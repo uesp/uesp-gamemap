@@ -1,0 +1,14 @@
+#
+# Deployment file for the UESP gamemap source as used by the uespdeploy script.
+#
+
+name = uesp.gamemap
+
+ignore = .hg*
+ignore = *.deploy
+ignore = *.sh
+
+# dest = content1.uesp.net:/home/uesp/www/maps2/
+# dest = content2.uesp.net:/home/uesp/www/maps2/
+dest = content3.uesp.net:/home/uesp/www/testmap1/
+
