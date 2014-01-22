@@ -6,9 +6,9 @@
  */
 
 
-uesp.gamemap.maptile = function(x, y)
+uesp.gamemap.MapTile = function(x, y)
 {
 	this.element = null;
-	this.deltatilex = (typeof x !== 'undefined') ? x : 0;
-	this.deltatiley = (typeof y !== 'undefined') ? y : 0;
+	this.deltaTileX = (typeof x !== 'undefined') ? x : 0;
+	this.deltaTileY = (typeof y !== 'undefined') ? y : 0;
 }

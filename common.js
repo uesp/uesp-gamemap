@@ -11,7 +11,7 @@ uesp.gamemap = uesp.gamemap || {};
 
 
 	// Simple position/point class
-uesp.gamemap.position = function (x, y)
+uesp.gamemap.Position = function (x, y)
 {
 	this.x = (typeof x !== 'undefined') ? x : 0;
 	this.y = (typeof y !== 'undefined') ? y : 0;
