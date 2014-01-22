@@ -7,6 +7,7 @@
 uesp.gamemap.MapOptions = function(mapOptions)
 {
 	this.getMapTileFunction = uesp.gamemap.defaultGetMapTile;
+	this.missingMapTile = "missingtile.jpg";
 	
 	this.minZoomLevel = 9;
 	this.maxZoomLevel = 17;
