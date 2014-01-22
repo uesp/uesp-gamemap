@@ -81,7 +81,7 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 
 uesp.gamemap.Map.prototype.loadMapTiles = function()
 {
-	if (this.getMapTileFunction === null) return;
+	if (uesp.gamemap.isNullorUndefined(this.getMapTileFunction)) return;
 			
 	for (y = 0; y < this.tileCountY; ++y)
 	{
