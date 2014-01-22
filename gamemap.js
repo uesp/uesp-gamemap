@@ -18,6 +18,7 @@ uesp.gamemap.Map = function(mapOptions)
 	this.draggingObject = null;
 	this.dragStartLeft = 0;
 	this.dragStartTop  = 0;
+	this.checkTilesOnDrag = true;
 	
 	this.mapTiles = [];
 	
@@ -26,6 +27,43 @@ uesp.gamemap.Map = function(mapOptions)
 	this.createEvents();
 	
 	this.loadMapTiles();
+}
+
+
+uesp.gamemap.Map.prototype.checkTileEdges = function ()
+{
+	tilesLeft = 0;
+	tilesRight = 0;
+	tilesTop = 0;
+	tilesBottom = 0;
+	
+	extraX = this.mapOptions.tileCountX * this.mapOptions.tileSize - $(this.mapOptions.mapContainer).width();
+	extraY = this.mapOptions.tileCountY * this.mapOptions.tileSize - $(this.mapOptions.mapContainer).height();
+	
+	tilesLeft = -Math.floor($("#gmMapRoot").offset().left / this.mapOptions.tileSize) - 1; 
+	tilesTop  = -Math.floor($("#gmMapRoot").offset().top  / this.mapOptions.tileSize) - 1;
+	tilesRight  = Math.floor((extraX + $("#gmMapRoot").offset().left) / this.mapOptions.tileSize);
+	tilesBottom = Math.floor((extraY + $("#gmMapRoot").offset().top)  / this.mapOptions.tileSize);
+	
+	//if (this.mapOptions.debug) console.debug("Extra Tiles: " + tilesLeft + ", " + tilesTop + ", " + tilesRight + ", " + tilesBottom);
+	
+	if (tilesRight < 1)
+	{
+		this.shiftMapTiles(1, 0);
+	}
+	else if (tilesLeft < 1)
+	{
+		this.shiftMapTiles(-1, 0);
+	}
+	
+	if (tilesTop < 1)
+	{
+		this.shiftMapTiles(0, -1);
+	}
+	else if (tilesBottom < 1)
+	{
+		this.shiftMapTiles(0, 1);
+	}
 }
 
 
@@ -95,6 +133,20 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 }
 
 
+uesp.gamemap.Map.prototype.dumpTileIndices = function()
+{
+	for (y = 0; y < this.mapOptions.tileCountY; ++y)
+	{
+		var LineString = "";
+		for (x = 0; x < this.mapOptions.tileCountX; ++x)
+		{
+			LineString += "(" + this.mapTiles[y][x].deltaTileX + ","+ this.mapTiles[y][x].deltaTileX + ") ";
+		}
+		console.debug(LineString);
+	}
+}
+
+
 uesp.gamemap.Map.prototype.getGamePositionOfCenter = function()
 {
 	var x = 0;
@@ -148,7 +200,7 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 	{
 		for (x = 0; x < this.mapOptions.tileCountX; ++x)
 		{
-			var gamePos = this.convertTileToGamePos(x + this.startTileX + 0.5, y + this.startTileY + 0.5);
+			var gamePos = this.convertTileToGamePos(this.mapTiles[y][x].deltaTileX + this.startTileX + 0.5, this.mapTiles[y][x].deltaTileY + this.startTileY + 0.5);
 			
 			if (!this.isGamePosInBounds(gamePos))
 			{
@@ -163,6 +215,35 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 }
 
 
+uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
+{
+	if (uesp.gamemap.isNullorUndefined(this.mapOptions.getMapTileFunction)) return;
+	
+	for (y = 0; y < this.mapOptions.tileCountY; ++y)
+	{
+		for (x = 0; x < this.mapOptions.tileCountX; ++x)
+		{
+			if (xIndex >= 0 && this.mapTiles[y][x].deltaTileX != xIndex) continue;
+			if (yIndex >= 0 && this.mapTiles[y][x].deltaTileY != yIndex) continue;
+			
+			var gamePos = this.convertTileToGamePos(this.mapTiles[y][x].deltaTileX + this.startTileX + 0.5, this.mapTiles[y][x].deltaTileY + this.startTileY + 0.5);
+			
+			if (!this.isGamePosInBounds(gamePos))
+			{
+				this.mapTiles[y][x].element.css("background", "url(" + this.mapOptions.missingMapTile + ")");
+				continue;
+			}
+			
+			//console.debug("loading tile " + x + ", " + y + "(" + this.mapTiles[y][x].deltaTileX + ", " + this.mapTiles[y][x].deltaTileY + ")");
+			
+			imageURL = this.mapOptions.getMapTileFunction(this.startTileX + this.mapTiles[y][x].deltaTileX, this.startTileY + this.mapTiles[y][x].deltaTileY, this.zoomLevel);
+			this.mapTiles[y][x].element.css("background", "url(" + imageURL + ")");
+		}
+	}
+}
+
+
+
 uesp.gamemap.Map.prototype.onDragEnd = function(event)
 {
 	this.isDragging = false;
@@ -171,6 +252,7 @@ uesp.gamemap.Map.prototype.onDragEnd = function(event)
 	this.draggingObject = null;
 	
 	this.getGamePositionOfCenter();
+	this.checkTileEdges();
 }
 
 
@@ -183,6 +265,7 @@ uesp.gamemap.Map.prototype.onDragMove = function(event)
 			left: event.pageX - this.dragStartLeft
 	});
 
+	if (this.checkTilesOnDrag) this.checkTileEdges();
 }
 
 
@@ -205,7 +288,6 @@ uesp.gamemap.Map.prototype.onMouseDown = function(event)
 	if (self.mapOptions.debug) console.debug("onMouseDown");
 	
 	self.onDragStart(event);
-	
 	
 	event.preventDefault();
 }
@@ -255,6 +337,87 @@ uesp.gamemap.Map.prototype.onMouseUp = function(event)
 }
 
 
+uesp.gamemap.Map.prototype.shiftMapTiles = function(deltaX, deltaY)
+{
+	var curOffset = $("#gmMapRoot").offset();
+	var targetXIndex = -1;
+	var targetYIndex = -1;
+	
+	if (deltaX >= 1)
+	{
+		targetXIndex = 0;
+		deltaX = 1;
+	}
+	else if (deltaX <= -1)
+	{
+		targetXIndex = this.mapOptions.tileCountX - 1;
+		deltaX = -1;
+	}
+	
+	if (deltaY >= 1)
+	{
+		targetYIndex = 0;
+		deltaY = 1;
+	}
+	else if (deltaY <= -1)
+	{
+		targetYIndex = this.mapOptions.tileCountY - 1;
+		deltaY = -1;
+	}
+	
+	for (var y = 0; y < this.mapOptions.tileCountY; y++)
+	{
+		for(var x = 0; x < this.mapOptions.tileCountX; x++)
+		{
+			var tileOffset = this.mapTiles[y][x].element.offset();
+			
+			if (this.mapTiles[y][x].deltaTileX == targetXIndex)
+			{
+				this.mapTiles[y][x].deltaTileX += (this.mapOptions.tileCountX - 1) * deltaX;
+				tileLeft = tileOffset.left + this.mapOptions.tileSize * (this.mapOptions.tileCountX - 1) * deltaX;
+
+			}
+			else
+			{
+				this.mapTiles[y][x].deltaTileX -= deltaX;
+				tileLeft = tileOffset.left - this.mapOptions.tileSize * deltaX;
+			}
+			
+			if (this.mapTiles[y][x].deltaTileY == targetYIndex)
+			{
+				this.mapTiles[y][x].deltaTileY += (this.mapOptions.tileCountY - 1) * deltaY;
+				tileTop = tileOffset.top + this.mapOptions.tileSize * (this.mapOptions.tileCountY - 1) * deltaY;
+			}
+			else
+			{
+				this.mapTiles[y][x].deltaTileY -= deltaY;
+				tileTop = tileOffset.top - this.mapOptions.tileSize * deltaY;
+			}
+			
+			this.mapTiles[y][x].element.offset({
+				left: tileLeft,
+				top:  tileTop
+			});
+		}
+	}
+	
+	$("#gmMapRoot").offset({
+		left: curOffset.left + this.mapOptions.tileSize * deltaX,
+		top : curOffset.top  + this.mapOptions.tileSize * deltaY
+	});
+	
+	this.dragStartLeft -= this.mapOptions.tileSize * deltaX;
+	this.dragStartTop  -= this.mapOptions.tileSize * deltaY;
+	
+	this.startTileX += deltaX;
+	this.startTileY += deltaY;
+	
+	//console.debug("shiftMapTiles(" + deltaX + ", " + deltaY + "): " + this.startTileX + ", " + this.startTileY);
+	//this.loadMapTilesRowCol(targetXIndex + (this.mapOptions.tileCountX - 1) * deltaX, targetYIndex + (this.mapOptions.tileCountY - 1) * deltaY);
+	this.loadMapTiles();
+}
+
+
 uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 {
 	if (this.zoomLevel >= this.mapOptions.maxZoomLevel) return;
@@ -268,9 +431,6 @@ uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 		x = $(this.mapOptions.mapContainer).width() /2;
 		y = $(this.mapOptions.mapContainer).height()/2;
 	}
-	
-	//x = $(this.mapOptions.mapContainer).width() /2;
-	//y = $(this.mapOptions.mapContainer).height()/2;
 	
 	var mapOffset  = $(this.mapOptions.mapContainer).offset();
 	var rootOffset = $("#gmMapRoot").offset();
