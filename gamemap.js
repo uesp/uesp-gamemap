@@ -111,12 +111,21 @@ uesp.gamemap.Map.prototype.getGamePositionOfCenter = function()
 
 uesp.gamemap.Map.prototype.loadMapTiles = function()
 {
+	var maxTiles = Math.pow(2, this.zoomLevel);
+	
 	if (uesp.gamemap.isNullorUndefined(this.mapOptions.getMapTileFunction)) return;
 			
 	for (y = 0; y < this.mapOptions.tileCountY; ++y)
 	{
 		for (x = 0; x < this.mapOptions.tileCountX; ++x)
 		{
+			if (x + this.startTileX < 0 || x + this.startTileX >= maxTiles ||
+				y + this.startTileY < 0 || y + this.startTileY >= maxTiles)
+			{
+				this.mapTiles[y][x].element.css("background", "url(" + this.mapOptions.missingMapTile + ")");
+				continue;
+			}
+			
 			imageURL = this.mapOptions.getMapTileFunction(this.startTileX + this.mapTiles[y][x].deltaTileX, this.startTileY + this.mapTiles[y][x].deltaTileY, this.zoomLevel);
 			this.mapTiles[y][x].element.css("background", "url(" + imageURL + ")");
 		}
