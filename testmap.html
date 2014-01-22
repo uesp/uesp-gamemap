@@ -13,13 +13,13 @@
 		var g_GameMap = null;
 
 		$( document ).ready( function() {
-			g_GameMap = new uesp.gamemap.map();
-			g_GameMap.SetGetMapTileFunc(GetSkyrimMapTile);
+			g_GameMap = new uesp.gamemap.Map();
+			g_GameMap.setGetMapTileFunc(getSkyrimMapTile);
 		});
 
-		function GetSkyrimMapTile(XPos, YPos, Zoom)
+		function getSkyrimMapTile(xPos, yPos, zoom)
 		{
-			return "http://content3.uesp.net/maps2/srmap/color/zoom" + Zoom + "/skyrim-" + XPos + "-" + YPos + "-" + Zoom + ".jpg";
+			return "http://content3.uesp.net/maps2/srmap/color/zoom" + zoom + "/skyrim-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
 		}
 
 	</script>
