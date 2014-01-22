@@ -6,29 +6,17 @@
  */
 
 
-uesp.gamemap.Map = function()
+uesp.gamemap.Map = function(mapOptions)
 {
-	this.tileCountX = 7;
-	this.tileCountY = 5;
-	this.tileSize   = 256;
+	this.mapOptions = new uesp.gamemap.MapOptions(mapOptions);
 	
 	this.zoomLevel = 15;
-	this.minZoomLevel = 9;
-	this.maxZoomLevel = 17;
-	
 	this.startTileX = 0;
 	this.startTileY = 0;
-	
-	this.gamePosX1 = 0;
-	this.gamePosX2 = 0;
-	this.gamePosY1 = 0;
-	this.gamePosY2 = 0;
 	
 	this.isDragging = false;
 	
 	this.mapTiles = [];
-	
-	this.getMapTileFunction = uesp.gamemap.defaultGetMapTile;
 	
 	this.createMapContainer();
 	this.createMapTiles();
@@ -45,15 +33,15 @@ uesp.gamemap.Map.prototype.createMapContainer = function()
 
 uesp.gamemap.Map.prototype.createMapTiles = function()
 {
-	offsetX = $('#gmMap').offset().left - this.tileSize;
-	offsetY = $('#gmMap').offset().top - this.tileSize;
+	offsetX = $('#gmMap').offset().left - this.mapOptions.tileSize;
+	offsetY = $('#gmMap').offset().top - this.mapOptions.tileSize;
 	
-	for (y = 0; y < this.tileCountY; ++y)
+	for (y = 0; y < this.mapOptions.tileCountY; ++y)
 	{
 		this.mapTiles.push([]);
-		this.mapTiles[y].push( new Array(this.tileCountX));
+		this.mapTiles[y].push( new Array(this.mapOptions.tileCountX));
 		
-		for (x = 0; x < this.tileCountX; ++x)
+		for (x = 0; x < this.mapOptions.tileCountX; ++x)
 		{
 			this.mapTiles[y][x] = this.createMapTile(x, y);
 		}
@@ -66,8 +54,8 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 {
 	var newTile = new uesp.gamemap.MapTile(x, y);
 	
-	xPos = x * this.tileSize + offsetX;
-	yPos = y * this.tileSize + offsetY;
+	xPos = x * this.mapOptions.tileSize + offsetX;
+	yPos = y * this.mapOptions.tileSize + offsetY;
 	tileID = "Tile_" + x + "_" + y;
 	
 	newDiv = $('<div />').addClass('gmMapTile').attr('id', tileID).text(tileID);
@@ -81,13 +69,13 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 
 uesp.gamemap.Map.prototype.loadMapTiles = function()
 {
-	if (uesp.gamemap.isNullorUndefined(this.getMapTileFunction)) return;
+	if (uesp.gamemap.isNullorUndefined(this.mapOptions.getMapTileFunction)) return;
 			
-	for (y = 0; y < this.tileCountY; ++y)
+	for (y = 0; y < this.mapOptions.tileCountY; ++y)
 	{
-		for (x = 0; x < this.tileCountX; ++x)
+		for (x = 0; x < this.mapOptions.tileCountX; ++x)
 		{
-			imageURL = this.getMapTileFunction(this.startTileX + this.mapTiles[y][x].deltaTileX, this.startTileY + this.mapTiles[y][x].deltaTileY, this.zoomLevel);
+			imageURL = this.mapOptions.getMapTileFunction(this.startTileX + this.mapTiles[y][x].deltaTileX, this.startTileY + this.mapTiles[y][x].deltaTileY, this.zoomLevel);
 			this.mapTiles[y][x].element.css("background", "url(" + imageURL + ")");
 		}
 	}
@@ -96,7 +84,7 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 
 uesp.gamemap.Map.prototype.setGetMapTileFunc = function(newFunc)
 {
-	this.getMapTileFunction = newFunc;
+	this.mapOptions.getMapTileFunction = newFunc;
 }
 
 
