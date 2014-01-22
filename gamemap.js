@@ -116,6 +116,8 @@ uesp.gamemap.Map.prototype.getGamePositionOfCenter = function()
 
 uesp.gamemap.Map.prototype.isGamePosInBounds = function(gamePos)
 {
+	if (uesp.gamemap.isNullorUndefined(gamePos.x) || uesp.gamemap.isNullorUndefined(gamePos.y)) return false;
+	
 	if (this.mapOptions.gamePosX1 < this.mapOptions.gamePosX2)
 	{
 		if (gamePos.x < this.mapOptions.gamePosX1 || gamePos.x > this.mapOptions.gamePosX2) return false;
