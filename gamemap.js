@@ -265,8 +265,6 @@ uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
 				continue;
 			}
 			
-			//console.debug("loading tile " + x + ", " + y + "(" + this.mapTiles[y][x].deltaTileX + ", " + this.mapTiles[y][x].deltaTileY + ")");
-			
 			imageURL = this.mapOptions.getMapTileFunction(this.startTileX + this.mapTiles[y][x].deltaTileX, this.startTileY + this.mapTiles[y][x].deltaTileY, this.zoomLevel);
 			this.mapTiles[y][x].element.css("background", "url(" + imageURL + ")");
 		}
@@ -382,7 +380,6 @@ uesp.gamemap.Map.prototype.setGamePos = function(x, y, zoom)
 	}
 	
 	var tilePos = this.convertGameToTilePos(x, y);
-	
 	tilePos.x -= this.mapOptions.tileCountX/2;
 	tilePos.y -= this.mapOptions.tileCountY/2;
 	
