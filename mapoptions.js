@@ -27,14 +27,16 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.mapContainer = "#gmMap";
 	
 	this.debug = true;
-	
-	//console.debug("Before: " + this.gamePosX1);
-	
+
+	this.mergeOptions(mapOptions);
+}
+
+
+uesp.gamemap.MapOptions.prototype.mergeOptions = function(mapOptions)
+{
 	if (!uesp.gamemap.isNullorUndefined(mapOptions))
 	{
 		uesp.gamemap.mergeObjects(this, mapOptions);
 	}
-	
-	//console.debug("Before: " + this.gamePosX1);
-	//console.debug("Input: " + mapOptions.gamePosX1);
 }
+
