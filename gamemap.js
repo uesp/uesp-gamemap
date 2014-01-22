@@ -27,14 +27,14 @@ uesp.gamemap.Map = function(mapOptions)
 
 uesp.gamemap.Map.prototype.createMapContainer = function()
 {
-	$('<div />').attr('id', 'gmMapContainer').appendTo("#gmMap");
+	$('<div />').attr('id', 'gmMapRoot').appendTo(this.mapOptions.mapContainer);
 }
 
 
 uesp.gamemap.Map.prototype.createMapTiles = function()
 {
-	offsetX = $('#gmMap').offset().left - this.mapOptions.tileSize;
-	offsetY = $('#gmMap').offset().top - this.mapOptions.tileSize;
+	offsetX = $(this.mapOptions.mapContainer).offset().left - this.mapOptions.tileSize;
+	offsetY = $(this.mapOptions.mapContainer).offset().top - this.mapOptions.tileSize;
 	
 	for (y = 0; y < this.mapOptions.tileCountY; ++y)
 	{
@@ -58,9 +58,10 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 	yPos = y * this.mapOptions.tileSize + offsetY;
 	tileID = "Tile_" + x + "_" + y;
 	
-	newDiv = $('<div />').addClass('gmMapTile').attr('id', tileID).text(tileID);
-	newDiv.appendTo('#gmMapContainer');
+	newDiv = $('<div />').addClass('gmMapTile').attr('id', tileID);
+	newDiv.appendTo('#gmMapRoot');
 	newDiv.offset({ top: yPos, left: xPos });
+	if (this.mapOptions.Debug) newDiv.text(tileID);
 	newTile.element = newDiv;
 	
 	return newTile;
