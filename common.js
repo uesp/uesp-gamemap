@@ -18,3 +18,7 @@ uesp.gamemap.Position = function (x, y)
 }
 
 
+uesp.gamemap.isNullorUndefined (variable)
+{
+	return (typeof variable === 'undefined' || variable === null);
+}
