@@ -29,6 +29,19 @@ uesp.gamemap.Map = function(mapOptions)
 }
 
 
+uesp.gamemap.Map.prototype.convertTileToGamePos = function(tileX, tileY)
+{
+	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
+	var gameX = 0;
+	var gameY = 0;	
+	
+	gameX = tileX / maxTiles * (this.mapOptions.gamePosX2 - this.mapOptions.gamePosX1) + this.mapOptions.gamePosX1;
+	gameY = tileY / maxTiles * (this.mapOptions.gamePosY2 - this.mapOptions.gamePosY1) + this.mapOptions.gamePosY1;
+	
+	return new uesp.gamemap.Position(gameX, gameY);
+}
+
+
 uesp.gamemap.Map.prototype.createEvents = function()
 {
 
@@ -97,30 +110,45 @@ uesp.gamemap.Map.prototype.getGamePositionOfCenter = function()
 	tileY = rootCenterY / this.mapOptions.tileSize + this.startTileY;
 	//if (this.mapOptions.debug) console.debug("Game Tile Position = " + tileX + ", " + tileY);
 	
-	rawX = tileX / Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
-	rawY = tileY / Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
-	//if (this.mapOptions.debug) console.debug("Game Raw Position = " + rawX + ", " + rawY);
+	return this.convertTileToGamePos(tileX, tileY);
+}
+
+
+uesp.gamemap.Map.prototype.isGamePosInBounds = function(gamePos)
+{
+	if (this.mapOptions.gamePosX1 < this.mapOptions.gamePosX2)
+	{
+		if (gamePos.x < this.mapOptions.gamePosX1 || gamePos.x > this.mapOptions.gamePosX2) return false;
+	}
+	else
+	{
+		if (gamePos.x > this.mapOptions.gamePosX1 || gamePos.x < this.mapOptions.gamePosX2) return false;
+	}
+		
+	if (this.mapOptions.gamePosY1 < this.mapOptions.gamePosY2)
+	{
+		if (gamePos.y < this.mapOptions.gamePosY1 || gamePos.y > this.mapOptions.gamePosY2) return false;
+	}
+	else
+	{
+		if (gamePos.y > this.mapOptions.gamePosY1 || gamePos.y < this.mapOptions.gamePosY2) return false;
+	}
 	
-	x = (this.mapOptions.gamePosX2 - this.mapOptions.gamePosX1) * rawX + this.mapOptions.gamePosX1;
-	y = (this.mapOptions.gamePosY2 - this.mapOptions.gamePosY1) * rawY + this.mapOptions.gamePosY1;
-	
-	if (this.mapOptions.debug) console.debug("Game Position = " + x + ", " + y);
-	return new uesp.gamemap.Position(x, y);
+	return true;
 }
 
 
 uesp.gamemap.Map.prototype.loadMapTiles = function()
 {
-	var maxTiles = Math.pow(2, this.zoomLevel);
-	
 	if (uesp.gamemap.isNullorUndefined(this.mapOptions.getMapTileFunction)) return;
 			
 	for (y = 0; y < this.mapOptions.tileCountY; ++y)
 	{
 		for (x = 0; x < this.mapOptions.tileCountX; ++x)
 		{
-			if (x + this.startTileX < 0 || x + this.startTileX >= maxTiles ||
-				y + this.startTileY < 0 || y + this.startTileY >= maxTiles)
+			var gamePos = this.convertTileToGamePos(x + this.startTileX + 0.5, y + this.startTileY + 0.5);
+			
+			if (!this.isGamePosInBounds(gamePos))
 			{
 				this.mapTiles[y][x].element.css("background", "url(" + this.mapOptions.missingMapTile + ")");
 				continue;
