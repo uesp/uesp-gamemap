@@ -16,6 +16,8 @@ uesp.gamemap.Map = function(mapOptions)
 	
 	this.isDragging = false;
 	this.draggingObject = null;
+	this.dragStartLeft = 0;
+	this.dragStartTop  = 0;
 	
 	this.mapTiles = [];
 	
@@ -30,10 +32,10 @@ uesp.gamemap.Map = function(mapOptions)
 uesp.gamemap.Map.prototype.createEvents = function()
 {
 
-	$(window).on("mousemove", this.onMouseMove);
-	$('#umMapContainer').on("mousedown", this.onMouseDown);
-	$(window).on("mouseup", this.onMouseUp);
-	$('#umMapContainer').on('DOMMouseScroll mousewheel', this.onMouseScroll);
+	$(window).on("mousemove", { self: this }, this.onMouseMove);
+	$('#gmMapRoot').on("mousedown", { self: this }, this.onMouseDown);
+	$(window).on("mouseup", { self: this }, this.onMouseUp);
+	$('#gmMapRoot').on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
 }
 
 
@@ -73,7 +75,7 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 	newDiv = $('<div />').addClass('gmMapTile').attr('id', tileID);
 	newDiv.appendTo('#gmMapRoot');
 	newDiv.offset({ top: yPos, left: xPos });
-	if (this.mapOptions.Debug) newDiv.text(tileID);
+	if (this.mapOptions.debug) newDiv.text(tileID);
 	newTile.element = newDiv;
 	
 	return newTile;
@@ -95,26 +97,83 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 }
 
 
+uesp.gamemap.Map.prototype.onDragEnd = function(event)
+{
+	this.isDragging = false;
+	if (uesp.gamemap.isNullorUndefined(this.draggingObject)) return;
+	
+	this.draggingObject = null;
+}
+
+
+uesp.gamemap.Map.prototype.onDragMove = function(event)
+{
+	if (uesp.gamemap.isNullorUndefined(this.draggingObject)) return;
+	
+	$("#gmMapRoot").offset({
+			top:  event.pageY - this.dragStartTop,
+			left: event.pageX - this.dragStartLeft
+	});
+
+}
+
+
+uesp.gamemap.Map.prototype.onDragStart = function(event)
+{
+	mapOffset = $("#gmMapRoot").offset();
+	this.dragStartTop = event.pageY - mapOffset.top;
+	this.dragStartLeft = event.pageX - mapOffset.left;
+	
+	this.draggingObject = $(event.target);
+	this.isDragging = true;
+
+	if (this.mapOptions.debug) console.debug("Drag Start Offset: " + this.dragStartLeft + ", " + this.dragStartTop);
+}
+
+
 uesp.gamemap.Map.prototype.onMouseDown = function(event)
 {
-	if (this.mapOptions.Debug) console.debug("onMouseDown");
+	var self = event.data.self;
+	if (self.mapOptions.debug) console.debug("onMouseDown");
+	
+	self.onDragStart(event);
+	
+	
+	event.preventDefault();
 }
 
 
 uesp.gamemap.Map.prototype.onMouseMove = function(event)
 {
+	var self = event.data.self;
+	
+	if (self.isDragging)
+	{
+		self.onDragMove(event);
+		event.preventDefault();
+	}
 }
 
 
 uesp.gamemap.Map.prototype.onMouseScroll = function(event)
 {
-	if (this.mapOptions.Debug) console.debug("onMouseScroll");
+	var self = event.data.self;
+	if (self.mapOptions.debug) console.debug("onMouseScroll");
+	
+	event.preventDefault();
 }
 
 
 uesp.gamemap.Map.prototype.onMouseUp = function(event)
 {
-	if (this.mapOptions.Debug) console.debug("onMouseUp");
+	var self = event.data.self;
+	if (self.mapOptions.debug) console.debug("onMouseUp");
+	
+	if (self.isDragging)
+	{
+		self.onDragEnd(event);
+		event.preventDefault();
+	}
 }
 
 
