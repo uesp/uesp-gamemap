@@ -158,12 +158,15 @@ uesp.gamemap.Map.prototype.onMouseMove = function(event)
 uesp.gamemap.Map.prototype.onMouseScroll = function(event)
 {
 	var self = event.data.self;
+	var rootOffset = $("#gmMapRoot").offset();
+	var zoomX =event.pageX - rootOffset.left;
+	var zoomY =event.pageY - rootOffset.top;
 	
 	if (event.originalEvent.detail > 0 || event.originalEvent.wheelDelta < 0)
 	{
-		self.zoomOut();
+		self.zoomOut(zoomX, zoomY);
 	} else {
-		self.zoomIn();
+		self.zoomIn(zoomX, zoomY);
 	}
 	
 	if (self.mapOptions.debug) console.debug("onMouseScroll");
@@ -184,12 +187,12 @@ uesp.gamemap.Map.prototype.onMouseUp = function(event)
 }
 
 
-uesp.gamemap.Map.prototype.zoomIn = function()
+uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 {
 	if (this.zoomLevel >= this.mapOptions.maxZoomLevel) return;
 	
 	this.zoomLevel++;
-	if (this.mapOptions.debug) console.debug("Zoom = " + this.zoomLevel);
+	if (this.mapOptions.debug) console.debug("Zoom (" + x + ", " + y + ") = " + this.zoomLevel);
 	
 	centerTileX = this.startTileX + this.mapOptions.tileCountX/2;
 	centerTileY = this.startTileY + this.mapOptions.tileCountY/2;
@@ -201,7 +204,7 @@ uesp.gamemap.Map.prototype.zoomIn = function()
 }
 
 
-uesp.gamemap.Map.prototype.zoomOut = function()
+uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 {
 	if (this.zoomLevel <= this.mapOptions.minZoomLevel) return;
 	
