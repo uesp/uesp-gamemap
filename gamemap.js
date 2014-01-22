@@ -309,6 +309,10 @@ uesp.gamemap.Map.prototype.onMouseScroll = function(event)
 {
 	var self = event.data.self;
 	var rootOffset = $(self.mapOptions.mapContainer).offset();
+	
+	if (uesp.gamemap.isNullorUndefined(event.pageX)) event.pageX = event.originalEvent.pageX;
+	if (uesp.gamemap.isNullorUndefined(event.pageY)) event.pageY = event.originalEvent.pageY;
+	
 	var zoomX = event.pageX - rootOffset.left;
 	var zoomY = event.pageY - rootOffset.top;
 	
@@ -425,6 +429,7 @@ uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 	var curPos= this.getGamePositionOfCenter();
 	
 	this.zoomLevel++;
+	if (this.mapOptions.debug) console.debug("Zoom In (" + x + ", " + y + ") = " + this.zoomLevel);
 	
 	if (uesp.gamemap.isNullorUndefined(x) || uesp.gamemap.isNullorUndefined(y))
 	{
@@ -462,16 +467,13 @@ uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 	this.getGamePositionOfCenter();
 	
 	this.zoomLevel--;
-	if (this.mapOptions.debug) console.debug("Zoom (" + x + ", " + y + ") = " + this.zoomLevel);
+	if (this.mapOptions.debug) console.debug("Zoom Out (" + x + ", " + y + ") = " + this.zoomLevel);
 	
 	if (uesp.gamemap.isNullorUndefined(x) || uesp.gamemap.isNullorUndefined(y))
 	{
 		x = $(this.mapOptions.mapContainer).width() /2;
 		y = $(this.mapOptions.mapContainer).height()/2;
 	}
-	
-	//x = $(this.mapOptions.mapContainer).width() /2;
-	//y = $(this.mapOptions.mapContainer).height()/2;
 	
 	var mapOffset  = $(this.mapOptions.mapContainer).offset();
 	var rootOffset = $("#gmMapRoot").offset();
