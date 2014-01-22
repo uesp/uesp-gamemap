@@ -47,20 +47,20 @@ uesp.gamemap.Map.prototype.checkTileEdges = function ()
 	
 	//if (this.mapOptions.debug) console.debug("Extra Tiles: " + tilesLeft + ", " + tilesTop + ", " + tilesRight + ", " + tilesBottom);
 	
-	if (tilesRight < 1)
+	if (tilesRight < this.mapOptions.tileEdgeLoadCount)
 	{
 		this.shiftMapTiles(1, 0);
 	}
-	else if (tilesLeft < 1)
+	else if (tilesLeft < this.mapOptions.tileEdgeLoadCount)
 	{
 		this.shiftMapTiles(-1, 0);
 	}
 	
-	if (tilesTop < 1)
+	if (tilesTop < this.mapOptions.tileEdgeLoadCount)
 	{
 		this.shiftMapTiles(0, -1);
 	}
-	else if (tilesBottom < 1)
+	else if (tilesBottom < this.mapOptions.tileEdgeLoadCount)
 	{
 		this.shiftMapTiles(0, 1);
 	}
