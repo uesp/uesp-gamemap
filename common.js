@@ -18,7 +18,23 @@ uesp.gamemap.Position = function (x, y)
 }
 
 
-uesp.gamemap.isNullorUndefined (variable)
+uesp.gamemap.isNullorUndefined = function (variable)
 {
 	return (typeof variable === 'undefined' || variable === null);
+}
+
+
+uesp.gamemap.createMergedObject = function (obj1, obj2)
+{
+	var obj3 = {};
+	for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
+	for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+	return obj3;
+}
+
+
+uesp.gamemap.mergeObjects = function (obj1, obj2)
+{
+	for (var attrname in obj2) { obj1[attrname] = obj2[attrname]; }
+	return obj1;
 }

@@ -6,15 +6,20 @@
 	<link rel="stylesheet" href="gamemap.css" />
 	<script type="text/javascript" src="jquery-1.10.2.js"></script>
 	<script type="text/javascript" src="common.js"></script>
+	<script type="text/javascript" src="mapoptions.js"></script>
 	<script type="text/javascript" src="maptile.js"></script>
 	<script type="text/javascript" src="gamemap.js"></script>
 	<script type="text/javascript">
 
 		var g_GameMap = null;
+		
+		var g_MapOptions = {
+				gamePosX1 : 1234,
+				getMapTileFunction : getSkyrimMapTile
+		};
 
 		$( document ).ready( function() {
-			g_GameMap = new uesp.gamemap.Map();
-			g_GameMap.setGetMapTileFunc(getSkyrimMapTile);
+			g_GameMap = new uesp.gamemap.Map(g_MapOptions);
 		});
 
 		function getSkyrimMapTile(xPos, yPos, zoom)
