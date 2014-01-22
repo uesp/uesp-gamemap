@@ -417,8 +417,8 @@ uesp.gamemap.Map.prototype.shiftMapTiles = function(deltaX, deltaY)
 	this.startTileY += deltaY;
 	
 	//console.debug("shiftMapTiles(" + deltaX + ", " + deltaY + "): " + this.startTileX + ", " + this.startTileY);
-	//this.loadMapTilesRowCol(targetXIndex + (this.mapOptions.tileCountX - 1) * deltaX, targetYIndex + (this.mapOptions.tileCountY - 1) * deltaY);
-	this.loadMapTiles();
+	this.loadMapTilesRowCol(targetXIndex + (this.mapOptions.tileCountX - 1) * deltaX, targetYIndex + (this.mapOptions.tileCountY - 1) * deltaY);
+	//this.loadMapTiles();
 }
 
 
