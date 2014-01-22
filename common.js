@@ -5,8 +5,13 @@
  *
  */
 
+	// Namespace definitions
+var uesp = uesp || {};
+uesp.gamemap = uesp.gamemap || {};
 
-function uesp.gamemap.position (x, y)
+
+	// Simple position/point class
+uesp.gamemap.position = function (x, y)
 {
 	this.x = (typeof x !== 'undefined') ? x : 0;
 	this.y = (typeof y !== 'undefined') ? y : 0;
