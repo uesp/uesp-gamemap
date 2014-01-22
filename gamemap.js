@@ -158,8 +158,15 @@ uesp.gamemap.Map.prototype.onMouseMove = function(event)
 uesp.gamemap.Map.prototype.onMouseScroll = function(event)
 {
 	var self = event.data.self;
-	if (self.mapOptions.debug) console.debug("onMouseScroll");
 	
+	if (event.originalEvent.detail > 0 || event.originalEvent.wheelDelta < 0)
+	{
+		self.zoomOut();
+	} else {
+		self.zoomIn();
+	}
+	
+	if (self.mapOptions.debug) console.debug("onMouseScroll");
 	event.preventDefault();
 }
 
@@ -177,9 +184,37 @@ uesp.gamemap.Map.prototype.onMouseUp = function(event)
 }
 
 
-uesp.gamemap.Map.prototype.setGetMapTileFunc = function(newFunc)
+uesp.gamemap.Map.prototype.zoomIn = function()
 {
-	this.mapOptions.getMapTileFunction = newFunc;
+	if (this.zoomLevel >= this.mapOptions.maxZoomLevel) return;
+	
+	this.zoomLevel++;
+	if (this.mapOptions.debug) console.debug("Zoom = " + this.zoomLevel);
+	
+	centerTileX = this.startTileX + this.mapOptions.tileCountX/2;
+	centerTileY = this.startTileY + this.mapOptions.tileCountY/2;
+	
+	this.startTileX = Math.round(centerTileX*2 - this.mapOptions.tileCountX/2);
+	this.startTileY = Math.round(centerTileY*2 - this.mapOptions.tileCountY/2);
+	
+	this.loadMapTiles();
+}
+
+
+uesp.gamemap.Map.prototype.zoomOut = function()
+{
+	if (this.zoomLevel <= this.mapOptions.minZoomLevel) return;
+	
+	this.zoomLevel--;
+	if (this.mapOptions.debug) console.debug("Zoom = " + this.zoomLevel);
+	
+	centerTileX = this.startTileX + this.mapOptions.tileCountX/2;
+	centerTileY = this.startTileY + this.mapOptions.tileCountY/2;
+	
+	this.startTileX = Math.round(centerTileX/2 - this.mapOptions.tileCountX/2);
+	this.startTileY = Math.round(centerTileY/2 - this.mapOptions.tileCountY/2);
+	
+	this.loadMapTiles();
 }
 
 
