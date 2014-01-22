@@ -24,6 +24,9 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.gamePosY1 = 10000;
 	this.gamePosY2 = 0;
 	
+	this.initialGamePosX = 0;
+	this.initialGamePosY = 0;
+	
 	this.mapContainer = "#gmMap";
 	
 	this.debug = true;
