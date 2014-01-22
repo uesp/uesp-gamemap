@@ -17,7 +17,13 @@
 				mapContainer : "#gmMap",
 				getMapTileFunction : getSkyrimMapTile,
 				missingMapTile:  "http://content3.uesp.net/maps2/srmap/color/nullimage.jpg",
-				zoomOffset : 9
+				zoomOffset : 9,
+				initialGamePosX : 1000,
+				initialGamePosY : 8000,
+				gamePosX1: 0,
+				gamePosX2: 10000,
+				gamePosY1: 10000,
+				gamePosY2: 0,
 		};
 
 		$( document ).ready( function() {
@@ -34,6 +40,12 @@
 <body>
 
 Map Tiles...
+<a href="#" onClick="g_GameMap.zoomOut();">Zoom Out</a>
+<a href="#" onClick="g_GameMap.zoomIn();">Zoom In</a>
+<a href="#" onClick="g_GameMap.setGamePos(2000, 7000);">Set Pos Test</a>
+<a href="#" onClick="g_GameMap.setGameZoom(16);">Set Zoom Test</a>
+<a href="#" onClick="g_GameMap.getGamePositionOfCenter();">Check Center Pos</a>
+<a href="#" onClick="g_GameMap.getTilePositionOfCenter();">Check CenterTile Pos</a>
 
 <div id="gmMap">
 </div>
