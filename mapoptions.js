@@ -10,15 +10,16 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	
 	this.minZoomLevel = 9;
 	this.maxZoomLevel = 17;
+	this.zoomOffset   = 0;
 	
 	this.tileCountX = 7;
 	this.tileCountY = 5;
 	this.tileSize   = 256;
 	
 	this.gamePosX1 = 0;
-	this.gamePosX2 = 0;
+	this.gamePosX2 = 10000;
 	this.gamePosY1 = 10000;
-	this.gamePosY2 = 10000;
+	this.gamePosY2 = 0;
 	
 	this.mapContainer = "#gmMap";
 	
