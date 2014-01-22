@@ -10,6 +10,10 @@ uesp.gamemap.Map = function(mapOptions)
 {
 	this.mapOptions = new uesp.gamemap.MapOptions(mapOptions);
 	
+	this.mapWorlds = {};
+	this.currentWorldName = "__default";
+	this.addWorld(this.currentWorldName, mapOptions);
+	
 	this.zoomLevel = 15;
 	this.startTileX = 0;
 	this.startTileY = 0;
@@ -29,6 +33,12 @@ uesp.gamemap.Map = function(mapOptions)
 	this.setGamePos(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY);
 	
 	this.loadMapTiles();
+}
+
+
+uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions)
+{
+	this.mapWorlds[worldName] = new uesp.gamemap.World(worldName, mapOptions);
 }
 
 
@@ -78,7 +88,7 @@ uesp.gamemap.Map.prototype.convertTileToGamePos = function(tileX, tileY)
 	gameX = tileX / maxTiles * (this.mapOptions.gamePosX2 - this.mapOptions.gamePosX1) + this.mapOptions.gamePosX1;
 	gameY = tileY / maxTiles * (this.mapOptions.gamePosY2 - this.mapOptions.gamePosY1) + this.mapOptions.gamePosY1;
 	
-	if (this.mapOptions.debug) console.debug("convertTileToGamePos() = " + gameX + ", " + gameY);
+	//if (this.mapOptions.debug) console.debug("convertTileToGamePos() = " + gameX + ", " + gameY);
 	return new uesp.gamemap.Position(gameX, gameY);
 }
 
@@ -116,6 +126,8 @@ uesp.gamemap.Map.prototype.createMapTiles = function()
 {
 	offsetX = $(this.mapOptions.mapContainer).offset().left;
 	offsetY = $(this.mapOptions.mapContainer).offset().top;
+	
+	this.mapTiles = [];
 	
 	for (y = 0; y < this.mapOptions.tileCountY; ++y)
 	{
@@ -170,11 +182,9 @@ uesp.gamemap.Map.prototype.getGamePositionOfCenter = function()
 	
 	rootCenterX = $(this.mapOptions.mapContainer).width() /2 + mapOffset.left - rootOffset.left;
 	rootCenterY = $(this.mapOptions.mapContainer).height()/2 + mapOffset.top  - rootOffset.top;
-	//if (this.mapOptions.debug) console.debug("Root Center = " + rootCenterX + ", " + rootCenterY);
 	
 	tileX = rootCenterX / this.mapOptions.tileSize + this.startTileX;
 	tileY = rootCenterY / this.mapOptions.tileSize + this.startTileY;
-	//if (this.mapOptions.debug) console.debug("Game Tile Position = " + tileX + ", " + tileY);
 	
 	return this.convertTileToGamePos(tileX, tileY);
 }
@@ -187,6 +197,18 @@ uesp.gamemap.Map.prototype.getTilePositionOfCenter = function()
 	
 	if (this.mapOptions.debug) console.debug("getTilePositionOfCenter(): " + tilePos.x + ", " + tilePos.y);
 	return tilePos;
+}
+
+
+uesp.gamemap.Map.prototype.getMapState = function()
+{
+	var mapState = new uesp.gamemap.MapState();
+	
+	mapState.zoomLevel = this.zoomLevel;
+	mapState.gamePos   = this.getGamePositionOfCenter();
+	mapState.worldName = this.currentWorldName;
+	
+	return mapState;
 }
 
 
@@ -279,8 +301,6 @@ uesp.gamemap.Map.prototype.onDragEnd = function(event)
 	if (uesp.gamemap.isNullorUndefined(this.draggingObject)) return;
 	
 	this.draggingObject = null;
-	
-	this.getGamePositionOfCenter();
 	this.checkTileEdges();
 }
 
@@ -394,7 +414,6 @@ uesp.gamemap.Map.prototype.setGamePos = function(x, y, zoom)
 	$("#gmMapRoot").offset({ left: newOffsetX, top: newOffsetY});
 	
 	this.loadMapTiles();
-	this.getGamePositionOfCenter();
 }
 
 
@@ -425,7 +444,16 @@ uesp.gamemap.Map.prototype.setGameZoom = function(zoom)
 	$("#gmMapRoot").offset({ left: newOffsetX, top: newOffsetY});
 	
 	this.loadMapTiles();
-	this.getGamePositionOfCenter();
+}
+
+
+uesp.gamemap.Map.prototype.setMapState = function (newState)
+{
+	if (uesp.gamemap.isNullorUndefined(newState)) return;
+	
+	this.currentWorldName = newState.worldName;
+	
+	this.setGamePos(newState.gamePos.x, newState.gamePos.y, newState.zoomLevel);
 }
 
 
@@ -543,14 +571,12 @@ uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 	$("#gmMapRoot").offset({ left: newOffsetX, top: newOffsetY});
 	
 	this.loadMapTiles();
-	this.getGamePositionOfCenter();
 }
 
 
 uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 {
 	if (this.zoomLevel <= this.mapOptions.minZoomLevel) return;
-	this.getGamePositionOfCenter();
 	
 	this.zoomLevel--;
 	if (this.mapOptions.debug) console.debug("Zoom Out (" + x + ", " + y + ") = " + this.zoomLevel);
@@ -581,7 +607,6 @@ uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 	$("#gmMapRoot").offset({ left: newOffsetX, top: newOffsetY});
 	
 	this.loadMapTiles();
-	this.getGamePositionOfCenter();
 }
 
 
