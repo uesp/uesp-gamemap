@@ -15,14 +15,26 @@ uesp.gamemap.Map = function(mapOptions)
 	this.startTileY = 0;
 	
 	this.isDragging = false;
+	this.draggingObject = null;
 	
 	this.mapTiles = [];
 	
 	this.createMapContainer();
 	this.createMapTiles();
+	this.createEvents();
+	
 	this.loadMapTiles();
 }
 
+
+uesp.gamemap.Map.prototype.createEvents = function()
+{
+
+	$(window).on("mousemove", this.onMouseMove);
+	$('#umMapContainer').on("mousedown", this.onMouseDown);
+	$(window).on("mouseup", this.onMouseUp);
+	$('#umMapContainer').on('DOMMouseScroll mousewheel', this.onMouseScroll);
+}
 
 
 uesp.gamemap.Map.prototype.createMapContainer = function()
@@ -80,6 +92,29 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 			this.mapTiles[y][x].element.css("background", "url(" + imageURL + ")");
 		}
 	}
+}
+
+
+uesp.gamemap.Map.prototype.onMouseDown = function(event)
+{
+	if (this.mapOptions.Debug) console.debug("onMouseDown");
+}
+
+
+uesp.gamemap.Map.prototype.onMouseMove = function(event)
+{
+}
+
+
+uesp.gamemap.Map.prototype.onMouseScroll = function(event)
+{
+	if (this.mapOptions.Debug) console.debug("onMouseScroll");
+}
+
+
+uesp.gamemap.Map.prototype.onMouseUp = function(event)
+{
+	if (this.mapOptions.Debug) console.debug("onMouseUp");
 }
 
 
