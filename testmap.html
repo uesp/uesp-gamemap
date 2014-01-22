@@ -8,6 +8,21 @@
 	<script type="text/javascript" src="common.js"></script>
 	<script type="text/javascript" src="maptile.js"></script>
 	<script type="text/javascript" src="gamemap.js"></script>
+	<script type="text/javascript">
+
+		var g_GameMap = null;
+
+		$( document ).ready( function() {
+			g_GameMap = new uesp.gamemap.map();
+			g_GameMap.SetGetMapTileFunc(GetSkyrimMapTile);
+		});
+
+		function GetSkyrimMapTile(XPos, YPos, Zoom)
+		{
+			return "http://content3.uesp.net/maps2/srmap/color/zoom" + Zoom + "/skyrim-" + XPos + "-" + YPos + "-" + Zoom + ".jpg";
+		}
+
+	</script>
 </head>
 <body>
 

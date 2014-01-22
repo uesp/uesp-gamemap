@@ -5,7 +5,6 @@
  *
  */
 
-var g_GameMap = null;
 
 uesp.gamemap.map = function()
 {
@@ -33,6 +32,7 @@ uesp.gamemap.map = function()
 	
 	this.CreateMapContainer();
 	this.CreateMapTiles();
+	this.LoadMapTiles();
 }
 
 
@@ -71,6 +71,24 @@ uesp.gamemap.map.prototype.CreateMapTiles = function()
 }
 
 
+uesp.gamemap.map.prototype.LoadMapTiles = function()
+{
+	for (y = 0; y < this.TileCountY; ++y)
+	{
+		for (x = 0; x < this.TileCountX; ++x)
+		{
+			//this.MapTiles[y][x].
+		}
+	}
+}
+
+
+uesp.gamemap.map.prototype.SetGetMapTileFunc = function(NewFunc)
+{
+	this.GetMapTileFunction = NewFunc;
+}
+
+
 uesp.gamemap.DefaultGetMapTile = function(TileX, TileY, Zoom)
 {
 	return "zoom" + Zoom + "/maptile_" + TileX + "_" + TileY + ".jpg"; 
@@ -78,11 +96,6 @@ uesp.gamemap.DefaultGetMapTile = function(TileX, TileY, Zoom)
 
 
 
-uesp.gamemap.onDocumentLoad = function()
-{
-	g_GameMap = new uesp.gamemap.map();
-	console.debug("Ok");
-}
 
 
-$( document ).ready( uesp.gamemap.onDocumentLoad );
+
