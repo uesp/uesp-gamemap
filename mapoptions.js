@@ -17,6 +17,8 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.tileCountY = 7;
 	this.tileSize   = 256;
 	
+	this.tileEdgeLoadCount = 1;
+	
 	this.gamePosX1 = 0;
 	this.gamePosX2 = 10000;
 	this.gamePosY1 = 10000;
