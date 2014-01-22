@@ -1,4 +1,3 @@
 syntax: glob
 *.secrets
 *.pyc
-test*
