@@ -48,11 +48,10 @@ class GameMap
 	
 	private function createTables()
 	{
-		$query = "
-				CREATE TABLE IF NOT EXISTS  `world` (
+		$query = "CREATE TABLE IF NOT EXISTS `world` (
 					`id` BIGINT NOT NULL AUTO_INCREMENT,
-					`name` TEXT NOT NULL,
-					`display_name` TEXT NOT NULL,
+					`name` TINYTEXT NOT NULL,
+					`display_name` TINYTEXT NOT NULL,
 					`description` TEXT NOT NULL,
 					`wiki_page` TEXT NOT NULL,
 					`cell_size` INTEGER NOT NULL,
@@ -62,11 +61,32 @@ class GameMap
 					`pos_top` INTEGER NOT NULL,
 					`pos_right` INTEGER NOT NULL,
 					`pos_bottom` INTEGER NOT NULL,
+					`enabled` TINYINT NOT NULL,
 					PRIMARY KEY ( id )
 				);";
 		
 		$result = mysql_query($query);
-		if ($result !== TRUE) return $this->reportError("Failed to create table!");
+		if ($result !== TRUE) return $this->reportError("Failed to create world table!");
+		
+		$query = "CREATE TABLE IF NOT EXISTS location (
+					id BIGINT NOT NULL AUTO_INCREMENT,
+					world_id BIGINT NOT NULL,
+					lrev_id BIGINT NOT NULL,
+					loc_type TINYINT NOT NULL,
+					loc_data TEXT NOT NULL,
+					loc_x INTEGER NOT NULL,
+					loc_y INTEGER NOT NULL,
+					loc_width INTEGER NOT NULL,
+					loc_height INTEGER NOT NULL,
+					title TINYTEXT NOT NULL,
+					description TEXT NOT NULL,
+					wiki_page TEXT NOT NULL,
+					display_level INTEGER NOT NULL,
+					visible TINYINT NOT NULL,
+					PRIMARY KEY ( id )
+				);";
+		$result = mysql_query($query);
+		if ($result !== TRUE) return $this->reportError("Failed to create location table!");
 		
 		return true;
 	}
@@ -80,9 +100,8 @@ class GameMap
 		switch ($action)
 		{
 			case 'create_tables':
-				return $this->initDatabaseWrite();
+				return $this->doCreateTables();
 			case 'get_worlds':
-				if (!$this->initDatabase()) return false;
 				return $this->doGetWorlds();
 			case 'default':
 			default:
@@ -94,9 +113,19 @@ class GameMap
 	}
 	
 	
+	public function doCreateTables ()
+	{
+		$result = $this->initDatabase();
+		if (!$result) return false;
+		
+		$this->addOutputItem("result", "Successfully created tables!");
+		return true;
+	}
+	
+	
 	public function doGetWorlds ()
 	{
-		
+		if (!$this->initDatabase()) return false;
 		return true;
 	}
 	
@@ -143,24 +172,6 @@ class GameMap
 	}
 	
 	
-	public function writeHeaders ()
-	{
-		header("Expires: 0");
-		header("Pragma: no-cache");
-		header("Cache-Control: no-cache, no-store, must-revalidate");
-		header("Pragma: no-cache");
-		header("content-type: application/json");
-	}
-	
-	
-	public function writeJson ()
-	{
-		$this->writeHeaders();
-		print json_encode($this->outputItems);
-		print "\n";
-	}
-	
-	
 	private function setInputParams ()
 	{
 		global $argv;
@@ -179,7 +190,25 @@ class GameMap
 					$this->inputParams[$e[0]] = 0;
 			}
 		}
-	} 
+	}
+	
+	
+	public function writeHeaders ()
+	{
+		header("Expires: 0");
+		header("Pragma: no-cache");
+		header("Cache-Control: no-cache, no-store, must-revalidate");
+		header("Pragma: no-cache");
+		header("content-type: application/json");
+	}
+	
+	
+	public function writeJson ()
+	{
+		$this->writeHeaders();
+		print json_encode($this->outputItems);
+		print "\n";
+	}
 	
 }
 
