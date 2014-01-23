@@ -42,7 +42,7 @@ uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions)
 }
 
 
-uesp.gamemap.Map.prototype.changeWorld = function (worldName)
+uesp.gamemap.Map.prototype.changeWorld = function (worldName, newState)
 {
 	if (worldName == this.currentWorldName) return;
 	
@@ -56,7 +56,11 @@ uesp.gamemap.Map.prototype.changeWorld = function (worldName)
 	{
 		this.currentWorldName = worldName;
 		this.mapOptions = this.mapWorlds[this.currentWorldName].mapOptions;
-		this.setMapState(this.mapWorlds[this.currentWorldName].mapState);
+		
+		if (uesp.gamemap.isNullorUndefined(newState))
+			this.setMapState(this.mapWorlds[this.currentWorldName].mapState);
+		else
+			this.setMapState(newState);
 	}
 	
 }
@@ -472,9 +476,15 @@ uesp.gamemap.Map.prototype.setMapState = function (newState)
 	if (uesp.gamemap.isNullorUndefined(newState)) return;
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, newState);
 	
-	this.currentWorldName = newState.worldName;
-	
-	this.setGamePos(newState.gamePos.x, newState.gamePos.y, newState.zoomLevel);
+	if (this.currentWorldName != newState.worldName)
+	{
+		this.changeWorld(newState.worldName, newState);
+	}
+	else
+	{
+		this.setGamePos(newState.gamePos.x, newState.gamePos.y, newState.zoomLevel);
+	}
+
 }
 
 
