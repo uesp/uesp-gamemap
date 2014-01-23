@@ -18,7 +18,6 @@ class GameMap
 	public $outputItems = array();
 	
 	private $db      = null;
-	private $dbwrite = null;
 	
 	
 	function __construct ()
@@ -119,10 +118,10 @@ class GameMap
 	{
 		global $uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW, $uespGameMapDatabase;
 		
-		$this->dbwrite = mysql_connect($uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW);
-		if (!$this->dbwrite) return $this->reportError("Could not connect to mysql database!");
+		$this->db = mysql_connect($uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW);
+		if (!$this->db) return $this->reportError("Could not connect to mysql database!");
 		
-		if (!mysql_select_db($uespGameMapDatabase, $this->dbwrite)) return $this->reportError("Game map database '".$uespGameMapDatabase."'. not found!");
+		if (!mysql_select_db($uespGameMapDatabase, $this->db)) return $this->reportError("Game map database '".$uespGameMapDatabase."'. not found!");
 		
 		return $this->checkTables();
 	}
