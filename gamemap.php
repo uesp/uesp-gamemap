@@ -13,11 +13,17 @@ require '/home/uesp/secrets/gamemap.secrets';
 class GameMap
 {
 	
+	const LOCTYPE_POINT = 1;
+	const LOCTYPE_PATH  = 2;
+	const LOCTYPE_AREA  = 3;
+	
+	
 	public $inputParams = array();
 	public $action = 'default';
+	public $mapname = '';
 	public $outputItems = array();
 	
-	private $db      = null;
+	private $db = null;
 	
 	
 	function __construct ()
@@ -66,7 +72,7 @@ class GameMap
 				);";
 		
 		$result = mysql_query($query);
-		if ($result !== TRUE) return $this->reportError("Failed to create world table!");
+		if ($result === FALSE) return $this->reportError("Failed to create world table!");
 		
 		$query = "CREATE TABLE IF NOT EXISTS location (
 					id BIGINT NOT NULL AUTO_INCREMENT,
@@ -86,7 +92,7 @@ class GameMap
 					PRIMARY KEY ( id )
 				);";
 		$result = mysql_query($query);
-		if ($result !== TRUE) return $this->reportError("Failed to create location table!");
+		if ($result === FALSE) return $this->reportError("Failed to create location table!");
 		
 		return true;
 	}
@@ -126,6 +132,22 @@ class GameMap
 	public function doGetWorlds ()
 	{
 		if (!$this->initDatabase()) return false;
+		
+		$query = "SELECT * from world WHERE enabled <> 0;";
+		$result = mysql_query($query);
+		if ($result === FALSE) return $this->reportError("Failed to retrieve world data!" . $result);
+		
+		$worlds = Array();
+		$count = 0;
+		
+		while ( ($row = mysql_fetch_assoc($result)) )
+		{
+			$worlds[] = $row;
+			$count += 1;
+		}
+		
+		$this->addOutputItem("worlds", $worlds);
+		$this->addOutputItem("world_count", $count);
 		return true;
 	}
 	
@@ -159,6 +181,10 @@ class GameMap
 	private function parseInputParams ()
 	{
 		$this->action = strtolower($this->inputParams['action']);
+		$this->mapname = strtolower($this->inputParams['mapname']);
+		
+		if ($this->mapname === null) $this->mapname = '';
+		if ($this->action === null) $this->action = 'default';
 	}
 	
 	
