@@ -154,7 +154,7 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 	newDiv = $('<div />').addClass('gmMapTile').attr('id', tileID);
 	newDiv.appendTo('#gmMapRoot');
 	newDiv.offset({ top: yPos, left: xPos });
-	if (this.mapOptions.debug) newDiv.text(tileID);
+	if (uesp.debug) newDiv.text(tileID);
 	newTile.element = newDiv;
 	
 	return newTile;
@@ -334,7 +334,7 @@ uesp.gamemap.Map.prototype.onDragStart = function(event)
 uesp.gamemap.Map.prototype.onMouseDown = function(event)
 {
 	var self = event.data.self;
-	if (self.mapOptions.debug) uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseDown");
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseDown");
 	
 	self.onDragStart(event);
 	
@@ -372,7 +372,7 @@ uesp.gamemap.Map.prototype.onMouseScroll = function(event)
 		self.zoomIn(zoomX, zoomY);
 	}
 	
-	if (self.mapOptions.debug) uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseScroll");
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseScroll");
 	event.preventDefault();
 }
 
@@ -380,7 +380,7 @@ uesp.gamemap.Map.prototype.onMouseScroll = function(event)
 uesp.gamemap.Map.prototype.onMouseUp = function(event)
 {
 	var self = event.data.self;
-	if (self.mapOptions.debug) uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseUp");
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseUp");
 	
 	if (self.isDragging)
 	{
