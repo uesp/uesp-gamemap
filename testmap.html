@@ -16,7 +16,7 @@
 		var g_GameMap = null;
 		var g_MapState = null;
 		
-		var g_MapOptions = {
+		var g_SRMapOptions = {
 				mapContainer : "#gmMap",
 				getMapTileFunction : getSkyrimMapTile,
 				missingMapTile:  "http://content3.uesp.net/maps2/srmap/color/nullimage.jpg",
@@ -28,14 +28,34 @@
 				gamePosY1: 10000,
 				gamePosY2: 0,
 		};
+		
+		
+		var g_DBMapOptions = {
+				mapContainer : "#gmMap",
+				getMapTileFunction : getDBMapTile,
+				missingMapTile:  "http://content3.uesp.net/maps2/images/dboutofrange.jpg",
+				zoomOffset : 9,
+				initialGamePosX : 1000,
+				initialGamePosY : 8000,
+				gamePosX1: 0,
+				gamePosX2: 10000,
+				gamePosY1: 10000,
+				gamePosY2: 0,
+		};
 
 		$( document ).ready( function() {
-			g_GameMap = new uesp.gamemap.Map(g_MapOptions);
+			g_GameMap = new uesp.gamemap.Map("Skyrim", g_SRMapOptions);
+			g_GameMap.addWorld("Dragonborn", g_DBMapOptions);
 		});
 
 		function getSkyrimMapTile(xPos, yPos, zoom)
 		{
 			return "http://content3.uesp.net/maps2/srmap/color/zoom" + zoom + "/skyrim-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
+		}
+		
+		function getDBMapTile(xPos, yPos, zoom)
+		{
+			return "http://content3.uesp.net/maps2/dbmap/zoom" + zoom + "/solstheim-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
 		}
 
 	</script>
@@ -51,6 +71,8 @@ Map Tiles...
 <a href="#" onClick="g_GameMap.getTilePositionOfCenter();">Check CenterTile Pos</a>
 <a href="#" onClick="g_MapState = g_GameMap.getMapState();">Save State</a>
 <a href="#" onClick="g_GameMap.setMapState(g_MapState);">Restore State</a>
+<a href="#" onClick="g_GameMap.changeWorld('Skyrim');">Skyrim</a>
+<a href="#" onClick="g_GameMap.changeWorld('Dragonborn');">Dragonborn</a>
 
 <div id="gmMap">
 </div>

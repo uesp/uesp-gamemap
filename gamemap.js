@@ -6,12 +6,12 @@
  */
 
 
-uesp.gamemap.Map = function(mapOptions)
+uesp.gamemap.Map = function(worldName, mapOptions)
 {
 	this.mapOptions = new uesp.gamemap.MapOptions(mapOptions);
 	
 	this.mapWorlds = {};
-	this.currentWorldName = "__default";
+	this.currentWorldName = worldName;
 	this.addWorld(this.currentWorldName, mapOptions);
 	
 	this.zoomLevel = 15;
@@ -39,6 +39,26 @@ uesp.gamemap.Map = function(mapOptions)
 uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions)
 {
 	this.mapWorlds[worldName] = new uesp.gamemap.World(worldName, mapOptions);
+}
+
+
+uesp.gamemap.Map.prototype.changeWorld = function (worldName)
+{
+	if (worldName == this.currentWorldName) return;
+	
+	if (!uesp.gamemap.isNullorUndefined(this.mapWorlds[this.currentWorldName]))
+	{
+		this.mapWorlds[this.currentWorldName].mapState   = this.getMapState();
+		this.mapWorlds[this.currentWorldName].mapOptions = this.mapOptions;
+	}
+	
+	if (!uesp.gamemap.isNullorUndefined(this.mapWorlds[worldName]))
+	{
+		this.currentWorldName = worldName;
+		this.mapOptions = this.mapWorlds[this.currentWorldName].mapOptions;
+		this.setMapState(this.mapWorlds[this.currentWorldName].mapState);
+	}
+	
 }
 
 
@@ -450,6 +470,7 @@ uesp.gamemap.Map.prototype.setGameZoom = function(zoom)
 uesp.gamemap.Map.prototype.setMapState = function (newState)
 {
 	if (uesp.gamemap.isNullorUndefined(newState)) return;
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, newState);
 	
 	this.currentWorldName = newState.worldName;
 	
