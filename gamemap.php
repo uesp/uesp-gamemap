@@ -20,8 +20,9 @@ class GameMap
 	
 	public $inputParams = array();
 	public $action = 'default';
-	public $mapname = '';
+	public $world = '';
 	public $outputItems = array();
+	public $limitCount = 50;
 	
 	private $db = null;
 	
@@ -84,7 +85,7 @@ class GameMap
 					loc_y INTEGER NOT NULL,
 					loc_width INTEGER NOT NULL,
 					loc_height INTEGER NOT NULL,
-					title TINYTEXT NOT NULL,
+					name TINYTEXT NOT NULL,
 					description TEXT NOT NULL,
 					wiki_page TEXT NOT NULL,
 					display_level INTEGER NOT NULL,
@@ -109,6 +110,8 @@ class GameMap
 				return $this->doCreateTables();
 			case 'get_worlds':
 				return $this->doGetWorlds();
+			case 'get_locs':
+				return $this->doGetLocations();
 			case 'default':
 			default:
 				break;
@@ -124,10 +127,48 @@ class GameMap
 		$result = $this->initDatabase();
 		if (!$result) return false;
 		
+		$result = $this->createTables();
+		if (!$result) return false;
+		
 		$this->addOutputItem("result", "Successfully created tables!");
 		return true;
 	}
 	
+	
+	public function doGetLocations ()
+	{
+		if ($this->world === '') return $this->reportError("No world specified to retrieve locations for!");
+		if (!$this->initDatabase()) return false;
+		
+		$query = "SELECT * from location WHERE visible <> 0 AND world_id=".$this->world." LIMIT ".$this->limitCount.";";
+		
+		$result = mysql_query($query);
+		if ($result === FALSE) return $this->reportError("Failed to retrieve location data!" . $result);
+		
+		$locations = Array();
+		$count = 0;
+		
+		while ( ($row = mysql_fetch_assoc($result)) )
+		{
+			settype($row['id'], "integer");
+			settype($row['world_id'], "integer");
+			settype($row['lrev_id'], "integer");
+			settype($row['loc_type'], "integer");
+			settype($row['loc_x'], "integer");
+			settype($row['loc_y'], "integer");
+			settype($row['loc_width'], "integer");
+			settype($row['loc_height'], "integer");
+			settype($row['display_level'], "integer");
+			settype($row['visible'], "integer");
+			
+			$locations[] = $row;
+			$count += 1;
+		}
+		
+		$this->addOutputItem("locations", $locations);
+		$this->addOutputItem("location_count", $count);
+		return true;
+	}
 	
 	public function doGetWorlds ()
 	{
@@ -142,6 +183,15 @@ class GameMap
 		
 		while ( ($row = mysql_fetch_assoc($result)) )
 		{
+			settype($row['enabled'], "integer");
+			settype($row['pos_right'], "integer");
+			settype($row['pos_left'], "integer");
+			settype($row['pos_top'], "integer");
+			settype($row['pos_bottom'], "integer");
+			settype($row['cell_size'], "integer");
+			settype($row['min_zoom'], "integer");
+			settype($row['max_zoom'], "integer");
+			
 			$worlds[] = $row;
 			$count += 1;
 		}
@@ -180,11 +230,8 @@ class GameMap
 	
 	private function parseInputParams ()
 	{
-		$this->action = strtolower($this->inputParams['action']);
-		$this->mapname = strtolower($this->inputParams['mapname']);
-		
-		if ($this->mapname === null) $this->mapname = '';
-		if ($this->action === null) $this->action = 'default';
+		if (array_key_exists('action', $this->inputParams)) $this->action = mysql_real_escape_string(strtolower($this->inputParams['action']));
+		if (array_key_exists('world',  $this->inputParams)) $this->world  = mysql_real_escape_string(strtolower($this->inputParams['world']));
 	}
 	
 	
