@@ -474,7 +474,6 @@ uesp.gamemap.Map.prototype.setGameZoom = function(zoom)
 uesp.gamemap.Map.prototype.setMapState = function (newState)
 {
 	if (uesp.gamemap.isNullorUndefined(newState)) return;
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, newState);
 	
 	if (this.currentWorldName != newState.worldName)
 	{
