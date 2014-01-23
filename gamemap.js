@@ -132,7 +132,6 @@ uesp.gamemap.Map.prototype.convertGameToTilePos = function(gameX, gameY)
 
 uesp.gamemap.Map.prototype.createEvents = function()
 {
-
 	$(window).on("mousemove", { self: this }, this.onMouseMove);
 	$('#gmMapRoot').on("mousedown", { self: this }, this.onMouseDown);
 	$(window).on("mouseup", { self: this }, this.onMouseUp);
