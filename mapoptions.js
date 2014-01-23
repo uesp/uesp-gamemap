@@ -28,8 +28,6 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.initialGamePosY = 0;
 	
 	this.mapContainer = "#gmMap";
-	
-	this.debug = true;
 
 	this.mergeOptions(mapOptions);
 }
