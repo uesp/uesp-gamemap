@@ -451,9 +451,10 @@ uesp.gamemap.Map.prototype.setGameZoom = function(zoom)
 	var curGamePos = this.getGamePositionOfCenter();
 	var curTilePos = this.convertGameToTilePos(curGamePos.x, curGamePos.y);
 	var mapOffset = $(this.mapOptions.mapContainer).offset();
+	var zoomSize = Math.pow(2, zoom - this.zoomLevel);
 	
-	newTileX = curTilePos.x * Math.pow(2, zoom - this.zoomLevel) - this.mapOptions.tileCountX/2;
-	newTileY = curTilePos.y * Math.pow(2, zoom - this.zoomLevel) - this.mapOptions.tileCountY/2;
+	newTileX = curTilePos.x * zoomSize - this.mapOptions.tileCountX/2;
+	newTileY = curTilePos.y * zoomSize - this.mapOptions.tileCountY/2;
 	
 	this.zoomLevel = zoom;
 	
