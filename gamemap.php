@@ -13,6 +13,7 @@ require '/home/uesp/secrets/gamemap.secrets';
 class GameMap
 {
 	
+	const LOCTYPE_NONE  = 0;
 	const LOCTYPE_POINT = 1;
 	const LOCTYPE_PATH  = 2;
 	const LOCTYPE_AREA  = 3;
