@@ -11,7 +11,7 @@ uesp.gamemap.Map = function(worldName, mapOptions)
 	this.mapOptions = new uesp.gamemap.MapOptions(mapOptions);
 	
 	this.mapWorlds = {};
-	this.currentWorldName = worldName;
+	this.currentWorldName = worldName.toLowerCase();
 	this.addWorld(this.currentWorldName, mapOptions);
 	
 	this.zoomLevel = 15;
@@ -38,12 +38,14 @@ uesp.gamemap.Map = function(worldName, mapOptions)
 
 uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions)
 {
+	worldName = worldName.toLowerCase();
 	this.mapWorlds[worldName] = new uesp.gamemap.World(worldName, mapOptions);
 }
 
 
 uesp.gamemap.Map.prototype.changeWorld = function (worldName, newState)
 {
+	worldName = worldName.toLowerCase();
 	if (worldName == this.currentWorldName) return;
 	
 	if (!uesp.gamemap.isNullorUndefined(this.mapWorlds[this.currentWorldName]))
@@ -410,6 +412,47 @@ uesp.gamemap.Map.prototype.onMouseUp = function(event)
 		self.onDragEnd(event);
 		event.preventDefault();
 	}
+}
+
+
+uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
+{
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received world data");
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, data);
+	
+	if (!uesp.gamemap.isNullorUndefined(data.isError)) return uesp.logError("Error retrieving world data!", data.errorMsg);
+	if (uesp.gamemap.isNullorUndefined(data.worlds))   return uesp.logError("World data not found in JSON response!", data);
+	
+	for (key in data.worlds)
+	{
+		var world = data.worlds[key];
+		
+		uesp.logDebug(uesp.LOG_LEVEL_ERROR, world);
+		if (uesp.gamemap.isNullorUndefined(world.name)) continue;
+		
+		if (uesp.gamemap.isNullorUndefined(this.mapWorlds[world.name]))
+		{
+			this.mapWorlds[world.name] = uesp.gamemap.createWorldFromJson(world);
+			uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Creating new world " + world.name);
+		}
+		else
+		{
+			this.mapWorlds[world.name].mergeFromJson(world);
+			uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Merging to existing world " + world.name);
+		}
+	}
+	
+	return true;
+}
+
+
+uesp.gamemap.Map.prototype.retrieveWorldData = function()
+{
+	var queryParams = {};
+	var self = this;
+	queryParams.action = "get_worlds";
+	
+	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveWorldData(data); });
 }
 
 
