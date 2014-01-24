@@ -80,6 +80,7 @@ class GameMap
 					id BIGINT NOT NULL AUTO_INCREMENT,
 					worldId BIGINT NOT NULL,
 					revisionId BIGINT NOT NULL,
+					destinationId BIGINT NOT NULL,
 					locType TINYINT NOT NULL,
 					displayData TEXT NOT NULL,
 					x INTEGER NOT NULL,
