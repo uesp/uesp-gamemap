@@ -1,6 +1,6 @@
 #gmMap {
-	width: 800px;
-	height: 600px;
+	width: 90%;
+	height: 90%;
 	border: solid black 1px;
 	overflow: hidden;
 	position: absolute;
@@ -22,6 +22,8 @@
 }
 
 .gmMapLoc {
+	position: absolute;
+	white-space: nowrap;
 	z-index: 10;
 	color: #ffff00;
 	font-weight: bold;
