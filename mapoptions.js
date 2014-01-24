@@ -28,6 +28,7 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	
 	this.initialGamePosX = 0;
 	this.initialGamePosY = 0;
+	this.initialZoom     = 10;
 	
 	this.mapContainer = "#gmMap";
 

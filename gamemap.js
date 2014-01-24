@@ -11,8 +11,15 @@ uesp.gamemap.Map = function(worldName, mapOptions)
 	this.mapOptions = new uesp.gamemap.MapOptions(mapOptions);
 	
 	this.mapWorlds = {};
-	this.currentWorldName = worldName.toLowerCase();
-	this.addWorld(this.currentWorldName, mapOptions);
+	
+	if (uesp.gamemap.isNullorUndefined(worldName))
+	{
+		this.currentWorldName = "__default";
+		this.addWorld(this.currentWorldName, mapOptions);
+	} else {
+		this.currentWorldName = worldName.toLowerCase();
+		this.addWorld(this.currentWorldName, mapOptions);
+	}
 	
 	this.locations = {};
 	this.locationElements = {};
@@ -34,16 +41,13 @@ uesp.gamemap.Map = function(worldName, mapOptions)
 	this.createEvents();
 	
 	this.setGamePos(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY);
-	
-	this.loadMapTiles();
-	this.updateLocations();
 }
 
 
-uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions)
+uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions, worldId)
 {
 	worldName = worldName.toLowerCase();
-	this.mapWorlds[worldName] = new uesp.gamemap.World(worldName, mapOptions);
+	this.mapWorlds[worldName] = new uesp.gamemap.World(worldName, mapOptions, worldId);
 }
 
 
@@ -51,8 +55,6 @@ uesp.gamemap.Map.prototype.changeWorld = function (worldName, newState)
 {
 	worldName = worldName.toLowerCase();
 	if (worldName == this.currentWorldName) return;
-	
-	this.clearLocations();
 	
 	if (!uesp.gamemap.isNullorUndefined(this.mapWorlds[this.currentWorldName]))
 	{
@@ -62,6 +64,8 @@ uesp.gamemap.Map.prototype.changeWorld = function (worldName, newState)
 	
 	if (!uesp.gamemap.isNullorUndefined(this.mapWorlds[worldName]))
 	{
+		this.clearLocations();
+		
 		this.currentWorldName = worldName;
 		this.mapOptions = this.mapWorlds[this.currentWorldName].mapOptions;
 		
@@ -248,6 +252,13 @@ uesp.gamemap.Map.prototype.getGamePositionOfCenter = function()
 	tileY = rootCenterY / this.mapOptions.tileSize + this.startTileY;
 	
 	return this.convertTileToGamePos(tileX, tileY);
+}
+
+
+uesp.gamemap.Map.prototype.getWorldId = function()
+{
+	if (this.currentWorldName in this.mapWorlds) return this.mapWorlds[this.currentWorldName].id;
+	return -1;
 }
 
 
@@ -566,14 +577,18 @@ uesp.gamemap.Map.prototype.retrieveLocations = function()
 	
 	var queryParams = {};
 	queryParams.action = "get_locs";
-	queryParams.world  = 1;
+	queryParams.world  = this.getWorldId();
 	queryParams.top    = mapBounds.top;
 	queryParams.bottom = mapBounds.bottom;
 	queryParams.left   = mapBounds.left;
 	queryParams.right  = mapBounds.right;
 	queryParams.zoom   = this.zoomLevel;
 	
+	if (queryParams.world <= 0) return uesp.logError("Unknown worldId for current world '" + this.currentWorldName + "'!");
+	
 	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveLocationData(data); });
+	
+	return true;
 }
 
 
@@ -588,6 +603,14 @@ uesp.gamemap.Map.prototype.retrieveWorldData = function()
 
 
 uesp.gamemap.Map.prototype.setGamePos = function(x, y, zoom)
+{
+	this.setGamePosNoUpdate(x, y, zoom);
+	this.updateLocations();
+	this.loadMapTiles();
+}
+
+
+uesp.gamemap.Map.prototype.setGamePosNoUpdate = function(x, y, zoom)
 {
 	var mapOffset = $(this.mapOptions.mapContainer).offset();
 	
@@ -609,8 +632,6 @@ uesp.gamemap.Map.prototype.setGamePos = function(x, y, zoom)
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newOffset = " + newOffsetX + ", " + newOffsetY);
 	
 	$("#gmMapRoot").offset({ left: newOffsetX, top: newOffsetY});
-	
-	this.loadMapTiles();
 }
 
 
@@ -641,8 +662,8 @@ uesp.gamemap.Map.prototype.setGameZoom = function(zoom)
 	
 	$("#gmMapRoot").offset({ left: newOffsetX, top: newOffsetY});
 	
+	this.updateLocations();
 	this.loadMapTiles();
-	this.updateLocationOffsets();
 }
 
 
@@ -798,6 +819,13 @@ uesp.gamemap.Map.prototype.updateLocationOffsets = function ()
 	{
 		this.updateLocationOffset(this.locations[key]);
 	}
+}
+
+
+uesp.gamemap.Map.prototype.updateMap = function()
+{
+	this.updateLocations();
+	this.loadMapTiles();
 }
 
 

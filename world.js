@@ -5,16 +5,20 @@
  */
 
 
-uesp.gamemap.World = function(worldName, mapOptions)
+uesp.gamemap.World = function(worldName, mapOptions, worldId)
 {
 	this.name = worldName.toLowerCase();
 	this.displayName = worldName;
 	
 	this.mapOptions = new uesp.gamemap.MapOptions(mapOptions);
+	
 	this.mapState = new uesp.gamemap.MapState();
 	this.mapState.worldName = this.name;
+	this.mapState.gamePos.x = this.mapOptions.initialGamePosX;
+	this.mapState.gamePos.y = this.mapOptions.initialGamePosY;
+	this.mapState.zoomLevel = this.mapOptions.initialZoom;
 	
-	this.id = -1;
+	this.id = uesp.gamemap.isNullorUndefined(worldId) ? -1 : worldId;
 	this.description = '';
 	this.wiki_page ='';
 	this.cell_size = -1;
