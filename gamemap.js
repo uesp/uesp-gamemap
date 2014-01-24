@@ -52,6 +52,8 @@ uesp.gamemap.Map.prototype.changeWorld = function (worldName, newState)
 	worldName = worldName.toLowerCase();
 	if (worldName == this.currentWorldName) return;
 	
+	this.clearLocations();
+	
 	if (!uesp.gamemap.isNullorUndefined(this.mapWorlds[this.currentWorldName]))
 	{
 		this.mapWorlds[this.currentWorldName].mapState   = this.getMapState();
