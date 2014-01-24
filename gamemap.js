@@ -242,6 +242,37 @@ uesp.gamemap.Map.prototype.getTilePositionOfCenter = function()
 }
 
 
+uesp.gamemap.Map.prototype.getMapBounds = function()
+{
+	var rootOffset = $("#gmMapRoot").offset();
+	var mapOffset  = $(this.mapOptions.mapContainer).offset();
+	var width  =  $(this.mapOptions.mapContainer).width();
+	var height =  $(this.mapOptions.mapContainer).height();
+	
+	leftTile = this.startTileX + (mapOffset.left - rootOffset.left)/this.mapOptions.tileSize;
+	topTile  = this.startTileY + (mapOffset.top  - rootOffset.top )/this.mapOptions.tileSize;
+	
+	rightTile   = this.startTileX + (mapOffset.left - rootOffset.left + width )/this.mapOptions.tileSize;
+	bottomTile  = this.startTileY + (mapOffset.top  - rootOffset.top  + height)/this.mapOptions.tileSize;
+	
+	this.startTileX + this.mapOptions.tileCountX, this.startTileY + this.mapOptions.tileCountY
+		
+	leftTop     = this.convertTileToGamePos(leftTile, topTile);
+	rightBottom = this.convertTileToGamePos(rightTile, bottomTile);
+	
+	return new uesp.gamemap.Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
+}
+
+
+uesp.gamemap.Map.prototype.getMapRootBounds = function()
+{
+	leftTop     = this.convertTileToGamePos(this.startTileX, this.startTileY);
+	rightBottom = this.convertTileToGamePos(this.startTileX + this.mapOptions.tileCountX, this.startTileY + this.mapOptions.tileCountY);
+	
+	return new uesp.gamemap.Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
+}
+
+
 uesp.gamemap.Map.prototype.getMapState = function()
 {
 	var mapState = new uesp.gamemap.MapState();
@@ -488,8 +519,15 @@ uesp.gamemap.Map.prototype.retrieveLocations = function()
 {
 	var queryParams = {};
 	var self = this;
+	var mapBounds = this.getMapRootBounds();
+	
 	queryParams.action = "get_locs";
 	queryParams.world  = 1;
+	queryParams.top    = mapBounds.top;
+	queryParams.bottom = mapBounds.bottom;
+	queryParams.left   = mapBounds.left;
+	queryParams.right  = mapBounds.right;
+	queryParams.zoom   = this.zoomLevel;
 	
 	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveLocationData(data); });
 }
