@@ -24,7 +24,7 @@ uesp.gamemap.Location = function()
 	this.name = "";
 	this.description = "";
 	this.wikiPage = "";
-	this.locType = 0;
+	this.locType = uesp.gamemap.LOCTYPE_NONE;
 	this.displayLevel = 0;
 	this.visible = false;
 	
