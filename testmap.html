@@ -25,6 +25,7 @@
 				zoomOffset : 9,
 				initialGamePosX : 1000,
 				initialGamePosY : 8000,
+				initialZoom : 10,
 				gamePosX1: -232000,
 				gamePosX2: 290500,
 				gamePosY1: 207000,
@@ -35,6 +36,8 @@
 				//gamePosY2: -180224,
 		};
 		
+		g_SRMapOptions
+		
 		
 		var g_DBMapOptions = {
 				mapContainer : "#gmMap",
@@ -43,15 +46,24 @@
 				zoomOffset : 9,
 				initialGamePosX : 1000,
 				initialGamePosY : 8000,
-				gamePosX1: -40960,
-				gamePosX2: 163840,
-				gamePosY1: 122880,
-				gamePosY2: -40960,
+				initialZoom : 10,
+				gamePosX1: -170960,
+				gamePosX2: 323840,
+				gamePosY1: 512880,
+				gamePosY2: 2960,
+				//gamePosX1: -40960,
+				//gamePosX2: 163840,
+				//gamePosY1: 122880,
+				//gamePosY2: -40960,
 		};
 
 		$( document ).ready( function() {
 			g_GameMap = new uesp.gamemap.Map("Skyrim", g_SRMapOptions);
-			g_GameMap.addWorld("Dragonborn", g_DBMapOptions);
+			
+			g_GameMap.addWorld("Skyrim",     g_SRMapOptions, 1);
+			g_GameMap.addWorld("Dragonborn", g_DBMapOptions, 2);
+			
+			g_GameMap.updateMap();
 		});
 
 		function getSkyrimMapTile(xPos, yPos, zoom)
