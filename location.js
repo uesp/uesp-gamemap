@@ -41,6 +41,32 @@ uesp.gamemap.Location = function()
 }
 
 
+uesp.gamemap.Location.prototype.isInBounds = function (mapBounds)
+{
+		//TODO: Proper checking for all location types
+	
+	if (mapBounds.left < mapBounds.right)
+	{
+		if (this.x < mapBounds.left || this.x > mapBounds.right) return false;
+	}
+	else
+	{
+		if (this.x > mapBounds.left || this.x < mapBounds.right) return false;
+	}
+	
+	if (mapBounds.bottom < mapBounds.top)
+	{
+		if (this.y < mapBounds.bottom || this.y > mapBounds.top)   return false;		
+	}
+	else
+	{
+		if (this.y > mapBounds.bottom || this.y < mapBounds.top)   return false;
+	}
+	
+	return true;
+}
+
+
 uesp.gamemap.Location.prototype.mergeFromJson = function(data)
 {
 	uesp.gamemap.mergeObjects(this, data);
