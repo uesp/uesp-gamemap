@@ -26,6 +26,7 @@ class GameMap
 	public $limitCount = 50;
 	
 	private $db = null;
+	private $skipCheckTables = false;
 	
 	
 	function __construct ()
@@ -213,6 +214,7 @@ class GameMap
 		
 		if (!mysql_select_db($uespGameMapDatabase, $this->db)) return $this->reportError("Game map database '".$uespGameMapDatabase."'. not found!");
 		
+		if ($this->skipCheckTables) return true;
 		return $this->checkTables();
 	}
 	
