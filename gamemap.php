@@ -32,7 +32,7 @@ class GameMap
 	
 	public $outputItems = array();
 	
-	public $limitCount = 50;
+	public $limitCount = 100;
 	
 	private $db = null;
 	private $skipCheckTables = false;
