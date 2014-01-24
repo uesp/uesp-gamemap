@@ -29,6 +29,7 @@ uesp.gamemap.Location = function()
 	this.visible = false;
 	
 	this.displayData = {};
+	
 	//this.iconFile = 0;
 	//this.editorId = 0;
 	//this.formId = 0;
@@ -38,3 +39,24 @@ uesp.gamemap.Location = function()
 	//this.customStyle = '';
 	//this.customClass = '';
 }
+
+
+uesp.gamemap.Location.prototype.mergeFromJson = function(data)
+{
+	uesp.gamemap.mergeObjects(this, data);
+	
+	if (!uesp.gamemap.isNullorUndefined(data.displayData))
+	{
+		this.displayData = jQuery.parseJSON( this.displayData );
+	}
+}
+
+
+uesp.gamemap.createLocationFromJson = function(data)
+{
+	var newLocation = new uesp.gamemap.Location();
+	newLocation.mergeFromJson(data);
+	return newLocation;
+}
+
+

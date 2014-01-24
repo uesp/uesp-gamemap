@@ -18,4 +18,9 @@
 	height:256px;
 	border: none;
 	position: absolute;
+	z-index: 1;
+}
+
+.gmMapLoc {
+	z-index: 10;
 }
