@@ -36,6 +36,7 @@ uesp.gamemap.Map = function(worldName, mapOptions)
 	this.setGamePos(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY);
 	
 	this.loadMapTiles();
+	this.updateLocations();
 }
 
 
@@ -105,6 +106,18 @@ uesp.gamemap.Map.prototype.checkTileEdges = function ()
 	{
 		this.shiftMapTiles(0, 1);
 	}
+}
+
+
+uesp.gamemap.Map.prototype.clearLocations = function()
+{
+	for (key in this.locationElements)
+	{
+		$(this.locationElements[key]).remove();
+	}
+	
+	this.locations = {};
+	this.locationElements = {};
 }
 
 
@@ -379,6 +392,7 @@ uesp.gamemap.Map.prototype.onDragEnd = function(event)
 	
 	this.draggingObject = null;
 	this.checkTileEdges();
+	this.updateLocations();
 }
 
 
@@ -519,12 +533,36 @@ uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 }
 
 
+uesp.gamemap.Map.prototype.removeExtraLocations = function()
+{
+	var mapBounds = this.getMapRootBounds();
+	
+	for (key in this.locations)
+	{
+		if (this.locations[key].isInBounds(mapBounds)) continue;
+		
+		if (!uesp.gamemap.isNullorUndefined(this.locationElements[key]))
+		{
+			$(this.locationElements[key]).remove();
+			//index = this.locationElements.indexOf(key);
+			//if (index != -1) this.locationElements.splice(index, 1);
+			delete this.locationElements[key];
+		}
+		
+		//index = this.locations.indexOf(key);
+		//if (index != -1) this.locations.splice(index, 1);
+		delete this.locationElements[key];
+	}
+	
+}
+
+
 uesp.gamemap.Map.prototype.retrieveLocations = function()
 {
-	var queryParams = {};
 	var self = this;
 	var mapBounds = this.getMapRootBounds();
 	
+	var queryParams = {};
 	queryParams.action = "get_locs";
 	queryParams.world  = 1;
 	queryParams.top    = mapBounds.top;
@@ -716,6 +754,30 @@ uesp.gamemap.Map.prototype.shiftLocations = function (deltaX, deltaY)
 }
 
 
+uesp.gamemap.Map.prototype.updateLocations = function()
+{
+	this.removeExtraLocations();
+	this.updateLocationOffsets();
+	this.updateLocationDisplayLevels();
+	this.retrieveLocations();
+}
+
+
+uesp.gamemap.Map.prototype.updateLocationDisplayLevels = function()
+{
+	for (key in this.locations)
+	{
+		if (uesp.gamemap.isNullorUndefined(this.locationElements[key])) continue;
+		
+		
+		if (this.zoomLevel < this.locations[key].displayLevel)
+			$(this.locationElements[key]).hide(0);
+		else
+			$(this.locationElements[key]).show(0);
+	}
+}
+
+
 uesp.gamemap.Map.prototype.updateLocationOffset = function (location)
 {
 	tilePos = this.convertGameToTilePos(location.x, location.y);
@@ -771,8 +833,8 @@ uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newOffset = " + newOffsetX + ", " + newOffsetY);
 	$("#gmMapRoot").offset({ left: newOffsetX, top: newOffsetY});
 	
+	this.updateLocations();
 	this.loadMapTiles();
-	this.updateLocationOffsets();
 }
 
 
@@ -807,9 +869,9 @@ uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 	newOffsetY = Math.round(mapOffset.top  + y - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - newTileY) * this.mapOptions.tileSize);
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newOffset = " + newOffsetX + ", " + newOffsetY);
 	$("#gmMapRoot").offset({ left: newOffsetX, top: newOffsetY});
-	
+		
+	this.updateLocations();
 	this.loadMapTiles();
-	this.updateLocationOffsets();
 }
 
 
