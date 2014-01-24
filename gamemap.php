@@ -59,16 +59,16 @@ class GameMap
 		$query = "CREATE TABLE IF NOT EXISTS `world` (
 					`id` BIGINT NOT NULL AUTO_INCREMENT,
 					`name` TINYTEXT NOT NULL,
-					`display_name` TINYTEXT NOT NULL,
+					`displayName` TINYTEXT NOT NULL,
 					`description` TEXT NOT NULL,
-					`wiki_page` TEXT NOT NULL,
-					`cell_size` INTEGER NOT NULL,
-					`min_zoom` INTEGER NOT NULL,
-					`max_zoom` INTEGER NOT NULL,
-					`pos_left` INTEGER NOT NULL,
-					`pos_top` INTEGER NOT NULL,
-					`pos_right` INTEGER NOT NULL,
-					`pos_bottom` INTEGER NOT NULL,
+					`wikiPage` TEXT NOT NULL,
+					`cellSize` INTEGER NOT NULL,
+					`minZoom` INTEGER NOT NULL,
+					`maxZoom` INTEGER NOT NULL,
+					`posLeft` INTEGER NOT NULL,
+					`posTop` INTEGER NOT NULL,
+					`posRight` INTEGER NOT NULL,
+					`posBottom` INTEGER NOT NULL,
 					`enabled` TINYINT NOT NULL,
 					PRIMARY KEY ( id )
 				);";
@@ -78,18 +78,18 @@ class GameMap
 		
 		$query = "CREATE TABLE IF NOT EXISTS location (
 					id BIGINT NOT NULL AUTO_INCREMENT,
-					world_id BIGINT NOT NULL,
-					lrev_id BIGINT NOT NULL,
-					loc_type TINYINT NOT NULL,
-					loc_data TEXT NOT NULL,
-					loc_x INTEGER NOT NULL,
-					loc_y INTEGER NOT NULL,
-					loc_width INTEGER NOT NULL,
-					loc_height INTEGER NOT NULL,
+					worldId BIGINT NOT NULL,
+					revisionId BIGINT NOT NULL,
+					locType TINYINT NOT NULL,
+					displayData TEXT NOT NULL,
+					x INTEGER NOT NULL,
+					y INTEGER NOT NULL,
+					width INTEGER NOT NULL,
+					height INTEGER NOT NULL,
 					name TINYTEXT NOT NULL,
 					description TEXT NOT NULL,
-					wiki_page TEXT NOT NULL,
-					display_level INTEGER NOT NULL,
+					wikiPage TEXT NOT NULL,
+					displayLevel INTEGER NOT NULL,
 					visible TINYINT NOT NULL,
 					PRIMARY KEY ( id )
 				);";
@@ -141,7 +141,7 @@ class GameMap
 		if ($this->world === '') return $this->reportError("No world specified to retrieve locations for!");
 		if (!$this->initDatabase()) return false;
 		
-		$query = "SELECT * from location WHERE visible <> 0 AND world_id=".$this->world." LIMIT ".$this->limitCount.";";
+		$query = "SELECT * from location WHERE visible <> 0 AND worldId=".$this->world." LIMIT ".$this->limitCount.";";
 		
 		$result = mysql_query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve location data!" . $result);
@@ -152,14 +152,14 @@ class GameMap
 		while ( ($row = mysql_fetch_assoc($result)) )
 		{
 			settype($row['id'], "integer");
-			settype($row['world_id'], "integer");
-			settype($row['lrev_id'], "integer");
-			settype($row['loc_type'], "integer");
-			settype($row['loc_x'], "integer");
-			settype($row['loc_y'], "integer");
-			settype($row['loc_width'], "integer");
-			settype($row['loc_height'], "integer");
-			settype($row['display_level'], "integer");
+			settype($row['worldId'], "integer");
+			settype($row['revisionId'], "integer");
+			settype($row['locType'], "integer");
+			settype($row['x'], "integer");
+			settype($row['y'], "integer");
+			settype($row['width'], "integer");
+			settype($row['height'], "integer");
+			settype($row['displayLevel'], "integer");
 			settype($row['visible'], "integer");
 			
 			$locations[] = $row;
@@ -167,7 +167,7 @@ class GameMap
 		}
 		
 		$this->addOutputItem("locations", $locations);
-		$this->addOutputItem("location_count", $count);
+		$this->addOutputItem("locationCount", $count);
 		return true;
 	}
 	
@@ -185,20 +185,20 @@ class GameMap
 		while ( ($row = mysql_fetch_assoc($result)) )
 		{
 			settype($row['enabled'], "integer");
-			settype($row['pos_right'], "integer");
-			settype($row['pos_left'], "integer");
-			settype($row['pos_top'], "integer");
-			settype($row['pos_bottom'], "integer");
-			settype($row['cell_size'], "integer");
-			settype($row['min_zoom'], "integer");
-			settype($row['max_zoom'], "integer");
+			settype($row['posRight'], "integer");
+			settype($row['posLeft'], "integer");
+			settype($row['posTop'], "integer");
+			settype($row['posBottom'], "integer");
+			settype($row['cellSize'], "integer");
+			settype($row['minZoom'], "integer");
+			settype($row['maxZoom'], "integer");
 			
 			$worlds[] = $row;
 			$count += 1;
 		}
 		
 		$this->addOutputItem("worlds", $worlds);
-		$this->addOutputItem("world_count", $count);
+		$this->addOutputItem("worldCount", $count);
 		return true;
 	}
 	
