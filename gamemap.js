@@ -14,6 +14,9 @@ uesp.gamemap.Map = function(worldName, mapOptions)
 	this.currentWorldName = worldName.toLowerCase();
 	this.addWorld(this.currentWorldName, mapOptions);
 	
+	this.locations = {};
+	this.locationElements = {};
+	
 	this.zoomLevel = 15;
 	this.startTileX = 0;
 	this.startTileY = 0;
@@ -183,6 +186,20 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 	newTile.element = newDiv;
 	
 	return newTile;
+}
+
+
+uesp.gamemap.Map.prototype.displayLocation = function (location)
+{
+	
+	xPos = 0;
+	yPos = 0;
+	
+	newDiv = $('<div />').addClass('gmMapLoc');
+	newDiv.appendTo('#gmMapRoot');
+	newDiv.offset({ top: yPos, left: xPos });
+
+	location.element = newDiv;
 }
 
 
@@ -415,6 +432,27 @@ uesp.gamemap.Map.prototype.onMouseUp = function(event)
 }
 
 
+uesp.gamemap.Map.prototype.onReceiveLocationData = function (data)
+{
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received location data");
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, data);
+	
+	if (!uesp.gamemap.isNullorUndefined(data.isError))  return uesp.logError("Error retrieving location data!", data.errorMsg);
+	if (uesp.gamemap.isNullorUndefined(data.locations)) return uesp.logError("Location data not found in JSON response!", data);
+	
+	for (key in data.locations)
+	{
+		var location = data.locations[key];
+		if (uesp.gamemap.isNullorUndefined(location.id)) continue;
+		
+		this.locations[location.id] = uesp.gamemap.createLocationFromJson(location);
+		this.displayLocation(this.locations[location.id]);
+	}
+	
+	return true;
+}
+
+
 uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 {
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received world data");
@@ -443,6 +481,17 @@ uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 	}
 	
 	return true;
+}
+
+
+uesp.gamemap.Map.prototype.retrieveLocations = function()
+{
+	var queryParams = {};
+	var self = this;
+	queryParams.action = "get_locs";
+	queryParams.world  = 1;
+	
+	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveLocationData(data); });
 }
 
 
