@@ -20,9 +20,18 @@ class GameMap
 	
 	
 	public $inputParams = array();
+	
 	public $action = 'default';
 	public $world = '';
+	
+	public $limitBottom = 0;
+	public $limitTop    = 1000;
+	public $limitLeft   = 0;
+	public $limitRight  = 1000;
+	public $limitDisplayLevel = 100;
+	
 	public $outputItems = array();
+	
 	public $limitCount = 50;
 	
 	private $db = null;
@@ -143,7 +152,10 @@ class GameMap
 		if ($this->world === '') return $this->reportError("No world specified to retrieve locations for!");
 		if (!$this->initDatabase()) return false;
 		
-		$query = "SELECT * from location WHERE visible <> 0 AND worldId=".$this->world." LIMIT ".$this->limitCount.";";
+		$query  = "SELECT * from location WHERE visible <> 0 AND worldId=".$this->world." ";
+		$query .= "AND x >= " . $this->limitLeft ." AND x <= ". $this->limitRight ." AND y >= ". $this->limitBottom ." AND y <= ". $this->limitTop ." ";
+		$query .= " AND displayLevel <= ". $this->limitDisplayLevel ." ";
+		$query .= " LIMIT ".$this->limitCount.";";
 		
 		$result = mysql_query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve location data!" . $result);
@@ -237,6 +249,25 @@ class GameMap
 	{
 		if (array_key_exists('action', $this->inputParams)) $this->action = mysql_real_escape_string(strtolower($this->inputParams['action']));
 		if (array_key_exists('world',  $this->inputParams)) $this->world  = mysql_real_escape_string(strtolower($this->inputParams['world']));
+		if (array_key_exists('top',    $this->inputParams)) $this->limitTop    = intval(mysql_real_escape_string($this->inputParams['top']));
+		if (array_key_exists('left',   $this->inputParams)) $this->limitLeft   = intval(mysql_real_escape_string($this->inputParams['left']));
+		if (array_key_exists('bottom', $this->inputParams)) $this->limitBottom = intval(mysql_real_escape_string($this->inputParams['bottom']));
+		if (array_key_exists('right',  $this->inputParams)) $this->limitRight  = intval(mysql_real_escape_string($this->inputParams['right']));
+		if (array_key_exists('zoom',   $this->inputParams)) $this->limitDisplayLevel = intval(mysql_real_escape_string($this->inputParams['zoom']));
+		
+		if ($this->limitTop < $this->limitBottom)
+		{
+			$tmp = $this->limitTop;
+			$this->limitTop = $this->limitBottom;
+			$this->limitBottom = $tmp;
+		}
+		
+		if ($this->limitRight < $this->limitLeft)
+		{
+			$tmp = $this->limitRight;
+			$this->limitRight = $this->limitLeft;
+			$this->limitLeft = $tmp;
+		}
 	}
 	
 	
