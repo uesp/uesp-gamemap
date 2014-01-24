@@ -150,7 +150,7 @@ uesp.gamemap.Map.prototype.convertGameToTilePos = function(gameX, gameY)
 	tileX = (gameX - this.mapOptions.gamePosX1) * maxTiles / (this.mapOptions.gamePosX2 - this.mapOptions.gamePosX1);
 	tileY = (gameY - this.mapOptions.gamePosY1) * maxTiles / (this.mapOptions.gamePosY2 - this.mapOptions.gamePosY1);
 	
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "convertGameToTilePos() = " + tileX + ", " + tileY);
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, "convertGameToTilePos() = " + tileX + ", " + tileY);
 	return new uesp.gamemap.Position(tileX, tileY);
 }
 
@@ -573,7 +573,7 @@ uesp.gamemap.Map.prototype.removeExtraLocations = function()
 uesp.gamemap.Map.prototype.retrieveLocations = function()
 {
 	var self = this;
-	var mapBounds = this.getMapRootBounds();
+	var mapBounds = this.getMapBounds();
 	
 	var queryParams = {};
 	queryParams.action = "get_locs";
