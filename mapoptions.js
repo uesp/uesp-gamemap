@@ -15,7 +15,7 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.maxZoomLevel = 17;
 	this.zoomOffset   = 0;
 	
-	this.tileCountX = 7;
+	this.tileCountX = 10;
 	this.tileCountY = 7;
 	this.tileSize   = 256;
 	
