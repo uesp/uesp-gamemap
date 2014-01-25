@@ -209,21 +209,42 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 
 uesp.gamemap.Map.prototype.displayLocation = function (location)
 {
+	var animate = true;
+	
 	if (location.labelElement == null)
 	{
 		location.labelElement = $('<div />').addClass('gmMapLoc');
 		location.labelElement.appendTo('#gmMapRoot');
 		
 		$(location.labelElement).text(location.name);
-		
-		this.updateLocationOffset(location, false);
+		animate = false;
 	}
 	else
 	{
 		$(location.labelElement).text(location.name);
-		this.updateLocationOffset(location, true);
 	}
 	
+	if (location.iconElement == null)
+	{
+		location.iconElement = $('<div />').addClass('gmMapLocIcon');
+		location.iconElement.appendTo('#gmMapRoot');
+		
+		if (location.displayData.iconType == null)
+			imageURL = this.mapOptions.iconPath + this.mapOptions.iconMissing;
+		else
+			imageURL = this.mapOptions.iconPath + location.displayData.iconType + ".png";
+		
+		$(location.iconElement).css( {
+			'background-image': 'url(' + imageURL + ')'
+		});
+	
+		animate = false;
+	}
+	else
+	{
+	}
+	
+	this.updateLocationOffset(location, animate);
 }
 
 

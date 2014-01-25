@@ -153,14 +153,14 @@ uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 			// TODO: Doesn't current work perfectly...
 		//$(this.labelElement).animate({ left: "-=" + deltaX + "px", top: "-=" + deltaY + "px" }, 100);
 		
-		if ( !(this.labelElement == null)) $(this.labelElement).offset( { left: x, top: y });
-		if ( !(this.iconElement  == null)) $(this.iconElement).offset ( { left: x, top: y });
+		if ( !(this.labelElement == null)) $(this.labelElement).offset( { left: x+8, top: y-8 });
+		if ( !(this.iconElement  == null)) $(this.iconElement).offset ( { left: x-8, top: y-8 });
 		if ( !(this.popupElement == null)) $(this.popupElement).offset( { left: x, top: y });
 	}
 	else
 	{
-		if ( !(this.labelElement == null)) $(this.labelElement).offset( { left: x, top: y });
-		if ( !(this.iconElement  == null)) $(this.iconElement).offset ( { left: x, top: y });
+		if ( !(this.labelElement == null)) $(this.labelElement).offset( { left: x+8, top: y-8 });
+		if ( !(this.iconElement  == null)) $(this.iconElement).offset ( { left: x-8, top: y-8 });
 		if ( !(this.popupElement == null)) $(this.popupElement).offset( { left: x, top: y });
 	}
 }
