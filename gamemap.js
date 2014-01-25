@@ -211,18 +211,22 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 
 uesp.gamemap.Map.prototype.displayLocation = function (location)
 {
-	if (uesp.gamemap.isNullorUndefined(this.locationElements[location.id]))
+	if (location.id in this.locationElements)
+	{
+		$(this.locationElements[location.id]).text(location.name);
+		this.updateLocationOffset(location, true);
+	}
+	else
 	{
 		newDiv = $('<div />').addClass('gmMapLoc');
 		newDiv.appendTo('#gmMapRoot');
-		
 		this.locationElements[location.id] = newDiv;
+		
+		$(this.locationElements[location.id]).text(location.name);
+		
+		this.updateLocationOffset(location, false);
 	}
 	
-		//TODO: Proper handling of location types
-	$(this.locationElements[location.id]).text(location.name);
-	
-	this.updateLocationOffset(location);
 }
 
 
@@ -803,8 +807,8 @@ uesp.gamemap.Map.prototype.shiftLocations = function (deltaX, deltaY)
 uesp.gamemap.Map.prototype.updateLocations = function()
 {
 	this.removeExtraLocations();
-	this.updateLocationOffsets();
 	this.updateLocationDisplayLevels();
+	this.updateLocationOffsets(true);
 	this.retrieveLocations();
 }
 
@@ -824,23 +828,39 @@ uesp.gamemap.Map.prototype.updateLocationDisplayLevels = function()
 }
 
 
-uesp.gamemap.Map.prototype.updateLocationOffset = function (location)
+uesp.gamemap.Map.prototype.updateLocationOffset = function (location, animate)
 {
+	if (! (location.id in this.locationElements)) return false;
+	
 	tilePos = this.convertGameToTilePos(location.x, location.y);
 	
 	mapOffset  = $("#gmMapRoot").offset();
 	xPos = (tilePos.x - this.startTileX) * this.mapOptions.tileSize + mapOffset.left;
 	yPos = (tilePos.y - this.startTileY) * this.mapOptions.tileSize + mapOffset.top;
 	
-	$(this.locationElements[location.id]).offset({  left: xPos, top: yPos });
+	curOffset  = $(this.locationElements[location.id]).offset();
+	if (curOffset.left == xPos && curOffset.top == yPos) return;
+	
+	if (animate === true)
+	{
+		deltaX = curOffset.left - xPos;
+		deltaY = curOffset.top  - yPos; 
+		$(this.locationElements[location.id]).animate({ left: "-=" + deltaX + "px", top: "-=" + deltaY + "px" }, 100);
+	}
+	else
+	{
+		$(this.locationElements[location.id]).offset({ left: xPos, top: yPos });
+	}
+	
+	return true;
 }
 
 
-uesp.gamemap.Map.prototype.updateLocationOffsets = function ()
+uesp.gamemap.Map.prototype.updateLocationOffsets = function (animate)
 {
 	for (key in this.locations)
 	{
-		this.updateLocationOffset(this.locations[key]);
+		this.updateLocationOffset(this.locations[key], animate);
 	}
 }
 
