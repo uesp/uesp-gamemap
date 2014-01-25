@@ -88,7 +88,9 @@ uesp.gamemap.Location.prototype.showElements = function (duration)
 {
 	if ( !(this.labelElement == null)) $(this.labelElement).show(duration);
 	if ( !(this.iconElement  == null)) $(this.iconElement).show(duration);
-	if ( !(this.popupElement == null)) $(this.popupElement).show(duration);
+	
+	this.updateLabelOffset();
+	this.updateIconOffset();
 }
 
 
@@ -275,14 +277,33 @@ uesp.gamemap.Location.prototype.updateIcon = function (mapOptions)
 }
 
 
+uesp.gamemap.Location.prototype.showPopup = function ()
+{
+	if (this.popupElement == null) this.updatePopup();
+	this.popupElement.show();
+}
+
+
+uesp.gamemap.Location.prototype.hidePopup = function ()
+{
+	if (this.popupElement == null) return;
+	this.popupElement.hide();
+}
+
+
 uesp.gamemap.Location.prototype.togglePopup = function ()
 {
 	if (this.popupElement == null) return this.updatePopup();
 	
 	if ($(this.popupElement).is(":visible") )
+	{
 		$(this.popupElement).hide();
+	}
 	else
+	{
 		$(this.popupElement).show();
+		this.updatePopupOffset();
+	}
 }
 
 
