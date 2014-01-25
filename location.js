@@ -150,8 +150,10 @@ uesp.gamemap.Location.prototype.onLabelClickFunction = function()
 {
 	var self = this;
 	
-	return function() {
+	return function()
+	{
 		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Label Click", self);
+		self.togglePopup();
 	};
 }
 
@@ -252,7 +254,7 @@ uesp.gamemap.Location.prototype.updateIcon = function (mapOptions)
 				.addClass('gmMapLocIconDiv')
 				.appendTo('#gmMapRoot');
 		
-		$('<spam />').addClass('gmMapLocIconHelper').appendTo(this.iconElement);
+		$('<span />').addClass('gmMapLocIconHelper').appendTo(this.iconElement);
 		
 		$('<img />').addClass('gmMapLocIcon')
 			.load(uesp.gamemap.onLoadIconSuccess)
@@ -273,6 +275,60 @@ uesp.gamemap.Location.prototype.updateIcon = function (mapOptions)
 }
 
 
+uesp.gamemap.Location.prototype.togglePopup = function ()
+{
+	if (this.popupElement == null) return this.updatePopup();
+	
+	if ($(this.popupElement).is(":visible") )
+		$(this.popupElement).hide();
+	else
+		$(this.popupElement).show();
+}
+
+
+uesp.gamemap.onCloseLocationPopup = function(element)
+{
+	console.debug(element);
+	$(element.parentNode.parentNode.parentNode).hide();
+	return true;
+}
+
+
+uesp.gamemap.Location.prototype.updatePopup = function ()
+{
+	var popupDiv;
+	var popupContent =  "<div class='gmMapPopupClose'><img src='images/cancelicon.png' onclick='return uesp.gamemap.onCloseLocationPopup(this);' width='12' height='12' /></div>" + 
+						"<div class='gmMapPopupTitle'>{name}</div>" + 
+						"<div class='gmMapPopupPos'>Location: {x}, {y}</div>" +
+						"<div class='gmMapPopupWikiPage'><a href='{wikiLink}'>{wikiPage}</a></div>" +
+						"<div class='gmMapPopupDesc'>{description}</div>";
+	
+	if (this.popupElement == null)
+	{
+		this.popupElement = $('<div />').addClass('gmMapPopupRoot')
+				.appendTo('#gmMapRoot');
+		
+		popupDiv = $('<div />').addClass('gmMapPopup')
+				.appendTo(this.popupElement);
+		
+		$('<div />').addClass('gmMapPopupDownArrow')
+		.appendTo(this.popupElement);
+	}
+	else
+	{
+		popupDiv = this.popupElement.children[0];
+	}
+	
+	//popupHtml  = "<div class='gmMapPopupTitle'>" + this.name + "</div>\n";
+	//popupHtml += "<div class='gmMapPopupPos'>Location: " + this.x + ", " + this.y + "</div>\n";
+	popupHtml = uesp.template2(popupContent, this, this.displayData);
+	
+	$(popupDiv).html(popupHtml);
+	
+	this.updatePopupOffset();
+}
+
+
 uesp.gamemap.Location.prototype.updateLabelOffset = function ()
 {
 	if (this.labelElement == null) return;
@@ -288,6 +344,13 @@ uesp.gamemap.Location.prototype.updateIconOffset = function ()
 	$(this.iconElement).offset( { left: this.offsetLeft - $(this.iconElement).width()/2, top: this.offsetTop - $(this.iconElement).height()/2 });
 }
 
+
+uesp.gamemap.Location.prototype.updatePopupOffset = function ()
+{
+	if (this.popupElement == null) return;
+	
+	$(this.popupElement).offset( { left: this.offsetLeft - $(this.popupElement).width()/2, top: this.offsetTop - $(this.popupElement).height() - 8 });
+}
 
 
 uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
@@ -308,13 +371,8 @@ uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 	}
 	
 	this.updateLabelOffset();
-	
-	if ( !(this.iconElement == null))
-	{
-		$(this.iconElement).offset( { left: x-$(this.iconElement).width()/2, top: y-$(this.iconElement).height()/2 });
-	}
-	
-	if ( !(this.popupElement == null)) $(this.popupElement).offset( { left: x, top: y });
+	this.updateIconOffset();
+	this.updatePopupOffset();
 }
 
 
