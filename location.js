@@ -36,6 +36,8 @@ uesp.gamemap.Location = function()
 	
 	this.offsetLeft = 0;
 	this.offsetTop  = 0;
+	this.labelOffsetLeft = 0;
+	this.labelOffsetTop  = 0;
 	
 	//this.iconFile = 0;
 	//this.editorId = 0;
@@ -146,13 +148,78 @@ uesp.gamemap.Location.prototype.shiftElements = function (shiftX, shiftY)
 
 uesp.gamemap.Location.prototype.updateLabel = function ()
 {
+	var labelPos = 0;
 	
 	if (this.labelElement == null)
 	{
 		this.labelElement = $('<div />').addClass('gmMapLoc').appendTo('#gmMapRoot');
 	}
 	
+	if ( !(this.displayData.labelPos == null) ) labelPos = this.displayData.labelPos;
+	
+	var labelWidth = this.name.length*6 + 2;
+	
+	switch (labelPos) {
+		case 1:
+			anchorPoint = 'topLeft';
+			labelTextAlign = 'left';
+			this.labelOffsetLeft = 8;
+			this.labelOffsetTop  = 4;
+			break;
+		case 2:
+			anchorPoint = 'topCenter';
+			labelTextAlign = 'center';
+			this.labelOffsetLeft = labelWidth/2;
+			this.labelOffsetTop  = 4;
+			break;
+		case 3:
+			anchorPoint = 'topRight';
+			labelTextAlign = 'right';
+			this.labelOffsetLeft = labelWidth + 5;
+			this.labelOffsetTop  = 4;
+			break;
+		case 4:
+			anchorPoint = 'midRight';
+			labelTextAlign = 'right';
+			this.labelOffsetLeft = labelWidth + 5;
+			this.labelOffsetTop  = 16;
+			break;
+		case 5:
+			anchorPoint = 'bottomRight';
+			labelTextAlign = 'right';
+			this.labelOffsetLeft = labelWidth + 5;
+			this.labelOffsetTop  = 26;
+			break;
+		case 6:
+			anchorPoint = 'bottomCenter';
+			labelTextAlign = 'center';
+			this.labelOffsetLeft = labelWidth/2;
+			this.labelOffsetTop  = 26;
+			break;
+		case 7:
+			anchorPoint = 'bottomLeft';
+			labelTextAlign = 'left';
+			this.labelOffsetLeft = 8;
+			this.labelOffsetTop  = 26;
+			break;
+		case 8:		// Fall through
+		default:
+			anchorPoint = 'midLeft';
+			labelTextAlign = 'left';
+			this.labelOffsetLeft = -8;
+			this.labelOffsetTop  = 16;
+			break;
+		case 9:
+			anchorPoint = 'center';
+			labelTextAlign = 'center';
+			this.labelOffsetLeft = labelWidth/2;
+			this.labelOffsetTop  = 16;
+			break;
+	}
+	
+	$(this.labelElement).css({ textAlign: labelTextAlign, width: labelWidth });
 	$(this.labelElement).text(this.name);
+	
 	this.updateLabelOffset();
 }
 
@@ -191,7 +258,7 @@ uesp.gamemap.Location.prototype.updateLabelOffset = function ()
 {
 	if (this.labelElement == null) return;
 	
-	$(this.labelElement).offset( { left: this.offsetLeft+8, top: this.offsetTop-7 });
+	$(this.labelElement).offset( { left: this.offsetLeft - this.labelOffsetLeft, top: this.offsetTop - this.labelOffsetTop + 8 });
 }
 
 
