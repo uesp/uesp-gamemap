@@ -844,8 +844,12 @@ uesp.gamemap.Map.prototype.updateLocationOffset = function (location, animate)
 	if (animate === true)
 	{
 		deltaX = curOffset.left - xPos;
-		deltaY = curOffset.top  - yPos; 
-		$(this.locationElements[location.id]).animate({ left: "-=" + deltaX + "px", top: "-=" + deltaY + "px" }, 100);
+		deltaY = curOffset.top  - yPos;
+		
+			// Doesn't current work perfectly...
+		//$(this.locationElements[location.id]).animate({ left: "-=" + deltaX + "px", top: "-=" + deltaY + "px" }, 100);
+		
+		$(this.locationElements[location.id]).offset({ left: xPos, top: yPos });
 	}
 	else
 	{
