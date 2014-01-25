@@ -9,6 +9,8 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.getMapTileFunction = uesp.gamemap.defaultGetMapTile;
 	this.missingMapTile = "missingtile.jpg";
 	
+	this.wikiUrl = "";
+	
 	this.iconPath    = "";
 	this.iconMissing = "missing.png";
 	

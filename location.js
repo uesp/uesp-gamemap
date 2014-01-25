@@ -24,6 +24,7 @@ uesp.gamemap.Location = function()
 	this.name = "";
 	this.description = "";
 	this.wikiPage = "";
+	this.wikiLink = "";
 	this.locType = uesp.gamemap.LOCTYPE_NONE;
 	this.displayLevel = 0;
 	this.visible = false;
@@ -309,7 +310,6 @@ uesp.gamemap.Location.prototype.togglePopup = function ()
 
 uesp.gamemap.onCloseLocationPopup = function(element)
 {
-	console.debug(element);
 	$(element.parentNode.parentNode.parentNode).hide();
 	return true;
 }
@@ -319,9 +319,8 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 {
 	var popupDiv;
 	var popupContent =  "<div class='gmMapPopupClose'><img src='images/cancelicon.png' onclick='return uesp.gamemap.onCloseLocationPopup(this);' width='12' height='12' /></div>" + 
-						"<div class='gmMapPopupTitle'>{name}</div>" + 
+						"<div class='gmMapPopupTitle'><a href='{wikiLink}'>{name}</a></div>" + 
 						"<div class='gmMapPopupPos'>Location: {x}, {y}</div>" +
-						"<div class='gmMapPopupWikiPage'><a href='{wikiLink}'>{wikiPage}</a></div>" +
 						"<div class='gmMapPopupDesc'>{description}</div>";
 	
 	if (this.popupElement == null)
@@ -371,6 +370,12 @@ uesp.gamemap.Location.prototype.updatePopupOffset = function ()
 	if (this.popupElement == null) return;
 	
 	$(this.popupElement).offset( { left: this.offsetLeft - $(this.popupElement).width()/2, top: this.offsetTop - $(this.popupElement).height() - 8 });
+}
+
+
+uesp.gamemap.Location.prototype.updateData = function (mapOptions)
+{
+	this.wikiLink = mapOptions.wikiUrl + this.wikiPage;
 }
 
 
