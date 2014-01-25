@@ -17,6 +17,7 @@ Game Map
 Locations
 	- Proper handling of the 3 location types
 	- Look at label animations (requires relative position?)
+	- Handle different sized (larger) icons
 	
 	
 World
