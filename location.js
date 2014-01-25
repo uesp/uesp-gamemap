@@ -34,6 +34,9 @@ uesp.gamemap.Location = function()
 	this.iconElement  = null;
 	this.popupElement = null;
 	
+	this.offsetLeft = 0;
+	this.offsetTop  = 0;
+	
 	//this.iconFile = 0;
 	//this.editorId = 0;
 	//this.formId = 0;
@@ -141,8 +144,71 @@ uesp.gamemap.Location.prototype.shiftElements = function (shiftX, shiftY)
 }
 
 
+uesp.gamemap.Location.prototype.updateLabel = function ()
+{
+	
+	if (this.labelElement == null)
+	{
+		this.labelElement = $('<div />').addClass('gmMapLoc').appendTo('#gmMapRoot');
+	}
+	
+	$(this.labelElement).text(this.name);
+	this.updateLabelOffset();
+}
+
+
+uesp.gamemap.Location.prototype.updateIcon = function (mapOptions)
+{
+	if (this.displayData.iconType == null) return;
+	
+	var missingURL = mapOptions.iconPath + mapOptions.iconMissing;
+	var imageURL   = mapOptions.iconPath + this.displayData.iconType + ".png";
+	
+	if (this.iconElement == null)
+	{	
+		this.iconElement = $('<div />')
+				.addClass('gmMapLocIconDiv')
+				.appendTo('#gmMapRoot');
+		
+		$('<spam />').addClass('gmMapLocIconHelper').appendTo(this.iconElement);
+		
+		$('<img />').addClass('gmMapLocIcon')
+			.load(uesp.gamemap.onLoadIconSuccess)
+			.error(uesp.gamemap.onLoadIconFailed(missingURL))
+			.attr('src', imageURL)
+			.appendTo(this.iconElement);
+	}
+	else
+	{
+		$(this.iconElement.children[1]).attr('src', imageURL);
+	}
+	
+	this.updateIconOffset();
+}
+
+
+uesp.gamemap.Location.prototype.updateLabelOffset = function ()
+{
+	if (this.labelElement == null) return;
+	
+	$(this.labelElement).offset( { left: this.offsetLeft+8, top: this.offsetTop-7 });
+}
+
+
+uesp.gamemap.Location.prototype.updateIconOffset = function ()
+{
+	if (this.iconElement == null) return;
+	
+	$(this.iconElement).offset( { left: this.offsetLeft - $(this.iconElement).width()/2, top: this.offsetTop - $(this.iconElement).height()/2 });
+}
+
+
+
 uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 {
+	this.offsetLeft = x;
+	this.offsetTop  = y;
+	
 	if (animate === true)
 	{
 		//deltaX = curOffset.left - x;
@@ -155,7 +221,7 @@ uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 		//return;
 	}
 	
-	if ( !(this.labelElement == null)) $(this.labelElement).offset( { left: x+8, top: y-7 });
+	this.updateLabelOffset();
 	
 	if ( !(this.iconElement == null))
 	{

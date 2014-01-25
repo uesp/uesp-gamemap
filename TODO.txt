@@ -14,10 +14,12 @@ Map Options
 Game Map
 	- Add limits to valid coordinates
 
+
 Locations
 	- Proper handling of the 3 location types
 	- Look at label animations (requires relative position?)
 	- Handle different sized (larger) icons
+	- Put label/icon/popup into its own class?
 	
 	
 World

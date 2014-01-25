@@ -153,6 +153,18 @@ uesp.gamemap.Map.prototype.convertGameToTilePos = function(gameX, gameY)
 }
 
 
+uesp.gamemap.Map.prototype.convertGameToPixelPos = function(gameX, gameY)
+{
+	mapOffset = $("#gmMapRoot").offset();
+	tilePos = this.convertGameToTilePos(gameX, gameY);
+	
+	xPos = (tilePos.x - this.startTileX) * this.mapOptions.tileSize + mapOffset.left;
+	yPos = (tilePos.y - this.startTileY) * this.mapOptions.tileSize + mapOffset.top;
+	
+	return new uesp.gamemap.Position(xPos, yPos);
+}
+
+
 uesp.gamemap.Map.prototype.createEvents = function()
 {
 	$(window).on("mousemove", { self: this }, this.onMouseMove);
@@ -209,8 +221,6 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 
 uesp.gamemap.onLoadIconSuccess = function()
 {
-	//curOffset = $(this).offset();
-	//$(this).offset({ left: curOffset.left - $(this).width()/2 , top: curOffset.top - $(this).height()/2});
 	$(this).show();
 }
 
@@ -225,55 +235,15 @@ uesp.gamemap.onLoadIconFailed = function(missingURL)
 
 uesp.gamemap.Map.prototype.displayLocation = function (location)
 {
-	var animate = true;
+	pixelPos = this.convertGameToPixelPos(location.x, location.y);
 	
-	if (location.labelElement == null)
-	{
-		location.labelElement = $('<div />').addClass('gmMapLoc');
-		location.labelElement.appendTo('#gmMapRoot');
-		
-		$(location.labelElement).text(location.name);
-		animate = false;
-	}
-	else
-	{
-		$(location.labelElement).text(location.name);
-	}
+	location.offsetLeft = pixelPos.x;
+	location.offsetTop  = pixelPos.y;
 	
-	if (location.iconElement == null)
-	{
-		if ( !(location.displayData.iconType == null))
-		{
-			var missingURL = this.mapOptions.iconPath + this.mapOptions.iconMissing;
-			var imageURL = this.mapOptions.iconPath + location.displayData.iconType + ".png";
-			
-			location.iconElement = $('<div />')
-					.addClass('gmMapLocIconDiv')
-					.appendTo('#gmMapRoot');
-			
-			$('<spam />').addClass('gmMapLocIconHelper').appendTo(location.iconElement);
-		
-			$('<img />').addClass('gmMapLocIcon')
-				.load(uesp.gamemap.onLoadIconSuccess)
-				.error(uesp.gamemap.onLoadIconFailed(missingURL))
-				.attr('src', imageURL)
-				.appendTo(location.iconElement);
-		}
+	location.updateLabel();
+	location.updateIcon(this.mapOptions);
 	
-		animate = false;
-	}
-	else
-	{
-		if ( !(location.displayData.iconType == null))
-		{
-			var missingURL = this.mapOptions.iconPath + this.mapOptions.iconMissing;
-			var imageURL = this.mapOptions.iconPath + location.displayData.iconType + ".png";
-			
-			$(location.iconElement.children[1]).attr('src', imageURL);
-		}
-	}
-	
-	this.updateLocationOffset(location, animate);
+	//this.updateLocationOffset(location, false);
 }
 
 
