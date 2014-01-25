@@ -145,3 +145,14 @@ uesp.setLogLevel = function(logLevel)
 }
 
 uesp.setLogLevel(uesp.DEFAULT_LOG_LEVEL);
+
+
+uesp.template = function (templateText, data)
+{
+	return templateText.replace(/{(\w*)}/g, function(m, key) { return data.hasOwnProperty(key) ? data[key] : ""; });
+}
+
+uesp.template2 = function (templateText, data1, data2)
+{
+	return templateText.replace(/{(\w*)}/g, function(m, key) { return data1.hasOwnProperty(key) ? data1[key] : (data2.hasOwnProperty(key) ? data2[key] : ""); });
+}
