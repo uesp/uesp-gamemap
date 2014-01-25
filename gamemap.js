@@ -555,8 +555,16 @@ uesp.gamemap.Map.prototype.onReceiveLocationData = function (data)
 		var location = data.locations[key];
 		if (location.id == null) continue;
 		
-		if ( !(location.id in this.locations)) this.locations[location.id] = uesp.gamemap.createLocationFromJson(location);
+		if ( !(location.id in this.locations))
+		{
+			this.locations[location.id] = uesp.gamemap.createLocationFromJson(location);
+		}
+		else
+		{
+			this.locations[location.id].mergeFromJson(location);
+		}
 		
+		this.locations[location.id].updateData(this.mapOptions);
 		this.displayLocation(this.locations[location.id]);
 	}
 	
