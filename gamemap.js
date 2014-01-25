@@ -804,11 +804,11 @@ uesp.gamemap.Map.prototype.shiftLocations = function (deltaX, deltaY)
 }
 
 
-uesp.gamemap.Map.prototype.updateLocations = function()
+uesp.gamemap.Map.prototype.updateLocations = function(animate)
 {
 	this.removeExtraLocations();
 	this.updateLocationDisplayLevels();
-	this.updateLocationOffsets(true);
+	this.updateLocationOffsets(animate);
 	this.retrieveLocations();
 }
 
@@ -906,7 +906,7 @@ uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newOffset = " + newOffsetX + ", " + newOffsetY);
 	$("#gmMapRoot").offset({ left: newOffsetX, top: newOffsetY});
 	
-	this.updateLocations();
+	this.updateLocations(true);
 	this.loadMapTiles();
 }
 
@@ -943,7 +943,7 @@ uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newOffset = " + newOffsetX + ", " + newOffsetY);
 	$("#gmMapRoot").offset({ left: newOffsetX, top: newOffsetY});
 		
-	this.updateLocations();
+	this.updateLocations(true);
 	this.loadMapTiles();
 }
 
