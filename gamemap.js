@@ -22,7 +22,6 @@ uesp.gamemap.Map = function(worldName, mapOptions)
 	}
 	
 	this.locations = {};
-	this.locationElements = {};
 	
 	this.zoomLevel = 15;
 	this.startTileX = 0;
@@ -117,13 +116,12 @@ uesp.gamemap.Map.prototype.checkTileEdges = function ()
 
 uesp.gamemap.Map.prototype.clearLocations = function()
 {
-	for (key in this.locationElements)
+	for (key in this.locations)
 	{
-		$(this.locationElements[key]).remove();
+		this.locations[key].removeElements();
 	}
 	
 	this.locations = {};
-	this.locationElements = {};
 }
 
 
@@ -211,20 +209,19 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 
 uesp.gamemap.Map.prototype.displayLocation = function (location)
 {
-	if (location.id in this.locationElements)
+	if (location.labelElement == null)
 	{
-		$(this.locationElements[location.id]).text(location.name);
-		this.updateLocationOffset(location, true);
+		location.labelElement = $('<div />').addClass('gmMapLoc');
+		location.labelElement.appendTo('#gmMapRoot');
+		
+		$(location.labelElement).text(location.name);
+		
+		this.updateLocationOffset(location, false);
 	}
 	else
 	{
-		newDiv = $('<div />').addClass('gmMapLoc');
-		newDiv.appendTo('#gmMapRoot');
-		this.locationElements[location.id] = newDiv;
-		
-		$(this.locationElements[location.id]).text(location.name);
-		
-		this.updateLocationOffset(location, false);
+		$(location.labelElement).text(location.name);
+		this.updateLocationOffset(location, true);
 	}
 	
 }
@@ -532,9 +529,10 @@ uesp.gamemap.Map.prototype.onReceiveLocationData = function (data)
 	for (key in data.locations)
 	{
 		var location = data.locations[key];
-		if (uesp.gamemap.isNullorUndefined(location.id)) continue;
+		if (location.id == null) continue;
 		
-		this.locations[location.id] = uesp.gamemap.createLocationFromJson(location);
+		if ( !(location.id in this.locations)) this.locations[location.id] = uesp.gamemap.createLocationFromJson(location);
+		
 		this.displayLocation(this.locations[location.id]);
 	}
 	
@@ -581,17 +579,8 @@ uesp.gamemap.Map.prototype.removeExtraLocations = function()
 	{
 		if (this.locations[key].isInBounds(mapBounds)) continue;
 		
-		if (!uesp.gamemap.isNullorUndefined(this.locationElements[key]))
-		{
-			$(this.locationElements[key]).remove();
-			//index = this.locationElements.indexOf(key);
-			//if (index != -1) this.locationElements.splice(index, 1);
-			delete this.locationElements[key];
-		}
-		
-		//index = this.locations.indexOf(key);
-		//if (index != -1) this.locations.splice(index, 1);
-		delete this.locationElements[key];
+		this.locations[key].removeElements();
+		delete this.locations[key];
 	}
 	
 }
@@ -793,13 +782,12 @@ uesp.gamemap.Map.prototype.shiftMapTiles = function(deltaX, deltaY)
 
 uesp.gamemap.Map.prototype.shiftLocations = function (deltaX, deltaY)
 {
-	for (key in this.locationElements)
+	var shiftX = deltaX * this.mapOptions.tileSize;
+	var shiftY = deltaY * this.mapOptions.tileSize;
+	
+	for (key in this.locations)
 	{
-		curOffset = $(this.locationElements[key]).offset();
-		$(this.locationElements[key]).offset({
-				left: curOffset.left - deltaX * this.mapOptions.tileSize,
-				top : curOffset.top  - deltaY * this.mapOptions.tileSize
-		});
+		this.locations[key].shiftElements(shiftX, shiftY);
 	}
 }
 
@@ -817,45 +805,23 @@ uesp.gamemap.Map.prototype.updateLocationDisplayLevels = function()
 {
 	for (key in this.locations)
 	{
-		if (uesp.gamemap.isNullorUndefined(this.locationElements[key])) continue;
-		
-		
 		if (this.zoomLevel < this.locations[key].displayLevel)
-			$(this.locationElements[key]).hide(0);
+			this.locations[key].hideElements(0);
 		else
-			$(this.locationElements[key]).show(0);
+			this.locations[key].showElements(0);
 	}
 }
 
 
 uesp.gamemap.Map.prototype.updateLocationOffset = function (location, animate)
 {
-	if (! (location.id in this.locationElements)) return false;
-	
 	tilePos = this.convertGameToTilePos(location.x, location.y);
 	
 	mapOffset  = $("#gmMapRoot").offset();
 	xPos = (tilePos.x - this.startTileX) * this.mapOptions.tileSize + mapOffset.left;
 	yPos = (tilePos.y - this.startTileY) * this.mapOptions.tileSize + mapOffset.top;
-	
-	curOffset  = $(this.locationElements[location.id]).offset();
-	if (curOffset.left == xPos && curOffset.top == yPos) return;
-	
-	if (animate === true)
-	{
-		deltaX = curOffset.left - xPos;
-		deltaY = curOffset.top  - yPos;
-		
-			// Doesn't current work perfectly...
-		//$(this.locationElements[location.id]).animate({ left: "-=" + deltaX + "px", top: "-=" + deltaY + "px" }, 100);
-		
-		$(this.locationElements[location.id]).offset({ left: xPos, top: yPos });
-	}
-	else
-	{
-		$(this.locationElements[location.id]).offset({ left: xPos, top: yPos });
-	}
-	
+			
+	location.updateOffset(xPos, yPos, animate);
 	return true;
 }
 

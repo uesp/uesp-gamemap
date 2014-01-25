@@ -30,6 +30,10 @@ uesp.gamemap.Location = function()
 	
 	this.displayData = {};
 	
+	this.labelElement = null;
+	this.iconElement  = null;
+	this.popupElement = null;
+	
 	//this.iconFile = 0;
 	//this.editorId = 0;
 	//this.formId = 0;
@@ -67,6 +71,22 @@ uesp.gamemap.Location.prototype.isInBounds = function (mapBounds)
 }
 
 
+uesp.gamemap.Location.prototype.hideElements = function (duration)
+{
+	if ( !(this.labelElement == null)) $(this.labelElement).hide(duration);
+	if ( !(this.iconElement  == null)) $(this.iconElement).hide(duration);
+	if ( !(this.popupElement == null)) $(this.popupElement).hide(duration);
+}
+
+
+uesp.gamemap.Location.prototype.showElements = function (duration)
+{
+	if ( !(this.labelElement == null)) $(this.labelElement).show(duration);
+	if ( !(this.iconElement  == null)) $(this.iconElement).show(duration);
+	if ( !(this.popupElement == null)) $(this.popupElement).show(duration);
+}
+
+
 uesp.gamemap.Location.prototype.mergeFromJson = function(data)
 {
 	uesp.gamemap.mergeObjects(this, data);
@@ -74,6 +94,74 @@ uesp.gamemap.Location.prototype.mergeFromJson = function(data)
 	if (!uesp.gamemap.isNullorUndefined(data.displayData))
 	{
 		this.displayData = jQuery.parseJSON( this.displayData );
+	}
+}
+
+
+uesp.gamemap.Location.prototype.removeElements = function ()
+{
+	if ( !(this.labelElement == null)) $(this.labelElement).remove();
+	if ( !(this.iconElement  == null)) $(this.iconElement).remove();
+	if ( !(this.popupElement == null)) $(this.popupElement).remove();
+}
+
+
+uesp.gamemap.Location.prototype.shiftElements = function (shiftX, shiftY)
+{
+	if ( !(this.labelElement == null))
+	{
+		curOffset = $(this.labelElement).offset();
+	
+		$(this.labelElement).offset({
+			left: curOffset.left - shiftX,
+			top : curOffset.top  - shiftY
+		});
+	}
+	
+	if ( !(this.iconElement == null))
+	{
+		curOffset = $(this.iconElement).offset();
+	
+		$(this.iconElement).offset({
+			left: curOffset.left - shiftX,
+			top : curOffset.top  - shiftY
+		});
+	}
+	
+	if ( !(this.popupElement == null))
+	{
+		curOffset = $(this.popupElement).offset();
+	
+		$(this.popupElement).offset({
+			left: curOffset.left - shiftX,
+			top : curOffset.top  - shiftY
+		});
+	}
+	
+}
+
+
+uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
+{
+	if (animate === true)
+	{
+		//deltaX = curOffset.left - x;
+		//deltaY = curOffset.top  - y;
+		//curOffset  = $(this.labelElement).offset();
+		//if (curOffset.left == xPos && curOffset.top == yPos) return;
+	
+			// TODO: Doesn't current work perfectly...
+		//$(this.labelElement).animate({ left: "-=" + deltaX + "px", top: "-=" + deltaY + "px" }, 100);
+		
+		if ( !(this.labelElement == null)) $(this.labelElement).offset( { left: x, top: y });
+		if ( !(this.iconElement  == null)) $(this.iconElement).offset ( { left: x, top: y });
+		if ( !(this.popupElement == null)) $(this.popupElement).offset( { left: x, top: y });
+	}
+	else
+	{
+		if ( !(this.labelElement == null)) $(this.labelElement).offset( { left: x, top: y });
+		if ( !(this.iconElement  == null)) $(this.iconElement).offset ( { left: x, top: y });
+		if ( !(this.popupElement == null)) $(this.popupElement).offset( { left: x, top: y });
 	}
 }
 
