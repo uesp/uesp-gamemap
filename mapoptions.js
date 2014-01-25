@@ -9,6 +9,9 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.getMapTileFunction = uesp.gamemap.defaultGetMapTile;
 	this.missingMapTile = "missingtile.jpg";
 	
+	this.iconPath    = "";
+	this.iconMissing = "missing.png";
+	
 	this.gameDataScript = "gamemap.php";
 	
 	this.minZoomLevel = 9;
