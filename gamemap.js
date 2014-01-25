@@ -168,7 +168,7 @@ uesp.gamemap.Map.prototype.convertGameToPixelPos = function(gameX, gameY)
 uesp.gamemap.Map.prototype.createEvents = function()
 {
 	$(window).on("mousemove", { self: this }, this.onMouseMove);
-	$('#gmMapRoot').on("mousedown", { self: this }, this.onMouseDown);
+	$('.gmMapTile').on("mousedown", { self: this }, this.onMouseDown);
 	$(window).on("mouseup", { self: this }, this.onMouseUp);
 	$('#gmMapRoot').on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
 }
@@ -209,9 +209,13 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 	yPos = y * this.mapOptions.tileSize + offsetY;
 	tileID = "Tile_" + x + "_" + y;
 	
-	newDiv = $('<div />').addClass('gmMapTile').attr('id', tileID);
-	newDiv.appendTo('#gmMapRoot');
-	newDiv.offset({ top: yPos, left: xPos });
+	newDiv = $('<div />').addClass('gmMapTile').attr('id', tileID)
+					.appendTo('#gmMapRoot')
+					.offset({ top: yPos, left: xPos })
+					.attr('unselectable', 'on')
+					.css('user-select', 'none')
+					.on('selectstart', false);
+	
 	if (uesp.debug) newDiv.text(tileID);
 	newTile.element = newDiv;
 	

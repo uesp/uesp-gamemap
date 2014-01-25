@@ -146,13 +146,28 @@ uesp.gamemap.Location.prototype.shiftElements = function (shiftX, shiftY)
 }
 
 
+uesp.gamemap.Location.prototype.onLabelClickFunction = function()
+{
+	var self = this;
+	
+	return function() {
+		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Label Click", self);
+	};
+}
+
+
 uesp.gamemap.Location.prototype.updateLabel = function ()
 {
 	var labelPos = 0;
 	
 	if (this.labelElement == null)
 	{
-		this.labelElement = $('<div />').addClass('gmMapLoc').appendTo('#gmMapRoot');
+		this.labelElement = $('<div />').addClass('gmMapLoc')
+			.appendTo('#gmMapRoot')
+			.click(this.onLabelClickFunction())
+			.attr('unselectable', 'on')
+			.css('user-select', 'none')
+			.on('selectstart', false);
 	}
 	
 	if ( !(this.displayData.labelPos == null) ) labelPos = this.displayData.labelPos;
@@ -243,6 +258,10 @@ uesp.gamemap.Location.prototype.updateIcon = function (mapOptions)
 			.load(uesp.gamemap.onLoadIconSuccess)
 			.error(uesp.gamemap.onLoadIconFailed(missingURL))
 			.attr('src', imageURL)
+			.click(this.onLabelClickFunction())
+			.attr('unselectable', 'on')
+			.css('user-select', 'none')
+			.on('selectstart', false)
 			.appendTo(this.iconElement);
 	}
 	else
