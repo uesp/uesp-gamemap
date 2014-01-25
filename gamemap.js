@@ -246,12 +246,18 @@ uesp.gamemap.Map.prototype.displayLocation = function (location)
 		{
 			var missingURL = this.mapOptions.iconPath + this.mapOptions.iconMissing;
 			var imageURL = this.mapOptions.iconPath + location.displayData.iconType + ".png";
+			
+			location.iconElement = $('<div />')
+					.addClass('gmMapLocIconDiv')
+					.appendTo('#gmMapRoot');
+			
+			$('<spam />').addClass('gmMapLocIconHelper').appendTo(location.iconElement);
 		
-			location.iconElement = $('<img />').addClass('gmMapLocIcon')
+			$('<img />').addClass('gmMapLocIcon')
 				.load(uesp.gamemap.onLoadIconSuccess)
 				.error(uesp.gamemap.onLoadIconFailed(missingURL))
 				.attr('src', imageURL)
-				.appendTo('#gmMapRoot');
+				.appendTo(location.iconElement);
 		}
 	
 		animate = false;
@@ -263,7 +269,7 @@ uesp.gamemap.Map.prototype.displayLocation = function (location)
 			var missingURL = this.mapOptions.iconPath + this.mapOptions.iconMissing;
 			var imageURL = this.mapOptions.iconPath + location.displayData.iconType + ".png";
 			
-			$(location.iconElement).attr('src', imageURL);
+			$(location.iconElement.children[1]).attr('src', imageURL);
 		}
 	}
 	

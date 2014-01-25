@@ -35,11 +35,25 @@
 	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.2);
 }
 
-.gmMapLocIcon {
+.gmMapLocIconDiv {
+	width: 16px;
+	height: 16px;
 	position: absolute;
 	z-index: 9;
 	display: inline-block;
 	background-position: center;
 	background-repeat: no-repeat;
+	border: none;
+	text-align: center;
+}
+
+.gmMapLocIconHelper {
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.gmMapLocIcon {
+	display: inline-block;
 	border: none;
 }
