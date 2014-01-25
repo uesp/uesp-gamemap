@@ -348,24 +348,40 @@ uesp.gamemap.Map.prototype.isValidZoom = function(zoom)
 }
 
 
+uesp.gamemap.onMapTileLoadFunction = function (element, imageURL) 
+{
+	return function() {
+		$(this).remove();
+		element.css('background-image', 'url(' + imageURL + ')');
+	};
+}
+
+
 uesp.gamemap.Map.prototype.loadMapTiles = function()
 {
 	if (uesp.gamemap.isNullorUndefined(this.mapOptions.getMapTileFunction)) return;
+	
+	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
 			
-	for (y = 0; y < this.mapOptions.tileCountY; ++y)
+	for (var y = 0; y < this.mapOptions.tileCountY; ++y)
 	{
-		for (x = 0; x < this.mapOptions.tileCountX; ++x)
+		for (var x = 0; x < this.mapOptions.tileCountX; ++x)
 		{
-			var gamePos = this.convertTileToGamePos(this.mapTiles[y][x].deltaTileX + this.startTileX + 0.5, this.mapTiles[y][x].deltaTileY + this.startTileY + 0.5);
+			var tileX = this.mapTiles[y][x].deltaTileX + this.startTileX;
+			var tileY = this.mapTiles[y][x].deltaTileY + this.startTileY;
 			
-			if (!this.isGamePosInBounds(gamePos))
+			if (tileX < 0 || tileY < 0 || tileX >= maxTiles || tileY >= maxTiles)
 			{
-				this.mapTiles[y][x].element.css("background", "url(" + this.mapOptions.missingMapTile + ")");
+				this.mapTiles[y][x].element.css("background-image", "url(" + this.mapOptions.missingMapTile + ")");
 				continue;
 			}
 			
-			imageURL = this.mapOptions.getMapTileFunction(this.startTileX + this.mapTiles[y][x].deltaTileX, this.startTileY + this.mapTiles[y][x].deltaTileY, this.zoomLevel);
-			this.mapTiles[y][x].element.css("background", "url(" + imageURL + ")");
+			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel);
+			var element  = this.mapTiles[y][x].element;
+			
+			$('<img/>').attr('src', imageURL)
+				.load( uesp.gamemap.onMapTileLoadFunction(element, imageURL))
+				.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
 		}
 	}
 }
@@ -375,6 +391,8 @@ uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
 {
 	if (uesp.gamemap.isNullorUndefined(this.mapOptions.getMapTileFunction)) return;
 	
+	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
+	
 	for (y = 0; y < this.mapOptions.tileCountY; ++y)
 	{
 		for (x = 0; x < this.mapOptions.tileCountX; ++x)
@@ -382,16 +400,21 @@ uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
 			if (xIndex >= 0 && this.mapTiles[y][x].deltaTileX != xIndex) continue;
 			if (yIndex >= 0 && this.mapTiles[y][x].deltaTileY != yIndex) continue;
 			
-			var gamePos = this.convertTileToGamePos(this.mapTiles[y][x].deltaTileX + this.startTileX + 0.5, this.mapTiles[y][x].deltaTileY + this.startTileY + 0.5);
+			var tileX = this.mapTiles[y][x].deltaTileX + this.startTileX;
+			var tileY = this.mapTiles[y][x].deltaTileY + this.startTileY;
 			
-			if (!this.isGamePosInBounds(gamePos))
+			if (tileX < 0 || tileY < 0 || tileX >= maxTiles || tileY >= maxTiles)
 			{
-				this.mapTiles[y][x].element.css("background", "url(" + this.mapOptions.missingMapTile + ")");
+				this.mapTiles[y][x].element.css("background-image", "url(" + this.mapOptions.missingMapTile + ")");
 				continue;
 			}
 			
-			imageURL = this.mapOptions.getMapTileFunction(this.startTileX + this.mapTiles[y][x].deltaTileX, this.startTileY + this.mapTiles[y][x].deltaTileY, this.zoomLevel);
-			this.mapTiles[y][x].element.css("background", "url(" + imageURL + ")");
+			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel);
+			var element  = this.mapTiles[y][x].element;
+			
+			$('<img/>').attr('src', imageURL)
+				.load( uesp.gamemap.onMapTileLoadFunction(element, imageURL))
+				.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
 		}
 	}
 }
