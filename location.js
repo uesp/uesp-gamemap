@@ -339,10 +339,7 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 		popupDiv = this.popupElement.children[0];
 	}
 	
-	//popupHtml  = "<div class='gmMapPopupTitle'>" + this.name + "</div>\n";
-	//popupHtml += "<div class='gmMapPopupPos'>Location: " + this.x + ", " + this.y + "</div>\n";
 	popupHtml = uesp.template2(popupContent, this, this.displayData);
-	
 	$(popupDiv).html(popupHtml);
 	
 	this.updatePopupOffset();
