@@ -150,19 +150,19 @@ uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 		//curOffset  = $(this.labelElement).offset();
 		//if (curOffset.left == xPos && curOffset.top == yPos) return;
 	
-			// TODO: Doesn't current work perfectly...
+			// TODO: Doesn't currently work perfectly...
 		//$(this.labelElement).animate({ left: "-=" + deltaX + "px", top: "-=" + deltaY + "px" }, 100);
-		
-		if ( !(this.labelElement == null)) $(this.labelElement).offset( { left: x+8, top: y-8 });
-		if ( !(this.iconElement  == null)) $(this.iconElement).offset ( { left: x-8, top: y-8 });
-		if ( !(this.popupElement == null)) $(this.popupElement).offset( { left: x, top: y });
+		//return;
 	}
-	else
+	
+	if ( !(this.labelElement == null)) $(this.labelElement).offset( { left: x+8, top: y-7 });
+	
+	if ( !(this.iconElement == null))
 	{
-		if ( !(this.labelElement == null)) $(this.labelElement).offset( { left: x+8, top: y-8 });
-		if ( !(this.iconElement  == null)) $(this.iconElement).offset ( { left: x-8, top: y-8 });
-		if ( !(this.popupElement == null)) $(this.popupElement).offset( { left: x, top: y });
+		$(this.iconElement).offset( { left: x-$(this.iconElement).width()/2, top: y-$(this.iconElement).height()/2 });
 	}
+	
+	if ( !(this.popupElement == null)) $(this.popupElement).offset( { left: x, top: y });
 }
 
 
