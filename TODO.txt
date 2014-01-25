@@ -1,0 +1,22 @@
+
+
+Common
+	- Replace 'isNullorDefined()' with 'var == null' where appropriate
+	- Move common functions to the uesp. namespace (or uesp.common.)
+
+
+Map Options
+	- Replace x/y variables with Point or Bounds classes where appropriate
+	- Add coordinate limits
+
+
+Game Map
+	- Add limits to valid coordinates
+
+Locations
+	- Proper handling of the 3 location types
+	
+	
+World
+	- Better handling of worldId/worldName
+	- Proper getting of world data somehow
