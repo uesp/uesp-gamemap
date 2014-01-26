@@ -6,7 +6,7 @@
  */
 
 
-uesp.gamemap.Map = function(worldName, mapOptions)
+uesp.gamemap.Map = function(worldName, mapOptions, worldId)
 {
 	this.mapOptions = new uesp.gamemap.MapOptions(mapOptions);
 	
@@ -15,10 +15,10 @@ uesp.gamemap.Map = function(worldName, mapOptions)
 	if (uesp.gamemap.isNullorUndefined(worldName))
 	{
 		this.currentWorldName = "__default";
-		this.addWorld(this.currentWorldName, mapOptions);
+		this.addWorld(this.currentWorldName, mapOptions, worldId);
 	} else {
 		this.currentWorldName = worldName.toLowerCase();
-		this.addWorld(this.currentWorldName, mapOptions);
+		this.addWorld(this.currentWorldName, mapOptions, worldId);
 	}
 	
 	this.locations = {};
@@ -37,11 +37,14 @@ uesp.gamemap.Map = function(worldName, mapOptions)
 	
 	this.mapTiles = [];
 	
+	this.queryParams = uesp.parseQueryParams();
+	
 	this.createMapContainer();
 	this.createMapTiles();
 	this.createEvents();
 	
-	this.setGamePos(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY);
+	this.setGamePosNoUpdate(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY, this.mapOptions.initialZoom);
+	this.updateMapStateFromQuery(false);
 }
 
 
@@ -684,11 +687,15 @@ uesp.gamemap.Map.prototype.retrieveWorldData = function()
 }
 
 
-uesp.gamemap.Map.prototype.setGamePos = function(x, y, zoom)
+uesp.gamemap.Map.prototype.setGamePos = function(x, y, zoom, updateMap)
 {
 	this.setGamePosNoUpdate(x, y, zoom);
-	this.updateLocations();
-	this.loadMapTiles();
+	
+	if (updateMap == null || updateMap === true)
+	{
+		this.updateLocations();
+		this.loadMapTiles();
+	}
 }
 
 
@@ -776,17 +783,19 @@ uesp.gamemap.Map.prototype.setGameZoom = function(zoom)
 }
 
 
-uesp.gamemap.Map.prototype.setMapState = function (newState)
+uesp.gamemap.Map.prototype.setMapState = function (newState, updateMap)
 {
 	if (uesp.gamemap.isNullorUndefined(newState)) return;
 	
+	if (updateMap == null) updateMap = true;
+	
 	if (this.currentWorldName != newState.worldName)
 	{
-		this.changeWorld(newState.worldName, newState);
+		this.changeWorld(newState.worldName, newState, updateMap);
 	}
 	else
 	{
-		this.setGamePos(newState.gamePos.x, newState.gamePos.y, newState.zoomLevel);
+		this.setGamePos(newState.gamePos.x, newState.gamePos.y, newState.zoomLevel, updateMap);
 	}
 
 }
@@ -935,6 +944,32 @@ uesp.gamemap.Map.prototype.updateMap = function()
 }
 
 
+uesp.gamemap.Map.prototype.updateMapStateFromQuery = function (updateMap)
+{
+	var gamePos = this.getGamePositionOfCenter();
+	var gameX = gamePos.x;
+	var gameY = gamePos.y;
+	var zoom  = this.currentZoom;
+	var world = this.currentWorldName;
+	
+	if ( ! (this.queryParams.x     == null)) gameX = parseInt(this.queryParams.x);
+	if ( ! (this.queryParams.y     == null)) gameY = parseInt(this.queryParams.y);
+	if ( ! (this.queryParams.zoom  == null)) zoom  = parseInt(this.queryParams.zoom);
+	if ( ! (this.queryParams.world == null)) world = decodeURIComponent(this.queryParams.world);
+
+	var newState = new uesp.gamemap.MapState();
+	newState.gamePos.x = gameX;
+	newState.gamePos.y = gameY;
+	newState.zoomLevel = zoom;
+	newState.worldName = world;
+	
+	this.setMapState(newState, updateMap);
+	
+	//this.setGamePosNoUpdate(gameX, gameY, zoom);
+	//if (updateMap === true) this.updateMap();
+}
+
+
 uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 {
 	if (this.zoomLevel >= this.mapOptions.maxZoomLevel) return;
@@ -955,18 +990,18 @@ uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 	
 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapOptions.tileSize;
 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapOptions.tileSize;
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "tile = " + tileX + ", " + tileY);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomin tile = " + tileX + ", " + tileY);
 	
 	newTileX = tileX*2 - this.mapOptions.tileCountX/2;
 	newTileY = tileY*2 - this.mapOptions.tileCountY/2;
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newTile = " + newTileX + ", " + newTileY);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomin newTile = " + newTileX + ", " + newTileY);
 	
 	this.startTileX = Math.floor(newTileX);
 	this.startTileY = Math.floor(newTileY);
 	
 	newOffsetX = Math.round(mapOffset.left + x - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - newTileX) * this.mapOptions.tileSize);
 	newOffsetY = Math.round(mapOffset.top  + y - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - newTileY) * this.mapOptions.tileSize);
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newOffset = " + newOffsetX + ", " + newOffsetY);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomin newOffset = " + newOffsetX + ", " + newOffsetY);
 	$("#gmMapRoot").offset({ left: newOffsetX, top: newOffsetY});
 	
 	this.updateLocations(true);
@@ -992,18 +1027,18 @@ uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 	
 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapOptions.tileSize;
 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapOptions.tileSize;
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "tile = " + tileX + ", " + tileY);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomout tile = " + tileX + ", " + tileY);
 	
 	newTileX = tileX/2 - this.mapOptions.tileCountX/2;
 	newTileY = tileY/2 - this.mapOptions.tileCountY/2;
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newTile = " + newTileX + ", " + newTileY);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomout newTile = " + newTileX + ", " + newTileY);
 	
 	this.startTileX = Math.floor(newTileX);
 	this.startTileY = Math.floor(newTileY);
 	
 	newOffsetX = Math.round(mapOffset.left + x - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - newTileX) * this.mapOptions.tileSize);
 	newOffsetY = Math.round(mapOffset.top  + y - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - newTileY) * this.mapOptions.tileSize);
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newOffset = " + newOffsetX + ", " + newOffsetY);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomout newOffset = " + newOffsetX + ", " + newOffsetY);
 	$("#gmMapRoot").offset({ left: newOffsetX, top: newOffsetY});
 		
 	this.updateLocations(true);

@@ -27,7 +27,7 @@
 				zoomOffset : 9,
 				initialGamePosX : 1000,
 				initialGamePosY : 8000,
-				initialZoom : 10,
+				initialZoom : 13,
 				gamePosX1: -232000,
 				gamePosX2: 290500,
 				gamePosY1: 207000,
@@ -38,8 +38,6 @@
 				//gamePosY2: -180224,
 		};
 		
-		g_SRMapOptions
-		
 		
 		var g_DBMapOptions = {
 				mapContainer : "#gmMap",
@@ -48,9 +46,9 @@
 				iconPath: "icons/",
 				wikiUrl: "http://www.uesp.net/wiki/Dragonborn:",
 				zoomOffset : 8,
-				initialGamePosX : 1000,
-				initialGamePosY : 8000,
-				initialZoom : 10,
+				initialGamePosX : 7000,
+				initialGamePosY : 50000,
+				initialZoom : 12,
 				//gamePosX1: -170960,
 				//gamePosX2: 323840,
 				//gamePosY1: 512880,
@@ -61,13 +59,12 @@
 				gamePosY2: -40960,
 		};
 
-		$( document ).ready( function() {
-			g_GameMap = new uesp.gamemap.Map("Skyrim", g_SRMapOptions);
-			
-			g_GameMap.addWorld("Skyrim",     g_SRMapOptions, 1);
+		$( document ).ready( function()
+		{
+			g_GameMap = new uesp.gamemap.Map("Skyrim", g_SRMapOptions, 1);
 			g_GameMap.addWorld("Dragonborn", g_DBMapOptions, 2);
 			
-			g_GameMap.updateMap();
+			g_GameMap.updateMapStateFromQuery(true);
 		});
 
 		function getSkyrimMapTile(xPos, yPos, zoom)
