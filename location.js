@@ -34,6 +34,7 @@ uesp.gamemap.Location = function()
 	this.labelElement = null;
 	this.iconElement  = null;
 	this.popupElement = null;
+	this.pathElement  = null;
 	
 	this.offsetLeft = 0;
 	this.offsetTop  = 0;
@@ -81,6 +82,7 @@ uesp.gamemap.Location.prototype.hideElements = function (duration)
 {
 	if ( !(this.labelElement == null)) $(this.labelElement).hide(duration);
 	if ( !(this.iconElement  == null)) $(this.iconElement).hide(duration);
+	if ( !(this.pathElement  == null)) $(this.pathElement).hide(duration);
 	if ( !(this.popupElement == null)) $(this.popupElement).hide(duration);
 }
 
@@ -89,9 +91,11 @@ uesp.gamemap.Location.prototype.showElements = function (duration)
 {
 	if ( !(this.labelElement == null)) $(this.labelElement).show(duration);
 	if ( !(this.iconElement  == null)) $(this.iconElement).show(duration);
+	if ( !(this.pathElement  == null)) $(this.pathElement).show(duration);
 	
 	this.updateLabelOffset();
 	this.updateIconOffset();
+	this.updatePathOffset();
 }
 
 
@@ -111,6 +115,7 @@ uesp.gamemap.Location.prototype.removeElements = function ()
 	if ( !(this.labelElement == null)) $(this.labelElement).remove();
 	if ( !(this.iconElement  == null)) $(this.iconElement).remove();
 	if ( !(this.popupElement == null)) $(this.popupElement).remove();
+	if ( !(this.pathElement  == null)) $(this.pathElement).remove();
 }
 
 
@@ -141,6 +146,16 @@ uesp.gamemap.Location.prototype.shiftElements = function (shiftX, shiftY)
 		curOffset = $(this.popupElement).offset();
 	
 		$(this.popupElement).offset({
+			left: curOffset.left - shiftX,
+			top : curOffset.top  - shiftY
+		});
+	}
+	
+	if ( !(this.pathElement == null))
+	{
+		curOffset = $(this.pathElement).offset();
+	
+		$(this.pathElement).offset({
 			left: curOffset.left - shiftX,
 			top : curOffset.top  - shiftY
 		});
@@ -370,6 +385,14 @@ uesp.gamemap.Location.prototype.updatePopupOffset = function ()
 }
 
 
+uesp.gamemap.Location.prototype.updatePathOffset = function ()
+{
+	if (this.pathElement == null) return;
+	
+	$(this.pathElement).offset( { left: this.offsetLeft - $(this.pathElement).width()/2, top: this.offsetTop - $(this.pathElement).height() - 8 });
+}
+
+
 uesp.gamemap.Location.prototype.updateData = function (mapOptions)
 {
 	this.wikiLink = mapOptions.wikiUrl + this.wikiPage;
@@ -396,6 +419,102 @@ uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 	this.updateLabelOffset();
 	this.updateIconOffset();
 	this.updatePopupOffset();
+	this.updatePathOffset();
+}
+
+
+uesp.gamemap.Location.prototype.updatePath = function ()
+{
+	
+	if (this.pathElement == null)
+	{
+		this.pathElement = $('<canvas />').addClass('gmMapPathCanvas')
+				.attr({'width':100,'height':200})
+				.offset({ left: 500, top: 500 })
+				.on('selectstart', false)
+				.appendTo('#gmMapRoot');
+		
+		var c2 = this.pathElement[0].getContext('2d');
+		c2.scale(2, 2);
+		//c2.translate(100, 100);
+		c2.beginPath();
+		c2.moveTo(0, 0);
+		c2.lineTo(100,50);
+		c2.lineTo(50, 100);
+		c2.lineTo(0, 90);
+		c2.closePath();
+		c2.globalCompositeOperation = 'destination-atop';
+		c2.fillStyle = 'rgba(255,0,0,0.25)';
+		c2.fill();
+		c2.lineWidth = 2;
+		c2.strokeStyle = 'rgba(255,0,0,0.15)';
+		c2.stroke();
+		
+		this.pathElement.click(function (e) {
+			var ca = e.target;
+			var co = ca.getContext('2d');
+			var offset = $(ca).offset();
+			
+			if (co.isPointInPath(e.pageX - offset.left, e.pageY - offset.top) )
+			{
+				console.debug("clicked path");
+			}
+
+		});
+		
+		
+		this.pathElement.mouseout(function (e) {
+			var ca = e.target;
+			var co = ca.getContext('2d')
+			co.fillStyle = 'rgba(255,0,0,0.25)';
+			co.fill();
+		});
+		
+		this.pathElement.mousemove(function (e) {
+			var ca = e.target;
+			var co = ca.getContext('2d');
+			var offset = $(ca).offset();
+
+			if (co.isPointInPath(e.pageX - offset.left, e.pageY - offset.top) )
+			{
+				co.fillStyle = 'rgba(255,255,255,0.25)';
+				co.fill();
+			}
+			else
+			{
+				co.fillStyle = 'rgba(255,0,0,0.25)';
+				co.fill();
+			}
+			//console.debug('Is point in path: ' + (? 'YES' : 'NO'));
+		});
+	}
+	else
+	{
+	}
+	
+	this.updatePathOffset();
+}
+
+
+uesp.gamemap.Location.prototype.update = function (mapOptions)
+{
+	if (this.locType == uesp.gamemap.LOCTYPE_POINT)
+	{
+		this.updateLabel();
+		this.updateIcon(mapOptions);
+	}
+	else if (this.locType == uesp.gamemap.LOCTYPE_PATH)
+	{
+		this.updateLabel();
+		this.updateIcon(mapOptions);
+		this.updatePath();
+	}
+	else if (this.locType == uesp.gamemap.LOCTYPE_AREA)
+	{
+		this.updateLabel();
+		this.updateIcon(mapOptions);
+		this.updatePath();
+	}
 }
 
 

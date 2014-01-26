@@ -262,10 +262,9 @@ uesp.gamemap.Map.prototype.displayLocation = function (location)
 	location.offsetLeft = pixelPos.x;
 	location.offsetTop  = pixelPos.y;
 	
-	location.updateLabel();
-	location.updateIcon(this.mapOptions);
+	location.updateData(this.mapOptions);
 	
-	//this.updateLocationOffset(location, false);
+	location.update(this.mapOptions);
 }
 
 
@@ -1045,6 +1044,32 @@ uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 	this.loadMapTiles();
 }
 
+
+uesp.gamemap.Map.prototype.testPath = function()
+{
+	/*
+	var canvasElement = $('<canvas />').addClass('gmMapPathCanvas').attr({'width':100,'height':200}).offset({ left: 1000, top: 1000 }).appendTo('#gmMapRoot');
+	
+	var c2 = canvasElement[0].getContext('2d');
+	c2.beginPath();
+	c2.moveTo(0, 0);
+	c2.lineTo(100,50);
+	c2.lineTo(50, 100);
+	c2.lineTo(0, 90);
+	c2.closePath();
+	c2.fillStyle = '#f00';
+	c2.fill();
+	c2.lineWidth = 2;
+	c2.strokeStyle = 'blue';
+	c2.stroke(); */
+	
+	var newPath = new uesp.gamemap.Location();
+	newPath.id = 1234;
+	newPath.locType = 2;
+	this.locations[newPath.id] = newPath;
+	
+	this.displayLocation(newPath);
+}
 
 uesp.gamemap.defaultGetMapTile = function(tileX, tileY, zoom)
 {

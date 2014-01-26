@@ -119,5 +119,10 @@
 	border-top: 10px solid #fff;
 	top: -1px;
 	position: relative;
-	margin: 0 auto;
+	margin: 0 auto;	
+}
+
+.gmMapPathCanvas {
+	position: absolute;
+	z-index: 30;
 }
