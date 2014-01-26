@@ -13,6 +13,8 @@ Map Options
 
 Game Map
 	- Add limits to valid coordinates
+	- Smoother scrolling
+	- Update tiles/locations during pan animation
 
 
 Locations
