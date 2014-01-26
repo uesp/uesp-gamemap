@@ -195,19 +195,19 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 		case 3:
 			anchorPoint = 'topRight';
 			labelTextAlign = 'right';
-			this.labelOffsetLeft = labelWidth + 5;
+			this.labelOffsetLeft = labelWidth + 8;
 			this.labelOffsetTop  = 4;
 			break;
 		case 4:
 			anchorPoint = 'midRight';
 			labelTextAlign = 'right';
-			this.labelOffsetLeft = labelWidth + 5;
+			this.labelOffsetLeft = labelWidth + 8;
 			this.labelOffsetTop  = 16;
 			break;
 		case 5:
 			anchorPoint = 'bottomRight';
 			labelTextAlign = 'right';
-			this.labelOffsetLeft = labelWidth + 5;
+			this.labelOffsetLeft = labelWidth + 8;
 			this.labelOffsetTop  = 26;
 			break;
 		case 6:
