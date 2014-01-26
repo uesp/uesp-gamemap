@@ -31,6 +31,8 @@ uesp.gamemap.Map = function(worldName, mapOptions)
 	this.draggingObject = null;
 	this.dragStartLeft = 0;
 	this.dragStartTop  = 0;
+	this.dragStartEventX = 0;
+	this.dragStartEventY = 0;
 	this.checkTilesOnDrag = true;
 	
 	this.mapTiles = [];
@@ -165,12 +167,25 @@ uesp.gamemap.Map.prototype.convertGameToPixelPos = function(gameX, gameY)
 }
 
 
+uesp.gamemap.Map.prototype.convertPixelToGamePos = function(pixelX, pixelY)
+{
+	mapOffset = $("#gmMapRoot").offset();
+	
+	tileX = (pixelX - mapOffset.left) / this.mapOptions.tileSize + this.startTileX;
+	tileY = (pixelY - mapOffset.top)  / this.mapOptions.tileSize + this.startTileY;
+	
+	return this.convertTileToGamePos(tileX, tileY);
+}
+
+
 uesp.gamemap.Map.prototype.createEvents = function()
 {
 	$(window).on("mousemove", { self: this }, this.onMouseMove);
 	$('.gmMapTile').on("mousedown", { self: this }, this.onMouseDown);
 	$(window).on("mouseup", { self: this }, this.onMouseUp);
 	$('#gmMapRoot').on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
+	
+	$('.gmMapTile').dblclick({ self: this }, this.onDoubleClick);
 }
 
 
@@ -453,7 +468,11 @@ uesp.gamemap.Map.prototype.onDragEnd = function(event)
 	
 	this.draggingObject = null;
 	this.checkTileEdges();
-	this.updateLocations();
+	
+	deltaX = event.pageX - this.dragStartEventX;
+	deltaY = event.pageY - this.dragStartEventY;
+	
+	if (deltaX != 0 || deltaY != 0)	this.updateLocations();
 }
 
 
@@ -462,8 +481,8 @@ uesp.gamemap.Map.prototype.onDragMove = function(event)
 	if (uesp.gamemap.isNullorUndefined(this.draggingObject)) return;
 	
 	$("#gmMapRoot").offset({
-			top:  event.pageY - this.dragStartTop,
-			left: event.pageX - this.dragStartLeft
+			left: event.pageX - this.dragStartLeft,
+			top:  event.pageY - this.dragStartTop
 	});
 
 	if (this.checkTilesOnDrag) this.checkTileEdges();
@@ -473,13 +492,17 @@ uesp.gamemap.Map.prototype.onDragMove = function(event)
 uesp.gamemap.Map.prototype.onDragStart = function(event)
 {
 	mapOffset = $("#gmMapRoot").offset();
-	this.dragStartTop = event.pageY - mapOffset.top;
+	
 	this.dragStartLeft = event.pageX - mapOffset.left;
+	this.dragStartTop = event.pageY - mapOffset.top;
+	
+	this.dragStartEventX = event.pageX;
+	this.dragStartEventY = event.pageY;
 	
 	this.draggingObject = $(event.target);
 	this.isDragging = true;
 
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Drag Start Offset: " + this.dragStartLeft + ", " + this.dragStartTop);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Drag Start Offset: " + this.dragStartLeft + ", " + this.dragStartTop);
 }
 
 
@@ -491,6 +514,17 @@ uesp.gamemap.Map.prototype.onMouseDown = function(event)
 	self.onDragStart(event);
 	
 	event.preventDefault();
+}
+
+
+uesp.gamemap.Map.prototype.onDoubleClick = function(event)
+{
+	var self = event.data.self;
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onDoubleClick");
+	
+	gamePos = self.convertPixelToGamePos(event.pageX, event.pageY);
+	
+	self.panToGamePos(gamePos.x, gamePos.y);
 }
 
 
@@ -658,6 +692,33 @@ uesp.gamemap.Map.prototype.setGamePos = function(x, y, zoom)
 }
 
 
+uesp.gamemap.Map.prototype.panToGamePos = function(x, y)
+{
+	var mapOffset = $(this.mapOptions.mapContainer).offset();
+	
+	var tilePos = this.convertGameToTilePos(x, y);
+	tilePos.x -= this.mapOptions.tileCountX/2;
+	tilePos.y -= this.mapOptions.tileCountY/2;
+	
+	tileX = Math.floor(tilePos.x);
+	tileY = Math.floor(tilePos.y);
+	
+	newOffsetX = Math.round(mapOffset.left + $(this.mapOptions.mapContainer).width()/2  - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - tilePos.x) * this.mapOptions.tileSize);
+	newOffsetY = Math.round(mapOffset.top  + $(this.mapOptions.mapContainer).height()/2 - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - tilePos.y) * this.mapOptions.tileSize);
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newOffset = " + newOffsetX + ", " + newOffsetY);
+	
+	var self = this;
+	
+	$("#gmMapRoot").animate({ left: newOffsetX, top: newOffsetY}, {
+				complete: function() { 
+					self.checkTileEdges();
+					self.loadMapTiles();
+					self.updateLocations();
+				}
+			});
+}
+
+
 uesp.gamemap.Map.prototype.setGamePosNoUpdate = function(x, y, zoom)
 {
 	var mapOffset = $(this.mapOptions.mapContainer).offset();
@@ -702,7 +763,7 @@ uesp.gamemap.Map.prototype.setGameZoom = function(zoom)
 	
 	this.startTileX = Math.floor(newTileX);
 	this.startTileY = Math.floor(newTileY);
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "setGamePos(): startTile = " + this.startTileX + ", " + this.startTileY);
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "setGameZoom(): startTile = " + this.startTileX + ", " + this.startTileY);
 	
 	newOffsetX = Math.round(mapOffset.left + $(this.mapOptions.mapContainer).width()/2  - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - newTileX) * this.mapOptions.tileSize);
 	newOffsetY = Math.round(mapOffset.top  + $(this.mapOptions.mapContainer).height()/2 - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - newTileY) * this.mapOptions.tileSize);
