@@ -156,3 +156,27 @@ uesp.template2 = function (templateText, data1, data2)
 {
 	return templateText.replace(/{(\w*)}/g, function(m, key) { return data1.hasOwnProperty(key) ? data1[key] : (data2.hasOwnProperty(key) ? data2[key] : ""); });
 }
+
+
+uesp.parseQueryParams = function()
+{
+	var queryString = location.search.substring(1).toLowerCase();
+	var params = queryString.split("&");
+	var resultParams = { };
+	
+	for (var i = 0; i < params.length; i++ )
+	{
+		if ( params[i].indexOf("=") >= 0 )
+		{
+			var paramSplit = params[i].split("=");
+			resultParams[paramSplit[0]] = paramSplit[1];
+		}
+		else
+		{
+			resultParams[params[i]] = '';
+		}
+	}
+	
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, resultParams);
+	return resultParams;
+}
