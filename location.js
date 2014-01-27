@@ -109,6 +109,10 @@ uesp.gamemap.Location.prototype.mergeFromJson = function(data)
 	{
 		this.displayData = jQuery.parseJSON( this.displayData );
 	}
+	
+	this.name = encodeURIComponent(this.name);
+	this.description = encodeURIComponent(this.description);
+	this.wikiPage = encodeURIComponent(this.wikiPage);
 }
 
 
