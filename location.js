@@ -334,7 +334,7 @@ uesp.gamemap.onCloseLocationPopup = function(element)
 
 uesp.gamemap.onJumpToDestination = function(destId)
 {
-	console.debug("Jumping to destinationId " + destId);
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Jumping to destinationId " + destId);
 	return false;
 }
 
@@ -437,7 +437,6 @@ uesp.gamemap.Location.prototype.drawPath = function (context)
 	context.globalCompositeOperation = 'destination-atop';
 	context.lineWidth = this.displayData.lineWidth;
 	context.strokeStyle = this.displayData.strokeStyle;
-	//console.debug(context.lineWidth, context.strokeStyle);
 	
 	while (i + 1 < this.displayData.points.length)
 	{
@@ -507,8 +506,6 @@ uesp.gamemap.Location.prototype.updatePath = function ()
 	if (this.pathElement == null)
 	{
 		var divSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
-		console.log(divSize);
-		
 		var divW = divSize.x;
 		var divH = divSize.y;
 		var yConstant = this.height;
@@ -534,7 +531,7 @@ uesp.gamemap.Location.prototype.updatePath = function ()
 			
 			if (co.isPointInPath(e.pageX - offset.left, e.pageY - offset.top) )
 			{
-				console.debug("clicked path");
+				uesp.logDebug(uesp.LOG_LEVEL_WARNING, "clicked path");
 			}
 		});
 		
@@ -550,7 +547,7 @@ uesp.gamemap.Location.prototype.updatePath = function ()
 		});
 		
 		this.pathElement.mousedown(function (e) {
-			console.debug("Canvas mousedown");
+			uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Canvas mousedown");
 			var bottomEvent = new $.Event("mousedown");
 	        
 	        bottomEvent.pageX = e.pageX;
@@ -621,7 +618,6 @@ uesp.gamemap.Location.prototype.updatePath = function ()
 				co.stroke();
 			}
 			
-			//console.debug('Is point in path: ' + (? 'YES' : 'NO'));
 		});
 	}
 	else
@@ -655,9 +651,9 @@ uesp.gamemap.Location.prototype.update = function ()
 }
 
 
-uesp.gamemap.createLocationFromJson = function(data, gameMap)
+uesp.gamemap.createLocationFromJson = function(data, parentMap)
 {
-	var newLocation = new uesp.gamemap.Location(gameMap);
+	var newLocation = new uesp.gamemap.Location(parentMap);
 	newLocation.mergeFromJson(data);
 	return newLocation;
 }
