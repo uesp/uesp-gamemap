@@ -420,13 +420,15 @@ uesp.gamemap.Location.prototype.updatePathSize = function ()
 	if (this.locType < uesp.gamemap.LOCTYPE_PATH) return;
 	if (this.pathElement == null) return;
 	
+	var pixelSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
+	this.pixelWidth  = pixelSize.x;
+	this.pixelHeight = pixelSize.y;
+	
 	this.pathElement.attr( { width: this.pixelWidth, height: this.pixelHeight });
 	
 	var context = this.pathElement[0].getContext('2d');
-	
 	context.translate(-this.x * this.pixelWidth / this.width, -this.x * this.pixelHeight / this.height);
 	context.scale(this.pixelWidth / this.width, this.pixelHeight / this.height);
-	
 	this.drawPath(context);
 }
 
@@ -492,72 +494,104 @@ uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 }
 
 
-uesp.gamemap.Location.prototype.updatePath = function ()
+uesp.gamemap.Location.prototype.createPath = function ()
 {
+	var divSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
+	var divW = divSize.x;
+	var divH = divSize.y;
 	
-	if (this.pathElement == null)
-	{
-		var pixelSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
-		this.pixelWidth  = pixelSize.x;
-		this.pixelHeight = pixelSize.y;
+	this.pathElement = $('<canvas />').addClass('gmMapPathCanvas')
+		.attr({'width': divW,'height': divH})
+		.on('selectstart', false)
+		.appendTo('#gmMapRoot');
+	
+	var context = this.pathElement[0].getContext('2d');
+	
+	context.translate(-this.x * divW / this.width, -this.x * divH / this.height);
+	context.scale(divW / this.width, divH / this.height);
+	
+	//this.drawPath(context);
+	
+	var self = this;
+	
+	this.pathElement.click(function (e) {
+		var ca = e.target;
+		var co = ca.getContext('2d');
+		var offset = $(ca).offset();
 		
-		var divSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
-		var divW = divSize.x;
-		var divH = divSize.y;
-		var yConstant = this.height;
+		if (co.isPointInPath(e.pageX - offset.left, e.pageY - offset.top) )
+		{
+			uesp.logDebug(uesp.LOG_LEVEL_WARNING, "clicked path");
+		}
+	});
+	
+	this.pathElement.dblclick(function (e) {
+		var bottomEvent = new $.Event("dblclick");
+        
+        bottomEvent.pageX = e.pageX;
+        bottomEvent.pageY = e.pageY;
+        
+        $(".gmMapTile:first").trigger(bottomEvent);
+        
+        return false;
+	});
+	
+	this.pathElement.mousedown(function (e) {
+		uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Canvas mousedown");
+		var bottomEvent = new $.Event("mousedown");
+        
+        bottomEvent.pageX = e.pageX;
+        bottomEvent.pageY = e.pageY;
+        
+        $(".gmMapTile:first").trigger(bottomEvent);
+        
+        return false;
+	});
+	
+	this.pathElement.mouseout(function (e) {
+		var ca = e.target;
+		var co = ca.getContext('2d');
 		
-		this.pathElement = $('<canvas />').addClass('gmMapPathCanvas')
-			.attr({'width': divW,'height': divH})
-			.on('selectstart', false)
-			.appendTo('#gmMapRoot');
+		if (self.locType != uesp.gamemap.LOCTYPE_PATH)
+		{
+			co.fillStyle = self.displayData.fillStyle;
+			co.fill();
+		}
+		else
+		{
+			co.fillStyle = 'rgba(255,0,0,0)';
+			co.fill();
+		}
 		
-		var c2 = this.pathElement[0].getContext('2d');
-		
-		c2.translate(-this.x * divW / this.width, -this.x * divH / this.height);
-		c2.scale(divW / this.width, divH / this.height);
-		
-		this.drawPath(c2);
-		
-		var self = this;
-		
-		this.pathElement.click(function (e) {
-			var ca = e.target;
-			var co = ca.getContext('2d');
-			var offset = $(ca).offset();
-			
-			if (co.isPointInPath(e.pageX - offset.left, e.pageY - offset.top) )
+		co.lineWidth = self.displayData.lineWidth;
+		co.strokeStyle = self.displayData.strokeStyle;
+		co.stroke();
+	});
+	
+	this.pathElement.mousemove(function (e) {
+		var ca = e.target;
+		var co = ca.getContext('2d');
+		var offset = $(ca).offset();
+
+		if (co.isPointInPath(e.pageX - offset.left, e.pageY - offset.top) )
+		{
+			if (self.locType != uesp.gamemap.LOCTYPE_PATH)
 			{
-				uesp.logDebug(uesp.LOG_LEVEL_WARNING, "clicked path");
+				co.fillStyle = self.displayData.hover.fillStyle;
+				co.fill();
 			}
-		});
-		
-		this.pathElement.dblclick(function (e) {
-			var bottomEvent = new $.Event("dblclick");
-	        
-	        bottomEvent.pageX = e.pageX;
-	        bottomEvent.pageY = e.pageY;
-	        
-	        $(".gmMapTile:first").trigger(bottomEvent);
-	        
-	        return false;
-		});
-		
-		this.pathElement.mousedown(function (e) {
-			uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Canvas mousedown");
-			var bottomEvent = new $.Event("mousedown");
-	        
-	        bottomEvent.pageX = e.pageX;
-	        bottomEvent.pageY = e.pageY;
-	        
-	        $(".gmMapTile:first").trigger(bottomEvent);
-	        
-	        return false;
-		});
-		
-		this.pathElement.mouseout(function (e) {
-			var ca = e.target;
-			var co = ca.getContext('2d');
+			else
+			{
+				co.fillStyle = 'rgba(255,0,0,0)';
+				co.fill();
+			}
 			
+			co.lineWidth = self.displayData.hover.lineWidth;
+			co.strokeStyle = self.displayData.hover.strokeStyle;
+			co.stroke();
+		}
+		else
+		{
 			if (self.locType != uesp.gamemap.LOCTYPE_PATH)
 			{
 				co.fillStyle = self.displayData.fillStyle;
@@ -572,52 +606,18 @@ uesp.gamemap.Location.prototype.updatePath = function ()
 			co.lineWidth = self.displayData.lineWidth;
 			co.strokeStyle = self.displayData.strokeStyle;
 			co.stroke();
-		});
+		}
 		
-		this.pathElement.mousemove(function (e) {
-			var ca = e.target;
-			var co = ca.getContext('2d');
-			var offset = $(ca).offset();
+	});
+}
 
-			if (co.isPointInPath(e.pageX - offset.left, e.pageY - offset.top) )
-			{
-				if (self.locType != uesp.gamemap.LOCTYPE_PATH)
-				{
-					co.fillStyle = self.displayData.hover.fillStyle;
-					co.fill();
-				}
-				else
-				{
-					co.fillStyle = 'rgba(255,0,0,0)';
-					co.fill();
-				}
-				
-				co.lineWidth = self.displayData.hover.lineWidth;
-				co.strokeStyle = self.displayData.hover.strokeStyle;
-				co.stroke();
-			}
-			else
-			{
-				if (self.locType != uesp.gamemap.LOCTYPE_PATH)
-				{
-					co.fillStyle = self.displayData.fillStyle;
-					co.fill();
-				}
-				else
-				{
-					co.fillStyle = 'rgba(255,0,0,0)';
-					co.fill();
-				}
-				
-				co.lineWidth = self.displayData.lineWidth;
-				co.strokeStyle = self.displayData.strokeStyle;
-				co.stroke();
-			}
-			
-		});
-	}
-	else
+
+uesp.gamemap.Location.prototype.updatePath = function ()
+{
+	
+	if (this.pathElement == null)
 	{
+		this.createPath();
 	}
 	
 	this.updatePathOffset();
