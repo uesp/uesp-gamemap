@@ -370,7 +370,6 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 						"<div class='gmMapPopupTitle'><a href='{wikiLink}'>{name}</a></div>" + 
 						"<div class='gmMapPopupPos'>Location: {x}, {y}</div>" +
 						"<div class='gmMapPopupPos'>Internal ID: {id}</div>" +
-						"<div class='gmMapPopupPos'>Destination ID: {destinationId}</div>" +
 						"<div class='gmMapPopupDesc'>{description}</div>";
 	
 	this.wikiLink = this.parentMap.mapOptions.wikiUrl + this.wikiPage;
@@ -391,6 +390,7 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 		popupDiv = this.popupElement.children[0];
 	}
 	
+	if (this.destinationId > 0) popupContent += "<div class='gmMapPopupPos'>Destination ID: {destinationId}</div>";
 	popupHtml = uesp.template2(popupContent, this, this.displayData);
 	
 	$(popupDiv).html(popupHtml);
