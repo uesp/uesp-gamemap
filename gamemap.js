@@ -427,6 +427,13 @@ uesp.gamemap.onMapTileLoadFunction = function (element, imageURL)
 }
 
 
+uesp.gamemap.Map.prototype.onJumpToDestinationLoad = function (eventData)
+{
+	if (eventData.destId == null) return;
+	this.jumpToDestination(eventData.destId);
+}
+
+
 uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
 {
 	if (destId <= 0) return;
@@ -434,8 +441,7 @@ uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
 	if (!this.hasLocation(destId))
 	{
 		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Don't have data for destination location #" + destId + "!");
-		this.retrieveLocation(destId);
-		//Bind event to teleport on load?
+		this.retrieveLocation(destId, this.onJumpToDestinationLoad, { destId: destId });
 		return;
 	}
 	
@@ -448,7 +454,6 @@ uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
 	newState.zoomLevel = this.currentZoom;
 	
 	this.changeWorld(destLoc.worldId, newState);
-	
 }
 
 
@@ -697,6 +702,7 @@ uesp.gamemap.Map.prototype.removeExtraLocations = function()
 	
 	for (key in this.locations)
 	{
+		if (this.locations[key].worldId != this.currentWorldId) continue;
 		if (this.locations[key].isInBounds(mapBounds)) continue;
 		
 		this.locations[key].removeElements();
@@ -706,7 +712,7 @@ uesp.gamemap.Map.prototype.removeExtraLocations = function()
 }
 
 
-uesp.gamemap.Map.prototype.retrieveLocation = function(locId)
+uesp.gamemap.Map.prototype.retrieveLocation = function(locId, onLoadFunction, eventData)
 {
 	if (locId <= 0) return;
 	
@@ -715,7 +721,10 @@ uesp.gamemap.Map.prototype.retrieveLocation = function(locId)
 	queryParams.action = "get_loc";
 	queryParams.locid  = locId;
 	
-	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveLocationData(data); });
+	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+			self.onReceiveLocationData(data); 
+			if ( !(onLoadFunction == null) ) onLoadFunction.call(self, eventData);
+		});
 	
 	return true;
 	
