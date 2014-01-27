@@ -11,6 +11,7 @@ uesp.gamemap.Map = function(worldName, mapOptions, worldId)
 	this.mapOptions = new uesp.gamemap.MapOptions(mapOptions);
 	
 	this.mapWorlds = {};
+	this.mapWorldNameIndex = {};
 	
 	if (worldName == null)
 	{
@@ -51,12 +52,25 @@ uesp.gamemap.Map = function(worldName, mapOptions, worldId)
 uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions, worldId)
 {
 	this.mapWorlds[worldId] = new uesp.gamemap.World(worldName.toLowerCase(), mapOptions, worldId);
+	this.mapWorldNameIndex[worldName.toLowerCase()] = worldId;
 }
 
 
-uesp.gamemap.Map.prototype.changeWorld = function (worldId, newState)
+uesp.gamemap.Map.prototype.changeWorld = function (world, newState)
 {
+	if (isNaN(world))
+	{
+		worldName = decodeURIComponent(world).toLowerCase();
+		if ( !(worldName in this.mapWorldNameIndex) ) return uesp.logError("Unknown world '" + worldName + "' received!"); 
+		worldId = this.mapWorldNameIndex[worldName];
+	}
+	else
+	{
+		worldId = world;
+	}
+	
 	if (worldId == this.currentWorldId) return;
+	if (worldId <= 0) return uesp.logError("Unknown world #" + worldId + " received!");
 	
 	if (this.currentWorldId in this.mapWorlds)
 	{
@@ -985,7 +999,19 @@ uesp.gamemap.Map.prototype.updateMapStateFromQuery = function (updateMap)
 	if ( ! (this.queryParams.x     == null)) gameX   = parseInt(this.queryParams.x);
 	if ( ! (this.queryParams.y     == null)) gameY   = parseInt(this.queryParams.y);
 	if ( ! (this.queryParams.zoom  == null)) zoom    = parseInt(this.queryParams.zoom);
-	if ( ! (this.queryParams.world == null)) worldId = parseInt(this.queryParams.world);
+	
+	if ( ! (this.queryParams.world == null))
+	{
+		if (isNaN(this.queryParams.world))
+		{
+			worldName = decodeURIComponent(this.queryParams.world).toLowerCase();
+			if (worldName in this.mapWorldNameIndex) worldId = this.mapWorldNameIndex[worldName];
+		}
+		else
+		{
+			worldId = parseInt(this.queryParams.world);
+		}
+	}
 
 	var newState = new uesp.gamemap.MapState();
 	
