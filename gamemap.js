@@ -379,6 +379,12 @@ uesp.gamemap.Map.prototype.getMapState = function()
 }
 
 
+uesp.gamemap.Map.prototype.hasLocation = function(locId)
+{
+	return locId in this.locations;
+}
+
+
 uesp.gamemap.Map.prototype.isGamePosInBounds = function(gamePos)
 {
 	if (uesp.gamemap.isNullorUndefined(gamePos.x) || uesp.gamemap.isNullorUndefined(gamePos.y)) return false;
@@ -418,6 +424,31 @@ uesp.gamemap.onMapTileLoadFunction = function (element, imageURL)
 		$(this).remove();
 		element.css('background-image', 'url(' + imageURL + ')');
 	};
+}
+
+
+uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
+{
+	if (destId <= 0) return;
+	
+	if (!this.hasLocation(destId))
+	{
+		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Don't have data for destination location #" + destId + "!");
+		this.retrieveLocation(destId);
+		//Bind event to teleport on load?
+		return;
+	}
+	
+	var newState = new uesp.gamemap.MapState;
+	var destLoc  = this.locations[destId];
+	
+	newState.worldId = destLoc.worldId;
+	newState.gamePos.x = destLoc.x;
+	newState.gamePos.y = destLoc.y;
+	newState.zoomLevel = this.currentZoom;
+	
+	this.changeWorld(destLoc.worldId, newState);
+	
 }
 
 

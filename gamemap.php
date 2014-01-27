@@ -23,6 +23,7 @@ class GameMap
 	
 	public $action = 'default';
 	public $world = '';
+	public $locid = 0;
 	
 	public $limitBottom = 0;
 	public $limitTop    = 1000;
@@ -124,6 +125,8 @@ class GameMap
 				return $this->doGetWorlds();
 			case 'get_locs':
 				return $this->doGetLocations();
+			case 'get_loc':
+					return $this->doGetLocation();
 			case 'default':
 			default:
 				break;
@@ -168,6 +171,7 @@ class GameMap
 			settype($row['id'], "integer");
 			settype($row['worldId'], "integer");
 			settype($row['revisionId'], "integer");
+			settype($row['destinationId'], "integer");
 			settype($row['locType'], "integer");
 			settype($row['x'], "integer");
 			settype($row['y'], "integer");
@@ -184,6 +188,46 @@ class GameMap
 		$this->addOutputItem("locationCount", $count);
 		return true;
 	}
+	
+	
+	public function doGetLocation ()
+	{
+		if ($this->locid === 0) return $this->reportError("No location specified to retrieve data for!");
+		if (!$this->initDatabase()) return false;
+	
+		$query  = "SELECT * from location WHERE visible <> 0 AND id=".$this->locid." ";
+		$query .= " LIMIT 1";
+	
+		$result = mysql_query($query);
+		if ($result === FALSE) return $this->reportError("Failed to retrieve location data!" . $result);
+	
+		$locations = Array();
+		$count = 0;
+	
+		while ( ($row = mysql_fetch_assoc($result)) )
+		{
+			settype($row['id'], "integer");
+			settype($row['worldId'], "integer");
+			settype($row['destinationId'], "integer");
+			settype($row['revisionId'], "integer");
+			settype($row['locType'], "integer");
+			settype($row['x'], "integer");
+			settype($row['y'], "integer");
+			settype($row['width'], "integer");
+			settype($row['height'], "integer");
+			settype($row['displayLevel'], "integer");
+			settype($row['visible'], "integer");
+				
+			$locations[] = $row;
+			$count += 1;
+			break;
+		}
+	
+		$this->addOutputItem("locations", $locations);
+		$this->addOutputItem("locationCount", $count);
+		return true;
+	}
+	
 	
 	public function doGetWorlds ()
 	{
@@ -254,6 +298,7 @@ class GameMap
 		if (array_key_exists('bottom', $this->inputParams)) $this->limitBottom = intval(mysql_real_escape_string($this->inputParams['bottom']));
 		if (array_key_exists('right',  $this->inputParams)) $this->limitRight  = intval(mysql_real_escape_string($this->inputParams['right']));
 		if (array_key_exists('zoom',   $this->inputParams)) $this->limitDisplayLevel = intval(mysql_real_escape_string($this->inputParams['zoom']));
+		if (array_key_exists('locid',  $this->inputParams)) $this->locid = intval(mysql_real_escape_string($this->inputParams['locid']));
 		
 		if ($this->limitTop < $this->limitBottom)
 		{

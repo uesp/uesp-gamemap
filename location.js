@@ -332,9 +332,10 @@ uesp.gamemap.onCloseLocationPopup = function(element)
 }
 
 
-uesp.gamemap.onJumpToDestination = function(destId)
+uesp.gamemap.Location.prototype.onJumpToDestination = function(destId)
 {
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Jumping to destinationId " + destId);
+	this.parentMap.jumpToDestination(destId);
 	return false;
 }
 
@@ -369,14 +370,29 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 	
 	popupHtml = uesp.template2(popupContent, this, this.displayData);
 	
+	$(popupDiv).html(popupHtml);
+	
 	if (this.destinationId > 0)
 	{
-		var destContent = "<div class='gmMapPopupDesc'><a href='' onclick='return uesp.gamemap.onJumpToDestination({destinationId});'>Jump to Destination</a></div>";
-		popupHtml += uesp.template2(destContent, this, this.displayData);
-		this.parentMap.loadLocation(this.destinationId);
+		if (!this.parentMap.hasLocation(this.destinationId)) this.parentMap.retrieveLocation(this.destinationId);
+		
+		var self = this;
+		
+		newDiv = $('<div />').addClass('gmMapPopupDesc')
+				.appendTo(popupDiv);
+		
+		$('<a></a>').attr('href', '#')
+				.html('Jump To Destination')
+				.click(function(event) {
+					self.onJumpToDestination(self.destinationId);
+					event.preventDefault();
+					return false;
+				})
+				.appendTo(newDiv);
+		
+		//var destContent = "<div class='gmMapPopupDesc'><a href='' onclick='return uesp.gamemap.onJumpToDestination({destinationId});'>Jump to Destination</a></div>";
+		//popupHtml += uesp.template2(destContent, this, this.displayData);
 	}
-	
-	$(popupDiv).html(popupHtml);
 	
 	this.updatePopupOffset();
 }
@@ -609,7 +625,7 @@ uesp.gamemap.Location.prototype.createPath = function ()
 	var divW = divSize.x;
 	var divH = divSize.y;
 	
-	this.pathElement = $('<canvas />').addClass('gmMapPathCanvas')
+	this.pathElement = $('<canvas></canvas>').addClass('gmMapPathCanvas')
 		.attr({'width': divW,'height': divH})
 		.on('selectstart', false)
 		.appendTo('#gmMapRoot');
