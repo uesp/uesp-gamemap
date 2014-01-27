@@ -11,8 +11,10 @@ uesp.gamemap.LOCTYPE_PATH  = 2;
 uesp.gamemap.LOCTYPE_AREA  = 3;
 
 
-uesp.gamemap.Location = function()
+uesp.gamemap.Location = function(parentMap)
 {
+	this.parentMap = parentMap;
+	
 	this.id = -1;
 	this.worldId = -1;
 	this.revisionId = -1;
@@ -259,12 +261,12 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 }
 
 
-uesp.gamemap.Location.prototype.updateIcon = function (mapOptions)
+uesp.gamemap.Location.prototype.updateIcon = function ()
 {
 	if (this.displayData.iconType == null) return;
 	
-	var missingURL = mapOptions.iconPath + mapOptions.iconMissing;
-	var imageURL   = mapOptions.iconPath + this.displayData.iconType + ".png";
+	var missingURL = this.parentMap.mapOptions.iconPath + this.parentMap.mapOptions.iconMissing;
+	var imageURL   = this.parentMap.mapOptions.iconPath + this.displayData.iconType + ".png";
 	
 	if (this.iconElement == null)
 	{	
@@ -330,6 +332,13 @@ uesp.gamemap.onCloseLocationPopup = function(element)
 }
 
 
+uesp.gamemap.onJumpToDestination = function(destId)
+{
+	console.debug("Jumping to destinationId " + destId);
+	return false;
+}
+
+
 uesp.gamemap.Location.prototype.updatePopup = function ()
 {
 	var popupDiv;
@@ -337,6 +346,7 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 						"<div class='gmMapPopupTitle'><a href='{wikiLink}'>{name}</a></div>" + 
 						"<div class='gmMapPopupPos'>Location: {x}, {y}</div>" +
 						"<div class='gmMapPopupPos'>Internal ID: {id}</div>" +
+						"<div class='gmMapPopupPos'>Destination ID: {destinationId}</div>" +
 						"<div class='gmMapPopupDesc'>{description}</div>";
 	
 	if (this.popupElement == null)
@@ -356,6 +366,13 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 	}
 	
 	popupHtml = uesp.template2(popupContent, this, this.displayData);
+	
+	if (this.destinationId > 0)
+	{
+		var destContent = "<div class='gmMapPopupDesc'><a href='' onclick='return uesp.gamemap.onJumpToDestination({destinationId});'>Jump to Destination</a></div>";
+		popupHtml += uesp.template2(destContent, this, this.displayData);
+	}
+	
 	$(popupDiv).html(popupHtml);
 	
 	this.updatePopupOffset();
@@ -398,7 +415,7 @@ uesp.gamemap.Location.prototype.updatePathOffset = function ()
 
 uesp.gamemap.Location.prototype.updatePathSize = function ()
 {
-	if (this.locType <= 1) return;
+	if (this.locType < uesp.gamemap.LOCTYPE_PATH) return;
 	if (this.pathElement == null) return;
 	
 	this.pathElement.attr( { width: this.pixelWidth, height: this.pixelHeight });
@@ -416,7 +433,11 @@ uesp.gamemap.Location.prototype.drawPath = function (context)
 {
 	var i = 0;
 	
+	context.clearRect(this.x, this.y, this.width, this.height);
 	context.globalCompositeOperation = 'destination-atop';
+	context.lineWidth = this.displayData.lineWidth;
+	context.strokeStyle = this.displayData.strokeStyle;
+	//console.debug(context.lineWidth, context.strokeStyle);
 	
 	while (i + 1 < this.displayData.points.length)
 	{
@@ -428,10 +449,17 @@ uesp.gamemap.Location.prototype.drawPath = function (context)
 		i += 2;
 	}
 	
-	context.closePath();
-	
-	context.fillStyle = this.displayData.fillStyle;
-	context.fill();
+	if (this.locType == uesp.gamemap.LOCTYPE_AREA)
+	{
+		context.closePath();
+		context.fillStyle = this.displayData.fillStyle;
+		context.fill();
+	}
+	else
+	{
+		context.fillStyle = 'rgba(255,0,0,0)';
+		context.fill();
+	}
 	
 	context.lineWidth = this.displayData.lineWidth;
 	context.strokeStyle = this.displayData.strokeStyle;
@@ -439,11 +467,11 @@ uesp.gamemap.Location.prototype.drawPath = function (context)
 }
 
 
-uesp.gamemap.Location.prototype.updateData = function (gameMap)
+uesp.gamemap.Location.prototype.updateData = function ()
 {
-	this.wikiLink = gameMap.mapOptions.wikiUrl + this.wikiPage;
+	this.wikiLink = this.parentMap.mapOptions.wikiUrl + this.wikiPage;
 	
-	var pixelSize = gameMap.convertGameToPixelSize(this.width, this.height);
+	var pixelSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
 	this.pixelWidth  = pixelSize.x;
 	this.pixelHeight = pixelSize.y;
 }
@@ -473,12 +501,12 @@ uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 }
 
 
-uesp.gamemap.Location.prototype.updatePath = function (gameMap)
+uesp.gamemap.Location.prototype.updatePath = function ()
 {
 	
 	if (this.pathElement == null)
 	{
-		var divSize = gameMap.convertGameToPixelSize(this.width, this.height);
+		var divSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
 		console.log(divSize);
 		
 		var divW = divSize.x;
@@ -508,7 +536,6 @@ uesp.gamemap.Location.prototype.updatePath = function (gameMap)
 			{
 				console.debug("clicked path");
 			}
-
 		});
 		
 		this.pathElement.dblclick(function (e) {
@@ -536,9 +563,22 @@ uesp.gamemap.Location.prototype.updatePath = function (gameMap)
 		
 		this.pathElement.mouseout(function (e) {
 			var ca = e.target;
-			var co = ca.getContext('2d')
-			co.fillStyle = self.displayData.fillStyle;
-			co.fill();
+			var co = ca.getContext('2d');
+			
+			if (self.locType != uesp.gamemap.LOCTYPE_PATH)
+			{
+				co.fillStyle = self.displayData.fillStyle;
+				co.fill();
+			}
+			else
+			{
+				co.fillStyle = 'rgba(255,0,0,0)';
+				co.fill();
+			}
+			
+			co.lineWidth = self.displayData.lineWidth;
+			co.strokeStyle = self.displayData.strokeStyle;
+			co.stroke();
 		});
 		
 		this.pathElement.mousemove(function (e) {
@@ -548,13 +588,37 @@ uesp.gamemap.Location.prototype.updatePath = function (gameMap)
 
 			if (co.isPointInPath(e.pageX - offset.left, e.pageY - offset.top) )
 			{
-				co.fillStyle = self.displayData.hover.fillStyle;
-				co.fill();
+				if (self.locType != uesp.gamemap.LOCTYPE_PATH)
+				{
+					co.fillStyle = self.displayData.hover.fillStyle;
+					co.fill();
+				}
+				else
+				{
+					co.fillStyle = 'rgba(255,0,0,0)';
+					co.fill();
+				}
+				
+				co.lineWidth = self.displayData.hover.lineWidth;
+				co.strokeStyle = self.displayData.hover.strokeStyle;
+				co.stroke();
 			}
 			else
 			{
-				co.fillStyle = self.displayData.fillStyle;
-				co.fill();
+				if (self.locType != uesp.gamemap.LOCTYPE_PATH)
+				{
+					co.fillStyle = self.displayData.fillStyle;
+					co.fill();
+				}
+				else
+				{
+					co.fillStyle = 'rgba(255,0,0,0)';
+					co.fill();
+				}
+				
+				co.lineWidth = self.displayData.lineWidth;
+				co.strokeStyle = self.displayData.strokeStyle;
+				co.stroke();
 			}
 			
 			//console.debug('Is point in path: ' + (? 'YES' : 'NO'));
@@ -569,31 +633,31 @@ uesp.gamemap.Location.prototype.updatePath = function (gameMap)
 }
 
 
-uesp.gamemap.Location.prototype.update = function (gameMap)
+uesp.gamemap.Location.prototype.update = function ()
 {
 	if (this.locType == uesp.gamemap.LOCTYPE_POINT)
 	{
 		this.updateLabel();
-		this.updateIcon(gameMap.mapOptions);
+		this.updateIcon();
 	}
 	else if (this.locType == uesp.gamemap.LOCTYPE_PATH)
 	{
 		this.updateLabel();
-		this.updateIcon(gameMap.mapOptions);
-		this.updatePath(gameMap);
+		this.updateIcon();
+		this.updatePath();
 	}
 	else if (this.locType == uesp.gamemap.LOCTYPE_AREA)
 	{
 		this.updateLabel();
-		this.updateIcon(gameMap.mapOptions);
-		this.updatePath(gameMap);
+		this.updateIcon();
+		this.updatePath();
 	}
 }
 
 
-uesp.gamemap.createLocationFromJson = function(data)
+uesp.gamemap.createLocationFromJson = function(data, gameMap)
 {
-	var newLocation = new uesp.gamemap.Location();
+	var newLocation = new uesp.gamemap.Location(gameMap);
 	newLocation.mergeFromJson(data);
 	return newLocation;
 }
