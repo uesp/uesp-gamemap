@@ -275,7 +275,6 @@ uesp.gamemap.Map.prototype.displayLocation = function (location)
 	location.offsetLeft = pixelPos.x;
 	location.offsetTop  = pixelPos.y;
 	
-	location.updateData();
 	location.update();
 }
 
@@ -612,7 +611,6 @@ uesp.gamemap.Map.prototype.onReceiveLocationData = function (data)
 			this.locations[location.id].mergeFromJson(location);
 		}
 		
-		this.locations[location.id].updateData();
 		this.displayLocation(this.locations[location.id]);
 	}
 	
@@ -908,7 +906,6 @@ uesp.gamemap.Map.prototype.shiftLocations = function (deltaX, deltaY)
 uesp.gamemap.Map.prototype.updateLocations = function(animate)
 {
 	this.removeExtraLocations();
-	this.updateLocationData();
 	this.updateLocationDisplayLevels();
 	this.updateLocationOffsets(animate);
 	this.redrawLocationPaths();
@@ -921,15 +918,6 @@ uesp.gamemap.Map.prototype.redrawLocationPaths = function()
 	for (key in this.locations)
 	{
 		if (this.locations[key].locType >= uesp.gamemap.LOCTYPE_PATH) this.locations[key].updatePathSize();
-	}
-}
-
-
-uesp.gamemap.Map.prototype.updateLocationData = function()
-{
-	for (key in this.locations)
-	{
-		this.locations[key].updateData();
 	}
 }
 
