@@ -118,6 +118,11 @@ uesp.gamemap.Location.prototype.removeElements = function ()
 	if ( !(this.iconElement  == null)) $(this.iconElement).remove();
 	if ( !(this.popupElement == null)) $(this.popupElement).remove();
 	if ( !(this.pathElement  == null)) $(this.pathElement).remove();
+	
+	this.labelElement = null;
+	this.iconElement  = null;
+	this.popupElement = null;
+	this.pathElement  = null;
 }
 
 

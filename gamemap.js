@@ -40,6 +40,8 @@ uesp.gamemap.Map = function(worldName, mapOptions, worldId)
 	
 	this.queryParams = uesp.parseQueryParams();
 	
+	this.retrieveWorldData();
+	
 	this.createMapContainer();
 	this.createMapTiles();
 	this.createEvents();
@@ -80,6 +82,8 @@ uesp.gamemap.Map.prototype.changeWorld = function (world, newState)
 	
 	if (worldId in this.mapWorlds)
 	{
+		this.clearLocationElements();
+		
 		this.currentWorldId = worldId;
 		this.mapOptions = this.mapWorlds[this.currentWorldId].mapOptions;
 		
@@ -135,12 +139,17 @@ uesp.gamemap.Map.prototype.checkTileEdges = function ()
 
 uesp.gamemap.Map.prototype.clearLocations = function()
 {
+	this.clearLocationElements();
+	this.locations = {};
+}
+
+
+uesp.gamemap.Map.prototype.clearLocationElements = function()
+{
 	for (key in this.locations)
 	{
 		this.locations[key].removeElements();
 	}
-	
-	this.locations = {};
 }
 
 
@@ -667,7 +676,7 @@ uesp.gamemap.Map.prototype.onReceiveLocationData = function (data)
 uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 {
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received world data");
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, data);
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, data);
 	
 	if (!uesp.gamemap.isNullorUndefined(data.isError)) return uesp.logError("Error retrieving world data!", data.errorMsg);
 	if (uesp.gamemap.isNullorUndefined(data.worlds))   return uesp.logError("World data not found in JSON response!", data);
@@ -676,7 +685,7 @@ uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 	{
 		var world = data.worlds[key];
 		
-		uesp.logDebug(uesp.LOG_LEVEL_ERROR, world);
+		uesp.logDebug(uesp.LOG_LEVEL_WARNING, world);
 		if (uesp.gamemap.isNullorUndefined(world.name)) continue;
 		
 		if (uesp.gamemap.isNullorUndefined(this.mapWorlds[world.name]))
