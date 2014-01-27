@@ -9,5 +9,5 @@ uesp.gamemap.MapState = function()
 {
 	this.zoomLevel = 10;
 	this.gamePos = new uesp.gamemap.Position(0, 0);
-	this.worldName = "__default";
+	this.worldId = 0;
 }

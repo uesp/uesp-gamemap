@@ -12,13 +12,7 @@ uesp.gamemap.World = function(worldName, mapOptions, worldId)
 	
 	this.mapOptions = new uesp.gamemap.MapOptions(mapOptions);
 	
-	this.mapState = new uesp.gamemap.MapState();
-	this.mapState.worldName = this.name;
-	this.mapState.gamePos.x = this.mapOptions.initialGamePosX;
-	this.mapState.gamePos.y = this.mapOptions.initialGamePosY;
-	this.mapState.zoomLevel = this.mapOptions.initialZoom;
-	
-	this.id = uesp.gamemap.isNullorUndefined(worldId) ? -1 : worldId;
+	this.id = (worldId == null) ? 0 : worldId;
 	this.description = '';
 	this.wiki_page ='';
 	this.cell_size = -1;
@@ -29,6 +23,12 @@ uesp.gamemap.World = function(worldName, mapOptions, worldId)
 	this.pos_right = this.mapOptions.gamePosX2;
 	this.pos_bottom = this.mapOptions.gamePosY2;
 	this.enabled = true;
+	
+	this.mapState = new uesp.gamemap.MapState();
+	this.mapState.worldId = this.id;
+	this.mapState.gamePos.x = this.mapOptions.initialGamePosX;
+	this.mapState.gamePos.y = this.mapOptions.initialGamePosY;
+	this.mapState.zoomLevel = this.mapOptions.initialZoom;
 }
 
 

@@ -12,13 +12,13 @@ uesp.gamemap.Map = function(worldName, mapOptions, worldId)
 	
 	this.mapWorlds = {};
 	
-	if (uesp.gamemap.isNullorUndefined(worldName))
+	if (worldName == null)
 	{
-		this.currentWorldName = "__default";
-		this.addWorld(this.currentWorldName, mapOptions, worldId);
+		this.currentWorldId = 0;
+		this.addWorld('__default', mapOptions, this.currentWorldId);
 	} else {
-		this.currentWorldName = worldName.toLowerCase();
-		this.addWorld(this.currentWorldName, mapOptions, worldId);
+		this.currentWorldId = worldId;
+		this.addWorld(worldName.toLowerCase(), mapOptions, worldId);
 	}
 	
 	this.locations = {};
@@ -50,33 +50,35 @@ uesp.gamemap.Map = function(worldName, mapOptions, worldId)
 
 uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions, worldId)
 {
-	worldName = worldName.toLowerCase();
-	this.mapWorlds[worldName] = new uesp.gamemap.World(worldName, mapOptions, worldId);
+	this.mapWorlds[worldId] = new uesp.gamemap.World(worldName.toLowerCase(), mapOptions, worldId);
 }
 
 
-uesp.gamemap.Map.prototype.changeWorld = function (worldName, newState)
+uesp.gamemap.Map.prototype.changeWorld = function (worldId, newState)
 {
-	worldName = worldName.toLowerCase();
-	if (worldName == this.currentWorldName) return;
+	if (worldId == this.currentWorldId) return;
 	
-	if (!uesp.gamemap.isNullorUndefined(this.mapWorlds[this.currentWorldName]))
+	if (this.currentWorldId in this.mapWorlds)
 	{
-		this.mapWorlds[this.currentWorldName].mapState   = this.getMapState();
-		this.mapWorlds[this.currentWorldName].mapOptions = this.mapOptions;
+		this.mapWorlds[this.currentWorldId].mapState   = this.getMapState();
+		this.mapWorlds[this.currentWorldId].mapOptions = this.mapOptions;
 	}
 	
-	if (!uesp.gamemap.isNullorUndefined(this.mapWorlds[worldName]))
+	if (worldId in this.mapWorlds)
 	{
 		this.clearLocations();
 		
-		this.currentWorldName = worldName;
-		this.mapOptions = this.mapWorlds[this.currentWorldName].mapOptions;
+		this.currentWorldId = worldId;
+		this.mapOptions = this.mapWorlds[this.currentWorldId].mapOptions;
 		
-		if (uesp.gamemap.isNullorUndefined(newState))
-			this.setMapState(this.mapWorlds[this.currentWorldName].mapState);
+		if (newState == null)
+			this.setMapState(this.mapWorlds[this.currentWorldId].mapState);
 		else
 			this.setMapState(newState);
+	}
+	else
+	{
+		uesp.logError("Unknown world ID " + worldId + "!");
 	}
 	
 }
@@ -270,6 +272,8 @@ uesp.gamemap.onLoadIconFailed = function(missingURL)
 
 uesp.gamemap.Map.prototype.displayLocation = function (location)
 {
+	if (location.worldId != this.currentWorldId) return;
+	
 	pixelPos = this.convertGameToPixelPos(location.x, location.y);
 	
 	location.offsetLeft = pixelPos.x;
@@ -305,13 +309,6 @@ uesp.gamemap.Map.prototype.getGamePositionOfCenter = function()
 	tileY = rootCenterY / this.mapOptions.tileSize + this.startTileY;
 	
 	return this.convertTileToGamePos(tileX, tileY);
-}
-
-
-uesp.gamemap.Map.prototype.getWorldId = function()
-{
-	if (this.currentWorldName in this.mapWorlds) return this.mapWorlds[this.currentWorldName].id;
-	return -1;
 }
 
 
@@ -362,7 +359,7 @@ uesp.gamemap.Map.prototype.getMapState = function()
 	
 	mapState.zoomLevel = this.zoomLevel;
 	mapState.gamePos   = this.getGamePositionOfCenter();
-	mapState.worldName = this.currentWorldName;
+	mapState.worldId   = this.currentWorldId;
 	
 	return mapState;
 }
@@ -664,6 +661,22 @@ uesp.gamemap.Map.prototype.removeExtraLocations = function()
 }
 
 
+uesp.gamemap.Map.prototype.retrieveLocation = function(locId)
+{
+	if (locId <= 0) return;
+	
+	var self = this;
+	var queryParams = {};
+	queryParams.action = "get_loc";
+	queryParams.locid  = locId;
+	
+	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveLocationData(data); });
+	
+	return true;
+	
+}
+
+
 uesp.gamemap.Map.prototype.retrieveLocations = function()
 {
 	var self = this;
@@ -671,14 +684,14 @@ uesp.gamemap.Map.prototype.retrieveLocations = function()
 	
 	var queryParams = {};
 	queryParams.action = "get_locs";
-	queryParams.world  = this.getWorldId();
+	queryParams.world  = this.currentWorldId;
 	queryParams.top    = mapBounds.top;
 	queryParams.bottom = mapBounds.bottom;
 	queryParams.left   = mapBounds.left;
 	queryParams.right  = mapBounds.right;
 	queryParams.zoom   = this.zoomLevel;
 	
-	if (queryParams.world <= 0) return uesp.logError("Unknown worldId for current world '" + this.currentWorldName + "'!");
+	if (queryParams.world <= 0) return uesp.logError("Unknown worldId for current world " + this.currentWorldId + "!");
 	
 	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveLocationData(data); });
 	
@@ -794,13 +807,12 @@ uesp.gamemap.Map.prototype.setGameZoom = function(zoom)
 
 uesp.gamemap.Map.prototype.setMapState = function (newState, updateMap)
 {
-	if (uesp.gamemap.isNullorUndefined(newState)) return;
-	
+	if (newState == null) return;
 	if (updateMap == null) updateMap = true;
 	
-	if (this.currentWorldName != newState.worldName)
+	if (this.currentWorldId != newState.worldId)
 	{
-		this.changeWorld(newState.worldName, newState, updateMap);
+		this.changeWorld(newState.worldId, newState, updateMap);
 	}
 	else
 	{
@@ -965,21 +977,22 @@ uesp.gamemap.Map.prototype.updateMap = function()
 uesp.gamemap.Map.prototype.updateMapStateFromQuery = function (updateMap)
 {
 	var gamePos = this.getGamePositionOfCenter();
-	var gameX = gamePos.x;
-	var gameY = gamePos.y;
-	var zoom  = this.currentZoom;
-	var world = this.currentWorldName;
+	var gameX   = gamePos.x;
+	var gameY   = gamePos.y;
+	var zoom    = this.currentZoom;
+	var worldId = this.currentWorldId;
 	
-	if ( ! (this.queryParams.x     == null)) gameX = parseInt(this.queryParams.x);
-	if ( ! (this.queryParams.y     == null)) gameY = parseInt(this.queryParams.y);
-	if ( ! (this.queryParams.zoom  == null)) zoom  = parseInt(this.queryParams.zoom);
-	if ( ! (this.queryParams.world == null)) world = decodeURIComponent(this.queryParams.world);
+	if ( ! (this.queryParams.x     == null)) gameX   = parseInt(this.queryParams.x);
+	if ( ! (this.queryParams.y     == null)) gameY   = parseInt(this.queryParams.y);
+	if ( ! (this.queryParams.zoom  == null)) zoom    = parseInt(this.queryParams.zoom);
+	if ( ! (this.queryParams.world == null)) worldId = parseInt(this.queryParams.world);
 
 	var newState = new uesp.gamemap.MapState();
+	
 	newState.gamePos.x = gameX;
 	newState.gamePos.y = gameY;
 	newState.zoomLevel = zoom;
-	newState.worldName = world;
+	newState.worldId   = worldId;
 	
 	this.setMapState(newState, updateMap);
 }
