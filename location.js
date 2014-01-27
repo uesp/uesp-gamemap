@@ -166,15 +166,32 @@ uesp.gamemap.Location.prototype.shiftElements = function (shiftX, shiftY)
 }
 
 
+uesp.gamemap.Location.prototype.onLabelClick = function()
+{
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Label Click", self);
+	this.togglePopup();
+}
+
+
+uesp.gamemap.Location.prototype.onLabelDblClick = function()
+{
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Label Double-Click", self);
+	
+	if (this.destinationId > 0) this.onJumpToDestination(); 
+}
+
+
 uesp.gamemap.Location.prototype.onLabelClickFunction = function()
 {
 	var self = this;
-	
-	return function()
-	{
-		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Label Click", self);
-		self.togglePopup();
-	};
+	return function() { self.onLabelClick(); };
+}
+
+
+uesp.gamemap.Location.prototype.onLabelDblClickFunction = function()
+{
+	var self = this;
+	return function() { self.onLabelDblClick(); }
 }
 
 
@@ -187,6 +204,7 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 		this.labelElement = $('<div />').addClass('gmMapLoc')
 			.appendTo('#gmMapRoot')
 			.click(this.onLabelClickFunction())
+			.dblclick(this.onLabelDblClickFunction())
 			.attr('unselectable', 'on')
 			.css('user-select', 'none')
 			.on('selectstart', false);
@@ -332,10 +350,10 @@ uesp.gamemap.onCloseLocationPopup = function(element)
 }
 
 
-uesp.gamemap.Location.prototype.onJumpToDestination = function(destId)
+uesp.gamemap.Location.prototype.onJumpToDestination = function()
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Jumping to destinationId " + destId);
-	this.parentMap.jumpToDestination(destId);
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Jumping to destinationId " + this.destinationId);
+	this.parentMap.jumpToDestination( this.destinationId);
 	return false;
 }
 
@@ -384,14 +402,12 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 		$('<a></a>').attr('href', '#')
 				.html('Jump To Destination')
 				.click(function(event) {
-					self.onJumpToDestination(self.destinationId);
+					self.onJumpToDestination();
 					event.preventDefault();
 					return false;
 				})
 				.appendTo(newDiv);
 		
-		//var destContent = "<div class='gmMapPopupDesc'><a href='' onclick='return uesp.gamemap.onJumpToDestination({destinationId});'>Jump to Destination</a></div>";
-		//popupHtml += uesp.template2(destContent, this, this.displayData);
 	}
 	
 	this.updatePopupOffset();
