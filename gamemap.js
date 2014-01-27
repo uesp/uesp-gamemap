@@ -467,9 +467,12 @@ uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
 
 uesp.gamemap.Map.prototype.loadMapTiles = function()
 {
-	if (uesp.gamemap.isNullorUndefined(this.mapOptions.getMapTileFunction)) return;
+	if (this.mapOptions.getMapTileFunction == null) return;
 	
+	var worldName = "__default";
 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
+	
+	if (this.currentWorldId in this.mapWorlds) worldName = this.mapWorlds[this.currentWorldId].name;
 			
 	for (var y = 0; y < this.mapOptions.tileCountY; ++y)
 	{
@@ -484,7 +487,7 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 				continue;
 			}
 			
-			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel);
+			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
 			var element  = this.mapTiles[y][x].element;
 			
 			$('<img/>').attr('src', imageURL)

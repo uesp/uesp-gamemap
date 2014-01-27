@@ -30,3 +30,18 @@ Locations
 World
 	- Better handling of worldId/worldName
 	- Proper getting of world data somehow
+	
+	
+Basic Features
+	- Search
+	- Table display
+	- In-map controls
+	- Mobile usability
+	- Edit capability
+		- Permissions
+		- Revisions
+		- Recent changes/history
+		- Patrols/reverts
+	- Wiki extensiony
+
+

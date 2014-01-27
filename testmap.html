@@ -67,12 +67,12 @@
 			g_GameMap.updateMapStateFromQuery(true);
 		});
 
-		function getSkyrimMapTile(xPos, yPos, zoom)
+		function getSkyrimMapTile(xPos, yPos, zoom, worldName)
 		{
 			return "http://content3.uesp.net/maps2/srmap/color/zoom" + zoom + "/skyrim-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
 		}
 		
-		function getDBMapTile(xPos, yPos, zoom)
+		function getDBMapTile(xPos, yPos, zoom, worldName)
 		{
 			return "http://content3.uesp.net/maps2/dbmap/zoom" + zoom + "/solstheim-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
 		}
