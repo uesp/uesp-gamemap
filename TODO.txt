@@ -17,6 +17,7 @@ Game Map
 	- Update tiles/locations during pan animation
 	- Proper handling of +/- coordinate systems (especially for paths)
 	- Shortcut keys
+	- Better/easier setting of conversion from game to pixel coordinates
 
 
 Locations
