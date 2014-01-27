@@ -373,6 +373,7 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 	{
 		var destContent = "<div class='gmMapPopupDesc'><a href='' onclick='return uesp.gamemap.onJumpToDestination({destinationId});'>Jump to Destination</a></div>";
 		popupHtml += uesp.template2(destContent, this, this.displayData);
+		this.parentMap.loadLocation(this.destinationId);
 	}
 	
 	$(popupDiv).html(popupHtml);
