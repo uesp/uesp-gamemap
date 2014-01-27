@@ -983,9 +983,6 @@ uesp.gamemap.Map.prototype.updateMapStateFromQuery = function (updateMap)
 	newState.worldName = world;
 	
 	this.setMapState(newState, updateMap);
-	
-	//this.setGamePosNoUpdate(gameX, gameY, zoom);
-	//if (updateMap === true) this.updateMap();
 }
 
 
