@@ -275,8 +275,8 @@ uesp.gamemap.Map.prototype.displayLocation = function (location)
 	location.offsetLeft = pixelPos.x;
 	location.offsetTop  = pixelPos.y;
 	
-	location.updateData(this);
-	location.update(this);
+	location.updateData();
+	location.update();
 }
 
 
@@ -605,14 +605,14 @@ uesp.gamemap.Map.prototype.onReceiveLocationData = function (data)
 		
 		if ( !(location.id in this.locations))
 		{
-			this.locations[location.id] = uesp.gamemap.createLocationFromJson(location);
+			this.locations[location.id] = uesp.gamemap.createLocationFromJson(location, this);
 		}
 		else
 		{
 			this.locations[location.id].mergeFromJson(location);
 		}
 		
-		this.locations[location.id].updateData(this);
+		this.locations[location.id].updateData();
 		this.displayLocation(this.locations[location.id]);
 	}
 	
@@ -920,7 +920,7 @@ uesp.gamemap.Map.prototype.redrawLocationPaths = function()
 {
 	for (key in this.locations)
 	{
-		if (this.locations[key].locType > 1) this.locations[key].updatePathSize();
+		if (this.locations[key].locType >= uesp.gamemap.LOCTYPE_PATH) this.locations[key].updatePathSize();
 	}
 }
 
@@ -929,7 +929,7 @@ uesp.gamemap.Map.prototype.updateLocationData = function()
 {
 	for (key in this.locations)
 	{
-		this.locations[key].updateData(this);
+		this.locations[key].updateData();
 	}
 }
 
@@ -1077,23 +1077,49 @@ uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 }
 
 
-uesp.gamemap.Map.prototype.testPath = function()
+uesp.gamemap.Map.prototype.testArea = function()
 {
-	var newPath = new uesp.gamemap.Location();
+	var newPath = new uesp.gamemap.Location(this);
 	
 	newPath.x = 30000;
 	newPath.y = 10000
 	newPath.width  = 40000;
 	newPath.height = 40000;
 	newPath.id = 1234;
-	newPath.locType = 2;
+	newPath.locType = uesp.gamemap.LOCTYPE_AREA;
 	newPath.displayData.hover = { };
 	newPath.displayData.hover.fillStyle = "rgba(255,0,0,0.5)";
-	newPath.displayData.hover.strokeStyle = "rgba(255,0,0,0.25)";
-	newPath.displayData.hover.lineWidth = 2;
+	newPath.displayData.hover.strokeStyle = "rgba(0,0,0,1)";
+	newPath.displayData.hover.lineWidth = 100;
 	newPath.displayData.fillStyle = "rgba(255,0,0,0.25)";;
 	newPath.displayData.strokeStyle = "rgba(255,0,0,0.15)";
-	newPath.displayData.lineWidth = 2;
+	newPath.displayData.lineWidth = 50;
+	
+	newPath.displayData.points = [30000, 10000, 70000, 1000, 50863,-5304, 60000, -30000, 35000, -10000];
+	
+	this.locations[newPath.id] = newPath;
+	
+	this.displayLocation(newPath);
+}
+
+
+uesp.gamemap.Map.prototype.testPath = function()
+{
+	var newPath = new uesp.gamemap.Location(this);
+	
+	newPath.x = 30000;
+	newPath.y = 10000
+	newPath.width  = 40000;
+	newPath.height = 40000;
+	newPath.id = 1235;
+	newPath.locType = uesp.gamemap.LOCTYPE_PATH;
+	newPath.displayData.hover = { };
+	newPath.displayData.hover.fillStyle = "rgba(0,255,0,0)";
+	newPath.displayData.hover.strokeStyle = "rgba(0,0,255,0.0.5)";
+	newPath.displayData.hover.lineWidth = 400;
+	newPath.displayData.fillStyle = "rgba(0,255,0,0)";
+	newPath.displayData.strokeStyle = "rgba(0,0,255,1)";
+	newPath.displayData.lineWidth = 200;
 	
 	newPath.displayData.points = [30000, 10000, 70000, 1000, 50863,-5304, 60000, -30000, 35000, -10000];
 	
