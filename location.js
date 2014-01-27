@@ -349,6 +349,8 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 						"<div class='gmMapPopupPos'>Destination ID: {destinationId}</div>" +
 						"<div class='gmMapPopupDesc'>{description}</div>";
 	
+	this.wikiLink = this.parentMap.mapOptions.wikiUrl + this.wikiPage;
+	
 	if (this.popupElement == null)
 	{
 		this.popupElement = $('<div />').addClass('gmMapPopupRoot')
@@ -466,16 +468,6 @@ uesp.gamemap.Location.prototype.drawPath = function (context)
 }
 
 
-uesp.gamemap.Location.prototype.updateData = function ()
-{
-	this.wikiLink = this.parentMap.mapOptions.wikiUrl + this.wikiPage;
-	
-	var pixelSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
-	this.pixelWidth  = pixelSize.x;
-	this.pixelHeight = pixelSize.y;
-}
-
-
 uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 {
 	this.offsetLeft = x;
@@ -505,6 +497,10 @@ uesp.gamemap.Location.prototype.updatePath = function ()
 	
 	if (this.pathElement == null)
 	{
+		var pixelSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
+		this.pixelWidth  = pixelSize.x;
+		this.pixelHeight = pixelSize.y;
+		
 		var divSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
 		var divW = divSize.x;
 		var divH = divSize.y;
