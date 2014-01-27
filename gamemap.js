@@ -848,7 +848,6 @@ uesp.gamemap.Map.prototype.shiftMapTiles = function(deltaX, deltaY)
 			{
 				this.mapTiles[y][x].deltaTileX += (this.mapOptions.tileCountX - 1) * deltaX;
 				tileLeft = tileOffset.left + this.mapOptions.tileSize * (this.mapOptions.tileCountX - 1) * deltaX;
-
 			}
 			else
 			{
