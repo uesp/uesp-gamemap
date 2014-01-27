@@ -1104,11 +1104,14 @@ uesp.gamemap.Map.prototype.testArea = function()
 {
 	var newPath = new uesp.gamemap.Location(this);
 	
+	newPath.worldId = this.currentWorldId;
 	newPath.x = 30000;
 	newPath.y = 10000
 	newPath.width  = 40000;
 	newPath.height = 40000;
 	newPath.id = 1234;
+	newPath.name = "Test Area";
+	newPath.displayData.iconType = 1;
 	newPath.locType = uesp.gamemap.LOCTYPE_AREA;
 	newPath.displayData.hover = { };
 	newPath.displayData.hover.fillStyle = "rgba(255,0,0,0.5)";
@@ -1130,11 +1133,14 @@ uesp.gamemap.Map.prototype.testPath = function()
 {
 	var newPath = new uesp.gamemap.Location(this);
 	
+	newPath.worldId = this.currentWorldId;
 	newPath.x = 30000;
 	newPath.y = 10000
 	newPath.width  = 40000;
 	newPath.height = 40000;
 	newPath.id = 1235;
+	newPath.name = "Test Path";
+	newPath.displayData.iconType = 2;
 	newPath.locType = uesp.gamemap.LOCTYPE_PATH;
 	newPath.displayData.hover = { };
 	newPath.displayData.hover.fillStyle = "rgba(0,255,0,0)";
