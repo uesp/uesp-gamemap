@@ -4,6 +4,9 @@ Common
 	- Replace 'isNullorDefined()' with 'var == null' where appropriate
 	- Move common functions to the uesp. namespace (or uesp.common.)
 	- Use the 'key in array' method where appropriate
+	- Double-check that things are escaped properly (mysql side and HTML side)
+		- Descriptions
+		- Names
 
 
 Map Options
