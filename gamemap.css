@@ -124,5 +124,6 @@
 
 .gmMapPathCanvas {
 	position: absolute;
-	z-index: 30;
+	z-index: 5;
+	border: none;
 }

@@ -158,6 +158,19 @@ uesp.gamemap.Map.prototype.convertGameToTilePos = function(gameX, gameY)
 }
 
 
+uesp.gamemap.Map.prototype.convertGameToPixelSize = function(width, height)
+{
+	var pixelW = 0;
+	var pixelH = 0;
+	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
+	
+	pixelW = width  * maxTiles / Math.abs(this.mapOptions.gamePosX2 - this.mapOptions.gamePosX1) * this.mapOptions.tileSize;
+	pixelH = height * maxTiles / Math.abs(this.mapOptions.gamePosY2 - this.mapOptions.gamePosY1) * this.mapOptions.tileSize;
+	
+	return new uesp.gamemap.Position(pixelW, pixelH);
+}
+
+
 uesp.gamemap.Map.prototype.convertGameToPixelPos = function(gameX, gameY)
 {
 	mapOffset = $("#gmMapRoot").offset();
@@ -262,9 +275,8 @@ uesp.gamemap.Map.prototype.displayLocation = function (location)
 	location.offsetLeft = pixelPos.x;
 	location.offsetTop  = pixelPos.y;
 	
-	location.updateData(this.mapOptions);
-	
-	location.update(this.mapOptions);
+	location.updateData(this);
+	location.update(this);
 }
 
 
@@ -600,7 +612,7 @@ uesp.gamemap.Map.prototype.onReceiveLocationData = function (data)
 			this.locations[location.id].mergeFromJson(location);
 		}
 		
-		this.locations[location.id].updateData(this.mapOptions);
+		this.locations[location.id].updateData(this);
 		this.displayLocation(this.locations[location.id]);
 	}
 	
@@ -896,9 +908,29 @@ uesp.gamemap.Map.prototype.shiftLocations = function (deltaX, deltaY)
 uesp.gamemap.Map.prototype.updateLocations = function(animate)
 {
 	this.removeExtraLocations();
+	this.updateLocationData();
 	this.updateLocationDisplayLevels();
 	this.updateLocationOffsets(animate);
+	this.redrawLocationPaths();
 	this.retrieveLocations();
+}
+
+
+uesp.gamemap.Map.prototype.redrawLocationPaths = function()
+{
+	for (key in this.locations)
+	{
+		if (this.locations[key].locType > 1) this.locations[key].updatePathSize();
+	}
+}
+
+
+uesp.gamemap.Map.prototype.updateLocationData = function()
+{
+	for (key in this.locations)
+	{
+		this.locations[key].updateData(this);
+	}
 }
 
 
@@ -1047,25 +1079,24 @@ uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 
 uesp.gamemap.Map.prototype.testPath = function()
 {
-	/*
-	var canvasElement = $('<canvas />').addClass('gmMapPathCanvas').attr({'width':100,'height':200}).offset({ left: 1000, top: 1000 }).appendTo('#gmMapRoot');
-	
-	var c2 = canvasElement[0].getContext('2d');
-	c2.beginPath();
-	c2.moveTo(0, 0);
-	c2.lineTo(100,50);
-	c2.lineTo(50, 100);
-	c2.lineTo(0, 90);
-	c2.closePath();
-	c2.fillStyle = '#f00';
-	c2.fill();
-	c2.lineWidth = 2;
-	c2.strokeStyle = 'blue';
-	c2.stroke(); */
-	
 	var newPath = new uesp.gamemap.Location();
+	
+	newPath.x = 30000;
+	newPath.y = 10000
+	newPath.width  = 40000;
+	newPath.height = 40000;
 	newPath.id = 1234;
 	newPath.locType = 2;
+	newPath.displayData.hover = { };
+	newPath.displayData.hover.fillStyle = "rgba(255,0,0,0.5)";
+	newPath.displayData.hover.strokeStyle = "rgba(255,0,0,0.25)";
+	newPath.displayData.hover.lineWidth = 2;
+	newPath.displayData.fillStyle = "rgba(255,0,0,0.25)";;
+	newPath.displayData.strokeStyle = "rgba(255,0,0,0.15)";
+	newPath.displayData.lineWidth = 2;
+	
+	newPath.displayData.points = [30000, 10000, 70000, 1000, 50863,-5304, 60000, -30000, 35000, -10000];
+	
 	this.locations[newPath.id] = newPath;
 	
 	this.displayLocation(newPath);

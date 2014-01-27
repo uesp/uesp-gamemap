@@ -15,6 +15,8 @@ Game Map
 	- Add limits to valid coordinates
 	- Smoother scrolling
 	- Update tiles/locations during pan animation
+	- Proper handling of +/- coordinate systems (especially for paths)
+	- Shortcut keys
 
 
 Locations

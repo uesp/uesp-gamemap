@@ -336,6 +336,7 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 	var popupContent =  "<div class='gmMapPopupClose'><img src='images/cancelicon.png' onclick='return uesp.gamemap.onCloseLocationPopup(this);' width='12' height='12' /></div>" + 
 						"<div class='gmMapPopupTitle'><a href='{wikiLink}'>{name}</a></div>" + 
 						"<div class='gmMapPopupPos'>Location: {x}, {y}</div>" +
+						"<div class='gmMapPopupPos'>Internal ID: {id}</div>" +
 						"<div class='gmMapPopupDesc'>{description}</div>";
 	
 	if (this.popupElement == null)
@@ -389,13 +390,62 @@ uesp.gamemap.Location.prototype.updatePathOffset = function ()
 {
 	if (this.pathElement == null) return;
 	
-	$(this.pathElement).offset( { left: this.offsetLeft - $(this.pathElement).width()/2, top: this.offsetTop - $(this.pathElement).height() - 8 });
+	$(this.pathElement).offset( { left: this.offsetLeft, top: this.offsetTop });
+	
+	
 }
 
 
-uesp.gamemap.Location.prototype.updateData = function (mapOptions)
+uesp.gamemap.Location.prototype.updatePathSize = function ()
 {
-	this.wikiLink = mapOptions.wikiUrl + this.wikiPage;
+	if (this.locType <= 1) return;
+	if (this.pathElement == null) return;
+	
+	this.pathElement.attr( { width: this.pixelWidth, height: this.pixelHeight });
+	
+	var context = this.pathElement[0].getContext('2d');
+	
+	context.translate(-this.x * this.pixelWidth / this.width, -this.x * this.pixelHeight / this.height);
+	context.scale(this.pixelWidth / this.width, this.pixelHeight / this.height);
+	
+	this.drawPath(context);
+}
+
+
+uesp.gamemap.Location.prototype.drawPath = function (context)
+{
+	var i = 0;
+	
+	context.globalCompositeOperation = 'destination-atop';
+	
+	while (i + 1 < this.displayData.points.length)
+	{
+		if (i == 0)
+			context.moveTo(this.displayData.points[i], this.height - this.displayData.points[i+1]);
+		else
+			context.lineTo(this.displayData.points[i], this.height - this.displayData.points[i+1]);
+		
+		i += 2;
+	}
+	
+	context.closePath();
+	
+	context.fillStyle = this.displayData.fillStyle;
+	context.fill();
+	
+	context.lineWidth = this.displayData.lineWidth;
+	context.strokeStyle = this.displayData.strokeStyle;
+	context.stroke();
+}
+
+
+uesp.gamemap.Location.prototype.updateData = function (gameMap)
+{
+	this.wikiLink = gameMap.mapOptions.wikiUrl + this.wikiPage;
+	
+	var pixelSize = gameMap.convertGameToPixelSize(this.width, this.height);
+	this.pixelWidth  = pixelSize.x;
+	this.pixelHeight = pixelSize.y;
 }
 
 
@@ -423,32 +473,31 @@ uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 }
 
 
-uesp.gamemap.Location.prototype.updatePath = function ()
+uesp.gamemap.Location.prototype.updatePath = function (gameMap)
 {
 	
 	if (this.pathElement == null)
 	{
+		var divSize = gameMap.convertGameToPixelSize(this.width, this.height);
+		console.log(divSize);
+		
+		var divW = divSize.x;
+		var divH = divSize.y;
+		var yConstant = this.height;
+		
 		this.pathElement = $('<canvas />').addClass('gmMapPathCanvas')
-				.attr({'width':100,'height':200})
-				.offset({ left: 500, top: 500 })
-				.on('selectstart', false)
-				.appendTo('#gmMapRoot');
+			.attr({'width': divW,'height': divH})
+			.on('selectstart', false)
+			.appendTo('#gmMapRoot');
 		
 		var c2 = this.pathElement[0].getContext('2d');
-		c2.scale(2, 2);
-		//c2.translate(100, 100);
-		c2.beginPath();
-		c2.moveTo(0, 0);
-		c2.lineTo(100,50);
-		c2.lineTo(50, 100);
-		c2.lineTo(0, 90);
-		c2.closePath();
-		c2.globalCompositeOperation = 'destination-atop';
-		c2.fillStyle = 'rgba(255,0,0,0.25)';
-		c2.fill();
-		c2.lineWidth = 2;
-		c2.strokeStyle = 'rgba(255,0,0,0.15)';
-		c2.stroke();
+		
+		c2.translate(-this.x * divW / this.width, -this.x * divH / this.height);
+		c2.scale(divW / this.width, divH / this.height);
+		
+		this.drawPath(c2);
+		
+		var self = this;
 		
 		this.pathElement.click(function (e) {
 			var ca = e.target;
@@ -462,11 +511,33 @@ uesp.gamemap.Location.prototype.updatePath = function ()
 
 		});
 		
+		this.pathElement.dblclick(function (e) {
+			var bottomEvent = new $.Event("dblclick");
+	        
+	        bottomEvent.pageX = e.pageX;
+	        bottomEvent.pageY = e.pageY;
+	        
+	        $(".gmMapTile:first").trigger(bottomEvent);
+	        
+	        return false;
+		});
+		
+		this.pathElement.mousedown(function (e) {
+			console.debug("Canvas mousedown");
+			var bottomEvent = new $.Event("mousedown");
+	        
+	        bottomEvent.pageX = e.pageX;
+	        bottomEvent.pageY = e.pageY;
+	        
+	        $(".gmMapTile:first").trigger(bottomEvent);
+	        
+	        return false;
+		});
 		
 		this.pathElement.mouseout(function (e) {
 			var ca = e.target;
 			var co = ca.getContext('2d')
-			co.fillStyle = 'rgba(255,0,0,0.25)';
+			co.fillStyle = self.displayData.fillStyle;
 			co.fill();
 		});
 		
@@ -477,14 +548,15 @@ uesp.gamemap.Location.prototype.updatePath = function ()
 
 			if (co.isPointInPath(e.pageX - offset.left, e.pageY - offset.top) )
 			{
-				co.fillStyle = 'rgba(255,255,255,0.25)';
+				co.fillStyle = self.displayData.hover.fillStyle;
 				co.fill();
 			}
 			else
 			{
-				co.fillStyle = 'rgba(255,0,0,0.25)';
+				co.fillStyle = self.displayData.fillStyle;
 				co.fill();
 			}
+			
 			//console.debug('Is point in path: ' + (? 'YES' : 'NO'));
 		});
 	}
@@ -493,27 +565,28 @@ uesp.gamemap.Location.prototype.updatePath = function ()
 	}
 	
 	this.updatePathOffset();
+	this.updatePathSize();
 }
 
 
-uesp.gamemap.Location.prototype.update = function (mapOptions)
+uesp.gamemap.Location.prototype.update = function (gameMap)
 {
 	if (this.locType == uesp.gamemap.LOCTYPE_POINT)
 	{
 		this.updateLabel();
-		this.updateIcon(mapOptions);
+		this.updateIcon(gameMap.mapOptions);
 	}
 	else if (this.locType == uesp.gamemap.LOCTYPE_PATH)
 	{
 		this.updateLabel();
-		this.updateIcon(mapOptions);
-		this.updatePath();
+		this.updateIcon(gameMap.mapOptions);
+		this.updatePath(gameMap);
 	}
 	else if (this.locType == uesp.gamemap.LOCTYPE_AREA)
 	{
 		this.updateLabel();
-		this.updateIcon(mapOptions);
-		this.updatePath();
+		this.updateIcon(gameMap.mapOptions);
+		this.updatePath(gameMap);
 	}
 }
 
