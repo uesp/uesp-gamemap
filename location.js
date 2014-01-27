@@ -494,6 +494,114 @@ uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 }
 
 
+uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
+{
+	var ca = event.target;
+	var co = ca.getContext('2d');
+	var offset = $(ca).offset();
+
+	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) )
+	{
+		if (this.locType != uesp.gamemap.LOCTYPE_PATH)
+		{
+			co.fillStyle = this.displayData.hover.fillStyle;
+			co.fill();
+		}
+		else
+		{
+			co.fillStyle = 'rgba(255,0,0,0)';
+			co.fill();
+		}
+		
+		co.lineWidth = this.displayData.hover.lineWidth;
+		co.strokeStyle = this.displayData.hover.strokeStyle;
+		co.stroke();
+	}
+	else
+	{
+		if (this.locType != uesp.gamemap.LOCTYPE_PATH)
+		{
+			co.fillStyle = this.displayData.fillStyle;
+			co.fill();
+		}
+		else
+		{
+			co.fillStyle = 'rgba(255,0,0,0)';
+			co.fill();
+		}
+		
+		co.lineWidth = this.displayData.lineWidth;
+		co.strokeStyle = this.displayData.strokeStyle;
+		co.stroke();
+	}
+}
+
+
+uesp.gamemap.Location.prototype.onPathMouseDown = function (event)
+{
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Canvas mousedown");
+	
+	var bottomEvent = new $.Event("mousedown");
+	
+	bottomEvent.pageX = event.pageX;
+	bottomEvent.pageY = event.pageY;
+	
+	$(".gmMapTile:first").trigger(bottomEvent);
+	
+	return false;
+}
+
+
+uesp.gamemap.Location.prototype.onPathMouseOut = function (event)
+{
+	var ca = event.target;
+	var co = ca.getContext('2d');
+	
+	if (this.locType != uesp.gamemap.LOCTYPE_PATH)
+	{
+		co.fillStyle = this.displayData.fillStyle;
+		co.fill();
+	}
+	else
+	{
+		co.fillStyle = 'rgba(255,0,0,0)';
+		co.fill();
+	}
+	
+	co.lineWidth = this.displayData.lineWidth;
+	co.strokeStyle = this.displayData.strokeStyle;
+	co.stroke();
+}
+
+
+uesp.gamemap.Location.prototype.onPathClick = function (event)
+{
+	var ca = event.target;
+	var co = ca.getContext('2d');
+	var offset = $(ca).offset();
+	
+	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) )
+	{
+		uesp.logDebug(uesp.LOG_LEVEL_WARNING, "clicked path");
+	}
+	
+	return false;
+}
+
+
+uesp.gamemap.Location.prototype.onPathDblClick = function (event)
+{
+	var bottomEvent = new $.Event("dblclick");
+	
+	bottomEvent.pageX = event.pageX;
+	bottomEvent.pageY = event.pageY;
+	
+	$(".gmMapTile:first").trigger(bottomEvent);
+	
+	return false;
+}
+
+
 uesp.gamemap.Location.prototype.createPath = function ()
 {
 	var divSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
@@ -510,105 +618,12 @@ uesp.gamemap.Location.prototype.createPath = function ()
 	context.translate(-this.x * divW / this.width, -this.x * divH / this.height);
 	context.scale(divW / this.width, divH / this.height);
 	
-	//this.drawPath(context);
-	
 	var self = this;
-	
-	this.pathElement.click(function (e) {
-		var ca = e.target;
-		var co = ca.getContext('2d');
-		var offset = $(ca).offset();
-		
-		if (co.isPointInPath(e.pageX - offset.left, e.pageY - offset.top) )
-		{
-			uesp.logDebug(uesp.LOG_LEVEL_WARNING, "clicked path");
-		}
-	});
-	
-	this.pathElement.dblclick(function (e) {
-		var bottomEvent = new $.Event("dblclick");
-        
-        bottomEvent.pageX = e.pageX;
-        bottomEvent.pageY = e.pageY;
-        
-        $(".gmMapTile:first").trigger(bottomEvent);
-        
-        return false;
-	});
-	
-	this.pathElement.mousedown(function (e) {
-		uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Canvas mousedown");
-		var bottomEvent = new $.Event("mousedown");
-        
-        bottomEvent.pageX = e.pageX;
-        bottomEvent.pageY = e.pageY;
-        
-        $(".gmMapTile:first").trigger(bottomEvent);
-        
-        return false;
-	});
-	
-	this.pathElement.mouseout(function (e) {
-		var ca = e.target;
-		var co = ca.getContext('2d');
-		
-		if (self.locType != uesp.gamemap.LOCTYPE_PATH)
-		{
-			co.fillStyle = self.displayData.fillStyle;
-			co.fill();
-		}
-		else
-		{
-			co.fillStyle = 'rgba(255,0,0,0)';
-			co.fill();
-		}
-		
-		co.lineWidth = self.displayData.lineWidth;
-		co.strokeStyle = self.displayData.strokeStyle;
-		co.stroke();
-	});
-	
-	this.pathElement.mousemove(function (e) {
-		var ca = e.target;
-		var co = ca.getContext('2d');
-		var offset = $(ca).offset();
-
-		if (co.isPointInPath(e.pageX - offset.left, e.pageY - offset.top) )
-		{
-			if (self.locType != uesp.gamemap.LOCTYPE_PATH)
-			{
-				co.fillStyle = self.displayData.hover.fillStyle;
-				co.fill();
-			}
-			else
-			{
-				co.fillStyle = 'rgba(255,0,0,0)';
-				co.fill();
-			}
-			
-			co.lineWidth = self.displayData.hover.lineWidth;
-			co.strokeStyle = self.displayData.hover.strokeStyle;
-			co.stroke();
-		}
-		else
-		{
-			if (self.locType != uesp.gamemap.LOCTYPE_PATH)
-			{
-				co.fillStyle = self.displayData.fillStyle;
-				co.fill();
-			}
-			else
-			{
-				co.fillStyle = 'rgba(255,0,0,0)';
-				co.fill();
-			}
-			
-			co.lineWidth = self.displayData.lineWidth;
-			co.strokeStyle = self.displayData.strokeStyle;
-			co.stroke();
-		}
-		
-	});
+	this.pathElement.click(function (e) { self.onPathClick(e); });
+	this.pathElement.dblclick(function (e) { self.onPathDblClick(e); });
+	this.pathElement.mousedown(function (e) { self.onPathMouseDown(e); });
+	this.pathElement.mouseout(function (e) { self.onPathMouseOut(e); });
+	this.pathElement.mousemove(function (e) { self.onPathMouseMove(e); });
 }
 
 
