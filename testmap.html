@@ -21,7 +21,6 @@
 		var g_DefaultMapOptions = {
 				getMapTileFunction : getDefaultMapTile,
 				wikiUrl: "http://www.uesp.net/wiki/",
-				mapContainer : "#gmMap",
 				missingMapTile:  "http://content3.uesp.net/maps2/srmap/color/nullimage.jpg",
 				iconPath: "icons/",
 				wikiNamespace: "UESPWiki"
@@ -76,7 +75,7 @@
 
 		$( document ).ready( function()
 		{
-			g_GameMap = new uesp.gamemap.Map(g_DefaultMapOptions);
+			g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions);
 			
 			g_GameMap.setOnMapWorldsLoaded( function()
 			{
