@@ -62,17 +62,7 @@ uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions, worldId)
 
 uesp.gamemap.Map.prototype.changeWorld = function (world, newState)
 {
-	if (isNaN(world))
-	{
-		worldName = decodeURIComponent(world).toLowerCase();
-		if ( !(worldName in this.mapWorldNameIndex) ) return uesp.logError("Unknown world '" + worldName + "' received!"); 
-		worldId = this.mapWorldNameIndex[worldName];
-	}
-	else
-	{
-		worldId = world;
-	}
-	
+	worldId = this.getWorldId(world);
 	if (worldId == this.currentWorldId) return;
 	if (worldId <= 0) return uesp.logError("Unknown world #" + worldId + " received!");
 	
@@ -349,16 +339,7 @@ uesp.gamemap.Map.prototype.getMapStateFromQuery = function ()
 	
 	if ( ! (this.queryParams.world == null))
 	{
-		
-		if (isNaN(this.queryParams.world))
-		{
-			worldName = decodeURIComponent(this.queryParams.world).toLowerCase();
-			if (worldName in this.mapWorldNameIndex) worldId = this.mapWorldNameIndex[worldName];
-		}
-		else
-		{
-			worldId = parseInt(this.queryParams.world);
-		}
+		worldId = this.getWorldId(this.queryParams.world);
 	}
 
 	var newState = new uesp.gamemap.MapState();
@@ -861,8 +842,28 @@ uesp.gamemap.Map.prototype.panToGamePos = function(x, y)
 }
 
 
-uesp.gamemap.Map.prototype.setMapOptions = function (worldId, mapOptions)
+uesp.gamemap.Map.prototype.getWorldId = function (world)
 {
+	if (world == null) return 0;
+	
+	if (isNan(world))
+	{
+		worldName = decodeURIComponent(world).toLowerCase();
+		if ( !(worldName in this.mapWorldNameIndex) ) return 0 
+		worldId = this.mapWorldNameIndex[worldName];
+	}
+	else
+	{
+		worldId = parseInt(world);
+	}
+	
+	return worldId; 
+}
+
+
+uesp.gamemap.Map.prototype.setMapOptions = function (world, mapOptions)
+{
+	var worldId = this.getWorldId(world);
 	if ( !(worldId in this.mapWorlds) ) return uesp.logError("Unknown world #" + worldId + " received!");
 	
 	this.mapWorlds[worldId].mergeMapOptions(mapOptions);
