@@ -327,13 +327,21 @@ uesp.gamemap.Map.prototype.getGamePositionOfCenter = function()
 }
 
 
-uesp.gamemap.Map.prototype.getMapStateFromQuery = function ()
+uesp.gamemap.Map.prototype.getMapStateFromQuery = function (defaultMapState)
 {
 	var gamePos = this.getGamePositionOfCenter();
 	var gameX   = gamePos.x;
 	var gameY   = gamePos.y;
 	var zoom    = this.zoomLevel;
 	var worldId = this.currentWorldId;
+	
+	if ( !(defaultMapState == null) )
+	{
+		gameX   = defaultMapState.gamePos.x;
+		gameY   = defaultMapState.gamePos.y;
+		zoom    = defaultMapState.zoomLevel;
+		worldId = defaultMapState.worldId;
+	}
 	
 	if ( !(this.queryParams.x     == null)) gameX   = parseInt(this.queryParams.x);
 	if ( !(this.queryParams.y     == null)) gameY   = parseInt(this.queryParams.y);
@@ -405,6 +413,15 @@ uesp.gamemap.Map.prototype.getMapState = function()
 	mapState.worldId   = this.currentWorldId;
 	
 	return mapState;
+}
+
+
+uesp.gamemap.Map.prototype.getWorldMapState = function(world)
+{
+	var worldId = this.getWorldId(world);
+	if (worldId <= 0) return null;
+	
+	return this.mapWorlds[worldId].mapState;
 }
 
 
@@ -851,12 +868,13 @@ uesp.gamemap.Map.prototype.getWorldId = function (world)
 	if (isNaN(world))
 	{
 		worldName = decodeURIComponent(world).toLowerCase();
-		if ( !(worldName in this.mapWorldNameIndex) ) return 0 
+		if ( !(worldName in this.mapWorldNameIndex) ) return 0;
 		worldId = this.mapWorldNameIndex[worldName];
 	}
 	else
 	{
 		worldId = parseInt(world);
+		if ( !(worldId in this.mapWorlds)) return 0;
 	}
 	
 	return worldId; 
