@@ -38,7 +38,7 @@ uesp.gamemap.World.prototype.mergeFromJson = function(data)
 	
 	this.mapState.worldId = this.id;
 	
-	this.displayName = encodeURIComponent(this.displayName);
+	//this.displayName = encodeURIComponent(this.displayName);
 	//TODO: Update limits and zoom?
 }
 
