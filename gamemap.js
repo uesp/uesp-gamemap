@@ -846,7 +846,7 @@ uesp.gamemap.Map.prototype.getWorldId = function (world)
 {
 	if (world == null) return 0;
 	
-	if (isNan(world))
+	if (isNaN(world))
 	{
 		worldName = decodeURIComponent(world).toLowerCase();
 		if ( !(worldName in this.mapWorldNameIndex) ) return 0 
