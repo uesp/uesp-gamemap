@@ -39,14 +39,33 @@ uesp.gamemap.World.prototype.mergeFromJson = function(data)
 	this.mapState.worldId = this.id;
 	
 	//this.displayName = encodeURIComponent(this.displayName);
-	//TODO: Update limits and zoom?
+	
+	this.updateStateFromOptions();
+}
+
+
+uesp.gamemap.World.prototype.mergeMapOptions = function(mapOptions)
+{
+	this.mapOptions.mergeOptions(mapOptions);
+	this.updateStateFromOptions();
+}
+
+
+uesp.gamemap.World.prototype.updateStateFromOptions = function()
+{
+	this.mapState.worldId = this.id;
+	this.mapState.gamePos.x = this.mapOptions.initialGamePosX;
+	this.mapState.gamePos.y = this.mapOptions.initialGamePosY;
+	this.mapState.zoomLevel = this.mapOptions.initialZoom;
 }
 
 
 uesp.gamemap.createWorldFromJson = function(data)
 {
 	var newWorld = new uesp.gamemap.World(data.name, null);
+	
 	newWorld.mergeFromJson(data);
+	
 	return newWorld;
 }
 
