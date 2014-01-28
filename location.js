@@ -211,7 +211,7 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 	if (this.labelElement == null)
 	{
 		this.labelElement = $('<div />').addClass('gmMapLoc')
-			.appendTo('#gmMapRoot')
+			.appendTo(this.parentMap.mapRoot)
 			.click(this.onLabelClickFunction())
 			.dblclick(this.onLabelDblClickFunction())
 			.attr('unselectable', 'on')
@@ -299,7 +299,7 @@ uesp.gamemap.Location.prototype.updateIcon = function ()
 	{	
 		this.iconElement = $('<div />')
 				.addClass('gmMapLocIconDiv')
-				.appendTo('#gmMapRoot');
+				.appendTo(this.parentMap.mapRoot);
 		
 		$('<span />').addClass('gmMapLocIconHelper').appendTo(this.iconElement);
 		
@@ -381,7 +381,7 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 	if (this.popupElement == null)
 	{
 		this.popupElement = $('<div />').addClass('gmMapPopupRoot')
-				.appendTo('#gmMapRoot');
+				.appendTo(this.parentMap.mapRoot);
 		
 		popupDiv = $('<div />').addClass('gmMapPopup')
 				.appendTo(this.popupElement);
@@ -653,7 +653,7 @@ uesp.gamemap.Location.prototype.createPath = function ()
 	this.pathElement = $('<canvas></canvas>').addClass('gmMapPathCanvas')
 		.attr({'width': divW,'height': divH})
 		.on('selectstart', false)
-		.appendTo('#gmMapRoot');
+		.appendTo(this.parentMap.mapRoot);
 	
 	var context = this.pathElement[0].getContext('2d');
 	
