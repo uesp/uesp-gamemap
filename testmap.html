@@ -62,9 +62,19 @@
 		$( document ).ready( function()
 		{
 			g_GameMap = new uesp.gamemap.Map("Skyrim", g_SRMapOptions, 1);
-			g_GameMap.addWorld("Dragonborn", g_DBMapOptions, 2);
+			//g_GameMap.addWorld("Dragonborn", g_DBMapOptions, 2);
 			
-			g_GameMap.updateMapStateFromQuery(true);
+			g_GameMap.setOnMapWorldsLoaded( function()
+			{
+				this.setMapOptions(1, g_SRMapOptions);
+				this.setMapOptions(2, g_DBMapOptions);
+				
+				mapState = this.getMapStateFromQuery();
+				this.setMapState(mapState, true);
+				
+				uesp.logDebug(uesp.LOG_LEVEL_ERROR, "onMapWorldsLoaded");
+				uesp.logDebug(uesp.LOG_LEVEL_ERROR, mapState);
+			});
 		});
 
 		function getSkyrimMapTile(xPos, yPos, zoom, worldName)
