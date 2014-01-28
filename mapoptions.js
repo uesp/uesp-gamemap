@@ -9,7 +9,8 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.getMapTileFunction = uesp.gamemap.defaultGetMapTile;
 	this.missingMapTile = "missingtile.jpg";
 	
-	this.wikiUrl = "";
+	this.wikiUrl       = '';
+	this.wikiNamespace = '';
 	
 	this.iconPath    = "";
 	this.iconMissing = "missing.png";
@@ -48,4 +49,5 @@ uesp.gamemap.MapOptions.prototype.mergeOptions = function(mapOptions)
 		uesp.gamemap.mergeObjects(this, mapOptions);
 	}
 }
+
 

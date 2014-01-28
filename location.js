@@ -376,7 +376,7 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 						"<div class='gmMapPopupPos'>Internal ID: {id}</div>" +
 						"<div class='gmMapPopupDesc'>{description}</div>";
 	
-	this.wikiLink = this.parentMap.mapOptions.wikiUrl + this.wikiPage;
+	this.wikiLink = this.createWikiLink();
 	
 	if (this.popupElement == null)
 	{
@@ -666,6 +666,17 @@ uesp.gamemap.Location.prototype.createPath = function ()
 	this.pathElement.mousedown(function (e) { self.onPathMouseDown(e); });
 	this.pathElement.mouseout(function (e) { self.onPathMouseOut(e); });
 	this.pathElement.mousemove(function (e) { self.onPathMouseMove(e); });
+}
+
+
+uesp.gamemap.Location.prototype.createWikiLink = function()
+{
+	if ( !(this.parentMap.mapOptions.wikiNamespace == null) && this.parentMap.mapOptions.wikiNamespace.length > 0)
+	{
+		return this.parentMap.mapOptions.wikiUrl + this.parentMap.mapOptions.wikiNamespace + ':' + this.wikiPage;
+	}
+	
+	return this.parentMap.mapOptions.wikiUrl + this.wikiPage;
 }
 
 
