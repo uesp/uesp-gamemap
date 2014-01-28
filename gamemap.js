@@ -6,9 +6,10 @@
  */
 
 
-uesp.gamemap.Map = function(worldName, mapOptions, worldId)
+uesp.gamemap.Map = function(defaultMapOptions)
 {
-	this.mapOptions = new uesp.gamemap.MapOptions(mapOptions);
+	this.defaultMapOptions = uesp.cloneObject(defaultMapOptions);
+	this.mapOptions        = new uesp.gamemap.MapOptions(this.defaultMapOptions);
 	
 	this.mapRoot = null;
 		
@@ -17,14 +18,8 @@ uesp.gamemap.Map = function(worldName, mapOptions, worldId)
 	this.mapWorldsLoaded = false;
 	this.onMapWorldsLoadedFunc = null;
 	
-	if (worldName == null)
-	{
-		this.currentWorldId = 0;
-		this.addWorld('__default', mapOptions, this.currentWorldId);
-	} else {
-		this.currentWorldId = worldId;
-		this.addWorld(worldName.toLowerCase(), mapOptions, worldId);
-	}
+	this.currentWorldId = 0;
+	this.addWorld('__default', this.mapOptions, this.currentWorldId);
 	
 	this.locations = {};
 	
@@ -57,7 +52,10 @@ uesp.gamemap.Map = function(worldName, mapOptions, worldId)
 
 uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions, worldId)
 {
-	this.mapWorlds[worldId] = new uesp.gamemap.World(worldName.toLowerCase(), mapOptions, worldId);
+	this.mapWorlds[worldId] = new uesp.gamemap.World(worldName.toLowerCase(), this.defaultMapOptions, worldId);
+	
+	this.mapWorlds[worldId].mergeMapOptions(mapOptions);
+	
 	this.mapWorldNameIndex[worldName.toLowerCase()] = worldId;
 }
 
@@ -738,7 +736,8 @@ uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 		}
 		else
 		{
-			this.mapWorlds[world.id] = uesp.gamemap.createWorldFromJson(world);
+			this.addWorld(world.name, this.defaultMapOptions, world.id);
+			this.mapWorlds[world.id].mergeFromJson(world);
 			this.mapWorldNameIndex[world.name] = world.id;
 			uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Creating new world " + world.name);
 		}

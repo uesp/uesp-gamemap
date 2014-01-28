@@ -18,12 +18,24 @@
 		var g_GameMap = null;
 		var g_MapState = null;
 		
-		var g_SRMapOptions = {
+		var g_DefaultMapOptions = {
+				getMapTileFunction : getDefaultMapTile,
+				wikiUrl: "http://www.uesp.net/wiki/",
 				mapContainer : "#gmMap",
-				getMapTileFunction : getSkyrimMapTile,
 				missingMapTile:  "http://content3.uesp.net/maps2/srmap/color/nullimage.jpg",
-				wikiUrl: "http://www.uesp.net/wiki/Skyrim:",
 				iconPath: "icons/",
+				wikiNamespace: "UESPWiki"
+		};
+		
+		var g_SRMapOptions = {
+				//mapContainer : "#gmMap",
+				//getMapTileFunction : getSkyrimMapTile,
+				//iconPath: "icons/",
+				//wikiUrl: "http://www.uesp.net/wiki/Skyrim:",
+				
+				missingMapTile:  "http://content3.uesp.net/maps2/srmap/color/nullimage.jpg",
+				wikiNamespace: "Skyrim",
+				
 				zoomOffset : 9,
 				initialGamePosX : 1000,
 				initialGamePosY : 8000,
@@ -40,11 +52,14 @@
 		
 		
 		var g_DBMapOptions = {
-				mapContainer : "#gmMap",
-				getMapTileFunction : getDBMapTile,
+				//mapContainer : "#gmMap",
+				//getMapTileFunction : getDBMapTile,
+				//iconPath: "icons/",
+				//wikiUrl: "http://www.uesp.net/wiki/Dragonborn:",
+				
 				missingMapTile:  "http://content3.uesp.net/maps2/images/dboutofrange.jpg",
-				iconPath: "icons/",
-				wikiUrl: "http://www.uesp.net/wiki/Dragonborn:",
+				wikiNamespace: "Dragonborn",
+				
 				zoomOffset : 8,
 				initialGamePosX : 7000,
 				initialGamePosY : 50000,
@@ -61,7 +76,7 @@
 
 		$( document ).ready( function()
 		{
-			g_GameMap = new uesp.gamemap.Map();
+			g_GameMap = new uesp.gamemap.Map(g_DefaultMapOptions);
 			
 			g_GameMap.setOnMapWorldsLoaded( function()
 			{
@@ -75,6 +90,15 @@
 				uesp.logDebug(uesp.LOG_LEVEL_ERROR, mapState);
 			});
 		});
+		
+		
+		function getDefaultMapTile(xPos, yPos, zoom, worldName)
+		{
+			if (worldName == 'skyrim')
+				return getSkyrimMapTile(xPos, yPos, zoom, worldName);
+			else if (worldName == 'dragonborn') 
+				return getDBMapTile(xPos, yPos, zoom, worldName);
+		}
 
 		function getSkyrimMapTile(xPos, yPos, zoom, worldName)
 		{
