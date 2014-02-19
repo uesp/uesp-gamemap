@@ -14,14 +14,16 @@ uesp.gamemap.World = function(worldName, mapOptions, worldId)
 	
 	this.id = (worldId == null) ? 0 : worldId;
 	this.description = '';
-	this.wiki_page ='';
-	this.cell_size = -1;
-	this.min_zoom = this.mapOptions.minZoomLevel;
-	this.max_zoom = this.mapOptions.maxZoomLevel;
-	this.pos_left = this.mapOptions.gamePosX1;
-	this.pos_top = this.mapOptions.gamePosY1;
-	this.pos_right = this.mapOptions.gamePosX2;
-	this.pos_bottom = this.mapOptions.gamePosY2;
+	this.wikiPage ='';
+	this.cellSize = -1;
+	this.missingMapTile = this.mapOptions.missingMapTile;
+	this.minZoom = this.mapOptions.minZoomLevel;
+	this.maxZoom = this.mapOptions.maxZoomLevel;
+	this.zoomOffset = this.mapOptions.zoomOffset;
+	this.posLeft = this.mapOptions.gamePosX1;
+	this.posTop = this.mapOptions.gamePosY1;
+	this.posRight = this.mapOptions.gamePosX2;
+	this.posBottom = this.mapOptions.gamePosY2;
 	this.enabled = true;
 	
 	this.mapState = new uesp.gamemap.MapState();
@@ -38,7 +40,14 @@ uesp.gamemap.World.prototype.mergeFromJson = function(data)
 	
 	this.mapState.worldId = this.id;
 	
-	//this.displayName = encodeURIComponent(this.displayName);
+	this.mapOptions.minZoomLevel = this.minZoom;
+	this.mapOptions.maxZoomLevel = this.maxZoom;
+	this.mapOptions.zoomOffset   = this.zoomOffset;
+	
+	this.mapOptions.gamePosX1 = this.posLeft;
+	this.mapOptions.gamePosX2 = this.posRight;
+	this.mapOptions.gamePosY1 = this.posTop;
+	this.mapOptions.gamePosY2 = this.posBottom;
 	
 	this.updateStateFromOptions();
 }
