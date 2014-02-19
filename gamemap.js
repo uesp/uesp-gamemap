@@ -264,7 +264,7 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 					.css('user-select', 'none')
 					.on('selectstart', false);
 	
-	if (uesp.debug) newDiv.text(tileID);
+	//if (uesp.debug) newDiv.text(tileID);
 	newTile.element = newDiv;
 	
 	return newTile;
@@ -309,6 +309,43 @@ uesp.gamemap.Map.prototype.dumpTileIndices = function()
 		}
 		uesp.logDebug(uesp.LOG_LEVEL_WARNING, LineString);
 	}
+}
+
+
+function compareMapWorld (a, b)
+{
+	if (a < b) return -1;
+	if (a > b) return 1;
+	return 0;
+}
+
+
+uesp.gamemap.Map.prototype.fillWorldList = function(ElementID)
+{
+	TargetList = $(ElementID);
+	if (TargetList == null) return false;
+	
+	var tmpWorldList = [];
+	
+	for (key in this.mapWorlds)
+	{
+		tmpWorldList.push(this.mapWorlds[key].name);
+	}
+	
+	tmpWorldList.sort(compareMapWorld);
+	TargetList.empty();
+	
+	for (i = 0; i < tmpWorldList.length; ++i)
+	{
+		world = this.mapWorlds[this.mapWorldNameIndex[tmpWorldList[i]]];
+		if (world == null) continue;
+		
+		TargetList.append($("<option></option>")
+					.attr("value", world.id)
+					.text(world.displayName)); 
+	}
+	
+	return true;
 }
 
 
@@ -508,10 +545,16 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 {
 	if (this.mapOptions.getMapTileFunction == null) return;
 	
-	var worldName = "__default";
+	if (!(this.currentWorldId in this.mapWorlds))
+	{
+		uesp.logError("Unknown worldID " + this.currentWorldId + "!");
+		return;
+	}
+	
+	var worldName = this.mapWorlds[this.currentWorldId].name;
 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
 	
-	if (this.currentWorldId in this.mapWorlds) worldName = this.mapWorlds[this.currentWorldId].name;
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "worldID: " + this.currentWorldId + " worldName: " + worldName);
 			
 	for (var y = 0; y < this.mapOptions.tileCountY; ++y)
 	{
@@ -541,6 +584,13 @@ uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
 {
 	if (uesp.gamemap.isNullorUndefined(this.mapOptions.getMapTileFunction)) return;
 	
+	if (!(this.currentWorldId in this.mapWorlds))
+	{
+		uesp.logError("Unknown worldID " + this.currentWorldId + "!");
+		return;
+	}
+	
+	var worldName = this.mapWorlds[this.currentWorldId].name;
 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
 	
 	for (y = 0; y < this.mapOptions.tileCountY; ++y)
@@ -559,7 +609,7 @@ uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
 				continue;
 			}
 			
-			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel);
+			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
 			var element  = this.mapTiles[y][x].element;
 			
 			$('<img/>').attr('src', imageURL)

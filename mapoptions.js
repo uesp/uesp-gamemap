@@ -35,6 +35,9 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.initialGamePosX = 0;
 	this.initialGamePosY = 0;
 	this.initialZoom     = 10;
+	
+	this.initialGamePosX = 300;
+	this.initialGamePosY = 500;
 
 	this.mergeOptions(mapOptions);
 }
