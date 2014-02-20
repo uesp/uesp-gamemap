@@ -37,7 +37,7 @@ class GameMap
 	public $limitCount = 100;
 	
 	private $db = null;
-	private $skipCheckTables = false;
+	private $skipCheckTables = true;
 	
 	
 	function __construct ()
