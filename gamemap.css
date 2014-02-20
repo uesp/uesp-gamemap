@@ -163,6 +163,11 @@
 .MapListHeader {
 	font-weight: bold;
 	background-color: #eeeeee;
+	color: #cc0000;
+}
+
+ul ul .MapListHeader {
+	color: #660000;
 }
 
 #MapList ul {
