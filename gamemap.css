@@ -1,9 +1,11 @@
 #gmMap {
-	width: 90%;
-	height: 90%;
+	bottom: 2px;
+	top: 30px;
 	border: solid black 1px;
 	overflow: hidden;
 	position: absolute;
+	left: 205px;
+	right: 2px;
 }
 
 #gmMapContainer {
@@ -127,4 +129,90 @@
 	position: absolute;
 	z-index: 5;
 	border: none;
+}
+
+#MapListContainer {
+	position: absolute;
+	left: 2px;
+	top: 30px;
+	width: 200px;
+	bottom: 2px;
+	border: solid 1px gray;
+	list-style-type: none;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+#MapList {
+	border: none;
+	margin: 0;
+	padding: 0;
+	width: 198px;
+	height: 100%;
+	font: 13px sans-serif;
+	cursor: default;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+
+.MapListHeader {
+	font-weight: bold;
+	background-color: #eeeeee;
+}
+
+#MapList ul {
+	list-style-type: none;
+	padding: 0;
+}
+
+.MapListSelect {
+	background-color: #3333ff;
+	color: #ffffff;
+}
+
+#MapList li {
+	list-style-type: none;
+	padding-left: 0px;
+}
+
+#MapList li:hover {
+	background-color: #ccccff;
+}
+
+#MapList li.MapListSelect:hover {
+	background-color: #0000cc;
+}
+
+#MapList .MapListHeader:hover {
+	background-color: #cccccc;
+}
+
+#MapList ul li {
+	padding-left: 15px;
+}
+
+#MapList ul ul {
+	display: none;
+}
+
+#MapList ul ul li {
+	padding-left: 30px;
+}
+
+#MapList ul ul ul li {
+	padding-left: 45px;
+}
+
+#MapList ul ul ul ul li {
+	padding-left: 60px;
+}
+
+
+
+
 }
