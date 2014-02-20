@@ -43,6 +43,7 @@ class GameMap
 	
 	function __construct ()
 	{
+		$this->db = mysqli_init();
 		$this->setInputParams();
 		$this->parseInputParams();
 	}
@@ -56,7 +57,7 @@ class GameMap
 	
 	private function checkTables()
 	{
-		$result = mysql_query('select 1 from `world`;');
+		$result = $this->db->query('select 1 from `world`;');
 		
 		if ($result === FALSE)
 		{
@@ -86,7 +87,7 @@ class GameMap
 					PRIMARY KEY ( id )
 				);";
 		
-		$result = mysql_query($query);
+		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to create world table!");
 		
 		$query = "CREATE TABLE IF NOT EXISTS location (
@@ -107,7 +108,8 @@ class GameMap
 					visible TINYINT NOT NULL,
 					PRIMARY KEY ( id )
 				);";
-		$result = mysql_query($query);
+		
+		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to create location table!");
 		
 		return true;
@@ -173,13 +175,14 @@ class GameMap
 		$query .= " AND displayLevel <= ". $this->limitDisplayLevel ." ";
 		$query .= " LIMIT ".$this->limitCount.";";
 		
-		$result = mysql_query($query);
-		if ($result === FALSE) return $this->reportError("Failed to retrieve location data!" . $result);
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to retrieve location data!");
 		
 		$locations = Array();
 		$count = 0;
+		$result->data_seek(0);
 		
-		while ( ($row = mysql_fetch_assoc($result)) )
+		while ( ($row = $result->fetch_assoc()) )
 		{
 			settype($row['id'], "integer");
 			settype($row['worldId'], "integer");
@@ -212,14 +215,15 @@ class GameMap
 	
 		$query  = "SELECT * from location WHERE visible <> 0 AND id=".$this->locationId." ";
 		$query .= " LIMIT 1";
-	
-		$result = mysql_query($query);
-		if ($result === FALSE) return $this->reportError("Failed to retrieve location data!" . $result);
+		
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to retrieve location data!");
 	
 		$locations = Array();
 		$count = 0;
+		$result->data_seek(0);
 	
-		while ( ($row = mysql_fetch_assoc($result)) )
+		while ( ($row = $result->fetch_assoc()) )
 		{
 			settype($row['id'], "integer");
 			settype($row['worldId'], "integer");
@@ -256,14 +260,15 @@ class GameMap
 			$query .= "name='". $worldName ."';";
 		else
 			return $this->reportError("World ID/name not specified!");
-					
-		$result = mysql_query($query);
-		if ($result === FALSE) return $this->reportError("Failed to retrieve world data!" . $result);
-	
+		
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to retrieve world data!");
+		
 		$worlds = Array();
 		$count = 0;
-	
-		while ( ($row = mysql_fetch_assoc($result)) )
+		$result->data_seek(0);
+		
+		while ( ($row = $result->fetch_assoc()) )
 		{
 			settype($row['enabled'], "integer");
 			settype($row['posRight'], "integer");
@@ -289,13 +294,14 @@ class GameMap
 		if (!$this->initDatabase()) return false;
 		
 		$query = "SELECT * from world WHERE enabled <> 0;";
-		$result = mysql_query($query);
+		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve world data!" . $result);
 		
 		$worlds = Array();
 		$count = 0;
+		$result->data_seek(0);
 		
-		while ( ($row = mysql_fetch_assoc($result)) )
+		while ( ($row = $result->fetch_assoc()) )
 		{
 			settype($row['enabled'], "integer");
 			settype($row['posRight'], "integer");
@@ -320,14 +326,12 @@ class GameMap
 	{
 		if (!$this->initDatabase()) return 0;
 	
-		$query = "SELECT id from world WHERE name='". mysql_real_escape_string($worldName) ."' LIMIT 1;";
-		$result = mysql_query($query);
-		if ($result === FALSE) return $this->reportError("Failed to get the ID for world '". $worldName ."'! " . $result);
+		$query = "SELECT id from world WHERE name='". $this->db->real_escape_string($worldName) ."' LIMIT 1;";
+		$result = $this->db->query($query);
+		if ($result === false || $result->num_rows === 0) return $this->reportError("Failed to get the ID for world '". $worldName ."'! ");
 		
-		if (mysql_num_rows($result) == 0) return $this->reportError("Failed to get the ID for world '". $worldName ."'! " . $result);
-	
-		$row = mysql_fetch_assoc($result);
-		if (!$row) return $this->reportError("Failed to get the ID for world '". $worldName ."'! " . $result);
+		$result->data_seek(0);
+		$row = $result->fetch_assoc();
 		
 		settype($row['id'], "integer");
 		if ($row['id'] == 0) return $this->reportError("Failed to get the ID for world '". $worldName ."'! " . $result);
@@ -341,10 +345,8 @@ class GameMap
 		
 		if ($this->dbInitialized) return true;
 		
-		$this->db = mysql_connect($uespGameMapReadDBHost, $uespGameMapReadUser, $uespGameMapReadPW);
-		if (!$this->db) return $this->reportError("Could not connect to mysql database!");
-		
-		if (!mysql_select_db($uespGameMapDatabase, $this->db)) return $this->reportError("Game map database '".$uespGameMapDatabase."'. not found!");
+		$this->db->real_connect($uespGameMapReadDBHost, $uespGameMapReadUser, $uespGameMapReadPW, $uespGameMapDatabase);
+		if ($db->connect_error) return $this->reportError("Could not connect to mysql database!");
 		
 		$this->dbInitialized = true;
 		
@@ -359,10 +361,8 @@ class GameMap
 		
 		if ($this->dbInitialized) return true;
 		
-		$this->db = mysql_connect($uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW);
-		if (!$this->db) return $this->reportError("Could not connect to mysql database!");
-		
-		if (!mysql_select_db($uespGameMapDatabase, $this->db)) return $this->reportError("Game map database '".$uespGameMapDatabase."'. not found!");
+		$this->db->real_connect($uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW, $uespGameMapDatabase);
+		if ($db->connect_error) return $this->reportError("Could not connect to mysql database!");
 		
 		$this->dbInitialized = true;
 		
@@ -373,18 +373,21 @@ class GameMap
 	
 	private function parseInputParams ()
 	{
-		if (array_key_exists('action', $this->inputParams)) $this->action = mysql_real_escape_string(strtolower($this->inputParams['action']));
-		if (array_key_exists('top',    $this->inputParams)) $this->limitTop    = intval(mysql_real_escape_string($this->inputParams['top']));
-		if (array_key_exists('left',   $this->inputParams)) $this->limitLeft   = intval(mysql_real_escape_string($this->inputParams['left']));
-		if (array_key_exists('bottom', $this->inputParams)) $this->limitBottom = intval(mysql_real_escape_string($this->inputParams['bottom']));
-		if (array_key_exists('right',  $this->inputParams)) $this->limitRight  = intval(mysql_real_escape_string($this->inputParams['right']));
-		if (array_key_exists('zoom',   $this->inputParams)) $this->limitDisplayLevel = intval(mysql_real_escape_string($this->inputParams['zoom']));
-		if (array_key_exists('locid',  $this->inputParams)) $this->locationId = intval(mysql_real_escape_string($this->inputParams['locid']));
-		if (array_key_exists('incworld',  $this->inputParams)) $this->includeWorld = intval(mysql_real_escape_string($this->inputParams['incworld']));
+			//TODO: Need to change to write db connection afterwards if required
+		if (!$this->initDatabase()) return false;
+		
+		if (array_key_exists('action', $this->inputParams)) $this->action = $this->db->real_escape_string(strtolower($this->inputParams['action']));
+		if (array_key_exists('top',    $this->inputParams)) $this->limitTop    = intval($this->db->real_escape_string($this->inputParams['top']));
+		if (array_key_exists('left',   $this->inputParams)) $this->limitLeft   = intval($this->db->real_escape_string($this->inputParams['left']));
+		if (array_key_exists('bottom', $this->inputParams)) $this->limitBottom = intval($this->db->real_escape_string($this->inputParams['bottom']));
+		if (array_key_exists('right',  $this->inputParams)) $this->limitRight  = intval($this->db->real_escape_string($this->inputParams['right']));
+		if (array_key_exists('zoom',   $this->inputParams)) $this->limitDisplayLevel = intval($this->db->real_escape_string($this->inputParams['zoom']));
+		if (array_key_exists('locid',  $this->inputParams)) $this->locationId = intval($this->db->real_escape_string($this->inputParams['locid']));
+		if (array_key_exists('incworld',  $this->inputParams)) $this->includeWorld = intval($this->db->real_escape_string($this->inputParams['incworld']));
 		
 		if (array_key_exists('world',  $this->inputParams))
 		{
-			$worldParam = mysql_real_escape_string($this->inputParams['world']);
+			$worldParam = $this->db->real_escape_string($this->inputParams['world']);
 			
 			if (is_numeric($worldParam))
 				$this->worldId = intval($worldParam);
