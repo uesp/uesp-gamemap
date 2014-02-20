@@ -22,7 +22,7 @@ class GameMap
 	public $inputParams = array();
 	
 	public $action = 'default';
-	public $world = '';
+	public $world = 0;
 	public $locid = 0;
 	
 	public $limitBottom = 0;
@@ -30,6 +30,7 @@ class GameMap
 	public $limitLeft   = 0;
 	public $limitRight  = 1000;
 	public $limitDisplayLevel = 100;
+	public $includeWorld = 0;
 	
 	public $outputItems = array();
 	
@@ -152,7 +153,7 @@ class GameMap
 	
 	public function doGetLocations ()
 	{
-		if ($this->world === '') return $this->reportError("No world specified to retrieve locations for!");
+		if ($this->world <= 0) return $this->reportError("No world specified to retrieve locations for!");
 		if (!$this->initDatabase()) return false;
 		
 		$query  = "SELECT * from location WHERE visible <> 0 AND worldId=".$this->world." ";
@@ -186,6 +187,8 @@ class GameMap
 		
 		$this->addOutputItem("locations", $locations);
 		$this->addOutputItem("locationCount", $count);
+		
+		if ($this->includeWorld != 0) return $this->doGetWorld($this->world);
 		return true;
 	}
 	
@@ -225,6 +228,38 @@ class GameMap
 	
 		$this->addOutputItem("locations", $locations);
 		$this->addOutputItem("locationCount", $count);
+		return true;
+	}
+	
+	
+	public function doGetWorld ($worldId)
+	{
+		if (!$this->initDatabase()) return false;
+	
+		$query = "SELECT * from world WHERE enabled <> 0 AND id=". $worldId .";";
+		$result = mysql_query($query);
+		if ($result === FALSE) return $this->reportError("Failed to retrieve world data!" . $result);
+	
+		$worlds = Array();
+		$count = 0;
+	
+		while ( ($row = mysql_fetch_assoc($result)) )
+		{
+			settype($row['enabled'], "integer");
+			settype($row['posRight'], "integer");
+			settype($row['posLeft'], "integer");
+			settype($row['posTop'], "integer");
+			settype($row['posBottom'], "integer");
+			settype($row['cellSize'], "integer");
+			settype($row['minZoom'], "integer");
+			settype($row['maxZoom'], "integer");
+				
+			$worlds[] = $row;
+			$count += 1;
+		}
+	
+		$this->addOutputItem("worlds", $worlds);
+		$this->addOutputItem("worldCount", $count);
 		return true;
 	}
 	
@@ -292,13 +327,14 @@ class GameMap
 	private function parseInputParams ()
 	{
 		if (array_key_exists('action', $this->inputParams)) $this->action = mysql_real_escape_string(strtolower($this->inputParams['action']));
-		if (array_key_exists('world',  $this->inputParams)) $this->world  = mysql_real_escape_string(strtolower($this->inputParams['world']));
+		if (array_key_exists('world',  $this->inputParams)) $this->world  = intval(strtolower($this->inputParams['world']));
 		if (array_key_exists('top',    $this->inputParams)) $this->limitTop    = intval(mysql_real_escape_string($this->inputParams['top']));
 		if (array_key_exists('left',   $this->inputParams)) $this->limitLeft   = intval(mysql_real_escape_string($this->inputParams['left']));
 		if (array_key_exists('bottom', $this->inputParams)) $this->limitBottom = intval(mysql_real_escape_string($this->inputParams['bottom']));
 		if (array_key_exists('right',  $this->inputParams)) $this->limitRight  = intval(mysql_real_escape_string($this->inputParams['right']));
 		if (array_key_exists('zoom',   $this->inputParams)) $this->limitDisplayLevel = intval(mysql_real_escape_string($this->inputParams['zoom']));
 		if (array_key_exists('locid',  $this->inputParams)) $this->locid = intval(mysql_real_escape_string($this->inputParams['locid']));
+		if (array_key_exists('incworld',  $this->inputParams)) $this->includeWorld = intval(mysql_real_escape_string($this->inputParams['incworld']));
 		
 		if ($this->limitTop < $this->limitBottom)
 		{

@@ -468,6 +468,12 @@ uesp.gamemap.Map.prototype.hasLocation = function(locId)
 }
 
 
+uesp.gamemap.Map.prototype.hasWorld = function(worldId)
+{
+	return worldId in this.mapWorlds;
+}
+
+
 uesp.gamemap.Map.prototype.isGamePosInBounds = function(gamePos)
 {
 	if (uesp.gamemap.isNullorUndefined(gamePos.x) || uesp.gamemap.isNullorUndefined(gamePos.y)) return false;
@@ -854,6 +860,7 @@ uesp.gamemap.Map.prototype.retrieveLocations = function()
 	queryParams.left   = mapBounds.left;
 	queryParams.right  = mapBounds.right;
 	queryParams.zoom   = this.zoomLevel;
+	if (!this.hasWorld(this.currentWorldId)) queryParams.incworld = 1;
 	
 	if (queryParams.world <= 0) return uesp.logError("Unknown worldId for current world " + this.currentWorldId + "!");
 	
