@@ -19,6 +19,7 @@
 	border: none;
 	position: absolute;
 	z-index: 1;
+	cursor: url(grab.cur) 8 8, default;
 }
 
 .gmMapLoc {
