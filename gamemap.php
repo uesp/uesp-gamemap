@@ -22,6 +22,7 @@ class GameMap
 	
 	public $action = 'default';
 	public $worldId = 0;
+	public $worldName = '';
 	public $locationId = 0;
 	
 	public $limitBottom = 0;
@@ -37,6 +38,7 @@ class GameMap
 	
 	private $db = null;
 	private $skipCheckTables = true;
+	private $dbInitialized = false;
 	
 	
 	function __construct ()
@@ -152,10 +154,21 @@ class GameMap
 	
 	public function doGetLocations ()
 	{
-		if ($this->worldId <= 0) return $this->reportError("No world specified to retrieve locations for!");
 		if (!$this->initDatabase()) return false;
 		
-		$query  = "SELECT * from location WHERE visible <> 0 AND worldId=".$this->worldId." ";
+		$query  = "SELECT * from location WHERE visible <> 0 AND ";
+		
+		if ($this->worldName != '')
+		{
+			$this->worldId = $this->getWorldId($this->worldName);
+			if ($this->worldId == 0) return false;
+		}
+
+		if ($this->worldId > 0)
+			$query .= "worldId=" . $this->worldId . " ";
+		else
+			return $this->reportError("No world specified to retrieve locations for!");
+			
 		$query .= "AND x >= " . $this->limitLeft ." AND x <= ". $this->limitRight ." AND y >= ". $this->limitBottom ." AND y <= ". $this->limitTop ." ";
 		$query .= " AND displayLevel <= ". $this->limitDisplayLevel ." ";
 		$query .= " LIMIT ".$this->limitCount.";";
@@ -187,7 +200,7 @@ class GameMap
 		$this->addOutputItem("locations", $locations);
 		$this->addOutputItem("locationCount", $count);
 		
-		if ($this->includeWorld != 0) return $this->doGetWorld($this->worldId);
+		if ($this->includeWorld != 0) return $this->doGetWorld();
 		return true;
 	}
 	
@@ -231,11 +244,19 @@ class GameMap
 	}
 	
 	
-	public function doGetWorld ($worldId)
+	public function doGetWorld ()
 	{
 		if (!$this->initDatabase()) return false;
 	
-		$query = "SELECT * from world WHERE enabled <> 0 AND id=". $worldId .";";
+		$query = "SELECT * from world WHERE enabled <> 0 AND ";
+
+		if ($this->worldId > 0)
+			$query .= "id=". $worldId .";";
+		else if ($this->worldName != '')
+			$query .= "name='". $worldName ."';";
+		else
+			return $this->reportError("World ID/name not specified!");
+					
 		$result = mysql_query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve world data!" . $result);
 	
@@ -295,14 +316,37 @@ class GameMap
 	}
 	
 	
+	public function getWorldId ($worldName)
+	{
+		if (!$this->initDatabase()) return 0;
+	
+		$query = "SELECT id from world WHERE name='". mysql_real_escape_string($worldName) ."' LIMIT 1;";
+		$result = mysql_query($query);
+		if ($result === FALSE) return $this->reportError("Failed to get the ID for world '". $worldName ."'! " . $result);
+		
+		if (mysql_num_rows($result) == 0) return $this->reportError("Failed to get the ID for world '". $worldName ."'! " . $result);
+	
+		$row = mysql_fetch_assoc($result);
+		if (!$row) return $this->reportError("Failed to get the ID for world '". $worldName ."'! " . $result);
+		
+		settype($row['id'], "integer");
+		if ($row['id'] == 0) return $this->reportError("Failed to get the ID for world '". $worldName ."'! " . $result);
+		return $row['id'];
+	}
+	
+	
 	private function initDatabase ()
 	{
 		global $uespGameMapReadDBHost, $uespGameMapReadUser, $uespGameMapReadPW, $uespGameMapDatabase;
+		
+		if ($this->dbInitialized) return true;
 		
 		$this->db = mysql_connect($uespGameMapReadDBHost, $uespGameMapReadUser, $uespGameMapReadPW);
 		if (!$this->db) return $this->reportError("Could not connect to mysql database!");
 		
 		if (!mysql_select_db($uespGameMapDatabase, $this->db)) return $this->reportError("Game map database '".$uespGameMapDatabase."'. not found!");
+		
+		$this->dbInitialized = true;
 		
 		if ($this->skipCheckTables) return true;
 		return $this->checkTables();
@@ -313,10 +357,14 @@ class GameMap
 	{
 		global $uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW, $uespGameMapDatabase;
 		
+		if ($this->dbInitialized) return true;
+		
 		$this->db = mysql_connect($uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW);
 		if (!$this->db) return $this->reportError("Could not connect to mysql database!");
 		
 		if (!mysql_select_db($uespGameMapDatabase, $this->db)) return $this->reportError("Game map database '".$uespGameMapDatabase."'. not found!");
+		
+		$this->dbInitialized = true;
 		
 		if ($this->skipCheckTables) return true;
 		return $this->checkTables();
@@ -326,7 +374,6 @@ class GameMap
 	private function parseInputParams ()
 	{
 		if (array_key_exists('action', $this->inputParams)) $this->action = mysql_real_escape_string(strtolower($this->inputParams['action']));
-		if (array_key_exists('world',  $this->inputParams)) $this->worldId  = intval(mysql_real_escape_string($this->inputParams['world']));
 		if (array_key_exists('top',    $this->inputParams)) $this->limitTop    = intval(mysql_real_escape_string($this->inputParams['top']));
 		if (array_key_exists('left',   $this->inputParams)) $this->limitLeft   = intval(mysql_real_escape_string($this->inputParams['left']));
 		if (array_key_exists('bottom', $this->inputParams)) $this->limitBottom = intval(mysql_real_escape_string($this->inputParams['bottom']));
@@ -334,6 +381,17 @@ class GameMap
 		if (array_key_exists('zoom',   $this->inputParams)) $this->limitDisplayLevel = intval(mysql_real_escape_string($this->inputParams['zoom']));
 		if (array_key_exists('locid',  $this->inputParams)) $this->locationId = intval(mysql_real_escape_string($this->inputParams['locid']));
 		if (array_key_exists('incworld',  $this->inputParams)) $this->includeWorld = intval(mysql_real_escape_string($this->inputParams['incworld']));
+		
+		if (array_key_exists('world',  $this->inputParams))
+		{
+			$worldParam = mysql_real_escape_string($this->inputParams['world']);
+			
+			if (is_numeric($worldParam))
+				$this->worldId = intval($worldParam);
+			else
+				$this->worldName = strtolower($worldParam);
+	
+		}
 		
 		if ($this->limitTop < $this->limitBottom)
 		{
