@@ -327,7 +327,7 @@ class GameMap
 	private function parseInputParams ()
 	{
 		if (array_key_exists('action', $this->inputParams)) $this->action = mysql_real_escape_string(strtolower($this->inputParams['action']));
-		if (array_key_exists('world',  $this->inputParams)) $this->world  = intval(strtolower($this->inputParams['world']));
+		if (array_key_exists('world',  $this->inputParams)) $this->world  = intval(mysql_real_escape_string($this->inputParams['world']));
 		if (array_key_exists('top',    $this->inputParams)) $this->limitTop    = intval(mysql_real_escape_string($this->inputParams['top']));
 		if (array_key_exists('left',   $this->inputParams)) $this->limitLeft   = intval(mysql_real_escape_string($this->inputParams['left']));
 		if (array_key_exists('bottom', $this->inputParams)) $this->limitBottom = intval(mysql_real_escape_string($this->inputParams['bottom']));
