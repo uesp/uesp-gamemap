@@ -36,8 +36,9 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.initialGamePosY = 0;
 	this.initialZoom     = 10;
 	
-	this.initialGamePosX = 300;
-	this.initialGamePosY = 500;
+		//Temporary values for the initial ESO maps
+	this.initialGamePosX = 500000;
+	this.initialGamePosY = 600000;
 
 	this.mergeOptions(mapOptions);
 }
