@@ -37,6 +37,13 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions)
 	this.dragStartEventY = 0;
 	this.checkTilesOnDrag = true;
 	
+		// This just controls the client-side editing abilities.
+		// All security for writes is handled on the server side.
+	this.enableEdit = true;
+	this.currentEditMode = '';
+	this.editNoticeDiv = null;
+	this.nextNewLocationId = -100;
+	
 	this.mapTiles = [];
 	
 	this.queryParams = uesp.parseQueryParams();
@@ -59,6 +66,12 @@ uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions, worldId)
 	this.mapWorlds[worldId].mergeMapOptions(mapOptions);
 	
 	this.mapWorldNameIndex[worldName.toLowerCase()] = worldId;
+}
+
+
+uesp.gamemap.Map.prototype.canEdit = function ()
+{
+	return this.enableEdit;
 }
 
 
@@ -626,6 +639,116 @@ uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
 }
 
 
+uesp.gamemap.Map.prototype.createEditNoticeDiv = function()
+{
+	this.editNoticeDiv = $('<div />').attr('id', 'gmMapEditNotice')
+								.attr('class', '')
+								.appendTo(this.mapContainer);
+}
+
+
+uesp.gamemap.Map.prototype.displayEditNotice = function(Notice)
+{
+	if (!this.editNoticeDiv) this.createEditNoticeDiv();
+	
+	this.editNoticeDiv.html(Notice);
+	this.editNoticeDiv.show();
+}
+
+
+uesp.gamemap.Map.prototype.hideEditNotice = function()
+{
+	if (this.editNoticeDiv)
+	{
+		this.editNoticeDiv.hide();
+		this.editNoticeDiv.html('');
+	}
+}
+
+
+uesp.gamemap.Map.prototype.onCancelEditMode = function(event)
+{
+	if (this.currentEditMode == '') return true;
+	
+	this.currentEditMode = '';
+	this.hideEditNotice();
+	
+	$('.gmMapTile').removeClass('gmCrosshairCursor');
+	
+	return true;
+}
+
+
+uesp.gamemap.Map.prototype.onAddLocationStart = function()
+{
+	if (!this.canEdit()) return false;
+	
+	this.currentEditMode = 'addlocation';
+	this.displayEditNotice("Click on the map to add a location...<a id='gmMapEditNoticeCancel'>[cancel]</a>");
+	$('.gmMapTile').addClass('gmCrosshairCursor');
+	
+	var self = this;
+	
+	$('#gmMapEditNoticeCancel').click(function(event) {
+		self.onCancelEditMode(event);
+	});
+	
+	return true;
+}
+
+
+uesp.gamemap.Map.prototype.createNewLocationId = function ()
+{
+	NewId = this.nextNewLocationId;
+	this.nextNewLocationId -= 1;
+	return NewId;
+}
+
+
+uesp.gamemap.Map.prototype.createNewLocation = function (gamePos)
+{
+	if (!this.canEdit()) return null;
+	
+	var location = new uesp.gamemap.Location(this);
+	
+	location.id = this.createNewLocationId();
+	location.worldId = this.currentWorldId;
+	location.name = 'New Location';
+	location.x = Math.round(gamePos.x);
+	location.y = Math.round(gamePos.y);
+	location.locType = uesp.gamemap.LOCTYPE_POINT;
+	location.displayLevel = 1;
+	location.visible = true;
+	location.useEditPopup = true;
+	
+	location.displayData.labelPos = 'midRight';
+	location.displayData.iconType = 1;
+	
+	this.locations[location.id] = location;
+	
+	this.displayLocation(this.locations[location.id]);
+	location.showPopup();
+	
+	return location;
+}
+
+
+uesp.gamemap.Map.prototype.onAddLocationClick = function (event)
+{
+	this.hideEditNotice();
+	this.currentEditMode = '';
+	$('.gmMapTile').removeClass('gmCrosshairCursor');
+	
+	if (!this.canEdit()) return false;
+	
+	gamePos = this.convertPixelToGamePos(event.pageX, event.pageY);
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "onAddLocationClick()", gamePos);
+	
+	this.createNewLocation(gamePos);
+	
+	return true;
+}
+
 
 uesp.gamemap.Map.prototype.onDragEnd = function(event)
 {
@@ -644,7 +767,7 @@ uesp.gamemap.Map.prototype.onDragEnd = function(event)
 
 uesp.gamemap.Map.prototype.onDragMove = function(event)
 {
-	if (uesp.gamemap.isNullorUndefined(this.draggingObject)) return;
+	if (this.draggingObject == null) return;
 	
 	this.mapRoot.offset({
 			left: event.pageX - this.dragStartLeft,
@@ -677,7 +800,10 @@ uesp.gamemap.Map.prototype.onMouseDown = function(event)
 	var self = event.data.self;
 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseDown");
 	
-	self.onDragStart(event);
+	if (self.currentEditMode == 'addlocation')
+		self.onAddLocationClick(event);
+	else
+		self.onDragStart(event);
 	
 	event.preventDefault();
 }
@@ -816,6 +942,7 @@ uesp.gamemap.Map.prototype.removeExtraLocations = function()
 {
 	var mapBounds = this.getMapRootBounds();
 	
+		// Remove locations in this world that are out of the current bounds
 	for (key in this.locations)
 	{
 		if (this.locations[key].worldId != this.currentWorldId) continue;
@@ -1133,8 +1260,12 @@ uesp.gamemap.Map.prototype.updateLocations = function(animate)
 	this.removeExtraLocations();
 	this.updateLocationDisplayLevels();
 	this.updateLocationOffsets(animate);
-	this.redrawLocationPaths();
+	
+	//this.redrawLocationPaths();
+	this.redrawLocations();
+	
 	this.retrieveLocations();
+	
 }
 
 
@@ -1143,6 +1274,22 @@ uesp.gamemap.Map.prototype.redrawLocationPaths = function()
 	for (key in this.locations)
 	{
 		if (this.locations[key].locType >= uesp.gamemap.LOCTYPE_PATH) this.locations[key].updatePathSize();
+	}
+}
+
+
+uesp.gamemap.Map.prototype.redrawLocations = function()
+{
+	for (key in this.locations)
+	{
+		if (this.locations[key].worldId != this.currentWorldId) continue;
+		
+		if (this.locations[key].locType >= uesp.gamemap.LOCTYPE_PATH)
+		{
+			this.locations[key].updatePathSize(false);
+		}
+		
+		this.displayLocation(this.locations[key]);
 	}
 }
 
@@ -1327,6 +1474,19 @@ uesp.gamemap.Map.prototype.testPath = function()
 	
 	this.displayLocation(newPath);
 }
+
+
+uesp.gamemap.Map.prototype.updateLocationId = function(oldId, newId)
+{
+	if (oldId in this.locations) 
+	{
+		var location = this.locations[oldId];
+		delete this.locations[oldId];
+		location.id = newId;
+		this.locations[newId] = location;
+	}
+}
+
 
 uesp.gamemap.defaultGetMapTile = function(tileX, tileY, zoom)
 {

@@ -123,6 +123,12 @@
 			var result = element.options[element.selectedIndex].value;
 			g_GameMap.changeWorld(result);
 		}
+		
+		function onAddLocation()
+		{
+			g_GameMap.onAddLocationStart();
+			//alert("adding location...");
+		}
 
 	</script>
 </head>
@@ -139,11 +145,14 @@ Map Tiles...
 <a href="#" onClick="g_GameMap.setMapState(g_MapState);">Restore State</a>
 <a href="#" onClick="g_GameMap.changeWorld('Skyrim');">Skyrim</a>
 <a href="#" onClick="g_GameMap.changeWorld(2);">Dragonborn</a>
+
 Worlds 
 <select id="gmWorldSelect" onchange="onChangeWorld(this)">
 <option value="1">Skyrim
 <option value="2">Dragonborn
 </select>
+
+<button onclick="onAddLocation()">Add Location</button>
 
 <div id="MapListContainer">
 <ul id="MapList">
