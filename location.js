@@ -19,6 +19,7 @@ uesp.gamemap.Location = function(parentMap)
 	this.worldId = -1;
 	this.revisionId = -1;
 	this.destinationId = -1;
+	this.iconType = 0;
 	this.x = 0;
 	this.y = 0;
 	this.width = 0;
@@ -302,8 +303,6 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 
 uesp.gamemap.Location.prototype.updateIcon = function ()
 {
-	if (this.displayData.iconType == null) return;
-	
 	var missingURL = this.parentMap.mapOptions.iconPath + this.parentMap.mapOptions.iconMissing;
 	var imageURL   = this.parentMap.mapOptions.iconPath + this.displayData.iconType + ".png";
 	
@@ -474,8 +473,7 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	
 	formValues.displayData = { };
 	formValues.displayData.points = [formValues.x, formValues.y];
-	formValues.displayData.iconType = parseInt(formValues.iconType);
-	formValues.iconType = formValues.displayData.iconType; 
+	formValues.iconType = parseInt(formValues.iconType);
 	
 	if (formValues.visible == null)
 		formValues.visible = false;
@@ -625,7 +623,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	
 	if (this.id < 0) this.setPopupEditNotice('New location not yet saved.', 'warning');
 	
-	$('#' + this.popupId + ' select').val(this.displayData.iconType);
+	$('#' + this.popupId + ' select').val(this.iconType);
 	
 	var self = this;
 	

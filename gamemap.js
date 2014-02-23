@@ -722,7 +722,7 @@ uesp.gamemap.Map.prototype.createNewLocation = function (gamePos)
 	location.useEditPopup = true;
 	
 	location.displayData.labelPos = 'midRight';
-	location.displayData.iconType = 1;
+	location.iconType = 1;
 	
 	this.locations[location.id] = location;
 	
@@ -1429,7 +1429,7 @@ uesp.gamemap.Map.prototype.testArea = function()
 	newPath.height = 40000;
 	newPath.id = 1234;
 	newPath.name = "Test Area";
-	newPath.displayData.iconType = 1;
+	newPath.iconType = 1;
 	newPath.locType = uesp.gamemap.LOCTYPE_AREA;
 	newPath.displayData.hover = { };
 	newPath.displayData.hover.fillStyle = "rgba(255,0,0,0.5)";
@@ -1458,7 +1458,7 @@ uesp.gamemap.Map.prototype.testPath = function()
 	newPath.height = 40000;
 	newPath.id = 1235;
 	newPath.name = "Test Path";
-	newPath.displayData.iconType = 2;
+	newPath.iconType = 2;
 	newPath.locType = uesp.gamemap.LOCTYPE_PATH;
 	newPath.displayData.hover = { };
 	newPath.displayData.hover.fillStyle = "rgba(0,255,0,0)";

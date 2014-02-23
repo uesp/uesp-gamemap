@@ -36,6 +36,9 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.initialGamePosY = 0;
 	this.initialZoom     = 10;
 	
+		// Map iconTypes values to strings
+	this.iconTypeMap = { };
+	
 		//Temporary values for the initial ESO maps
 	this.initialGamePosX = 500000;
 	this.initialGamePosY = 600000;
