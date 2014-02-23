@@ -25,6 +25,16 @@ class GameMap
 	public $worldName = '';
 	public $locationId = 0;
 	
+	public $locName = '';
+	public $locDescription = '';
+	public $locWikiPage = '';
+	public $locType = 0;
+	public $locDisplayLevel = 0;
+	public $locVisible = 1;
+	public $locDisplayData = '{}';
+	public $locX = 0;
+	public $locY = 0;
+	
 	public $limitBottom = 0;
 	public $limitTop    = 1000;
 	public $limitLeft   = 0;
@@ -38,12 +48,12 @@ class GameMap
 	
 	private $db = null;
 	private $skipCheckTables = true;
-	private $dbInitialized = false;
+	private $dbReadInitialized  = false;
+	private $dbWriteInitialized = false;
 	
 	
 	function __construct ()
 	{
-		$this->db = mysqli_init();
 		$this->setInputParams();
 		$this->parseInputParams();
 	}
@@ -130,7 +140,11 @@ class GameMap
 			case 'get_locs':
 				return $this->doGetLocations();
 			case 'get_loc':
-					return $this->doGetLocation();
+				return $this->doGetLocation();
+			case 'set_loc':
+				return $this->doSetLocation();
+			case 'add_loc':
+				return $this->doAddLocation();
 			case 'default':
 			default:
 				break;
@@ -204,6 +218,68 @@ class GameMap
 		$this->addOutputItem("locationCount", $count);
 		
 		if ($this->includeWorld != 0) return $this->doGetWorld();
+		return true;
+	}
+	
+	
+	public function doAddLocation ()
+	{
+		if (!$this->initDatabaseWrite()) return false;
+		
+		$query = "INSERT INTO location(worldId, locType, name, description, wikiPage, displayLevel, visible, x, y, displayData) VALUES (";
+		$query .= "{$this->worldId}, ";
+		$query .= "{$this->locType}, ";
+		$query .= "'{$this->locName}', ";
+		$query .= "'{$this->locDescription}', ";
+		$query .= "'{$this->locWikiPage}', ";
+		$query .= "{$this->locDisplayLevel}, ";
+		$query .= "{$this->locVisible}, ";
+		$query .= "{$this->locX}, ";
+		$query .= "{$this->locY}, ";
+		$query .= "'{$this->locDisplayData}' ";
+		$query .= ');';
+		
+		$result = $this->db->query($query);
+		
+		if ($result === FALSE) {
+			error_log($query);
+			error_log($this->db->error);
+			return $this->reportError("Failed to save new location data!");
+		}
+		
+		$this->addOutputItem('newLocId', $this->db->insert_id);
+		$this->addOutputItem('success', True);
+		return true;
+	}
+	
+	
+	public function doSetLocation ()
+	{
+		if ($this->locationId <= 0) return $this->doAddLocation();
+		if (!$this->initDatabaseWrite()) return false;
+		
+		$query  = "UPDATE location SET ";
+		$query .= "worldId={$this->worldId}, ";
+		$query .= "locType={$this->locType}, ";
+		$query .= "x={$this->locX}, ";
+		$query .= "y={$this->locY}, ";
+		$query .= "displayLevel={$this->locDisplayLevel}, ";
+		$query .= "visible={$this->locVisible}, ";
+		$query .= "name='{$this->locName}', ";
+		$query .= "description='{$this->locDescription}', ";
+		$query .= "wikiPage='{$this->locWikiPage}', ";
+		$query .= "displayData='{$this->locDisplayData}' ";
+		$query .= " WHERE id={$this->locationId};";
+		
+		$result = $this->db->query($query);
+		
+		if ($result === FALSE) {
+			error_log($query);
+			error_log($this->db->error);
+			return $this->reportError("Failed to save location data!");
+		}
+		
+		$this->addOutputItem('success', True);
 		return true;
 	}
 	
@@ -343,12 +419,13 @@ class GameMap
 	{
 		global $uespGameMapReadDBHost, $uespGameMapReadUser, $uespGameMapReadPW, $uespGameMapDatabase;
 		
-		if ($this->dbInitialized) return true;
+		if ($this->dbReadInitialized || $this->dbWriteInitialized) return true;
 		
-		$this->db->real_connect($uespGameMapReadDBHost, $uespGameMapReadUser, $uespGameMapReadPW, $uespGameMapDatabase);
+		$this->db = new mysqli($uespGameMapReadDBHost, $uespGameMapReadUser, $uespGameMapReadPW, $uespGameMapDatabase);
 		if ($db->connect_error) return $this->reportError("Could not connect to mysql database!");
 		
-		$this->dbInitialized = true;
+		$this->dbReadInitialized = true;
+		$this->dbWriteInitialized = false;
 		
 		if ($this->skipCheckTables) return true;
 		return $this->checkTables();
@@ -359,12 +436,21 @@ class GameMap
 	{
 		global $uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW, $uespGameMapDatabase;
 		
-		if ($this->dbInitialized) return true;
+		if ($this->dbWriteInitialized) return true;
 		
-		$this->db->real_connect($uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW, $uespGameMapDatabase);
+		if ($this->dbReadInitialized)
+		{
+			$this->db->close();
+			unset($this->db);
+			$this->db = null;
+			$this->dbReadInitialized = false;
+		}
+		
+		$this->db = new mysqli($uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW, $uespGameMapDatabase);
 		if ($db->connect_error) return $this->reportError("Could not connect to mysql database!");
 		
-		$this->dbInitialized = true;
+		$this->dbReadInitialized = true;
+		$this->dbWriteInitialized = true;
 		
 		if ($this->skipCheckTables) return true;
 		return $this->checkTables();
@@ -384,6 +470,16 @@ class GameMap
 		if (array_key_exists('zoom',   $this->inputParams)) $this->limitDisplayLevel = intval($this->db->real_escape_string($this->inputParams['zoom']));
 		if (array_key_exists('locid',  $this->inputParams)) $this->locationId = intval($this->db->real_escape_string($this->inputParams['locid']));
 		if (array_key_exists('incworld',  $this->inputParams)) $this->includeWorld = intval($this->db->real_escape_string($this->inputParams['incworld']));
+		if (array_key_exists('worldid',  $this->inputParams)) $this->worldId = intval($this->db->real_escape_string($this->inputParams['worldid']));
+		if (array_key_exists('displaylevel',  $this->inputParams)) $this->locDisplayLevel = intval($this->db->real_escape_string($this->inputParams['displaylevel']));
+		if (array_key_exists('visible',  $this->inputParams)) $this->locVisible = intval($this->db->real_escape_string($this->inputParams['visible']));
+		if (array_key_exists('x',  $this->inputParams)) $this->locX = intval($this->db->real_escape_string($this->inputParams['x']));
+		if (array_key_exists('y',  $this->inputParams)) $this->locY = intval($this->db->real_escape_string($this->inputParams['y']));
+		if (array_key_exists('loctype',  $this->inputParams)) $this->locType = intval($this->db->real_escape_string($this->inputParams['loctype']));
+		if (array_key_exists('name', $this->inputParams)) $this->locName = $this->db->real_escape_string($this->inputParams['name']);
+		if (array_key_exists('description', $this->inputParams)) $this->locDescription = $this->db->real_escape_string($this->inputParams['description']);
+		if (array_key_exists('wikipage', $this->inputParams)) $this->locWikiPage = $this->db->real_escape_string($this->inputParams['wikipage']);
+		if (array_key_exists('displaydata', $this->inputParams)) $this->locDisplayData = $this->db->real_escape_string($this->inputParams['displaydata']);
 		
 		if (array_key_exists('world',  $this->inputParams))
 		{

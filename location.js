@@ -30,6 +30,7 @@ uesp.gamemap.Location = function(parentMap)
 	this.locType = uesp.gamemap.LOCTYPE_NONE;
 	this.displayLevel = 0;
 	this.visible = false;
+	this.useEditPopup = false;
 	
 	this.displayData = {};
 	
@@ -51,6 +52,17 @@ uesp.gamemap.Location = function(parentMap)
 	//this.fontColor = '#ff9999';
 	//this.customStyle = '';
 	//this.customClass = '';
+}
+
+
+uesp.gamemap.Location.nextPopupId = 100;
+
+
+uesp.gamemap.Location.prototype.getNextPopupId = function ()
+{
+	NextId = uesp.gamemap.Location.nextPopupId;
+	uesp.gamemap.Location.nextPopupId += 1;
+	return NextId;
 }
 
 
@@ -221,6 +233,8 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 	
 	if ( !(this.displayData.labelPos == null) ) labelPos = this.displayData.labelPos;
 	
+	console.log(this.name);
+	
 	var labelWidth = this.name.length*6 + 2;
 	
 	switch (labelPos) {
@@ -359,18 +373,290 @@ uesp.gamemap.onCloseLocationPopup = function(element)
 }
 
 
+uesp.gamemap.onCloseLocationEditPopup = function(element)
+{
+	$(element.parentNode.parentNode.parentNode).hide();
+	return true;
+}
+
+
+uesp.gamemap.Location.prototype.onClickLocationEditPopup = function(event)
+{
+	if (!this.parentMap.canEdit()) return false;
+	
+	this.hidePopup();
+	if (!(this.popupElement == null)) $(this.popupElement).remove();
+	this.popupElement = null;
+	
+	this.useEditPopup = true;
+	this.updateEditPopup();
+	
+	return true;
+}
+
+
+uesp.gamemap.Location.prototype.onClosePopup = function (event)
+{
+	this.hidePopup();
+}
+
+
+uesp.gamemap.Location.prototype.onCloseEditPopup = function (event)
+{
+	this.hidePopup();
+	$(this.popupElement).remove();
+	this.popupElement = null;
+	this.useEditPopup = false;
+}
+
+
+uesp.gamemap.Location.prototype.setPopupEditNotice = function (Msg, MsgType)
+{
+	if (this.popupElement == null) return;
+	
+	$status = $('#' + this.popupId + ' .gmMapEditPopupStatus');
+	if ($status == null) return;
+	
+	$status.html(Msg);
+	$status.removeClass('gmMapEditPopupStatusOk');
+	$status.removeClass('gmMapEditPopupStatusNote');
+	$status.removeClass('gmMapEditPopupStatusWarning');
+	$status.removeClass('gmMapEditPopupStatusError');
+	
+	if (MsgType == null || MsgType === 'ok')
+		$status.addClass('gmMapEditPopupStatusOk');
+	else if (MsgType === 'note')
+		$status.addClass('gmMapEditPopupStatusNote');
+	else if (MsgType === 'warning')
+		$status.addClass('gmMapEditPopupStatusWarning');
+	else if (MsgType === 'error')
+		$status.addClass('gmMapEditPopupStatusError');
+}
+
+
+uesp.gamemap.Location.prototype.onSaveEditPopup = function (event)
+{
+	if (!this.parentMap.canEdit()) return false;
+	if (this.popupElement == null) return false;
+	
+	this.setPopupEditNotice('Saving location...');
+	
+	this.getFormData();
+	this.updateLabel();
+	this.updateLabelOffset();
+	this.updateIcon();
+	this.updateIconOffset();
+	this.updatePopupOffset();
+	
+	this.doSaveQuery();
+	
+	//this.hidePopup();
+	//this.useEditPopup = false;
+}
+
+
+uesp.gamemap.Location.prototype.getFormData = function()
+{
+	if (!this.parentMap.canEdit()) return false;
+	
+	form = $('#' + this.popupId + ' form');
+	if (form == null) return false;
+	
+	//TODO displayData.points
+	
+	formValues = {};
+	
+	$.each(form.serializeArray(), function(i, field) {
+		formValues[field.name] = field.value;
+	});
+	
+	formValues.displayLevel = parseInt(formValues.displayLevel);
+	formValues.x = parseInt(formValues.x);
+	formValues.y = parseInt(formValues.y);
+	
+	formValues.displayData = { };
+	formValues.displayData.points = [formValues.x, formValues.y];
+	formValues.displayData.iconType = parseInt(formValues.iconType);
+	formValues.iconType = formValues.displayData.iconType; 
+	
+	if (formValues.visible == null)
+		formValues.visible = false;
+	else
+		formValues.visible = parseInt(formValues.visible) != 0;
+	
+	console.log(formValues);
+	
+	uesp.gamemap.mergeObjects(this, formValues);
+	
+	pixelPos = this.parentMap.convertGameToPixelPos(this.x, this.y);
+	this.offsetLeft = pixelPos.x;
+	this.offsetTop  = pixelPos.y;
+	
+	return true;
+}
+
+
+uesp.gamemap.Location.prototype.createSaveQuery = function()
+{
+	var query = 'action=set_loc';
+	
+	displayDataJson = JSON.stringify(this.displayData);
+	
+	query += '&locid=' + this.id;
+	query += '&worldid=' + this.worldId;
+	query += '&loctype=' + this.locType;
+	query += '&name=' + encodeURIComponent(this.name);
+	query += '&description=' + encodeURIComponent(this.description);
+	query += '&wikipage=' + encodeURIComponent(this.wikiPage);
+	query += '&x=' + this.x;
+	query += '&y=' + this.y;
+	query += '&displaydata=' + encodeURIComponent(displayDataJson);
+	query += '&icontype=' + encodeURIComponent(this.iconType);
+	query += '&displaylevel=' + this.displayLevel;
+	query += '&visible=' + (this.visible ? '1' : '0');
+	
+	console.log("saveQuery", query);
+	return query;
+}
+
+
+uesp.gamemap.Location.prototype.onSavedLocation = function (data)
+{
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received onSavedLocation data");
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, data);
+	
+	if (!(data.isError == null) || data.success === false)
+	{
+		this.setPopupEditNotice('Error saving location data!', 'error');
+		return false;
+	}
+	
+	this.setPopupEditNotice('Successfully saved location!');
+	
+	if (!(data.newLocId == null))
+	{
+		this.parentMap.updateLocationId(this.id, data.newLocId)
+		this.id = data.newLocId;
+		this.updateEditPopup();
+	}
+	
+	return true;
+}
+
+
+uesp.gamemap.Location.prototype.doSaveQuery = function()
+{
+	var self = this;
+	
+	queryParams = this.createSaveQuery();
+	
+	$.getJSON(this.parentMap.mapOptions.gameDataScript, queryParams, function(data) {
+		self.onSavedLocation(data); 
+	});
+	
+	return true;
+}
+
+
 uesp.gamemap.Location.prototype.onJumpToDestination = function()
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Jumping to destinationId " + this.destinationId);
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Jumping to destination " + this.destinationId);
 	this.parentMap.jumpToDestination( this.destinationId);
 	return false;
 }
 
 
-uesp.gamemap.Location.prototype.updatePopup = function ()
+uesp.gamemap.Location.prototype.updateEditPopup = function ()
 {
 	var popupDiv;
-	var popupContent =  "<div class='gmMapPopupClose'><img src='images/cancelicon.png' onclick='return uesp.gamemap.onCloseLocationPopup(this);' width='12' height='12' /></div>" + 
+	var popupContent =	"<form onsubmit='return false;'>" +
+						"<div class='gmMapEditPopupTitle'>Editing Location</div>" + 
+						"<div class='gmMapPopupClose'><img src='images/cancelicon.png' width='12' height='12' /></div><br />" +
+						"<div class='gmMapEditPopupLabel'>Name</div>" +
+							"<input type='text' class='gmMapEditPopupInput' name='name' value='{name}' size='24' /> <br />" +
+						"<div class='gmMapEditPopupLabel'>Enabled</div>" +
+							"<input type='checkbox' class='gmMapEditPopupInput' name='visible' value='1' checked='{visible}' /> <br />" +
+						"<div class='gmMapEditPopupLabel'>Position</div>" +
+							"<input type='text' class='gmMapEditPopupInput' name='x' value='{x}' size='8' /> " +
+							"<input type='text' class='gmMapEditPopupInput' name='y' value='{y}' size='8' /> <br />" +
+						"<div class='gmMapEditPopupLabel'>Wiki Page</div>" +
+							"<input type='text' class='gmMapEditPopupInput' name='wikiPage' value='{wikiPage}' size='24' /> <br />" +
+						"<div class='gmMapEditPopupLabel'>Description</div>" +
+							"<input type='text' class='gmMapEditPopupInput' name='description' value='{description}' size='24' /> <br />" +
+						"<div class='gmMapEditPopupLabel'>Display Level</div>" +
+							"<input type='text' class='gmMapEditPopupInput' name='displayLevel' value='{displayLevel}' size='8' /> <br />" +
+						"<div class='gmMapEditPopupLabel'>Icon</div>" +
+							"<select class='gmMapEditPopupInput' name='iconType' value='{iconType}'>" +
+							"<option>1</option>" +
+							"<option>2</option>" +
+							"<option>3</option>" +
+							"<option>4</option>" + 
+							"</select> <br />" +
+						"<div class='gmMapEditPopupLabel'>Internal ID</div>" +
+							"<div class='gmMapEditPopupInput'>{id}</div> <br />" + 
+						"<div class='gmMapEditPopupLabel'>World ID</div>" +
+							"<div class='gmMapEditPopupInput'>{worldId}</div> <br />" +
+						"<div class='gmMapEditPopupLabel'>Type</div>" +
+							"<div class='gmMapEditPopupInput'>{locType}</div> <br />" +
+						"<br />" + 
+						"<div class='gmMapEditPopupStatus'></div>" +
+						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonSave' value='Save' />" +
+						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonClose' value='Cancel' />" +
+						"</form>";
+	
+	this.wikiLink = this.createWikiLink();
+	
+	if (this.popupElement == null)
+	{
+		this.popupId = "locPopup" + this.getNextPopupId();
+		
+		this.popupElement = $('<div />').addClass('gmMapPopupRoot')
+				.attr('id', this.popupId)
+				.appendTo(this.parentMap.mapRoot);
+		
+		popupDiv = $('<div />').addClass('gmMapEditPopup')
+				.appendTo(this.popupElement);
+		
+		$('<div />').addClass('gmMapPopupDownArrow')
+				.appendTo(this.popupElement);
+	}
+	else
+	{
+		popupDiv = this.popupElement.children()[0];
+	}
+	
+	popupHtml = uesp.template2(popupContent, this, this.displayData);
+	$(popupDiv).html(popupHtml);
+	
+	if (this.id < 0) this.setPopupEditNotice('New location not yet saved.', 'warning');
+	
+	$('#' + this.popupId + ' select').val(this.displayData.iconType);
+	
+	var self = this;
+	
+	$('#' + this.popupId + ' .gmMapPopupClose').click(function(event) {
+		self.onCloseEditPopup(event);
+	});
+	
+	$('#' + this.popupId + ' .gmMapEditPopupButtonClose').click(function(event) {
+		self.onCloseEditPopup(event);
+	});
+	
+	$('#' + this.popupId + ' .gmMapEditPopupButtonSave').click(function(event) {
+		self.onSaveEditPopup(event);
+	});
+	
+	this.updatePopupOffset();
+}
+
+
+uesp.gamemap.Location.prototype.updatePopup = function ()
+{
+	
+	if (this.useEditPopup) return this.updateEditPopup();
+	
+	var popupDiv;
+	var popupContent =  "<div class='gmMapPopupClose'><img src='images/cancelicon.png' width='12' height='12' /></div>" + 
 						"<div class='gmMapPopupTitle'><a href='{wikiLink}'>{name}</a></div>" + 
 						"<div class='gmMapPopupPos'>Location: {x}, {y}</div>" +
 						"<div class='gmMapPopupPos'>Internal ID: {id}</div>" +
@@ -380,24 +666,45 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 	
 	if (this.popupElement == null)
 	{
+		this.popupId = "locPopup" + this.getNextPopupId();
+		
 		this.popupElement = $('<div />').addClass('gmMapPopupRoot')
+				.attr('id', this.popupId)
 				.appendTo(this.parentMap.mapRoot);
 		
 		popupDiv = $('<div />').addClass('gmMapPopup')
 				.appendTo(this.popupElement);
 		
 		$('<div />').addClass('gmMapPopupDownArrow')
-		.appendTo(this.popupElement);
+				.appendTo(this.popupElement);
 	}
 	else
 	{
-		popupDiv = this.popupElement.children[0];
+		popupDiv = this.popupElement.children()[0];
 	}
 	
 	if (this.destinationId > 0) popupContent += "<div class='gmMapPopupPos'>Destination ID: {destinationId}</div>";
-	popupHtml = uesp.template2(popupContent, this, this.displayData);
 	
+	if (this.parentMap.canEdit())
+	{
+		popupContent += "<div class='gmMapPopupEditLabel'>Edit...</div>";
+	}
+	
+	popupHtml = uesp.template2(popupContent, this, this.displayData);
 	$(popupDiv).html(popupHtml);
+	
+	var self = this;
+	
+	if (this.parentMap.canEdit())
+	{
+		$('#' + this.popupId + ' .gmMapPopupEditLabel').click(function(event) {
+			return self.onClickLocationEditPopup(event);
+		});
+	}
+	
+	$('#' + this.popupId + ' .gmMapPopupClose').click(function(event) {
+		self.onClosePopup(event);
+	});
 	
 	if (this.destinationId > 0)
 	{
@@ -457,10 +764,12 @@ uesp.gamemap.Location.prototype.updatePathOffset = function ()
 }
 
 
-uesp.gamemap.Location.prototype.updatePathSize = function ()
+uesp.gamemap.Location.prototype.updatePathSize = function (redraw)
 {
 	if (this.locType < uesp.gamemap.LOCTYPE_PATH) return;
 	if (this.pathElement == null) return;
+	
+	if (!(redraw == null)) redraw = true;
 	
 	var pixelSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
 	this.pixelWidth  = pixelSize.x;
@@ -468,10 +777,13 @@ uesp.gamemap.Location.prototype.updatePathSize = function ()
 	
 	this.pathElement.attr( { width: this.pixelWidth, height: this.pixelHeight });
 	
-	var context = this.pathElement[0].getContext('2d');
-	context.translate(-this.x * this.pixelWidth / this.width, -this.x * this.pixelHeight / this.height);
-	context.scale(this.pixelWidth / this.width, this.pixelHeight / this.height);
-	this.drawPath(context);
+	if (redraw)
+	{
+		var context = this.pathElement[0].getContext('2d');
+		context.translate(-this.x * this.pixelWidth / this.width, -this.x * this.pixelHeight / this.height);
+		context.scale(this.pixelWidth / this.width, this.pixelHeight / this.height);
+		this.drawPath(context);
+	}
 }
 
 

@@ -1,6 +1,6 @@
 #gmMap {
 	bottom: 2px;
-	top: 30px;
+	top: 40px;
 	border: solid black 1px;
 	overflow: hidden;
 	position: absolute;
@@ -83,6 +83,21 @@
 	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
 }
 
+
+.gmMapEditPopup {
+	display: block;
+	width: 280px;
+	height: 300px;
+	background-color: #ffffff;
+	border: none;
+	z-index: 20;
+	font-family: "Arial", sans-serif;
+	font-size: 13px;
+	padding: 4px;
+	border-radius: 5px;
+	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
+}
+
 .gmMapPopupClose {
 	float: right;
 	cursor: pointer;
@@ -102,6 +117,17 @@
 .gmMapPopupPos {
 	font-size: 9px;
 	padding-left: 10px;
+}
+
+.gmMapPopupEditLabel {
+	text-align: right;
+	width: 100%;
+	color: #0000ff;
+	cursor: pointer;
+}
+
+.gmMapPopupEditLabel:hover {
+	background: #999999;
 }
 
 .gmMapPopupDesc {
@@ -134,7 +160,7 @@
 #MapListContainer {
 	position: absolute;
 	left: 2px;
-	top: 30px;
+	top: 40px;
 	width: 200px;
 	bottom: 2px;
 	border: solid 1px gray;
@@ -218,6 +244,124 @@ ul ul .MapListHeader {
 }
 
 
+#gmMapEditNotice {
+	border: solid gray 1px;
+	background: rgba(0,0,0,0.7);
+	color: #9999ff;
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	width: 350px;
+	height: 25px;
+	line-height: 25px;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	z-index: 200;
+	text-align: center;
+	vertical-align: middle;
+}
+
+#gmMapEditNoticeCancel {
+	cursor: pointer;
+	color: #ff6666;
+}
+
+.gmCrosshairCursor {
+	cursor: crosshair !important;
+}
+
+.gmMapEditPopupTitle {
+	display: inline-block;
+	position: relative;
+	width: 240px;
+	background-color: #ccccff;
+	height: 18px;
+	line-height: 18px;
+	font-size: 13px;
+	font-family: sans-serif;
+	font-weight: bold;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.gmMapEditPopupLabel {
+	width: 90px;
+	font-size: 11px;
+	font-family: sans-serif;
+	text-align: right;
+	display: inline-block;
+	position: relative;
+	height: 16px;
+	line-height: 16px;
+	vertical-align: middle;
+}
+
+.gmMapEditPopupInput {
+	left: 5px;
+	font-size: 11px;
+	font-family: sans-serif;
+	display: inline-block;
+	position: relative;
+	height: 11px;
+	padding-bottom: 2px;
+}
 
 
+.gmMapEditPopupStatus {
+	width: 150px;
+	height: 20px;
+	font-family: Arial, sans-serif;
+	font-size: 10px;
+	float: left;
+}
+
+.gmMapEditPopupStatusOk {
+	background-color: none;
+}
+
+.gmMapEditPopupStatusNote {
+	background-color: #99ff99;
+}
+
+.gmMapEditPopupStatusWarning {
+	background-color: #ffff99;
+}
+
+.gmMapEditPopupStatusError {
+	background-color: #ff9999;
+}
+
+.gmMapEditPopupButtons {
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+	float: right;
+}
+
+
+div.gmMapEditPopupInput {
+	height: 16px;
+	top: 1px;
+}
+
+
+select.gmMapEditPopupInput {
+	height: 18px;
+	top: 1px;
+	left: 7px;
+	width: 100px;
+}
+
+input[type=checkbox].gmMapEditPopupInput {
+	position: relative;
+	border: none;
+	outline: none;
+	margin: 0;
+	text-align: left;
+	height: 13px;
+	width: 20px;
+	right: 1px;
+	top: 4px;
+	font-family: Arial, sans-serif !important;
+	font-size: 11px !important;
 }
