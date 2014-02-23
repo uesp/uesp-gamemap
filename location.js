@@ -233,8 +233,6 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 	
 	if ( !(this.displayData.labelPos == null) ) labelPos = this.displayData.labelPos;
 	
-	console.log(this.name);
-	
 	var labelWidth = this.name.length*6 + 2;
 	
 	switch (labelPos) {
@@ -484,8 +482,6 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	else
 		formValues.visible = parseInt(formValues.visible) != 0;
 	
-	console.log(formValues);
-	
 	uesp.gamemap.mergeObjects(this, formValues);
 	
 	pixelPos = this.parentMap.convertGameToPixelPos(this.x, this.y);
@@ -515,7 +511,6 @@ uesp.gamemap.Location.prototype.createSaveQuery = function()
 	query += '&displaylevel=' + this.displayLevel;
 	query += '&visible=' + (this.visible ? '1' : '0');
 	
-	console.log("saveQuery", query);
 	return query;
 }
 
