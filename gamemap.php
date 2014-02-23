@@ -29,6 +29,7 @@ class GameMap
 	public $locDescription = '';
 	public $locWikiPage = '';
 	public $locType = 0;
+	public $locIconType = 0;
 	public $locDisplayLevel = 0;
 	public $locVisible = 1;
 	public $locDisplayData = '{}';
@@ -204,6 +205,7 @@ class GameMap
 			settype($row['revisionId'], "integer");
 			settype($row['destinationId'], "integer");
 			settype($row['locType'], "integer");
+			settype($row['iconType'], "integer");
 			settype($row['x'], "integer");
 			settype($row['y'], "integer");
 			settype($row['width'], "integer");
@@ -237,6 +239,7 @@ class GameMap
 		$query .= "{$this->locVisible}, ";
 		$query .= "{$this->locX}, ";
 		$query .= "{$this->locY}, ";
+		$query .= "{$this->locIconType}, ";
 		$query .= "'{$this->locDisplayData}' ";
 		$query .= ');';
 		
@@ -265,6 +268,7 @@ class GameMap
 		$query .= "x={$this->locX}, ";
 		$query .= "y={$this->locY}, ";
 		$query .= "displayLevel={$this->locDisplayLevel}, ";
+		$query .= "iconType={$this->locIconType}, ";
 		$query .= "visible={$this->locVisible}, ";
 		$query .= "name='{$this->locName}', ";
 		$query .= "description='{$this->locDescription}', ";
@@ -307,6 +311,7 @@ class GameMap
 			settype($row['destinationId'], "integer");
 			settype($row['revisionId'], "integer");
 			settype($row['locType'], "integer");
+			settype($row['iconType'], "integer");
 			settype($row['x'], "integer");
 			settype($row['y'], "integer");
 			settype($row['width'], "integer");
@@ -477,6 +482,7 @@ class GameMap
 		if (array_key_exists('x',  $this->inputParams)) $this->locX = intval($this->db->real_escape_string($this->inputParams['x']));
 		if (array_key_exists('y',  $this->inputParams)) $this->locY = intval($this->db->real_escape_string($this->inputParams['y']));
 		if (array_key_exists('loctype',  $this->inputParams)) $this->locType = intval($this->db->real_escape_string($this->inputParams['loctype']));
+		if (array_key_exists('icontype',  $this->inputParams)) $this->locIconType = intval($this->db->real_escape_string($this->inputParams['icontype']));
 		if (array_key_exists('name', $this->inputParams)) $this->locName = $this->db->real_escape_string($this->inputParams['name']);
 		if (array_key_exists('description', $this->inputParams)) $this->locDescription = $this->db->real_escape_string($this->inputParams['description']);
 		if (array_key_exists('wikipage', $this->inputParams)) $this->locWikiPage = $this->db->real_escape_string($this->inputParams['wikipage']);
