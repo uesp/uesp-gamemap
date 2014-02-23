@@ -304,7 +304,7 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 uesp.gamemap.Location.prototype.updateIcon = function ()
 {
 	var missingURL = this.parentMap.mapOptions.iconPath + this.parentMap.mapOptions.iconMissing;
-	var imageURL   = this.parentMap.mapOptions.iconPath + this.displayData.iconType + ".png";
+	var imageURL   = this.parentMap.mapOptions.iconPath + this.iconType + ".png";
 	
 	if (this.iconElement == null)
 	{	
@@ -326,7 +326,7 @@ uesp.gamemap.Location.prototype.updateIcon = function ()
 	}
 	else
 	{
-		$(this.iconElement.children[1]).attr('src', imageURL);
+		$(this.iconElement.children()[1]).attr('src', imageURL);
 	}
 	
 	this.updateIconOffset();
@@ -470,15 +470,17 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	formValues.displayLevel = parseInt(formValues.displayLevel);
 	formValues.x = parseInt(formValues.x);
 	formValues.y = parseInt(formValues.y);
+	formValues.iconType = parseInt(formValues.iconType);
 	
 	formValues.displayData = { };
 	formValues.displayData.points = [formValues.x, formValues.y];
-	formValues.iconType = parseInt(formValues.iconType);
 	
 	if (formValues.visible == null)
 		formValues.visible = false;
 	else
 		formValues.visible = parseInt(formValues.visible) != 0;
+	
+	console.log(formValues);
 	
 	uesp.gamemap.mergeObjects(this, formValues);
 	
@@ -562,6 +564,18 @@ uesp.gamemap.Location.prototype.onJumpToDestination = function()
 uesp.gamemap.Location.prototype.updateEditPopup = function ()
 {
 	var popupDiv;
+	var iconTypeInput;
+	
+	if (this.parentMap == null || this.parentMap.mapOptions.iconTypeMap == null)
+	{
+		iconTypeInput = "<input type='text' class='gmMapEditPopupInput' name='iconType' value='{iconType}' size='8' />";
+	}
+	else
+	{
+		iconTypeInput = "<select class='gmMapEditPopupInput' name='iconType'>" +
+						this.getIconTypeSelectOptions(this.iconType) + "</select>";
+	}
+	
 	var popupContent =	"<form onsubmit='return false;'>" +
 						"<div class='gmMapEditPopupTitle'>Editing Location</div>" + 
 						"<div class='gmMapPopupClose'><img src='images/cancelicon.png' width='12' height='12' /></div><br />" +
@@ -579,12 +593,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 						"<div class='gmMapEditPopupLabel'>Display Level</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='displayLevel' value='{displayLevel}' size='8' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Icon</div>" +
-							"<select class='gmMapEditPopupInput' name='iconType' value='{iconType}'>" +
-							"<option>1</option>" +
-							"<option>2</option>" +
-							"<option>3</option>" +
-							"<option>4</option>" + 
-							"</select> <br />" +
+							iconTypeInput + "<br />" +
 						"<div class='gmMapEditPopupLabel'>Internal ID</div>" +
 							"<div class='gmMapEditPopupInput'>{id}</div> <br />" + 
 						"<div class='gmMapEditPopupLabel'>World ID</div>" +
@@ -623,7 +632,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	
 	if (this.id < 0) this.setPopupEditNotice('New location not yet saved.', 'warning');
 	
-	$('#' + this.popupId + ' select').val(this.iconType);
+	//$('#' + this.popupId + ' select').val(this.iconType);
 	
 	var self = this;
 	
@@ -1017,6 +1026,36 @@ uesp.gamemap.Location.prototype.update = function ()
 		this.updateIcon();
 		this.updatePath();
 	}
+}
+
+
+uesp.gamemap.Location.prototype.getIconTypeSelectOptions = function (selectedValue)
+{
+	if (this.parentMap == null || this.parentMap.mapOptions.iconTypeMap == null)
+	{
+		return "";
+	}
+	
+	var options = '';
+	
+	for (key in this.parentMap.mapOptions.iconTypeMap)
+	{
+		options += "<option value='" + key + "' " + (selectedValue == key ? "selected": "") + ">" + this.parentMap.mapOptions.iconTypeMap[key] + "</option>\n";
+	}
+	
+	return options;
+}
+
+
+uesp.gamemap.Location.prototype.convertIconTypeToString = function (iconType)
+{
+	if (this.parentMap == null || this.parentMap.mapOptions.iconTypeMap == null)
+	{
+		return iconType.toString();
+	}
+	
+	if (iconType in this.parentMap.mapOptions.iconTypeMap) return this.parentMap.mapOptions.iconTypeMap[iconType];
+	return iconType.toString();
 }
 
 
