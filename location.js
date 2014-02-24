@@ -602,6 +602,8 @@ uesp.gamemap.Location.prototype.onJumpToDestination = function()
 
 uesp.gamemap.Location.prototype.updateEditPopupIconPreview = function ()
 {
+	console.log("updateEditPopupIconPreview");
+	
 	var iconPreview = $(this.popupElement).find(".gmMapEditPopupIconPreview");
 	
 	iconTypeElement = $(this.popupElement).find("input[name=iconType]");
@@ -692,8 +694,6 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	$(popupDiv).html(popupHtml);
 	
 	if (this.id < 0) this.setPopupEditNotice('New location not yet saved.', 'warning');
-	
-	//$('#' + this.popupId + ' select').val(this.iconType);
 	
 	var self = this;
 	
@@ -1137,13 +1137,27 @@ uesp.gamemap.Location.prototype.getLabelPosSelectOptions = function (selectedVal
 
 uesp.gamemap.Location.prototype.getIconTypeSelectOptions = function (selectedValue)
 {
-	if (this.parentMap.mapOptions.iconTypeMap == null) return "";
+	if (this.parentMap.mapOptions.iconTypeMap == null) return '';
 	
-	var options = '';
+	var reverseIconTypeMap = { };
+	var sortedIconTypeArray = [ ];
 	
 	for (key in this.parentMap.mapOptions.iconTypeMap)
 	{
-		options += "<option value='" + key + "' " + (selectedValue == key ? "selected": "") + ">" + this.parentMap.mapOptions.iconTypeMap[key] + "  (" + key.toString() + ")</option>\n";
+		var keyValue = this.parentMap.mapOptions.iconTypeMap[key];
+		reverseIconTypeMap[keyValue] = key;
+		sortedIconTypeArray.push(keyValue);
+	}
+	
+	sortedIconTypeArray.sort();
+	
+	var options = '';
+	
+	for (key in sortedIconTypeArray)
+	{
+		iconTypeName = sortedIconTypeArray[key];
+		iconType = reverseIconTypeMap[iconTypeName];
+		options += "<option value='" + iconType + "' " + (selectedValue == key ? "selected": "") + ">" + iconTypeName + "  (" + iconType + ")</option>\n";
 	}
 	
 	return options;
