@@ -2,6 +2,8 @@
  * world.js -- Created by Dave Humphrey (dave@uesp.net) on 22 Jan 2014
  * 		Released under the GPL v2
  *
+ * TODO:
+ * 		- parentId for zooming "out" to the parent map (if any)
  */
 
 
