@@ -32,6 +32,7 @@ class GameMap
 	public $locIconType = 0;
 	public $locDisplayLevel = 0;
 	public $locVisible = 1;
+	public $locDestId = 0;
 	public $locDisplayData = '{}';
 	public $locX = 0;
 	public $locY = 0;
@@ -229,7 +230,7 @@ class GameMap
 	{
 		if (!$this->initDatabaseWrite()) return false;
 		
-		$query = "INSERT INTO location(worldId, locType, name, description, wikiPage, displayLevel, visible, x, y, iconType, displayData) VALUES (";
+		$query = "INSERT INTO location(worldId, locType, name, description, wikiPage, displayLevel, visible, x, y, iconType, destinationId, displayData) VALUES (";
 		$query .= "{$this->worldId}, ";
 		$query .= "{$this->locType}, ";
 		$query .= "'{$this->locName}', ";
@@ -240,6 +241,7 @@ class GameMap
 		$query .= "{$this->locX}, ";
 		$query .= "{$this->locY}, ";
 		$query .= "{$this->locIconType}, ";
+		$query .= "{$this->locDestId}, ";
 		$query .= "'{$this->locDisplayData}' ";
 		$query .= ');';
 		
@@ -269,6 +271,7 @@ class GameMap
 		$query .= "y={$this->locY}, ";
 		$query .= "displayLevel={$this->locDisplayLevel}, ";
 		$query .= "iconType={$this->locIconType}, ";
+		$query .= "destinationId={$this->locDestId}, ";
 		$query .= "visible={$this->locVisible}, ";
 		$query .= "name='{$this->locName}', ";
 		$query .= "description='{$this->locDescription}', ";
@@ -480,6 +483,7 @@ class GameMap
 		if (array_key_exists('worldid',  $this->inputParams)) $this->worldId = intval($this->db->real_escape_string($this->inputParams['worldid']));
 		if (array_key_exists('displaylevel',  $this->inputParams)) $this->locDisplayLevel = intval($this->db->real_escape_string($this->inputParams['displaylevel']));
 		if (array_key_exists('visible',  $this->inputParams)) $this->locVisible = intval($this->db->real_escape_string($this->inputParams['visible']));
+		if (array_key_exists('destid',  $this->inputParams)) $this->locDestId = intval($this->db->real_escape_string($this->inputParams['destid']));
 		if (array_key_exists('x',  $this->inputParams)) $this->locX = intval($this->db->real_escape_string($this->inputParams['x']));
 		if (array_key_exists('y',  $this->inputParams)) $this->locY = intval($this->db->real_escape_string($this->inputParams['y']));
 		if (array_key_exists('loctype',  $this->inputParams)) $this->locType = intval($this->db->real_escape_string($this->inputParams['loctype']));

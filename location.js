@@ -15,10 +15,10 @@ uesp.gamemap.Location = function(parentMap)
 {
 	this.parentMap = parentMap;
 	
-	this.id = -1;
-	this.worldId = -1;
-	this.revisionId = -1;
-	this.destinationId = -1;
+	this.id = 0;
+	this.worldId = 0;
+	this.revisionId = 0;
+	this.destinationId = 0;
 	this.iconType = 0;
 	this.x = 0;
 	this.y = 0;
@@ -514,8 +514,6 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	else
 		formValues.visible = parseInt(formValues.visible) != 0;
 	
-	console.log(formValues);
-	
 	uesp.gamemap.mergeObjects(this, formValues);
 	
 	pixelPos = this.parentMap.convertGameToPixelPos(this.x, this.y);
@@ -544,6 +542,7 @@ uesp.gamemap.Location.prototype.createSaveQuery = function()
 	query += '&icontype=' + encodeURIComponent(this.iconType);
 	query += '&displaylevel=' + this.displayLevel;
 	query += '&visible=' + (this.visible ? '1' : '0');
+	query += '&destid=' + this.destinationId;
 	
 	return query;
 }
@@ -657,14 +656,15 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 						"<div class='gmMapEditPopupLabel'>Label Position</div>" +
 							"<select class='gmMapEditPopupInput' name='labelPos'>" +
 							this.getLabelPosSelectOptions(this.displayData.labelPos) + 
-							"</select> <br />" + 
+							"</select> <br />" +
+						"<div class='gmMapEditPopupLabel'>Destination ID</div>" +
+							"<input type='text' class='gmMapEditPopupInput' name='destinationId' value='{destinationId}' size='8' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Internal ID</div>" +
 							"<div class='gmMapEditPopupInput'>{id}</div> <br />" + 
 						"<div class='gmMapEditPopupLabel'>World ID</div>" +
 							"<div class='gmMapEditPopupInput'>{worldId}</div> <br />" +
 						"<div class='gmMapEditPopupLabel'>Type</div>" +
 							"<div class='gmMapEditPopupInput'>{locType}</div> <br />" +
-						"<br />" + 
 						"<div class='gmMapEditPopupStatus'></div>" +
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonDelete' value='Delete' />" +
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonSave' value='Save' />" +
