@@ -601,8 +601,6 @@ uesp.gamemap.Location.prototype.onJumpToDestination = function()
 
 uesp.gamemap.Location.prototype.updateEditPopupIconPreview = function ()
 {
-	console.log("updateEditPopupIconPreview");
-	
 	var iconPreview = $(this.popupElement).find(".gmMapEditPopupIconPreview");
 	
 	iconTypeElement = $(this.popupElement).find("input[name=iconType]");
