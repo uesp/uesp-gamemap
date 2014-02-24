@@ -632,6 +632,8 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	}
 	
 		//TODO: Proper permission checking for edit/add/delete abilities
+		//TODO: Proper template functionality
+		//TODO: Better function organization/shorter
 	var popupContent =	"<form onsubmit='return false;'>" +
 						"<div class='gmMapEditPopupTitle'>Editing Location</div>" + 
 						"<div class='gmMapPopupClose'><img src='images/cancelicon.png' width='12' height='12' /></div><br />" +

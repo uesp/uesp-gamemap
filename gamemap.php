@@ -468,6 +468,7 @@ class GameMap
 			//TODO: Need to change to write db connection afterwards if required
 		if (!$this->initDatabase()) return false;
 		
+			//TODO: Better parameter handling
 		if (array_key_exists('action', $this->inputParams)) $this->action = $this->db->real_escape_string(strtolower($this->inputParams['action']));
 		if (array_key_exists('top',    $this->inputParams)) $this->limitTop    = intval($this->db->real_escape_string($this->inputParams['top']));
 		if (array_key_exists('left',   $this->inputParams)) $this->limitLeft   = intval($this->db->real_escape_string($this->inputParams['left']));
