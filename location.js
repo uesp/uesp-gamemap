@@ -561,12 +561,26 @@ uesp.gamemap.Location.prototype.onJumpToDestination = function()
 }
 
 
+uesp.gamemap.Location.prototype.updateEditPopupIconPreview = function ()
+{
+	var iconPreview = $(this.popupElement).find(".gmMapEditPopupIconPreview");
+	
+	iconTypeElement = $(this.popupElement).find("input[name=iconType]");
+	if (iconTypeElement == null || iconTypeElement.length == 0) iconTypeElement = $(this.popupElement).find("select[name=iconType]");
+	
+	imageURL = this.parentMap.mapOptions.iconPath + parseInt(iconTypeElement.val()) + ".png";
+	
+	iconPreview.css('background-image', 'url(' + imageURL + ')');
+	return true;
+}
+
+
 uesp.gamemap.Location.prototype.updateEditPopup = function ()
 {
 	var popupDiv;
 	var iconTypeInput;
 	
-	if (this.parentMap == null || this.parentMap.mapOptions.iconTypeMap == null)
+	if (this.parentMap.mapOptions.iconTypeMap == null)
 	{
 		iconTypeInput = "<input type='text' class='gmMapEditPopupInput' name='iconType' value='{iconType}' size='8' />";
 	}
@@ -593,7 +607,9 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 						"<div class='gmMapEditPopupLabel'>Display Level</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='displayLevel' value='{displayLevel}' size='8' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Icon</div>" +
-							iconTypeInput + "<br />" +
+							iconTypeInput +
+							"<div class='gmMapEditPopupIconPreview'></div>" + 
+							"<br />" +
 						"<div class='gmMapEditPopupLabel'>Internal ID</div>" +
 							"<div class='gmMapEditPopupInput'>{id}</div> <br />" + 
 						"<div class='gmMapEditPopupLabel'>World ID</div>" +
@@ -640,6 +656,19 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 		self.onCloseEditPopup(event);
 	});
 	
+	if (this.parentMap.mapOptions.iconTypeMap == null)
+	{
+		$('#' + this.popupId + ' input[name=iconType]').keyup(function() {
+			self.updateEditPopupIconPreview();
+		});
+	}
+	else
+	{
+		$('#' + this.popupId + ' select[name=iconType]').change(function() {
+			self.updateEditPopupIconPreview();
+		});
+	}
+	
 	$('#' + this.popupId + ' .gmMapEditPopupButtonClose').click(function(event) {
 		self.onCloseEditPopup(event);
 	});
@@ -648,6 +677,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 		self.onSaveEditPopup(event);
 	});
 	
+	this.updateEditPopupIconPreview();
 	this.updatePopupOffset();
 }
 
@@ -1040,7 +1070,7 @@ uesp.gamemap.Location.prototype.getIconTypeSelectOptions = function (selectedVal
 	
 	for (key in this.parentMap.mapOptions.iconTypeMap)
 	{
-		options += "<option value='" + key + "' " + (selectedValue == key ? "selected": "") + ">" + this.parentMap.mapOptions.iconTypeMap[key] + "</option>\n";
+		options += "<option value='" + key + "' " + (selectedValue == key ? "selected": "") + ">" + this.parentMap.mapOptions.iconTypeMap[key] + "  (" + key.toString() + ")</option>\n";
 	}
 	
 	return options;

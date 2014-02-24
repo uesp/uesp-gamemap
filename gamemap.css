@@ -345,11 +345,24 @@ div.gmMapEditPopupInput {
 }
 
 
+.gmMapEditPopupIconPreview
+{
+	background-repeat: no-repeat;
+	background-position: center;
+	display: inline-block;
+	position: relative;
+	height: 16px;
+	width: 16px;
+	left: 10px;
+	top: 3px;
+}
+
+
 select.gmMapEditPopupInput {
 	height: 18px;
 	top: 1px;
 	left: 7px;
-	width: 100px;
+	width: 150px;
 }
 
 input[type=checkbox].gmMapEditPopupInput {
