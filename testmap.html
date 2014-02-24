@@ -272,6 +272,13 @@
 			g_GameMap.onAddLocationStart();
 			//alert("adding location...");
 		}
+		
+		
+		function onAddLocationPath()
+		{
+			g_GameMap.onAddPathStart();
+			//alert("adding location...");
+		}
 
 	</script>
 </head>
@@ -296,6 +303,8 @@ Worlds
 </select>
 
 <button onclick="onAddLocation()">Add Location</button>
+
+<button onclick="onAddLocationPath()">Add Path</button>
 
 <div id="MapListContainer">
 <ul id="MapList">

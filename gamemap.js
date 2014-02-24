@@ -647,12 +647,32 @@ uesp.gamemap.Map.prototype.createEditNoticeDiv = function()
 }
 
 
-uesp.gamemap.Map.prototype.displayEditNotice = function(Notice)
+uesp.gamemap.Map.prototype.displayEditNotice = function(Notice, FinishButton, CancelButton)
 {
+	var self = this;
+	
 	if (!this.editNoticeDiv) this.createEditNoticeDiv();
+	
+	if (CancelButton.length > 0)
+	{
+		Notice += "<button id='gmMapEditNoticeCancel'>" + CancelButton + "</button>";
+	}
+	
+	if (FinishButton.length > 0) 
+	{
+		Notice += "<button id='gmMapEditNoticeFinish'>" + FinishButton + "</button>";
+	}
 	
 	this.editNoticeDiv.html(Notice);
 	this.editNoticeDiv.show();
+	
+	$('#gmMapEditNoticeCancel').click(function(event) {
+		self.onCancelEditMode(event);
+	});
+	
+	$('#gmMapEditNoticeFinish').click(function(event) {
+		self.onFinishEditMode(event);
+	});
 }
 
 
@@ -679,19 +699,38 @@ uesp.gamemap.Map.prototype.onCancelEditMode = function(event)
 }
 
 
+uesp.gamemap.Map.prototype.onFinishEditMode = function(event)
+{
+	if (this.currentEditMode == '') return true;
+	
+	this.currentEditMode = '';
+	this.hideEditNotice();
+	
+	$('.gmMapTile').removeClass('gmCrosshairCursor');
+	
+	return true;
+}
+
+
 uesp.gamemap.Map.prototype.onAddLocationStart = function()
 {
 	if (!this.canEdit()) return false;
 	
 	this.currentEditMode = 'addlocation';
-	this.displayEditNotice("Click on the map to add a location...<a id='gmMapEditNoticeCancel'>[cancel]</a>");
+	this.displayEditNotice("Click on the map to add a location...", '', 'Cancel');
 	$('.gmMapTile').addClass('gmCrosshairCursor');
 	
-	var self = this;
+	return true;
+}
+
+
+uesp.gamemap.Map.prototype.onAddPathStart = function()
+{
+	if (!this.canEdit()) return false;
 	
-	$('#gmMapEditNoticeCancel').click(function(event) {
-		self.onCancelEditMode(event);
-	});
+	this.currentEditMode = 'addpath';
+	this.displayEditNotice("Click on the map to add points to the path. Click 'Finish' when done...", 'Finish', 'Cancel');
+	$('.gmMapTile').addClass('gmCrosshairCursor');
 	
 	return true;
 }
