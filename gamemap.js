@@ -90,7 +90,7 @@ uesp.gamemap.Map.prototype.changeWorld = function (world, newState)
 	if (worldId in this.mapWorlds)
 	{
 		this.clearLocationElements();
-		
+			
 		this.currentWorldId = worldId;
 		this.mapOptions = this.mapWorlds[this.currentWorldId].mapOptions;
 		
@@ -555,7 +555,7 @@ uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
 	newState.gamePos.y = destLoc.y;
 	newState.zoomLevel = this.zoomLevel;
 	
-	this.changeWorld(destLoc.worldId, newState);
+	this.setMapState(newState);
 	destLoc.showPopup();
 }
 
