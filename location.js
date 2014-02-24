@@ -472,9 +472,6 @@ uesp.gamemap.Location.prototype.onSaveEditPopup = function (event)
 	this.updatePopupOffset();
 	
 	this.doSaveQuery();
-	
-	//this.hidePopup();
-	//this.useEditPopup = false;
 }
 
 
@@ -494,8 +491,6 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	form = $('#' + this.popupId + ' form');
 	if (form == null) return false;
 	
-	//TODO displayData.points
-	
 	formValues = {};
 	
 	$.each(form.serializeArray(), function(i, field) {
@@ -508,9 +503,11 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	formValues.iconType = parseInt(formValues.iconType);
 	
 	formValues.displayData = { };
-	formValues.displayData.points = [formValues.x, formValues.y];
 	formValues.displayData.labelPos = parseInt(formValues.labelPos);
 	delete formValues.labelPos;
+	
+		// TODO: Update displayData.points for path/areas?
+	formValues.displayData.points = [formValues.x, formValues.y];
 	
 	if (formValues.visible == null)
 		formValues.visible = false;
