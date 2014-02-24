@@ -82,6 +82,78 @@
 				  63 : "Dragon Mound",
 				  100 : "Other"
 		};
+		
+		var esoIconMap = {
+				1  : "Artifact Gate",
+				2  : "Bank",
+				3  : "Battle",
+				4  : "Border Keep",
+				5  : "Caravan",
+				6  : "Clothier",
+				7  : "Dock",
+				8  : "Elder Scroll",
+				9  : "Farm",
+				10 : "Foward Camp",
+				11 : "Inn",
+				12 : "Keep",
+				13 : "Lumber Mill",
+				14 : "Mine",
+				15 : "Outpost",
+				16 : "Smithy",
+				17 : "Temple",
+				18 : "Vendor",
+				19 : "Wayshrine",
+				20 : "Arcanist",
+				21 : "Woodworker",
+				22 : "Alchemist",
+				23 : "Armor Smith",
+				24 : "Armory",
+				25 : "Bag Vendor",
+				26 : "Banker",
+				27 : "Blunt Weapons",
+				28 : "Cooking Fire",
+				29 : "Enchanter",
+				30 : "Fighter's Guild",
+				31 : "Hall Steward",
+				32 : "Heavy Armor",
+				33 : "Light Armor",
+				34 : "General Goods",
+				35 : "Mage's Guild",
+				36 : "Magister",
+				37 : "Medium Armor",
+				38 : "Perquisitor",
+				39 : "Provisioner",
+				40 : "Respec Altar",
+				41 : "Stable Master",
+				42 : "Swords",
+				43 : "Travel NPC",
+				44 : "Weapon Smith",
+				50 : "Area of Interest",
+				51 : "Aylied Ruin",
+				52 : "Camp",
+				53 : "Cave",
+				54 : "Cemetary",
+				55 : "City",
+				56 : "Crafting",
+				57 : "Crypt", 
+				58 : "Daedric Ruin",
+				59 : "Dungeon",
+				60 : "Dwemer Ruin",
+				61 : "Estate",
+				62 : "Explorable",
+				63 : "Group Boss",
+				64 : "Group Dungeon",
+				65 : "Group Instance",
+				66 : "Grove",
+				67 : "Lighthouse",
+				68 : "Mundus Stone",
+				69 : "Portal",
+				70 : "Public Dungeon",
+				71 : "Ruin",
+				72 : "Sewer",
+				73 : "Tower",
+				74 : "Town"
+		};
 
 		var g_GameMap = null;
 		var g_MapState = null;
@@ -90,9 +162,9 @@
 				getMapTileFunction : getDefaultMapTile,
 				wikiUrl: "http://www.uesp.net/wiki/",
 				missingMapTile:  "http://content3.uesp.net/gamemap/blacknulltile.jpg",
-				iconPath: "icons/",
+				iconPath: "icons-eso/",
 				wikiNamespace: "UESPWiki",
-				iconTypeMap: skyrimIconMap
+				iconTypeMap: esoIconMap
 		};
 		
 		var g_SRMapOptions = {
@@ -101,6 +173,7 @@
 				//iconPath: "icons/",
 				//wikiUrl: "http://www.uesp.net/wiki/Skyrim:",
 				
+				iconPath: "icons/",
 				missingMapTile:  "http://content3.uesp.net/maps2/srmap/color/nullimage.jpg",
 				wikiNamespace: "Skyrim",
 				
@@ -125,6 +198,7 @@
 				//iconPath: "icons/",
 				//wikiUrl: "http://www.uesp.net/wiki/Dragonborn:",
 				
+				iconPath: "icons/",
 				missingMapTile:  "http://content3.uesp.net/maps2/images/dboutofrange.jpg",
 				wikiNamespace: "Dragonborn",
 				

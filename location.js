@@ -199,6 +199,18 @@ uesp.gamemap.Location.prototype.onLabelDblClick = function()
 {
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Label Double-Click", self);
 	
+	if (this.parentMap.canEdit())
+	{
+		this.hidePopup();
+		delete this.popupElement;
+		this.popupElement = null;
+		
+		this.useEditPopup = true;
+		this.showPopup();
+		
+		return;
+	}
+	
 	if (this.destinationId > 0) this.onJumpToDestination(); 
 }
 
@@ -221,6 +233,20 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 {
 	var labelPos = 0;
 	
+	if ( !(this.displayData.labelPos == null) ) labelPos = this.displayData.labelPos;
+	
+	if (labelPos === 0)
+	{
+		if (! (this.labelElement == null))
+		{
+			$(this.labelElement).remove();
+			delete this.labelElement;
+			this.labelElement = null;
+		}
+		
+		return true;
+	}
+	
 	if (this.labelElement == null)
 	{
 		this.labelElement = $('<div />').addClass('gmMapLoc')
@@ -232,28 +258,26 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 			.on('selectstart', false);
 	}
 	
-	if ( !(this.displayData.labelPos == null) ) labelPos = this.displayData.labelPos;
-	
 	var labelWidth = this.name.length*6 + 2;
 	
 	switch (labelPos) {
 		case 1:
-			anchorPoint = 'topLeft';
-			labelTextAlign = 'left';
-			this.labelOffsetLeft = 8;
-			this.labelOffsetTop  = 4;
-			break;
-		case 2:
-			anchorPoint = 'topCenter';
-			labelTextAlign = 'center';
-			this.labelOffsetLeft = labelWidth/2;
-			this.labelOffsetTop  = 4;
-			break;
-		case 3:
-			anchorPoint = 'topRight';
+			anchorPoint = 'bottomRight';
 			labelTextAlign = 'right';
 			this.labelOffsetLeft = labelWidth + 8;
-			this.labelOffsetTop  = 4;
+			this.labelOffsetTop  = 26;
+			break;
+		case 2:
+			anchorPoint = 'bottomCenter';
+			labelTextAlign = 'center';
+			this.labelOffsetLeft = labelWidth/2;
+			this.labelOffsetTop  = 26;
+			break;
+		case 3:
+			anchorPoint = 'bottomLeft';
+			labelTextAlign = 'left';
+			this.labelOffsetLeft = 8;
+			this.labelOffsetTop  = 26;
 			break;
 		case 4:
 			anchorPoint = 'midRight';
@@ -262,35 +286,36 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 			this.labelOffsetTop  = 16;
 			break;
 		case 5:
-			anchorPoint = 'bottomRight';
-			labelTextAlign = 'right';
-			this.labelOffsetLeft = labelWidth + 8;
-			this.labelOffsetTop  = 26;
-			break;
-		case 6:
-			anchorPoint = 'bottomCenter';
+			anchorPoint = 'center';
 			labelTextAlign = 'center';
 			this.labelOffsetLeft = labelWidth/2;
-			this.labelOffsetTop  = 26;
+			this.labelOffsetTop  = 16;
 			break;
-		case 7:
-			anchorPoint = 'bottomLeft';
-			labelTextAlign = 'left';
-			this.labelOffsetLeft = 8;
-			this.labelOffsetTop  = 26;
-			break;
-		case 8:		// Fall through
+		case 6:
 		default:
 			anchorPoint = 'midLeft';
 			labelTextAlign = 'left';
 			this.labelOffsetLeft = -8;
 			this.labelOffsetTop  = 16;
 			break;
-		case 9:
-			anchorPoint = 'center';
+			
+		case 7:
+			anchorPoint = 'topRight';
+			labelTextAlign = 'right';
+			this.labelOffsetLeft = labelWidth + 8;
+			this.labelOffsetTop  = 4;
+			break;
+		case 8:
+			anchorPoint = 'topCenter';
 			labelTextAlign = 'center';
 			this.labelOffsetLeft = labelWidth/2;
-			this.labelOffsetTop  = 16;
+			this.labelOffsetTop  = 4;
+			break;
+		case 9:
+			anchorPoint = 'topLeft';
+			labelTextAlign = 'left';
+			this.labelOffsetLeft = 8;
+			this.labelOffsetTop  = 4;
 			break;
 	}
 	
@@ -314,11 +339,12 @@ uesp.gamemap.Location.prototype.updateIcon = function ()
 		
 		$('<span />').addClass('gmMapLocIconHelper').appendTo(this.iconElement);
 		
-		$('<img />').addClass('gmMapLocIcon')
+		imageElement = $('<img />').addClass('gmMapLocIcon')
 			.load(uesp.gamemap.onLoadIconSuccess)
 			.error(uesp.gamemap.onLoadIconFailed(missingURL))
 			.attr('src', imageURL)
 			.click(this.onLabelClickFunction())
+			.dblclick(this.onLabelDblClickFunction())
 			.attr('unselectable', 'on')
 			.css('user-select', 'none')
 			.on('selectstart', false)
@@ -474,6 +500,8 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	
 	formValues.displayData = { };
 	formValues.displayData.points = [formValues.x, formValues.y];
+	formValues.displayData.labelPos = parseInt(formValues.labelPos);
+	delete formValues.labelPos;
 	
 	if (formValues.visible == null)
 		formValues.visible = false;
@@ -534,6 +562,11 @@ uesp.gamemap.Location.prototype.onSavedLocation = function (data)
 		this.id = data.newLocId;
 		this.updateEditPopup();
 	}
+	
+	this.useEditPopup = false;
+	this.hidePopup();
+	this.popupElement.remove();
+	this.popupElement = null;
 	
 	return true;
 }
@@ -610,6 +643,10 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 							iconTypeInput +
 							"<div class='gmMapEditPopupIconPreview'></div>" + 
 							"<br />" +
+						"<div class='gmMapEditPopupLabel'>Label Position</div>" +
+							"<select class='gmMapEditPopupInput' name='labelPos'>" +
+							this.getLabelPosSelectOptions(this.displayData.labelPos) + 
+							"</select> <br />" + 
 						"<div class='gmMapEditPopupLabel'>Internal ID</div>" +
 							"<div class='gmMapEditPopupInput'>{id}</div> <br />" + 
 						"<div class='gmMapEditPopupLabel'>World ID</div>" +
@@ -1059,12 +1096,36 @@ uesp.gamemap.Location.prototype.update = function ()
 }
 
 
+uesp.gamemap.Location.LABEL_POSITIONS = {
+	0 : 'None',
+	1 : 'Top Left',
+	2 : 'Top Center',
+	3 : 'Top Right',
+	4 : 'Middle Left',
+	5 : 'Center',
+	6 : 'Middle Right',
+	7 : 'Bottom Right',
+	8 : 'Bottom Center',
+	9 : 'Bottom Left'
+};
+
+
+uesp.gamemap.Location.prototype.getLabelPosSelectOptions = function (selectedValue)
+{
+	var options = '';
+	
+	for (key in uesp.gamemap.Location.LABEL_POSITIONS)
+	{
+		options += "<option value='" + key + "' " + (selectedValue == key ? "selected": "") + ">" + uesp.gamemap.Location.LABEL_POSITIONS[key] + "  (" + key.toString() + ")</option>\n";
+	}
+	
+	return options;
+}
+
+
 uesp.gamemap.Location.prototype.getIconTypeSelectOptions = function (selectedValue)
 {
-	if (this.parentMap == null || this.parentMap.mapOptions.iconTypeMap == null)
-	{
-		return "";
-	}
+	if (this.parentMap.mapOptions.iconTypeMap == null) return "";
 	
 	var options = '';
 	

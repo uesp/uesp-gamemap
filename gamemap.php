@@ -229,7 +229,7 @@ class GameMap
 	{
 		if (!$this->initDatabaseWrite()) return false;
 		
-		$query = "INSERT INTO location(worldId, locType, name, description, wikiPage, displayLevel, visible, x, y, displayData) VALUES (";
+		$query = "INSERT INTO location(worldId, locType, name, description, wikiPage, displayLevel, visible, x, y, iconType, displayData) VALUES (";
 		$query .= "{$this->worldId}, ";
 		$query .= "{$this->locType}, ";
 		$query .= "'{$this->locName}', ";
