@@ -40,8 +40,8 @@
 }
 
 .gmMapLocIconDiv {
-	width: 16px;
-	height: 16px;
+	width: 32px;
+	height: 32px;
 	position: absolute;
 	z-index: 9;
 	display: inline-block;
@@ -350,11 +350,11 @@ div.gmMapEditPopupInput {
 	background-repeat: no-repeat;
 	background-position: center;
 	display: inline-block;
-	position: relative;
-	height: 16px;
-	width: 16px;
-	left: 10px;
-	top: 3px;
+	position: absolute;
+	height: 32px;
+	width: 32px;
+	left: 250px;
+	top: 130px;
 }
 
 

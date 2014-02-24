@@ -721,7 +721,7 @@ uesp.gamemap.Map.prototype.createNewLocation = function (gamePos)
 	location.visible = true;
 	location.useEditPopup = true;
 	
-	location.displayData.labelPos = 'midRight';
+	location.displayData.labelPos = 6;
 	location.iconType = 1;
 	
 	this.locations[location.id] = location;
