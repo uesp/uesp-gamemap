@@ -14,6 +14,74 @@
 	<script type="text/javascript" src="maptile.js"></script>
 	<script type="text/javascript" src="gamemap.js"></script>
 	<script type="text/javascript">
+	
+		var skyrimIconMap = {
+				  0 : "None",
+				  1 : "City",
+				  2 : "Town",
+				  3 : "Settlement",
+				  4 : "Cave",
+				  5 : "Camp",
+				  6 : "Fort",
+				  7 : "Nordic Ruins",
+				  8 : "Dwemer Ruins",
+				  9 : "Shipwreck",
+				  10 : "Grove",
+				  11 : "Landmark",
+				  12 : "Dragon Lair",
+				  13 : "Farm",
+				  14 : "Wood Mill",
+				  15 : "Mine",
+				  16 : "Imperial Camp",
+				  17 : "Stormcloak Camp",
+				  18 : "Doomstone",
+				  19 : "Wheat Mill",
+				  20 : "Smelter",
+				  21 : "Stable",
+				  22 : "Imperial Tower",
+				  23 : "Clearing",
+				  24 : "Pass",
+				  25 : "Altar",
+				  26 : "Rock",
+				  27 : "Lighthouse",
+				  28 : "Orc Stronghold",
+				  29 : "Giant Camp",
+				  30 : "Shack",
+				  31 : "Nordic Tower",
+				  32 : "Nordic Dwelling",
+				  33 : "Dock",
+				  34 : "Shrine",
+				  35 : "Riften Castle",
+				  36 : "Riften Capitol",
+				  37 : "Windhelm Castle",
+				  38 : "Windhelm Capitol",
+				  39 : "Whiterun Castle",
+				  40 : "Whiterun Capitol",
+				  41 : "Solitude Castle",
+				  42 : "Solitude Capitol",
+				  43 : "Markarth Castle",
+				  44 : "Markarth Capitol",
+				  45 : "Winterhold Castle",
+				  46 : "Winterhold Capitol",
+				  47 : "Morthal Castle",
+				  48 : "Morthal Capitol",
+				  49 : "Falkreath Castle",
+				  50 : "Falkreath Capitol",
+				  51 : "Dawnstar Castle",
+				  52 : "Dawnstar Capitol",
+				  53 : "Temple",
+				  54 : "Town",
+				  55 : "Stone",
+				  56 : "Tower",
+				  57 : "Teleport",
+				  58 : "Teleport",
+				  59 : "Castle",
+				  60 : "Door",
+				  61 : "Shrine",
+				  62 : "Ore Vein",
+				  63 : "Dragon Mound",
+				  100 : "Other"
+		};
 
 		var g_GameMap = null;
 		var g_MapState = null;
@@ -23,7 +91,8 @@
 				wikiUrl: "http://www.uesp.net/wiki/",
 				missingMapTile:  "http://content3.uesp.net/gamemap/blacknulltile.jpg",
 				iconPath: "icons/",
-				wikiNamespace: "UESPWiki"
+				wikiNamespace: "UESPWiki",
+				iconTypeMap: skyrimIconMap
 		};
 		
 		var g_SRMapOptions = {
