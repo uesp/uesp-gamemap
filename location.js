@@ -478,6 +478,15 @@ uesp.gamemap.Location.prototype.onSaveEditPopup = function (event)
 }
 
 
+uesp.gamemap.Location.prototype.onDeleteEditPopup = function (event)
+{
+	if (!this.parentMap.canEdit()) return false;
+	if (this.popupElement == null) return false;
+	
+	this.setPopupEditNotice('Delete not yet implemented!', 'error');
+}
+
+
 uesp.gamemap.Location.prototype.getFormData = function()
 {
 	if (!this.parentMap.canEdit()) return false;
@@ -623,6 +632,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 						this.getIconTypeSelectOptions(this.iconType) + "</select>";
 	}
 	
+		//TODO: Proper permission checking for edit/add/delete abilities
 	var popupContent =	"<form onsubmit='return false;'>" +
 						"<div class='gmMapEditPopupTitle'>Editing Location</div>" + 
 						"<div class='gmMapPopupClose'><img src='images/cancelicon.png' width='12' height='12' /></div><br />" +
@@ -655,6 +665,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 							"<div class='gmMapEditPopupInput'>{locType}</div> <br />" +
 						"<br />" + 
 						"<div class='gmMapEditPopupStatus'></div>" +
+						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonDelete' value='Delete' />" +
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonSave' value='Save' />" +
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonClose' value='Cancel' />" +
 						"</form>";
@@ -714,6 +725,10 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 		self.onSaveEditPopup(event);
 	});
 	
+	$('#' + this.popupId + ' .gmMapEditPopupButtonDelete').click(function(event) {
+		self.onDeleteEditPopup(event);
+	});
+
 	this.updateEditPopupIconPreview();
 	this.updatePopupOffset();
 }
