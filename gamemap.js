@@ -756,7 +756,7 @@ uesp.gamemap.Map.prototype.createNewLocation = function (gamePos)
 	location.x = Math.round(gamePos.x);
 	location.y = Math.round(gamePos.y);
 	location.locType = uesp.gamemap.LOCTYPE_POINT;
-	location.displayLevel = 1;
+	location.displayLevel = this.zoomLevel - 1;
 	location.visible = true;
 	location.useEditPopup = true;
 	
