@@ -1159,7 +1159,8 @@ uesp.gamemap.Location.prototype.getIconTypeSelectOptions = function (selectedVal
 	{
 		iconTypeName = sortedIconTypeArray[key];
 		iconType = reverseIconTypeMap[iconTypeName];
-		options += "<option value='" + iconType + "' " + (selectedValue == key ? "selected": "") + ">" + iconTypeName + "  (" + iconType + ")</option>\n";
+		
+		options += "<option value='" + iconType + "' " + (selectedValue == iconType ? "selected": "") + ">" + iconTypeName + "  (" + iconType + ")</option>\n";
 	}
 	
 	return options;
