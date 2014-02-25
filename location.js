@@ -538,7 +538,7 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	
 	formValues.displayData.labelPos = parseInt(formValues.displayData.labelPos);
 	
-	if (this.locType == 1) displayData.points = [formValues.x, formValues.y];
+	if (this.locType == 1) formValues.displayData.points = [formValues.x, formValues.y];
 	
 	if (formValues.visible == null)
 		formValues.visible = false;
