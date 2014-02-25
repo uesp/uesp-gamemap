@@ -50,6 +50,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions)
 	this.currentEditMode = '';
 	this.editNoticeDiv = null;
 	this.nextNewLocationId = -100;
+	this.editClickWall = null;
 	this.currentEditLocation = null;
 	
 	this.mapTiles = [];
@@ -237,6 +238,7 @@ uesp.gamemap.Map.prototype.createEvents = function()
 {
 	$(window).on("mousemove", { self: this }, this.onMouseMove);
 	$('.gmMapTile').on("mousedown", { self: this }, this.onMouseDown);
+	$('.gmMapTile').on("click", { self: this }, this.onClick);
 	$(window).on("mouseup", { self: this }, this.onMouseUp);
 	this.mapRoot.on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
 	
@@ -695,11 +697,10 @@ uesp.gamemap.Map.prototype.onCancelEditMode = function(event)
 {
 	if (this.currentEditMode == '') return true;
 	
+	this.removeEditClickWall();
 	this.currentEditLocation = null;
 	this.currentEditMode = '';
 	this.hideEditNotice();
-	
-	$('.gmMapTile').removeClass('gmCrosshairCursor');
 	
 	return true;
 }
@@ -709,8 +710,8 @@ uesp.gamemap.Map.prototype.onFinishEditMode = function(event)
 {
 	if (this.currentEditMode == '') return true;
 	
+	this.removeEditClickWall();
 	this.hideEditNotice();
-	$('.gmMapTile').removeClass('gmCrosshairCursor');
 	
 	if (this.currentEditMode == 'addpath')
 	{
@@ -730,9 +731,9 @@ uesp.gamemap.Map.prototype.onAddLocationStart = function()
 {
 	if (!this.canEdit()) return false;
 	
+	this.addEditClickWall();
 	this.currentEditMode = 'addlocation';
 	this.displayEditNotice("Click on the map to add a location...", '', 'Cancel');
-	$('.gmMapTile').addClass('gmCrosshairCursor');
 	
 	return true;
 }
@@ -759,9 +760,9 @@ uesp.gamemap.Map.prototype.onAddPathStart = function()
 {
 	if (!this.canEdit()) return false;
 	
+	this.addEditClickWall();
 	this.currentEditMode = 'addpath';
 	this.displayEditNotice("Click on the map to add points to the path. Click 'Finish' when done...", 'Finish', 'Cancel');
-	$('.gmMapTile').addClass('gmCrosshairCursor');
 	
 	this.currentEditLocation = new uesp.gamemap.Location(this);
 	this.currentEditLocation.locType = uesp.gamemap.LOCTYPE_PATH;
@@ -844,9 +845,9 @@ uesp.gamemap.Map.prototype.createNewLocation = function (gamePos)
 
 uesp.gamemap.Map.prototype.onAddLocationClick = function (event)
 {
+	this.removeEditClickWall();
 	this.hideEditNotice();
 	this.currentEditMode = '';
-	$('.gmMapTile').removeClass('gmCrosshairCursor');
 	
 	if (!this.canEdit()) return false;
 	
@@ -950,10 +951,10 @@ uesp.gamemap.Map.prototype.onDragStart = function(event)
 }
 
 
-uesp.gamemap.Map.prototype.onMouseDown = function(event)
+uesp.gamemap.Map.prototype.onClick = function(event)
 {
 	var self = event.data.self;
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseDown");
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onClick");
 	
 	if (self.currentEditMode == 'addlocation')
 		self.onAddLocationClick(event);
@@ -961,7 +962,16 @@ uesp.gamemap.Map.prototype.onMouseDown = function(event)
 		self.onAddPathClick(event);
 	else if (self.currentEditMode == 'addarea')
 		self.onAddAreaClick(event);
-	else
+	
+}
+
+
+uesp.gamemap.Map.prototype.onMouseDown = function(event)
+{
+	var self = event.data.self;
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseDown");
+	
+	if (self.currentEditMode == '')
 		self.onDragStart(event);
 	
 	event.preventDefault();
@@ -1649,6 +1659,30 @@ uesp.gamemap.Map.prototype.updateLocationId = function(oldId, newId)
 		location.id = newId;
 		this.locations[newId] = location;
 	}
+}
+
+
+uesp.gamemap.Map.prototype.addEditClickWall = function()
+{
+	
+	if (this.editClickWall == null)
+	{
+		this.editClickWall = $('<div />')
+				.attr('id', 'gmMapRootClickWall')
+				.appendTo(this.mapContainer);
+		
+		this.editClickWall.click({ self: this }, this.onClick);
+	}
+	
+	this.editClickWall.css('z-index', 101);
+}
+
+
+uesp.gamemap.Map.prototype.removeEditClickWall = function()
+{
+	if (this.editClickWall == null) return;
+	
+	this.editClickWall.css('z-index', 0);
 }
 
 

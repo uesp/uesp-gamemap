@@ -280,10 +280,6 @@ ul ul .MapListHeader {
 	color: #000000;
 }
 
-.gmCrosshairCursor {
-	cursor: crosshair !important;
-}
-
 .gmMapEditPopupTitle {
 	border-radius: 2px;
 	display: inline-block;
@@ -421,6 +417,7 @@ input[type=checkbox].gmMapEditPopupInput {
 }
 
 #gmMapRootClickWall {
+	cursor: crosshair;
 	z-index: 0;
 	width: 100%;
 	height: 100%;
