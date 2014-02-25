@@ -777,8 +777,14 @@ uesp.gamemap.Map.prototype.onAddPathStart = function()
 	this.currentEditLocation.displayData.hover.fillStyle = "rgba(255,0,0,0.5)";
 	this.currentEditLocation.displayData.hover.strokeStyle = "rgba(0,0,0,0.5)";
 	this.currentEditLocation.displayData.hover.lineWidth = 2;
-	this.currentEditLocation.displayData.fillStyle = "rgba(255,255,255,1)";;
+	this.currentEditLocation.displayData.fillStyle = "rgba(255,255,255,1)";
 	this.currentEditLocation.displayData.strokeStyle = "rgba(0,0,0,1)";
+	
+	this.currentEditLocation.displayData.hover.fillStyle = "#ff0000";
+	this.currentEditLocation.displayData.hover.strokeStyle = "#000000";
+	this.currentEditLocation.displayData.fillStyle = "#ffffff";
+	this.currentEditLocation.displayData.strokeStyle = "#000000";
+	
 	this.currentEditLocation.displayData.lineWidth = 1;
 	this.currentEditLocation.iconType = 0;
 	
