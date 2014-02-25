@@ -36,6 +36,8 @@ class GameMap
 	public $locDisplayData = '{}';
 	public $locX = 0;
 	public $locY = 0;
+	public $locWidth = 0;
+	public $locHeight = 0;
 	
 	public $limitBottom = 0;
 	public $limitTop    = 1000;
@@ -230,7 +232,7 @@ class GameMap
 	{
 		if (!$this->initDatabaseWrite()) return false;
 		
-		$query = "INSERT INTO location(worldId, locType, name, description, wikiPage, displayLevel, visible, x, y, iconType, destinationId, displayData) VALUES (";
+		$query = "INSERT INTO location(worldId, locType, name, description, wikiPage, displayLevel, visible, x, y, width, height, iconType, destinationId, displayData) VALUES (";
 		$query .= "{$this->worldId}, ";
 		$query .= "{$this->locType}, ";
 		$query .= "'{$this->locName}', ";
@@ -240,6 +242,8 @@ class GameMap
 		$query .= "{$this->locVisible}, ";
 		$query .= "{$this->locX}, ";
 		$query .= "{$this->locY}, ";
+		$query .= "{$this->locWidth}, ";
+		$query .= "{$this->locHeight}, ";
 		$query .= "{$this->locIconType}, ";
 		$query .= "{$this->locDestId}, ";
 		$query .= "'{$this->locDisplayData}' ";
@@ -276,7 +280,9 @@ class GameMap
 		$query .= "name='{$this->locName}', ";
 		$query .= "description='{$this->locDescription}', ";
 		$query .= "wikiPage='{$this->locWikiPage}', ";
-		$query .= "displayData='{$this->locDisplayData}' ";
+		$query .= "displayData='{$this->locDisplayData}', ";
+		$query .= "width={$this->locWidth}, ";
+		$query .= "height={$this->locHeight} ";
 		$query .= " WHERE id={$this->locationId};";
 		
 		$result = $this->db->query($query);
@@ -355,6 +361,7 @@ class GameMap
 		
 		while ( ($row = $result->fetch_assoc()) )
 		{
+			settype($row['id'], "integer");
 			settype($row['enabled'], "integer");
 			settype($row['posRight'], "integer");
 			settype($row['posLeft'], "integer");
@@ -363,6 +370,7 @@ class GameMap
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
+			settype($row['zoomOffset'], "integer");
 				
 			$worlds[] = $row;
 			$count += 1;
@@ -388,6 +396,7 @@ class GameMap
 		
 		while ( ($row = $result->fetch_assoc()) )
 		{
+			settype($row['id'], "integer");
 			settype($row['enabled'], "integer");
 			settype($row['posRight'], "integer");
 			settype($row['posLeft'], "integer");
@@ -396,6 +405,7 @@ class GameMap
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
+			settype($row['zoomOffset'], "integer");
 			
 			$worlds[] = $row;
 			$count += 1;
@@ -486,6 +496,8 @@ class GameMap
 		if (array_key_exists('destid',  $this->inputParams)) $this->locDestId = intval($this->db->real_escape_string($this->inputParams['destid']));
 		if (array_key_exists('x',  $this->inputParams)) $this->locX = intval($this->db->real_escape_string($this->inputParams['x']));
 		if (array_key_exists('y',  $this->inputParams)) $this->locY = intval($this->db->real_escape_string($this->inputParams['y']));
+		if (array_key_exists('locwidth',  $this->inputParams)) $this->locWidth = intval($this->db->real_escape_string($this->inputParams['locwidth']));
+		if (array_key_exists('locheight',  $this->inputParams)) $this->locHeight = intval($this->db->real_escape_string($this->inputParams['locheight']));
 		if (array_key_exists('loctype',  $this->inputParams)) $this->locType = intval($this->db->real_escape_string($this->inputParams['loctype']));
 		if (array_key_exists('icontype',  $this->inputParams)) $this->locIconType = intval($this->db->real_escape_string($this->inputParams['icontype']));
 		if (array_key_exists('name', $this->inputParams)) $this->locName = $this->db->real_escape_string($this->inputParams['name']);
