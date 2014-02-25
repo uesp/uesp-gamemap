@@ -939,14 +939,13 @@ uesp.gamemap.Location.prototype.drawPath = function (context)
 {
 	var i = 0;
 	
-	context.clearRect(this.x, this.y, this.width, this.height);
-	context.globalCompositeOperation = 'destination-atop';
+	context.clearRect(this.x, this.y - this.height, this.width, this.height);
+	//context.globalCompositeOperation = 'destination-atop';
 	
 	avgScale = (this.pixelWidth / this.width + this.pixelHeight / this.height) / 2.0;
 	if (avgScale === 0) avgScale = 1;
 	
-	context.lineWidth = this.displayData.lineWidth / avgScale;
-	context.strokeStyle = this.displayData.strokeStyle;
+	context.beginPath();
 	
 	while (i + 1 < this.displayData.points.length)
 	{
@@ -964,12 +963,9 @@ uesp.gamemap.Location.prototype.drawPath = function (context)
 		context.fillStyle = this.displayData.fillStyle;
 		context.fill();
 	}
-	else
-	{
-		context.fillStyle = 'rgba(0,0,0,0)';
-		context.fill();
-	}
 	
+	context.lineWidth = this.displayData.lineWidth / avgScale;
+	context.strokeStyle = this.displayData.strokeStyle;
 	context.stroke();
 }
 
@@ -1009,19 +1005,14 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 	
 	avgScale = (this.pixelWidth / this.width + this.pixelHeight / this.height) / 2.0;
 	if (avgScale === 0) avgScale = 1;
+	
+	co.clearRect(this.x, this.y - this.height, this.width, this.height);
 
 	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) )
 	{
-		if (this.locType != uesp.gamemap.LOCTYPE_PATH)
+		if (this.locType == uesp.gamemap.LOCTYPE_AREA)
 		{
-			co.fillStyle = 'rgba(0,0,0,0)';
-			co.fill();
 			co.fillStyle = this.displayData.hover.fillStyle;
-			co.fill();
-		}
-		else
-		{
-			co.fillStyle = 'rgba(0,0,0,0)';
 			co.fill();
 		}
 		
@@ -1031,16 +1022,9 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 	}
 	else
 	{
-		if (this.locType != uesp.gamemap.LOCTYPE_PATH)
+		if (this.locType == uesp.gamemap.LOCTYPE_AREA)
 		{
-			co.fillStyle = 'rgba(0,0,0,0)';
-			co.fill();
 			co.fillStyle = this.displayData.fillStyle;
-			co.fill();
-		}
-		else
-		{
-			co.fillStyle = 'rgba(0,0,0,0)';
 			co.fill();
 		}
 		
@@ -1071,16 +1055,11 @@ uesp.gamemap.Location.prototype.onPathMouseOut = function (event)
 	var ca = event.target;
 	var co = ca.getContext('2d');
 	
-	if (this.locType != uesp.gamemap.LOCTYPE_PATH)
+	co.clearRect(this.x, this.y - this.height, this.width, this.height);
+	
+	if (this.locType == uesp.gamemap.LOCTYPE_AREA)
 	{
-		co.fillStyle = 'rgba(0,0,0,0)';
-		co.fill();
 		co.fillStyle = this.displayData.fillStyle;
-		co.fill();
-	}
-	else
-	{
-		co.fillStyle = 'rgba(0,0,0,0)';
 		co.fill();
 	}
 	
