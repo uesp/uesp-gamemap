@@ -331,6 +331,16 @@ uesp.gamemap.Location.prototype.updateIcon = function ()
 	var missingURL = this.parentMap.mapOptions.iconPath + this.parentMap.mapOptions.iconMissing;
 	var imageURL   = this.parentMap.mapOptions.iconPath + this.iconType + ".png";
 	
+	if (this.iconType == 0)
+	{
+		if (!(this.iconElement == null))
+		{
+			this.iconElement.remove();
+			this.iconElement = null;
+		}
+		return true;
+	}
+	
 	if (this.iconElement == null)
 	{	
 		this.iconElement = $('<div />')
@@ -502,12 +512,12 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	formValues.y = parseInt(formValues.y);
 	formValues.iconType = parseInt(formValues.iconType);
 	
-	formValues.displayData = { };
-	formValues.displayData.labelPos = parseInt(formValues.labelPos);
+	displayData = { };
+	displayData.labelPos = parseInt(formValues.labelPos);
 	delete formValues.labelPos;
 	
 		// TODO: Update displayData.points for path/areas?
-	formValues.displayData.points = [formValues.x, formValues.y];
+	if (this.locType == 1) displayData.points = [formValues.x, formValues.y];
 	
 	if (formValues.visible == null)
 		formValues.visible = false;
@@ -515,6 +525,7 @@ uesp.gamemap.Location.prototype.getFormData = function()
 		formValues.visible = parseInt(formValues.visible) != 0;
 	
 	uesp.gamemap.mergeObjects(this, formValues);
+	uesp.gamemap.mergeObjects(this.displayData, displayData);
 	
 	pixelPos = this.parentMap.convertGameToPixelPos(this.x, this.y);
 	this.offsetLeft = pixelPos.x;
@@ -543,6 +554,13 @@ uesp.gamemap.Location.prototype.createSaveQuery = function()
 	query += '&displaylevel=' + this.displayLevel;
 	query += '&visible=' + (this.visible ? '1' : '0');
 	query += '&destid=' + this.destinationId;
+	query += '&locwidth=' + this.width;
+	query += '&locheight=' + this.height;
+	
+	if (this.locType > 1)
+	{
+		
+	}
 	
 	return query;
 }
@@ -850,7 +868,7 @@ uesp.gamemap.Location.prototype.updatePathSize = function (redraw)
 	if (this.locType < uesp.gamemap.LOCTYPE_PATH) return;
 	if (this.pathElement == null) return;
 	
-	if (!(redraw == null)) redraw = true;
+	if (redraw == null) redraw = true;
 	
 	var pixelSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
 	this.pixelWidth  = pixelSize.x;
@@ -861,8 +879,11 @@ uesp.gamemap.Location.prototype.updatePathSize = function (redraw)
 	if (redraw)
 	{
 		var context = this.pathElement[0].getContext('2d');
-		context.translate(-this.x * this.pixelWidth / this.width, -this.x * this.pixelHeight / this.height);
+		
+		context.setTransform(1, 0, 0, 1, 0, 0);
+		context.translate(-this.x * this.pixelWidth / this.width, -(this.y - this.height) * this.pixelHeight / this.height);
 		context.scale(this.pixelWidth / this.width, this.pixelHeight / this.height);
+		
 		this.drawPath(context);
 	}
 }
@@ -874,15 +895,19 @@ uesp.gamemap.Location.prototype.drawPath = function (context)
 	
 	context.clearRect(this.x, this.y, this.width, this.height);
 	context.globalCompositeOperation = 'destination-atop';
-	context.lineWidth = this.displayData.lineWidth;
+	
+	avgScale = (this.pixelWidth / this.width + this.pixelHeight / this.height) / 2.0;
+	if (avgScale === 0) avgScale = 1;
+	
+	context.lineWidth = this.displayData.lineWidth / avgScale;
 	context.strokeStyle = this.displayData.strokeStyle;
 	
 	while (i + 1 < this.displayData.points.length)
 	{
 		if (i == 0)
-			context.moveTo(this.displayData.points[i], this.height - this.displayData.points[i+1]);
+			context.moveTo(this.displayData.points[i], this.y * 2 - this.displayData.points[i+1] - this.height);
 		else
-			context.lineTo(this.displayData.points[i], this.height - this.displayData.points[i+1]);
+			context.lineTo(this.displayData.points[i], this.y * 2 - this.displayData.points[i+1] - this.height);
 		
 		i += 2;
 	}
@@ -899,8 +924,6 @@ uesp.gamemap.Location.prototype.drawPath = function (context)
 		context.fill();
 	}
 	
-	context.lineWidth = this.displayData.lineWidth;
-	context.strokeStyle = this.displayData.strokeStyle;
 	context.stroke();
 }
 
@@ -934,6 +957,9 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 	var ca = event.target;
 	var co = ca.getContext('2d');
 	var offset = $(ca).offset();
+	
+	avgScale = (this.pixelWidth / this.width + this.pixelHeight / this.height) / 2.0;
+	if (avgScale === 0) avgScale = 1;
 
 	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) )
 	{
@@ -948,7 +974,7 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 			co.fill();
 		}
 		
-		co.lineWidth = this.displayData.hover.lineWidth;
+		co.lineWidth = this.displayData.hover.lineWidth / avgScale;
 		co.strokeStyle = this.displayData.hover.strokeStyle;
 		co.stroke();
 	}
@@ -965,7 +991,7 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 			co.fill();
 		}
 		
-		co.lineWidth = this.displayData.lineWidth;
+		co.lineWidth = this.displayData.lineWidth / avgScale;
 		co.strokeStyle = this.displayData.strokeStyle;
 		co.stroke();
 	}
@@ -1003,7 +1029,10 @@ uesp.gamemap.Location.prototype.onPathMouseOut = function (event)
 		co.fill();
 	}
 	
-	co.lineWidth = this.displayData.lineWidth;
+	avgScale = (this.pixelWidth / this.width + this.pixelHeight / this.height) / 2.0;
+	if (avgScale === 0) avgScale = 1;
+	
+	co.lineWidth = this.displayData.lineWidth / avgScale;
 	co.strokeStyle = this.displayData.strokeStyle;
 	co.stroke();
 }
@@ -1018,6 +1047,8 @@ uesp.gamemap.Location.prototype.onPathClick = function (event)
 	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) )
 	{
 		uesp.logDebug(uesp.LOG_LEVEL_WARNING, "clicked path");
+		
+		this.togglePopup();
 	}
 	
 	return false;
@@ -1050,7 +1081,7 @@ uesp.gamemap.Location.prototype.createPath = function ()
 	
 	var context = this.pathElement[0].getContext('2d');
 	
-	context.translate(-this.x * divW / this.width, -this.x * divH / this.height);
+	context.translate(-this.x * divW / this.width, -(this.y - this.height) * divH / this.height);
 	context.scale(divW / this.width, divH / this.height);
 	
 	var self = this;
@@ -1151,7 +1182,7 @@ uesp.gamemap.Location.prototype.getIconTypeSelectOptions = function (selectedVal
 	
 	sortedIconTypeArray.sort();
 	
-	var options = '';
+	var options = "<option value='0' " + (selectedValue == 0 ? "selected": "") + ">None (0)</option>\n";
 	
 	for (key in sortedIconTypeArray)
 	{
