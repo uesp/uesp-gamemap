@@ -527,11 +527,16 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	uesp.gamemap.mergeObjects(this, formValues);
 	uesp.gamemap.mergeObjects(this.displayData, displayData);
 	
-	pixelPos = this.parentMap.convertGameToPixelPos(this.x, this.y);
+	this.computeOffset();
+	return true;
+}
+
+
+uesp.gamemap.Location.prototype.computeOffset = function()
+{
+	pixelPos = this.parentMap.convertGameToPixelPos(this.x + this.width/2, this.y - this.height/2);
 	this.offsetLeft = pixelPos.x;
 	this.offsetTop  = pixelPos.y;
-	
-	return true;
 }
 
 
@@ -857,7 +862,9 @@ uesp.gamemap.Location.prototype.updatePathOffset = function ()
 {
 	if (this.pathElement == null) return;
 	
-	$(this.pathElement).offset( { left: this.offsetLeft, top: this.offsetTop });
+	pixelPos = this.parentMap.convertGameToPixelPos(this.x, this.y);
+	
+	$(this.pathElement).offset( { left: pixelPos.x, top: pixelPos.y });
 	
 	
 }
