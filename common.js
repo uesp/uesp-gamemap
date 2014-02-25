@@ -152,9 +152,18 @@ uesp.template = function (templateText, data)
 	return templateText.replace(/{(\w*)}/g, function(m, key) { return data.hasOwnProperty(key) ? data[key] : ""; });
 }
 
-uesp.template2 = function (templateText, data1, data2)
+
+	//TODO: Add more nesting levels if required
+uesp.template = function (templateText, data)
 {
-	return templateText.replace(/{(\w*)}/g, function(m, key) { return data1.hasOwnProperty(key) ? data1[key] : (data2.hasOwnProperty(key) ? data2[key] : ""); });
+	return templateText.replace(/{(\w*)\.?(\w*)?\.?(\w*)?}/g, function(m, key1, key2, key3) {
+		if (!data.hasOwnProperty(key1)) return '';
+		if (key2 == null) return data[key1];
+		if (!data[key1].hasOwnProperty(key2)) return '';
+		if (key3 == null) return data[key1][key2];
+		if (!data[key1][key2].hasOwnProperty(key3)) return '';
+		return data[key1][key2][key3];
+	});
 }
 
 
