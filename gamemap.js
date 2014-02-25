@@ -312,6 +312,7 @@ uesp.gamemap.onLoadIconFailed = function(missingURL)
 uesp.gamemap.Map.prototype.displayLocation = function (location)
 {
 	if (location.worldId != this.currentWorldId) return;
+	if (!location.visible) return;
 	
 	location.computeOffset();
 	location.update();
