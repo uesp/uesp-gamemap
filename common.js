@@ -147,20 +147,14 @@ uesp.setLogLevel = function(logLevel)
 uesp.setLogLevel(uesp.DEFAULT_LOG_LEVEL);
 
 
-uesp.template = function (templateText, data)
-{
-	return templateText.replace(/{(\w*)}/g, function(m, key) { return data.hasOwnProperty(key) ? data[key] : ""; });
-}
-
-
 	//TODO: Add more nesting levels if required
 uesp.template = function (templateText, data)
 {
 	return templateText.replace(/{(\w*)\.?(\w*)?\.?(\w*)?}/g, function(m, key1, key2, key3) {
 		if (!data.hasOwnProperty(key1)) return '';
-		if (key2 == null) return data[key1];
+		if (key2 == null || key2 == '') return data[key1];
 		if (!data[key1].hasOwnProperty(key2)) return '';
-		if (key3 == null) return data[key1][key2];
+		if (key3 == null || key3 == '') return data[key1][key2];
 		if (!data[key1][key2].hasOwnProperty(key3)) return '';
 		return data[key1][key2][key3];
 	});

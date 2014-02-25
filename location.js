@@ -679,13 +679,13 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	if (this.locType > 1)
 	{
 		pathContent = 	"<div class='gmMapEditPopupLabel'>Fill Style</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='displayData.fillStyle' value='{displayData.fillStyle}' size='14' /> " +
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.fillStyle' value='{displayData.fillStyle}' size='14' /><br />" +
 						"<div class='gmMapEditPopupLabel'>Stroke Style</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='displayData.strokeStyle' value='{displayData.strokeStyle}' size='14' /> " +
 							" &nbsp; Width:" + 
 							"<input type='text' class='gmMapEditPopupInput' name='displayData.lineWidth' value='{displayData.lineWidth}' size='2' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Hover Fill Style</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.fillStyle' value='{displayData.hover.fillStyle}' size='14' />" +
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.fillStyle' value='{displayData.hover.fillStyle}' size='14' /><br />" +
 						"<div class='gmMapEditPopupLabel'>Hover Stroke</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.strokeStyle' value='{displayData.hover.strokeStyle}' size='14' /> " +
 							" &nbsp; Width:" + 
