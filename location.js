@@ -1101,7 +1101,7 @@ uesp.gamemap.Location.prototype.onPathClick = function (event)
 	
 	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) )
 	{
-		uesp.logDebug(uesp.LOG_LEVEL_WARNING, "clicked path");
+		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "clicked path");
 		
 		this.togglePopup();
 	}
@@ -1112,6 +1112,22 @@ uesp.gamemap.Location.prototype.onPathClick = function (event)
 
 uesp.gamemap.Location.prototype.onPathDblClick = function (event)
 {
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "double-clicked path");
+	
+	if (this.parentMap.canEdit())
+	{
+		this.useEditPopup = true;
+		
+		if (this.popupElement != null) 
+		{
+			this.popupElement.remove();
+			this.popupElement = null;
+		}
+		
+		this.showPopup();
+		return true;
+	}
+	
 	var bottomEvent = new $.Event("dblclick");
 	
 	bottomEvent.pageX = event.pageX;
