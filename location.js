@@ -659,6 +659,12 @@ uesp.gamemap.Location.prototype.updateEditPopupIconPreview = function ()
 }
 
 
+uesp.gamemap.Location.prototype.onUpdateCurrentZoomEditPopup = function (event)
+{
+	$('#' + this.popupId + ' .gmMapEditPopupCurrentZoom').text('Current Zoom = ' + this.parentMap.zoomLevel);
+}
+
+
 uesp.gamemap.Location.prototype.updateEditPopup = function ()
 {
 	var popupDiv;
@@ -711,7 +717,8 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 						"<div class='gmMapEditPopupLabel'>Description</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='description' value='{description}' size='24' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Display Level</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='displayLevel' value='{displayLevel}' size='8' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='displayLevel' value='{displayLevel}' size='8' />" + 
+							"<div class='gmMapEditPopupCurrentZoom'>Current Zoom = </div> <br />" +
 						"<div class='gmMapEditPopupLabel'>Icon</div>" +
 							iconTypeInput +
 							"<div class='gmMapEditPopupIconPreview'></div>" + 
@@ -778,6 +785,10 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 		});
 	}
 	
+	$('#' + this.popupId + ' input[name=displayLevel]').on('focus keydown', function(event) {
+		self.onUpdateCurrentZoomEditPopup(event);
+	});
+	
 	$('#' + this.popupId + ' .gmMapEditPopupButtonClose').click(function(event) {
 		self.onCloseEditPopup(event);
 	});
@@ -790,6 +801,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 		self.onDeleteEditPopup(event);
 	});
 
+	this.onUpdateCurrentZoomEditPopup();
 	this.updateEditPopupIconPreview();
 	this.updatePopupOffset();
 }
