@@ -322,6 +322,13 @@ ul ul .MapListHeader {
 	padding-bottom: 2px;
 }
 
+.gmMapEditPopupCurrentZoom
+{
+	font-size: 9px;
+	display: inline-block;
+	position: relative;
+	padding-left: 10px;
+}
 
 .gmMapEditPopupStatus {
 	width: 100%;
