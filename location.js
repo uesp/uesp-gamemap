@@ -475,11 +475,9 @@ uesp.gamemap.Location.prototype.onSaveEditPopup = function (event)
 	this.setPopupEditNotice('Saving location...');
 	
 	this.getFormData();
-	this.updateLabel();
-	this.updateLabelOffset();
-	this.updateIcon();
-	this.updateIconOffset();
-	this.updatePopupOffset();
+
+	this.updateOffset();
+	this.update();
 	
 	this.doSaveQuery();
 }
@@ -504,19 +502,42 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	formValues = {};
 	
 	$.each(form.serializeArray(), function(i, field) {
-		formValues[field.name] = field.value;
+		fields = field.name.split('.');
+		
+		if (fields.length == 1)
+		{
+			formValues[field.name] = field.value;
+		}
+		else if (fields.length == 2)
+		{
+			if (formValues[fields[0]] == null) formValues[fields[0]] = { };
+			formValues[fields[0]][fields[1]] = field.value;
+		}
+		else if (fields.length == 3)
+		{
+			if (formValues[fields[0]][fields[1]] == null) formValues[fields[0]][fields[1]] = { };
+			formValues[fields[0]][fields[1]][fields[2]] = field.value;
+		}
+		else
+		{
+			uesp.logError("Too many nested levels in form name'" + field.name + "'!");
+		}
 	});
 	
 	formValues.displayLevel = parseInt(formValues.displayLevel);
 	formValues.x = parseInt(formValues.x);
 	formValues.y = parseInt(formValues.y);
 	formValues.iconType = parseInt(formValues.iconType);
+	formValues.destinationId = parseInt(formValues.destinationId);
 	
-	displayData = { };
-	displayData.labelPos = parseInt(formValues.labelPos);
-	delete formValues.labelPos;
+	if (this.locType > 1)
+	{
+		formValues.displayData.lineWidth = parseInt(formValues.displayData.lineWidth);
+		formValues.displayData.hover.lineWidth = parseInt(formValues.displayData.hover.lineWidth);
+	}
 	
-		// TODO: Update displayData.points for path/areas?
+	formValues.displayData.labelPos = parseInt(formValues.displayData.labelPos);
+	
 	if (this.locType == 1) displayData.points = [formValues.x, formValues.y];
 	
 	if (formValues.visible == null)
@@ -524,10 +545,12 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	else
 		formValues.visible = parseInt(formValues.visible) != 0;
 	
+	uesp.gamemap.mergeObjects(this.displayData, formValues.displayData);
+	delete formValues.displayData;
 	uesp.gamemap.mergeObjects(this, formValues);
-	uesp.gamemap.mergeObjects(this.displayData, displayData);
 	
 	this.computeOffset();
+	
 	return true;
 }
 
@@ -651,6 +674,25 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 						this.getIconTypeSelectOptions(this.iconType) + "</select>";
 	}
 	
+	var pathContent = '';
+	
+	if (this.locType > 1)
+	{
+		pathContent = 	"<div class='gmMapEditPopupLabel'>Fill Style</div>" +
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.fillStyle' value='{displayData.fillStyle}' size='14' /> " +
+						"<div class='gmMapEditPopupLabel'>Stroke Style</div>" +
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.strokeStyle' value='{displayData.strokeStyle}' size='14' /> " +
+							" &nbsp; Width:" + 
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.lineWidth' value='{displayData.lineWidth}' size='2' /> <br />" +
+						"<div class='gmMapEditPopupLabel'>Hover Fill Style</div>" +
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.fillStyle' value='{displayData.hover.fillStyle}' size='14' />" +
+						"<div class='gmMapEditPopupLabel'>Hover Stroke</div>" +
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.strokeStyle' value='{displayData.hover.strokeStyle}' size='14' /> " +
+							" &nbsp; Width:" + 
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.lineWidth' value='{displayData.hover.lineWidth}' size='2' /> <br />" +
+						"";
+	}
+	
 		//TODO: Proper permission checking for edit/add/delete abilities
 		//TODO: Proper template functionality
 		//TODO: Better function organization/shorter
@@ -675,17 +717,16 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 							"<div class='gmMapEditPopupIconPreview'></div>" + 
 							"<br />" +
 						"<div class='gmMapEditPopupLabel'>Label Position</div>" +
-							"<select class='gmMapEditPopupInput' name='labelPos'>" +
+							"<select class='gmMapEditPopupInput' name='displayData.labelPos'>" +
 							this.getLabelPosSelectOptions(this.displayData.labelPos) + 
 							"</select> <br />" +
 						"<div class='gmMapEditPopupLabel'>Destination ID</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='destinationId' value='{destinationId}' size='8' /> <br />" +
+						pathContent +
 						"<div class='gmMapEditPopupLabel'>Internal ID</div>" +
-							"<div class='gmMapEditPopupInput'>{id}</div> <br />" + 
-						"<div class='gmMapEditPopupLabel'>World ID</div>" +
-							"<div class='gmMapEditPopupInput'>{worldId}</div> <br />" +
-						"<div class='gmMapEditPopupLabel'>Type</div>" +
-							"<div class='gmMapEditPopupInput'>{locType}</div> <br />" +
+							"<div class='gmMapEditPopupInput'>{id}</div> &nbsp; " + 
+							"<div class='gmMapEditPopupInput'>World ID: {worldId}</div> &nbsp; " +
+							"<div class='gmMapEditPopupInput'>Type: {locType}</div> <br />" +
 						"<div class='gmMapEditPopupStatus'></div>" +
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonDelete' value='Delete' />" +
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonSave' value='Save' />" +
@@ -713,7 +754,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 		popupDiv = this.popupElement.children()[0];
 	}
 	
-	popupHtml = uesp.template2(popupContent, this, this.displayData);
+	popupHtml = uesp.template(popupContent, this);
 	$(popupDiv).html(popupHtml);
 	
 	if (this.id < 0) this.setPopupEditNotice('New location not yet saved.', 'warning');
@@ -794,7 +835,7 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 		popupContent += "<div class='gmMapPopupEditLabel'>Edit...</div>";
 	}
 	
-	popupHtml = uesp.template2(popupContent, this, this.displayData);
+	popupHtml = uesp.template(popupContent, this);
 	$(popupDiv).html(popupHtml);
 	
 	var self = this;
@@ -865,8 +906,6 @@ uesp.gamemap.Location.prototype.updatePathOffset = function ()
 	pixelPos = this.parentMap.convertGameToPixelPos(this.x, this.y);
 	
 	$(this.pathElement).offset( { left: pixelPos.x, top: pixelPos.y });
-	
-	
 }
 
 
@@ -927,7 +966,7 @@ uesp.gamemap.Location.prototype.drawPath = function (context)
 	}
 	else
 	{
-		context.fillStyle = 'rgba(255,0,0,0)';
+		context.fillStyle = 'rgba(0,0,0,0)';
 		context.fill();
 	}
 	
@@ -937,19 +976,22 @@ uesp.gamemap.Location.prototype.drawPath = function (context)
 
 uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 {
-	this.offsetLeft = x;
-	this.offsetTop  = y;
-	
-	if (animate === true)
+	if (!(x == null))
 	{
-		//deltaX = curOffset.left - x;
-		//deltaY = curOffset.top  - y;
-		//curOffset  = $(this.labelElement).offset();
-		//if (curOffset.left == xPos && curOffset.top == yPos) return;
-	
-			// TODO: Doesn't currently work perfectly...
-		//$(this.labelElement).animate({ left: "-=" + deltaX + "px", top: "-=" + deltaY + "px" }, 100);
-		//return;
+		this.offsetLeft = x;
+		this.offsetTop  = y;
+		
+		if (animate === true)
+		{
+			//deltaX = curOffset.left - x;
+			//deltaY = curOffset.top  - y;
+			//curOffset  = $(this.labelElement).offset();
+			//if (curOffset.left == xPos && curOffset.top == yPos) return;
+			
+				// TODO: Doesn't currently work perfectly...
+			//$(this.labelElement).animate({ left: "-=" + deltaX + "px", top: "-=" + deltaY + "px" }, 100);
+			//return;
+		}
 	}
 	
 	this.updateLabelOffset();
@@ -972,14 +1014,14 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 	{
 		if (this.locType != uesp.gamemap.LOCTYPE_PATH)
 		{
-			co.fillStyle = 'rgba(255,0,0,0)';
+			co.fillStyle = 'rgba(0,0,0,0)';
 			co.fill();
 			co.fillStyle = this.displayData.hover.fillStyle;
 			co.fill();
 		}
 		else
 		{
-			co.fillStyle = 'rgba(255,0,0,0)';
+			co.fillStyle = 'rgba(0,0,0,0)';
 			co.fill();
 		}
 		
@@ -991,14 +1033,14 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 	{
 		if (this.locType != uesp.gamemap.LOCTYPE_PATH)
 		{
-			co.fillStyle = 'rgba(255,0,0,0)';
+			co.fillStyle = 'rgba(0,0,0,0)';
 			co.fill();
 			co.fillStyle = this.displayData.fillStyle;
 			co.fill();
 		}
 		else
 		{
-			co.fillStyle = 'rgba(255,0,0,0)';
+			co.fillStyle = 'rgba(0,0,0,0)';
 			co.fill();
 		}
 		
@@ -1031,12 +1073,14 @@ uesp.gamemap.Location.prototype.onPathMouseOut = function (event)
 	
 	if (this.locType != uesp.gamemap.LOCTYPE_PATH)
 	{
+		co.fillStyle = 'rgba(0,0,0,0)';
+		co.fill();
 		co.fillStyle = this.displayData.fillStyle;
 		co.fill();
 	}
 	else
 	{
-		co.fillStyle = 'rgba(255,0,0,0)';
+		co.fillStyle = 'rgba(0,0,0,0)';
 		co.fill();
 	}
 	

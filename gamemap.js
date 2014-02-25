@@ -1458,13 +1458,18 @@ uesp.gamemap.Map.prototype.updateLocationDisplayLevels = function()
 
 uesp.gamemap.Map.prototype.updateLocationOffset = function (location, animate)
 {
+	/*
 	tilePos = this.convertGameToTilePos(location.x, location.y);
 	
 	mapOffset  = this.mapRoot.offset();
 	xPos = (tilePos.x - this.startTileX) * this.mapOptions.tileSize + mapOffset.left;
 	yPos = (tilePos.y - this.startTileY) * this.mapOptions.tileSize + mapOffset.top;
 			
-	location.updateOffset(xPos, yPos, animate);
+	location.updateOffset(xPos, yPos, animate); */
+	
+	location.computeOffset();
+	location.updateOffset();
+	
 	return true;
 }
 
