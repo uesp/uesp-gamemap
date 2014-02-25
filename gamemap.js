@@ -6,6 +6,7 @@
  * TODO:
  * 		- Remove new location when cancelled before save
  * 		- Delete location
+ * 		- Enable display of non-visible locations when editing
  * 		- Tooltips for areas/paths?
  * 		- Disable locations when adding path/area points?
  * 		- Jump to destination on path/area double-click
