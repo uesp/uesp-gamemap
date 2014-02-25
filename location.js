@@ -488,7 +488,16 @@ uesp.gamemap.Location.prototype.onDeleteEditPopup = function (event)
 	if (!this.parentMap.canEdit()) return false;
 	if (this.popupElement == null) return false;
 	
-	this.setPopupEditNotice('Delete not yet implemented!', 'error');
+	//this.setPopupEditNotice('Delete not yet implemented!', 'error');
+	this.setPopupEditNotice('Saving location...');
+	
+	this.getFormData();
+	this.visible = false;
+	
+	this.updateOffset();
+	this.update();
+	
+	this.doSaveQuery();
 }
 
 
@@ -618,6 +627,12 @@ uesp.gamemap.Location.prototype.onSavedLocation = function (data)
 	this.hidePopup();
 	this.popupElement.remove();
 	this.popupElement = null;
+	
+		// TODO: Temporay way to delete elements
+	if (!this.visible)
+	{
+		this.removeElements();
+	}
 	
 	return true;
 }
