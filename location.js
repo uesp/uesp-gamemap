@@ -965,6 +965,8 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 	{
 		if (this.locType != uesp.gamemap.LOCTYPE_PATH)
 		{
+			co.fillStyle = 'rgba(255,0,0,0)';
+			co.fill();
 			co.fillStyle = this.displayData.hover.fillStyle;
 			co.fill();
 		}
@@ -982,6 +984,8 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 	{
 		if (this.locType != uesp.gamemap.LOCTYPE_PATH)
 		{
+			co.fillStyle = 'rgba(255,0,0,0)';
+			co.fill();
 			co.fillStyle = this.displayData.fillStyle;
 			co.fill();
 		}
