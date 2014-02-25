@@ -308,11 +308,7 @@ uesp.gamemap.Map.prototype.displayLocation = function (location)
 {
 	if (location.worldId != this.currentWorldId) return;
 	
-	pixelPos = this.convertGameToPixelPos(location.x, location.y);
-	
-	location.offsetLeft = pixelPos.x;
-	location.offsetTop  = pixelPos.y;
-	
+	location.computeOffset();
 	location.update();
 }
 
