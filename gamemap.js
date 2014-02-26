@@ -662,12 +662,12 @@ uesp.gamemap.Map.prototype.displayEditNotice = function(Notice, FinishButton, Ca
 	
 	if (!this.editNoticeDiv) this.createEditNoticeDiv();
 	
-	if (CancelButton.length > 0)
+	if (CancelButton != null && CancelButton.length > 0)
 	{
 		Notice += "<button id='gmMapEditNoticeCancel'>" + CancelButton + "</button>";
 	}
 	
-	if (FinishButton.length > 0) 
+	if (FinishButton != null && FinishButton.length > 0) 
 	{
 		Notice += "<button id='gmMapEditNoticeFinish'>" + FinishButton + "</button>";
 	}
@@ -722,6 +722,10 @@ uesp.gamemap.Map.prototype.onFinishEditMode = function(event)
 	else if (this.currentEditMode == 'addarea')
 	{
 		this.onFinishedAddArea();
+	}
+	else if (this.currentEditMode == 'edithandles')
+	{
+		this.onFinishedEditHandles();
 	}
 	
 	this.currentEditMode = '';
@@ -1000,6 +1004,12 @@ uesp.gamemap.Map.prototype.onMouseMove = function(event)
 		self.onDragMove(event);
 		event.preventDefault();
 	}
+	else if (self.currentEditLocation != null && self.currentEditLocation.draggingPathHandle >= 0)
+	{
+		self.currentEditLocation.onPathEditHandlesDragMove(event);
+	}
+	
+
 }
 
 
@@ -1035,6 +1045,10 @@ uesp.gamemap.Map.prototype.onMouseUp = function(event)
 	{
 		self.onDragEnd(event);
 		event.preventDefault();
+	}
+	else if (self.currentEditLocation != null && self.currentEditLocation.draggingPathHandle >= 0)
+	{
+		self.currentEditLocation.onPathEditHandlesDragEnd(event);
 	}
 }
 
@@ -1664,7 +1678,7 @@ uesp.gamemap.Map.prototype.updateLocationId = function(oldId, newId)
 }
 
 
-uesp.gamemap.Map.prototype.addEditClickWall = function()
+uesp.gamemap.Map.prototype.addEditClickWall = function(cursor)
 {
 	
 	if (this.editClickWall == null)
@@ -1674,7 +1688,14 @@ uesp.gamemap.Map.prototype.addEditClickWall = function()
 				.appendTo(this.mapContainer);
 		
 		this.editClickWall.click({ self: this }, this.onClick);
+		this.editClickWall.mousemove({ self: this }, this.onMouseMove);
+		this.editClickWall.mouseup({ self: this }, this.onMouseUp);
 	}
+	
+	if (cursor == null)
+		this.editClickWall.css('cursor', '');
+	else
+		this.editClickWall.css('cursor', cursor);
 	
 	this.editClickWall.css('z-index', 101);
 }
@@ -1685,6 +1706,33 @@ uesp.gamemap.Map.prototype.removeEditClickWall = function()
 	if (this.editClickWall == null) return;
 	
 	this.editClickWall.css('z-index', 0);
+}
+
+
+uesp.gamemap.Map.prototype.onEditPathHandlesStart = function (location)
+{
+	this.currentEditMode = 'edithandles';
+	this.currentEditLocation = location;
+	this.displayEditNotice('Edit path/area nodes by clicking and dragging.', 'Finish');
+	
+	this.addEditClickWall('default');
+	this.currentEditLocation.pathElement.css('z-index', '150');
+	
+	this.displayLocation(this.currentEditLocation);
+}
+
+
+uesp.gamemap.Map.prototype.onFinishedEditHandles = function()
+{
+	this.removeEditClickWall();
+	this.currentEditLocation.pathElement.css('z-index', '');
+	
+	this.currentEditLocation.editPathHandles = false;
+	this.displayLocation(this.currentEditLocation);
+	this.currentEditLocation.showPopup();
+	
+	this.currentEditLocation = null;
+	return true;
 }
 
 

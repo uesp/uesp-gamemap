@@ -31,7 +31,14 @@ uesp.gamemap.Location = function(parentMap)
 	this.locType = uesp.gamemap.LOCTYPE_NONE;
 	this.displayLevel = 0;
 	this.visible = false;
+	
 	this.useEditPopup = false;
+	this.editPathHandles = false;
+	this.lastHoverPathHandle = -1;
+	this.draggingPathHandle = -1;
+	this.lastSelectedPathHandle = -1;
+	this.dragStartX = 0;
+	this.dragStartY = 0;
 	
 	this.displayData = {};
 	
@@ -56,6 +63,11 @@ uesp.gamemap.Location = function(parentMap)
 }
 
 
+uesp.gamemap.Location.PATH_EDITHANDLE_SIZE = 8;
+uesp.gamemap.Location.PATH_EDITHANDLE_COLOR = '#ffffff';
+uesp.gamemap.Location.PATH_EDITHANDLE_COLOR_HOVER = '#990000';
+uesp.gamemap.Location.PATH_EDITHANDLE_COLOR_SELECTED = '#ff0000';
+uesp.gamemap.Location.PATH_EDITHANDLE_COLOR_DRAGGING = '#ff0000';
 uesp.gamemap.Location.nextPopupId = 100;
 
 
@@ -501,6 +513,17 @@ uesp.gamemap.Location.prototype.onDeleteEditPopup = function (event)
 }
 
 
+uesp.gamemap.Location.prototype.onEditHandlesEditPopup = function (event)
+{
+	this.popupElement.hide();
+	this.editPathHandles = true;
+	this.lastHoverPathHandle = -1;
+	this.lastSelectedPathHandle = -1;
+	this.draggingPathHandle = -1;
+	this.parentMap.onEditPathHandlesStart(this);
+}
+
+
 uesp.gamemap.Location.prototype.getFormData = function()
 {
 	if (!this.parentMap.canEdit()) return false;
@@ -696,6 +719,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	}
 	
 	var pathContent = '';
+	var pathButtons = '';
 	
 	if (this.locType > 1)
 	{
@@ -712,6 +736,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 							" &nbsp; Width:" + 
 							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.lineWidth' value='{displayData.hover.lineWidth}' size='2' /> <br />" +
 						"";
+		pathButtons = 	"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonEditHandle' value='Edit Handles' />";
 	}
 	
 		//TODO: Proper permission checking for edit/add/delete abilities
@@ -751,6 +776,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 							"<div class='gmMapEditPopupInput'>Type: {locType}</div> <br />" +
 						"<div class='gmMapEditPopupStatus'></div>" +
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonDelete' value='Delete' />" +
+						pathButtons + 
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonSave' value='Save' />" +
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonClose' value='Cancel' />" +
 						"</form>";
@@ -815,10 +841,16 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	$('#' + this.popupId + ' .gmMapEditPopupButtonDelete').click(function(event) {
 		self.onDeleteEditPopup(event);
 	});
+	
+	$('#' + this.popupId + ' .gmMapEditPopupButtonEditHandle').click(function(event) {
+		self.onEditHandlesEditPopup(event);
+	});
 
 	this.onUpdateCurrentZoomEditPopup();
 	this.updateEditPopupIconPreview();
 	this.updatePopupOffset();
+	
+	if (this.locType > 1) this.updatePath();
 }
 
 
@@ -957,17 +989,59 @@ uesp.gamemap.Location.prototype.updatePathSize = function (redraw)
 		context.translate(-this.x * this.pixelWidth / this.width, -(this.y - this.height) * this.pixelHeight / this.height);
 		context.scale(this.pixelWidth / this.width, this.pixelHeight / this.height);
 		
+		context.clearRect(this.x, this.y - this.height, this.width, this.height);
+		
 		this.drawPath(context);
+		if (this.editPathHandles) this.drawPathHandles(context);
 	}
+}
+
+
+uesp.gamemap.Location.prototype.drawPathHandles = function (context)
+{
+	
+	for (i = 0; i < this.displayData.points.length; i += 2)
+	{
+		this.drawPathHandle(i, uesp.gamemap.Location.PATH_EDITHANDLE_COLOR, context);
+	}
+	
+}
+
+uesp.gamemap.Location.prototype.getContextScale = function ()
+{
+	if (this.pixelWidth == 0 || this.width == 0) return 1.0;
+	return (this.pixelWidth / this.width);
+}
+
+
+uesp.gamemap.Location.prototype.drawPathHandle = function (index, fillColor, context)
+{
+	if (index < 0 || index >= this.displayData.points.length-1) return false;
+	
+	if (context == null)
+	{
+		context = this.getContext();
+		if (context == null) return false;
+	}
+	
+	if (fillColor == null) fillColor = uesp.gamemap.Location.PATH_EDITHANDLE_COLOR;
+	
+	handleSize = uesp.gamemap.Location.PATH_EDITHANDLE_SIZE / this.getContextScale();
+	
+	x = this.displayData.points[index] - handleSize/2;
+	y = this.y * 2 - this.displayData.points[index+1] - this.height - handleSize/2;
+	
+	context.beginPath();
+	context.fillStyle = fillColor;
+	context.fillRect(x, y, handleSize, handleSize);
+	
+	return true;
 }
 
 
 uesp.gamemap.Location.prototype.drawPath = function (context)
 {
 	var i = 0;
-	
-	context.clearRect(this.x, this.y - this.height, this.width, this.height);
-	//context.globalCompositeOperation = 'destination-atop';
 	
 	avgScale = (this.pixelWidth / this.width + this.pixelHeight / this.height) / 2.0;
 	if (avgScale === 0) avgScale = 1;
@@ -987,12 +1061,26 @@ uesp.gamemap.Location.prototype.drawPath = function (context)
 	if (this.locType == uesp.gamemap.LOCTYPE_AREA)
 	{
 		context.closePath();
-		context.fillStyle = this.displayData.fillStyle;
+		
+		if (this.editPathHandles)
+			context.fillStyle = 'rgba(255,255,255,0.4)';
+		else
+			context.fillStyle = this.displayData.fillStyle;
+		
 		context.fill();
 	}
 	
-	context.lineWidth = this.displayData.lineWidth / avgScale;
-	context.strokeStyle = this.displayData.strokeStyle;
+	if (this.editPathHandles)
+	{
+		context.strokeStyle = 'rgba(0,0,0,1)';
+		context.lineWidth = 1 / avgScale;
+	}
+	else
+	{
+		context.lineWidth = this.displayData.lineWidth / avgScale;
+		context.strokeStyle = this.displayData.strokeStyle;
+	}
+	
 	context.stroke();
 }
 
@@ -1024,11 +1112,90 @@ uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 }
 
 
+uesp.gamemap.Location.prototype.onPathEditHandlesDragMove = function (event)
+{
+	x = this.displayData.points[this.draggingPathHandle];
+	y = this.displayData.points[this.draggingPathHandle + 1];
+	
+	newPixelX = event.pageX;
+	newPixelY = event.pageY;
+	
+	newGamePos = this.parentMap.convertPixelToGamePos(newPixelX, newPixelY);
+	
+	this.displayData.points[this.draggingPathHandle  ] = newGamePos.x;
+	this.displayData.points[this.draggingPathHandle+1] = newGamePos.y;
+	
+	this.computePathSize();
+	this.updateFormPosition(this.x, this.y);
+	this.computeOffset();
+	this.updatePath();
+	
+	return true;
+}
+
+
+uesp.gamemap.Location.prototype.updateFormPosition = function (x, y)
+{
+	$(this.popupElement).find('input[name=x]').val(x);
+	$(this.popupElement).find('input[name=y]').val(y);
+}
+
+
+uesp.gamemap.Location.prototype.onPathEditHandlesMouseMove = function (event)
+{
+	avgScale = (this.pixelWidth / this.width + this.pixelHeight / this.height) / 2.0;
+	if (avgScale === 0) avgScale = 1;
+	
+	handleSize = uesp.gamemap.Location.PATH_EDITHANDLE_SIZE / avgScale;
+	gamePos = this.parentMap.convertPixelToGamePos(event.pageX, event.pageY);
+	
+	for (i = 0; i < this.displayData.points.length; i += 2)
+	{
+		x1 = this.displayData.points[i] - handleSize/2;
+		y1 = this.displayData.points[i+1] - handleSize/2;
+		x2 = x1 + handleSize;
+		y2 = y1 + handleSize;
+		
+		if (gamePos.x >= x1 && gamePos.x <= x2 && gamePos.y >= y1 && gamePos.y <= y2)
+		{
+			this.pathElement.css('cursor', 'pointer');
+			if (this.lastHoverPathHandle == i) return true;
+			
+			console.log("Hovering over path handle #" + i);
+			
+			if (this.lastHoverPathHandle >= 0)
+			{
+				this.drawPathHandle(this.lastHoverPathHandle, uesp.gamemap.Location.PATH_EDITHANDLE_COLOR);
+			}
+			
+			this.drawPathHandle(i, uesp.gamemap.Location.PATH_EDITHANDLE_COLOR_HOVER);
+			this.lastHoverPathHandle = i;
+			
+			return true;
+		}
+	}
+	
+	if (this.lastHoverPathHandle >= 0)
+	{
+		this.drawPathHandle(this.lastHoverPathHandle, uesp.gamemap.Location.PATH_EDITHANDLE_COLOR);
+	}
+	
+	this.lastHoverPathHandle = -1;
+	this.pathElement.css('cursor', '');
+	return false;
+}
+
+
 uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 {
 	var ca = event.target;
 	var co = ca.getContext('2d');
 	var offset = $(ca).offset();
+	
+	if (this.draggingPathHandle >= 0) return this.onPathEditHandlesDragMove(event);
+	if (this.editPathHandles) return this.onPathEditHandlesMouseMove(event);
+	
+	if (this.useEditPopup && this.popupElement != null) return false;
 	
 	avgScale = (this.pixelWidth / this.width + this.pixelHeight / this.height) / 2.0;
 	if (avgScale === 0) avgScale = 1;
@@ -1062,9 +1229,79 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 }
 
 
+uesp.gamemap.Location.prototype.onPathEditHandlesDragStart = function (event, pointIndex)
+{
+	this.draggingPathHandle = pointIndex;
+	this.dragStartX = event.pageX;
+	this.dragStartY = event.pageY;
+	return true;
+}
+
+
+uesp.gamemap.Location.prototype.onPathEditHandlesMouseDown = function (event)
+{
+	if (this.lastHoverPathHandle < 0) return false;
+	
+	this.onPathEditHandlesDragStart(event, this.lastHoverPathHandle);
+	
+	return false;
+}
+
+
+uesp.gamemap.Location.prototype.onPathEditHandlesDragEnd = function (event)
+{
+	this.draggingPathHandle = -1;
+	this.updatePath();
+	return false;
+}
+
+
+uesp.gamemap.Location.prototype.computePathSize = function ()
+{
+	if (this.displayData.points.length <= 0) return;
+	
+	xMin = this.displayData.points[0];
+	yMin = this.displayData.points[1];
+	xMax = xMin;
+	yMax = yMin;
+	
+	for (i = 2; i < this.displayData.points.length; i += 2)
+	{
+		x = this.displayData.points[i];
+		y = this.displayData.points[i+1];
+		
+		if (x < xMin) xMin = x;
+		if (y < yMin) yMin = y;
+		if (x > xMax) xMax = x;
+		if (y > yMax) yMax = y;
+	}
+	
+		//TODO: Proper handling of inverse coordinate systems
+	this.x = xMin;
+	this.y = yMax;
+	
+	this.width  = xMax - xMin;
+	this.height = yMax - yMin;
+	
+	return true;
+}
+
+
+uesp.gamemap.Location.prototype.onPathMouseUp = function (event)
+{
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "onPathMouseUp");
+	
+	if (this.draggingPathHandle >= 0) return this.onPathEditHandlesDragEnd(event);
+	
+	return false;
+}
+
+
 uesp.gamemap.Location.prototype.onPathMouseDown = function (event)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Canvas mousedown");
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onPathMouseDown");
+	
+	if (this.editPathHandles) return this.onPathEditHandlesMouseDown(event);
 	
 	var bottomEvent = new $.Event("mousedown");
 	
@@ -1081,6 +1318,8 @@ uesp.gamemap.Location.prototype.onPathMouseOut = function (event)
 {
 	var ca = event.target;
 	var co = ca.getContext('2d');
+	
+	if (this.useEditPopup && this.popupElement != null) return false;
 	
 	co.clearRect(this.x, this.y - this.height, this.width, this.height);
 	
@@ -1099,8 +1338,26 @@ uesp.gamemap.Location.prototype.onPathMouseOut = function (event)
 }
 
 
+uesp.gamemap.Location.prototype.getContext = function ()
+{
+	return this.pathElement[0].getContext('2d');
+}
+
+
+uesp.gamemap.Location.prototype.onPathEditHandlesClick = function (event)
+{
+	if (this.lastHoverPathHandle < 0) return false;
+	
+	this.lastSelectedPathHandle = this.lastHoverPathHandle;
+	
+	return false;
+}
+
+
 uesp.gamemap.Location.prototype.onPathClick = function (event)
 {
+	if (this.editPathHandles) return this.onPathEditHandlesClick(event);
+	
 	var ca = event.target;
 	var co = ca.getContext('2d');
 	var offset = $(ca).offset();
@@ -1165,6 +1422,7 @@ uesp.gamemap.Location.prototype.createPath = function ()
 	this.pathElement.click(function (e) { self.onPathClick(e); });
 	this.pathElement.dblclick(function (e) { self.onPathDblClick(e); });
 	this.pathElement.mousedown(function (e) { self.onPathMouseDown(e); });
+	this.pathElement.mouseup(function (e) { self.onPathMouseUp(e); });
 	this.pathElement.mouseout(function (e) { self.onPathMouseOut(e); });
 	this.pathElement.mousemove(function (e) { self.onPathMouseMove(e); });
 }
@@ -1190,7 +1448,7 @@ uesp.gamemap.Location.prototype.updatePath = function ()
 	}
 	
 	this.updatePathOffset();
-	this.updatePathSize();
+	this.updatePathSize(true);
 }
 
 
