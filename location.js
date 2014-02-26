@@ -1253,9 +1253,31 @@ uesp.gamemap.Location.prototype.onPathEditHandlesMouseDown = function (event)
 {
 	if (this.lastHoverPathHandle < 0) return false;
 	
+	if (event.ctrlKey) return this.onPathEditHandlesDelete(this.lastHoverPathHandle);
+	
 	this.onPathEditHandlesDragStart(event, this.lastHoverPathHandle);
 	
 	return false;
+}
+
+
+uesp.gamemap.Location.prototype.onPathEditHandlesDelete = function (pointIndex)
+{
+	if (pointIndex < 0) return false;
+	if (pointIndex >= this.displayData.points.length-1) return false;
+	
+	if (pointIndex == this.lastHoverPathHandle) this.lastHoverPathHandle = -1;
+	if (pointIndex == this.lastSelectedPathHandle) this.lastSelectedPathHandle = -1;
+	if (pointIndex == this.draggingPathHandle) this.draggingPathHandle = -1;
+	
+	this.displayData.points.splice(pointIndex, 2);
+	
+	this.computePathSize();
+	this.updateFormPosition();
+	this.computeOffset();
+	this.updatePath();
+	
+	return true;
 }
 
 
