@@ -1158,7 +1158,11 @@ uesp.gamemap.Location.prototype.updatePathEditHandlesCursor = function (event)
 {
 	if (this.lastHoverPathHandle < 0)
 	{
-		this.pathElement.css('cursor', '');
+		if (event != null && event.shiftKey)
+			this.pathElement.css('cursor', 'crosshair');
+		else
+			this.pathElement.css('cursor', '');
+		
 		return true;
 	}
 	
@@ -1179,8 +1183,6 @@ uesp.gamemap.Location.prototype.onPathEditHandlesMouseMove = function (event)
 	handleSize = uesp.gamemap.Location.PATH_EDITHANDLE_SIZE / avgScale;
 	gamePos = this.parentMap.convertPixelToGamePos(event.pageX, event.pageY);
 	
-	//if (event.ctrlKey)
-	
 	for (i = 0; i < this.displayData.points.length; i += 2)
 	{
 		x1 = this.displayData.points[i] - handleSize/2;
@@ -1190,7 +1192,6 @@ uesp.gamemap.Location.prototype.onPathEditHandlesMouseMove = function (event)
 		
 		if (gamePos.x >= x1 && gamePos.x <= x2 && gamePos.y >= y1 && gamePos.y <= y2)
 		{
-			//this.pathElement.css('cursor', event.ctrlKey ? 'no-drop' : 'pointer');
 			if (this.lastHoverPathHandle == i) return true;
 			
 			if (this.lastHoverPathHandle >= 0)
@@ -1212,7 +1213,6 @@ uesp.gamemap.Location.prototype.onPathEditHandlesMouseMove = function (event)
 	}
 	
 	this.lastHoverPathHandle = -1;
-	//this.pathElement.css('cursor', '');
 	this.updatePathEditHandlesCursor(event);
 	return false;
 }
@@ -1272,13 +1272,89 @@ uesp.gamemap.Location.prototype.onPathEditHandlesDragStart = function (event, po
 
 uesp.gamemap.Location.prototype.onPathEditHandlesMouseDown = function (event)
 {
+	if (event.shiftKey) return this.onPathEditHandlesAdd(event);
 	if (this.lastHoverPathHandle < 0) return false;
-	
 	if (event.ctrlKey) return this.onPathEditHandlesDelete(this.lastHoverPathHandle);
 	
 	this.onPathEditHandlesDragStart(event, this.lastHoverPathHandle);
-	
 	return false;
+}
+
+
+uesp.gamemap.Location.prototype.onPathEditHandlesAdd = function (event)
+{
+	gamePos = this.parentMap.convertPixelToGamePos(event.pageX, event.pageY);
+	
+	if (this.displayData.points.length <= 3)
+	{
+		this.displayData.points.push(gamePos.x);
+		this.displayData.points.push(gamePos.y);
+		
+		this.computePathSize();
+		this.updateFormPosition();
+		this.computeOffset();
+		this.updatePath();
+		
+		return true;
+	}
+	
+	insertPointIndex = this.findClosestLineSegment(gamePos.x, gamePos.y);
+	if (insertPointIndex < 0) insertPointIndex = this.displayData.points.length - 2;
+	
+	this.displayData.points.splice(insertPointIndex + 2, 0, gamePos.x, gamePos.y);
+	
+	this.computePathSize();
+	this.updateFormPosition();
+	this.computeOffset();
+	this.updatePath();
+	
+	return true;
+}
+
+
+uesp.gamemap.Location.prototype.findClosestLineSegment = function (px, py)
+{
+	if (this.displayData.points.length <= 3) return 0;
+	
+	x1 = this.displayData.points[0];
+	y1 = this.displayData.points[1];
+	x2 = this.displayData.points[2];
+	y2 = this.displayData.points[3];
+	
+	minPointIndex = 0;
+	minDistance = uesp.distToSegment2(px, py, x1, y1, x2, y2);
+	
+	for (i = 2; i < this.displayData.points.length; i += 2)
+	{
+		x1 = this.displayData.points[i];
+		y1 = this.displayData.points[i+1];
+		
+		if (i < this.displayData.points.length)
+		{
+			x2 = this.displayData.points[i+2];
+			y2 = this.displayData.points[i+3];
+		}
+		else if (this.locType == uesp.gamemap.LOCTYPE_PATH)
+		{
+			break;
+		}
+		else
+		{
+			x2 = this.displayData.points[0];
+			y2 = this.displayData.points[1];
+		}
+		
+		distance = uesp.distToSegment2(px, py, x1, y1, x2, y2);
+		
+		if (distance < minDistance)
+		{
+			minDistance = distance;
+			minPointIndex = i;
+		}
+	}
+	
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "findClosestLineSegment", minPointIndex, minDistance);
+	return minPointIndex;
 }
 
 
