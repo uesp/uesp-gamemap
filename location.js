@@ -566,6 +566,9 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	{
 		formValues.displayData.lineWidth = parseInt(formValues.displayData.lineWidth);
 		formValues.displayData.hover.lineWidth = parseInt(formValues.displayData.hover.lineWidth);
+		
+		this.locType = formValues.isArea ? uesp.gamemap.LOCTYPE_AREA : uesp.gamemap.LOCTYPE_PATH;
+		delete formValues.isArea;
 	}
 	
 	formValues.displayData.labelPos = parseInt(formValues.displayData.labelPos);
@@ -720,6 +723,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	
 	var pathContent = '';
 	var pathButtons = '';
+	var pathCheckbox = '';
 	
 	if (this.locType > 1)
 	{
@@ -737,6 +741,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.lineWidth' value='{displayData.hover.lineWidth}' size='2' /> <br />" +
 						"";
 		pathButtons = 	"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonEditHandle' value='Edit Handles' />";
+		pathCheckbox = 	" &nbsp; &nbsp; &nbsp; Is Area <input type='checkbox' class='gmMapEditPopupInput' name='isArea' value='1' />";
 	}
 	
 		//TODO: Proper permission checking for edit/add/delete abilities
@@ -748,7 +753,9 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 						"<div class='gmMapEditPopupLabel'>Name</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='name' value='{name}' size='24' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Enabled</div>" +
-							"<input type='checkbox' class='gmMapEditPopupInput' name='visible' value='1' checked='{visible}' /> <br />" +
+							"<input type='checkbox' class='gmMapEditPopupInput' name='visible' value='1' />" +
+							pathCheckbox + 
+							"<br />" +
 						"<div class='gmMapEditPopupLabel'>Position</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='x' value='{x}' size='8' /> " +
 							"<input type='text' class='gmMapEditPopupInput' name='y' value='{y}' size='8' /> <br />" +
@@ -804,6 +811,9 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	
 	popupHtml = uesp.template(popupContent, this);
 	$(popupDiv).html(popupHtml);
+	
+	$(popupDiv).find('input[name=visible]').prop('checked', this.visible);
+	$(popupDiv).find('input[name=isArea]').prop('checked', this.locType == uesp.gamemap.LOCTYPE_AREA);
 	
 	if (this.id < 0) this.setPopupEditNotice('New location not yet saved.', 'warning');
 	
