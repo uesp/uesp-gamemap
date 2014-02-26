@@ -10,6 +10,7 @@
  * 		- Tooltips for areas/paths?
  * 		- Disable locations when adding path/area points?
  * 		- Jump to destination on path/area double-click
+ *		- Help for edit fields (and in general)
  *
  */
 
