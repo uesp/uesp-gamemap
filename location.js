@@ -1375,6 +1375,8 @@ uesp.gamemap.Location.prototype.onPathDblClick = function (event)
 {
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "double-clicked path");
 	
+	if (this.editPathHandles) return false;
+	
 	if (this.parentMap.canEdit())
 	{
 		this.useEditPopup = true;

@@ -1713,7 +1713,7 @@ uesp.gamemap.Map.prototype.onEditPathHandlesStart = function (location)
 {
 	this.currentEditMode = 'edithandles';
 	this.currentEditLocation = location;
-	this.displayEditNotice('Edit path/area nodes by clicking and dragging.', 'Finish');
+	this.displayEditNotice('Edit path/area nodes by clicking and dragging. Hit \'Finish\' on the right when done.', 'Finish');
 	
 	this.addEditClickWall('default');
 	this.currentEditLocation.pathElement.css('z-index', '150');
