@@ -220,3 +220,34 @@ uesp.cloneObject = function (obj)
 	
 	throw new Error("Unable to clone object! Its type is not supported.");
 }
+
+
+uesp.square = function (x)
+{
+	return x * x;
+}
+
+
+uesp.pointDistanceSquare = function (x1, y1, x2, y2)
+{
+	 return uesp.square(x1 - x2) + uesp.square(y1 - y2)
+}
+
+
+uesp.distToSegment2 = function (px, py, x1, y1, x2, y2)
+{
+	var length2 = uesp.pointDistanceSquare(x1, y1, x2, y2);
+	if (length2 == 0) return uesp.pointDistanceSquare(px, py, x1, y1);
+	
+	var t = ((px - x1) * (x2 - x1) + (py - y1) * (y2 - y1)) / length2;
+	if (t < 0) return uesp.pointDistanceSquare(px, py, x1, y1);
+	if (t > 1) return uesp.pointDistanceSquare(px, py, x2, y2);
+	
+	return uesp.pointDistanceSquare(px, py, x1 + t * (x2 - x1), y1 + t * (y2 - y1));
+}
+
+
+uesp.distToSegment = function (px, py, x1, y1, x2, y2)
+{
+	return Math.sqrt(uesp.distToSegment2(px, py, x1, y1, x2, y2));
+}

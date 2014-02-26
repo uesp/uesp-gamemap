@@ -1761,7 +1761,7 @@ uesp.gamemap.Map.prototype.onEditPathHandlesStart = function (location)
 {
 	this.currentEditMode = 'edithandles';
 	this.currentEditLocation = location;
-	this.displayEditNotice('Edit path/area nodes by clicking and dragging. Hit \'Finish\' on the right when done.', 'Finish', 'Cancel');
+	this.displayEditNotice('Edit path/area nodes by clicking and dragging.<br/>Hit \'Finish\' on the right when done.<br />Ctrl+Click deletes a point. Shift+Click adds a point.', 'Finish', 'Cancel');
 	this.currentEditPathPoints = uesp.cloneObject(location.displayData.points);
 	
 	this.addEditClickWall('default');
