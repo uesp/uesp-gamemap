@@ -53,6 +53,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions)
 	this.nextNewLocationId = -100;
 	this.editClickWall = null;
 	this.currentEditLocation = null;
+	this.currentEditPathPoints = null;
 	
 	this.mapTiles = [];
 	
@@ -700,9 +701,24 @@ uesp.gamemap.Map.prototype.onCancelEditMode = function(event)
 	if (this.currentEditMode == '') return true;
 	
 	this.removeEditClickWall();
-	this.currentEditLocation = null;
-	this.currentEditMode = '';
 	this.hideEditNotice();
+	
+	if (this.currentEditMode == 'edithandles')
+	{
+		this.currentEditLocation.editPathHandles = false;
+		this.currentEditLocation.pathElement.css('z-index', '');
+		this.currentEditLocation.displayData.points = this.currentEditPathPoints;
+		this.currentEditLocation.computePathSize();
+		this.currentEditLocation.updateFormPosition();
+		this.currentEditLocation.computeOffset();
+		this.currentEditLocation.updatePath();
+		
+		this.currentEditLocation.showPopup();
+	}
+	
+	this.currentEditLocation = null;
+	this.currentEditPathPoints = null;
+	this.currentEditMode = '';
 	
 	return true;
 }
@@ -1713,7 +1729,8 @@ uesp.gamemap.Map.prototype.onEditPathHandlesStart = function (location)
 {
 	this.currentEditMode = 'edithandles';
 	this.currentEditLocation = location;
-	this.displayEditNotice('Edit path/area nodes by clicking and dragging. Hit \'Finish\' on the right when done.', 'Finish');
+	this.displayEditNotice('Edit path/area nodes by clicking and dragging. Hit \'Finish\' on the right when done.', 'Finish', 'Cancel');
+	this.currentEditPathPoints = uesp.cloneObject(location.displayData.points);
 	
 	this.addEditClickWall('default');
 	this.currentEditLocation.pathElement.css('z-index', '150');
