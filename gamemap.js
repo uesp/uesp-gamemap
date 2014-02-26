@@ -249,6 +249,7 @@ uesp.gamemap.Map.prototype.createEvents = function()
 	$('.gmMapTile').on("click", { self: this }, this.onClick);
 	$(window).on("mouseup", { self: this }, this.onMouseUp);
 	this.mapRoot.on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
+	this.mapContainer.on("contextmenu", {self: this}, this.onRightClick);
 	
 	$(window).on("keyup", { self: this }, this.onKeyUp);
 	$(window).on("keydown", { self: this }, this.onKeyDown);
@@ -989,9 +990,29 @@ uesp.gamemap.Map.prototype.onDragStart = function(event)
 }
 
 
+uesp.gamemap.Map.prototype.onRightClick = function(event)
+{
+	var self = event.data.self;
+	event.preventDefault();
+	
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "onRightClick");
+	
+	if (self.currentEditMode != '') return false;
+	
+	self.onZoomOutWorld();
+	return false;
+}
+
+
 uesp.gamemap.Map.prototype.onClick = function(event)
 {
 	var self = event.data.self;
+	
+	if (event.which == 3)
+		return self.onRightClick(event);
+	else if (event.which != 1)
+		return false;
+	
 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onClick");
 	
 	if (self.currentEditMode == 'addlocation')
@@ -1007,6 +1028,8 @@ uesp.gamemap.Map.prototype.onClick = function(event)
 uesp.gamemap.Map.prototype.onMouseDown = function(event)
 {
 	var self = event.data.self;
+	if (event.which != 1) return false;
+	
 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseDown");
 	
 	if (self.currentEditMode == 'edithandles')
