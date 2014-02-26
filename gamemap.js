@@ -11,6 +11,7 @@
  * 		- Disable locations when adding path/area points?
  * 		- Jump to destination on path/area double-click
  *		- Help for edit fields (and in general)
+ *		- Todo add padding around path div
  *
  */
 
@@ -244,6 +245,9 @@ uesp.gamemap.Map.prototype.createEvents = function()
 	$('.gmMapTile').on("click", { self: this }, this.onClick);
 	$(window).on("mouseup", { self: this }, this.onMouseUp);
 	this.mapRoot.on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
+	
+	$(window).on("keyup", { self: this }, this.onKeyUp);
+	$(window).on("keydown", { self: this }, this.onKeyDown);
 	
 	$('.gmMapTile').dblclick({ self: this }, this.onDoubleClick);
 }
@@ -1027,6 +1031,32 @@ uesp.gamemap.Map.prototype.onMouseMove = function(event)
 	}
 	
 
+}
+
+
+uesp.gamemap.Map.prototype.onKeyDown = function(event)
+{
+	var self = event.data.self;
+	
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, 'onKeyDown');
+	
+	if (self.currentEditLocation != null && self.currentEditLocation.editPathHandles)
+	{
+		self.currentEditLocation.onPathEditHandlesKeyDown(event);
+	}
+}
+
+
+uesp.gamemap.Map.prototype.onKeyUp = function(event)
+{
+	var self = event.data.self;
+	
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, 'onKeyUp');
+	
+	if (self.currentEditLocation != null && self.currentEditLocation.editPathHandles)
+	{
+		self.currentEditLocation.onPathEditHandlesKeyUp(event);
+	}
 }
 
 
