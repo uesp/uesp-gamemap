@@ -1824,7 +1824,7 @@ uesp.gamemap.Map.prototype.showWorldEditForm = function()
 						"<div class='gmMapEditPopupTitle'>Editing World</div>" +
 						"<div class='gmMapPopupClose'><img src='images/cancelicon.png' width='12' height='12' /></div><br />" +
 						"<div class='gmMapEditPopupLabel'>Name</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='name' value='{name}' size='24' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='name' value='{name}' size='24' readonly /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Enabled</div>" +
 							"<input type='checkbox' class='gmMapEditPopupInput' name='enabled' value='1' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Display Name</div>" +
