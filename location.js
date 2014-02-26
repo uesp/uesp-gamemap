@@ -1136,7 +1136,7 @@ uesp.gamemap.Location.prototype.onPathEditHandlesDragMove = function (event)
 	this.displayData.points[this.draggingPathHandle+1] = newGamePos.y;
 	
 	this.computePathSize();
-	this.updateFormPosition(this.x, this.y);
+	this.updateFormPosition();
 	this.computeOffset();
 	this.updatePath();
 	
@@ -1146,6 +1146,9 @@ uesp.gamemap.Location.prototype.onPathEditHandlesDragMove = function (event)
 
 uesp.gamemap.Location.prototype.updateFormPosition = function (x, y)
 {
+	if (x == null) x = this.x;
+	if (y == null) y = this.y;
+	
 	$(this.popupElement).find('input[name=x]').val(x);
 	$(this.popupElement).find('input[name=y]').val(y);
 }
