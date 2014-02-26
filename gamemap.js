@@ -12,6 +12,7 @@
  * 		- Jump to destination on path/area double-click
  *		- Help for edit fields (and in general)
  *		- Todo add padding around path div
+ *		- Better cursor icons for adding/deleting path nodes
  *
  */
 
