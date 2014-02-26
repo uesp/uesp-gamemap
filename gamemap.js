@@ -1827,6 +1827,8 @@ uesp.gamemap.Map.prototype.showWorldEditForm = function()
 							"<input type='text' class='gmMapEditPopupInput' name='name' value='{name}' size='24' readonly /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Enabled</div>" +
 							"<input type='checkbox' class='gmMapEditPopupInput' name='enabled' value='1' /> <br />" +
+						"<div class='gmMapEditPopupLabel'>Parent World ID</div>" +
+							"<input type='text' class='gmMapEditPopupInput' name='parentId' value='{parentId}' size='8' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Display Name</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='displayName' value='{displayName}' size='24' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Wiki Page</div>" +
@@ -1981,6 +1983,7 @@ uesp.gamemap.Map.prototype.getWorldFormData = function()
 	
 	formValues = uesp.getFormData(form)
 	
+	formValues.parentId = parseInt(formValues.parentId);
 	formValues.minZoom = parseInt(formValues.minZoom);
 	formValues.maxZoom = parseInt(formValues.maxZoom);
 	formValues.zoomOffset = parseInt(formValues.zoomOffset);

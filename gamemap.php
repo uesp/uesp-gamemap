@@ -41,6 +41,7 @@ class GameMap
 	
 	public $worldDisplayName = '';
 	public $worldMissingTile = '';
+	public $worldParentId = 0;
 	public $worldMinZoom = 0;
 	public $worldMaxZoom = 20;
 	public $worldZoomOffset = 0;
@@ -97,6 +98,7 @@ class GameMap
 	{
 		$query = "CREATE TABLE IF NOT EXISTS `world` (
 					`id` BIGINT NOT NULL AUTO_INCREMENT,
+					`parentId` BIGINT NOT NULL,
 					`name` TINYTEXT NOT NULL,
 					`displayName` TINYTEXT NOT NULL,
 					`description` TEXT NOT NULL,
@@ -104,6 +106,7 @@ class GameMap
 					`cellSize` INTEGER NOT NULL,
 					`minZoom` INTEGER NOT NULL,
 					`maxZoom` INTEGER NOT NULL,
+					`zoomOffset` INTEGER NOT NULL,
 					`posLeft` INTEGER NOT NULL,
 					`posTop` INTEGER NOT NULL,
 					`posRight` INTEGER NOT NULL,
@@ -287,6 +290,7 @@ class GameMap
 		$query .= "description='{$this->locDescription}', ";
 		$query .= "wikiPage='{$this->locWikiPage}', ";
 		//$query .= "missingTile='{$this->worldMissingTile}', ";
+		$query .= "parentId={$this->worldParentId}, ";
 		$query .= "minZoom={$this->worldMinZoom}, ";
 		$query .= "maxZoom={$this->worldMaxZoom}, ";
 		$query .= "zoomOffset={$this->worldZoomOffset}, ";
@@ -409,6 +413,7 @@ class GameMap
 		while ( ($row = $result->fetch_assoc()) )
 		{
 			settype($row['id'], "integer");
+			settype($row['parentId'], "integer");
 			settype($row['enabled'], "integer");
 			settype($row['posRight'], "integer");
 			settype($row['posLeft'], "integer");
@@ -444,6 +449,7 @@ class GameMap
 		while ( ($row = $result->fetch_assoc()) )
 		{
 			settype($row['id'], "integer");
+			settype($row['parentId'], "integer");
 			settype($row['enabled'], "integer");
 			settype($row['posRight'], "integer");
 			settype($row['posLeft'], "integer");
@@ -561,6 +567,7 @@ class GameMap
 		if (array_key_exists('posright',  $this->inputParams)) $this->worldPosRight = intval($this->db->real_escape_string($this->inputParams['posright']));
 		if (array_key_exists('postop',  $this->inputParams)) $this->worldPosTop = intval($this->db->real_escape_string($this->inputParams['postop']));
 		if (array_key_exists('posbottom',  $this->inputParams)) $this->worldPosBottom = intval($this->db->real_escape_string($this->inputParams['posbottom']));
+		if (array_key_exists('parentid',  $this->inputParams)) $this->worldParentId = intval($this->db->real_escape_string($this->inputParams['parentid']));
 		
 		if (array_key_exists('world',  $this->inputParams))
 		{
