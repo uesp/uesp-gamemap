@@ -2016,6 +2016,19 @@ uesp.gamemap.Map.prototype.setEditClickWallBackground = function(background)
 }
 
 
+
+uesp.gamemap.Map.prototype.onZoomOutWorld = function()
+{
+	if ( !(this.currentWorldId in this.mapWorlds)) return false;
+	
+	world = this.mapWorlds[this.currentWorldId];
+	if (world.parentId <= 0) return false;
+	
+	this.changeWorld(world.parentId);
+	return true;
+}
+
+
 uesp.gamemap.defaultGetMapTile = function(tileX, tileY, zoom)
 {
 	return "zoom" + zoom + "/maptile_" + tileX + "_" + tileY + ".jpg"; 
