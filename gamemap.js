@@ -999,7 +999,9 @@ uesp.gamemap.Map.prototype.onMouseDown = function(event)
 	var self = event.data.self;
 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseDown");
 	
-	if (self.currentEditMode == '')
+	if (self.currentEditMode == 'edithandles')
+		self.currentEditLocation.onPathEditHandlesMouseDown(event);
+	else if (self.currentEditMode == '')
 		self.onDragStart(event);
 	
 	event.preventDefault();
@@ -1738,6 +1740,7 @@ uesp.gamemap.Map.prototype.addEditClickWall = function(cursor)
 		this.editClickWall.click({ self: this }, this.onClick);
 		this.editClickWall.mousemove({ self: this }, this.onMouseMove);
 		this.editClickWall.mouseup({ self: this }, this.onMouseUp);
+		this.editClickWall.mousedown({ self: this }, this.onMouseDown);
 	}
 	
 	if (cursor == null)
