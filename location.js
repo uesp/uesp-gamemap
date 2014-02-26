@@ -1161,8 +1161,6 @@ uesp.gamemap.Location.prototype.onPathEditHandlesMouseMove = function (event)
 			this.pathElement.css('cursor', 'pointer');
 			if (this.lastHoverPathHandle == i) return true;
 			
-			console.log("Hovering over path handle #" + i);
-			
 			if (this.lastHoverPathHandle >= 0)
 			{
 				this.drawPathHandle(this.lastHoverPathHandle, uesp.gamemap.Location.PATH_EDITHANDLE_COLOR);
