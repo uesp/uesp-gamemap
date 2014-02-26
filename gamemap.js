@@ -1123,6 +1123,8 @@ uesp.gamemap.Map.prototype.onMouseUp = function(event)
 	var self = event.data.self;
 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseUp");
 	
+	if (event.which != 1) return false;
+	
 	if (self.isDragging)
 	{
 		self.onDragEnd(event);
