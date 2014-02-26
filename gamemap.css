@@ -431,3 +431,23 @@ input[type=checkbox].gmMapEditPopupInput {
 	top: 0px;
 	left: 0px;
 }
+
+#gmMapWorldEdit {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	font-size: 11px;
+	font-family: sans-serif;
+	display: block;
+	width: 300px;
+	height: 330px;
+	background-color: #ffffff;
+	border: none;
+	z-index: 300;
+	padding: 4px;
+	border-radius: 5px;
+	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
+}

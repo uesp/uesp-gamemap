@@ -500,7 +500,6 @@ uesp.gamemap.Location.prototype.onDeleteEditPopup = function (event)
 	if (!this.parentMap.canEdit()) return false;
 	if (this.popupElement == null) return false;
 	
-	//this.setPopupEditNotice('Delete not yet implemented!', 'error');
 	this.setPopupEditNotice('Saving location...');
 	
 	this.getFormData();
@@ -531,30 +530,7 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	form = $('#' + this.popupId + ' form');
 	if (form == null) return false;
 	
-	formValues = {};
-	
-	$.each(form.serializeArray(), function(i, field) {
-		fields = field.name.split('.');
-		
-		if (fields.length == 1)
-		{
-			formValues[field.name] = field.value;
-		}
-		else if (fields.length == 2)
-		{
-			if (formValues[fields[0]] == null) formValues[fields[0]] = { };
-			formValues[fields[0]][fields[1]] = field.value;
-		}
-		else if (fields.length == 3)
-		{
-			if (formValues[fields[0]][fields[1]] == null) formValues[fields[0]][fields[1]] = { };
-			formValues[fields[0]][fields[1]][fields[2]] = field.value;
-		}
-		else
-		{
-			uesp.logError("Too many nested levels in form name'" + field.name + "'!");
-		}
-	});
+	formValues = uesp.getFormData(form);
 	
 	formValues.displayLevel = parseInt(formValues.displayLevel);
 	formValues.x = parseInt(formValues.x);

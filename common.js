@@ -251,3 +251,35 @@ uesp.distToSegment = function (px, py, x1, y1, x2, y2)
 {
 	return Math.sqrt(uesp.distToSegment2(px, py, x1, y1, x2, y2));
 }
+
+
+uesp.getFormData = function (form)
+{
+	formValues = {};
+	if (form == null) return formValues;
+	
+	$.each(form.serializeArray(), function(i, field) {
+		fields = field.name.split('.');
+		
+		if (fields.length == 1)
+		{
+			formValues[field.name] = field.value;
+		}
+		else if (fields.length == 2)
+		{
+			if (formValues[fields[0]] == null) formValues[fields[0]] = { };
+			formValues[fields[0]][fields[1]] = field.value;
+		}
+		else if (fields.length == 3)
+		{
+			if (formValues[fields[0]][fields[1]] == null) formValues[fields[0]][fields[1]] = { };
+			formValues[fields[0]][fields[1]][fields[2]] = field.value;
+		}
+		else
+		{
+			uesp.logError("Too many nested levels in form name'" + field.name + "'!");
+		}
+	});
+	
+	return formValues;
+}
