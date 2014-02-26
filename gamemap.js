@@ -1028,12 +1028,11 @@ uesp.gamemap.Map.prototype.onMouseMove = function(event)
 		self.onDragMove(event);
 		event.preventDefault();
 	}
-	else if (self.currentEditLocation != null && self.currentEditLocation.draggingPathHandle >= 0)
+	else if (self.currentEditMode == 'edithandles')
 	{
-		self.currentEditLocation.onPathEditHandlesDragMove(event);
+		self.onPathMouseMove(event);
 	}
 	
-
 }
 
 
@@ -1756,6 +1755,7 @@ uesp.gamemap.Map.prototype.removeEditClickWall = function()
 {
 	if (this.editClickWall == null) return;
 	
+	this.editClickWall.css('cursor', '');
 	this.editClickWall.css('z-index', 0);
 }
 

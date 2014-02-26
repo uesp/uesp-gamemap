@@ -1159,17 +1159,29 @@ uesp.gamemap.Location.prototype.updatePathEditHandlesCursor = function (event)
 	if (this.lastHoverPathHandle < 0)
 	{
 		if (event != null && event.shiftKey)
+		{
 			this.pathElement.css('cursor', 'crosshair');
+			this.parentMap.editClickWall.css('cursor', 'crosshair');
+		}
 		else
+		{
 			this.pathElement.css('cursor', '');
+			this.parentMap.editClickWall.css('cursor', 'default');
+		}
 		
 		return true;
 	}
 	
 	if (event != null && event.ctrlKey)
+	{
 		this.pathElement.css('cursor',  'no-drop');
+		this.parentMap.editClickWall.css('cursor', 'no-drop');
+	}
 	else
+	{
 		this.pathElement.css('cursor', 'pointer');
+		this.parentMap.editClickWall.css('cursor', 'default');
+	}
 	
 	return true;
 }
