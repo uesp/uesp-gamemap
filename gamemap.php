@@ -39,6 +39,17 @@ class GameMap
 	public $locWidth = 0;
 	public $locHeight = 0;
 	
+	public $worldDisplayName = '';
+	public $worldMissingTile = '';
+	public $worldMinZoom = 0;
+	public $worldMaxZoom = 20;
+	public $worldZoomOffset = 0;
+	public $worldPosLeft = 0;
+	public $worldPosRight = 10000;
+	public $worldPosTop = 10000;
+	public $worldPosBottom = 0;
+	public $worldEnabled = 1;
+	
 	public $limitBottom = 0;
 	public $limitTop    = 1000;
 	public $limitLeft   = 0;
@@ -150,6 +161,8 @@ class GameMap
 				return $this->doSetLocation();
 			case 'add_loc':
 				return $this->doAddLocation();
+			case 'set_world':
+					return $this->doSetWorld();
 			case 'default':
 			default:
 				break;
@@ -258,6 +271,40 @@ class GameMap
 		}
 		
 		$this->addOutputItem('newLocId', $this->db->insert_id);
+		$this->addOutputItem('success', True);
+		return true;
+	}
+	
+	
+	public function doSetWorld ()
+	{
+		if ($this->worldId <= 0) return $this->reportError("Cannot create worlds yet!");
+		if (!$this->initDatabaseWrite()) return false;
+	
+		$query  = "UPDATE world SET ";
+		$query .= "name='{$this->locName}', ";
+		$query .= "displayName='{$this->worldDisplayName}', ";
+		$query .= "description='{$this->locDescription}', ";
+		$query .= "wikiPage='{$this->locWikiPage}', ";
+		//$query .= "missingTile='{$this->worldMissingTile}', ";
+		$query .= "minZoom={$this->worldMinZoom}, ";
+		$query .= "maxZoom={$this->worldMaxZoom}, ";
+		$query .= "zoomOffset={$this->worldZoomOffset}, ";
+		$query .= "posLeft={$this->worldPosLeft}, ";
+		$query .= "posRight={$this->worldPosRight}, ";
+		$query .= "posTop={$this->worldPosTop}, ";
+		$query .= "posBottom={$this->worldPosBottom}, ";
+		$query .= "enabled={$this->worldEnabled} ";
+		$query .= " WHERE id={$this->worldId};";
+	
+		$result = $this->db->query($query);
+	
+		if ($result === FALSE) {
+			error_log($query);
+			error_log($this->db->error);
+			return $this->reportError("Failed to save world data!");
+		}
+	
 		$this->addOutputItem('success', True);
 		return true;
 	}
@@ -504,6 +551,16 @@ class GameMap
 		if (array_key_exists('description', $this->inputParams)) $this->locDescription = $this->db->real_escape_string($this->inputParams['description']);
 		if (array_key_exists('wikipage', $this->inputParams)) $this->locWikiPage = $this->db->real_escape_string($this->inputParams['wikipage']);
 		if (array_key_exists('displaydata', $this->inputParams)) $this->locDisplayData = $this->db->real_escape_string($this->inputParams['displaydata']);
+		if (array_key_exists('displayname', $this->inputParams)) $this->worldDisplayName = $this->db->real_escape_string($this->inputParams['displayname']);
+		if (array_key_exists('missingtile', $this->inputParams)) $this->worldMissingTile = $this->db->real_escape_string($this->inputParams['missingtile']);
+		if (array_key_exists('enabled',  $this->inputParams)) $this->worldEnabled = intval($this->db->real_escape_string($this->inputParams['enabled']));
+		if (array_key_exists('minzoom',  $this->inputParams)) $this->worldMinZoom = intval($this->db->real_escape_string($this->inputParams['minzoom']));
+		if (array_key_exists('maxzoom',  $this->inputParams)) $this->worldMaxZoom = intval($this->db->real_escape_string($this->inputParams['maxzoom']));
+		if (array_key_exists('zoomoffset',  $this->inputParams)) $this->worldZoomOffset = intval($this->db->real_escape_string($this->inputParams['zoomoffset']));
+		if (array_key_exists('posleft',  $this->inputParams)) $this->worldPosLeft = intval($this->db->real_escape_string($this->inputParams['posleft']));
+		if (array_key_exists('posright',  $this->inputParams)) $this->worldPosRight = intval($this->db->real_escape_string($this->inputParams['posright']));
+		if (array_key_exists('postop',  $this->inputParams)) $this->worldPosTop = intval($this->db->real_escape_string($this->inputParams['postop']));
+		if (array_key_exists('posbottom',  $this->inputParams)) $this->worldPosBottom = intval($this->db->real_escape_string($this->inputParams['posbottom']));
 		
 		if (array_key_exists('world',  $this->inputParams))
 		{

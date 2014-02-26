@@ -16,7 +16,7 @@ uesp.gamemap.World = function(worldName, mapOptions, worldId)
 	
 	this.id = (worldId == null) ? 0 : worldId;
 	this.description = '';
-	this.wikiPage ='';
+	this.wikiPage = '';
 	this.cellSize = -1;
 	this.missingMapTile = this.mapOptions.missingMapTile;
 	this.minZoom = this.mapOptions.minZoomLevel;
@@ -39,7 +39,12 @@ uesp.gamemap.World = function(worldName, mapOptions, worldId)
 uesp.gamemap.World.prototype.mergeFromJson = function(data)
 {
 	uesp.gamemap.mergeObjects(this, data);
-	
+	this.updateOptions();
+}
+
+
+uesp.gamemap.World.prototype.updateOptions = function()
+{
 	this.mapState.worldId = this.id;
 	
 	this.mapOptions.minZoomLevel = this.minZoom;
@@ -81,3 +86,28 @@ uesp.gamemap.createWorldFromJson = function(data)
 }
 
 
+uesp.gamemap.World.prototype.createSaveQuery = function()
+{
+	var query = 'action=set_world';
+	
+	query += '&worldid=' + this.id;
+	query += '&name=' + encodeURIComponent(this.name);
+	query += '&displayname=' + encodeURIComponent(this.displayName);
+	query += '&description=' + encodeURIComponent(this.description);
+	query += '&wikipage=' + encodeURIComponent(this.wikiPage);
+	query += '&missingtile=' + encodeURIComponent(this.missingMapTile);
+	query += '&minzoom=' + this.minZoom;
+	query += '&maxzoom=' + this.maxZoom;
+	query += '&posleft=' + this.posLeft;
+	query += '&posright=' + this.posRight;
+	query += '&postop=' + this.posTop;
+	query += '&posbottom=' + this.posBottom;
+	query += '&zoomoffset=' + this.zoomOffset;
+	query += '&enabled=' + (this.enabled ? '1' : '0');
+	
+	if (this.locType > 1)
+	{
+	}
+	
+	return query;
+}
