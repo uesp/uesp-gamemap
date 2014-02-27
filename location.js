@@ -707,17 +707,17 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	if (this.locType > 1)
 	{
 		pathContent = 	"<div class='gmMapEditPopupLabel'>Fill Style</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='displayData.fillStyle' value='{displayData.fillStyle}' size='14' /><br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.fillStyle' value='{displayData.fillStyle}' size='14'  maxlength='100' /><br />" +
 						"<div class='gmMapEditPopupLabel'>Stroke Style</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='displayData.strokeStyle' value='{displayData.strokeStyle}' size='14' /> " +
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.strokeStyle' value='{displayData.strokeStyle}' size='14'  maxlength='100' /> " +
 							" &nbsp; Width:" + 
-							"<input type='text' class='gmMapEditPopupInput' name='displayData.lineWidth' value='{displayData.lineWidth}' size='2' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.lineWidth' value='{displayData.lineWidth}' size='2'  maxlength='10' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Hover Fill Style</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.fillStyle' value='{displayData.hover.fillStyle}' size='14' /><br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.fillStyle' value='{displayData.hover.fillStyle}' size='14'  maxlength='100' /><br />" +
 						"<div class='gmMapEditPopupLabel'>Hover Stroke</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.strokeStyle' value='{displayData.hover.strokeStyle}' size='14' /> " +
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.strokeStyle' value='{displayData.hover.strokeStyle}' size='14'  maxlength='100' /> " +
 							" &nbsp; Width:" + 
-							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.lineWidth' value='{displayData.hover.lineWidth}' size='2' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='displayData.hover.lineWidth' value='{displayData.hover.lineWidth}' size='2'  maxlength='10' /> <br />" +
 						"";
 		pathButtons = 	"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonEditHandle' value='Edit Handles' />";
 		pathCheckbox = 	" &nbsp; &nbsp; &nbsp; Is Area <input type='checkbox' class='gmMapEditPopupInput' name='isArea' value='1' />";
@@ -730,20 +730,20 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 						"<div class='gmMapEditPopupTitle'>Editing Location</div>" + 
 						"<div class='gmMapPopupClose'><img src='images/cancelicon.png' width='12' height='12' /></div><br />" +
 						"<div class='gmMapEditPopupLabel'>Name</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='name' value='{name}' size='24' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='name' value='{name}' size='24' maxlength='100' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Enabled</div>" +
 							"<input type='checkbox' class='gmMapEditPopupInput' name='visible' value='1' />" +
 							pathCheckbox + 
 							"<br />" +
 						"<div class='gmMapEditPopupLabel'>Position</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='x' value='{x}' size='8' /> " +
-							"<input type='text' class='gmMapEditPopupInput' name='y' value='{y}' size='8' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='x' value='{x}' size='8' maxlength='10' /> " +
+							"<input type='text' class='gmMapEditPopupInput' name='y' value='{y}' size='8' maxlength='10' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Wiki Page</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='wikiPage' value='{wikiPage}' size='24' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='wikiPage' value='{wikiPage}' size='24' maxlength='100' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Description</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='description' value='{description}' size='24' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='description' value='{description}' size='24' maxlength='500' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Display Level</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='displayLevel' value='{displayLevel}' size='8' />" + 
+							"<input type='text' class='gmMapEditPopupInput' name='displayLevel' value='{displayLevel}' size='8' maxlength='10' />" + 
 							"<div class='gmMapEditPopupCurrentZoom'>Current Zoom = </div> <br />" +
 						"<div class='gmMapEditPopupLabel'>Icon</div>" +
 							iconTypeInput +
@@ -754,7 +754,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 							this.getLabelPosSelectOptions(this.displayData.labelPos) + 
 							"</select> <br />" +
 						"<div class='gmMapEditPopupLabel'>Destination ID</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='destinationId' value='{destinationId}' size='8' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='destinationId' value='{destinationId}' size='8' maxlength='10' /> <br />" +
 						pathContent +
 						"<div class='gmMapEditPopupLabel'>Internal ID</div>" +
 							"<div class='gmMapEditPopupInput'>{id}</div> &nbsp; " + 
