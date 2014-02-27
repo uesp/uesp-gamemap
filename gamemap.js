@@ -374,7 +374,7 @@ uesp.gamemap.Map.prototype.fillWorldList = function(ElementID)
 	
 	for (key in this.mapWorlds)
 	{
-		tmpWorldList.push(this.mapWorlds[key].name);
+		if (this.mapWorlds[key].name[0] != '_') tmpWorldList.push(this.mapWorlds[key].name);
 	}
 	
 	tmpWorldList.sort(compareMapWorld);

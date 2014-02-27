@@ -164,7 +164,14 @@
 				missingMapTile:  "http://content3.uesp.net/gamemap/blacknulltile.jpg",
 				iconPath: "icons-eso/",
 				wikiNamespace: "ESO",
-				iconTypeMap: esoIconMap
+				iconTypeMap: esoIconMap,
+				gamePosX1: 0,
+				gamePosX2: 1000000,
+				gamePosY1: 1000000,
+				gamePosY2: 0,
+				initialGamePosX : 500000,
+				initialGamePosY : 500000,
+				initialZoom : 10,
 		};
 		
 		var g_SRMapOptions = {
@@ -219,10 +226,19 @@
 		
 		function onWorldLoad()
 		{
-			this.setMapOptions(1, g_SRMapOptions);
-			this.setMapOptions(2, g_DBMapOptions);
+				// Skyrim/Dragonborn maps
+			//this.setMapOptions(1, g_SRMapOptions);
+			//this.setMapOptions(2, g_DBMapOptions);
+			//mapState = this.getMapStateFromQuery(this.getWorldMapState(1));
 			
-			mapState = this.getMapStateFromQuery(this.getWorldMapState(1));
+			defaultMapState = new uesp.gamemap.MapState();
+			
+			defaultMapState.worldId = 668;
+			defaultMapState.zoomLevel = 9;
+			defaultMapState.gamePos.x = 500000;
+			defaultMapState.gamePos.y = 500000;
+			
+			mapState = this.getMapStateFromQuery(defaultMapState);
 			this.setMapState(mapState);
 				
 			uesp.logDebug(uesp.LOG_LEVEL_ERROR, "onMapWorldsLoaded");
