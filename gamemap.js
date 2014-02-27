@@ -53,7 +53,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions)
 	
 		// This just controls the client-side editing abilities.
 		// All security for writes is handled on the server side.
-	this.enableEdit = true;
+	this.enableEdit = false;
 	this.currentEditMode = '';
 	this.editNoticeDiv = null;
 	this.nextNewLocationId = -100;
