@@ -12,6 +12,8 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.wikiUrl       = '';
 	this.wikiNamespace = '';
 	
+	this.mapUrl = '';
+	
 	this.iconPath    = "";
 	this.iconMissing = "missing.png";
 	
