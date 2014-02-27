@@ -278,47 +278,15 @@
 			
 			g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
 
-				// TODO: Temporary call to get the grouped-list for ESO
+				// TODO: Temporary call to get the group-world list for ESO
 			$.get( 'template/worldgrouplist.txt', function( data ) {
 				g_GameMap.worldGroupListContents = data;
 				uesp.logDebug(uesp.LOG_LEVEL_ERROR, 'Received world group list contents!');
 				$('#gmMapList').html(data);
-				onUpdateMapGroupList();
+				g_GameMap.setEventsForMapGroupList();
 			});
 
 		});
-		
-		function onUpdateMapGroupList()
-		{
-			var lastSelectedItem = null;
-			
-			$("#gmMapList li").click(function(e) {
-				if ($(this).hasClass('gmMapListHeader')) return false;
-				if (lastSelectedItem) lastSelectedItem.removeClass('gmMapListSelect');
-				$(this).addClass('gmMapListSelect');
-				lastSelectedItem = $(this);
-				
-				worldName = $(this).text();
-				g_GameMap.changeWorld(worldName);
-			});
-			
-			$("#gmMapList li.gmMapListHeader").click(function(e) {
-				childList = $(this).next('ul');
-				
-				if (childList)
-				{
-					visible = !childList.is(':visible');
-					childList.slideToggle(200);
-					
-					if (visible)
-						$(this).css('background-image', 'url(images/uparrow.gif)');
-					else
-						$(this).css('background-image', 'url(images/downarrow.gif)');
-				}
-				
-				
-			});
-		}
 		
 		
 		function getDefaultMapTile(xPos, yPos, zoom, worldName)
@@ -381,25 +349,10 @@ Worlds
 </select>
 
 <button id="addLocationButton" style="display:none;" onclick="onAddLocation();">Add Location</button>
-
 <button id="addPathButton" style="display:none;" onclick="g_GameMap.onAddPathStart();">Add Path</button>
-
 <button id="addAreaButton" style="display:none;" onclick="g_GameMap.onAddAreaStart();">Add Area</button>
-
 <button id="editWorldButton" style="display:none;" onclick="g_GameMap.onEditWorld();">Edit World</button>
-
 <button id="zoomOutWorldButton"  onclick="g_GameMap.onZoomOutWorld();">Zoom World Out</button>
-
-<div id="gmMapListContainer">
-<ul id="gmMapList">
-	<li>Loading world data...</li>
-</ul>
-
-</div>
-
-
-
-
 
 <div id="gmMap">
 </div>
