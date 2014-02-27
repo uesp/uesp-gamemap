@@ -1055,7 +1055,19 @@ Worlds
 	
 	$("#MapList li.MapListHeader").click(function(e) {
 		childList = $(this).next('ul');
-		if (childList) childList.slideToggle(200);
+		
+		if (childList)
+		{
+			visible = !childList.is(':visible');
+			childList.slideToggle(200);
+			
+			if (visible)
+				$(this).css('background-image', 'url(images/uparrow.gif)');
+			else
+				$(this).css('background-image', 'url(images/downarrow.gif)');
+		}
+		
+		
 	});
 </script>
 
