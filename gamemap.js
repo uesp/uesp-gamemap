@@ -133,6 +133,7 @@ uesp.gamemap.Map.prototype.createMapList = function ()
 		$('#gmMapListButtonGroup').removeClass('gmMapListButtonSelect');
 		$('#gmMapListAlpha').show();
 		$('#gmMapList').hide();
+		$('#gmMapListAlpha').focus();
 	});
 	
 	$('#gmMapListButtonGroup').click(function(e) {
@@ -140,6 +141,7 @@ uesp.gamemap.Map.prototype.createMapList = function ()
 		$('#gmMapListButtonAlpha').removeClass('gmMapListButtonSelect');
 		$('#gmMapList').show();
 		$('#gmMapListAlpha').hide();
+		$('#gmMapListGroup').focus();
 	});
 	
 	$('#gmMapListAlphaSelect').change(function(e) {
@@ -2185,7 +2187,7 @@ uesp.gamemap.Map.prototype.setEventsForMapGroupList = function ()
 	
 	$("#gmMapList li").click(function(e) {
 		if ($(this).hasClass('gmMapListHeader')) return false;
-		if (self.mapListLastSelectedItem) self.mapListLastSelectedItem.removeClass('gmMapListSelect');
+		if (self.mapListLastSelectedItem != null) self.mapListLastSelectedItem.removeClass('gmMapListSelect');
 		$(this).addClass('gmMapListSelect');
 		self.mapListLastSelectedItem = $(this);
 		
