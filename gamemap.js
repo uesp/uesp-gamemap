@@ -37,7 +37,11 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	
 	this.mapListContainer = null;
 	this.mapListLastSelectedItem = null;
-		
+	
+		// TODO: Better way of limiting which map worlds to show
+	this.minValidWorldId = 100;
+	this.maxValidWorldId = 10000;
+	
 	this.mapWorlds = {};
 	this.mapWorldNameIndex = {};
 	this.mapWorldDisplayNameIndex = {};
@@ -96,7 +100,6 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions, worldId, displayName)
 {
 	this.mapWorlds[worldId] = new uesp.gamemap.World(worldName.toLowerCase(), this.defaultMapOptions, worldId);
-	
 	this.mapWorlds[worldId].mergeMapOptions(mapOptions);
 	
 	this.mapWorldNameIndex[worldName.toLowerCase()] = worldId;
@@ -425,7 +428,7 @@ uesp.gamemap.Map.prototype.fillWorldList = function(ElementID)
 	
 	for (key in this.mapWorlds)
 	{
-		if (this.mapWorlds[key].name[0] != '_') tmpWorldList.push(this.mapWorlds[key].name);
+		if (this.mapWorlds[key].name[0] != '_' && key > 0) tmpWorldList.push(this.mapWorlds[key].name);
 	}
 	
 	tmpWorldList.sort(compareMapWorld);
@@ -1186,6 +1189,7 @@ uesp.gamemap.Map.prototype.onMouseScroll = function(event)
 }
 
 
+
 uesp.gamemap.Map.prototype.onMouseUp = function(event)
 {
 	var self = event.data.self;
@@ -1244,9 +1248,13 @@ uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 	
 	for (key in data.worlds)
 	{
-		var world = data.worlds[key];
+			//TODO: Better world filter
+		if (key < this.minValidWorldId) continue;
+		if (key > this.maxValidWorldId) continue;
 		
+		var world = data.worlds[key];
 		uesp.logDebug(uesp.LOG_LEVEL_WARNING, world);
+		
 		if (uesp.gamemap.isNullorUndefined(world.name)) continue;
 		
 		if (world.id in this.mapWorlds)
