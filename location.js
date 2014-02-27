@@ -582,6 +582,7 @@ uesp.gamemap.Location.prototype.createSaveQuery = function()
 	
 	query += '&locid=' + this.id;
 	query += '&worldid=' + this.worldId;
+	query += '&revisionid=' + this.revisionId;
 	query += '&loctype=' + this.locType;
 	query += '&name=' + encodeURIComponent(this.name);
 	query += '&description=' + encodeURIComponent(this.description);
@@ -624,6 +625,8 @@ uesp.gamemap.Location.prototype.onSavedLocation = function (data)
 		this.id = data.newLocId;
 		this.updateEditPopup();
 	}
+	
+	if (data.newRevisionId != null) this.revisionId = data.newRevisionId;
 	
 	this.useEditPopup = false;
 	this.hidePopup();

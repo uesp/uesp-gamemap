@@ -278,7 +278,7 @@ class GameMap
 	}
 	
 	
-	public function addWorldRevision ()
+	public function addRevision ()
 	{
 		$userName = $_SERVER["REMOTE_ADDR"];
 		$userId = 0;
@@ -289,13 +289,17 @@ class GameMap
 		
 		$userName = $this->db->real_escape_string($userName);
 		
-		$query  = "INSERT INTO revision(parentId, worldHistoryId, editUserId, editUserText, editComment, patrolled) VALUES(";
-		$query .= "{$this->revisionId}, ";		//parentId
-		$query .= "{$this->worldHistoryId}, ";	//worldHistoryId
-		$query .= "$userId, ";					//editUserId
-		$query .= "'$userName', ";				//editUserText
-		$query .= "'', ";						//editComment
-		$query .= "0 ";							//patrolled
+		$query  = "INSERT INTO revision(parentId, ";
+		if ($this->worldHistoryId    > 0) $query .= "worldHistoryId, ";
+		if ($this->locationHistoryId > 0) $query .= "locationHistoryId,";
+		$query .= "editUserId, editUserText, editComment, patrolled) VALUES(";
+		$query .= "{$this->revisionId}, ";			//parentId
+		if ($this->worldHistoryId    > 0) $query .= "{$this->worldHistoryId}, ";
+		if ($this->locationHistoryId > 0) $query .= "{$this->locationHistoryId}, ";
+		$query .= "$userId, ";						//editUserId
+		$query .= "'$userName', ";					//editUserText
+		$query .= "'', ";							//editComment
+		$query .= "0 ";								//patrolled
 		$query .= ");";
 		
 		$result = $this->db->query($query);
@@ -322,10 +326,27 @@ class GameMap
 					FROM world WHERE id={$this->worldId};";
 		
 		$result = $this->db->query($query);
-		if ($result === FALSE) return $this->reportError("Failed to copy world {$this->worldId} to history table! " . $this->db->error);
+		if ($result === FALSE) return $this->reportError("Failed to copy world {$this->worldId} to history table!");
 		
 		$this->worldHistoryId = $this->db->insert_id;
 		$this->addOutputItem("newWorldHistoryId", $this->worldHistoryId);
+		return true;
+	}
+	
+	
+	public function copyToLocationHistory ()
+	{
+		if ($this->locationId == 0) return $this->reportError("Cannot copy empty location record to history!");
+	
+		$query = "INSERT INTO location_history(locationId, revisionId, worldId, locType, x, y, displayLevel, iconType, destinationId, visible, name, description, wikiPage, displayData, width, height)
+		SELECT id, revisionId, worldId, locType, x, y, displayLevel, iconType, destinationId, visible, name, description, wikiPage, displayData, width, height 
+		FROM location WHERE id={$this->locationId};";
+	
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to copy location {$this->locationId} to history table!");
+	
+		$this->locationHistoryId = $this->db->insert_id;
+		$this->addOutputItem("newLocationHistoryId", $this->locationHistoryId);
 		return true;
 	}
 	
@@ -414,6 +435,11 @@ class GameMap
 			return $this->reportError("Failed to save new location data!");
 		}
 		
+		if (!$this->addRevision()) return false;
+		if (!$this->updateLocationRevision($this->locationId)) return false;
+		if (!$this->copyToLocationHistory()) return false;
+		if (!$this->updateRevisionLocationHistory($this->newRevisionId)) return false;
+		
 		$this->addOutputItem('newLocId', $this->db->insert_id);
 		$this->addOutputItem('success', True);
 		return true;
@@ -452,7 +478,7 @@ class GameMap
 			return $this->reportError("Failed to save world data!");
 		}
 		
-		if (!$this->addWorldRevision()) return false;
+		if (!$this->addRevision()) return false;
 		if (!$this->updateWorldRevision($this->worldId)) return false;
 		if (!$this->copyToWorldHistory()) return false;
 		if (!$this->updateRevisionWorldHistory($this->newRevisionId)) return false;
@@ -480,6 +506,28 @@ class GameMap
 	
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to update the revision world history ID!");
+	
+		return true;
+	}
+	
+	
+	public function updateLocationRevision ($worldId)
+	{
+		$query = "UPDATE location SET revisionId={$this->newRevisionId} WHERE id={$worldId};";
+	
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to update the location revision!");
+	
+		return true;
+	}
+	
+	
+	public function updateRevisionLocationHistory ($revisionId)
+	{
+		$query = "UPDATE revision SET locationHistoryId={$this->locationHistoryId} WHERE id={$revisionId};";
+	
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to update the revision location history ID!");
 	
 		return true;
 	}
@@ -515,7 +563,13 @@ class GameMap
 			return $this->reportError("Failed to save location data!");
 		}
 		
+		if (!$this->addRevision()) return false;
+		if (!$this->updateLocationRevision($this->locationId)) return false;
+		if (!$this->copyToLocationHistory()) return false;
+		if (!$this->updateRevisionLocationHistory($this->newRevisionId)) return false;
+		
 		$this->addOutputItem('success', True);
+		$this->addOutputItem('locationId', $this->locationId);
 		return true;
 	}
 	
