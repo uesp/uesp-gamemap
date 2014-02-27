@@ -435,12 +435,14 @@ class GameMap
 			return $this->reportError("Failed to save new location data!");
 		}
 		
+		$this->locationId = $this->db->insert_id;
+		
 		if (!$this->addRevision()) return false;
 		if (!$this->updateLocationRevision($this->locationId)) return false;
 		if (!$this->copyToLocationHistory()) return false;
 		if (!$this->updateRevisionLocationHistory($this->newRevisionId)) return false;
 		
-		$this->addOutputItem('newLocId', $this->db->insert_id);
+		$this->addOutputItem('newLocId', $this->locationId);
 		$this->addOutputItem('success', True);
 		return true;
 	}
