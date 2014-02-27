@@ -170,23 +170,19 @@ uesp.gamemap.Map.prototype.changeWorld = function (world, newState)
 		this.mapWorlds[this.currentWorldId].mapOptions = this.mapOptions;
 	}
 	
-	if (worldId in this.mapWorlds)
-	{
-		this.clearLocationElements();
-			
-		this.currentWorldId = worldId;
-		this.mapOptions = this.mapWorlds[this.currentWorldId].mapOptions;
-		
-		if (newState == null)
-			this.setMapState(this.mapWorlds[this.currentWorldId].mapState);
-		else
-			this.setMapState(newState);
-	}
-	else
-	{
-		uesp.logError("Unknown world ID " + worldId + "!");
-	}
+	if (! (worldId in this.mapWorlds)) return uesp.logError("Unknown world ID " + worldId + "!");
 	
+	this.clearLocationElements();
+		
+	this.currentWorldId = worldId;
+	this.mapOptions = this.mapWorlds[this.currentWorldId].mapOptions;
+	
+	if (newState == null)
+		this.setMapState(this.mapWorlds[this.currentWorldId].mapState);
+	else
+		this.setMapState(newState);
+	
+	if (this.userEvents.onMapWorldChanged != null) this.userEvents.onMapWorldChanged.call(this, this.mapWorlds[this.currentWorldId]);
 }
 
 

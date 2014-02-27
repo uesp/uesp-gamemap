@@ -240,11 +240,6 @@
 			
 			mapState = this.getMapStateFromQuery(defaultMapState);
 			this.setMapState(mapState);
-				
-			uesp.logDebug(uesp.LOG_LEVEL_ERROR, "onMapWorldsLoaded");
-			uesp.logDebug(uesp.LOG_LEVEL_ERROR, mapState);
-				
-			this.fillWorldList('#gmWorldSelect');
 		}
 		
 		
@@ -273,7 +268,8 @@
 		{
 			userEvents = {
 				onMapWorldsLoaded   : onWorldLoad,
-				onPermissionsLoaded : onPermLoad
+				onPermissionsLoaded : onPermLoad,
+				onMapWorldChanged   : onWorldChanged
 			};
 			
 			g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
@@ -314,17 +310,11 @@
 			return "http://content3.uesp.net/maps2/dbmap/zoom" + zoom + "/solstheim-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
 		}
 		
-		function onChangeWorld(element)
+		function onWorldChanged(newWorld)
 		{
-			var result = parseInt(element.options[element.selectedIndex].value);
-			g_GameMap.changeWorld(result);
+			console.log("new world " + newWorld.displayName);
 		}
 		
-		function onAddLocation()
-		{
-			g_GameMap.onAddLocationStart();
-			//alert("adding location...");
-		}
 		
 	</script>
 </head>
@@ -342,13 +332,7 @@ Map Tiles...
 <a href="#" onClick="g_GameMap.changeWorld('Skyrim');">Skyrim</a>
 <a href="#" onClick="g_GameMap.changeWorld(2);">Dragonborn</a>
 
-Worlds 
-<select id="gmWorldSelect" onchange="onChangeWorld(this)">
-<option value="1">Skyrim
-<option value="2">Dragonborn
-</select>
-
-<button id="addLocationButton" style="display:none;" onclick="onAddLocation();">Add Location</button>
+<button id="addLocationButton" style="display:none;" onclick="g_GameMap.onAddLocationStart();">Add Location</button>
 <button id="addPathButton" style="display:none;" onclick="g_GameMap.onAddPathStart();">Add Path</button>
 <button id="addAreaButton" style="display:none;" onclick="g_GameMap.onAddAreaStart();">Add Area</button>
 <button id="editWorldButton" style="display:none;" onclick="g_GameMap.onEditWorld();">Edit World</button>
