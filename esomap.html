@@ -169,9 +169,32 @@
 		}
 		
 		
+			// TODO: Move into Map class
 		function onWorldChanged(newWorld)
 		{
 			console.log("new world " + newWorld.displayName);
+			console.log(g_GameMap.mapListLastSelectedItem);
+			
+			foundListItem = $('#gmMapList li:contains("' + newWorld.displayName +'")').not('.gmMapListHeader');
+			console.log(foundListItem);
+			
+			if (foundListItem != null)
+			{
+				if (g_GameMap.mapListLastSelectedItem != null) g_GameMap.mapListLastSelectedItem.removeClass('gmMapListSelect');
+				foundListItem.addClass('gmMapListSelect');
+				g_GameMap.mapListLastSelectedItem = foundListItem;
+				$(foundListItem).parents('ul:first').show();
+			}
+			
+			$('#gmMapListAlphaSelect').val(newWorld.id);
+			//foundListItem = $('#gmMapListAlphaSelect option:contains("' + newWorld.displayName + '")')
+			//console.log(foundListItem);
+			
+			//if (foundListItem != null)
+			//{
+				//foundListItem.prop('selected', true);
+				//$('#gmMapListAlphaSelect').val(newWorld.id);
+			//}
 		}
 		
 		
