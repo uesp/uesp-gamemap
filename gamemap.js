@@ -71,6 +71,8 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.worldEditPopup = null;
 	this.currentEditWorld = null;
 	
+	this.worldGroupListContents = '';
+	
 	this.mapTiles = [];
 	
 	this.queryParams = uesp.parseQueryParams();
