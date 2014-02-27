@@ -207,6 +207,8 @@ class GameMap
 		$query = "CREATE TABLE IF NOT EXISTS revision (
 					id BIGINT NOT NULL AUTO_INCREMENT,
 					parentId BIGINT,
+					worldId BIGINT,
+					locationId BIGINT,
 					worldHistoryId BIGINT,
 					locationHistoryId BIGINT,
 					editUserId BIGINT NOT NULL,
@@ -290,10 +292,14 @@ class GameMap
 		$userName = $this->db->real_escape_string($userName);
 		
 		$query  = "INSERT INTO revision(parentId, ";
+		if ($this->worldId > 0)    $query .= "worldId, ";
+		if ($this->locationId > 0) $query .= "locationId, ";
 		if ($this->worldHistoryId    > 0) $query .= "worldHistoryId, ";
 		if ($this->locationHistoryId > 0) $query .= "locationHistoryId,";
 		$query .= "editUserId, editUserText, editComment, patrolled) VALUES(";
 		$query .= "{$this->revisionId}, ";			//parentId
+		if ($this->worldId > 0)    $query .= "{$this->worldId}, ";
+		if ($this->locationId > 0) $query .= "{$this->locationId}, ";
 		if ($this->worldHistoryId    > 0) $query .= "{$this->worldHistoryId}, ";
 		if ($this->locationHistoryId > 0) $query .= "{$this->locationHistoryId}, ";
 		$query .= "$userId, ";						//editUserId
