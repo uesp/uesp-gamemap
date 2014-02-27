@@ -16,6 +16,7 @@ uesp.gamemap.World = function(worldName, mapOptions, worldId)
 	
 	this.id = (worldId == null) ? 0 : worldId;
 	this.parentId = -1;
+	this.revisionId = 0;
 	this.description = '';
 	this.wikiPage = '';
 	this.cellSize = -1;
@@ -93,6 +94,7 @@ uesp.gamemap.World.prototype.createSaveQuery = function()
 	
 	query += '&worldid=' + this.id;
 	query += '&parentid=' + this.parentId;
+	query += '&revisionid=' + this.revisionId;
 	query += '&name=' + encodeURIComponent(this.name);
 	query += '&displayname=' + encodeURIComponent(this.displayName);
 	query += '&description=' + encodeURIComponent(this.description);
