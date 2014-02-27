@@ -500,6 +500,15 @@ uesp.gamemap.Location.prototype.onDeleteEditPopup = function (event)
 	if (!this.parentMap.canEdit()) return false;
 	if (this.popupElement == null) return false;
 	
+		//Special case of a new location not yet saved
+	if (this.id < 0)
+	{
+		this.removeElements();
+		this.visible = false;
+		delete this.parentMap.locations[this.id];
+		return true;
+	}
+	
 	this.setPopupEditNotice('Saving location...');
 	
 	this.getFormData();
