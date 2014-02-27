@@ -2077,6 +2077,13 @@ uesp.gamemap.Map.prototype.onZoomOutWorld = function()
 }
 
 
+uesp.gamemap.Map.prototype.setUserEvents = function(userEvents)
+{
+	if (userEvents == null) return;
+	uesp.mergeObjects(this.userEvents, userEvents);
+}
+
+
 uesp.gamemap.defaultGetMapTile = function(tileX, tileY, zoom)
 {
 	return "zoom" + zoom + "/maptile_" + tileX + "_" + tileY + ".jpg"; 
