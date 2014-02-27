@@ -195,12 +195,12 @@
 .MapListHeader {
 	font-weight: bold;
 	background-color: #eeeeee;
-	color: #cc0000;
+	color: #000000;
 	background-image: url(images/uparrow.gif);
 }
 
 ul ul .MapListHeader {
-	color: #660000;
+	color: #666666;
 	background-image: url(images/downarrow.gif);
 }
 
@@ -210,7 +210,7 @@ ul ul .MapListHeader {
 }
 
 .MapListSelect {
-	background-color: #3333ff;
+	background-color: #0000cc;
 	color: #ffffff;
 }
 
@@ -226,7 +226,7 @@ ul ul .MapListHeader {
 }
 
 #MapList li.MapListSelect:hover {
-	background-color: #0000cc;
+	background-color: #3333cc;
 }
 
 #MapList .MapListHeader:hover {
