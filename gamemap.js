@@ -580,6 +580,8 @@ uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
 	newState.worldId = destLoc.worldId;
 	newState.gamePos.x = destLoc.x;
 	newState.gamePos.y = destLoc.y;
+	
+		//TODO: Use stored zoomLevel in world?
 	newState.zoomLevel = this.zoomLevel;
 	
 	this.setMapState(newState);
