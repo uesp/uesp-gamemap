@@ -681,6 +681,8 @@ class GameMap
 	{
 		global $uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW, $uespGameMapDatabase;
 		
+		if (!$this->canEdit) return $this->reportError('You do not have sufficient permissions!');
+		
 		if ($this->dbWriteInitialized) return true;
 		
 		if ($this->dbReadInitialized)
