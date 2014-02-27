@@ -166,8 +166,8 @@
 #gmMapListContainer {
 	position: absolute;
 	left: 2px;
-	top: 40px;
-	width: 200px;
+	top: 2px;
+	width: 250px;
 	bottom: 2px;
 	border: solid 1px gray;
 	list-style-type: none;
@@ -181,8 +181,78 @@
 	border: none;
 	margin: 0;
 	padding: 0;
-	width: 198px;
+	width: 248px;
 	height: 100%;
+	font: 13px sans-serif;
+	cursor: default;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+#gmMapListTitle {
+	background-color: #cccccc;
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	width: 100%;
+	height: 20px;
+	line-height: 20px;
+	vertical-align: middle;
+	text-align: center;
+	border: solid gray 1px;
+}
+
+#gmMapListAlpha form {
+	height: 100%;
+}
+
+#gmMapListAlphaSelect {
+	width: 100%;
+	height: 100%;
+}
+
+#gmMapListButtonGroup, #gmMapListButtonAlpha {
+	cursor: pointer;
+	width: 50px;
+	height: 12px;
+	line-height: 12px;
+	font-size: 10px;
+	background-color: #999999;
+	border: solid 1px gray;
+	float: right;
+	display: inline-block;
+	padding: 1px;
+	margin-right: 2px;
+	margin-top: 2px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.gmMapListButtonSelect
+{
+	background-color: #ffff99 !important;
+}
+
+#gmMapListButtonGroup:hover, #gmMapListButtonAlpha:hover {
+	background-color: #eeeeee;
+}
+
+#gmMapListAlpha {
+	position: absolute;
+	top: 21px;
+	bottom: 0px;
+	width: 100%;
+	border: none;
+	margin: 0;
+	padding: 0;
 	font: 13px sans-serif;
 	cursor: default;
 	-webkit-touch-callout: none;
@@ -254,7 +324,6 @@ ul ul .gmMapListHeader {
 #gmMapList ul ul ul ul li {
 	padding-left: 60px;
 }
-
 
 #gmMapEditNotice {
 	border: solid gray 1px;
