@@ -118,9 +118,10 @@ uesp.gamemap.Map.prototype.createMapList = function ()
 					"<div id='gmMapListAlpha' style='display: none;'>" +
 						"<form><select id='gmMapListAlphaSelect' size='4'></select></form>" + 
 					"</div>" +
+					"<div id='gmMapListGroup'>" + 
 					"<ul id='gmMapList'>" +
 						"<li>Loading world data...</li>" + 
-					"</ul>";
+					"</ul></div>";
 	
 	this.mapListContainer = $('<div />')
 								.attr('id', 'gmMapListContainer')
@@ -132,16 +133,22 @@ uesp.gamemap.Map.prototype.createMapList = function ()
 		$('#gmMapListButtonAlpha').addClass('gmMapListButtonSelect');
 		$('#gmMapListButtonGroup').removeClass('gmMapListButtonSelect');
 		$('#gmMapListAlpha').show();
-		$('#gmMapList').hide();
-		$('#gmMapListAlpha').focus();
+		$('#gmMapListGroup').hide();
+		$('#gmMapListAlphaSelect').focus();
 	});
 	
 	$('#gmMapListButtonGroup').click(function(e) {
 		$('#gmMapListButtonGroup').addClass('gmMapListButtonSelect');
 		$('#gmMapListButtonAlpha').removeClass('gmMapListButtonSelect');
-		$('#gmMapList').show();
+		$('#gmMapListGroup').show();
 		$('#gmMapListAlpha').hide();
 		$('#gmMapListGroup').focus();
+		
+		selItem = $('#gmMapList li.gmMapListSelect');
+		if (selItem == null) return;
+			
+		container = $('#gmMapListGroup');
+		container.scrollTop(selItem.offset().top - container.offset().top + container.scrollTop() - 200);
 	});
 	
 	$('#gmMapListAlphaSelect').change(function(e) {
