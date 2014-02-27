@@ -37,10 +37,11 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 		
 	this.mapWorlds = {};
 	this.mapWorldNameIndex = {};
+	this.mapWorldDisplayNameIndex = {};
 	this.mapWorldsLoaded = false;
 	
 	this.currentWorldId = 0;
-	this.addWorld('__default', this.mapOptions, this.currentWorldId);
+	this.addWorld('__default', this.mapOptions, this.currentWorldId, '');
 	
 	this.locations = {};
 	
@@ -86,13 +87,14 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 }
 
 
-uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions, worldId)
+uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions, worldId, displayName)
 {
 	this.mapWorlds[worldId] = new uesp.gamemap.World(worldName.toLowerCase(), this.defaultMapOptions, worldId);
 	
 	this.mapWorlds[worldId].mergeMapOptions(mapOptions);
 	
 	this.mapWorldNameIndex[worldName.toLowerCase()] = worldId;
+	if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldId;
 }
 
 
@@ -1200,13 +1202,15 @@ uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 		{
 			this.mapWorlds[world.id].mergeFromJson(world);
 			this.mapWorldNameIndex[world.name] = world.id;
+			this.mapWorldDisplayNameIndex[world.displayName] = world.id;
 			uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Merging to existing world " + world.name);
 		}
 		else
 		{
-			this.addWorld(world.name, this.defaultMapOptions, world.id);
+			this.addWorld(world.name, this.defaultMapOptions, world.id, world.displayName);
 			this.mapWorlds[world.id].mergeFromJson(world);
 			this.mapWorldNameIndex[world.name] = world.id;
+			this.mapWorldDisplayNameIndex[world.displayName] = world.id;
 			uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Creating new world " + world.name);
 		}
 	}
@@ -1361,7 +1365,11 @@ uesp.gamemap.Map.prototype.getWorldId = function (world)
 	
 	if (isNaN(world))
 	{
-		worldName = decodeURIComponent(world).toLowerCase();
+		worldName = decodeURIComponent(world);
+		
+		if (worldName in this.mapWorldDisplayNameIndex) return this.mapWorldDisplayNameIndex[worldName];
+		
+		worldName = worldName.toLowerCase();
 		if ( !(worldName in this.mapWorldNameIndex) ) return 0;
 		worldId = this.mapWorldNameIndex[worldName];
 	}
