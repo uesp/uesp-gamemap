@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>UESP:Elder Scrolls Online Map</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<link rel="stylesheet" href="gamemap.css" />
+	<script type="text/javascript" src="jquery-1.10.2.js"></script>
+	<script type="text/javascript" src="common.js"></script>
+	<script type="text/javascript" src="bounds.js"></script>
+	<script type="text/javascript" src="mapoptions.js"></script>
+	<script type="text/javascript" src="mapstate.js"></script>
+	<script type="text/javascript" src="location.js"></script>
+	<script type="text/javascript" src="world.js"></script>
+	<script type="text/javascript" src="maptile.js"></script>
+	<script type="text/javascript" src="gamemap.js"></script>
+	<script type="text/javascript">
+		var esoIconMap = {
+				1  : "Artifact Gate",
+				2  : "Bank",
+				3  : "Battle",
+				4  : "Border Keep",
+				5  : "Caravan",
+				6  : "Clothier",
+				7  : "Dock",
+				8  : "Elder Scroll",
+				9  : "Farm",
+				10 : "Forward Camp",
+				11 : "Inn",
+				12 : "Keep",
+				13 : "Lumber Mill",
+				14 : "Mine",
+				15 : "Outpost",
+				16 : "Smithy",
+				17 : "Temple",
+				18 : "Vendor",
+				19 : "Wayshrine",
+				20 : "Arcanist",
+				21 : "Woodworker",
+				22 : "Alchemist",
+				23 : "Armor Smith",
+				24 : "Armory",
+				25 : "Bag Vendor",
+				26 : "Banker",
+				27 : "Blunt Weapons",
+				28 : "Cooking Fire",
+				29 : "Enchanter",
+				30 : "Fighter's Guild",
+				31 : "Hall Steward",
+				32 : "Heavy Armor",
+				33 : "Light Armor",
+				34 : "General Goods",
+				35 : "Mage's Guild",
+				36 : "Magister",
+				37 : "Medium Armor",
+				38 : "Perquisitor",
+				39 : "Provisioner",
+				40 : "Respec Altar",
+				41 : "Stable Master",
+				42 : "Swords",
+				43 : "Travel NPC",
+				44 : "Weapon Smith",
+				50 : "Area of Interest",
+				51 : "Aylied Ruin",
+				52 : "Camp",
+				53 : "Cave",
+				54 : "Cemetary",
+				55 : "City",
+				56 : "Crafting",
+				57 : "Crypt", 
+				58 : "Daedric Ruin",
+				59 : "Dungeon",
+				60 : "Dwemer Ruin",
+				61 : "Estate",
+				62 : "Explorable",
+				63 : "Group Boss",
+				64 : "Group Dungeon",
+				65 : "Group Instance",
+				66 : "Grove",
+				67 : "Lighthouse",
+				68 : "Mundus Stone",
+				69 : "Portal",
+				70 : "Public Dungeon",
+				71 : "Ruin",
+				72 : "Sewer",
+				73 : "Tower",
+				74 : "Town"
+		};
+		
+		var g_GameMap = null;
+		var g_MapState = null;
+		
+		var g_DefaultMapOptions = {
+				getMapTileFunction : getDefaultMapTile,
+				wikiUrl: "http://www.uesp.net/wiki/",
+				missingMapTile:  "http://content3.uesp.net/gamemap/blacknulltile.jpg",
+				iconPath: "icons-eso/",
+				wikiNamespace: "ESO",
+				iconTypeMap: esoIconMap,
+				gamePosX1: 0,
+				gamePosX2: 1000000,
+				gamePosY1: 1000000,
+				gamePosY2: 0,
+				initialGamePosX : 400000,
+				initialGamePosY : 600000,
+				initialZoom : 10,
+		};
+		
+		
+		function onWorldLoad()
+		{
+			defaultMapState = new uesp.gamemap.MapState();
+			
+			defaultMapState.worldId = 668;
+			defaultMapState.zoomLevel = 9;
+			defaultMapState.gamePos.x = 500000;
+			defaultMapState.gamePos.y = 500000;
+			
+			mapState = this.getMapStateFromQuery(defaultMapState);
+			this.setMapState(mapState);
+		}
+		
+		
+		function onPermLoad()
+		{
+			canEdit = this.canEdit();
+			
+			if (canEdit)
+			{
+				$("#addLocationButton").show();
+				$("#addPathButton").show();
+				$("#addAreaButton").show();
+				$("#editWorldButton").show();
+			}
+			else
+			{
+				$("#addLocationButton").hide();
+				$("#addPathButton").hide();
+				$("#addAreaButton").hide();
+				$("#editWorldButton").hide();
+			}
+		}
+		
+		
+		$( document ).ready( function()
+		{
+			userEvents = {
+				onMapWorldsLoaded   : onWorldLoad,
+				onPermissionsLoaded : onPermLoad,
+				onMapWorldChanged   : onWorldChanged
+			};
+			
+			g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
+
+				// TODO: Temporary call to get the group-world list for ESO
+			$.get( 'template/worldgrouplist.txt', function( data ) {
+				g_GameMap.worldGroupListContents = data;
+				uesp.logDebug(uesp.LOG_LEVEL_ERROR, 'Received world group list contents!');
+				$('#gmMapList').html(data);
+				g_GameMap.setEventsForMapGroupList();
+			});
+
+		});
+		
+		
+		function getDefaultMapTile(xPos, yPos, zoom, worldName)
+		{
+			return "http://content3.uesp.net/gamemap/" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + ".jpg";
+		}
+		
+		
+		function onWorldChanged(newWorld)
+		{
+			console.log("new world " + newWorld.displayName);
+		}
+		
+		
+	</script>
+</head>
+<body>
+
+<div id="gmMenuBar">
+		<div id="gmTitle">UESP:Elder Scrolls Online Map</div>
+		
+		<ol class="gmMenuLinks">
+			<li class="gmMenuItem"><a href="" id="umMapLink">Link to Current Map</a></li>
+			<li class="gmMenuItem"><a href="">Reset Map</a></li>
+		</ol>
+		
+		<button id="editWorldButton" style="display:none;" onclick="g_GameMap.onEditWorld();">Edit World</button>
+		<button id="addLocationButton" style="display:none;" onclick="g_GameMap.onAddLocationStart();">Add Location</button>
+		<button id="addPathButton" style="display:none;" onclick="g_GameMap.onAddPathStart();">Add Path</button>
+		<button id="addAreaButton" style="display:none;" onclick="g_GameMap.onAddAreaStart();">Add Area</button>
+		
+		<div id="gmMenuLinksRight">
+			<ol class="gmMenuLinks">
+				<li class="gmMenuItem"><a href="http://www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design" target="_new">Help</a></li>
+				<li class="gmMenuItem"><a href="http://www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design">Discuss</a></li>
+				<li class="gmMenuItem"><a href="http://www.uesp.net/wiki/Main_Page">UESP Home</a></li>
+			</ol>
+		</div>
+</div>
+
+
+
+<div id="gmMap">
+</div>
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1386039-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+</body>
+</html>

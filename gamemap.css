@@ -1,6 +1,6 @@
 #gmMap {
 	bottom: 0px;
-	top: 40px;
+	top: 30px;
 	left: 0px;
 	right: 0px;
 	border: solid black 1px;
@@ -335,8 +335,8 @@ ul ul .gmMapListHeader {
 	width: auto;
 	height: auto;
 	position: absolute;
-	top: 10px;
-	left: 250px;
+	top: 5px;
+	left: 260px;
 	z-index: 200;
 	padding: 5px;
 	text-align: left;
@@ -525,4 +525,76 @@ input[type=checkbox].gmMapEditPopupInput {
 	padding: 4px;
 	border-radius: 5px;
 	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
+}
+
+
+#gmMenuBar {
+	position: absolute;
+	padding: 0px;
+	top: 0px;
+	left: 0px;
+	height: 30px;
+	width: 100%;
+	background-color: #333333;
+	z-index: 899;
+	border-bottom: 1px solid #000;
+}
+
+#gmTitle {
+	position: relative;
+	top: 3px;
+	left: 5px;
+	display: inline;
+	font-family: Arial;
+	font-size: 20px;
+	font-weight: bold;
+	color: white;
+	padding-right: 50px;
+}
+
+.gmMenuLinks {
+	display: inline;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	outline: 0;
+	background: transparent;
+	vertical-align: baseline;
+	font-family: Arial, sans-serif;
+	font: 13px/27px Arial, sans-serif;
+	color: #cccccc;
+}
+
+#gmMenuLinksRight {
+	position: absolute;
+	top: 0px;
+	display: block;
+	right: 0;
+	padding-right: 10px;
+}
+
+.gmMenuItem {
+	cursor: pointer;
+	position: relative;
+	display: inline-block;
+	line-height: 26px;
+	padding-right: 5px;
+	padding-left: 5px;
+	vertical-align: top;
+	text-align: -webkit-match-parent;
+	border-top: 2px solid #cc0000;
+}
+
+.gmMenuItem:hover {
+	background-color: #666;
+}
+
+.gmMenuItem a {
+	cursor: pointer;
+	display: block;
+	text-decoration: none !important;
+	color: #ccc;	
+}
+
+.gmMenuItem a:hover {
 }
