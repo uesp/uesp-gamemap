@@ -1,11 +1,11 @@
 #gmMap {
-	bottom: 2px;
+	bottom: 0px;
 	top: 40px;
+	left: 0px;
+	right: 0px;
 	border: solid black 1px;
 	overflow: hidden;
 	position: absolute;
-	left: 205px;
-	right: 2px;
 }
 
 #gmMapContainer {
@@ -173,6 +173,8 @@
 	list-style-type: none;
 	overflow-x: hidden;
 	overflow-y: auto;
+	z-index: 50;
+	background-color: #ffffff;
 }
 
 #gmMapList {
@@ -265,7 +267,7 @@ ul ul .gmMapListHeader {
 	height: auto;
 	position: absolute;
 	top: 10px;
-	left: 10px;
+	left: 250px;
 	z-index: 200;
 	padding: 5px;
 	text-align: left;

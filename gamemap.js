@@ -34,6 +34,10 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.mapRoot = null;
 	this.mapContainer = $('#' + mapContainerId);
 	if (this.mapContainer == null) uesp.logError('The gamemap container \'' + mapContainerId + '\' was not found!');
+	
+	this.mapListContainer = null;
+	this.mapListElement = null;
+	this.mapListLastSelectedItem = null;
 		
 	this.mapWorlds = {};
 	this.mapWorldNameIndex = {};
@@ -82,6 +86,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	
 	this.createMapRoot();
 	this.createMapTiles();
+	this.createMapList();
 	this.createEvents();
 	
 	this.setGamePosNoUpdate(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY, this.mapOptions.initialZoom);
@@ -97,6 +102,22 @@ uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions, worldId, 
 	
 	this.mapWorldNameIndex[worldName.toLowerCase()] = worldId;
 	if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldId;
+}
+
+
+uesp.gamemap.Map.prototype.createMapList = function ()
+{
+	this.mapListContainer = $('<div />')
+								.attr('id', 'gmMapListContainer')
+								.appendTo(this.mapContainer);
+	
+	this.mapListElement = $('<ul />')
+							.attr('id', 'gmMapList')
+							.appendTo(this.mapListContainer);
+	
+	$('<li />').text('Loading world data...').appendTo(this.mapListElement);
+	
+	return true;
 }
 
 
@@ -2099,6 +2120,39 @@ uesp.gamemap.Map.prototype.setUserEvents = function(userEvents)
 {
 	if (userEvents == null) return;
 	uesp.mergeObjects(this.userEvents, userEvents);
+}
+
+
+uesp.gamemap.Map.prototype.setEventsForMapGroupList = function ()
+{
+	var self = this;
+	
+	$("#gmMapList li").click(function(e) {
+		if ($(this).hasClass('gmMapListHeader')) return false;
+		if (self.mapListLastSelectedItem) self.mapListLastSelectedItem.removeClass('gmMapListSelect');
+		$(this).addClass('gmMapListSelect');
+		self.mapListLastSelectedItem = $(this);
+		
+		worldName = $(this).text();
+		g_GameMap.changeWorld(worldName);
+	});
+	
+	$("#gmMapList li.gmMapListHeader").click(function(e) {
+		childList = $(this).next('ul');
+		
+		if (childList)
+		{
+			visible = !childList.is(':visible');
+			childList.slideToggle(200);
+			
+			if (visible)
+				$(this).css('background-image', 'url(images/uparrow.gif)');
+			else
+				$(this).css('background-image', 'url(images/downarrow.gif)');
+		}
+		
+		
+	});
 }
 
 
