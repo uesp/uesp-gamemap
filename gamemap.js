@@ -49,6 +49,8 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions)
 	this.dragStartEventY = 0;
 	this.checkTilesOnDrag = true;
 	
+	this.jumpToDestinationOnClick = true;
+	
 		// This just controls the client-side editing abilities.
 		// All security for writes is handled on the server side.
 	this.enableEdit = true;
@@ -65,6 +67,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions)
 	
 	this.queryParams = uesp.parseQueryParams();
 	
+	this.requestPermissions();
 	this.retrieveWorldData();
 	
 	this.createMapRoot();
@@ -1021,7 +1024,10 @@ uesp.gamemap.Map.prototype.onClick = function(event)
 		self.onAddPathClick(event);
 	else if (self.currentEditMode == 'addarea')
 		self.onAddAreaClick(event);
+	else if (self.currentEditMode != '')
+		return false;
 	
+	return true;
 }
 
 
@@ -1221,6 +1227,27 @@ uesp.gamemap.Map.prototype.removeExtraLocations = function()
 		delete this.locations[key];
 	}
 	
+}
+
+
+uesp.gamemap.Map.prototype.onReceivePermissions = function (data)
+{
+	if (data.canEdit != null) this.enableEdit = data.canEdit;
+	
+}
+
+
+uesp.gamemap.Map.prototype.requestPermissions = function ()
+{
+	var self = this;
+	
+	var queryParams = {};
+	queryParams.action = "get_perm";
+	
+	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+		self.onReceivePermissions(data); 
+		//if ( !(onLoadFunction == null) ) onLoadFunction.call(self, eventData);
+	});
 }
 
 

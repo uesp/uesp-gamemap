@@ -1519,7 +1519,11 @@ uesp.gamemap.Location.prototype.onPathClick = function (event)
 	{
 		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "clicked path");
 		
-		this.togglePopup();
+		
+		if (!this.useEditPopup && this.destinationId > 0 && this.parentMap.jumpToDestinationOnClick) 
+			this.onJumpToDestination();
+		else
+			this.togglePopup();
 	}
 	
 	return false;
