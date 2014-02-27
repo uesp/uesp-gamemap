@@ -93,7 +93,7 @@
 				getMapTileFunction : getDefaultMapTile,
 				wikiUrl: "http://www.uesp.net/wiki/",
 				mapUrl : "http://content3.uesp.net/testmap1/esomap.html",
-				missingMapTile:  "http://content3.uesp.net/gamemap/blacknulltile.jpg",
+				missingMapTile:  "http://maps.uesp.net/esomap/blacknulltile.jpg",
 				iconPath: "icons-eso/",
 				wikiNamespace: "ESO",
 				iconTypeMap: esoIconMap,
@@ -165,7 +165,7 @@
 		
 		function getDefaultMapTile(xPos, yPos, zoom, worldName)
 		{
-			return "http://content3.uesp.net/gamemap/" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + ".jpg";
+			return "http://maps.uesp.net/esomap/" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + ".jpg";
 		}
 		
 		

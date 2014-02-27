@@ -8,7 +8,7 @@ ignore = .hg*
 ignore = *.deploy
 ignore = *.sh
 
-# dest = content1.uesp.net:/home/uesp/www/maps2/
-# dest = content2.uesp.net:/home/uesp/www/maps2/
-dest = content3.uesp.net:/home/uesp/www/testmap1/
+# dest = content1.uesp.net:/home/uesp/www/esomap/
+# dest = content2.uesp.net:/home/uesp/www/esomap/
+dest = content3.uesp.net:/home/uesp/www/esomap/
 
