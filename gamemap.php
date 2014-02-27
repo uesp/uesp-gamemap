@@ -66,12 +66,21 @@ class GameMap
 	private $skipCheckTables = true;
 	private $dbReadInitialized  = false;
 	private $dbWriteInitialized = false;
+	private $startedSession = false;
+	private $canEdit = false;
 	
 	
 	function __construct ()
 	{
 		$this->setInputParams();
 		$this->parseInputParams();
+		
+		session_name('uesp_net_wiki5_session');
+		$this->startedSession = session_start();
+		
+		if (!$this->startedSession) error_log("Failed to start session!");
+		
+		if (isset($_SESSION['wsUserID'])) $this->canEdit = true;
 	}
 	
 	
@@ -166,6 +175,8 @@ class GameMap
 				return $this->doAddLocation();
 			case 'set_world':
 					return $this->doSetWorld();
+			case 'get_perm':
+					return $this->doGetPermissions();
 			case 'default':
 			default:
 				break;
@@ -185,6 +196,13 @@ class GameMap
 		if (!$result) return false;
 		
 		$this->addOutputItem("result", "Successfully created tables!");
+		return true;
+	}
+	
+	
+	public function doGetPermissions ()
+	{
+		$this->addOutputItem("canEdit", $this->canEdit);
 		return true;
 	}
 	
