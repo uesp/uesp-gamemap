@@ -24,6 +24,10 @@ class GameMap
 	public $worldId = 0;
 	public $worldName = '';
 	public $locationId = 0;
+	public $revisionId = 0;
+	public $worldHistoryId = 0;
+	public $locHistoryId = 0;
+	public $newRevisionId = 0;
 	
 	public $locName = '';
 	public $locDescription = '';
@@ -36,6 +40,7 @@ class GameMap
 	public $locDisplayData = '{}';
 	public $locX = 0;
 	public $locY = 0;
+	
 	public $locWidth = 0;
 	public $locHeight = 0;
 	
@@ -108,6 +113,7 @@ class GameMap
 		$query = "CREATE TABLE IF NOT EXISTS `world` (
 					`id` BIGINT NOT NULL AUTO_INCREMENT,
 					`parentId` BIGINT NOT NULL,
+					`revisionId` BIGINT NOT NULL,
 					`name` TINYTEXT NOT NULL,
 					`displayName` TINYTEXT NOT NULL,
 					`description` TEXT NOT NULL,
@@ -126,6 +132,30 @@ class GameMap
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to create world table!");
+		
+		$query = "CREATE TABLE IF NOT EXISTS world_history (
+					id BIGINT NOT NULL AUTO_INCREMENT,
+					worldId BIGINT NOT NULL,
+					revisionId BIGINT NOT NULL,
+					parentId BIGINT NOT NULL,
+					name TINYTEXT NOT NULL,
+					displayName TINYTEXT NOT NULL,
+					description TEXT NOT NULL,
+					wikiPage TEXT NOT NULL,
+					cellSize INTEGER NOT NULL,
+					minZoom INTEGER NOT NULL,
+					maxZoom INTEGER NOT NULL,
+					zoomOffset INTEGER NOT NULL,
+					posLeft INTEGER NOT NULL,
+					posTop INTEGER NOT NULL,
+					posRight INTEGER NOT NULL,
+					posBottom INTEGER NOT NULL,
+					enabled TINYINT NOT NULL,
+					PRIMARY KEY ( id )
+				);";
+		
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to create world_history table!");
 		
 		$query = "CREATE TABLE IF NOT EXISTS location (
 					id BIGINT NOT NULL AUTO_INCREMENT,
@@ -150,6 +180,47 @@ class GameMap
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to create location table!");
 		
+		$query = "CREATE TABLE IF NOT EXISTS location_history (
+					id BIGINT NOT NULL AUTO_INCREMENT,
+					locationId BIGINT NOT NULL,
+					revisionId BIGINT NOT NULL,
+					worldId BIGINT NOT NULL,
+					destinationId BIGINT NOT NULL,
+					locType TINYINT NOT NULL,
+					x INTEGER NOT NULL,
+					y INTEGER NOT NULL,
+					width INTEGER NOT NULL,
+					height INTEGER NOT NULL,
+					name TINYTEXT NOT NULL,
+					description TEXT NOT NULL,
+					iconType TINYINT NOT NULL,
+					displayData TEXT NOT NULL,
+					wikiPage TEXT NOT NULL,
+					displayLevel INTEGER NOT NULL,
+					visible TINYINT NOT NULL,
+					PRIMARY KEY ( id )
+				);";
+		
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to create location_history table!");
+		
+		$query = "CREATE TABLE IF NOT EXISTS revision (
+					id BIGINT NOT NULL AUTO_INCREMENT,
+					parentId BIGINT,
+					worldHistoryId BIGINT,
+					locationHistoryId BIGINT,
+					editUserId BIGINT NOT NULL,
+					editUserText TEXT NOT NULL,
+					editTimestamp TIMESTAMP NOT NULL,
+					editComment TEXT NOT NULL,
+					patrolled TINYINT NOT NULL,
+					PRIMARY KEY (id)
+				);";
+		
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to create revision table!");
+		
+		$this->addOutputItem("createResult", true);
 		return true;
 	}
 	
@@ -174,9 +245,9 @@ class GameMap
 			case 'add_loc':
 				return $this->doAddLocation();
 			case 'set_world':
-					return $this->doSetWorld();
+				return $this->doSetWorld();
 			case 'get_perm':
-					return $this->doGetPermissions();
+				return $this->doGetPermissions();
 			case 'default':
 			default:
 				break;
@@ -203,6 +274,58 @@ class GameMap
 	public function doGetPermissions ()
 	{
 		$this->addOutputItem("canEdit", $this->canEdit);
+		return true;
+	}
+	
+	
+	public function addWorldRevision ()
+	{
+		$userName = $_SERVER["REMOTE_ADDR"];
+		$userId = 0;
+		$revisionId = 0;
+		
+		if (isset($_SESSION['wsUserID'])) $userId = $_SESSION['wsUserID'];
+		if (isset($_SESSION['wsUserName'])) $userName = $_SESSION['wsUserName'];
+		
+		$userName = $this->db->real_escape_string($userName);
+		
+		$query  = "INSERT INTO revision(parentId, worldHistoryId, editUserId, editUserText, editComment, patrolled) VALUES(";
+		$query .= "{$this->revisionId}, ";		//parentId
+		$query .= "{$this->worldHistoryId}, ";	//worldHistoryId
+		$query .= "$userId, ";					//editUserId
+		$query .= "'$userName', ";				//editUserText
+		$query .= "'', ";						//editComment
+		$query .= "0 ";							//patrolled
+		$query .= ");";
+		
+		$result = $this->db->query($query);
+		
+		if ($result === FALSE) {
+			error_log($this->db->error);
+			return $this->reportError("Failed to create new revision record!");
+		}
+		
+		$revisionId = $this->db->insert_id;
+		$this->addOutputItem("newRevisionId", $revisionId);
+		
+		$this->newRevisionId = $revisionId;
+		return true;
+	}
+	
+	
+	public function copyToWorldHistory ()
+	{
+		if ($this->worldId == 0) return $this->reportError("Cannot copy empty world record to history!");
+		
+		$query = "INSERT INTO world_history(worldId, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled)
+					SELECT id, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled
+					FROM world WHERE id={$this->worldId};";
+		
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to copy world {$this->worldId} to history table! " . $this->db->error);
+		
+		$this->worldHistoryId = $this->db->insert_id;
+		$this->addOutputItem("newWorldHistoryId", $this->worldHistoryId);
 		return true;
 	}
 	
@@ -318,6 +441,8 @@ class GameMap
 		$query .= "posBottom={$this->worldPosBottom}, ";
 		$query .= "enabled={$this->worldEnabled} ";
 		$query .= " WHERE id={$this->worldId};";
+		
+		error_log($query);
 	
 		$result = $this->db->query($query);
 	
@@ -326,8 +451,36 @@ class GameMap
 			error_log($this->db->error);
 			return $this->reportError("Failed to save world data!");
 		}
-	
+		
+		if (!$this->addWorldRevision()) return false;
+		if (!$this->updateWorldRevision($this->worldId)) return false;
+		if (!$this->copyToWorldHistory()) return false;
+		if (!$this->updateRevisionWorldHistory($this->newRevisionId)) return false;
+		
 		$this->addOutputItem('success', True);
+		$this->addOutputItem('worldId', $this->worldId);
+		return true;
+	}
+	
+	
+	public function updateWorldRevision ($worldId)
+	{
+		$query = "UPDATE world SET revisionId={$this->newRevisionId} WHERE id={$worldId};";
+		
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to update the world revision!");
+		
+		return true;
+	}
+	
+	
+	public function updateRevisionWorldHistory ($revisionId)
+	{
+		$query = "UPDATE revision SET worldHistoryId={$this->worldHistoryId} WHERE id={$revisionId};";
+	
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to update the revision world history ID!");
+	
 		return true;
 	}
 	
@@ -432,6 +585,7 @@ class GameMap
 		{
 			settype($row['id'], "integer");
 			settype($row['parentId'], "integer");
+			settype($row['revisionId'], "integer");
 			settype($row['enabled'], "integer");
 			settype($row['posRight'], "integer");
 			settype($row['posLeft'], "integer");
@@ -468,6 +622,7 @@ class GameMap
 		{
 			settype($row['id'], "integer");
 			settype($row['parentId'], "integer");
+			settype($row['revisionId'], "integer");
 			settype($row['enabled'], "integer");
 			settype($row['posRight'], "integer");
 			settype($row['posLeft'], "integer");
@@ -586,6 +741,7 @@ class GameMap
 		if (array_key_exists('postop',  $this->inputParams)) $this->worldPosTop = intval($this->db->real_escape_string($this->inputParams['postop']));
 		if (array_key_exists('posbottom',  $this->inputParams)) $this->worldPosBottom = intval($this->db->real_escape_string($this->inputParams['posbottom']));
 		if (array_key_exists('parentid',  $this->inputParams)) $this->worldParentId = intval($this->db->real_escape_string($this->inputParams['parentid']));
+		if (array_key_exists('revisionid',  $this->inputParams)) $this->revisionId = intval($this->db->real_escape_string($this->inputParams['revisionid']));
 		
 		if (array_key_exists('world',  $this->inputParams))
 		{
@@ -618,8 +774,9 @@ class GameMap
 	{
 		$this->addOutputItem("isError", true);
 		$this->addOutputItem("errorMsg", $errorMsg);
-		
+				
 		error_log("Error: " . $errorMsg);
+		if ($this->db->error) error_log($this->db->error); 
 		return false;
 	}
 	

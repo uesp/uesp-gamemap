@@ -755,8 +755,9 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 						pathContent +
 						"<div class='gmMapEditPopupLabel'>Internal ID</div>" +
 							"<div class='gmMapEditPopupInput'>{id}</div> &nbsp; " + 
-							"<div class='gmMapEditPopupInput'>World ID: {worldId}</div> &nbsp; " +
-							"<div class='gmMapEditPopupInput'>Type: {locType}</div> <br />" +
+							"<div class='gmMapEditPopupInput'>World: {worldId}</div> &nbsp; " +
+							"<div class='gmMapEditPopupInput'>Type: {locType}</div> &nbsp;" +
+							"<div class='gmMapEditPopupInput'>Rev: {revisionId}</div> <br />" +
 						"<div class='gmMapEditPopupStatus'></div>" +
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonDelete' value='Delete' />" +
 						pathButtons + 

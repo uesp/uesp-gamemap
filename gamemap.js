@@ -1901,6 +1901,7 @@ uesp.gamemap.Map.prototype.showWorldEditForm = function()
 							"Bottom <input type='text' class='gmMapEditPopupInput' name='posBottom' value='{posBottom}' size='8' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Internal ID</div>" +
 							"<div class='gmMapEditPopupInput'>{id}</div> &nbsp; " +
+							"Rev: <div class='gmMapEditPopupInput'>{revisionId}</div> &nbsp; <br />" +
 						"<div class='gmMapEditPopupStatus'></div>" +
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonSave' value='Save' />" +
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonClose' value='Cancel' />" +
@@ -2012,6 +2013,8 @@ uesp.gamemap.Map.prototype.onSavedWorld = function (data)
 		this.setWorldPopupEditNotice('Error saving world data!', 'error');
 		return false;
 	}
+	
+	if (data.newRevisionId != null) this.currentEditWorld.revisionId = data.newRevisionId;
 	
 	this.setWorldPopupEditNotice('Successfully saved location!');
 	
