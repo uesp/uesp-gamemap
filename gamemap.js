@@ -14,6 +14,9 @@
  *		- Todo add padding around path div
  *		- Better cursor icons for adding/deleting path nodes
  *		- Move world editing to world class
+ *		- Add edit comment input field
+ *		- Add patrolling
+ *		- Add reversion of edits
  *
  */
 
