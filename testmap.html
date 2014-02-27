@@ -215,24 +215,52 @@
 				//gamePosY1: 122880,
 				//gamePosY2: -40960,
 		};
-
+		
+		
+		function onWorldLoad()
+		{
+			this.setMapOptions(1, g_SRMapOptions);
+			this.setMapOptions(2, g_DBMapOptions);
+			
+			mapState = this.getMapStateFromQuery(this.getWorldMapState(1));
+			this.setMapState(mapState);
+				
+			uesp.logDebug(uesp.LOG_LEVEL_ERROR, "onMapWorldsLoaded");
+			uesp.logDebug(uesp.LOG_LEVEL_ERROR, mapState);
+				
+			this.fillWorldList('#gmWorldSelect');
+		}
+		
+		
+		function onPermLoad()
+		{
+			canEdit = this.canEdit();
+			
+			if (canEdit)
+			{
+				$("#addLocationButton").show();
+				$("#addPathButton").show();
+				$("#addAreaButton").show();
+				$("#editWorldButton").show();
+			}
+			else
+			{
+				$("#addLocationButton").hide();
+				$("#addPathButton").hide();
+				$("#addAreaButton").hide();
+				$("#editWorldButton").hide();
+			}
+		}
+		
+		
 		$( document ).ready( function()
 		{
-			g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions);
+			userEvents = {
+				onMapWorldsLoaded   : onWorldLoad,
+				onPermissionsLoaded : onPermLoad
+			};
 			
-			g_GameMap.setOnMapWorldsLoaded( function()
-			{
-				this.setMapOptions(1, g_SRMapOptions);
-				this.setMapOptions(2, g_DBMapOptions);
-				
-				mapState = this.getMapStateFromQuery(this.getWorldMapState(1));
-				this.setMapState(mapState);
-				
-				uesp.logDebug(uesp.LOG_LEVEL_ERROR, "onMapWorldsLoaded");
-				uesp.logDebug(uesp.LOG_LEVEL_ERROR, mapState);
-				
-				this.fillWorldList('#gmWorldSelect');
-			});
+			g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
 		});
 		
 		
@@ -295,15 +323,15 @@ Worlds
 <option value="2">Dragonborn
 </select>
 
-<button onclick="onAddLocation();">Add Location</button>
+<button id="addLocationButton" style="display:none;" onclick="onAddLocation();">Add Location</button>
 
-<button onclick="g_GameMap.onAddPathStart();">Add Path</button>
+<button id="addPathButton" style="display:none;" onclick="g_GameMap.onAddPathStart();">Add Path</button>
 
-<button onclick="g_GameMap.onAddAreaStart();">Add Area</button>
+<button id="addAreaButton" style="display:none;" onclick="g_GameMap.onAddAreaStart();">Add Area</button>
 
-<button onclick="g_GameMap.onEditWorld();">Edit World</button>
+<button id="editWorldButton" style="display:none;" onclick="g_GameMap.onEditWorld();">Edit World</button>
 
-<button onclick="g_GameMap.onZoomOutWorld();">Zoom World Out</button>
+<button id="zoomOutWorldButton"  onclick="g_GameMap.onZoomOutWorld();">Zoom World Out</button>
 
 <div id="MapListContainer">
 <ul id="MapList">
