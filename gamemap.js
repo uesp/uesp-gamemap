@@ -18,10 +18,15 @@
  */
 
 
-uesp.gamemap.Map = function(mapContainerId, defaultMapOptions)
+uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 {
 	this.defaultMapOptions = uesp.cloneObject(defaultMapOptions);
 	this.mapOptions        = new uesp.gamemap.MapOptions(this.defaultMapOptions);
+	
+	if (userEvents == null)
+		this.userEvents = { };
+	else
+		this.userEvents = userEvents;
 	
 	this.mapRoot = null;
 	this.mapContainer = $('#' + mapContainerId);
@@ -30,7 +35,6 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions)
 	this.mapWorlds = {};
 	this.mapWorldNameIndex = {};
 	this.mapWorldsLoaded = false;
-	this.onMapWorldsLoadedFunc = null;
 	
 	this.currentWorldId = 0;
 	this.addWorld('__default', this.mapOptions, this.currentWorldId);
@@ -1204,9 +1208,9 @@ uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 	
 	this.mapWorldsLoaded = true;
 	
-	if ( !(this.onMapWorldsLoadedFunc == null) )
+	if (this.userEvents.onMapWorldsLoaded != null)
 	{
-		this.onMapWorldsLoadedFunc.call(this);
+		this.userEvents.onMapWorldsLoaded.call(this);
 	}
 	
 	return true;
@@ -1234,6 +1238,10 @@ uesp.gamemap.Map.prototype.onReceivePermissions = function (data)
 {
 	if (data.canEdit != null) this.enableEdit = data.canEdit;
 	
+	if (this.userEvents.onPermissionsLoaded != null)
+	{
+		this.userEvents.onPermissionsLoaded.call(this);
+	}
 }
 
 
@@ -1370,18 +1378,6 @@ uesp.gamemap.Map.prototype.setMapOptions = function (world, mapOptions)
 	this.mapWorlds[worldId].mergeMapOptions(mapOptions);
 	
 	if (this.currentWorldId == worldId) this.mapOptions.mergeOptions(mapOptions);
-}
-
-
-uesp.gamemap.Map.prototype.setOnMapWorldsLoaded = function (func)
-{
-	this.onMapWorldsLoadedFunc = func;
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "setOnMapWorldsLoaded", func, this.mapWorldsLoaded);
-	
-	if (this.mapWorldsLoaded && !(func == null))
-	{
-		func.call(this);
-	}
 }
 
 
