@@ -39,7 +39,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.mapListLastSelectedItem = null;
 	
 		// TODO: Better way of limiting which map worlds to show
-	this.minValidWorldId = 100;
+	this.minValidWorldId = 50;
 	this.maxValidWorldId = 10000;
 	
 	this.mapWorlds = {};
@@ -155,6 +155,32 @@ uesp.gamemap.Map.prototype.createMapList = function ()
 uesp.gamemap.Map.prototype.canEdit = function ()
 {
 	return this.enableEdit;
+}
+
+
+uesp.gamemap.Map.prototype.updateMapLink = function ()
+{
+		// TODO: Don't hard code link element ID (allow multiple links to be updated)
+	linkElement = $('#gmMapLink');
+	if (linkElement == null) return false;
+	
+	linkElement.attr('href', this.createMapLink());
+	return true;
+}
+
+
+uesp.gamemap.Map.prototype.createMapLink = function (mapState)
+{
+	var mapLink = this.mapOptions.mapUrl;
+	
+	if (mapState == null) mapState = this.getMapState();
+	
+	mapLink += '?world=' + mapState.worldId;
+	mapLink += '&x=' + mapState.gamePos.x;
+	mapLink += '&y=' + mapState.gamePos.y;
+	mapLink += '&zoom=' + mapState.zoomLevel;
+	
+	return mapLink;
 }
 
 
@@ -1244,12 +1270,12 @@ uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 	
 	for (key in data.worlds)
 	{
-			//TODO: Better world filter
-		if (key < this.minValidWorldId) continue;
-		if (key > this.maxValidWorldId) continue;
-		
 		var world = data.worlds[key];
 		uesp.logDebug(uesp.LOG_LEVEL_WARNING, world);
+		
+			//TODO: Better world filter
+		if (world.id < this.minValidWorldId) continue;
+		if (world.id > this.maxValidWorldId) continue;
 		
 		if (uesp.gamemap.isNullorUndefined(world.name)) continue;
 		
@@ -1614,11 +1640,12 @@ uesp.gamemap.Map.prototype.shiftLocations = function (deltaX, deltaY)
 
 uesp.gamemap.Map.prototype.updateLocations = function(animate)
 {
+	this.updateMapLink();
+	
 	this.removeExtraLocations();
 	this.updateLocationDisplayLevels();
 	this.updateLocationOffsets(animate);
 	
-	//this.redrawLocationPaths();
 	this.redrawLocations();
 	
 	this.retrieveLocations();

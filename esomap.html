@@ -92,6 +92,7 @@
 		var g_DefaultMapOptions = {
 				getMapTileFunction : getDefaultMapTile,
 				wikiUrl: "http://www.uesp.net/wiki/",
+				mapUrl : "http://content3.uesp.net/testmap1/esomap.html",
 				missingMapTile:  "http://content3.uesp.net/gamemap/blacknulltile.jpg",
 				iconPath: "icons-eso/",
 				wikiNamespace: "ESO",
@@ -182,8 +183,8 @@
 		<div id="gmTitle">UESP:Elder Scrolls Online Map</div>
 		
 		<ol class="gmMenuLinks">
-			<li class="gmMenuItem"><a href="" id="umMapLink">Link to Current Map</a></li>
-			<li class="gmMenuItem"><a href="">Reset Map</a></li>
+			<li class="gmMenuItem"><a href="" id="gmMapLink">Link to Current Map</a></li>
+			<li class="gmMenuItem"><a href="" id="gmMapReset">Reset Map</a></li>
 		</ol>
 		
 		<button id="editWorldButton" style="display:none;" onclick="g_GameMap.onEditWorld();">Edit World</button>
