@@ -163,7 +163,7 @@
 	border: none;
 }
 
-#MapListContainer {
+#gmMapListContainer {
 	position: absolute;
 	left: 2px;
 	top: 40px;
@@ -175,7 +175,7 @@
 	overflow-y: auto;
 }
 
-#MapList {
+#gmMapList {
 	border: none;
 	margin: 0;
 	padding: 0;
@@ -192,64 +192,64 @@
 }
 
 
-.MapListHeader {
+.gmMapListHeader {
 	font-weight: bold;
 	background-color: #eeeeee;
 	color: #000000;
 	background-image: url(images/uparrow.gif);
 }
 
-ul ul .MapListHeader {
+ul ul .gmMapListHeader {
 	color: #666666;
 	background-image: url(images/downarrow.gif);
 }
 
-#MapList ul {
+#gmMapList ul {
 	list-style-type: none;
 	padding: 0;
 }
 
-.MapListSelect {
+.gmMapListSelect {
 	background-color: #0000cc;
 	color: #ffffff;
 }
 
-#MapList li {
+#gmMapList li {
 	list-style-type: none;
 	padding-left: 0px;
 	background-repeat: no-repeat;
 	background-position: right 20px top 3px;
 }
 
-#MapList li:hover {
+#gmMapList li:hover {
 	background-color: #ccccff;
 }
 
-#MapList li.MapListSelect:hover {
+#gmMapList li.gmMapListSelect:hover {
 	background-color: #3333cc;
 }
 
-#MapList .MapListHeader:hover {
+#gmMapList .gmMapListHeader:hover {
 	background-color: #cccccc;
 }
 
-#MapList ul li {
+#gmMapList ul li {
 	padding-left: 15px;
 }
 
-#MapList ul ul {
+#gmMapList ul ul {
 	display: none;
 }
 
-#MapList ul ul li {
+#gmMapList ul ul li {
 	padding-left: 30px;
 }
 
-#MapList ul ul ul li {
+#gmMapList ul ul ul li {
 	padding-left: 45px;
 }
 
-#MapList ul ul ul ul li {
+#gmMapList ul ul ul ul li {
 	padding-left: 60px;
 }
 
