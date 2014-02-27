@@ -1523,8 +1523,12 @@ uesp.gamemap.Location.prototype.onPathClick = function (event)
 	{
 		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "clicked path");
 		
-		
-		if (!this.useEditPopup && this.destinationId > 0 && this.parentMap.jumpToDestinationOnClick) 
+		if (this.parentMap.canEdit() && event.shiftKey)
+		{
+			this.useEditPopup = true;
+			this.togglePopup();
+		}
+		else if (!this.useEditPopup && this.destinationId > 0 && this.parentMap.jumpToDestinationOnClick) 
 			this.onJumpToDestination();
 		else
 			this.togglePopup();
