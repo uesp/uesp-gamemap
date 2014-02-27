@@ -36,7 +36,6 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	if (this.mapContainer == null) uesp.logError('The gamemap container \'' + mapContainerId + '\' was not found!');
 	
 	this.mapListContainer = null;
-	this.mapListElement = null;
 	this.mapListLastSelectedItem = null;
 		
 	this.mapWorlds = {};
@@ -107,15 +106,44 @@ uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions, worldId, 
 
 uesp.gamemap.Map.prototype.createMapList = function ()
 {
+	var self = this;
+	var listHtml = 	"<div id='gmMapListTitle'>" +
+						"Map List" +
+						"<div id='gmMapListButtonAlpha'>Alpha</div>" +
+						"<div id='gmMapListButtonGroup' class='gmMapListButtonSelect'>Group</div>" +
+					"</div>" +
+					"<div id='gmMapListAlpha' style='display: none;'>" +
+						"<form><select id='gmMapListAlphaSelect' size='4'></select></form>" + 
+					"</div>" +
+					"<ul id='gmMapList'>" +
+						"<li>Loading world data...</li>" + 
+					"</ul>";
+	
 	this.mapListContainer = $('<div />')
 								.attr('id', 'gmMapListContainer')
 								.appendTo(this.mapContainer);
 	
-	this.mapListElement = $('<ul />')
-							.attr('id', 'gmMapList')
-							.appendTo(this.mapListContainer);
+	this.mapListContainer.html(listHtml);
 	
-	$('<li />').text('Loading world data...').appendTo(this.mapListElement);
+	$('#gmMapListButtonAlpha').click(function(e) {
+		$('#gmMapListButtonAlpha').addClass('gmMapListButtonSelect');
+		$('#gmMapListButtonGroup').removeClass('gmMapListButtonSelect');
+		$('#gmMapListAlpha').show();
+		$('#gmMapList').hide();
+	});
+	
+	$('#gmMapListButtonGroup').click(function(e) {
+		$('#gmMapListButtonGroup').addClass('gmMapListButtonSelect');
+		$('#gmMapListButtonAlpha').removeClass('gmMapListButtonSelect');
+		$('#gmMapList').show();
+		$('#gmMapListAlpha').hide();
+	});
+	
+	$('#gmMapListAlphaSelect').change(function(e) {
+		var result = parseInt(this.options[this.selectedIndex].value);
+		console.log(result);
+		self.changeWorld(result);
+	});
 	
 	return true;
 }
@@ -1239,11 +1267,8 @@ uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 	}
 	
 	this.mapWorldsLoaded = true;
-	
-	if (this.userEvents.onMapWorldsLoaded != null)
-	{
-		this.userEvents.onMapWorldsLoaded.call(this);
-	}
+	if (this.userEvents.onMapWorldsLoaded != null) this.userEvents.onMapWorldsLoaded.call(this);
+	this.fillWorldList('#gmMapListAlphaSelect');
 	
 	return true;
 }
