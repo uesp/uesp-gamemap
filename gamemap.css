@@ -196,10 +196,12 @@
 	font-weight: bold;
 	background-color: #eeeeee;
 	color: #cc0000;
+	background-image: url(images/uparrow.gif);
 }
 
 ul ul .MapListHeader {
 	color: #660000;
+	background-image: url(images/downarrow.gif);
 }
 
 #MapList ul {
@@ -215,6 +217,8 @@ ul ul .MapListHeader {
 #MapList li {
 	list-style-type: none;
 	padding-left: 0px;
+	background-repeat: no-repeat;
+	background-position: right 20px top 3px;
 }
 
 #MapList li:hover {
