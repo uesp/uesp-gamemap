@@ -674,7 +674,8 @@ uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
 	newState.zoomLevel = this.zoomLevel;
 	
 	this.setMapState(newState);
-	destLoc.showPopup();
+	
+	if (destLoc.displayData.labelPos != 0 || destLoc.iconType != 0) destLoc.showPopup();
 }
 
 
