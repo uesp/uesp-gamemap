@@ -1221,14 +1221,14 @@ uesp.gamemap.Location.prototype.onPathEditHandlesMouseMove = function (event)
 
 uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 {
-	var ca = event.target;
-	var co = ca.getContext('2d');
-	var offset = $(ca).offset();
-	
 	if (this.draggingPathHandle >= 0) return this.onPathEditHandlesDragMove(event);
 	if (this.editPathHandles) return this.onPathEditHandlesMouseMove(event);
 	
 	if (this.useEditPopup && this.popupElement != null) return false;
+	
+	var ca = event.target;
+	var co = ca.getContext('2d');
+	var offset = $(ca).offset();
 	
 	avgScale = (this.pixelWidth / this.width + this.pixelHeight / this.height) / 2.0;
 	if (avgScale === 0) avgScale = 1;
