@@ -73,7 +73,6 @@
 			<li>Haven</li>
 			<li>Haven Sewers</li>
 			<li>Karthdar</li>
-			<li>Khenarthi's Roost</li>
 			<li>Laeloria Ruins</li>
 			<li>Long Coast</li>
 			<li>Longsnout Cave</li>
@@ -133,6 +132,7 @@
 			<li>The Underroot</li>
 			<li>Woodhearth</li>
 			</ul>
+		<li>Khenarthi's Roost</li>
 		<li class='gmMapListHeader'>Malabaltor</li>
 			<ul>
 			<li>Abamath</li>
