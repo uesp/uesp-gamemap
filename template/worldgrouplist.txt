@@ -45,7 +45,6 @@
 			<li>Vulkhel Guard</li>
 			<li>Wansalen</li>
 			</ul>
-		<li>Balfoyen</li>
 		<li class='gmMapListHeader'>Grahtwood</li>
 			<ul>
 			<li>Boneorchard</li>
@@ -265,7 +264,7 @@
 			<li>Bangkorai</li>
 			<li>Bangkorai Garrison l</li>
 			<li>Blackheart Haven Area 1</li>
-			<li>Blackheart Hven Area 2</li>
+			<li>Blackheart Haven Area 2</li>
 			<li>Blackheart Haven Area 3</li>
 			<li>Blackheart Haven Area 4</li>
 			<li>Bloodmatron's Crypt Group</li>
@@ -296,7 +295,6 @@
 			<ul>
 			<li>Aldcroft</li>
 			<li>Angof's Chambers</li>
-			<li>Badmans Cave</li>
 			<li>Badmans Cave</li>
 			<li>Badman's End</li>
 			<li>Badman's Start</li>
