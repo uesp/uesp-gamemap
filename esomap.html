@@ -83,7 +83,11 @@
 				71 : "Ruin",
 				72 : "Sewer",
 				73 : "Tower",
-				74 : "Town"
+				74 : "Town",
+				75 : "Skyshard",
+				76 : "Lore Book",
+				77 : "Quest",
+				78 : "Quest Door"
 		};
 		
 		var g_GameMap = null;
@@ -94,7 +98,7 @@
 				wikiUrl: "http://www.uesp.net/wiki/",
 				mapUrl : "http://content3.uesp.net/testmap1/esomap.html",
 				missingMapTile:  "http://maps.uesp.net/esomap/blacknulltile.jpg",
-				iconPath: "icons-eso/",
+				iconPath: "icons/",
 				wikiNamespace: "ESO",
 				iconTypeMap: esoIconMap,
 				gamePosX1: 0,
@@ -175,7 +179,7 @@
 			console.log("new world " + newWorld.displayName);
 			console.log(g_GameMap.mapListLastSelectedItem);
 			
-			foundListItem = $('#gmMapList li:contains("' + newWorld.displayName +'")').not('.gmMapListHeader');
+			foundListItem = $('#gmMapList li:contains(">' + newWorld.displayName +'"<)').not('.gmMapListHeader');
 			console.log(foundListItem);
 			
 			if (foundListItem != null)
