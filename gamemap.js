@@ -1164,7 +1164,7 @@ uesp.gamemap.Map.prototype.onMouseMove = function(event)
 	}
 	else if (self.currentEditMode == 'edithandles')
 	{
-		self.onPathMouseMove(event);
+		//self.currentEditLocation.onPathMouseMove(event);
 	}
 	
 }
