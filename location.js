@@ -200,14 +200,20 @@ uesp.gamemap.Location.prototype.shiftElements = function (shiftX, shiftY)
 }
 
 
-uesp.gamemap.Location.prototype.onLabelClick = function()
+uesp.gamemap.Location.prototype.onLabelClick = function(event)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Label Click");
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Label Click", event);
+	
+	if (event.shiftKey && this.parentMap.canEdit())
+	{
+		this.useEditPopup = true;
+	}
+	
 	this.togglePopup();
 }
 
 
-uesp.gamemap.Location.prototype.onLabelDblClick = function()
+uesp.gamemap.Location.prototype.onLabelDblClick = function(event)
 {
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Label Double-Click");
 	
@@ -230,14 +236,14 @@ uesp.gamemap.Location.prototype.onLabelDblClick = function()
 uesp.gamemap.Location.prototype.onLabelClickFunction = function()
 {
 	var self = this;
-	return function() { self.onLabelClick(); };
+	return function(e) { self.onLabelClick(e); };
 }
 
 
 uesp.gamemap.Location.prototype.onLabelDblClickFunction = function()
 {
 	var self = this;
-	return function() { self.onLabelDblClick(); }
+	return function(e) { self.onLabelDblClick(e); }
 }
 
 
@@ -1548,7 +1554,10 @@ uesp.gamemap.Location.prototype.onPathClick = function (event)
 		else if (!this.useEditPopup && this.destinationId > 0 && this.parentMap.jumpToDestinationOnClick) 
 			this.onJumpToDestination();
 		else
+		{
+			this.useEditPopup = false;
 			this.togglePopup();
+		}
 	}
 	
 	return false;
