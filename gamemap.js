@@ -153,7 +153,6 @@ uesp.gamemap.Map.prototype.createMapList = function ()
 	
 	$('#gmMapListAlphaSelect').change(function(e) {
 		var result = parseInt(this.options[this.selectedIndex].value);
-		console.log(result);
 		self.changeWorld(result);
 	});
 	

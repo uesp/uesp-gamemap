@@ -176,11 +176,20 @@
 			// TODO: Move into Map class
 		function onWorldChanged(newWorld)
 		{
-			console.log("new world " + newWorld.displayName);
-			console.log(g_GameMap.mapListLastSelectedItem);
+			foundListItems = $('#gmMapList li:contains("' + newWorld.displayName +'")').not('.gmMapListHeader');
 			
-			foundListItem = $('#gmMapList li:contains(">' + newWorld.displayName +'"<)').not('.gmMapListHeader');
-			console.log(foundListItem);
+			var foundListItem = null;
+			var minTextLength = 1000;
+			
+			foundListItems.each(function( index ) {
+				textLen = $(this).text().length;
+				
+				if (textLen < minTextLength)
+				{
+					minTextLength = textLen;
+					foundListItem = $(this);
+				}
+			});
 			
 			if (foundListItem != null)
 			{
@@ -191,14 +200,6 @@
 			}
 			
 			$('#gmMapListAlphaSelect').val(newWorld.id);
-			//foundListItem = $('#gmMapListAlphaSelect option:contains("' + newWorld.displayName + '")')
-			//console.log(foundListItem);
-			
-			//if (foundListItem != null)
-			//{
-				//foundListItem.prop('selected', true);
-				//$('#gmMapListAlphaSelect').val(newWorld.id);
-			//}
 		}
 		
 		
