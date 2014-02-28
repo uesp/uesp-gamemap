@@ -262,7 +262,7 @@ class GameMap
 	
 	public function doCreateTables ()
 	{
-		$result = $this->initDatabase();
+		$result = $this->initDatabaseWrite();
 		if (!$result) return false;
 		
 		$result = $this->createTables();
