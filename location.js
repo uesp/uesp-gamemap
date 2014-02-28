@@ -409,6 +409,18 @@ uesp.gamemap.Location.prototype.togglePopup = function ()
 	{
 		$(this.popupElement).hide();
 	}
+	else if (this.useEditPopup)
+	{
+		if (this.popupElement.find('.gmMapEditPopup').length == 0)
+		{
+			this.popupElement.remove();
+			this.popupElement = null;
+			return this.updatePopup();
+		}
+		
+		$(this.popupElement).show();
+		this.updatePopupOffset();
+	}
 	else
 	{
 		$(this.popupElement).show();
