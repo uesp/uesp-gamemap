@@ -73,6 +73,7 @@
 			<li>Haven</li>
 			<li>Haven Sewers</li>
 			<li>Karthdar</li>
+			<li>Khenarthi's Roost</li>
 			<li>Laeloria Ruins</li>
 			<li>Long Coast</li>
 			<li>Longsnout Cave</li>
@@ -115,9 +116,9 @@
 			<li>Hectahame Grotto Valenheart</li>
 			<li>Hollow Lair</li>
 			<li>Ilmyris</li>
-			<li>Imperialunderground</li>
-			<li>Imperialundergroundpart1</li>
-			<li>Imperialundergroundpart2</li>
+			<li>Imperial Underground</li>
+			<li>Imperial Underground Part 1</li>
+			<li>Imperial Underground Part 2</li>
 			<li>Isles of Torment</li>
 			<li>Marbruk</li>
 			<li>Narilnagaia</li>
@@ -127,7 +128,7 @@
 			<li>Serpents Grotto</li>
 			<li>Shademisten Clave</li>
 			<li>Shrouded Hollow Area 1</li>
-			<li>Shroudedh Hllow Area 2</li>
+			<li>Shrouded Hollow Area 2</li>
 			<li>Silatar</li>
 			<li>The Underroot</li>
 			<li>Woodhearth</li>
@@ -137,7 +138,7 @@
 			<li>Abamath</li>
 			<li>Baandaritrading Post</li>
 			<li>Blackvine Ruins</li>
-			<li>Blackvine Ruinsl</li>
+			<li>Blackvine Ruins I</li>
 			<li>Broken Coast</li>
 			<li>Crimson Cove</li>
 			<li>Deadman's Drop</li>
@@ -246,7 +247,7 @@
 			<li>Kozanset</li>
 			<li>Kulatimines-A</li>
 			<li>Kulatimines-B</li>
-			<li>Lostcity</li>
+			<li>Lost City</li>
 			<li>Myrkwasa</li>
 			<li>Salasen</li>
 			<li>Sandblown Mine</li>
@@ -371,6 +372,7 @@
 			<li>Bonesnap Ruins</li>
 			<li>Bonesnapruin's Secret</li>
 			<li>Farangel's Delve</li>
+			<li>Gavaudon</li>
 			<li>Godrun's Dream</li>
 			<li>Koeglin Mine</li>
 			<li>Koeglin Village</li>
@@ -386,11 +388,8 @@
 		</ul>
 	<li class='gmMapListHeader'>Ebonheart</li>
 		<ul>
-		<li class='gmMapListHeader'>Bleakrock</li>
-			<ul>
-			<li>Bleakrock</li>
-			<li>Bleakrock Village</li>
-			</ul>
+		<li>Bleakrock</li>
+		<li>Bleakrock Village</li>
 		<li class='gmMapListHeader'>Deshaan</li>
 			<ul>
 			<li>Bthanual</li>
@@ -491,10 +490,9 @@
 			<ul>
 			<li>Apocryphas Gate</li>
 			<li>Ash Mountain</li>
-			<li>Balfoyen</li>
-			<li>Bleakrock</li>
+			<li>Bal Foyen</li>
 			<li>Coralheart Chamber</li>
-			<li>Crowswood</li>
+			<li>Crow's Wood</li>
 			<li>Daenseeth</li>
 			<li>Davons Watch</li>
 			<li>Davon's Watch Crypt</li>
@@ -515,7 +513,7 @@
 			<li>Orkeys Hollow</li>
 			<li>Pagglers Hollow</li>
 			<li>Sheogorath's Tongue</li>
-			<li>Slavepits</li>
+			<li>Slave Pits</li>
 			<li>Softloam Cavern</li>
 			<li>Stonefalls</li>
 			<li>Tormented Spire</li>
@@ -616,15 +614,8 @@
 		<li>Topal Island</li>
 		<li>Balfiera Island</li>
 		<li>Blackforge</li>
-		<li>Bonesnap Ruins</li>
 		<li>Canulus Refuge</li>
 		<li>Craglorn</li>
-		<li>Crow's Wood</li>
-		<li>Crypt of Hearts</li>
-		<li>Eldenhollow A</li>
-		<li>Eldenhollow B</li>
-		<li>Farwatch Tower</li>
-		<li>Fungal Grotto</li>
 		<li class='gmMapListHeader'>Guildmaps</li>
 			<ul>
 			<li>Abagarlas</li>
@@ -643,8 +634,6 @@
 			<li>The Earthforge</li>
 			<li>The Earthforge Public</li>
 			</ul>
-		<li>Halcyon Lake</li>
-		<li>Lostcity</li>
 		<li class='gmMapListHeader'>Main</li>
 			<ul>
 			<li>Castle of the Worm 1</li>
@@ -664,15 +653,12 @@
 			<li>Sancretor 6</li>
 			<li>Sancretor 7</li>
 			<li>Sancretor 8</li>
-			<li>Slavepits</li>
 			<li>Valley of Blades 1</li>
 			<li>Valley of Blades 2</li>
 			<li>Vision of the Companions</li>
 			</ul>
-		<li>Obsidian Scar</li>
 		<li>Overhead</li>
 		<li>Pvetest</li>
-		<li>Razak's Wheel</li>
 		<li>Silaseli Ruins</li>
 		<li>Towers</li>
 		<li>Vog</li>
