@@ -828,6 +828,11 @@ uesp.gamemap.Map.prototype.onCancelEditMode = function(event)
 	{
 		this.hideWorldEditForm();
 	}
+	else if (this.currentEditMode == 'addpath' || this.currentEditMode == 'addarea')
+	{
+		delete this.locations[this.currentEditLocation.id];
+		this.currentEditLocation.removeElements();
+	}
 	
 	this.currentEditLocation = null;
 	this.currentEditPathPoints = null;
