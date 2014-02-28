@@ -196,41 +196,38 @@
 		</ul>
 	<li class='gmMapListHeader'>Cyrodiil</li>
 		<ul>
-		<li class='gmMapListHeader'>Cyrodiil</li>
-			<ul>
-			<li>Ava Aldmeri</li>
-			<li>Ava Daggerfall</li>
-			<li>Ava Ebonheart</li>
-			<li>Ava Whole</li>
-			<li>Bloodmayne Cave</li>
-			<li>Breakneck Cave</li>
-			<li>Capstone Cave</li>
-			<li>Crackedwood Cave</li>
-			<li>Eastelsweyr Gate</li>
-			<li>Echo Cave</li>
-			<li>Haynote Cave</li>
-			<li>Imperial Sewers</li>
-			<li>Kingscrest</li>
-			<li>Lipsandtarn</li>
-			<li>Muckvalley Cavern</li>
-			<li>Newt Cave</li>
-			<li>Nisin Cave</li>
-			<li>Northhighrock Gate</li>
-			<li>Northmorrow Gate</li>
-			<li>Pothole Cavern</li>
-			<li>Quickwater Cave</li>
-			<li>Quickwater Depths</li>
-			<li>Redruby Cave</li>
-			<li>Serpenthollow Cave</li>
-			<li>Southhighrock Gate</li>
-			<li>Southmorrow Gate</li>
-			<li>Toadstool Hollow</li>
-			<li>Toadstool Hollow Lower</li>
-			<li>Underpall Cave</li>
-			<li>Vahtacen</li>
-			<li>Westelsweyr Gate</li>
-			<li>Whitefall Mountain</li>
-			</ul>
+		<li>Ava Aldmeri</li>
+		<li>Ava Daggerfall</li>
+		<li>Ava Ebonheart</li>
+		<li>Ava Whole</li>
+		<li>Bloodmayne Cave</li>
+		<li>Breakneck Cave</li>
+		<li>Capstone Cave</li>
+		<li>Crackedwood Cave</li>
+		<li>Eastelsweyr Gate</li>
+		<li>Echo Cave</li>
+		<li>Haynote Cave</li>
+		<li>Imperial Sewers</li>
+		<li>Kingscrest</li>
+		<li>Lipsandtarn</li>
+		<li>Muckvalley Cavern</li>
+		<li>Newt Cave</li>
+		<li>Nisin Cave</li>
+		<li>Northhighrock Gate</li>
+		<li>Northmorrow Gate</li>
+		<li>Pothole Cavern</li>
+		<li>Quickwater Cave</li>
+		<li>Quickwater Depths</li>
+		<li>Redruby Cave</li>
+		<li>Serpenthollow Cave</li>
+		<li>Southhighrock Gate</li>
+		<li>Southmorrow Gate</li>
+		<li>Toadstool Hollow</li>
+		<li>Toadstool Hollow Lower</li>
+		<li>Underpall Cave</li>
+		<li>Vahtacen</li>
+		<li>Westelsweyr Gate</li>
+		<li>Whitefall Mountain</li>
 		</ul>
 	<li class='gmMapListHeader'>Daggerfall</li>
 		<ul>
