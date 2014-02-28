@@ -452,6 +452,14 @@ uesp.gamemap.Location.prototype.onCloseEditPopup = function (event)
 	$(this.popupElement).remove();
 	this.popupElement = null;
 	this.useEditPopup = false;
+	
+		// Special case of a new location that hasn't been saved 
+	if (this.id <= 0)
+	{
+		delete this.parentMap.locations[this.id];
+		this.removeElements();
+	}
+
 }
 
 
