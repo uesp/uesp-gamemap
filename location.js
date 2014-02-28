@@ -753,7 +753,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 						"<div class='gmMapEditPopupTitle'>Editing Location</div>" + 
 						"<div class='gmMapPopupClose'><img src='images/cancelicon.png' width='12' height='12' /></div><br />" +
 						"<div class='gmMapEditPopupLabel'>Name</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='name' value='{name}' size='24' maxlength='100' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name=\"name\" value=\"{name}\" size='24' maxlength='100' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Enabled</div>" +
 							"<input type='checkbox' class='gmMapEditPopupInput' name='visible' value='1' />" +
 							pathCheckbox + 
@@ -762,9 +762,9 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 							"<input type='text' class='gmMapEditPopupInput' name='x' value='{x}' size='8' maxlength='10' /> " +
 							"<input type='text' class='gmMapEditPopupInput' name='y' value='{y}' size='8' maxlength='10' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Wiki Page</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='wikiPage' value='{wikiPage}' size='24' maxlength='100' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name=\"wikiPage\" value=\"{wikiPage}\" size='24' maxlength='100' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Description</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='description' value='{description}' size='24' maxlength='500' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name=\"description\" value=\"{description}\" size='24' maxlength='500' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Display Level</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='displayLevel' value='{displayLevel}' size='8' maxlength='10' />" + 
 							"<div class='gmMapEditPopupCurrentZoom'>Current Zoom = </div> <br />" +

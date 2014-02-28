@@ -1971,19 +1971,19 @@ uesp.gamemap.Map.prototype.showWorldEditForm = function()
 						"<div class='gmMapEditPopupTitle'>Editing World</div>" +
 						"<div class='gmMapPopupClose'><img src='images/cancelicon.png' width='12' height='12' /></div><br />" +
 						"<div class='gmMapEditPopupLabel'>Name</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='name' value='{name}' size='24' maxlength='100' readonly /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='name' value=\"{name}\" size='24' maxlength='100' readonly /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Enabled</div>" +
 							"<input type='checkbox' class='gmMapEditPopupInput' name='enabled' value='1' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Parent World ID</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='parentId' value='{parentId}' size='8'  maxlength='10' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Display Name</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='displayName' value='{displayName}' size='24'  maxlength='100' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name=\"displayName\" value=\"{displayName}\" size='24'  maxlength='100' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Wiki Page</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='wikiPage' value='{wikiPage}' size='24'  maxlength='100' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name=\"wikiPage\" value=\"{wikiPage}\" size='24'  maxlength='100' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Description</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='description' value='{description}' size='24'  maxlength='500' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name=\"description\" value=\"{description}\" size='24'  maxlength='500' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Missing Tile</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='missingMapTile' value='{missingMapTile}' size='24'  maxlength='100' readonly /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name=\"missingMapTile\" value=\"{missingMapTile}\" size='24'  maxlength='100' readonly /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Zoom Min/Max</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='minZoom' value='{minZoom}' size='8'  maxlength='10' /> &nbsp; " +
 							"<input type='text' class='gmMapEditPopupInput' name='maxZoom' value='{maxZoom}' size='8'  maxlength='10' /> <br />" +
