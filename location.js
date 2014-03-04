@@ -781,18 +781,6 @@ uesp.gamemap.Location.prototype.onUpdateCurrentZoomEditPopup = function (event)
 uesp.gamemap.Location.prototype.updateEditPopup = function ()
 {
 	var popupDiv;
-	var iconTypeInput;
-	
-	if (this.parentMap.mapOptions.iconTypeMap == null)
-	{
-		iconTypeInput = "<input type='text' class='gmMapEditPopupInput' name='iconType' value='{iconType}' size='8' />";
-	}
-	else
-	{
-		iconTypeInput = "<select class='gmMapEditPopupInput' name='iconType'>" +
-						this.getIconTypeSelectOptions(this.iconType) + "</select>";
-	}
-	
 	var pathContent = '';
 	var pathButtons = '';
 	var pathCheckbox = '';
@@ -838,9 +826,9 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 						"<div class='gmMapEditPopupLabel'>Display Level</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='displayLevel' value='{displayLevel}' size='8' maxlength='10' />" + 
 							"<div class='gmMapEditPopupCurrentZoom'>Current Zoom = </div> <br />" +
-						"<div class='gmMapEditPopupLabel'>Icon</div>" +
-							iconTypeInput +
-							"<div class='gmMapEditPopupIconPreview'></div>" + 
+						"<div class='gmMapEditPopupLabel'>Icon Type</div>" +
+							this.getIconTypeCustomList(this.iconType) + 
+							"<div class='gmMapEditPopupIconPreview'></div>" +
 							"<br />" +
 						"<div class='gmMapEditPopupLabel'>Label Position</div>" +
 							"<select class='gmMapEditPopupInput' name='displayData.labelPos'>" +
@@ -884,6 +872,9 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	
 	popupHtml = uesp.template(popupContent, this);
 	$(popupDiv).html(popupHtml);
+	
+	this.createIconTypeCustomListEvents();
+	this.setIconTypeCustomListValue(this.iconType);
 	
 	$(popupDiv).find('input[name=visible]').prop('checked', this.visible);
 	$(popupDiv).find('input[name=isArea]').prop('checked', this.locType == uesp.gamemap.LOCTYPE_AREA);
@@ -1775,6 +1766,245 @@ uesp.gamemap.Location.prototype.getLabelPosSelectOptions = function (selectedVal
 }
 
 
+uesp.gamemap.Location.prototype.hideIconTypeCustomList = function()
+{
+	var iconTypeList = this.popupElement.find('.gmMapIconTypeList');
+	var iconTypeListHeader = this.popupElement.find('.gmMapIconTypeListHeader');
+	
+	if (iconTypeList.length == 0) return false;
+	
+	iconTypeListHeader.removeClass('gmMapIconTypeListHeaderOpen');
+	iconTypeList.hide();
+	
+	return true;
+}
+
+
+uesp.gamemap.Location.prototype.showIconTypeCustomList = function()
+{
+	var iconTypeList = this.popupElement.find('.gmMapIconTypeList');
+	var iconTypeListHeader = this.popupElement.find('.gmMapIconTypeListHeader');
+	
+	if (iconTypeList.length == 0) return false;
+	
+	iconTypeListHeader.addClass('gmMapIconTypeListHeaderOpen');
+		
+	iconTypeList.show().focus();
+}
+
+
+uesp.gamemap.Location.prototype.setIconTypeCustomListValue = function(iconType)
+{
+	listHeader= this.popupElement.find('.gmMapIconTypeListHeader');
+	if (listHeader == null) return;
+	
+	if (this.parentMap.mapOptions.iconTypeMap == null)
+	{
+		listHeader.text(iconType);
+		return;
+	}
+	
+	if (iconType <= 0)
+	{
+		iconLabel = "None";
+	}
+	else
+	{
+		iconLabel = this.parentMap.mapOptions.iconTypeMap[iconType];
+	}
+	
+	listHeader.text(iconLabel + " (" + iconType + ")");
+	this.popupElement.find('.gmMapIconTypeListContainer input[name="iconType"]').val(iconType);
+	this.updateEditPopupIconPreview(iconType);
+}
+
+
+uesp.gamemap.Location.prototype.selectIconTypeCustomList = function(iconType)
+{
+	var iconTypeList = this.popupElement.find('.gmMapIconTypeList');
+	
+	iconTypeList.find('.gmMapIconTypeLabel').removeClass('gmMapIconTypeLabelSelected');
+	iconTypeList.find('.gmMapIconTypeValue:contains("' + iconType + '")').first().next().addClass('gmMapIconTypeLabelSelected');
+}
+
+
+uesp.gamemap.Location.prototype.changeSelectIconTypeCustomList = function(deltaSelect)
+{
+	var $iconTypeList = this.popupElement.find('.gmMapIconTypeList');
+	selectedElement = $iconTypeList.find('.gmMapIconTypeLabelSelected');
+	curElement = selectedElement.parent();
+	
+	while (deltaSelect != 0)
+	{
+		if (deltaSelect < 0)
+		{
+			nextElement = curElement.prev();
+			deltaSelect += 1;
+		}
+		else
+		{
+			nextElement = curElement.next();
+			deltaSelect -= 1;
+		}
+		
+		if (nextElement == null || nextElement.length == 0) break;
+		curElement = nextElement;
+	}
+	
+	selectedElement.removeClass('gmMapIconTypeLabelSelected');
+	curElement.find('.gmMapIconTypeLabel').addClass('gmMapIconTypeLabelSelected');
+	this.scrollIconTypeCustomList();
+}
+
+
+uesp.gamemap.Location.prototype.scrollIconTypeCustomList = function()
+{
+	var iconTypeList = this.popupElement.find('.gmMapIconTypeList');
+	selectedElement = iconTypeList.find('.gmMapIconTypeLabelSelected').first();
+	
+	if (selectedElement == null) 
+	{
+		iconTypeList.scrollTop(0);
+		return;
+	}
+	
+	iconTypeList.scrollTop(selectedElement.offset().top - iconTypeList.offset().top + iconTypeList.scrollTop() - 20);
+}
+
+
+uesp.gamemap.Location.prototype.createIconTypeCustomListEvents = function()
+{
+	var self = this;
+	var iconTypeList = this.popupElement.find('.gmMapIconTypeList');
+	
+	this.popupElement.find('.gmMapIconTypeListHeader').click(function (e) {
+		self.showIconTypeCustomList();
+		self.scrollIconTypeCustomList();
+	});
+	
+	iconTypeList.find('li').mousedown(function (e) {
+		iconType = $(e.target).parents('li').find('.gmMapIconTypeValue').text();
+		self.setIconTypeCustomListValue(iconType);
+		self.selectIconTypeCustomList(iconType);
+		self.hideIconTypeCustomList();
+	});
+	
+	iconTypeList.on('DOMMouseScroll mousewheel', { self: this }, function (event) {
+		self = event.data.self;
+		deltaY = -20;
+		if (event.originalEvent.detail > 0 || event.originalEvent.wheelDelta < 0) deltaY = -deltaY;
+		
+		iconTypeList.scrollTop(iconTypeList.scrollTop() + deltaY);
+		
+		event.preventDefault();
+		return false;
+	});
+	
+	iconTypeList.blur(function (e) {
+		self.hideIconTypeCustomList();
+	});
+	
+	iconTypeList.keydown(function (event) {
+		event.preventDefault();
+		
+		if (isNaN(event.which))
+			charPressed = event.which.toLowerCase();
+		else
+			charPressed = String.fromCharCode(event.which).toLowerCase();
+		
+		if (event.keyCode == 27)	//esc
+		{
+			self.hideIconTypeCustomList();
+		}
+		else if (event.keyCode == 13) //enter
+		{
+			selectedElement = iconTypeList.find('.gmMapIconTypeLabelSelected').first();
+			iconType = selectedElement.prev().text();
+			self.setIconTypeCustomListValue(iconType);
+			self.hideIconTypeCustomList();
+		}
+		else if (event.keyCode == 40) //down
+		{
+			self.changeSelectIconTypeCustomList(1);
+		}
+		else if (event.keyCode == 38) //up
+		{
+			self.changeSelectIconTypeCustomList(-1);
+		}
+		else if (event.keyCode == 36) //home
+		{
+			self.changeSelectIconTypeCustomList(-1000);
+		}
+		else if (event.keyCode == 35) //end
+		{
+			self.changeSelectIconTypeCustomList(1000);
+		}
+		else if (event.keyCode == 33) //pageup
+		{
+			self.changeSelectIconTypeCustomList(-10);
+		}
+		else if (event.keyCode == 34) //pagedown
+		{
+			self.changeSelectIconTypeCustomList(10);
+		}
+		else if (charPressed >= 'a' && charPressed <= 'z')
+		{
+			var $target = iconTypeList.find('.gmMapIconTypeLabel').filter(function () {
+				return $(this).text()[0].toLowerCase() == charPressed;
+			}).first();
+			
+			if ($target.length == 0) return false;
+			
+			iconTypeList.find('.gmMapIconTypeLabelSelected').removeClass('gmMapIconTypeLabelSelected');
+			$target.addClass('gmMapIconTypeLabelSelected');
+			self.scrollIconTypeCustomList();
+		}
+		
+		return false;
+	});
+}
+
+
+//TODO: Put the custom iconType list into its own class
+uesp.gamemap.Location.prototype.getIconTypeCustomList = function(currentIconType)
+{
+	if (this.parentMap.mapOptions.iconTypeMap == null) return '';
+	
+	var reverseIconTypeMap = { };
+	var sortedIconTypeArray = [ ];
+	
+	for (key in this.parentMap.mapOptions.iconTypeMap)
+	{
+		var keyValue = this.parentMap.mapOptions.iconTypeMap[key];
+		reverseIconTypeMap[keyValue] = key;
+		sortedIconTypeArray.push(keyValue);
+	}
+	
+	sortedIconTypeArray.sort();
+	
+	var output = "<div tabindex='1' class='gmMapIconTypeListContainer'>";
+	output += "<div class='gmMapIconTypeListHeader'></div>"
+	output += "<input type='hidden' name='iconType' value='{iconType}' />";
+	output += "<ul tabindex='1' class='gmMapIconTypeList' style='display: none'>";
+	output += "<li><div class='gmMapIconTypeValue'>0</div><div class='gmMapIconTypeLabel" + (currentIconType == 0 ? ' gmMapIconTypeLabelSelected' : '') + "'> None (0)</div></li>";
+	
+	for (key in sortedIconTypeArray)
+	{
+		iconTypeLabel = sortedIconTypeArray[key];
+		iconType = reverseIconTypeMap[iconTypeLabel];
+		
+		output += "<li><div class='gmMapIconTypeValue'>" + iconType + "</div><div class='gmMapIconTypeLabel" + (currentIconType == iconType ? ' gmMapIconTypeLabelSelected' : '') + "'>" + iconTypeLabel + " (" + iconType + ")"
+		output += "<img src='" + this.parentMap.mapOptions.iconPath + iconType + ".png' />";
+		output += "</div></li>";
+	}
+	
+	output += "</ul></div>"
+	return output;
+	
+}
+
+
+//TODO: Remove when no longer needed
 uesp.gamemap.Location.prototype.getIconTypeSelectOptions = function (selectedValue)
 {
 	if (this.parentMap.mapOptions.iconTypeMap == null) return '';

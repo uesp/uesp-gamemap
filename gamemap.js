@@ -1181,6 +1181,9 @@ uesp.gamemap.Map.prototype.onKeyDown = function(event)
 	{
 		self.currentEditLocation.onPathEditHandlesKeyDown(event);
 	}
+	else
+	{
+	}
 }
 
 
