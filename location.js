@@ -207,9 +207,16 @@ uesp.gamemap.Location.prototype.onLabelClick = function(event)
 	if (event.shiftKey && this.parentMap.canEdit())
 	{
 		this.useEditPopup = true;
+		this.togglePopup();
 	}
-	
-	this.togglePopup();
+	else if (!this.useEditPopup && this.destinationId > 0 && this.parentMap.jumpToDestinationOnClick)
+	{
+		this.onJumpToDestination();
+	}
+	else
+	{
+		this.togglePopup();
+	}
 }
 
 
@@ -1563,8 +1570,10 @@ uesp.gamemap.Location.prototype.onPathClick = function (event)
 			this.useEditPopup = true;
 			this.togglePopup();
 		}
-		else if (!this.useEditPopup && this.destinationId > 0 && this.parentMap.jumpToDestinationOnClick) 
+		else if (!this.useEditPopup && this.destinationId > 0 && this.parentMap.jumpToDestinationOnClick)
+		{
 			this.onJumpToDestination();
+		}
 		else
 		{
 			this.useEditPopup = false;

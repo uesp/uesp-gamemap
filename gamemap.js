@@ -65,6 +65,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.checkTilesOnDrag = true;
 	
 	this.jumpToDestinationOnClick = true;
+	this.openPopupOnJump = false;
 	
 		// This just controls the client-side editing abilities.
 		// All security for writes is handled on the server side.
@@ -675,7 +676,7 @@ uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
 	
 	this.setMapState(newState);
 	
-	if (destLoc.displayData.labelPos != 0 || destLoc.iconType != 0) destLoc.showPopup();
+	if (this.openPopupOnJump && (destLoc.displayData.labelPos != 0 || destLoc.iconType != 0)) destLoc.showPopup();
 }
 
 
