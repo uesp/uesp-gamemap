@@ -46,6 +46,7 @@ uesp.gamemap.Location = function(parentMap)
 	this.iconElement  = null;
 	this.popupElement = null;
 	this.pathElement  = null;
+	this.tooltipElement = null;
 	
 	this.offsetLeft = 0;
 	this.offsetTop  = 0;
@@ -111,6 +112,7 @@ uesp.gamemap.Location.prototype.hideElements = function (duration)
 	if ( !(this.iconElement  == null)) $(this.iconElement).hide(duration);
 	if ( !(this.pathElement  == null)) $(this.pathElement).hide(duration);
 	if ( !(this.popupElement == null)) $(this.popupElement).hide(duration);
+	if ( !(this.tooltipElement == null)) $(this.tooltipElement).hide(duration);
 }
 
 
@@ -147,11 +149,13 @@ uesp.gamemap.Location.prototype.removeElements = function ()
 	if ( !(this.iconElement  == null)) $(this.iconElement).remove();
 	if ( !(this.popupElement == null)) $(this.popupElement).remove();
 	if ( !(this.pathElement  == null)) $(this.pathElement).remove();
+	if ( !(this.tooltipElement  == null)) $(this.tooltipElement).remove();
 	
 	this.labelElement = null;
 	this.iconElement  = null;
 	this.popupElement = null;
 	this.pathElement  = null;
+	this.tooltipElement = null;
 }
 
 
@@ -192,6 +196,16 @@ uesp.gamemap.Location.prototype.shiftElements = function (shiftX, shiftY)
 		curOffset = $(this.pathElement).offset();
 	
 		$(this.pathElement).offset({
+			left: curOffset.left - shiftX,
+			top : curOffset.top  - shiftY
+		});
+	}
+	
+	if ( !(this.tooltipElement == null))
+	{
+		curOffset = $(this.tooltipElement).offset();
+	
+		$(this.tooltipElement).offset({
 			left: curOffset.left - shiftX,
 			top : curOffset.top  - shiftY
 		});
@@ -244,6 +258,20 @@ uesp.gamemap.Location.prototype.onLabelClickFunction = function()
 {
 	var self = this;
 	return function(e) { self.onLabelClick(e); };
+}
+
+
+uesp.gamemap.Location.prototype.onLabelMouseOverFunction = function()
+{
+	var self = this;
+	return function(e) { self.onLabelMouseOver(e); };
+}
+
+
+uesp.gamemap.Location.prototype.onLabelMouseOutFunction = function()
+{
+	var self = this;
+	return function(e) { self.onLabelMouseOut(e); };
 }
 
 
@@ -380,6 +408,8 @@ uesp.gamemap.Location.prototype.updateIcon = function ()
 			.attr('src', imageURL)
 			.click(this.onLabelClickFunction())
 			.dblclick(this.onLabelDblClickFunction())
+			.mouseover(this.onLabelMouseOverFunction())
+			.mouseout(this.onLabelMouseOutFunction())
 			.attr('unselectable', 'on')
 			.css('user-select', 'none')
 			.on('selectstart', false)
@@ -397,6 +427,8 @@ uesp.gamemap.Location.prototype.updateIcon = function ()
 uesp.gamemap.Location.prototype.showPopup = function ()
 {
 	if (this.popupElement == null) this.updatePopup();
+	
+	this.hideTooltip();
 	this.popupElement.show();
 }
 
@@ -1160,6 +1192,7 @@ uesp.gamemap.Location.prototype.updateOffset = function (x, y, animate)
 	this.updateIconOffset();
 	this.updatePopupOffset();
 	this.updatePathOffset();
+	this.updateTooltipOffset();
 }
 
 
@@ -1298,6 +1331,8 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 		co.lineWidth = this.displayData.hover.lineWidth / avgScale;
 		co.strokeStyle = this.displayData.hover.strokeStyle;
 		co.stroke();
+		
+		this.onLabelMouseOver(event);
 	}
 	else
 	{
@@ -1310,6 +1345,8 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 		co.lineWidth = this.displayData.lineWidth / avgScale;
 		co.strokeStyle = this.displayData.strokeStyle;
 		co.stroke();
+		
+		this.onLabelMouseOut(event);
 	}
 }
 
@@ -1518,6 +1555,8 @@ uesp.gamemap.Location.prototype.onPathMouseOut = function (event)
 	co.lineWidth = this.displayData.lineWidth / avgScale;
 	co.strokeStyle = this.displayData.strokeStyle;
 	co.stroke();
+	
+	this.onLabelMouseOut(event);
 }
 
 
@@ -1775,6 +1814,102 @@ uesp.gamemap.Location.prototype.convertIconTypeToString = function (iconType)
 	
 	if (iconType in this.parentMap.mapOptions.iconTypeMap) return this.parentMap.mapOptions.iconTypeMap[iconType];
 	return iconType.toString();
+}
+
+
+uesp.gamemap.Location.prototype.isPopupOpen = function ()
+{
+	if (this.popupElement == null) return false;
+	return this.popupElement.is(":visible");
+}
+
+
+uesp.gamemap.Location.prototype.shouldShowTooltip = function ()
+{
+	if (this.isPopupOpen()) return false;
+	if (this.displayData.labelPos != 0) return false;
+	
+	return true;
+}
+
+
+uesp.gamemap.Location.prototype.onTooltipMouseMove = function (event)
+{
+	if (this.pathElement != null)
+	{
+		var bottomEvent = new $.Event("mousemove");
+		bottomEvent.pageX = event.pageX;
+		bottomEvent.pageY = event.pageY;
+		
+		this.pathElement.trigger(bottomEvent);
+		event.preventDefault();
+	}
+}
+
+
+uesp.gamemap.Location.prototype.updateTooltip = function ()
+{
+	if (this.tooltipElement == null)
+	{
+		var self = this;
+		
+		this.tooltipElement = $("<div />")
+									.addClass('gmLocToolTip')
+									.css('display', 'none')
+									.mousemove(function(e) { self.onTooltipMouseMove(e); })
+									.appendTo(this.parentMap.mapRoot);
+	}
+	
+	this.updateTooltipOffset();
+	this.tooltipElement.text(this.name);
+	
+	return true;
+}
+
+
+uesp.gamemap.Location.prototype.updateTooltipOffset = function ()
+{
+	if (this.tooltipElement == null) return;
+	$(this.tooltipElement).offset( { left: this.offsetLeft + 8, top: this.offsetTop - 16 });
+}
+
+
+uesp.gamemap.Location.prototype.showTooltip = function ()
+{
+	this.updateTooltip();
+	this.tooltipElement.show();
+	this.updateTooltipOffset();
+}
+
+uesp.gamemap.Location.prototype.hideTooltip = function ()
+{
+	if (this.tooltipElement == null) return;
+	this.tooltipElement.hide();
+}
+
+
+uesp.gamemap.Location.prototype.removetooltip = function ()
+{
+	if (this.tooltipElement == null) return;
+	
+	this.tooltipElement.remove();
+	this.tooltipElement = null;
+}
+
+
+uesp.gamemap.Location.prototype.onLabelMouseOver = function (event)
+{
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, 'onLabelMouseOver');
+	
+	if (this.shouldShowTooltip()) this.showTooltip();
+}
+
+
+uesp.gamemap.Location.prototype.onLabelMouseOut = function (event)
+{
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, 'onLabelMouseOut');
+	
+	this.hideTooltip();
 }
 
 
