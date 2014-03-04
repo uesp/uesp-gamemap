@@ -680,6 +680,10 @@ uesp.gamemap.Location.prototype.onSavedLocation = function (data)
 	{
 		this.removeElements();
 	}
+	else if (this.displayLevel > this.parentMap.zoomLevel)
+	{
+		this.removeElements();
+	}
 	
 	return true;
 }
