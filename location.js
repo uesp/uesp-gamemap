@@ -728,9 +728,14 @@ uesp.gamemap.Location.prototype.updateEditPopupIconPreview = function ()
 	iconTypeElement = $(this.popupElement).find("input[name=iconType]");
 	if (iconTypeElement == null || iconTypeElement.length == 0) iconTypeElement = $(this.popupElement).find("select[name=iconType]");
 	
-	imageURL = this.parentMap.mapOptions.iconPath + parseInt(iconTypeElement.val()) + ".png";
+	iconType = parseInt(iconTypeElement.val());
+	imageURL = this.parentMap.mapOptions.iconPath + iconType + ".png";
 	
-	iconPreview.css('background-image', 'url(' + imageURL + ')');
+	if (iconType <= 0)
+		iconPreview.css('background-image', '');
+	else
+		iconPreview.css('background-image', 'url(' + imageURL + ')');
+	
 	return true;
 }
 
