@@ -1698,9 +1698,9 @@ uesp.gamemap.Location.LABEL_POSITIONS = {
 	4 : 'Middle Left',
 	5 : 'Center',
 	6 : 'Middle Right',
-	7 : 'Bottom Right',
+	7 : 'Bottom Left',
 	8 : 'Bottom Center',
-	9 : 'Bottom Left'
+	9 : 'Bottom Right'
 };
 
 
