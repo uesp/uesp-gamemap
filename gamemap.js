@@ -2040,7 +2040,7 @@ uesp.gamemap.Map.prototype.showWorldEditForm = function()
 }
 
 
-uesp.gamemap.Location.prototype.enableWorldPopupEditButtons = function (enable)
+uesp.gamemap.Map.prototype.enableWorldPopupEditButtons = function (enable)
 {
 	if (this.worldEditPopup == null) return;
 	this.worldEditPopup.find('input[type="button"]').attr('disabled', enable ? null : 'disabled');
