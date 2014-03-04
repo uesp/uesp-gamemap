@@ -2040,6 +2040,14 @@ uesp.gamemap.Map.prototype.showWorldEditForm = function()
 }
 
 
+uesp.gamemap.Location.prototype.enableWorldPopupEditButtons = function (enable)
+{
+	if (this.worldEditPopup == null) return;
+	this.worldEditPopup.find('input[type="button"]').attr('disabled', enable ? null : 'disabled');
+}
+
+
+
 uesp.gamemap.Map.prototype.setWorldPopupEditNotice = function (Msg, MsgType)
 {
 	if (this.worldEditPopup == null) return;
@@ -2080,6 +2088,7 @@ uesp.gamemap.Map.prototype.onSaveWorldEditPopup = function(event)
 	if (this.worldEditPopup == null) return false;
 	
 	this.setWorldPopupEditNotice('Saving world...');
+	this.enableWorldPopupEditButtons(false);
 	
 	this.getWorldFormData();
 	
@@ -2113,12 +2122,14 @@ uesp.gamemap.Map.prototype.onSavedWorld = function (data)
 	if (!(data.isError == null) || data.success === false)
 	{
 		this.setWorldPopupEditNotice('Error saving world data!', 'error');
+		this.enableWorldPopupEditButtons(true);
 		return false;
 	}
 	
 	if (data.newRevisionId != null) this.currentEditWorld.revisionId = data.newRevisionId;
 	
 	this.setWorldPopupEditNotice('Successfully saved location!');
+	this.enableWorldPopupEditButtons(true);
 	
 	this.hideWorldEditForm();
 	this.removeEditClickWall();
