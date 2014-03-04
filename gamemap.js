@@ -1675,14 +1675,17 @@ uesp.gamemap.Map.prototype.redrawLocations = function()
 {
 	for (key in this.locations)
 	{
-		if (this.locations[key].worldId != this.currentWorldId) continue;
+		var location = this.locations[key];
 		
-		if (this.locations[key].locType >= uesp.gamemap.LOCTYPE_PATH)
+		if (location.worldId != this.currentWorldId) continue;
+		if (location.displayLevel > this.zoomLevel) continue;
+		
+		if (location.locType >= uesp.gamemap.LOCTYPE_PATH)
 		{
-			this.locations[key].updatePathSize(false);
+			location.updatePathSize(false);
 		}
 		
-		this.displayLocation(this.locations[key]);
+		this.displayLocation(location);
 	}
 }
 
