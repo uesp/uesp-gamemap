@@ -512,12 +512,20 @@ uesp.gamemap.Location.prototype.setPopupEditNotice = function (Msg, MsgType)
 }
 
 
+uesp.gamemap.Location.prototype.enablePopupEditButtons = function (enable)
+{
+	if (this.popupElement == null) return;
+	this.popupElement.find('input[type="button"]').attr('disabled', enable ? null : 'disabled');
+}
+
+
 uesp.gamemap.Location.prototype.onSaveEditPopup = function (event)
 {
 	if (!this.parentMap.canEdit()) return false;
 	if (this.popupElement == null) return false;
 	
 	this.setPopupEditNotice('Saving location...');
+	this.enablePopupEditButtons(false);
 	
 	this.getFormData();
 
@@ -656,10 +664,12 @@ uesp.gamemap.Location.prototype.onSavedLocation = function (data)
 	if (!(data.isError == null) || data.success === false)
 	{
 		this.setPopupEditNotice('Error saving location data!', 'error');
+		this.enablePopupEditButtons(true);
 		return false;
 	}
 	
 	this.setPopupEditNotice('Successfully saved location!');
+	this.enablePopupEditButtons(true);
 	
 	if (!(data.newLocId == null))
 	{
