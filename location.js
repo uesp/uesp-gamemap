@@ -329,7 +329,7 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 		case 3:
 			anchorPoint = 'bottomLeft';
 			labelTextAlign = 'left';
-			this.labelOffsetLeft = 8;
+			this.labelOffsetLeft = -8;
 			this.labelOffsetTop  = 26;
 			break;
 		case 4:
@@ -367,7 +367,7 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 		case 9:
 			anchorPoint = 'topLeft';
 			labelTextAlign = 'left';
-			this.labelOffsetLeft = 8;
+			this.labelOffsetLeft = -8;
 			this.labelOffsetTop  = 4;
 			break;
 	}
