@@ -1906,7 +1906,6 @@ uesp.gamemap.Location.prototype.createIconTypeCustomListEvents = function()
 	});
 	
 	listHeader.keydown(function (event) {
-		console.log('gmMapIconTypeHeader onKeyDown');
 		
 		if (isNaN(event.which))
 			charPressed = event.which.toLowerCase();
