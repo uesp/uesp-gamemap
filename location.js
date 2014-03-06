@@ -1876,8 +1876,9 @@ uesp.gamemap.Location.prototype.createIconTypeCustomListEvents = function()
 {
 	var self = this;
 	var iconTypeList = this.popupElement.find('.gmMapIconTypeList');
+	var listHeader = this.popupElement.find('.gmMapIconTypeListHeader');
 	
-	this.popupElement.find('.gmMapIconTypeListHeader').click(function (e) {
+	listHeader.click(function (e) {
 		self.showIconTypeCustomList();
 		self.scrollIconTypeCustomList();
 	});
@@ -1902,6 +1903,31 @@ uesp.gamemap.Location.prototype.createIconTypeCustomListEvents = function()
 	
 	iconTypeList.blur(function (e) {
 		self.hideIconTypeCustomList();
+	});
+	
+	listHeader.keydown(function (event) {
+		console.log('gmMapIconTypeHeader onKeyDown');
+		
+		if (isNaN(event.which))
+			charPressed = event.which.toLowerCase();
+		else
+			charPressed = String.fromCharCode(event.which).toLowerCase();
+		
+		if (event.keyCode == 13 || event.keyCode == 40 || event.keyCode == 38 || event.keyCode == 36 || event.keyCode == 35 || event.keyCode == 33 || event.keyCode == 34)
+		{
+			self.showIconTypeCustomList();
+			self.popupElement.find('.gmMapIconTypeList').trigger(event);
+		}
+		else if (charPressed >= 'a' && charPressed <= 'z')
+		{
+			self.showIconTypeCustomList();
+			self.popupElement.find('.gmMapIconTypeList').trigger(event);
+		}
+		else if (event.keyCode == 27)
+		{
+			self.hideIconTypeCustomList();
+		}
+			
 	});
 	
 	iconTypeList.keydown(function (event) {
@@ -1983,7 +2009,7 @@ uesp.gamemap.Location.prototype.getIconTypeCustomList = function(currentIconType
 	sortedIconTypeArray.sort();
 	
 	var output = "<div tabindex='1' class='gmMapIconTypeListContainer'>";
-	output += "<div class='gmMapIconTypeListHeader'></div>"
+	output += "<div tabindex='0' class='gmMapIconTypeListHeader'></div>"
 	output += "<input type='hidden' name='iconType' value='{iconType}' />";
 	output += "<ul tabindex='1' class='gmMapIconTypeList' style='display: none'>";
 	output += "<li><div class='gmMapIconTypeValue'>0</div><div class='gmMapIconTypeLabel" + (currentIconType == 0 ? ' gmMapIconTypeLabelSelected' : '') + "'> None (0)</div></li>";
