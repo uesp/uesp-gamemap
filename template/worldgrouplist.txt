@@ -5,6 +5,7 @@
 		<li>Aldmeri Dominion</li>
 		<li class='gmMapListHeader'>Auridon</li>
 			<ul>
+			<li>Abandoned Mine</li>
 			<li>Auridon</li>
 			<li>Bewan</li>
 			<li>Bliss Lower</li>
@@ -17,6 +18,7 @@
 			<li>Entila's Folly</li>
 			<li>Ezduiin</li>
 			<li>First Hold</li>
+			<li>Hazik's Lair</li>
 			<li>Innertanzelwil</li>
 			<li>Lluvamir</li>
 			<li>Mehrune's Spite</li>
@@ -24,6 +26,8 @@
 			<li>Ondil</li>
 			<li>Phaer Catacombs</li>
 			<li>Rage</li>
+			<li>Reliquary Vault Bottom</li>
+			<li>Reliquary Vault Top</li>
 			<li>Rictus</li>
 			<li>Saltspray</li>
 			<li>Sky Watch</li>
@@ -128,6 +132,7 @@
 			<li>Shademisten Clave</li>
 			<li>Shrouded Hollow Area 1</li>
 			<li>Shrouded Hollow Area 2</li>
+			<li>Shrouded Hollow Center</li>
 			<li>Silatar</li>
 			<li>The Underroot</li>
 			<li>Woodhearth</li>
@@ -152,6 +157,9 @@
 			<li>Stormwarden Undercroft</li>
 			<li>Stridriver Basin</li>
 			<li>Tempest Island</li>
+			<li>Tempest Island N Cave</li>
+			<li>Tempest Island SE Cave</li>
+			<li>Tempest Island SW Cave</li>
 			<li>The Hunting Grounds</li>
 			<li>Tomb of the Apostates</li>
 			<li>Velynharbor</li>
@@ -168,6 +176,7 @@
 			<li>Fortsphinxmoth</li>
 			<li>Greenhill Catacombs</li>
 			<li>Halls of Ichor</li>
+			<li>Jode Plane</li>
 			<li>Jodeslight</li>
 			<li>Jodewood</li>
 			<li>Khajrawlith</li>
@@ -191,6 +200,7 @@
 			<li>The Vilemanse First Floor</li>
 			<li>The Vilemanse Second Floor</li>
 			<li>Thibaut's Cairn</li>
+			<li>Urcelmos Betrayal</li>
 			<li>Weepingwind Cave</li>
 			</ul>
 		</ul>
@@ -260,7 +270,8 @@
 		<li class='gmMapListHeader'>Bangkorai</li>
 			<ul>
 			<li>Bangkorai</li>
-			<li>Bangkorai Garrison l</li>
+			<li>Bangkorai Garrison 1</li>
+			<li>Bisnensel</li>
 			<li>Blackheart Haven Area 1</li>
 			<li>Blackheart Haven Area 2</li>
 			<li>Blackheart Haven Area 3</li>
@@ -278,6 +289,7 @@
 			<li>Jaggerjaw</li>
 			<li>Mournoth</li>
 			<li>Murcien's Claim</li>
+			<li>Nchuduabthar Threshold</li>
 			<li>Nilata Ruins</li>
 			<li>Onsisbreath Mine</li>
 			<li>Razak's Wheel</li>
@@ -368,6 +380,7 @@
 			<li>Bearclaw Mine</li>
 			<li>Bonesnap Ruins</li>
 			<li>Bonesnapruin's Secret</li>
+			<li>Emeric's Dream</li>
 			<li>Farangel's Delve</li>
 			<li>Gavaudon</li>
 			<li>Godrun's Dream</li>
@@ -386,7 +399,6 @@
 	<li class='gmMapListHeader'>Ebonheart</li>
 		<ul>
 		<li>Bleakrock</li>
-		<li>Bleakrock Village</li>
 		<li class='gmMapListHeader'>Deshaan</li>
 			<ul>
 			<li>Bthanual</li>
@@ -479,6 +491,8 @@
 			<li>Sunscaleen Clave</li>
 			<li>Temple of Sul</li>
 			<li>Tenmaurwolk</li>
+			<li>Tormented Spire Instance</li>
+			<li>Tsanji</li>
 			<li>Venomousfens</li>
 			<li>Vision of the Hist</li>
 			<li>White Rose Prison</li>
@@ -488,6 +502,7 @@
 			<li>Apocryphas Gate</li>
 			<li>Ash Mountain</li>
 			<li>Bal Foyen</li>
+			<li>Bleakrock Village</li>
 			<li>Coralheart Chamber</li>
 			<li>Crow's Wood</li>
 			<li>Daenseeth</li>
@@ -517,8 +532,9 @@
 			<li>Varanis</li>
 			<li>Zabamat</li>
 			</ul>
-		<li class='gmMapListHeader'>Therift</li>
+		<li class='gmMapListHeader'>The Rift</li>
 			<ul>
+			<li>Arcwind Point</li>
 			<li>Avancheznel</li>
 			<li>Blessed Crucible 1</li>
 			<li>Blessed Crucible 2</li>
@@ -561,11 +577,14 @@
 			<li>Aba-Loria</li>
 			<li>Blackforge</li>
 			<li>Blackgarrison</li>
+			<li>Cave of Trophies</li>
+			<li>Cave of Trophies Upper</li>
 			<li>Cold Harbour</li>
 			<li>Daedric Anchor Mooring</li>
 			<li>Depraved Grotto</li>
 			<li>Fist of Stone</li>
 			<li>Foundry of Woe</li>
+			<li>Great Shackle</li>
 			<li>Grundas Gatehouse Main</li>
 			<li>Grundas Gatehouse Room</li>
 			<li>Hajuxith</li>
@@ -585,6 +604,7 @@
 			<li>The Bleeding Forge</li>
 			<li>The Endless Stair</li>
 			<li>The Manor of Revelry</li>
+			<li>The Mooring</li>
 			<li>The Prohets Enclosure</li>
 			<li>The Tower's of Eyes</li>
 			<li>The Undercroft</li>
@@ -616,6 +636,7 @@
 		<li class='gmMapListHeader'>Guildmaps</li>
 			<ul>
 			<li>Abagarlas</li>
+			<li>Chateau Master Bedroom</li>
 			<li>Chateau Ravenous Rodent</li>
 			<li>Cheese Mongers Hollow</li>
 			<li>Circus of Cheerful Slaughter</li>
