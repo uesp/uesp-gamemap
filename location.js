@@ -835,7 +835,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 							this.getLabelPosSelectOptions(this.displayData.labelPos) + 
 							"</select> <br />" +
 						"<div class='gmMapEditPopupLabel'>Destination ID</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='destinationId' value='{destinationId}' size='8' maxlength='10' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='destinationId' value='{destinationId}' size='8' maxlength='10' /> &nbsp; &nbsp; use a locationId<br />" +
 						pathContent +
 						"<div class='gmMapEditPopupLabel'>Internal ID</div>" +
 							"<div class='gmMapEditPopupInput'>{id}</div> &nbsp; " + 

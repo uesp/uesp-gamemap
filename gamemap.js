@@ -2032,7 +2032,7 @@ uesp.gamemap.Map.prototype.showWorldEditForm = function()
 						"<div class='gmMapEditPopupLabel'>Enabled</div>" +
 							"<input type='checkbox' class='gmMapEditPopupInput' name='enabled' value='1' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Parent World ID</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='parentId' value='{parentId}' size='8'  maxlength='10' /> <br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='parentId' value='{parentId}' size='8'  maxlength='10' /> &nbsp; &nbsp; use a worldId<br />" +
 						"<div class='gmMapEditPopupLabel'>Display Name</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name=\"displayName\" value=\"{displayName}\" size='24'  maxlength='100' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>Wiki Page</div>" +
