@@ -347,7 +347,7 @@ uesp.gamemap.Map.prototype.createEvents = function()
 	$('.gmMapTile').on("touchstart", { self: this }, this.onTouchStart);
 	$('.gmMapTile').on("click", { self: this }, this.onClick);
 	$(window).on("mouseup", { self: this }, this.onMouseUp);
-	$(window).on("touchend", { self: this }, this.onTouchEnd);
+	$(window).on("touchend touchcancel", { self: this }, this.onTouchEnd);
 	this.mapRoot.on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
 	this.mapContainer.on("contextmenu", {self: this}, this.onRightClick);
 	
