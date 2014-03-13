@@ -728,6 +728,12 @@ input[type=checkbox].gmMapEditPopupInput {
 	right: 2px;
 	top: 2px;
 	z-index: 100;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .gmMapControlZoom {
@@ -742,8 +748,12 @@ input[type=checkbox].gmMapEditPopupInput {
 	border: solid gray 1px;
 	background-color: #cccccc;
 	color: #000;
+	border-color:#bbb #888 #666 #aaa;
+	border-width:2px 3px 3px 2px;
 }
 
 .gmMapControlZoom:hover {
 	background-color: #999999;
+	border-color: #666 #aaa #bbb #888;
+	border-width: 3px 2px 2px 3px;
 }
