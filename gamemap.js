@@ -2297,33 +2297,33 @@ uesp.gamemap.Map.prototype.createMapControls = function ()
 								.appendTo(this.mapContainer);
 	
 	this.mapControlPanUp = $('<div />')
-								.text('U')
+								.html('&#x2C4;')
 								.addClass('gmMapControlPan')
 								.addClass('gmMapControlPanBreak')
 								.click(function(e) { self.panUp(); })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlPanLeft = $('<div />')
-								.text('L')
+								.html('&#x2C2;')
 								.addClass('gmMapControlPan')
 								.click(function(e) { self.panLeft(); })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlPanRight = $('<div />')
-								.text('R')
+								.html('&#x2C3;')
 								.addClass('gmMapControlPan')
 								.click(function(e) { self.panRight(); })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlPanDown = $('<div />')
-								.text('D')
+								.html('&#x2C5;')
 								.addClass('gmMapControlPan')
 								.addClass('gmMapControlPanBreak')
 								.click(function(e) { self.panDown(); })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlZoomIn = $('<div />')
-								.text('+')
+								.html('+')
 								.addClass('gmMapControlZoom')
 								.click(function(e) { self.zoomIn(); })
 								.appendTo(this.mapControlRoot);
