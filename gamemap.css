@@ -741,7 +741,6 @@ input[type=checkbox].gmMapEditPopupInput {
 	width: 32px;
 	height: 32px;
 	line-height: 32px;
-	margin: 5px;
 	text-align: center;
 	vertical-align: middle;
 	font-size: 24px;
@@ -750,9 +749,38 @@ input[type=checkbox].gmMapEditPopupInput {
 	color: #000;
 	border-color:#bbb #888 #666 #aaa;
 	border-width:2px 3px 3px 2px;
+	margin: 0 auto;
+	margin-top: 5px;
 }
 
 .gmMapControlZoom:hover {
+	background-color: #999999;
+	border-color: #666 #aaa #bbb #888;
+	border-width: 3px 2px 2px 3px;
+}
+
+.gmMapControlPan {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	line-height: 24px;
+	margin: 3px;
+	text-align: center;
+	vertical-align: middle;
+	font-size: 16px;
+	border: solid gray 1px;
+	background-color: #cccccc;
+	color: #000;
+	border-color:#bbb #888 #666 #aaa;
+	border-width:2px 3px 3px 2px;
+	margin: 0 auto;
+}
+
+.gmMapControlPanBreak {
+	display: block;
+}
+
+.gmMapControlPan:hover {
 	background-color: #999999;
 	border-color: #666 #aaa #bbb #888;
 	border-width: 3px 2px 2px 3px;
