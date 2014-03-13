@@ -2296,17 +2296,78 @@ uesp.gamemap.Map.prototype.createMapControls = function ()
 								.addClass('gmMapControlRoot')
 								.appendTo(this.mapContainer);
 	
+	this.mapControlPanUp = $('<div />')
+								.text('U')
+								.addClass('gmMapControlPan')
+								.addClass('gmMapControlPanBreak')
+								.click(function(e) { self.panUp(); })
+								.appendTo(this.mapControlRoot);
+	
+	this.mapControlPanLeft = $('<div />')
+								.text('L')
+								.addClass('gmMapControlPan')
+								.click(function(e) { self.panLeft(); })
+								.appendTo(this.mapControlRoot);
+	
+	this.mapControlPanRight = $('<div />')
+								.text('R')
+								.addClass('gmMapControlPan')
+								.click(function(e) { self.panRight(); })
+								.appendTo(this.mapControlRoot);
+	
+	this.mapControlPanDown = $('<div />')
+								.text('D')
+								.addClass('gmMapControlPan')
+								.addClass('gmMapControlPanBreak')
+								.click(function(e) { self.panDown(); })
+								.appendTo(this.mapControlRoot);
+	
 	this.mapControlZoomIn = $('<div />')
 								.text('+')
 								.addClass('gmMapControlZoom')
-								.click(function(e) { self.zoomIn()})
+								.click(function(e) { self.zoomIn(); })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlZoomOut = $('<div />')
 								.text('-')
 								.addClass('gmMapControlZoom')
-								.click(function(e) { self.zoomOut()})
+								.click(function(e) { self.zoomOut(); })
 								.appendTo(this.mapControlRoot);
+}
+
+
+uesp.gamemap.Map.prototype.pan = function (deltaX, deltaY)
+{
+	this.mapRoot.animate({ left: '+=' + deltaX, top: '+=' + deltaY }, 500);
+	
+	this.updateLocations();
+	this.loadMapTiles();
+}
+
+uesp.gamemap.Map.PANAMOUNT = 256;
+
+
+uesp.gamemap.Map.prototype.panLeft = function ()
+{
+	this.pan(uesp.gamemap.Map.PANAMOUNT, 0);
+}
+
+
+uesp.gamemap.Map.prototype.panRight = function ()
+{
+	this.pan(-uesp.gamemap.Map.PANAMOUNT, 0);
+}
+
+
+uesp.gamemap.Map.prototype.panUp = function ()
+{
+	this.pan(0, uesp.gamemap.Map.PANAMOUNT);
+}
+
+
+uesp.gamemap.Map.prototype.panDown = function ()
+{
+	this.pan(0, -uesp.gamemap.Map.PANAMOUNT);
 }
 
 
