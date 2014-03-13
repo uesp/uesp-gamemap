@@ -2338,10 +2338,16 @@ uesp.gamemap.Map.prototype.createMapControls = function ()
 
 uesp.gamemap.Map.prototype.pan = function (deltaX, deltaY)
 {
+	var self = this;
+	
 	this.mapRoot.animate({ left: '+=' + deltaX, top: '+=' + deltaY }, 500);
 	
-	this.updateLocations();
-	this.loadMapTiles();
+	setTimeout(function() {
+		self.checkTileEdges();
+		self.updateLocations();
+		self.loadMapTiles();
+	}, 600);
+
 }
 
 uesp.gamemap.Map.PANAMOUNT = 256;
