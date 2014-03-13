@@ -42,6 +42,8 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.minValidWorldId = 50;
 	this.maxValidWorldId = 10000;
 	
+	this.mapControlRoot = null;
+	
 	this.mapWorlds = {};
 	this.mapWorldNameIndex = {};
 	this.mapWorldDisplayNameIndex = {};
@@ -90,6 +92,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	
 	this.createMapRoot();
 	this.createMapTiles();
+	this.createMapControls();
 	this.createMapList();
 	this.createEvents();
 	
@@ -1807,11 +1810,8 @@ uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 	this.zoomLevel++;
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Zoom In (" + x + ", " + y + ") = " + this.zoomLevel);
 	
-	if (uesp.gamemap.isNullorUndefined(x) || uesp.gamemap.isNullorUndefined(y))
-	{
-		x = this.mapContainer.width() /2;
-		y = this.mapContainer.height()/2;
-	}
+	if (x == null) x = this.mapContainer.width() /2;
+	if (y == null) y = this.mapContainer.height()/2;
 	
 	var mapOffset  = this.mapContainer.offset();
 	var rootOffset = this.mapRoot.offset();
@@ -1844,11 +1844,8 @@ uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 	this.zoomLevel--;
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Zoom Out (" + x + ", " + y + ") = " + this.zoomLevel);
 	
-	if (uesp.gamemap.isNullorUndefined(x) || uesp.gamemap.isNullorUndefined(y))
-	{
-		x = this.mapContainer.width() /2;
-		y = this.mapContainer.height()/2;
-	}
+	if (x == null) x = this.mapContainer.width() /2;
+	if (y == null) y = this.mapContainer.height()/2;
 	
 	var mapOffset  = this.mapContainer.offset();
 	var rootOffset = this.mapRoot.offset();
@@ -2287,6 +2284,29 @@ uesp.gamemap.Map.prototype.setEventsForMapGroupList = function ()
 		
 		
 	});
+}
+
+
+uesp.gamemap.Map.prototype.createMapControls = function ()
+{
+	if (this.mapControlRoot != null) return;
+	var self = this;
+	
+	this.mapControlRoot = $('<div />')
+								.addClass('gmMapControlRoot')
+								.appendTo(this.mapContainer);
+	
+	this.mapControlZoomIn = $('<div />')
+								.text('+')
+								.addClass('gmMapControlZoom')
+								.click(function(e) { self.zoomIn()})
+								.appendTo(this.mapControlRoot);
+	
+	this.mapControlZoomOut = $('<div />')
+								.text('-')
+								.addClass('gmMapControlZoom')
+								.click(function(e) { self.zoomOut()})
+								.appendTo(this.mapControlRoot);
 }
 
 

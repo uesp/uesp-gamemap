@@ -720,3 +720,30 @@ input[type=checkbox].gmMapEditPopupInput {
 .gmMapIconTypeLabel:hover {
 	background-color: #999999;
 }
+
+.gmMapControlRoot {
+	position: absolute;
+	background-color: transparent;
+	border: none;
+	right: 2px;
+	top: 2px;
+	z-index: 100;
+}
+
+.gmMapControlZoom {
+	display: block;
+	width: 32px;
+	height: 32px;
+	line-height: 32px;
+	margin: 5px;
+	text-align: center;
+	vertical-align: middle;
+	font-size: 24px;
+	border: solid gray 1px;
+	background-color: #cccccc;
+	color: #000;
+}
+
+.gmMapControlZoom:hover {
+	background-color: #999999;
+}
