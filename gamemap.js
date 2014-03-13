@@ -2290,9 +2290,12 @@ uesp.gamemap.Map.prototype.setEventsForMapGroupList = function ()
 }
 
 
-uesp.gamemap.defaultGetMapTile = function(tileX, tileY, zoom)
+uesp.gamemap.defaultGetMapTile = function(tileX, tileY, zoom, world)
 {
-	return "zoom" + zoom + "/maptile_" + tileX + "_" + tileY + ".jpg"; 
+	if (world == null)
+		return "zoom" + zoom + "/maptile-" + tileX + "-" + tileY + ".jpg";
+	else
+		return world + "/zoom" + zoom + "/maptile-" + tileX + "-" + tileY + ".jpg"; 
 }
 
 
