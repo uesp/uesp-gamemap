@@ -342,9 +342,12 @@ uesp.gamemap.Map.prototype.convertPixelToGamePos = function(pixelX, pixelY)
 uesp.gamemap.Map.prototype.createEvents = function()
 {
 	$(window).on("mousemove", { self: this }, this.onMouseMove);
+	$(window).on("touchmove", { self: this }, this.onTouchMove);
 	$('.gmMapTile').on("mousedown", { self: this }, this.onMouseDown);
+	$('.gmMapTile').on("touchstart", { self: this }, this.onTouchStart);
 	$('.gmMapTile').on("click", { self: this }, this.onClick);
 	$(window).on("mouseup", { self: this }, this.onMouseUp);
+	$(window).on("touchend", { self: this }, this.onTouchEnd);
 	this.mapRoot.on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
 	this.mapContainer.on("contextmenu", {self: this}, this.onRightClick);
 	
@@ -1130,16 +1133,46 @@ uesp.gamemap.Map.prototype.onClick = function(event)
 uesp.gamemap.Map.prototype.onMouseDown = function(event)
 {
 	var self = event.data.self;
-	if (event.which != 1) return false;
+	event.preventDefault();
 	
+	if (event.which != 1) return false;
 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseDown");
 	
 	if (self.currentEditMode == 'edithandles')
 		self.currentEditLocation.onPathEditHandlesMouseDown(event);
 	else if (self.currentEditMode == '')
 		self.onDragStart(event);
-	
+
+}
+
+
+uesp.gamemap.Map.prototype.onTouchStart = function(event)
+{
+	var self = event.data.self;
 	event.preventDefault();
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onTouchStart");
+	
+	var touch = event.touches[0];
+	
+	event.pageX = touch.pageX;
+	event.pageY = touch.pageY;
+	
+	self.onMouseDown(event);
+}
+
+
+uesp.gamemap.Map.prototype.onTouchEnd = function(event)
+{
+	var self = event.data.self;
+	event.preventDefault();
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onTouchEnd");
+	
+	var touch = event.touches[0];
+	
+	event.pageX = touch.pageX;
+	event.pageY = touch.pageY;
+	
+	self.onMouseUp(event);
 }
 
 
@@ -1158,6 +1191,8 @@ uesp.gamemap.Map.prototype.onMouseMove = function(event)
 {
 	var self = event.data.self;
 	
+	event.preventDefault();
+	
 	if (self.isDragging)
 	{
 		self.onDragMove(event);
@@ -1168,6 +1203,21 @@ uesp.gamemap.Map.prototype.onMouseMove = function(event)
 		self.currentEditLocation.onPathMouseMove(event);
 	}
 	
+}
+
+
+uesp.gamemap.Map.prototype.onTouchMove = function(event)
+{
+	var self = event.data.self;
+	event.preventDefault();
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onTouchMove");
+	
+	var touch = event.touches[0];
+	
+	event.pageX = touch.pageX;
+	event.pageY = touch.pageY;
+	
+	self.onMouseMove(event);
 }
 
 
@@ -1226,6 +1276,8 @@ uesp.gamemap.Map.prototype.onMouseScroll = function(event)
 
 uesp.gamemap.Map.prototype.onMouseUp = function(event)
 {
+	event.preventDefault();
+	
 	var self = event.data.self;
 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseUp");
 	
