@@ -41,6 +41,8 @@ class GameMap
 	public $locX = 0;
 	public $locY = 0;
 	
+	public $search = '';
+	
 	public $locWidth = 0;
 	public $locHeight = 0;
 	
@@ -250,6 +252,8 @@ class GameMap
 				return $this->doSetWorld();
 			case 'get_perm':
 				return $this->doGetPermissions();
+			case 'search':
+				return $this->doSearch();
 			case 'default':
 			default:
 				break;
@@ -353,6 +357,87 @@ class GameMap
 	
 		$this->locationHistoryId = $this->db->insert_id;
 		$this->addOutputItem("newLocationHistoryId", $this->locationHistoryId);
+		return true;
+	}
+	
+	
+	public function doSearch ()
+	{
+		$this->doWorldSearch();
+		$this->doLocationSearch();
+		return true;
+	}
+	
+	
+	public function doWorldSearch ()
+	{
+		$query = "SELECT * from world WHERE enabled != 0 AND MATCH(displayName, description) AGAINST ('{$this->search}') ORDER BY displayName LIMIT {$this->limitCount};";
+		
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed searching for worlds!");
+		
+		$worlds = Array();
+		$count = 0;
+		$result->data_seek(0);
+		
+		while ( ($row = $result->fetch_assoc()) )
+		{
+			settype($row['id'], "integer");
+			settype($row['parentId'], "integer");
+			settype($row['revisionId'], "integer");
+			settype($row['enabled'], "integer");
+			settype($row['posRight'], "integer");
+			settype($row['posLeft'], "integer");
+			settype($row['posTop'], "integer");
+			settype($row['posBottom'], "integer");
+			settype($row['cellSize'], "integer");
+			settype($row['minZoom'], "integer");
+			settype($row['maxZoom'], "integer");
+			settype($row['zoomOffset'], "integer");
+				
+			$worlds[] = $row;
+			$count += 1;
+		}
+		
+		$this->addOutputItem("worlds", $worlds);
+		$this->addOutputItem("worldCount", $count);
+		return true;
+	}
+	
+	
+	public function doLocationSearch ()
+	{
+		$query = "SELECT * from location WHERE visible != 0 AND MATCH(name, description) AGAINST ('{$this->search}') ORDER BY name, worldId LIMIT {$this->limitCount};";
+				
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed searching for locations!");
+		
+		$locations = Array();
+		$count = 0;
+		$result->data_seek(0);
+		
+		while ( ($row = $result->fetch_assoc()) )
+		{
+			settype($row['id'], "integer");
+			settype($row['worldId'], "integer");
+			settype($row['revisionId'], "integer");
+			settype($row['destinationId'], "integer");
+			settype($row['locType'], "integer");
+			settype($row['iconType'], "integer");
+			settype($row['x'], "integer");
+			settype($row['y'], "integer");
+			settype($row['width'], "integer");
+			settype($row['height'], "integer");
+			settype($row['displayLevel'], "integer");
+			settype($row['visible'], "integer");
+				
+			$locations[] = $row;
+			$count += 1;
+		}
+		
+		$this->addOutputItem("locations", $locations);
+		$this->addOutputItem("locationCount", $count);
+		
 		return true;
 	}
 	
@@ -806,6 +891,7 @@ class GameMap
 		if (array_key_exists('posbottom',  $this->inputParams)) $this->worldPosBottom = intval($this->db->real_escape_string($this->inputParams['posbottom']));
 		if (array_key_exists('parentid',  $this->inputParams)) $this->worldParentId = intval($this->db->real_escape_string($this->inputParams['parentid']));
 		if (array_key_exists('revisionid',  $this->inputParams)) $this->revisionId = intval($this->db->real_escape_string($this->inputParams['revisionid']));
+		if (array_key_exists('search',  $this->inputParams)) $this->search = $this->db->real_escape_string($this->inputParams['search']);
 		
 		if (array_key_exists('world',  $this->inputParams))
 		{

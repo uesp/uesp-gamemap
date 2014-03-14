@@ -43,11 +43,16 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.maxValidWorldId = 10000;
 	
 	this.mapControlRoot = null;
+	this.mapSearchRoot  = null;
+	this.mapSearchResults = null;
 	
 	this.mapWorlds = {};
 	this.mapWorldNameIndex = {};
 	this.mapWorldDisplayNameIndex = {};
 	this.mapWorldsLoaded = false;
+	
+	this.searchText = '';
+	this.searchResults = [ ];
 	
 	this.currentWorldId = 0;
 	this.addWorld('__default', this.mapOptions, this.currentWorldId, '');
@@ -93,6 +98,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.createMapRoot();
 	this.createMapTiles();
 	this.createMapControls();
+	this.createSearchControls();
 	this.createMapList();
 	this.createEvents();
 	
@@ -1138,8 +1144,8 @@ uesp.gamemap.Map.prototype.onMouseDown = function(event)
 	var self = event.data.self;
 	event.preventDefault();
 	
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "onMouseDown");
 	if (event.which != 1) return false;
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseDown");
 	
 	if (self.currentEditMode == 'edithandles')
 		self.currentEditLocation.onPathEditHandlesMouseDown(event);
@@ -1298,17 +1304,14 @@ uesp.gamemap.Map.prototype.onMouseUp = function(event)
 }
 
 
-uesp.gamemap.Map.prototype.onReceiveLocationData = function (data)
+uesp.gamemap.Map.prototype.mergeLocationData = function (locations, displayLocation)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received location data");
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, data);
+	if (locations == null) return;
+	if (displayLocation == null) displayLocation = false;
 	
-	if (!uesp.gamemap.isNullorUndefined(data.isError))  return uesp.logError("Error retrieving location data!", data.errorMsg);
-	if (uesp.gamemap.isNullorUndefined(data.locations)) return uesp.logError("Location data not found in JSON response!", data);
-	
-	for (key in data.locations)
+	for (key in locations)
 	{
-		var location = data.locations[key];
+		var location = locations[key];
 		if (location.id == null) continue;
 		
 		if ( !(location.id in this.locations))
@@ -1320,24 +1323,33 @@ uesp.gamemap.Map.prototype.onReceiveLocationData = function (data)
 			this.locations[location.id].mergeFromJson(location);
 		}
 		
-		this.displayLocation(this.locations[location.id]);
+		if (displayLocation) this.displayLocation(this.locations[location.id]);
 	}
+	
+}
+
+
+uesp.gamemap.Map.prototype.onReceiveLocationData = function (data)
+{
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received location data");
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, data);
+	
+	if (!uesp.gamemap.isNullorUndefined(data.isError))  return uesp.logError("Error retrieving location data!", data.errorMsg);
+	if (uesp.gamemap.isNullorUndefined(data.locations)) return uesp.logError("Location data not found in JSON response!", data);
+	
+	this.mergeLocationData(data.locations, true);
 	
 	return true;
 }
 
 
-uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
+uesp.gamemap.Map.prototype.mergeWorldData = function (worlds)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received world data");
-	uesp.logDebug(uesp.LOG_LEVEL_INFO, data);
+	if (worlds == null) return;
 	
-	if (!uesp.gamemap.isNullorUndefined(data.isError)) return uesp.logError("Error retrieving world data!", data.errorMsg);
-	if (uesp.gamemap.isNullorUndefined(data.worlds))   return uesp.logError("World data not found in JSON response!", data);
-	
-	for (key in data.worlds)
+	for (key in worlds)
 	{
-		var world = data.worlds[key];
+		var world = worlds[key];
 		uesp.logDebug(uesp.LOG_LEVEL_WARNING, world);
 		
 			//TODO: Better world filter
@@ -1362,6 +1374,19 @@ uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 			uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Creating new world " + world.name);
 		}
 	}
+	
+}
+
+
+uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
+{
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received world data");
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, data);
+	
+	if (!uesp.gamemap.isNullorUndefined(data.isError)) return uesp.logError("Error retrieving world data!", data.errorMsg);
+	if (uesp.gamemap.isNullorUndefined(data.worlds))   return uesp.logError("World data not found in JSON response!", data);
+	
+	this.mergeWorldData(data.worlds);
 	
 	this.mapWorldsLoaded = true;
 	if (this.userEvents.onMapWorldsLoaded != null) this.userEvents.onMapWorldsLoaded.call(this);
@@ -2284,6 +2309,260 @@ uesp.gamemap.Map.prototype.setEventsForMapGroupList = function ()
 		
 		
 	});
+}
+
+
+uesp.gamemap.Map.prototype.createSearchControls = function ()
+{
+	if (this.mapSearchRoot != null) return;
+	var self = this;
+	
+	this.mapSearchRoot = $('<div />')
+								.addClass('gmMapSearchRoot')
+								.appendTo(this.mapContainer);
+	
+		// TODO: Change to external template
+	var searchContent = "<form  onsubmit='return false;'>" +
+						"<div class='gmMapSearchInputDiv'>" + 
+						"<input class='gmMapSearchInput' type='text' name='search' value='' size='25' maxlength='100' />" +
+						"<input class='gmMapSearchButton' type='submit' value='Search' />" +
+						"</div>" + 
+						"</form>" +
+						"<div class='gmMapSearchResultsWrapper'>" + 
+						"<div class='gmMapSearchResults' style='display:none;'>" +
+						"</div>" +
+						"<div class='gmMapSearchResultsButton'>" +
+						"<img class='gmMapSearchResultsButtonImage' src='images/downarrows.gif' />" +
+						"<div class='gmMapSearchResultsButtonLabel'>Show Search Results</div>" + 
+						"<img class='gmMapSearchResultsButtonImage' src='images/downarrows.gif' />" +
+						"</div>" + 
+						"</div>";
+	
+	this.mapSearchRoot.html(searchContent);
+	
+	var mapSearchForm = this.mapSearchRoot.find('form');
+	var mapSearchButton = this.mapSearchRoot.find('.gmMapSearchButton');
+	this.mapSearchResults = this.mapSearchRoot.find('.gmMapSearchResults');
+	var mapSearchResultsButton = this.mapSearchRoot.find('.gmMapSearchResultsButton');
+	
+	mapSearchButton.click(function (e) {
+		self.onSearchButton(e);
+	});
+	
+	mapSearchResultsButton.click(function (e) {
+		self.onSearchResultsButton(e);
+	});
+}
+
+
+uesp.gamemap.Map.prototype.onSearchButton = function (event)
+{
+	var mapSearchForm = this.mapSearchRoot.find('form');
+	var searchText = mapSearchForm.find('input').val();
+	
+	this.doSearch(searchText);
+	
+	return false;
+}
+
+
+uesp.gamemap.Map.prototype.createSearchQuery = function (searchText)
+{
+	var queryParams = { };
+	
+	queryParams.action = 'search';
+	queryParams.search = encodeURIComponent(searchText);
+	
+	return queryParams;
+}
+
+
+uesp.gamemap.Map.prototype.doSearch = function (searchText)
+{
+	var self = this;
+	
+	searchText = searchText.trim();
+	if (searchText == null || searchText == '') return false;
+	
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, 'Search for: ', searchText);
+	this.searchText = searchText;
+	
+	var queryParams = this.createSearchQuery(searchText);
+	
+	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+		self.onReceiveSearchResults(data); 
+	});
+	
+	return true;
+}
+
+
+uesp.gamemap.Map.prototype.onReceiveSearchResults = function (data)
+{
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received search data");
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, data);
+	
+	if (data.isError === true)  return uesp.logError("Error retrieving location data!", data.errorMsg);
+	
+	this.searchResults = [ ];
+	
+	this.mergeLocationData(data.locations, false);
+	
+	for (key in data.worlds)
+	{
+		var world = data.worlds[key];
+		if (world.id == null) continue;
+		
+		this.searchResults.push( { worldId : world.id });
+	}
+	
+	for (key in data.locations)
+	{
+		var location = data.locations[key];
+		if (location.id == null) continue;
+		
+		this.searchResults.push( { locationId : location.id });
+	}
+	
+	this.showSearchResults();
+	this.updateSearchResults();
+	return true;
+}
+
+
+uesp.gamemap.Map.prototype.updateSearchResults = function ()
+{
+	this.clearSearchResults();
+	
+	for (i in this.searchResults)
+	{
+		var searchResult = this.searchResults[i];
+		
+		this.addSearchResultLocation(searchResult.locationId);
+		this.addSearchResultWorld(searchResult.worldId);
+	}
+	
+}
+
+uesp.gamemap.Map.prototype.addSearchResultLocation = function (locationId)
+{
+	var self = this;
+	
+	if (locationId == null) return;
+	
+	var location = this.locations[locationId];
+	if (location == null) return uesp.logError('Failed to find location #' + locationId + ' data!');
+	
+	var world = this.mapWorlds[location.worldId];
+	if (world == null) return uesp.logError('Failed to find world #' + location.worldId + ' data!');
+	
+	var locState = new uesp.gamemap.MapState;
+	locState.zoomLevel = world.maxZoom;
+	//if (locState.zoomLevel < this.zoomLevel) locState.zoomLevel = this.zoomLevel;
+	locState.gamePos.x = location.x;
+	locState.gamePos.y = location.y;
+	locState.worldId = world.id;
+	
+	var searchResult = $('<div />')
+							.addClass('gmMapSearchResultLocation')
+							.click(function (e) { self.setMapState(locState, true); })
+							.appendTo(this.mapSearchResults);
+	
+	var iconURL   = this.mapOptions.iconPath + location.iconType + ".png";
+	if (location.iconType == 0) iconURL = '';
+	
+		// TODO: Change to external template
+	var resultContent = "<img class='gmMapSearchResultIcon' src='" + iconURL + "' />" +
+						"<div class='gmMapSearchResultTitle'>{location.name}</div> " + 
+						"<div class='gnMapSearchResultLocWorld'>(in {world.displayName})</div>";
+	var data = { world: world, location: location };
+	var resultHtml = uesp.template(resultContent, data);
+	
+	searchResult.html(resultHtml);
+}
+
+
+uesp.gamemap.Map.prototype.addSearchResultWorld = function (worldId)
+{
+	var self = this;
+	
+	if (worldId == null) return;
+	
+	var world = this.mapWorlds[worldId];
+	if (world == null) return uesp.logError('Failed to find world #' + worldId + ' data!');
+	
+	var worldState = new uesp.gamemap.MapState;
+	worldState.zoomLevel = this.zoomLevel;
+	worldState.gamePos.x = (world.posLeft - world.posRight)/2 + world.posRight;
+	worldState.gamePos.y = (world.posTop - world.posBottom)/2 + world.posBottom;
+	worldState.worldId = world.id;
+	
+	var searchResult = $('<div />')
+							.addClass('gmMapSearchResultWorld')
+							.click(function (e) { self.setMapState(worldState, true); })
+							.appendTo(this.mapSearchResults);
+	
+		// TODO: Change to external template
+	var resultContent = "<div class='gmMapSearchResultTitle'>{displayName}</div>";
+	var resultHtml = uesp.template(resultContent, world);
+	
+	searchResult.html(resultHtml);
+}
+
+
+uesp.gamemap.Map.prototype.clearSearchResults = function ()
+{
+	this.mapSearchResults.text('');
+}
+
+
+uesp.gamemap.Map.prototype.onSearchResultsButton = function (event)
+{
+	this.toggleSearchResults();
+	return false;
+}
+
+
+uesp.gamemap.Map.prototype.updateSearchResultsButton = function (isVisible)
+{
+	if (isVisible == null) isVisible = this.mapSearchResults.is(':visible');
+	
+	var mapSearchResultsButton = this.mapSearchRoot.find('.gmMapSearchResultsButton');
+	var mapSearchResultsImage = mapSearchResultsButton.find('.gmMapSearchResultsButtonImage');
+	var mapSearchResultsLabel = mapSearchResultsButton.find('.gmMapSearchResultsButtonLabel');
+	
+	if (isVisible)
+	{
+		mapSearchResultsImage.attr('src', 'images/uparrows.gif');
+		mapSearchResultsLabel.text('Hide Search Results');
+	}
+	else
+	{
+		mapSearchResultsImage.attr('src', 'images/downarrows.gif');
+		mapSearchResultsLabel.text('Show Search Results');
+	}
+}
+
+
+uesp.gamemap.Map.prototype.toggleSearchResults = function ()
+{
+	var isVisible = this.mapSearchResults.is(':visible');
+	this.mapSearchResults.slideToggle(200);
+	this.updateSearchResultsButton(!isVisible);
+}
+
+
+uesp.gamemap.Map.prototype.showSearchResults = function ()
+{
+	this.mapSearchResults.show(200);
+	this.updateSearchResultsButton(true);
+}
+
+
+uesp.gamemap.Map.prototype.hideSearchResults = function ()
+{
+	this.mapSearchResults.hide(200);
+	this.updateSearchResultsButton(false);
 }
 
 

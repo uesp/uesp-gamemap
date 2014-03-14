@@ -3,7 +3,7 @@
 	top: 30px;
 	left: 0px;
 	right: 0px;
-	border: solid black 1px;
+	border: 1px solid black;
 	overflow: hidden;
 	position: absolute;
 }
@@ -11,7 +11,7 @@
 #gmMapContainer {
 	width: 100%;
 	height: 100%;
-	border: solid blue 1px;
+	border: 1px solid blue;
 	position: absolute;
 }
 
@@ -107,7 +107,7 @@
 }
 
 .gmMapEditPopup .gmMapPopupClose {
-	border: solid gray 1px;
+	border: 1px solid gray;
 }
 
 .gmMapPopupClose:hover {
@@ -169,7 +169,7 @@
 	top: 2px;
 	width: 250px;
 	bottom: 2px;
-	border: solid 1px gray;
+	border: 1px solid gray;
 	list-style-type: none;
 	z-index: 50;
 	background-color: #ffffff;
@@ -213,7 +213,7 @@
 	line-height: 20px;
 	vertical-align: middle;
 	text-align: center;
-	border: solid gray 1px;
+	border: 1px solid gray;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
@@ -238,7 +238,7 @@
 	line-height: 12px;
 	font-size: 10px;
 	background-color: #999999;
-	border: solid 1px gray;
+	border: 1px solid gray;
 	float: right;
 	display: inline-block;
 	padding: 1px;
@@ -343,7 +343,7 @@ ul ul .gmMapListHeader {
 }
 
 #gmMapEditNotice {
-	border: solid gray 1px;
+	border: 1px solid gray;
 	background: rgba(0,0,0,0.7);
 	color: #ffff00;
 	font-family: sans-serif;
@@ -492,7 +492,7 @@ div.gmMapEditPopupInput {
 
 
 select.gmMapEditPopupInput {
-	border: solid gray 1px;
+	border: 1px solid gray;
 	padding: 0;
 	margin: 0;
 	height: 17px;
@@ -502,7 +502,7 @@ select.gmMapEditPopupInput {
 }
 
 input.gmMapEditPopupInput {
-	border: solid gray 1px;
+	border: 1px solid gray;
 	padding-left: 4px;
 }
 
@@ -625,7 +625,7 @@ input[type=checkbox].gmMapEditPopupInput {
 .gmLocToolTip {
 	z-index: 25;
 	position: absolute;
-	border: solid gray 1px;
+	border: 1px solid gray;
 	background-color: #ffff99;
 	padding: 3px;
 	display: inline-block;
@@ -645,7 +645,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	height: 16px;
 	line-height: 16px;
 	width: 144px;
-	border: solid gray 1px;
+	border: 1px solid gray;
 	padding 2px;
 	background-image: url(images/downarrow.gif);
 	background-repeat: no-repeat;
@@ -667,7 +667,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	display: block;
 	position: absolute;
 	background-color: white;
-	border: solid gray 1px;
+	border: 1px solid gray;
 	height: 250px;
 	width: 170px;
 	overflow-y: auto;
@@ -744,7 +744,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	text-align: center;
 	vertical-align: middle;
 	font-size: 24px;
-	border: solid gray 1px;
+	border: 1px solid gray;
 	background-color: #cccccc;
 	color: #000;
 	border-color:#bbb #888 #666 #aaa;
@@ -784,4 +784,131 @@ input[type=checkbox].gmMapEditPopupInput {
 	background-color: #999999;
 	border-color: #666 #aaa #bbb #888;
 	border-width: 3px 2px 2px 3px;
+}
+
+.gmMapSearchRoot {
+	position: absolute;
+	left: 260px;
+	top: 2px;
+	bottom: 2px;
+	z-index: 100;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+	pointer-events: none;
+}
+
+.gmMapSearchInputDiv {
+	background-color: white;
+	border: 1px solid gray;
+	pointer-events: auto;
+}
+
+.gmMapSearchButton {
+
+}
+
+.gmMapSearchInput {
+	width: 150px;
+}
+
+.gmMapSearchResults {
+	pointer-events: visible;
+}
+
+.gmMapSearchResultsWrapper {
+	position: absolute;
+	top: 28px;
+	bottom: 20px;
+	width: 100%;
+	pointer-events: none;
+}
+
+.gmMapSearchResults {
+	background-color: white;
+	border: 1px solid gray;
+	position: relative;
+	top: 0px;
+	left: 0px;
+	overflow: auto;
+	height: 100%;
+}
+
+.gmMapSearchResultsButton {
+	background-color: #cccccc;
+	color: #666666;
+	height: 18px;
+	line-height: 18px;
+	text-align: center;
+	vertical-align: middle;
+	border-style: solid;
+	border-color: #bbb #888 #666 #aaa;
+	border-width: 1px 2px 2px 1px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: visible;
+	cursor: default;
+	position: relative;
+	top: 0px;
+	left: 0px;
+	
+}
+
+.gmMapSearchResultsButton:hover {
+	background-color: #999999;
+	border-color: #666 #aaa #bbb #888;
+	border-width: 2px 1px 1px 2px;
+}
+
+.gmMapSearchResultsButtonLabel {
+	display: inline-block;
+	padding-left: 5px;
+	padding-right: 5px;
+	cursor: default;
+}
+
+.gmMapSearchResultsButtonImage {
+	cursor: default;
+}
+
+.gmMapSearchResultLocation {
+	cursor: pointer;
+	height: 20px;
+	line-height: 20px;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+.gmMapSearchResultLocation:hover {
+	background-color: #cccccc;
+}
+
+.gmMapSearchResultWorld {
+	cursor: pointer;
+	height: 20px;
+	line-height: 20px;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+.gmMapSearchResultWorld:hover {
+	background-color: #cccccc;
+}
+
+.gmMapSearchResultIcon {
+	display: inline-block;
+	max-height: 16px;
+	width: 16px;
+}
+
+.gmMapSearchResultTitle {
+	display: inline-block;
+}
+
+.gnMapSearchResultLocWorld {
+	display: inline-block;
+	font-size: 9px;
 }
