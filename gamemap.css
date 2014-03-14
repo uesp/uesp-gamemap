@@ -477,7 +477,6 @@ div.gmMapEditPopupInput {
 	top: 1px;
 }
 
-
 .gmMapEditPopupIconPreview
 {
 	background-repeat: no-repeat;
@@ -799,16 +798,20 @@ input[type=checkbox].gmMapEditPopupInput {
 
 .gmMapSearchInputDiv {
 	background-color: white;
-	border: 1px solid gray;
+	border: none;
 	pointer-events: auto;
 }
 
 .gmMapSearchButton {
-
+	margin: 0;
+	padding: 0;
 }
 
 .gmMapSearchInput {
 	width: 150px;
+	margin: 0;
+	padding: 0;
+	border: 2px inset;
 }
 
 .gmMapSearchResults {
@@ -817,7 +820,7 @@ input[type=checkbox].gmMapEditPopupInput {
 
 .gmMapSearchResultsWrapper {
 	position: absolute;
-	top: 28px;
+	top: 20px;
 	bottom: 20px;
 	width: 100%;
 	pointer-events: none;
