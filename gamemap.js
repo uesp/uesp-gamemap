@@ -1200,8 +1200,6 @@ uesp.gamemap.Map.prototype.onMouseMove = function(event)
 {
 	var self = event.data.self;
 	
-	event.preventDefault();
-	
 	if (self.isDragging)
 	{
 		self.onDragMove(event);
