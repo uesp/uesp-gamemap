@@ -313,14 +313,14 @@
 			<li>Bthzark</li>
 			<li>Cambray Hills</li>
 			<li>Carzog's Demise</li>
-			<li>Cathbedraud</li>
+			<li>Cath Bedraud</li>
 			<li>Crosswych</li>
 			<li>Crosswych Mine</li>
 			<li>Cryptwatch Fort</li>
 			<li>Daenia</li>
 			<li>Daggerfall</li>
 			<li>Dourstone Vault</li>
-			<li>Eboncrypt</li>
+			<li>Ebon Crypt</li>
 			<li>Enduum</li>
 			<li>Farwatch Tower</li>
 			<li>Glenumbra</li>
