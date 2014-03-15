@@ -1283,8 +1283,6 @@ uesp.gamemap.Map.prototype.onMouseScroll = function(event)
 
 uesp.gamemap.Map.prototype.onMouseUp = function(event)
 {
-	event.preventDefault();
-	
 	var self = event.data.self;
 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseUp");
 	
