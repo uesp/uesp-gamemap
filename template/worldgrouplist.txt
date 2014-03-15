@@ -29,7 +29,7 @@
 			<li>Reliquary Vault Bottom</li>
 			<li>Reliquary Vault Top</li>
 			<li>Rictus</li>
-			<li>Saltspray</li>
+			<li>Saltspray Cave</li>
 			<li>Sky Watch</li>
 			<li>South Ruins</li>
 			<li>Temple</li>
@@ -73,7 +73,7 @@
 			<li>Eldenroot Wayshrine</li>
 			<li>Grahtwood</li>
 			<li>Greenhall</li>
-			<li>Greymire</li>
+			<li>Grey Mire</li>
 			<li>Haven</li>
 			<li>Haven Sewers</li>
 			<li>Karthdar</li>
