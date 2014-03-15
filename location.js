@@ -640,9 +640,11 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	
 	uesp.gamemap.mergeObjects(this.displayData, formValues.displayData);
 	delete formValues.displayData;
-	uesp.gamemap.mergeObjects(this, formValues);
 	
+	uesp.gamemap.mergeObjects(this, formValues);
 	this.computeOffset();
+	
+	if (this.id < 0 && this.wikiPage === "") this.wikiPage = this.name;
 	
 	return true;
 }
