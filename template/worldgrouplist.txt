@@ -58,19 +58,19 @@
 			<li>Coromount</li>
 			<li>Dessicated Cave</li>
 			<li>Elden Hollow</li>
-			<li>Eldenhollow Heroic 1</li>
-			<li>Eldenhollow Heroic 2</li>
-			<li>Eldenroot Crafting</li>
-			<li>Eldenroot Fighter's Guild</li>
-			<li>Eldenroot Fighter's Guild Down</li>
-			<li>Eldenroot Fighter's Guild Up</li>
-			<li>Eldenroot Ground Floor</li>
-			<li>Eldenroot Inn</li>
-			<li>Eldenrootmage's Guild</li>
-			<li>Eldenroot Mage's Guild Down</li>
-			<li>Eldenroot Services</li>
-			<li>Eldenroot Throne Room</li>
-			<li>Eldenroot Wayshrine</li>
+			<li>Elden Hollow Heroic 1</li>
+			<li>Elden Hollow Heroic 2</li>
+			<li>Elden Root Upper Level</li>
+			<li>Elden Root Fighters Guild Old</li>
+			<li>Elden Root Fighters Guild</li>
+			<li>Elden Root Fighters Guild Up</li>
+			<li>Elden Root</li>
+			<li>Elden Root Inn</li>
+			<li>Elden Root Mages Guild</li>
+			<li>Elden Root Mages Guild Up</li>
+			<li>Elden Root Ground Floor</li>
+			<li>Elden Root Throne Room</li>
+			<li>Elden Root Wayshrine</li>
 			<li>Grahtwood</li>
 			<li>Greenhall</li>
 			<li>Grey Mire</li>
