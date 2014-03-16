@@ -363,6 +363,11 @@ class GameMap
 	
 	public function doSearch ()
 	{
+		$this->searchWords = preg_split('/\s+/', $this->search);
+		$this->searchWordWildcard = implode('*', $this->searchWords);
+		
+		if ($this->searchWordWildcard != '') $this->searchWordWildcard .= '*';
+		
 		$this->doWorldSearch();
 		$this->doLocationSearch();
 		return true;
@@ -371,7 +376,7 @@ class GameMap
 	
 	public function doWorldSearch ()
 	{
-		$query = "SELECT * from world WHERE enabled != 0 AND MATCH(displayName, description) AGAINST ('{$this->search}') ORDER BY displayName LIMIT {$this->limitCount};";
+		$query = "SELECT * from world WHERE enabled != 0 AND MATCH(displayName, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY displayName LIMIT {$this->limitCount};";
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed searching for worlds!");
@@ -407,7 +412,7 @@ class GameMap
 	
 	public function doLocationSearch ()
 	{
-		$query = "SELECT * from location WHERE visible != 0 AND MATCH(name, description) AGAINST ('{$this->search}') ORDER BY name, worldId LIMIT {$this->limitCount};";
+		$query = "SELECT * from location WHERE visible != 0 AND MATCH(name, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY name, worldId LIMIT {$this->limitCount};";
 				
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed searching for locations!");
