@@ -405,14 +405,14 @@
 			<li>Corpse Garden</li>
 			<li>Darkshade Caverns</li>
 			<li>Darkshade Caverns Heroic</li>
-			<li>Deepcragden</li>
+			<li>Deep Crag Den</li>
 			<li>Deshaan</li>
 			<li>Desolate Cave</li>
 			<li>Eidolons Hollow</li>
 			<li>Eidolons Hollow 2</li>
 			<li>Eidolons Hollow North</li>
 			<li>Eidolons Hollow South</li>
-			<li>Forgotten Crypts</li>
+			<li>Knife Ear Grotto</li>
 			<li>Kwama Colony</li>
 			<li>Lagomere</li>
 			<li>Lower Bthanuel</li>
@@ -428,9 +428,9 @@
 			<li>Siaebony Mine</li>
 			<li>Siltreen</li>
 			<li>Taldeic Crypts</li>
+			<li>Taleon's Crag</li>
 			<li>Tribunal Temple</li>
-			<li>Triplecircle Mine</li>
-			<li>Unexplored Crag</li>
+			<li>Triple Circle Mine</li>
 			<li>Well of Lost Souls</li>
 			</ul>
 		<li class='gmMapListHeader'>Eastmarch</li>
@@ -440,7 +440,7 @@
 			<li>Direfrost Keep</li>
 			<li>Direfrost Keep Heroic</li>
 			<li>Direfrost Keep Summit</li>
-			<li>East March</li>
+			<li>Eastmarch</li>
 			<li>Fortamol</li>
 			<li>Fortmorvunskar</li>
 			<li>Frostwater Tundra</li>
@@ -509,6 +509,7 @@
 			<li>Davons Watch</li>
 			<li>Davon's Watch Crypt</li>
 			<li>Dhalmora</li>
+			<li>Ebonheart</li>
 			<li>Emberflint Mine</li>
 			<li>Fortarand</li>
 			<li>Fungal Grotto</li>
