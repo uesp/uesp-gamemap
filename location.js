@@ -223,7 +223,7 @@ uesp.gamemap.Location.prototype.onLabelClick = function(event)
 		this.useEditPopup = true;
 		this.togglePopup();
 	}
-	else if (!this.useEditPopup && this.destinationId > 0 && this.parentMap.jumpToDestinationOnClick)
+	else if (!this.useEditPopup && this.destinationId != 0 && this.parentMap.jumpToDestinationOnClick)
 	{
 		this.onJumpToDestination();
 	}
@@ -250,7 +250,7 @@ uesp.gamemap.Location.prototype.onLabelDblClick = function(event)
 		return;
 	}
 	
-	if (this.destinationId > 0) this.onJumpToDestination(); 
+	if (this.destinationId != 0) this.onJumpToDestination(); 
 }
 
 
@@ -750,7 +750,7 @@ uesp.gamemap.Location.prototype.doSaveQuery = function()
 uesp.gamemap.Location.prototype.onJumpToDestination = function()
 {
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Jumping to destination " + this.destinationId);
-	this.parentMap.jumpToDestination( this.destinationId);
+	this.parentMap.jumpToDestination(this.destinationId);
 	return false;
 }
 
@@ -837,9 +837,9 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 							this.getLabelPosSelectOptions(this.displayData.labelPos) + 
 							"</select> <br />" +
 						"<div class='gmMapEditPopupLabel'>Destination ID</div>" +
-							"<input type='text' class='gmMapEditPopupInput' name='destinationId' value='{destinationId}' size='8' maxlength='10' /> &nbsp; &nbsp; use a locationId<br />" +
+							"<input type='text' class='gmMapEditPopupInput' name='destinationId' value='{destinationId}' size='8' maxlength='10' /> &nbsp; + for location, - for world<br />" +
 						pathContent +
-						"<div class='gmMapEditPopupLabel'>Internal ID</div>" +
+						"<div class='gmMapEditPopupLabel'>locationId</div>" +
 							"<div class='gmMapEditPopupInput'>{id}</div> &nbsp; " + 
 							"<div class='gmMapEditPopupInput'>World: {worldId}</div> &nbsp; " +
 							"<div class='gmMapEditPopupInput'>Type: {locType}</div> &nbsp;" +
@@ -963,7 +963,7 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 		popupDiv = this.popupElement.children()[0];
 	}
 	
-	if (this.destinationId > 0) popupContent += "<div class='gmMapPopupPos'>Destination ID: {destinationId}</div>";
+	if (this.destinationId != 0) popupContent += "<div class='gmMapPopupPos'>Destination ID: {destinationId}</div>";
 	
 	if (this.parentMap.canEdit())
 	{
@@ -986,9 +986,15 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 		self.onClosePopup(event);
 	});
 	
-	if (this.destinationId > 0)
+	if (this.destinationId != 0)
 	{
-		if (!this.parentMap.hasLocation(this.destinationId)) this.parentMap.retrieveLocation(this.destinationId);
+		if (this.destinationId < 0)
+		{
+		}
+		else
+		{
+			if (!this.parentMap.hasLocation(this.destinationId)) this.parentMap.retrieveLocation(this.destinationId);
+		}
 		
 		var self = this;
 		
@@ -1621,7 +1627,7 @@ uesp.gamemap.Location.prototype.onPathClick = function (event)
 			this.useEditPopup = true;
 			this.togglePopup();
 		}
-		else if (!this.useEditPopup && this.destinationId > 0 && this.parentMap.jumpToDestinationOnClick)
+		else if (!this.useEditPopup && this.destinationId != 0 && this.parentMap.jumpToDestinationOnClick)
 		{
 			this.onJumpToDestination();
 		}
