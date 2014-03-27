@@ -665,9 +665,22 @@ uesp.gamemap.Map.prototype.onJumpToDestinationLoad = function (eventData)
 }
 
 
+
+uesp.gamemap.Map.prototype.jumpToWorld = function (worldId)
+{
+	if (worldId == null || worldId <= 0) return;
+	this.changeWorld(worldId);
+}
+
+
 uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
 {
-	if (destId <= 0) return;
+	if (destId == null || destId == 0) return;
+	
+	if (destId < 0)
+	{
+		return this.jumpToWorld(-destId);
+	}
 	
 	if (!this.hasLocation(destId))
 	{
@@ -2074,7 +2087,7 @@ uesp.gamemap.Map.prototype.showWorldEditForm = function()
 						"<div class='gmMapEditPopupLabel'>Top</div>" +
 							"<input type='text' class='gmMapEditPopupInput' name='posTop' value='{posTop}' size='8'  maxlength='10' /> &nbsp; " +
 							"Bottom <input type='text' class='gmMapEditPopupInput' name='posBottom' value='{posBottom}' size='8'  maxlength='10' /> <br />" +
-						"<div class='gmMapEditPopupLabel'>Internal ID</div>" +
+						"<div class='gmMapEditPopupLabel'>worldId</div>" +
 							"<div class='gmMapEditPopupInput'>{id}</div> &nbsp; " +
 							" &nbsp;  &nbsp; Revision<div class='gmMapEditPopupInput'>{revisionId}</div> &nbsp; <br />" +
 						"<div class='gmMapEditPopupStatus'></div>" +
