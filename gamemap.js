@@ -850,6 +850,16 @@ uesp.gamemap.Map.prototype.onCancelEditMode = function(event)
 		
 		this.currentEditLocation.showPopup();
 	}
+	else if (this.currentEditMode == 'draglocation')
+	{
+		this.currentEditLocation.displayData.points = this.currentEditPathPoints;
+		this.currentEditLocation.computePathSize();
+		this.currentEditLocation.updateFormPosition();
+		this.currentEditLocation.computeOffset();
+		
+		this.currentEditLocation.update();
+		this.currentEditLocation.showPopup();
+	}
 	else if (this.currentEditMode == 'editworld')
 	{
 		this.hideWorldEditForm();
@@ -887,6 +897,10 @@ uesp.gamemap.Map.prototype.onFinishEditMode = function(event)
 	else if (this.currentEditMode == 'edithandles')
 	{
 		this.onFinishedEditHandles();
+	}
+	else if (this.currentEditMode == 'draglocation')
+	{
+		this.onFinishedEditDragLocation();
 	}
 	
 	this.currentEditMode = '';
@@ -1003,6 +1017,24 @@ uesp.gamemap.Map.prototype.createNewLocation = function (gamePos)
 	location.showPopup();
 	
 	return location;
+}
+
+
+uesp.gamemap.Map.prototype.onDragLocationClick = function(event)
+{
+	event.preventDefault();
+	if (this.currentEditLocation == null) return false;
+	
+	gamePos = this.convertPixelToGamePos(event.pageX, event.pageY);
+	this.currentEditLocation.x = gamePos.x;
+	this.currentEditLocation.y = gamePos.y;
+	this.currentEditLocation.displayData.points[0] = gamePos.x;
+	this.currentEditLocation.displayData.points[1] = gamePos.y;
+	
+	this.currentEditLocation.computeOffset();
+	this.currentEditLocation.update();
+	
+	return true;
 }
 
 
@@ -1145,6 +1177,8 @@ uesp.gamemap.Map.prototype.onClick = function(event)
 		self.onAddPathClick(event);
 	else if (self.currentEditMode == 'addarea')
 		self.onAddAreaClick(event);
+	else if (self.currentEditMode == 'draglocation')
+		self.onDragLocationClick(event);
 	else if (self.currentEditMode != '')
 		return false;
 	
@@ -2009,6 +2043,36 @@ uesp.gamemap.Map.prototype.removeEditClickWall = function()
 }
 
 
+uesp.gamemap.Map.prototype.onEditDragLocationStart = function (location)
+{
+	this.currentEditMode = 'draglocation';
+	this.currentEditLocation = location;
+	this.displayEditNotice('Click to move location to a new position.<br/>Hit \'Finish\' on the right when done.', 'Finish', 'Cancel');
+	this.currentEditPathPoints = uesp.cloneObject(location.displayData.points);
+	
+	this.addEditClickWall('default');
+	
+	this.displayLocation(this.currentEditLocation);
+}
+
+
+uesp.gamemap.Map.prototype.onFinishedEditDragLocation = function (location)
+{
+	this.removeEditClickWall();
+
+	this.displayLocation(this.currentEditLocation);
+	
+	this.currentEditLocation.showPopup();
+	this.currentEditLocation.updateFormPosition();
+	this.currentEditLocation.updateOffset();
+	this.currentEditLocation.updatePopupOffset();
+	
+	
+	this.currentEditLocation = null;
+	return true;
+}
+
+
 uesp.gamemap.Map.prototype.onEditPathHandlesStart = function (location)
 {
 	this.currentEditMode = 'edithandles';
@@ -2016,6 +2080,7 @@ uesp.gamemap.Map.prototype.onEditPathHandlesStart = function (location)
 	this.displayEditNotice('Edit path/area nodes by clicking and dragging.<br/>Hit \'Finish\' on the right when done.<br />Ctrl+Click deletes a point. Shift+Click adds a point.', 'Finish', 'Cancel');
 	this.currentEditPathPoints = uesp.cloneObject(location.displayData.points);
 	
+	this.currentEditLocation.updateFormPosition();
 	this.addEditClickWall('default');
 	this.currentEditLocation.pathElement.css('z-index', '150');
 	
@@ -2030,7 +2095,11 @@ uesp.gamemap.Map.prototype.onFinishedEditHandles = function()
 	
 	this.currentEditLocation.editPathHandles = false;
 	this.displayLocation(this.currentEditLocation);
+	
 	this.currentEditLocation.showPopup();
+	this.currentEditLocation.updateFormPosition();
+	this.currentEditLocation.updateOffset();
+	this.currentEditLocation.updatePopupOffset();
 	
 	this.currentEditLocation = null;
 	return true;
