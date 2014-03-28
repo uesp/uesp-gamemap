@@ -568,6 +568,13 @@ uesp.gamemap.Location.prototype.onSaveEditPopup = function (event)
 }
 
 
+uesp.gamemap.Location.prototype.onDragEditPopup = function (event)
+{
+	this.popupElement.hide();
+	this.parentMap.onEditDragLocationStart(this);
+}
+
+
 uesp.gamemap.Location.prototype.onDeleteEditPopup = function (event)
 {
 	if (!this.parentMap.canEdit()) return false;
@@ -805,6 +812,10 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 		pathButtons = 	"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonEditHandle' value='Edit Handles' />";
 		pathCheckbox = 	" &nbsp; &nbsp; &nbsp; Is Area <input type='checkbox' class='gmMapEditPopupInput' name='isArea' value='1' />";
 	}
+	else
+	{
+		pathButtons = "<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonDrag' value='Set Pos' />";
+	}
 	
 		//TODO: Proper permission checking for edit/add/delete abilities
 		//TODO: Proper template functionality
@@ -916,6 +927,10 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	
 	$('#' + this.popupId + ' .gmMapEditPopupButtonDelete').click(function(event) {
 		self.onDeleteEditPopup(event);
+	});
+	
+	$('#' + this.popupId + ' .gmMapEditPopupButtonDrag').click(function(event) {
+		self.onDragEditPopup(event);
 	});
 	
 	$('#' + this.popupId + ' .gmMapEditPopupButtonEditHandle').click(function(event) {
