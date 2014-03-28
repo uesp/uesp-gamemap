@@ -900,6 +900,14 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 		self.onCloseEditPopup(event);
 	});
 	
+	$(popupDiv).find('.gmMapIconTypeListContainer').keydown(function(event) {
+		self.showIconTypeCustomList();
+		self.scrollIconTypeCustomList();
+		
+		self.popupElement.find(".gmMapIconTypeList").trigger(event);
+		event.preventDefault();
+	});
+	
 	if (this.parentMap.mapOptions.iconTypeMap == null)
 	{
 		$('#' + this.popupId + ' input[name=iconType]').keyup(function() {
@@ -2032,10 +2040,10 @@ uesp.gamemap.Location.prototype.getIconTypeCustomList = function(currentIconType
 	
 	sortedIconTypeArray.sort();
 	
-	var output = "<div tabindex='1' class='gmMapIconTypeListContainer'>";
-	output += "<div tabindex='0' class='gmMapIconTypeListHeader'></div>"
+	var output = "<div tabindex='0' class='gmMapIconTypeListContainer'>";
+	output += "<div class='gmMapIconTypeListHeader'></div>"
 	output += "<input type='hidden' name='iconType' value='{iconType}' />";
-	output += "<ul tabindex='1' class='gmMapIconTypeList' style='display: none'>";
+	output += "<ul tabindex='0' class='gmMapIconTypeList' style='display: none'>";
 	output += "<li><div class='gmMapIconTypeValue'>0</div><div class='gmMapIconTypeLabel" + (currentIconType == 0 ? ' gmMapIconTypeLabelSelected' : '') + "'> None (0)</div></li>";
 	
 	for (key in sortedIconTypeArray)
