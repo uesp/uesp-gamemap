@@ -2460,7 +2460,12 @@ uesp.gamemap.Map.prototype.doSearch = function (searchText)
 	var self = this;
 	
 	searchText = searchText.trim();
-	if (searchText == null || searchText == '') return false;
+	
+	if (searchText == null || searchText == '')
+	{
+		this.clearSearchResults();
+		return false;
+	}
 	
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, 'Search for: ', searchText);
 	this.searchText = searchText;
