@@ -1213,6 +1213,7 @@ uesp.gamemap.Location.prototype.onPathEditHandlesDragMove = function (event)
 	this.computeOffset();
 	this.updatePath();
 	
+	event.preventDefault();
 	return true;
 }
 
