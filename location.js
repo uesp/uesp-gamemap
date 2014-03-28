@@ -952,7 +952,7 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 	
 	var popupDiv;
 	var popupContent =  "<div class='gmMapPopupClose'><img src='images/cancelicon.png' width='12' height='12' /></div>" + 
-						"<div class='gmMapPopupTitle'><a href='{wikiLink}'>{name}</a></div>" + 
+						"<div class='gmMapPopupTitle'><a href=\"{wikiLink}\">{name}</a></div>" + 
 						"<div class='gmMapPopupPos'>Location: {x}, {y}</div>" +
 						"<div class='gmMapPopupPos'>Internal ID: {id}</div>" +
 						"<div class='gmMapPopupDesc'>{description}</div>";
@@ -1719,7 +1719,8 @@ uesp.gamemap.Location.prototype.createPath = function ()
 
 uesp.gamemap.Location.prototype.createWikiLink = function()
 {
-	if ( !(this.parentMap.mapOptions.wikiNamespace == null) && this.parentMap.mapOptions.wikiNamespace.length > 0)
+	
+	if (this.parentMap.mapOptions.wikiNamespace != null && this.parentMap.mapOptions.wikiNamespace.length > 0)
 	{
 		return this.parentMap.mapOptions.wikiUrl + this.parentMap.mapOptions.wikiNamespace + ':' + this.wikiPage;
 	}
