@@ -38,6 +38,8 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.mapListContainer = null;
 	this.mapListLastSelectedItem = null;
 	
+	this.mapKeyElement = null;
+	
 		// TODO: Better way of limiting which map worlds to show
 	this.minValidWorldId = 50;
 	this.maxValidWorldId = 10000;
@@ -2736,6 +2738,86 @@ uesp.gamemap.Map.prototype.panUp = function ()
 uesp.gamemap.Map.prototype.panDown = function ()
 {
 	this.pan(0, -uesp.gamemap.Map.PANAMOUNT);
+}
+
+
+uesp.gamemap.Map.prototype.hideMapKey = function()
+{
+	if (this.mapKeyElement != null) this.mapKeyElement.hide();
+}
+
+
+uesp.gamemap.Map.prototype.displayMapKey = function()
+{
+	if (this.mapKeyElement == null) this.createMapKey();
+	
+	this.mapKeyElement.show();
+}
+
+
+uesp.gamemap.Map.prototype.createMapKey = function()
+{
+	var self = this;
+	var MapKeyContent = "<div class='gmMapKeyTitle'>Map Key</div>" +
+						"<button class='gmMapKeyCloseButton'>Close</button>" +
+						this.createMapKeyContent() +
+						"";
+
+	this.mapKeyElement = $('<div />')
+			.addClass('gmMapKey')
+			.html(MapKeyContent)
+			.appendTo(this.mapContainer);
+	
+	this.mapKeyElement.find('.gmMapKeyCloseButton').click(function(event) {
+		self.hideMapKey();
+	});
+	
+}
+
+
+uesp.gamemap.Map.prototype.createMapKeyContent = function()
+{
+	if (this.mapOptions.iconTypeMap == null) return 'No Map Icons Available';
+	
+	var reverseIconTypeMap = { };
+	var sortedIconTypeArray = [ ];
+	
+	for (key in this.mapOptions.iconTypeMap)
+	{
+		var keyValue = this.mapOptions.iconTypeMap[key];
+		reverseIconTypeMap[keyValue] = key;
+		sortedIconTypeArray.push(keyValue);
+	}
+	
+	sortedIconTypeArray.sort();
+	
+	var output = "<div class='gmMapKeyContainer'><div class='gmMapKeyColumn'>";
+	var numColumns = 4
+	var itemsPerColumn = sortedIconTypeArray.length / numColumns;
+	var itemCount = 0;
+	
+	for (key in sortedIconTypeArray)
+	{
+		iconTypeLabel = sortedIconTypeArray[key];
+		iconType = reverseIconTypeMap[iconTypeLabel];
+		
+		output += "<div class='gmMapKeyItem'>";
+		output += "<img src='" + this.mapOptions.iconPath + iconType + ".png' />";
+		output += "<div class='gmMapKeyItemLabel'>"+ iconTypeLabel + "</div>";
+		output += "</div><br />";
+		
+		++itemCount;
+		
+		if (itemCount > itemsPerColumn)
+		{
+			output += "</div><div class='gmMapKeyColumn'>";
+			itemCount = 0;
+		}
+	}
+	
+	output += "</div></div>"
+	return output;
+	
 }
 
 
