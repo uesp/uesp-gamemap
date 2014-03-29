@@ -101,7 +101,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.createMapTiles();
 	this.createMapControls();
 	this.createSearchControls();
-	this.createMapList();
+	//this.createMapList(this.mapContainer);
 	this.createEvents();
 	
 	this.setGamePosNoUpdate(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY, this.mapOptions.initialZoom);
@@ -119,7 +119,7 @@ uesp.gamemap.Map.prototype.addWorld = function (worldName, mapOptions, worldId, 
 }
 
 
-uesp.gamemap.Map.prototype.createMapList = function ()
+uesp.gamemap.Map.prototype.createMapList = function (parentObject)
 {
 	var self = this;
 	var listHtml = 	"<div id='gmMapListTitle'>" +
@@ -137,7 +137,7 @@ uesp.gamemap.Map.prototype.createMapList = function ()
 	
 	this.mapListContainer = $('<div />')
 								.attr('id', 'gmMapListContainer')
-								.appendTo(this.mapContainer);
+								.appendTo(parentObject);
 	
 	this.mapListContainer.html(listHtml);
 	
@@ -166,6 +166,8 @@ uesp.gamemap.Map.prototype.createMapList = function ()
 	$('#gmMapListAlphaSelect').change(function(e) {
 		var result = parseInt(this.options[this.selectedIndex].value);
 		self.changeWorld(result);
+		
+		self.hideMapList();
 	});
 	
 	return true;
@@ -2371,6 +2373,8 @@ uesp.gamemap.Map.prototype.setEventsForMapGroupList = function ()
 		
 		worldName = $(this).text();
 		g_GameMap.changeWorld(worldName);
+		
+		self.hideMapList();
 	});
 	
 	$("#gmMapList li.gmMapListHeader").click(function(e) {
@@ -2386,9 +2390,17 @@ uesp.gamemap.Map.prototype.setEventsForMapGroupList = function ()
 			else
 				$(this).css('background-image', 'url(images/downarrow.gif)');
 		}
-		
-		
 	});
+	
+	$(document).mousedown(function (e) {
+		var container = $("#gmMapListRoot");
+		
+		if (!container.is(e.target) && container.has(e.target).length === 0)
+		{
+			self.hideMapList();
+		}
+	});
+	
 }
 
 
@@ -2818,6 +2830,32 @@ uesp.gamemap.Map.prototype.createMapKeyContent = function()
 	output += "</div></div>"
 	return output;
 	
+}
+
+
+uesp.gamemap.Map.prototype.toggleMapList = function()
+{
+	visible = $('#gmMapListRoot').is(':visible');
+	$('#gmMapListRoot').toggle();
+	
+	if (visible)
+		$('#gmMapNameLabel').removeClass('gmMapNameLabelUpArrow');
+	else
+		$('#gmMapNameLabel').addClass('gmMapNameLabelUpArrow');
+}
+
+
+uesp.gamemap.Map.prototype.showMapList = function()
+{
+	$('#gmMapListRoot').show();
+	$('#gmMapNameLabel').addClass('gmMapNameLabelUpArrow');
+}
+
+
+uesp.gamemap.Map.prototype.hideMapList = function()
+{
+	$('#gmMapListRoot').hide();
+	$('#gmMapNameLabel').removeClass('gmMapNameLabelUpArrow');
 }
 
 
