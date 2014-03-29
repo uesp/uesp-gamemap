@@ -2566,10 +2566,12 @@ uesp.gamemap.Map.prototype.addSearchResultLocation = function (locationId)
 							.appendTo(this.mapSearchResults);
 	
 	var iconURL   = this.mapOptions.iconPath + location.iconType + ".png";
-	if (location.iconType == 0) iconURL = '';
+	var imageContent = "<img class='gmMapSearchResultIcon' src='" + iconURL + "' />";
+	
+	if (location.iconType == 0) imageContent = "<div class='gmMapSearchResultIcon' />";
 	
 		// TODO: Change to external template
-	var resultContent = "<img class='gmMapSearchResultIcon' src='" + iconURL + "' />" +
+	var resultContent = imageContent +
 						"<div class='gmMapSearchResultTitle'>{location.name}</div> " + 
 						"<div class='gnMapSearchResultLocWorld'>(in {world.displayName})</div>";
 	var data = { world: world, location: location };
