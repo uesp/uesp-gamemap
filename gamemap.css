@@ -1,6 +1,6 @@
 #gmMap {
 	bottom: 0px;
-	top: 30px;
+	top: 29px;
 	left: 0px;
 	right: 0px;
 	border: 1px solid black;
@@ -557,11 +557,10 @@ input[type=checkbox].gmMapEditPopupInput {
 
 
 #gmMenuBar {
-	position: absolute;
+	display: inline-block;
 	padding: 0px;
 	top: 0px;
 	left: 0px;
-	height: 30px;
 	width: 100%;
 	background-color: #333333;
 	z-index: 899;
@@ -577,7 +576,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	font-size: 20px;
 	font-weight: bold;
 	color: white;
-	padding-right: 50px;
+	padding-right: 25px;
 }
 
 .gmMenuLinks {
@@ -594,9 +593,9 @@ input[type=checkbox].gmMapEditPopupInput {
 }
 
 #gmMenuLinksRight {
-	position: absolute;
 	top: 0px;
-	display: block;
+	display: inline;
+	float: right;
 	right: 0;
 	padding-right: 10px;
 }
@@ -996,7 +995,27 @@ input[type=checkbox].gmMapEditPopupInput {
 
 #gmMapListRoot {
 	position: absolute;
-	left: 550px;
+	left: 325px;
 	height: 600px;
 	width: 252px;
+}
+
+#gmMapEditButtons {
+	display: inline-block;
+	text-align: center;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	width: 100%;
+	height: 100%;
+}
+
+#gmMapBox {
+	
 }
