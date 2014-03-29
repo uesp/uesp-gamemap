@@ -2806,7 +2806,7 @@ uesp.gamemap.Map.prototype.createMapKeyContent = function()
 	sortedIconTypeArray.sort();
 	
 	var output = "<div class='gmMapKeyContainer'><div class='gmMapKeyColumn'>";
-	var numColumns = 4
+	var numColumns = 5
 	var itemsPerColumn = sortedIconTypeArray.length / numColumns;
 	var itemCount = 0;
 	
