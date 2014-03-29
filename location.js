@@ -923,6 +923,10 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 		});
 	}
 	
+	$('#' + this.popupId + ' input[name=name]').blur(function(e) {
+		self.onEditLocationNameBlur(e);
+	});
+	
 	$('#' + this.popupId + ' input[name=displayLevel]').on('focus keydown', function(event) {
 		self.onUpdateCurrentZoomEditPopup(event);
 	});
@@ -952,6 +956,111 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	this.updatePopupOffset();
 	
 	if (this.locType > 1) this.updatePath();
+}
+
+
+uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
+{
+	console.log("onEditLocationNameBlur");
+	
+		/* Only works on new locations on their first edit */
+	if (this.isFirstEdit == null || this.isFirstEdit === false) return;
+	if (this.id > 0) return;
+	
+	rawNameValue = this.popupElement.find("input[name=name]").val();
+	nameValue = rawNameValue.toLowerCase();
+	if (nameValue == null || nameValue === "") return;
+	
+	iconType = this.popupElement.find("input[name=iconType]");
+	displayLevel = this.popupElement.find("input[name=displayLevel]");
+	labelPos = this.popupElement.find("select[name='displayData.labelPos']");
+	wikiPage = this.popupElement.find("input[name=wikiPage]");
+	
+		// TODO: Don't hardcode values?
+	if (nameValue == "skyshard")
+	{
+		this.setIconTypeCustomListValue(75);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+		wikiPage.val("Skyshard");
+	}
+	else if (nameValue == "chest")
+	{
+		this.setIconTypeCustomListValue(83);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
+	else if (nameValue == "heavy sack")
+	{
+		this.setIconTypeCustomListValue(89);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
+	else if (nameValue == "cooking fire")
+	{
+		this.setIconTypeCustomListValue(28);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
+	else if (nameValue == "alchemy station")
+	{
+		this.setIconTypeCustomListValue(84);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
+	else if (nameValue == "enchanting station")
+	{
+		this.setIconTypeCustomListValue(85);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
+	else if (nameValue == "blacksmith station")
+	{
+		this.setIconTypeCustomListValue(86);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
+	else if (nameValue == "clothing station")
+	{
+		this.setIconTypeCustomListValue(88);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
+	else if (nameValue == "woodworking station")
+	{
+		this.setIconTypeCustomListValue(87);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
+	else if (uesp.endsWith(nameValue, "wayshrine"))
+	{
+		this.setIconTypeCustomListValue(19);
+		displayLevel.val(this.parentMap.mapOptions.minZoomLevel);
+		labelPos.val(0);
+		wikiPage.val(rawNameValue);
+	}
+	else if (uesp.endsWith(nameValue, "dolmen"))
+	{
+		this.setIconTypeCustomListValue(69);
+		displayLevel.val(this.parentMap.mapOptions.minZoomLevel-2);
+		wikiPage.val(rawNameValue);
+	}
+	else if (uesp.endsWith(nameValue, "fighters guild"))
+	{
+		this.setIconTypeCustomListValue(30);
+		displayLevel.val(this.parentMap.mapOptions.minZoomLevel+2);
+		labelPos.val(0);
+		wikiPage.val(rawNameValue);
+	}
+	else if (uesp.endsWith(nameValue, "mages guild"))
+	{
+		this.setIconTypeCustomListValue(35);
+		displayLevel.val(this.parentMap.mapOptions.minZoomLevel+2);
+		labelPos.val(0);
+		wikiPage.val(rawNameValue);
+	}
+	
+	//this.isFirstEdit = false;
 }
 
 
