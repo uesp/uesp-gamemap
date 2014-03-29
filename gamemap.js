@@ -2813,6 +2813,50 @@ uesp.gamemap.Map.prototype.hideMapList = function()
 }
 
 
+uesp.gamemap.Map.prototype.testGroupMap = function()
+{
+	var self = this;
+	var foundMaps = { };
+	var count = 0;
+	
+	$("#gmMapList li").not('.gmMapListHeader').each (function () {
+		var mapName = $(this).text();
+		
+		if (! (mapName in self.mapWorldDisplayNameIndex))
+		{
+			uesp.logError("Group map '" + mapName + "' not found!");
+			count++;
+		}
+		else
+		{
+			foundMaps[mapName] = 1;
+		}
+	});
+	
+	if (count == 0)
+		uesp.logError("No invalid group map names found!");
+	else
+		uesp.logError("Found " + count + " invalid group map names!");
+	
+	count = 0;
+	
+	for (mapName in self.mapWorldDisplayNameIndex)
+	{
+		if (! (mapName in foundMaps))
+		{
+			uesp.logError("Map '" + mapName + "' missing from group maps!");
+			count++;
+		}
+	}
+	
+	if (count == 0)
+		uesp.logError("No missing group map names found!");
+	else
+		uesp.logError("Found " + count + " missing group map names!");
+
+}
+
+
 uesp.gamemap.defaultGetMapTile = function(tileX, tileY, zoom, world)
 {
 	if (world == null)

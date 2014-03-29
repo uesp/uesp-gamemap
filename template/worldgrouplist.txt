@@ -17,9 +17,9 @@
 			<li>Despair</li>
 			<li>Entila's Folly</li>
 			<li>Ezduiin</li>
-			<li>First Hold</li>
+			<li>Firsthold</li>
 			<li>Hazik's Lair</li>
-			<li>Innertanzelwil</li>
+			<li>Inner Tanzelwil</li>
 			<li>Lluvamir</li>
 			<li>Mehrune's Spite</li>
 			<li>Mistral</li>
@@ -30,10 +30,10 @@
 			<li>Reliquary Vault Top</li>
 			<li>Rictus</li>
 			<li>Saltspray Cave</li>
-			<li>Sky Watch</li>
+			<li>Skywatch</li>
 			<li>South Ruins</li>
 			<li>Temple</li>
-			<li>Temple of the Mourning Spring</li>
+			<li>Temple of the Mourning Springs</li>
 			<li>The Banished Cells</li>
 			<li>The Refuge of Dread</li>
 			<li>The Vault of Exile</li>
@@ -56,7 +56,6 @@
 			<li>Burrootkwama Mine</li>
 			<li>Caveofbroken Sail</li>
 			<li>Coromount</li>
-			<li>Dessicated Cave</li>
 			<li>Elden Hollow</li>
 			<li>Elden Hollow Heroic 1</li>
 			<li>Elden Hollow Heroic 2</li>
@@ -68,7 +67,7 @@
 			<li>Elden Root Inn</li>
 			<li>Elden Root Mages Guild</li>
 			<li>Elden Root Mages Guild Up</li>
-			<li>Elden Root Ground Floor</li>
+			<li>Elden Root Services</li>
 			<li>Elden Root Throne Room</li>
 			<li>Elden Root Wayshrine</li>
 			<li>Grahtwood</li>
@@ -88,10 +87,11 @@
 			<li>Rajhins Vault Small Room</li>
 			<li>Redfurtrading Post</li>
 			<li>Reliquary of Stars</li>
-			<li>Root's Under</li>
+			<li>Root Sunder Ruins</li>
 			<li>Southpoint</li>
 			<li>Tarlain Heights</li>
 			<li>The Middens</li>
+			<li>The Scuttle Pit</li>
 			<li>Tomb of Anahbi</li>
 			<li>Eldenhollow A</li>
 			<li>Eldenhollow B</li>
@@ -209,34 +209,34 @@
 		<li>Ava Aldmeri</li>
 		<li>Ava Daggerfall</li>
 		<li>Ava Ebonheart</li>
-		<li>Ava Whole</li>
 		<li>Bloodmayne Cave</li>
 		<li>Breakneck Cave</li>
 		<li>Capstone Cave</li>
-		<li>Crackedwood Cave</li>
-		<li>Eastelsweyr Gate</li>
+		<li>Cracked Wood Cave</li>
+		<li>Cyrodiil</li>
+		<li>Eastern Elsweyr Gate</li>
 		<li>Echo Cave</li>
 		<li>Haynote Cave</li>
 		<li>Imperial Sewers</li>
 		<li>Kingscrest</li>
-		<li>Lipsandtarn</li>
-		<li>Muckvalley Cavern</li>
+		<li>Lipsand Tarn</li>
+		<li>Muck Valley Cavern</li>
 		<li>Newt Cave</li>
 		<li>Nisin Cave</li>
-		<li>Northhighrock Gate</li>
-		<li>Northmorrow Gate</li>
-		<li>Pothole Cavern</li>
+		<li>Northern High Rock Gate</li>
+		<li>Northern Morrowind Gate</li>
+		<li>Pothole Caverns</li>
 		<li>Quickwater Cave</li>
 		<li>Quickwater Depths</li>
 		<li>Redruby Cave</li>
-		<li>Serpenthollow Cave</li>
-		<li>Southhighrock Gate</li>
-		<li>Southmorrow Gate</li>
+		<li>Serpent Hollow Cave</li>
+		<li>Southern High Rock Gate</li>
+		<li>Southern Morrowind Gate</li>
 		<li>Toadstool Hollow</li>
 		<li>Toadstool Hollow Lower</li>
 		<li>Underpall Cave</li>
 		<li>Vahtacen</li>
-		<li>Westelsweyr Gate</li>
+		<li>Western Elsweyr Gate</li>
 		<li>Whitefall Mountain</li>
 		</ul>
 	<li class='gmMapListHeader'>Daggerfall</li>
@@ -254,7 +254,7 @@
 			<li>Kozanset</li>
 			<li>Kulatimines-A</li>
 			<li>Kulatimines-B</li>
-			<li>Lost City</li>
+			<li>Lostcity</li>
 			<li>Myrkwasa</li>
 			<li>Salasen</li>
 			<li>Sandblown Mine</li>
@@ -286,7 +286,7 @@
 			<li>Hallins Stand</li>
 			<li>Hall of Heroes</li>
 			<li>Hircines Woods</li>
-			<li>Jaggerjaw</li>
+			<li>Klathzgar</li>
 			<li>Mournoth</li>
 			<li>Murcien's Claim</li>
 			<li>Nchuduabthar Threshold</li>
@@ -407,11 +407,11 @@
 			<li>Darkshade Caverns Heroic</li>
 			<li>Deep Crag Den</li>
 			<li>Deshaan</li>
-			<li>Desolate Cave</li>
 			<li>Eidolons Hollow</li>
 			<li>Eidolons Hollow 2</li>
 			<li>Eidolons Hollow North</li>
 			<li>Eidolons Hollow South</li>
+			<li>Forgotten Crypts</li>
 			<li>Knife Ear Grotto</li>
 			<li>Kwama Colony</li>
 			<li>Lagomere</li>
@@ -441,14 +441,14 @@
 			<li>Direfrost Keep Heroic</li>
 			<li>Direfrost Keep Summit</li>
 			<li>Eastmarch</li>
-			<li>Fortamol</li>
-			<li>Fortmorvunskar</li>
+			<li>Fort Amol</li>
+			<li>Fort Morvunskar</li>
 			<li>Frostwater Tundra</li>
-			<li>Giantsrun</li>
+			<li>Giant's Run</li>
 			<li>Hall of the Dead</li>
-			<li>Hall of trials</li>
+			<li>Hall of Trials</li>
 			<li>Icehammer's Vault</li>
-			<li>Icewindpeaks</li>
+			<li>Icewind Peaks</li>
 			<li>Lostknife Cave</li>
 			<li>Mistwatch Crevasse Crypt</li>
 			<li>Mistwatch Tower</li>
@@ -465,8 +465,8 @@
 		<li>Ebonheart Pact</li>
 		<li class='gmMapListHeader'>Shadowfen</li>
 			<ul>
-			<li>Altencorimont</li>
-			<li>Arxcorinium</li>
+			<li>Alten Corimont</li>
+			<li>Arx Corinium</li>
 			<li>Atanaz Ruins</li>
 			<li>Brokentusk Cave</li>
 			<li>Chidmoska Ruins</li>
@@ -486,14 +486,14 @@
 			<li>Shrine of Blackworm</li>
 			<li>Skinstealer Lair</li>
 			<li>Stillrise Village</li>
-			<li>Storm Hold</li>
-			<li>Stormholdayleid Ruin</li>
+			<li>Stormhold</li>
+			<li>Stormhold Ayleid Ruin</li>
 			<li>Sunscaleen Clave</li>
 			<li>Temple of Sul</li>
 			<li>Tenmaurwolk</li>
 			<li>Tormented Spire Instance</li>
 			<li>Tsanji</li>
-			<li>Venomousfens</li>
+			<li>Venomous Fens</li>
 			<li>Vision of the Hist</li>
 			<li>White Rose Prison</li>
 			</ul>
@@ -505,18 +505,18 @@
 			<li>Bleakrock Village</li>
 			<li>Coralheart Chamber</li>
 			<li>Crow's Wood</li>
-			<li>Daenseeth</li>
+			<li>Daen Seeth</li>
 			<li>Davons Watch</li>
 			<li>Davon's Watch Crypt</li>
 			<li>Dhalmora</li>
 			<li>Ebonheart</li>
 			<li>Emberflint Mine</li>
-			<li>Fortarand</li>
+			<li>Fort Arand</li>
 			<li>Fungal Grotto</li>
 			<li>Fungal Grotto Secret Room</li>
 			<li>Heimlyn Keep Reliquary</li>
 			<li>Hightide Hollow</li>
-			<li>Housedres Crypts</li>
+			<li>House Dres Crypts</li>
 			<li>Hozzin's Folley</li>
 			<li>Iliath Temple Tunnels</li>
 			<li>Inner Sea Armature</li>
@@ -547,7 +547,7 @@
 			<li>Ebonmere Tower</li>
 			<li>Fallowstone Vault</li>
 			<li>Forelhost</li>
-			<li>Fortgreenwall</li>
+			<li>Fort Greenwall</li>
 			<li>Lost Prospect</li>
 			<li>Lost Prospect 2</li>
 			<li>Nimalten</li>
@@ -664,14 +664,14 @@
 			<li>Heart's Grief 1</li>
 			<li>Heart's Grief 2</li>
 			<li>Heart's Grief 3</li>
-			<li>Sancretor 1</li>
-			<li>Sancretor 2</li>
-			<li>Sancretor 3</li>
-			<li>Sancretor 4</li>
-			<li>Sancretor 5</li>
-			<li>Sancretor 6</li>
-			<li>Sancretor 7</li>
-			<li>Sancretor 8</li>
+			<li>Sancre Tor 1</li>
+			<li>Sancre Tor 2</li>
+			<li>Sancre Tor 3</li>
+			<li>Sancre Tor 4</li>
+			<li>Sancre Tor 5</li>
+			<li>Sancre Tor 6</li>
+			<li>Sancre Tor 7</li>
+			<li>Sancre Tor 8</li>
 			<li>Valley of Blades 1</li>
 			<li>Valley of Blades 2</li>
 			<li>Vision of the Companions</li>
@@ -679,6 +679,7 @@
 		<li>Overhead</li>
 		<li>Pvetest</li>
 		<li>Silaseli Ruins</li>
+		<li>Slavepits</li>
 		<li>Towers</li>
 		<li>Vog</li>
 		<li>Zehtswater Lower</li>
