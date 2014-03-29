@@ -179,6 +179,7 @@
 			
 			if (canEdit)
 			{
+				$("#gmMapEditButtons").show();
 				$("#addLocationButton").show();
 				$("#addPathButton").show();
 				$("#addAreaButton").show();
@@ -191,8 +192,23 @@
 				$("#addAreaButton").hide();
 				$("#editWorldButton").hide();
 			}
+			
+			updateMenuBarHeight();
 		}
 		
+		
+		$(window).resize( function(e) {
+			updateMenuBarHeight();
+		});
+		
+		function updateMenuBarHeight()
+		{
+			var menuBar = $("#gmMenuBar");
+			var map = $('#gmMap');
+			
+			var height = menuBar.height();
+			map.css('top', '' + height + 'px');
+		}
 		
 		$( document ).ready( function()
 		{
@@ -265,16 +281,11 @@
 		<div id="gmTitle">UESP:Elder Scrolls Online Map</div>
 		
 		<ol class="gmMenuLinks">
-			<li class="gmMenuItem"><a href="" id="gmMapLink">Link to Current Map</a></li>
-			<li class="gmMenuItem"><a href="" id="gmMapReset">Reset Map</a></li>
 			<li class="gmMenuItem" id="gmMapNameLabel" onclick="g_GameMap.showMapList();">Map:</li>
+			<li class="gmMenuItem"><a href="" id="gmMapLink">Link</a></li>
+			<li class="gmMenuItem"><a href="" id="gmMapReset">Reset</a></li>
 		</ol>
 		<div id="gmMapListRoot" tabindex="0" style="display:none;"></div>
-		
-		<button id="editWorldButton" style="display:none;" onclick="g_GameMap.onEditWorld();">Edit World</button>
-		<button id="addLocationButton" style="display:none;" onclick="g_GameMap.onAddLocationStart();">Add Location</button>
-		<button id="addPathButton" style="display:none;" onclick="g_GameMap.onAddPathStart();">Add Path</button>
-		<button id="addAreaButton" style="display:none;" onclick="g_GameMap.onAddAreaStart();">Add Area</button>
 		
 		<div id="gmMenuLinksRight">
 			<ol class="gmMenuLinks">
@@ -283,6 +294,13 @@
 				<li class="gmMenuItem"><a href="http://www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design">Discuss</a></li>
 				<li class="gmMenuItem"><a href="http://www.uesp.net/wiki/Main_Page">UESP Home</a></li>
 			</ol>
+		</div>
+		
+		<div id="gmMapEditButtons" style="display:none;">
+			<button id="editWorldButton" style="display:none;" onclick="g_GameMap.onEditWorld();">Edit World</button>
+			<button id="addLocationButton" style="display:none;" onclick="g_GameMap.onAddLocationStart();">Add Location</button>
+			<button id="addPathButton" style="display:none;" onclick="g_GameMap.onAddPathStart();">Add Path</button>
+			<button id="addAreaButton" style="display:none;" onclick="g_GameMap.onAddAreaStart();">Add Area</button>
 		</div>
 </div>
 
