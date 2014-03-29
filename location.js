@@ -40,6 +40,7 @@ uesp.gamemap.Location = function(parentMap)
 	this.lastSelectedPathHandle = -1;
 	this.dragStartX = 0;
 	this.dragStartY = 0;
+	this.isFirstEdit = false;
 	
 	this.displayData = {};
 	
