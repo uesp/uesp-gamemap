@@ -31,6 +31,7 @@ uesp.gamemap.Location = function(parentMap)
 	this.locType = uesp.gamemap.LOCTYPE_NONE;
 	this.displayLevel = 0;
 	this.visible = false;
+	this.isPathHovering = false;
 	
 	this.useEditPopup = false;
 	this.editPathHandles = false;
@@ -1341,10 +1342,12 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 	avgScale = (this.pixelWidth / this.width + this.pixelHeight / this.height) / 2.0;
 	if (avgScale === 0) avgScale = 1;
 	
-	co.clearRect(this.x, this.y - this.height, this.width, this.height);
-
 	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) )
 	{
+		if (this.isPathHovering) return;
+		this.isPathHovering = true;
+		co.clearRect(this.x, this.y - this.height, this.width, this.height);
+		
 		if (this.locType == uesp.gamemap.LOCTYPE_AREA)
 		{
 			co.fillStyle = this.displayData.hover.fillStyle;
@@ -1359,6 +1362,10 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 	}
 	else
 	{
+		if (!this.isPathHovering) return;
+		this.isPathHovering = false;
+		co.clearRect(this.x, this.y - this.height, this.width, this.height);
+		
 		if (this.locType == uesp.gamemap.LOCTYPE_AREA)
 		{
 			co.fillStyle = this.displayData.fillStyle;
@@ -1561,6 +1568,8 @@ uesp.gamemap.Location.prototype.onPathMouseOut = function (event)
 {
 	var ca = event.target;
 	var co = ca.getContext('2d');
+	
+	this.isPathHovering = false;
 	
 	if (this.useEditPopup && this.popupElement != null) return false;
 	
