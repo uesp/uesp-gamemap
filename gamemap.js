@@ -2829,7 +2829,6 @@ uesp.gamemap.Map.prototype.createMapKeyContent = function()
 	
 	output += "</div></div>"
 	return output;
-	
 }
 
 
