@@ -962,13 +962,14 @@ uesp.gamemap.Map.prototype.onAddPathStart = function()
 	this.currentEditLocation.displayData.labelPos = 0;
 	this.currentEditLocation.displayData.points = [];
 	this.currentEditLocation.displayData.hover = { };
-	this.currentEditLocation.displayData.hover.fillStyle = "rgba(255,0,0,0.5)";
+	this.currentEditLocation.displayData.hover.fillStyle = "rgba(255,255,255,0.25)";
 	this.currentEditLocation.displayData.hover.strokeStyle = "rgba(0,0,0,1)";
 	this.currentEditLocation.displayData.hover.lineWidth = 2;
-	this.currentEditLocation.displayData.fillStyle = "rgba(255,255,255,0.5)";
+	this.currentEditLocation.displayData.fillStyle = "rgba(255,255,255,0.05)";
 	this.currentEditLocation.displayData.strokeStyle = "rgba(0,0,0,0.5)";
 	this.currentEditLocation.displayData.lineWidth = 1;
 	this.currentEditLocation.iconType = 0;
+	this.currentEditLocation.isFirstEdit = true;
 	
 	this.locations[this.currentEditLocation.id] = this.currentEditLocation;
 	return true;
@@ -1011,6 +1012,7 @@ uesp.gamemap.Map.prototype.createNewLocation = function (gamePos)
 	location.displayLevel = this.zoomLevel - 1;
 	location.visible = true;
 	location.useEditPopup = true;
+	location.isFirstEdit = true;
 	
 	location.displayData.labelPos = 6;
 	location.iconType = 1;
@@ -1943,64 +1945,6 @@ uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 }
 
 
-uesp.gamemap.Map.prototype.testArea = function()
-{
-	var newPath = new uesp.gamemap.Location(this);
-	
-	newPath.worldId = this.currentWorldId;
-	newPath.x = 30000;
-	newPath.y = 10000;
-	newPath.width  = 40000;
-	newPath.height = 40000;
-	newPath.id = 1234;
-	newPath.name = "Test Area";
-	newPath.iconType = 1;
-	newPath.locType = uesp.gamemap.LOCTYPE_AREA;
-	newPath.displayData.hover = { };
-	newPath.displayData.hover.fillStyle = "rgba(255,0,0,0.5)";
-	newPath.displayData.hover.strokeStyle = "rgba(0,0,0,1)";
-	newPath.displayData.hover.lineWidth = 2;
-	newPath.displayData.fillStyle = "rgba(255,255,255,1)";;
-	newPath.displayData.strokeStyle = "rgba(255,0,0,1)";
-	newPath.displayData.lineWidth = 1;
-	
-	newPath.displayData.points = [30000, 10000, 70000, 1000, 50863,-5304, 60000, -30000, 35000, -10000];
-	
-	this.locations[newPath.id] = newPath;
-	
-	this.displayLocation(newPath);
-}
-
-
-uesp.gamemap.Map.prototype.testPath = function()
-{
-	var newPath = new uesp.gamemap.Location(this);
-	
-	newPath.worldId = this.currentWorldId;
-	newPath.x = 30000;
-	newPath.y = 10000
-	newPath.width  = 40000;
-	newPath.height = 40000;
-	newPath.id = 1235;
-	newPath.name = "Test Path";
-	newPath.iconType = 2;
-	newPath.locType = uesp.gamemap.LOCTYPE_PATH;
-	newPath.displayData.hover = { };
-	newPath.displayData.hover.fillStyle = "rgba(0,255,0,0)";
-	newPath.displayData.hover.strokeStyle = "rgba(0,0,255,0.0.5)";
-	newPath.displayData.hover.lineWidth = 4;
-	newPath.displayData.fillStyle = "rgba(0,255,0,0)";
-	newPath.displayData.strokeStyle = "rgba(0,0,255,1)";
-	newPath.displayData.lineWidth = 2;
-	
-	newPath.displayData.points = [30000, 10000, 70000, 1000, 50863,-5304, 60000, -30000, 35000, -10000];
-	
-	this.locations[newPath.id] = newPath;
-	
-	this.displayLocation(newPath);
-}
-
-
 uesp.gamemap.Map.prototype.updateLocationId = function(oldId, newId)
 {
 	if (oldId in this.locations) 
@@ -2761,7 +2705,7 @@ uesp.gamemap.Map.prototype.hideMapKey = function()
 }
 
 
-uesp.gamemap.Map.prototype.displayMapKey = function()
+uesp.gamemap.Map.prototype.showMapKey = function()
 {
 	if (this.mapKeyElement == null) this.createMapKey();
 	
@@ -2784,6 +2728,15 @@ uesp.gamemap.Map.prototype.createMapKey = function()
 	
 	this.mapKeyElement.find('.gmMapKeyCloseButton').click(function(event) {
 		self.hideMapKey();
+	});
+	
+	$(document).mousedown(function(e){
+		var container = self.mapKeyElement;
+		
+		if (!container.is(e.target) && container.has(e.target).length === 0)
+		{
+			self.hideMapKey();
+		}
 	});
 	
 }
