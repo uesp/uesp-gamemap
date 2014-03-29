@@ -789,7 +789,7 @@ input[type=checkbox].gmMapEditPopupInput {
 
 .gmMapSearchRoot {
 	position: absolute;
-	left: 260px;
+	left: 2px;
 	top: 2px;
 	bottom: 2px;
 	z-index: 100;
@@ -810,7 +810,7 @@ input[type=checkbox].gmMapEditPopupInput {
 }
 
 .gmMapSearchInput {
-	width: 150px;
+	width: 250px;
 	margin: 0;
 	padding: 0;
 	border: 2px inset;
@@ -971,4 +971,26 @@ input[type=checkbox].gmMapEditPopupInput {
 	display: inline-block;
 	vertical-align: middle;
 	margin-left: 5px;
+}
+
+#gmMapNameLabel {
+	overflow: hidden;
+	white-space: nowrap;
+	font-weight: bold;
+	color: #ffffff;
+	width: 252px;
+	background-repeat: no-repeat;
+	background-position: right 4px top 8px;
+	background-image: url(images/downarrow.gif)
+}
+
+.gmMapNameLabelUpArrow {
+	background-image: url(images/uparrow.gif) !important;
+}
+
+#gmMapListRoot {
+	position: absolute;
+	left: 550px;
+	height: 600px;
+	width: 252px;
 }

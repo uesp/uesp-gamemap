@@ -38,12 +38,10 @@
 				21 : "Woodworker",
 				22 : "Alchemist",
 				23 : "Brewer",
-					//23 : "Armor Smith",		//Need New?
 				24 : "Armory",
 				25 : "Pack Merchant",
 				26 : "Banker",
 				27 : "Outfitter",
-					//27 : "Blunt Weapons",
 				28 : "Cooking Fire",
 				29 : "Enchanter",
 				30 : "Fighter's Guild",
@@ -52,7 +50,6 @@
 				33 : "Light Armor",
 				34 : "Merchant",
 				35 : "Mage's Guild",
-					//36 : "Magister",
 				36 : "Fishing Hole",
 				37 : "Leatherworker",
 				38 : "Perquisitor",
@@ -75,7 +72,6 @@
 				60 : "Dwemer Ruin",
 				61 : "Estate",
 				62 : "Quest Start",
-					//62 : "Explorable",
 				63 : "Group Boss",
 				64 : "Group Dungeon",
 				65 : "Group Instance",
@@ -172,7 +168,10 @@
 			};
 			
 			g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
-
+			
+				// TODO: Change how map list is created
+			g_GameMap.createMapList($("#gmMapListRoot"));
+			
 				// TODO: Temporary call to get the group-world list for ESO
 			$.get( 'template/worldgrouplist.txt', function( data ) {
 				g_GameMap.worldGroupListContents = data;
@@ -180,7 +179,8 @@
 				$('#gmMapList').html(data);
 				g_GameMap.setEventsForMapGroupList();
 			});
-
+			
+			
 		});
 		
 		
@@ -217,6 +217,8 @@
 			}
 			
 			$('#gmMapListAlphaSelect').val(newWorld.id);
+			
+			$('#gmMapNameLabel').text("Map: " + newWorld.displayName);
 		}
 		
 		
@@ -230,7 +232,9 @@
 		<ol class="gmMenuLinks">
 			<li class="gmMenuItem"><a href="" id="gmMapLink">Link to Current Map</a></li>
 			<li class="gmMenuItem"><a href="" id="gmMapReset">Reset Map</a></li>
+			<li class="gmMenuItem" id="gmMapNameLabel" onclick="g_GameMap.showMapList();">Map:</li>
 		</ol>
+		<div id="gmMapListRoot" tabindex="0" style="display:none;"></div>
 		
 		<button id="editWorldButton" style="display:none;" onclick="g_GameMap.onEditWorld();">Edit World</button>
 		<button id="addLocationButton" style="display:none;" onclick="g_GameMap.onAddLocationStart();">Add Location</button>
@@ -246,8 +250,6 @@
 			</ol>
 		</div>
 </div>
-
-
 
 <div id="gmMap">
 </div>
