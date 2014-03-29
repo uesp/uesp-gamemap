@@ -1039,6 +1039,18 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		labelPos.val(0);
 		wikiPage.val(rawNameValue);
 	}
+	else if (uesp.endsWith(nameValue, "crafting node"))
+	{
+		this.setIconTypeCustomListValue(90);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
+	else if (uesp.endsWith(nameValue, "container"))
+	{
+		this.setIconTypeCustomListValue(91);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
 	else if (uesp.endsWith(nameValue, "dolmen"))
 	{
 		this.setIconTypeCustomListValue(69);
