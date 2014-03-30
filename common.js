@@ -169,7 +169,7 @@ uesp.template = function (templateText, data)
 
 uesp.parseQueryParams = function()
 {
-	var queryString = location.search.substring(1).toLowerCase();
+	var queryString = location.search.substring(1);
 	var params = queryString.split("&");
 	var resultParams = { };
 	
@@ -178,11 +178,13 @@ uesp.parseQueryParams = function()
 		if ( params[i].indexOf("=") >= 0 )
 		{
 			var paramSplit = params[i].split("=");
+			var variable = paramSplit[0].toLowerCase();
 			resultParams[paramSplit[0]] = paramSplit[1];
 		}
 		else
 		{
-			resultParams[params[i]] = '';
+			var variable =params[i].toLowerCase();
+			resultParams[variable] = '';
 		}
 	}
 	
