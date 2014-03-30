@@ -74,6 +74,8 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.dragStartEventY = 0;
 	this.checkTilesOnDrag = true;
 	
+	this.defaultShowHidden = false;
+	
 	this.jumpToDestinationOnClick = true;
 	this.openPopupOnJump = false;
 	
@@ -112,6 +114,13 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	
 	this.setGamePosNoUpdate(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY, this.mapOptions.initialZoom);
 	this.updateMapStateFromQuery(false);
+}
+
+
+uesp.gamemap.Map.prototype.isShowHidden = function ()
+{
+	if (this.queryParams.showhidden >= 1) return true;
+	return this.defaultShowHidden;
 }
 
 
@@ -449,7 +458,7 @@ uesp.gamemap.onLoadIconFailed = function(missingURL)
 uesp.gamemap.Map.prototype.displayLocation = function (location)
 {
 	if (location.worldId != this.currentWorldId) return;
-	if (!location.visible) return;
+	if (!location.visible && !this.isShowHidden()) return;
 	
 	location.computeOffset();
 	location.update();
@@ -1554,6 +1563,7 @@ uesp.gamemap.Map.prototype.retrieveLocation = function(locId, onLoadFunction, ev
 	var queryParams = {};
 	queryParams.action = "get_loc";
 	queryParams.locid  = locId;
+	if (this.isShowHidden()) queryParams.showhidden = 1;
 	
 	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
 			self.onReceiveLocationData(data); 
@@ -1573,6 +1583,7 @@ uesp.gamemap.Map.prototype.retrieveCenterOnLocation = function(world, locationNa
 	queryParams.action = "get_centeron";
 	queryParams.world  = world;
 	queryParams.centeron = locationName;
+	if (this.isShowHidden()) queryParams.showhidden = 1;
 	
 	//if (!this.hasWorld(this.worldId)) queryParams.incworld = 1;
 	//if (queryParams.world <= 0) return uesp.logError("Unknown worldId " + this.currentWorldId + "!");
@@ -1595,6 +1606,7 @@ uesp.gamemap.Map.prototype.retrieveLocations = function()
 	queryParams.left   = mapBounds.left;
 	queryParams.right  = mapBounds.right;
 	queryParams.zoom   = this.zoomLevel;
+	if (this.isShowHidden()) queryParams.showhidden = 1;
 	if (!this.hasWorld(this.currentWorldId)) queryParams.incworld = 1;
 	
 	if (queryParams.world <= 0) return uesp.logError("Unknown worldId for current world " + this.currentWorldId + "!");
@@ -1610,6 +1622,7 @@ uesp.gamemap.Map.prototype.retrieveWorldData = function()
 	var queryParams = {};
 	var self = this;
 	queryParams.action = "get_worlds";
+	if (this.isShowHidden()) queryParams.showhidden = 1;
 	
 	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveWorldData(data); });
 }
@@ -1886,7 +1899,8 @@ uesp.gamemap.Map.prototype.redrawLocations = function()
 		var location = this.locations[key];
 		
 		if (location.worldId != this.currentWorldId) continue;
-		if (location.displayLevel > this.zoomLevel) continue;
+		
+		if (location.displayLevel > this.zoomLevel || (this.isShowHidden() && this.zoomLevel == this.mapOptions.maxZoomLevel)) continue;
 		
 		if (location.locType >= uesp.gamemap.LOCTYPE_PATH)
 		{
@@ -2484,6 +2498,7 @@ uesp.gamemap.Map.prototype.createSearchQuery = function (searchText)
 	
 	queryParams.action = 'search';
 	queryParams.search = encodeURIComponent(searchText);
+	if (this.isShowHidden()) queryParams.showhidden = 1;
 	
 	return queryParams;
 }
