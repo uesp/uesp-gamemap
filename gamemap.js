@@ -52,6 +52,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.mapWorldNameIndex = {};
 	this.mapWorldDisplayNameIndex = {};
 	this.mapWorldsLoaded = false;
+	this.centerOnError = false;
 	
 	this.searchText = '';
 	this.searchResults = [ ];
@@ -97,6 +98,11 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.requestPermissions();
 	this.retrieveWorldData();
 	
+	if (this.queryParams.world != null && this.queryParams.centeron != null)
+	{
+		this.retrieveCenterOnLocation(this.queryParams.world, this.queryParams.centeron);
+	}
+	
 	this.createMapRoot();
 	this.createMapTiles();
 	this.createMapControls();
@@ -106,6 +112,12 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	
 	this.setGamePosNoUpdate(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY, this.mapOptions.initialZoom);
 	this.updateMapStateFromQuery(false);
+}
+
+
+uesp.gamemap.Map.prototype.hasCenterOnParam = function ()
+{
+	return this.queryParams.centeron != null && this.queryParams.centeron !== '' && !this.centerOnError;
 }
 
 
@@ -1378,10 +1390,57 @@ uesp.gamemap.Map.prototype.mergeLocationData = function (locations, displayLocat
 }
 
 
+uesp.gamemap.Map.prototype.onReceiveCenterOnLocationData = function (data)
+{
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received centeron location data");
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, data);
+	
+	if (data.isError === true || data.locations == null || data.locations.length === 0)
+	{
+		if (data.worlds == null || data.worlds.length === 0)
+		{
+			this.changeWorld(668); //TODO: Not hardcoded?
+			this.centerOnError = true;
+		}
+		else
+		{
+			this.mergeWorldData(data.worlds);
+			this.changeWorld(data.worlds[0].id);
+			this.centerOnError = true;
+		}
+		
+		return false;
+	}
+	
+	this.mergeLocationData(data.locations, true);
+	
+	if (data.worlds == null || data.worlds.length === 0)
+	{
+		this.changeWorld(668); //TODO: Not hardcoded?
+		this.centerOnError = true;
+		return true;
+	}
+	
+	this.mergeWorldData(data.worlds);
+	
+	var mapState = new uesp.gamemap.MapState();
+	mapState.worldId = data.worlds[0].id;
+	mapState.zoomLevel = data.worlds[0].maxZoom;
+	mapState.gamePos.x = data.locations[0].x;
+	mapState.gamePos.y = data.locations[0].y;
+	
+	console.log(mapState);
+	
+	this.changeWorld(data.worlds[0].id, mapState);
+	
+	return true;
+}
+
+
 uesp.gamemap.Map.prototype.onReceiveLocationData = function (data)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received location data");
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, data);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Received location data");
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, data);
 	
 	if (!uesp.gamemap.isNullorUndefined(data.isError))  return uesp.logError("Error retrieving location data!", data.errorMsg);
 	if (uesp.gamemap.isNullorUndefined(data.locations)) return uesp.logError("Location data not found in JSON response!", data);
@@ -1502,6 +1561,23 @@ uesp.gamemap.Map.prototype.retrieveLocation = function(locId, onLoadFunction, ev
 		});
 	
 	return true;
+	
+}
+
+
+uesp.gamemap.Map.prototype.retrieveCenterOnLocation = function(world, locationName)
+{
+	var self = this;
+	
+	var queryParams = {};
+	queryParams.action = "get_centeron";
+	queryParams.world  = world;
+	queryParams.centeron = locationName;
+	
+	//if (!this.hasWorld(this.worldId)) queryParams.incworld = 1;
+	//if (queryParams.world <= 0) return uesp.logError("Unknown worldId " + this.currentWorldId + "!");
+	
+	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveCenterOnLocationData(data); });
 	
 }
 

@@ -161,6 +161,8 @@
 		
 		function onWorldLoad()
 		{
+			if (this.hasCenterOnParam()) return;
+			
 			defaultMapState = new uesp.gamemap.MapState();
 			
 			defaultMapState.worldId = 668;

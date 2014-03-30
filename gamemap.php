@@ -23,6 +23,7 @@ class GameMap
 	public $action = 'default';
 	public $worldId = 0;
 	public $worldName = '';
+	public $world = '';
 	public $locationId = 0;
 	public $revisionId = 0;
 	public $worldHistoryId = 0;
@@ -38,6 +39,7 @@ class GameMap
 	public $locVisible = 1;
 	public $locDestId = 0;
 	public $locDisplayData = '{}';
+	public $locCenterOn = '';
 	public $locX = 0;
 	public $locY = 0;
 	
@@ -242,6 +244,8 @@ class GameMap
 				return $this->doGetWorlds();
 			case 'get_locs':
 				return $this->doGetLocations();
+			case 'get_centeron':
+				return $this->doGetCenterOn();
 			case 'get_loc':
 				return $this->doGetLocation();
 			case 'set_loc':
@@ -410,6 +414,52 @@ class GameMap
 	}
 	
 	
+	public function FindWorldCenterOn ($world)
+	{
+		
+		if (is_numeric($world))
+		{
+			$worldId = intval($world);
+			$query = "SELECT * from world WHERE enabled != 0 AND id={$worldId} LIMIT 1;";
+		}
+		else
+		{
+			$worldName = strtolower($world);
+			$query = "SELECT * from world WHERE enabled != 0 AND displayName='{$world}' or name='{$worldName}' LIMIT 1;";
+		}
+	
+		$result = $this->db->query($query);
+		if ($result === FALSE) return 0;
+	
+		$worlds = Array();
+		$count = 0;
+		$result->data_seek(0);
+	
+		while ( ($row = $result->fetch_assoc()) )
+		{
+			settype($row['id'], "integer");
+			settype($row['parentId'], "integer");
+			settype($row['revisionId'], "integer");
+			settype($row['enabled'], "integer");
+			settype($row['posRight'], "integer");
+			settype($row['posLeft'], "integer");
+			settype($row['posTop'], "integer");
+			settype($row['posBottom'], "integer");
+			settype($row['cellSize'], "integer");
+			settype($row['minZoom'], "integer");
+			settype($row['maxZoom'], "integer");
+			settype($row['zoomOffset'], "integer");
+	
+			$worlds[] = $row;
+			$count += 1;
+		}
+	
+		$this->addOutputItem("worlds", $worlds);
+		$this->addOutputItem("worldCount", $count);
+		return $worlds[0]['id'];
+	}
+	
+	
 	public function doLocationSearch ()
 	{
 		$query = "SELECT * from location WHERE visible != 0 AND MATCH(name, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY name, worldId LIMIT {$this->limitCount};";
@@ -442,6 +492,69 @@ class GameMap
 		
 		$this->addOutputItem("locations", $locations);
 		$this->addOutputItem("locationCount", $count);
+		
+		return true;
+	}
+	
+	
+	public function FindLocationCenterOn ($centerOn)
+	{
+		if (is_numeric($centerOn))
+		{
+			$locId = intval($centerOn);
+			$query = "SELECT * from location WHERE visible != 0 AND id={$locId} LIMIT {$this->limitCount};";
+		}
+		else
+		{
+			$query = "SELECT * from location WHERE visible != 0 AND name='{$centerOn}' LIMIT {$this->limitCount};";
+		}
+		
+		$result = $this->db->query($query);
+		if ($result === FALSE) return 0;
+	
+		$locations = Array();
+		$count = 0;
+		$result->data_seek(0);
+	
+		while ( ($row = $result->fetch_assoc()) )
+		{
+			settype($row['id'], "integer");
+			settype($row['worldId'], "integer");
+			settype($row['revisionId'], "integer");
+			settype($row['destinationId'], "integer");
+			settype($row['locType'], "integer");
+			settype($row['iconType'], "integer");
+			settype($row['x'], "integer");
+			settype($row['y'], "integer");
+			settype($row['width'], "integer");
+			settype($row['height'], "integer");
+			settype($row['displayLevel'], "integer");
+			settype($row['visible'], "integer");
+	
+			$locations[] = $row;
+			$count += 1;
+		}
+	
+		$this->addOutputItem("locations", $locations);
+		$this->addOutputItem("locationCount", $count);
+	
+		return $locations[0]['id'];
+	}
+	
+	
+	public function doGetCenterOn ()
+	{
+		if ($this->locCenterOn === '') return $this->reportError("Missing 'centeron' query parameter!");
+		if ($this->world       === '') return $this->reportError("Missing 'world' query parameter!");
+		
+		$worldId = $this->FindWorldCenterOn($this->world);
+		if ($worldId === 0) return $this->reportError("Could not find world '{$this->world}'!");
+		
+		$locId = $this->FindLocationCenterOn($this->locCenterOn);
+		if ($locId === 0) return $this->reportError("Could not find location matching '{$this->locCenterOn}'!");
+		
+		$this->addOutputItem("worldId", $worldId);
+		$this->addOutputItem("locationId", $locId);
 		
 		return true;
 	}
@@ -897,10 +1010,12 @@ class GameMap
 		if (array_key_exists('parentid',  $this->inputParams)) $this->worldParentId = intval($this->db->real_escape_string($this->inputParams['parentid']));
 		if (array_key_exists('revisionid',  $this->inputParams)) $this->revisionId = intval($this->db->real_escape_string($this->inputParams['revisionid']));
 		if (array_key_exists('search',  $this->inputParams)) $this->search = $this->db->real_escape_string($this->inputParams['search']);
+		if (array_key_exists('centeron',  $this->inputParams)) $this->locCenterOn = $this->db->real_escape_string($this->inputParams['centeron']);
 		
 		if (array_key_exists('world',  $this->inputParams))
 		{
 			$worldParam = $this->db->real_escape_string($this->inputParams['world']);
+			$this->world = $worldParam;
 			
 			if (is_numeric($worldParam))
 				$this->worldId = intval($worldParam);
