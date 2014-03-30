@@ -42,6 +42,7 @@ class GameMap
 	public $locCenterOn = '';
 	public $locX = 0;
 	public $locY = 0;
+	public $showHidden = 0;
 	
 	public $search = '';
 	
@@ -380,7 +381,7 @@ class GameMap
 	
 	public function doWorldSearch ()
 	{
-		$query = "SELECT * from world WHERE enabled != 0 AND MATCH(displayName, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY displayName LIMIT {$this->limitCount};";
+		$query = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") ." AND MATCH(displayName, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY displayName LIMIT {$this->limitCount};";
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed searching for worlds!");
@@ -420,12 +421,12 @@ class GameMap
 		if (is_numeric($world))
 		{
 			$worldId = intval($world);
-			$query = "SELECT * from world WHERE enabled != 0 AND id={$worldId} LIMIT 1;";
+			$query = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") ." AND id={$worldId} LIMIT 1;";
 		}
 		else
 		{
 			$worldName = strtolower($world);
-			$query = "SELECT * from world WHERE enabled != 0 AND displayName='{$world}' or name='{$worldName}' LIMIT 1;";
+			$query = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") ." AND displayName='{$world}' or name='{$worldName}' LIMIT 1;";
 		}
 	
 		$result = $this->db->query($query);
@@ -462,7 +463,7 @@ class GameMap
 	
 	public function doLocationSearch ()
 	{
-		$query = "SELECT * from location WHERE visible != 0 AND MATCH(name, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY name, worldId LIMIT {$this->limitCount};";
+		$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND MATCH(name, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY name, worldId LIMIT {$this->limitCount};";
 				
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed searching for locations!");
@@ -502,11 +503,11 @@ class GameMap
 		if (is_numeric($centerOn))
 		{
 			$locId = intval($centerOn);
-			$query = "SELECT * from location WHERE visible != 0 AND id={$locId} LIMIT {$this->limitCount};";
+			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND id={$locId} LIMIT {$this->limitCount};";
 		}
 		else
 		{
-			$query = "SELECT * from location WHERE visible != 0 AND name='{$centerOn}' LIMIT {$this->limitCount};";
+			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND name='{$centerOn}' LIMIT {$this->limitCount};";
 		}
 		
 		$result = $this->db->query($query);
@@ -564,7 +565,7 @@ class GameMap
 	{
 		if (!$this->initDatabase()) return false;
 		
-		$query  = "SELECT * from location WHERE visible <> 0 AND ";
+		$query  = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND ";
 		
 		if ($this->worldName != '')
 		{
@@ -790,7 +791,7 @@ class GameMap
 		if ($this->locationId === 0) return $this->reportError("No location specified to retrieve data for!");
 		if (!$this->initDatabase()) return false;
 	
-		$query  = "SELECT * from location WHERE visible <> 0 AND id=".$this->locationId." ";
+		$query  = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND id=".$this->locationId." ";
 		$query .= " LIMIT 1";
 		
 		$result = $this->db->query($query);
@@ -830,7 +831,7 @@ class GameMap
 	{
 		if (!$this->initDatabase()) return false;
 	
-		$query = "SELECT * from world WHERE enabled <> 0 AND ";
+		$query = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") . " AND ";
 
 		if ($this->worldId > 0)
 			$query .= "id=". $worldId .";";
@@ -871,11 +872,23 @@ class GameMap
 	}
 	
 	
+	public function getEnabledQueryParam ($label)
+	{
+		$result = "";
+		
+		if ($this->showHidden)
+			$result = " 1 ";
+		else
+			$result = " $label <> 0";
+			
+		return $result;
+	}
+	
 	public function doGetWorlds ()
 	{
 		if (!$this->initDatabase()) return false;
 		
-		$query = "SELECT * from world WHERE enabled <> 0;";
+		$query = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") . ";";
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve world data!" . $result);
 		
@@ -1011,6 +1024,7 @@ class GameMap
 		if (array_key_exists('revisionid',  $this->inputParams)) $this->revisionId = intval($this->db->real_escape_string($this->inputParams['revisionid']));
 		if (array_key_exists('search',  $this->inputParams)) $this->search = $this->db->real_escape_string($this->inputParams['search']);
 		if (array_key_exists('centeron',  $this->inputParams)) $this->locCenterOn = $this->db->real_escape_string($this->inputParams['centeron']);
+		if (array_key_exists('showhidden',  $this->inputParams)) $this->showHidden = intval($this->db->real_escape_string($this->inputParams['showhidden']));
 		
 		if (array_key_exists('world',  $this->inputParams))
 		{

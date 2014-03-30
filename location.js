@@ -287,8 +287,16 @@ uesp.gamemap.Location.prototype.onLabelDblClickFunction = function()
 uesp.gamemap.Location.prototype.updateLabel = function ()
 {
 	var labelPos = 0;
+	var isDisabled = false;
 	
 	if ( !(this.displayData.labelPos == null) ) labelPos = this.displayData.labelPos;
+	
+	if (this.iconType === 0 && labelPos === 0 && this.parentMap.isShowHidden())
+	{
+		labelPos = 6;
+		if (this.name === "") this.name = "[noname]";
+		isDisabled = true;
+	}
 	
 	if (labelPos === 0)
 	{
@@ -311,6 +319,8 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 			.attr('unselectable', 'on')
 			.css('user-select', 'none')
 			.on('selectstart', false);
+		
+		if (!this.visible || this.displayLevel >= 20 || isDisabled) this.labelElement.addClass('gmMapLocDisabled');
 	}
 	
 	var labelWidth = this.name.length*6 + 2;

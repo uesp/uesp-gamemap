@@ -39,6 +39,10 @@
 	cursor: pointer;
 }
 
+.gmMapLocDisabled {
+	color: #ff3333 !important;
+}
+
 .gmMapLocIconDiv {
 	width: 32px;
 	height: 32px;
