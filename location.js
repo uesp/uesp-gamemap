@@ -1061,6 +1061,12 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
 		labelPos.val(0);
 	}
+	else if (uesp.endsWith(nameValue, "treasure map"))
+	{
+		this.setIconTypeCustomListValue(79);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel - 1);
+		labelPos.val(0);
+	}
 	else if (uesp.endsWith(nameValue, "dolmen"))
 	{
 		this.setIconTypeCustomListValue(69);
