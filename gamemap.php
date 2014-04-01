@@ -1026,6 +1026,11 @@ class GameMap
 		if (array_key_exists('centeron',  $this->inputParams)) $this->locCenterOn = $this->db->real_escape_string($this->inputParams['centeron']);
 		if (array_key_exists('showhidden',  $this->inputParams)) $this->showHidden = intval($this->db->real_escape_string($this->inputParams['showhidden']));
 		
+			// Unsure why these are not being replaced automatically
+		$this->locCenterOn = str_replace('+', ' ', $this->locCenterOn);
+		$this->locCenterOn = str_replace('%20', ' ', $this->locCenterOn);
+		$this->locCenterOn = str_replace('%27', "'", $this->locCenterOn);
+		
 		if (array_key_exists('world',  $this->inputParams))
 		{
 			$worldParam = $this->db->real_escape_string($this->inputParams['world']);
@@ -1034,7 +1039,15 @@ class GameMap
 			if (is_numeric($worldParam))
 				$this->worldId = intval($worldParam);
 			else
-				$this->worldName = strtolower($worldParam);
+			{
+				$this->worldName = $worldParam;
+				$this->worldName = str_replace('+', ' ', $this->worldName);
+				$this->worldName = str_replace('%20', ' ', $this->worldName);
+				$this->worldName = str_replace('%27', "\'", $this->worldName);
+				$this->world = $this->worldName;
+				$this->worldName = strtolower($this->worldName);
+				error_log("WorldName: " . $this->world);
+			}
 	
 		}
 		

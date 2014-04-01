@@ -1435,8 +1435,8 @@ uesp.gamemap.Map.prototype.onReceiveCenterOnLocationData = function (data)
 	var mapState = new uesp.gamemap.MapState();
 	mapState.worldId = data.worlds[0].id;
 	mapState.zoomLevel = data.worlds[0].maxZoom;
-	mapState.gamePos.x = data.locations[0].x;
-	mapState.gamePos.y = data.locations[0].y;
+	mapState.gamePos.x = data.locations[0].x + data.locations[0].width/2;
+	mapState.gamePos.y = data.locations[0].y - data.locations[0].height/2;
 	
 	console.log(mapState);
 	
