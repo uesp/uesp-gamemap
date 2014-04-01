@@ -1042,6 +1042,12 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
 		labelPos.val(0);
 	}
+	else if (nameValue == "lorebook" || nameValue == "lore book")
+	{
+		this.setIconTypeCustomListValue(76);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
 	else if (uesp.endsWith(nameValue, "wayshrine"))
 	{
 		this.setIconTypeCustomListValue(19);
