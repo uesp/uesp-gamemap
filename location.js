@@ -1067,7 +1067,7 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
 		labelPos.val(0);
 	}
-	else if (uesp.endsWith(nameValue, "treasure map"))
+	else if (nameValue.indexOf("treasure map") !== -1)
 	{
 		this.setIconTypeCustomListValue(79);
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel - 1);
