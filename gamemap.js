@@ -2217,6 +2217,8 @@ uesp.gamemap.Map.prototype.showWorldEditForm = function()
 	
 	var self = this;
 	
+	this.worldEditPopup.find('input[name=name]').focus();
+	
 	this.worldEditPopup.find('.gmMapPopupClose').click(function(event) {
 		self.onCloseWorldEditPopup(event);
 	});
