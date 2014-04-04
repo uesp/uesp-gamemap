@@ -1042,6 +1042,18 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
 		labelPos.val(0);
 	}
+	else if (nameValue == "ayleid well")
+	{
+		this.setIconTypeCustomListValue(0);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel-1);
+		labelPos.val(6);
+	}
+	else if (nameValue == "imperial camp")
+	{
+		this.setIconTypeCustomListValue(0);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel-1);
+		labelPos.val(6);
+	}
 	else if (nameValue == "lorebook" || nameValue == "lore book")
 	{
 		this.setIconTypeCustomListValue(76);
