@@ -908,6 +908,8 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 	
 	var self = this;
 	
+	$(popupDiv).find('input[name=name]').focus();
+	
 	$('#' + this.popupId + ' .gmMapPopupClose').click(function(event) {
 		self.onCloseEditPopup(event);
 	});
