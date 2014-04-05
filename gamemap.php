@@ -498,7 +498,7 @@ class GameMap
 	}
 	
 	
-	public function FindLocationCenterOn ($centerOn)
+	public function FindLocationCenterOn ($centerOn, $worldId)
 	{
 		if (is_numeric($centerOn))
 		{
@@ -507,7 +507,7 @@ class GameMap
 		}
 		else
 		{
-			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND name='{$centerOn}' LIMIT {$this->limitCount};";
+			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId={$worldId} AND name='{$centerOn}' LIMIT {$this->limitCount};";
 		}
 		
 		$result = $this->db->query($query);
@@ -551,7 +551,7 @@ class GameMap
 		$worldId = $this->FindWorldCenterOn($this->world);
 		if ($worldId === 0) return $this->reportError("Could not find world '{$this->world}'!");
 		
-		$locId = $this->FindLocationCenterOn($this->locCenterOn);
+		$locId = $this->FindLocationCenterOn($this->locCenterOn, $worldId);
 		if ($locId === 0) return $this->reportError("Could not find location matching '{$this->locCenterOn}'!");
 		
 		$this->addOutputItem("worldId", $worldId);
