@@ -498,7 +498,7 @@ class GameMap
 	}
 	
 	
-	public function FindLocationCenterOn ($centerOn, $worldId)
+	public function FindLocationCenterOn ($centerOn, &$worldId)
 	{
 		if (is_numeric($centerOn))
 		{
@@ -538,18 +538,39 @@ class GameMap
 	
 		$this->addOutputItem("locations", $locations);
 		$this->addOutputItem("locationCount", $count);
-	
+		
+		if ($worldId === 0 && $count > 0)
+		{
+			error_log("WorldID1 = " . $locations[0]['worldId']);
+			$worldId = $locations[0]['worldId'];
+			$this->worldId = $worldId;
+			$this->doGetWorld();
+		}
+		else
+		{
+			error_log("WorldID2 = " . $worldId);
+		}
+		
 		return $locations[0]['id'];
 	}
 	
 	
 	public function doGetCenterOn ()
 	{
-		if ($this->locCenterOn === '') return $this->reportError("Missing 'centeron' query parameter!");
-		if ($this->world       === '') return $this->reportError("Missing 'world' query parameter!");
+		$worldId = 0;
 		
-		$worldId = $this->FindWorldCenterOn($this->world);
-		if ($worldId === 0) return $this->reportError("Could not find world '{$this->world}'!");
+		if ($this->locCenterOn === '') return $this->reportError("Missing 'centeron' query parameter!");
+		//if ($this->world       === '') return $this->reportError("Missing 'world' query parameter!");
+		
+		if ($this->world !== '')
+		{
+			$worldId = $this->FindWorldCenterOn($this->world);
+			//if ($worldId === 0) return $this->reportError("Could not find world '{$this->world}'!");
+		}
+		else
+		{
+			$worldId = 0;
+		}
 		
 		$locId = $this->FindLocationCenterOn($this->locCenterOn, $worldId);
 		if ($locId === 0) return $this->reportError("Could not find location matching '{$this->locCenterOn}'!");
@@ -830,15 +851,17 @@ class GameMap
 	public function doGetWorld ()
 	{
 		if (!$this->initDatabase()) return false;
-	
+		
 		$query = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") . " AND ";
-
+		
 		if ($this->worldId > 0)
-			$query .= "id=". $worldId .";";
+			$query .= "id=". $this->worldId .";";
 		else if ($this->worldName != '')
-			$query .= "name='". $worldName ."';";
+			$query .= "name='". $this->worldName ."';";
 		else
 			return $this->reportError("World ID/name not specified!");
+		
+		error_log($query);
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve world data!");
@@ -883,6 +906,7 @@ class GameMap
 			
 		return $result;
 	}
+	
 	
 	public function doGetWorlds ()
 	{
@@ -1071,7 +1095,7 @@ class GameMap
 	{
 		$this->addOutputItem("isError", true);
 		$this->addOutputItem("errorMsg", $errorMsg);
-				
+		
 		error_log("Error: " . $errorMsg);
 		if ($this->db->error) error_log($this->db->error); 
 		return false;
