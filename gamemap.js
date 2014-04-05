@@ -100,7 +100,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.requestPermissions();
 	this.retrieveWorldData();
 	
-	if (this.queryParams.world != null && this.queryParams.centeron != null)
+	if (this.queryParams.centeron != null)
 	{
 		this.retrieveCenterOnLocation(this.queryParams.world, this.queryParams.centeron);
 	}
@@ -1422,19 +1422,33 @@ uesp.gamemap.Map.prototype.onReceiveCenterOnLocationData = function (data)
 	}
 	
 	this.mergeLocationData(data.locations, true);
+	var worldId = 0;
 	
 	if (data.worlds == null || data.worlds.length === 0)
 	{
-		this.changeWorld(668); //TODO: Not hardcoded?
-		this.centerOnError = true;
-		return true;
+		//this.changeWorld(668); //TODO: Not hardcoded?
+		//this.centerOnError = true;
+		//return true;
+		worldId = data.locations[0].worldId;
+	}
+	else
+	{
+		this.mergeWorldData(data.worlds);
+		worldId = data.worlds[0].id
 	}
 	
-	this.mergeWorldData(data.worlds);
+	console.log("worldid", worldId);
+	
+	if (this.mapWorlds[worldId] == null) 
+	{
+		this.changeWorld(668); //TODO: Not hardcoded?
+		this.centerOnError = true;
+		return true;		
+	}
 	
 	var mapState = new uesp.gamemap.MapState();
-	mapState.worldId = data.worlds[0].id;
-	mapState.zoomLevel = data.worlds[0].maxZoom;
+	mapState.worldId = worldId;
+	mapState.zoomLevel = this.mapWorlds[worldId].maxZoom;
 	mapState.gamePos.x = data.locations[0].x + data.locations[0].width/2;
 	mapState.gamePos.y = data.locations[0].y - data.locations[0].height/2;
 	
@@ -1581,7 +1595,7 @@ uesp.gamemap.Map.prototype.retrieveCenterOnLocation = function(world, locationNa
 	
 	var queryParams = {};
 	queryParams.action = "get_centeron";
-	queryParams.world  = world;
+	if (world != null) queryParams.world  = world;
 	queryParams.centeron = locationName;
 	if (this.isShowHidden()) queryParams.showhidden = 1;
 	
