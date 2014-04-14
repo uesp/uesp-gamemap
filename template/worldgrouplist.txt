@@ -359,8 +359,7 @@
 			<li>Flyleaf Catacombs</li>
 			<li>Hildune's Secret Refuge</li>
 			<li>Hoarfrost</li>
-			<li>Lorkrata Ruins a</li>
-			<li>Lorkrata Ruins b</li>
+			<li>Lorkrata Ruins</li>
 			<li>Northpoint</li>
 			<li>Obsidian Scar</li>
 			<li>Orcsfinger Ruins</li>
@@ -660,7 +659,7 @@
 			<li>Castle of the Worm 3</li>
 			<li>Castle of the Worm 4</li>
 			<li>Castle of the Worm 5</li>
-			<li>Halls of Torment1</li>
+			<li>Halls of Torment</li>
 			<li>Heart's Grief 1</li>
 			<li>Heart's Grief 2</li>
 			<li>Heart's Grief 3</li>
