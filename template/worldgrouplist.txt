@@ -354,6 +354,7 @@
 			<li>Doomcrag Shrouded Pass</li>
 			<li>Doomcrag Top</li>
 			<li>Edrald Undercroft</li>
+			<li>Edrald Undercroft Upper</li>
 			<li>Erokii</li>
 			<li>Eyebrightfeld</li>
 			<li>Flyleaf Catacombs</li>
