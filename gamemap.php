@@ -156,7 +156,9 @@ class GameMap
 					posRight INTEGER NOT NULL,
 					posBottom INTEGER NOT NULL,
 					enabled TINYINT NOT NULL,
-					PRIMARY KEY ( id )
+					PRIMARY KEY ( id ),
+					FULLTEXT(displayName),
+					FULLTEXT(description)
 				);";
 		
 		$result = $this->db->query($query);
@@ -179,7 +181,9 @@ class GameMap
 					wikiPage TEXT NOT NULL,
 					displayLevel INTEGER NOT NULL,
 					visible TINYINT NOT NULL,
-					PRIMARY KEY ( id )
+					PRIMARY KEY ( id ),
+					FULLTEXT(name),
+					FULLTEXT(description)
 				);";
 		
 		$result = $this->db->query($query);
@@ -203,7 +207,7 @@ class GameMap
 					wikiPage TEXT NOT NULL,
 					displayLevel INTEGER NOT NULL,
 					visible TINYINT NOT NULL,
-					PRIMARY KEY ( id )
+					PRIMARY KEY ( id ),
 				);";
 		
 		$result = $this->db->query($query);
