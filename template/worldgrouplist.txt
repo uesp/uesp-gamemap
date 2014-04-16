@@ -241,11 +241,11 @@
 		</ul>
 	<li class='gmMapListHeader'>Daggerfall</li>
 		<ul>
-		<li class='gmMapListHeader'>Alikr</li>
+		<li class='gmMapListHeader'>Alik'r</li>
 			<ul>
 			<li>Aldunz</li>
 			<li>Alikr</li>
-			<li>Ashaba</li>
+			<li>Ash'abah Pass</li>
 			<li>Bergama</li>
 			<li>Coldrock Diggings</li>
 			<li>Divadschagrin Mine</li>
