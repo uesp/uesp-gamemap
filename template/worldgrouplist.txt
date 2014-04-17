@@ -687,12 +687,8 @@
 		<li>Blackvine Ruins I</li>
 		<li>Canulus Refuge</li>
 		<li>Craglorn</li>
-
-
-
 		<li>Overhead</li>
 		<li>Pvetest</li>
-
 		<li>Silaseli Ruins</li>
 		<li>Slavepits</li>
 		<li>Towers</li>
