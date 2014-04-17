@@ -179,11 +179,11 @@ uesp.parseQueryParams = function()
 		{
 			var paramSplit = params[i].split("=");
 			var variable = paramSplit[0].toLowerCase();
-			resultParams[paramSplit[0]] = paramSplit[1];
+			resultParams[paramSplit[0]] = decodeURIComponent(paramSplit[1]);
 		}
 		else
 		{
-			var variable =params[i].toLowerCase();
+			var variable = params[i].toLowerCase();
 			resultParams[variable] = '';
 		}
 	}
