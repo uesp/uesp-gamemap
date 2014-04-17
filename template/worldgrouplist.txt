@@ -627,60 +627,59 @@
 			<li>Wailing Prison 7</li>
 			</ul>
 		</ul>
+	<li class='gmMapListHeader'>Guildmaps</li>
+		<ul>
+		<li>Abagarlas</li>
+		<li>Chateau Master Bedroom</li>
+		<li>Chateau Ravenous Rodent</li>
+		<li>Cheese Mongers Hollow</li>
+		<li>Circus of Cheerful Slaughter</li>
+		<li>Eyevea</li>
+		<li>Fort Virak Ruin</li>
+		<li>Glade of the Divine Asakala</li>
+		<li>Glade of the Divine Shivering</li>
+		<li>Glade of the Divine Vuldngrav</li>
+		<li>Halls of Submission</li>
+		<li>Mzendeldt</li>
+		<li>Ragnthar</li>
+		<li>Stonefang</li>
+		<li>The Earthforge</li>
+		<li>The Earthforge Public</li>
+		</ul>
+	<li class='gmMapListHeader'>Main</li>
+		<ul>
+		<li>Castle of the Worm 1</li>
+		<li>Castle of the Worm 2</li>
+		<li>Castle of the Worm 3</li>
+		<li>Castle of the Worm 4</li>
+		<li>Castle of the Worm 5</li>
+		<li>Halls of Torment</li>
+		<li>Heart's Grief 1</li>
+		<li>Heart's Grief 2</li>
+		<li>Heart's Grief 3</li>
+		<li>Sancre Tor 1</li>
+		<li>Sancre Tor 2</li>
+		<li>Sancre Tor 3</li>
+		<li>Sancre Tor 4</li>
+		<li>Sancre Tor 5</li>
+		<li>Sancre Tor 6</li>
+		<li>Sancre Tor 7</li>
+		<li>Sancre Tor 8</li>
+		<li>Valley of Blades 1</li>
+		<li>Valley of Blades 2</li>
+		<li>Vision of the Companions</li>
+		</ul>
 	<li class='gmMapListHeader'>Unknown</li>
 		<ul>
 		<li>Topal Island</li>
 		<li>Balfiera Island</li>
 		<li>Canulus Refuge</li>
 		<li>Craglorn</li>
-		<li class='gmMapListHeader'>Guildmaps</li>
-			<ul>
-			<li>Abagarlas</li>
-			<li>Chateau Master Bedroom</li>
-			<li>Chateau Ravenous Rodent</li>
-			<li>Cheese Mongers Hollow</li>
-			<li>Circus of Cheerful Slaughter</li>
-			<li>Eyevea</li>
-			<li>Fort Virak Ruin</li>
-			<li>Glade of the Divine Asakala</li>
-			<li>Glade of the Divine Shivering</li>
-			<li>Glade of the Divine Vuldngrav</li>
-			<li>Halls of Submission</li>
-			<li>Mzendeldt</li>
-			<li>Ragnthar</li>
-			<li>Stonefang</li>
-			<li>The Earthforge</li>
-			<li>The Earthforge Public</li>
-			</ul>
-		<li class='gmMapListHeader'>Main</li>
-			<ul>
-			<li>Castle of the Worm 1</li>
-			<li>Castle of the Worm 2</li>
-			<li>Castle of the Worm 3</li>
-			<li>Castle of the Worm 4</li>
-			<li>Castle of the Worm 5</li>
-			<li>Halls of Torment</li>
-			<li>Heart's Grief 1</li>
-			<li>Heart's Grief 2</li>
-			<li>Heart's Grief 3</li>
-			<li>Sancre Tor 1</li>
-			<li>Sancre Tor 2</li>
-			<li>Sancre Tor 3</li>
-			<li>Sancre Tor 4</li>
-			<li>Sancre Tor 5</li>
-			<li>Sancre Tor 6</li>
-			<li>Sancre Tor 7</li>
-			<li>Sancre Tor 8</li>
-			<li>Valley of Blades 1</li>
-			<li>Valley of Blades 2</li>
-			<li>Vision of the Companions</li>
-			</ul>
+		
 		<li>Overhead</li>
 		<li>Pvetest</li>
 		<li>Silaseli Ruins</li>
 		<li>Slavepits</li>
 		<li>Towers</li>
 		<li>Vog</li>
-		<li>Zehtswater Lower</li>
-		<li>Zehtswater Upper</li>
 		</ul>
