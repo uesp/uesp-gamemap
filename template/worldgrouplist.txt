@@ -631,7 +631,6 @@
 		<ul>
 		<li>Topal Island</li>
 		<li>Balfiera Island</li>
-		<li>Blackforge</li>
 		<li>Canulus Refuge</li>
 		<li>Craglorn</li>
 		<li class='gmMapListHeader'>Guildmaps</li>
