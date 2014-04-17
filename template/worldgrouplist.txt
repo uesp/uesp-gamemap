@@ -580,7 +580,7 @@
 			<li>Blackgarrison</li>
 			<li>Cave of Trophies</li>
 			<li>Cave of Trophies Upper</li>
-			<li>Cold Harbour</li>
+			<li>Coldharbour</li>
 			<li>Daedric Anchor Mooring</li>
 			<li>Depraved Grotto</li>
 			<li>Fist of Stone</li>
