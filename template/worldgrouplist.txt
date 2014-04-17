@@ -9,7 +9,7 @@
 			<li>Auridon</li>
 			<li>Bewan</li>
 			<li>Bliss Lower</li>
-			<li>Blisstop</li>
+			<li>Bliss Top</li>
 			<li>Buraniim</li>
 			<li>Calambar</li>
 			<li>Cave of Broken Sails</li>
@@ -18,11 +18,8 @@
 			<li>Entila's Folly</li>
 			<li>Ezduiin</li>
 			<li>Firsthold</li>
-			<li>Hazik's Lair</li>
 			<li>Inner Tanzelwil</li>
-			<li>Lluvamir</li>
-			<li>Mehrune's Spite</li>
-			<li>Mistral</li>
+			<li>Mehrunes' Spite</li>
 			<li>Ondil</li>
 			<li>Phaer Catacombs</li>
 			<li>Rage</li>
@@ -33,7 +30,6 @@
 			<li>Skywatch</li>
 			<li>South Ruins</li>
 			<li>Temple</li>
-			<li>Temple of the Mourning Springs</li>
 			<li>The Banished Cells</li>
 			<li>The Refuge of Dread</li>
 			<li>The Vault of Exile</li>
@@ -45,16 +41,16 @@
 			<li>Torinaan 4</li>
 			<li>Torinaan 5</li>
 			<li>Vafe</li>
-			<li>Veiledkeep Base</li>
+			<li>Veiled Keep Base</li>
 			<li>Vulkhel Guard</li>
 			<li>Wansalen</li>
 			</ul>
 		<li class='gmMapListHeader'>Grahtwood</li>
 			<ul>
-			<li>Boneorchard</li>
+			<li>Bone Orchard</li>
 			<li>Brackenleaf</li>
-			<li>Burrootkwama Mine</li>
-			<li>Caveofbroken Sail</li>
+			<li>Burroot Kwama Mine</li>
+			<li>Cave of Broken Sails</li>
 			<li>Coromount</li>
 			<li>Elden Hollow</li>
 			<li>Elden Hollow Heroic 1</li>
@@ -72,7 +68,7 @@
 			<li>Elden Root Wayshrine</li>
 			<li>Grahtwood</li>
 			<li>Greenhall</li>
-			<li>Grey Mire</li>
+			<li>Gray Mire</li>
 			<li>Haven</li>
 			<li>Haven Sewers</li>
 			<li>Karthdar</li>
@@ -80,13 +76,13 @@
 			<li>Long Coast</li>
 			<li>Longsnout Cave</li>
 			<li>Mobar Mine</li>
-			<li>Nesalas</li>
+			<li>Ne Salas</li>
 			<li>Orrery</li>
-			<li>Ossuaryoftelacar</li>
+			<li>Ossuary of Telacar</li>
 			<li>Rajhin's Vault</li>
 			<li>Rajhins Vault Small Room</li>
-			<li>Redfurtrading Post</li>
-			<li>Reliquary of Stars</li>
+			<li>Redfur Trading Post</li>
+			<li>Reliquary Ruins</li>
 			<li>Root Sunder Ruins</li>
 			<li>Southpoint</li>
 			<li>Tarlain Heights</li>
@@ -95,22 +91,22 @@
 			<li>Tomb of Anahbi</li>
 			<li>Eldenhollow A</li>
 			<li>Eldenhollow B</li>
-			<li>Vindeath Cave</li>
+			<li>Vinedeath Cave</li>
 			<li>Wormroot Depths</li>
 			</ul>
 		<li class='gmMapListHeader'>Greenshade</li>
 			<ul>
 			<li>Albecean Sea</li>
 			<li>Barrow Trench</li>
-			<li>Caracdena</li>
+			<li>Carac Dena</li>
 			<li>City of Ash Boss</li>
 			<li>City of Ash Main</li>
-			<li>Court of Wilder King</li>
+			<li>Court of Wilderking</li>
 			<li>Drowned Coast</li>
 			<li>Falinesti Cave</li>
 			<li>Greenshade</li>
 			<li>Green's Marrow</li>
-			<li>Gurzags Mine</li>
+			<li>Gurzag's Mine</li>
 			<li>Harridan's Lair</li>
 			<li>Hectahame Grotto Arboretum</li>
 			<li>Hectahame Grotto Armory</li>
@@ -124,60 +120,61 @@
 			<li>Imperial Underground Part 2</li>
 			<li>Isles of Torment</li>
 			<li>Marbruk</li>
-			<li>Narilnagaia</li>
+			<li>Naril Nagaia</li>
 			<li>Nereid Temple</li>
-			<li>Oldmerchant Caves</li>
-			<li>Rulanyilsfall</li>
-			<li>Serpents Grotto</li>
-			<li>Shademisten Clave</li>
+			<li>Old Merchant Caves</li>
+			<li>Rulanyil's Fall</li>
+			<li>Serpent's Grotto</li>
+			<li>Shademist Enclave</li>
 			<li>Shrouded Hollow Area 1</li>
 			<li>Shrouded Hollow Area 2</li>
-			<li>Shrouded Hollow Center</li>
 			<li>Silatar</li>
 			<li>The Underroot</li>
 			<li>Woodhearth</li>
 			</ul>
 		<li>Khenarthi's Roost</li>
-		<li class='gmMapListHeader'>Malabaltor</li>
+		<li class='gmMapListHeader'>Malabal Tor</li>
 			<ul>
 			<li>Abamath</li>
-			<li>Baandaritrading Post</li>
-			<li>Blackvine Ruins</li>
-			<li>Blackvine Ruins I</li>
+			<li>Baandari Trading Post</li>
+			<li>Black Vine Ruins</li>
 			<li>Broken Coast</li>
 			<li>Crimson Cove</li>
-			<li>Deadman's Drop</li>
-			<li>Hoarvorpit</li>
-			<li>Malabaltor</li>
+			<li>Dead Man's Drop</li>
+			<li>Hazak's Hollow</li>
+			<li>Hoarvor Pit</li>
+			<li>Malabal Tor</li>
+			<li>Mistral</li>
 			<li>Ouze</li>
 			<li>Roots of Silvenar</li>
 			<li>Shael Ruins</li>
 			<li>Shrine of Mauloch</li>
-			<li>Silvenarvale</li>
+			<li>Silvenar Vale</li>
 			<li>Stormwarden Undercroft</li>
 			<li>Stridriver Basin</li>
 			<li>Tempest Island</li>
 			<li>Tempest Island N Cave</li>
 			<li>Tempest Island SE Cave</li>
 			<li>Tempest Island SW Cave</li>
+			<li>Temple of the Mourning Springs</li>
 			<li>The Hunting Grounds</li>
 			<li>Tomb of the Apostates</li>
-			<li>Velynharbor</li>
+			<li>Velyn Harbor</li>
 			<li>Vulkwasten</li>
 			</ul>
-		<li class='gmMapListHeader'>Reapersmarch</li>
+		<li class='gmMapListHeader'>Reaper's March</li>
 			<ul>
 			<li>Arenthia</li>
-			<li>Clawsstrike</li>
+			<li>Claw's Strike</li>
 			<li>Dawnmeade</li>
-			<li>Dokrin Temple</li>
+			<li>Do'Krin Monastery</li>
 			<li>Dune</li>
-			<li>Fardir's Folly</li>
-			<li>Fortsphinxmoth</li>
+			<li>Fadir's Folly</li>
+			<li>Fort Sphinxmoth</li>
 			<li>Greenhill Catacombs</li>
 			<li>Halls of Ichor</li>
 			<li>Jode Plane</li>
-			<li>Jodeslight</li>
+			<li>Jode's Light</li>
 			<li>Jodewood</li>
 			<li>Khajrawlith</li>
 			<li>Kuna's Delve</li>
@@ -187,21 +184,20 @@
 			<li>Plane of Jode Denoflorkhaj</li>
 			<li>Plane of Jodehubhillbos</li>
 			<li>Plane of Jode Temple</li>
-			<li>Rawlkha</li>
+			<li>Rawl'kha</li>
 			<li>Rawlkha Temple</li>
-			<li>Reapers March</li>
+			<li>Reaper's March</li>
 			<li>Rendro Caverns</li>
 			<li>Selene's Web</li>
 			<li>Selene's Web Final Boss Area</li>
-			<li>Senelana</li>
 			<li>Sren-Ja</li>
 			<li>Sren-Ja1</li>
 			<li>Sren-Ja2</li>
-			<li>The Vilemanse First Floor</li>
-			<li>The Vilemanse Second Floor</li>
+			<li>The Vile Manse First Floor</li>
+			<li>The Vile Manse Second Floor</li>
 			<li>Thibaut's Cairn</li>
 			<li>Urcelmos Betrayal</li>
-			<li>Weepingwind Cave</li>
+			<li>Weeping Wind Cave</li>
 			</ul>
 		</ul>
 	<li class='gmMapListHeader'>Cyrodiil</li>
@@ -241,22 +237,22 @@
 		</ul>
 	<li class='gmMapListHeader'>Daggerfall</li>
 		<ul>
-		<li class='gmMapListHeader'>Alik'r</li>
+		<li class='gmMapListHeader'>Alik'r Desert</li>
 			<ul>
 			<li>Aldunz</li>
-			<li>Alikr</li>
+			<li>Alik'r Desert</li>
 			<li>Ash'abah Pass</li>
 			<li>Bergama</li>
 			<li>Coldrock Diggings</li>
-			<li>Divadschagrin Mine</li>
+			<li>Divad's Chagrin Mine</li>
 			<li>Hallowed Wastes</li>
-			<li>Imperviou's Vault</li>
+			<li>Impervious Vault</li>
 			<li>Kozanset</li>
-			<li>Kulatimines-A</li>
-			<li>Kulatimines-B</li>
-			<li>Lostcity</li>
+			<li>Kulati Mine A</li>
+			<li>Kulati Mine B</li>
+			<li>Lost City of the Na-Totambu</li>
 			<li>Myrkwasa</li>
-			<li>Salasen</li>
+			<li>Salas En</li>
 			<li>Sandblown Mine</li>
 			<li>Santaki</li>
 			<li>Sentinel</li>
@@ -283,7 +279,7 @@
 			<li>Evermore</li>
 			<li>Fallen Wastes</li>
 			<li>Halcyon Lake</li>
-			<li>Hallins Stand</li>
+			<li>Hallin's Stand</li>
 			<li>Hall of Heroes</li>
 			<li>Hircines Woods</li>
 			<li>Klathzgar</li>
@@ -291,9 +287,9 @@
 			<li>Murcien's Claim</li>
 			<li>Nchuduabthar Threshold</li>
 			<li>Nilata Ruins</li>
-			<li>Onsisbreath Mine</li>
+			<li>Onsi's Breath Mine</li>
 			<li>Razak's Wheel</li>
-			<li>Rubblebutte</li>
+			<li>Rubble Butte</li>
 			<li>Sunken Road</li>
 			<li>The Farshores</li>
 			<li>Troll's Toothpick</li>
@@ -301,6 +297,12 @@
 			<li>Viridian Watch</li>
 			</ul>
 		<li>Daggerfall Alliance</li>
+		<li class='gmMapListHeader'>Betnikh</li>
+			<ul>
+			<li>Betnikh</li>
+			<li>Carzog's Demise</li>
+			<li>Moriseli</li>
+			</ul>
 		<li class='gmMapListHeader'>Glenumbra</li>
 			<ul>
 			<li>Aldcroft</li>
@@ -308,11 +310,8 @@
 			<li>Badmans Cave</li>
 			<li>Badman's End</li>
 			<li>Badman's Start</li>
-			<li>Betnihk</li>
 			<li>Bloodthorn Lair</li>
-			<li>Bthzark</li>
 			<li>Cambray Hills</li>
-			<li>Carzog's Demise</li>
 			<li>Cath Bedraud</li>
 			<li>Crosswych</li>
 			<li>Crosswych Mine</li>
@@ -324,20 +323,14 @@
 			<li>Enduum</li>
 			<li>Farwatch Tower</li>
 			<li>Glenumbra</li>
-			<li>Goblin Mine's End</li>
-			<li>Goblin Mine's Start</li>
 			<li>Halls of Submission</li>
 			<li>Highrock</li>
 			<li>Ilessan Tower</li>
 			<li>King's Guard</li>
 			<li>Mine's of Khuras</li>
-			<li>Moriseli</li>
-			<li>Port Hunding</li>
 			<li>Silumm</li>
 			<li>Spindleclutch</li>
 			<li>Spindleclutch Heroic</li>
-			<li>Stros M'kai</li>
-			<li>The Grave</li>
 			<li>Themond Mine</li>
 			<li>Tomb of Lost Kings</li>
 			<li>Vault of Lost Kings</li>
@@ -356,7 +349,7 @@
 			<li>Edrald Undercroft</li>
 			<li>Edrald Undercroft Upper</li>
 			<li>Erokii</li>
-			<li>Eyebrightfeld</li>
+			<li>Eyebright Feld</li>
 			<li>Flyleaf Catacombs</li>
 			<li>Hildune's Secret Refuge</li>
 			<li>Hoarfrost</li>
@@ -395,17 +388,36 @@
 			<li>Wayrest Sewers</li>
 			<li>Windridge Cave</li>
 			</ul>
+		<li class='gmMapListHeader'>Stros M'Kai</li>
+			<ul>
+			<li>Bthzark</li>
+			<li>Goblin Mine's End</li>
+			<li>Goblin Mine's Start</li>
+			<li>Port Hunding</li>
+			<li>Stros M'Kai</li>
+			<li>The Grave</li>
+			</ul>
 		</ul>
 	<li class='gmMapListHeader'>Ebonheart</li>
 		<ul>
-		<li>Bleakrock</li>
+		<li class='gmMapListHeader'>Bal Foyen</li>
+			<ul>
+			<li>Bal Foyen</li>
+			<li>Dhalmora</li>
+			</ul>
+		<li class='gmMapListHeader'>Bleakrock Isle</li>
+			<ul>
+			<li>Bleakrock Isle</li>
+			<li>Bleakrock Village</li>
+			<li>Orkey's Hollow</li>
+			<li>Hozzin's Folly</li>
+			</ul>
 		<li class='gmMapListHeader'>Deshaan</li>
 			<ul>
 			<li>Bthanual</li>
-			<li>Corpse Garden</li>
 			<li>Darkshade Caverns</li>
 			<li>Darkshade Caverns Heroic</li>
-			<li>Deep Crag Den</li>
+			<li>Deepcrag Den</li>
 			<li>Deshaan</li>
 			<li>Eidolons Hollow</li>
 			<li>Eidolons Hollow 2</li>
@@ -413,9 +425,8 @@
 			<li>Eidolons Hollow South</li>
 			<li>Forgotten Crypts</li>
 			<li>Knife Ear Grotto</li>
-			<li>Kwama Colony</li>
 			<li>Lagomere</li>
-			<li>Lower Bthanuel</li>
+			<li>Lower Bthanual</li>
 			<li>Mournhold</li>
 			<li>Mournhold Sewers</li>
 			<li>Mzithumz</li>
@@ -423,14 +434,15 @@
 			<li>Narsis Ruins</li>
 			<li>Obsidian Gorge</li>
 			<li>Quarantineserk</li>
-			<li>Redolentroam</li>
+			<li>Redolent Loam</li>
 			<li>Shadastula</li>
 			<li>Siaebony Mine</li>
 			<li>Siltreen</li>
 			<li>Taldeic Crypts</li>
 			<li>Taleon's Crag</li>
+			<li>The Corpse Garden</li>
+			<li>The Triple Circle Mine</li>
 			<li>Tribunal Temple</li>
-			<li>Triple Circle Mine</li>
 			<li>Well of Lost Souls</li>
 			</ul>
 		<li class='gmMapListHeader'>Eastmarch</li>
@@ -453,7 +465,7 @@
 			<li>Mistwatch Crevasse Crypt</li>
 			<li>Mistwatch Tower</li>
 			<li>Mzulft</li>
-			<li>Oldsords Cave</li>
+			<li>Old Sord's Cave</li>
 			<li>Stormcrag Crypt</li>
 			<li>The Bastard's Tomb</li>
 			<li>The Chill Hollow</li>
@@ -468,29 +480,29 @@
 			<li>Alten Corimont</li>
 			<li>Arx Corinium</li>
 			<li>Atanaz Ruins</li>
-			<li>Brokentusk Cave</li>
-			<li>Chidmoska Ruins</li>
+			<li>Broken Tusk</li>
+			<li>Chid-Moska Ruins</li>
 			<li>Crypt of Hearts</li>
-			<li>Gandranen</li>
+			<li>Gandranen Ruins</li>
 			<li>Hall of the Dead</li>
 			<li>Leafwater</li>
 			<li>Loriasel</li>
 			<li>Loriasel Lower Level</li>
 			<li>Mudmines of Skulrpahan</li>
-			<li>Mudtree Mine</li>
-			<li>Onkobrakwama Mine</li>
+			<li>Mud Tree Mine</li>
+			<li>Onkobra Kwama Mine</li>
 			<li>Reticulated Spine</li>
 			<li>Sanguine's Demesne</li>
 			<li>Shadowfen</li>
-			<li>Shadow's Caleen Clave</li>
-			<li>Shrine of Blackworm</li>
+			<li>Shadowscale Enclave</li>
+			<li>Shrine of the Black Maw</li>
 			<li>Skinstealer Lair</li>
 			<li>Stillrise Village</li>
 			<li>Stormhold</li>
 			<li>Stormhold Ayleid Ruin</li>
-			<li>Sunscaleen Clave</li>
+			<li>Sunscale Enclave</li>
 			<li>Temple of Sul</li>
-			<li>Tenmaurwolk</li>
+			<li>Ten-Maur-Wolk</li>
 			<li>Tormented Spire Instance</li>
 			<li>Tsanji</li>
 			<li>Venomous Fens</li>
@@ -501,14 +513,11 @@
 			<ul>
 			<li>Apocryphas Gate</li>
 			<li>Ash Mountain</li>
-			<li>Bal Foyen</li>
-			<li>Bleakrock Village</li>
 			<li>Coralheart Chamber</li>
 			<li>Crow's Wood</li>
 			<li>Daen Seeth</li>
-			<li>Davons Watch</li>
+			<li>Davon's Watch</li>
 			<li>Davon's Watch Crypt</li>
-			<li>Dhalmora</li>
 			<li>Ebonheart</li>
 			<li>Emberflint Mine</li>
 			<li>Fort Arand</li>
@@ -517,13 +526,11 @@
 			<li>Heimlyn Keep Reliquary</li>
 			<li>Hightide Hollow</li>
 			<li>House Dres Crypts</li>
-			<li>Hozzin's Folley</li>
 			<li>Iliath Temple Tunnels</li>
 			<li>Inner Sea Armature</li>
 			<li>Kragenmoor</li>
 			<li>Last Resort Barrow</li>
 			<li>Mephala's Nest</li>
-			<li>Orkeys Hollow</li>
 			<li>Pagglers Hollow</li>
 			<li>Sheogorath's Tongue</li>
 			<li>Slave Pits</li>
@@ -536,7 +543,7 @@
 		<li class='gmMapListHeader'>The Rift</li>
 			<ul>
 			<li>Arcwind Point</li>
-			<li>Avancheznel</li>
+			<li>Avanchnzel</li>
 			<li>Blessed Crucible 1</li>
 			<li>Blessed Crucible 2</li>
 			<li>Blessed Crucible 3</li>
@@ -544,7 +551,6 @@
 			<li>Blessed Crucible 5</li>
 			<li>Blessed Crucible 6</li>
 			<li>Blessed Crucible 7</li>
-			<li>Ebonmere Tower</li>
 			<li>Fallowstone Vault</li>
 			<li>Forelhost</li>
 			<li>Fort Greenwall</li>
@@ -559,8 +565,8 @@
 			<li>Riften</li>
 			<li>Shor's Stone</li>
 			<li>Shor's Stone Mine</li>
-			<li>Shroud Hearth</li>
-			<li>Smoke Frost Peaks</li>
+			<li>Shroud Hearth Barrow</li>
+			<li>Smokefrost Peaks</li>
 			<li>Snapleg Cave</li>
 			<li>Stony Pass</li>
 			<li>Taarengrav</li>
@@ -568,7 +574,7 @@
 			<li>The Rift</li>
 			<li>Trolhetta</li>
 			<li>Trolhetta Cave</li>
-			<li>Vernimwood</li>
+			<li>Vernim Woods</li>
 			</ul>
 		</ul>
 	<li class='gmMapListHeader'>Oblivion</li>
@@ -577,19 +583,17 @@
 			<ul>
 			<li>Aba-Loria</li>
 			<li>Blackforge</li>
-			<li>Blackgarrison</li>
+			<li>Black Garrison</li>
 			<li>Cave of Trophies</li>
 			<li>Cave of Trophies Upper</li>
 			<li>Coldharbour</li>
 			<li>Daedric Anchor Mooring</li>
-			<li>Depraved Grotto</li>
 			<li>Fist of Stone</li>
 			<li>Foundry of Woe</li>
 			<li>Great Shackle</li>
 			<li>Grundas Gatehouse Main</li>
 			<li>Grundas Gatehouse Room</li>
-			<li>Hajuxith</li>
-			<li>Hollow City</li>
+			<li>Haj Uxith</li>
 			<li>Library of Dusk</li>
 			<li>Lightless Cell</li>
 			<li>Lightless Oubliette</li>
@@ -598,26 +602,28 @@
 			<li>Mainquest 1 Map 2</li>
 			<li>Mainquest 1 Map 3</li>
 			<li>Mainquest 1 Map 4</li>
-			<li>Malsorra's Tomb</li>
+			<li>Mal Sorra's Tomb</li>
 			<li>Shrouded Plain</li>
 			<li>Stirk</li>
 			<li>The Ashen Mines</li>
 			<li>The Bleeding Forge</li>
 			<li>The Endless Stair</li>
+			<li>The Grotto of Depravity</li>
+			<li>The Hollow City</li>
 			<li>The Manor of Revelry</li>
 			<li>The Mooring</li>
 			<li>The Prohets Enclosure</li>
-			<li>The Tower's of Eyes</li>
+			<li>The Towers of Eyes</li>
 			<li>The Undercroft</li>
+			<li>The Vault of Haman Forgefire</li>
 			<li>The Vile Laboratory</li>
 			<li>The Wailing Prison</li>
+			<li>The Wailing Maw</li>
 			<li>Tower of Lies</li>
-			<li>Vault of Haman Forgefire</li>
 			<li>Vaults of Madness</li>
 			<li>Vaults of Madness 1</li>
 			<li>Vaults of Madness 2</li>
 			<li>Village of the Lost</li>
-			<li>Wailing Maw</li>
 			<li>Wailing Prison 1</li>
 			<li>Wailing Prison 2</li>
 			<li>Wailing Prison 3</li>
@@ -673,13 +679,20 @@
 		<ul>
 		<li>Topal Island</li>
 		<li>Balfiera Island</li>
+		<li>Blackvine Ruins I</li>
 		<li>Canulus Refuge</li>
 		<li>Craglorn</li>
-		
+		<li>Fading Tree</li>
+		<li>Faldar's Tooth</li>
+		<li>Iluvamir</li>
+		<li>Lady Llarel's Shelter</li>
 		<li>Overhead</li>
 		<li>Pvetest</li>
+		<li>Senalana</li>
 		<li>Silaseli Ruins</li>
 		<li>Slavepits</li>
 		<li>Towers</li>
 		<li>Vog</li>
+		<li>Zehtswater Lower</li>
+		<li>Zehtswater Upper</li>
 		</ul>
