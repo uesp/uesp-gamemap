@@ -18,6 +18,7 @@
 			<li>Entila's Folly</li>
 			<li>Ezduiin</li>
 			<li>Firsthold</li>
+			<li>Iluvamir</li>
 			<li>Inner Tanzelwil</li>
 			<li>Mehrunes' Spite</li>
 			<li>Ondil</li>
@@ -103,7 +104,8 @@
 			<li>City of Ash Main</li>
 			<li>Court of Wilderking</li>
 			<li>Drowned Coast</li>
-			<li>Falinesti Cave</li>
+			<li>Falinesti Cave</li
+			<li>Fading Tree</li>>
 			<li>Greenshade</li>
 			<li>Green's Marrow</li>
 			<li>Gurzag's Mine</li>
@@ -190,6 +192,7 @@
 			<li>Rendro Caverns</li>
 			<li>Selene's Web</li>
 			<li>Selene's Web Final Boss Area</li>
+			<li>Senalana</li>
 			<li>Sren-Ja</li>
 			<li>Sren-Ja1</li>
 			<li>Sren-Ja2</li>
@@ -425,6 +428,7 @@
 			<li>Eidolons Hollow South</li>
 			<li>Forgotten Crypts</li>
 			<li>Knife Ear Grotto</li>
+			<li>Lady Llarel's Shelter</li>
 			<li>Lagomere</li>
 			<li>Lower Bthanual</li>
 			<li>Mournhold</li>
@@ -551,6 +555,7 @@
 			<li>Blessed Crucible 5</li>
 			<li>Blessed Crucible 6</li>
 			<li>Blessed Crucible 7</li>
+			<li>Faldar's Tooth</li>
 			<li>Fallowstone Vault</li>
 			<li>Forelhost</li>
 			<li>Fort Greenwall</li>
@@ -682,13 +687,12 @@
 		<li>Blackvine Ruins I</li>
 		<li>Canulus Refuge</li>
 		<li>Craglorn</li>
-		<li>Fading Tree</li>
-		<li>Faldar's Tooth</li>
-		<li>Iluvamir</li>
-		<li>Lady Llarel's Shelter</li>
+
+
+
 		<li>Overhead</li>
 		<li>Pvetest</li>
-		<li>Senalana</li>
+
 		<li>Silaseli Ruins</li>
 		<li>Slavepits</li>
 		<li>Towers</li>
