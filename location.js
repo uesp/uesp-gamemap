@@ -328,66 +328,68 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 		this.labelElement.text(this.name);
 	}
 	
-	//console.log(this.labelElement.width(), this.labelElement.height())
+	var iconSize = 8;
+	if (this.iconElement != null) iconSize = this.iconElement.width()/2 - 2;
+	
 	//var labelWidth = this.name.length*6 + 2;
-	var labelWidth = this.labelElement.width();
+	var labelWidth  = this.labelElement.width();
+	var labelHeight = this.labelElement.height();
 	
 	switch (labelPos) {
 		case 1:
 			anchorPoint = 'bottomRight';
 			labelTextAlign = 'right';
-			this.labelOffsetLeft = labelWidth + 8;
-			this.labelOffsetTop  = 26;
+			this.labelOffsetLeft = labelWidth + iconSize;
+			this.labelOffsetTop  = iconSize*2;
 			break;
 		case 2:
 			anchorPoint = 'bottomCenter';
 			labelTextAlign = 'center';
 			this.labelOffsetLeft = labelWidth/2;
-			this.labelOffsetTop  = 26;
+			this.labelOffsetTop  = iconSize*2;
 			break;
 		case 3:
 			anchorPoint = 'bottomLeft';
 			labelTextAlign = 'left';
-			this.labelOffsetLeft = -8;
-			this.labelOffsetTop  = 26;
+			this.labelOffsetLeft = -iconSize;
+			this.labelOffsetTop  = iconSize*2;
 			break;
 		case 4:
 			anchorPoint = 'midRight';
 			labelTextAlign = 'right';
-			this.labelOffsetLeft = labelWidth + 8;
-			this.labelOffsetTop  = 16;
+			this.labelOffsetLeft = labelWidth + iconSize;
+			this.labelOffsetTop  = iconSize + labelHeight/2 - 4;
 			break;
 		case 5:
 			anchorPoint = 'center';
 			labelTextAlign = 'center';
 			this.labelOffsetLeft = labelWidth/2;
-			this.labelOffsetTop  = 16;
+			this.labelOffsetTop  = iconSize + labelHeight/2 - 4;
 			break;
 		case 6:
 		default:
 			anchorPoint = 'midLeft';
 			labelTextAlign = 'left';
-			this.labelOffsetLeft = -8;
-			this.labelOffsetTop  = 16;
+			this.labelOffsetLeft = -iconSize;
+			this.labelOffsetTop  = iconSize + labelHeight/2 - 4;
 			break;
-			
 		case 7:
 			anchorPoint = 'topRight';
 			labelTextAlign = 'right';
-			this.labelOffsetLeft = labelWidth + 8;
-			this.labelOffsetTop  = 4;
+			this.labelOffsetLeft = labelWidth + iconSize;
+			this.labelOffsetTop  = 0;
 			break;
 		case 8:
 			anchorPoint = 'topCenter';
 			labelTextAlign = 'center';
 			this.labelOffsetLeft = labelWidth/2;
-			this.labelOffsetTop  = 4;
+			this.labelOffsetTop  = 0;
 			break;
 		case 9:
 			anchorPoint = 'topLeft';
 			labelTextAlign = 'left';
-			this.labelOffsetLeft = -8;
-			this.labelOffsetTop  = 4;
+			this.labelOffsetLeft = -iconSize;
+			this.labelOffsetTop  = 0;
 			break;
 	}
 	
@@ -1210,25 +1212,6 @@ uesp.gamemap.Location.prototype.updateLabelOffset = function ()
 {
 	if (this.labelElement == null) return;
 	
-	switch (this.labelPos)
-	{
-		case 0:
-		case 1:
-		case 4:
-		case 7:
-			//$(this.labelElement).offset( { right: this.offsetLeft - this.labelOffsetLeft });
-			break;
-		case 2:
-		case 5:
-		case 8:
-			break;
-		case 3:
-		case 6:
-		case 9:
-			//$(this.labelElement).offset( { left: this.offsetLeft - this.labelOffsetLeft });
-			break;
-	}
-	
 	$(this.labelElement).offset( { left: this.offsetLeft - this.labelOffsetLeft, top: this.offsetTop - this.labelOffsetTop + 8 });
 }
 
@@ -1958,19 +1941,19 @@ uesp.gamemap.Location.prototype.update = function ()
 {
 	if (this.locType == uesp.gamemap.LOCTYPE_POINT)
 	{
-		this.updateLabel();
 		this.updateIcon();
+		this.updateLabel();
 	}
 	else if (this.locType == uesp.gamemap.LOCTYPE_PATH)
 	{
-		this.updateLabel();
 		this.updateIcon();
+		this.updateLabel();
 		this.updatePath();
 	}
 	else if (this.locType == uesp.gamemap.LOCTYPE_AREA)
 	{
-		this.updateLabel();
 		this.updateIcon();
+		this.updateLabel();
 		this.updatePath();
 	}
 }
