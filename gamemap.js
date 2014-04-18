@@ -205,10 +205,34 @@ uesp.gamemap.Map.prototype.updateMapLink = function ()
 {
 		// TODO: Don't hard code link element ID (allow multiple links to be updated)
 	linkElement = $('#gmMapLink');
-	if (linkElement == null) return false;
 	
-	linkElement.attr('href', this.createMapLink());
+	if (linkElement != null)
+	{
+		linkElement.attr('href', this.createMapLink());
+	}
+	
+	wikiLinkElement = $('#gmMapWikiLink');
+	
+	if (wikiLinkElement != null)
+	{
+		wikiLinkElement.attr('href', this.createMapWikiLink());
+	}
+	
 	return true;
+}
+
+
+uesp.gamemap.Map.prototype.createMapWikiLink = function ()
+{
+	if (! (this.currentWorldId in this.mapWorlds)) return '';
+	
+	wikiPage = this.mapWorlds[this.currentWorldId].wikiPage;
+	if (wikiPage == null || wikiPage == '') wikiPage = this.mapWorlds[this.currentWorldId].displayName;
+	
+	nameSpace = '';
+	if (this.mapOptions.wikiNamespace != null && this.mapOptions.wikiNamespace != '') nameSpace = this.mapOptions.wikiNamespace + ':';
+	
+	return this.mapOptions.wikiUrl + nameSpace + wikiPage;
 }
 
 
