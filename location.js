@@ -634,6 +634,9 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	formValues = uesp.getFormData(form);
 	
 	formValues.displayLevel = parseInt(formValues.displayLevel);
+	if (formValues.displayLevel < this.parentMap.mapOptions.minZoomLevel) formValues.displayLevel = this.parentMap.mapOptions.minZoomLevel;
+	if (formValues.displayLevel > this.parentMap.mapOptions.maxZoomLevel) formValues.displayLevel = this.parentMap.mapOptions.maxZoomLevel;
+			
 	formValues.x = parseInt(formValues.x);
 	formValues.y = parseInt(formValues.y);
 	formValues.iconType = parseInt(formValues.iconType);
