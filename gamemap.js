@@ -683,6 +683,16 @@ uesp.gamemap.onMapTileLoadFunction = function (element, imageURL)
 }
 
 
+uesp.gamemap.onMapTileLoadFunctionEx = function (element, imageURL, gameMap, origZoomLevel, origWorldId) 
+{
+	return function() {
+		$(this).remove();
+		if (gameMap.zoomLevel != origZoomLevel || gameMap.currentWorldId != origWorldId) return;
+		element.css('background-image', 'url(' + imageURL + ')');
+	};
+}
+
+
 uesp.gamemap.Map.prototype.onJumpToDestinationLoad = function (eventData)
 {
 	if (eventData.destId == null) return;
@@ -733,6 +743,7 @@ uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
 uesp.gamemap.Map.prototype.loadMapTiles = function()
 {
 	if (this.mapOptions.getMapTileFunction == null) return;
+	var self = this;
 	
 	if (!(this.currentWorldId in this.mapWorlds))
 	{
@@ -762,7 +773,8 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 			var element  = this.mapTiles[y][x].element;
 			
 			$('<img/>').attr('src', imageURL)
-				.load( uesp.gamemap.onMapTileLoadFunction(element, imageURL))
+				//.load(uesp.gamemap.onMapTileLoadFunction(element, imageURL))
+				.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentWorldId))
 				.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
 		}
 	}
