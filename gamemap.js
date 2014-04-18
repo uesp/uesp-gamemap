@@ -1176,12 +1176,16 @@ uesp.gamemap.Map.prototype.onDragStart = function(event)
 uesp.gamemap.Map.prototype.onRightClick = function(event)
 {
 	var self = event.data.self;
-	event.preventDefault();
 	
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "onRightClick");
 	
-	if (self.currentEditMode != '') return false;
+	if (self.currentEditMode != '') return true;
 	
+		/* Don't zoom out if right click in popup */
+	if ($(event.target).parents('.gmMapPopupRoot').length > 0) return true;
+	if ($(event.target).parents('.gmMapSearchRoot').length > 0) return true;
+	
+	event.preventDefault();
 	self.onZoomOutWorld();
 	return false;
 }
