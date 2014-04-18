@@ -1912,7 +1912,6 @@ uesp.gamemap.Location.prototype.createWikiLinkHref = function()
 
 uesp.gamemap.Location.prototype.createWikiLink = function()
 {
-	
 	if (this.parentMap.mapOptions.wikiNamespace != null && this.parentMap.mapOptions.wikiNamespace.length > 0)
 	{
 		if (this.wikiPage == "") return "";
