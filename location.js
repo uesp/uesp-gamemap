@@ -318,12 +318,19 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 			.dblclick(this.onLabelDblClickFunction())
 			.attr('unselectable', 'on')
 			.css('user-select', 'none')
+			.text(this.name)
 			.on('selectstart', false);
 		
 		if (!this.visible || this.displayLevel >= 20 || isDisabled) this.labelElement.addClass('gmMapLocDisabled');
 	}
+	else
+	{
+		this.labelElement.text(this.name);
+	}
 	
-	var labelWidth = this.name.length*6 + 2;
+	//console.log(this.labelElement.width(), this.labelElement.height())
+	//var labelWidth = this.name.length*6 + 2;
+	var labelWidth = this.labelElement.width();
 	
 	switch (labelPos) {
 		case 1:
@@ -384,9 +391,7 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 			break;
 	}
 	
-	$(this.labelElement).css({ textAlign: labelTextAlign, width: labelWidth });
-	$(this.labelElement).text(this.name);
-	
+	this.labelElement.css({ textAlign: labelTextAlign, width: labelWidth });
 	this.updateLabelOffset();
 }
 
@@ -1204,6 +1209,25 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 uesp.gamemap.Location.prototype.updateLabelOffset = function ()
 {
 	if (this.labelElement == null) return;
+	
+	switch (this.labelPos)
+	{
+		case 0:
+		case 1:
+		case 4:
+		case 7:
+			//$(this.labelElement).offset( { right: this.offsetLeft - this.labelOffsetLeft });
+			break;
+		case 2:
+		case 5:
+		case 8:
+			break;
+		case 3:
+		case 6:
+		case 9:
+			//$(this.labelElement).offset( { left: this.offsetLeft - this.labelOffsetLeft });
+			break;
+	}
 	
 	$(this.labelElement).offset( { left: this.offsetLeft - this.labelOffsetLeft, top: this.offsetTop - this.labelOffsetTop + 8 });
 }
