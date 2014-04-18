@@ -1983,8 +1983,40 @@ uesp.gamemap.Map.prototype.updateMapStateFromQuery = function (updateMap)
 }
 
 
+uesp.gamemap.Map.prototype.updateZoomControlButtons = function(newZoomLevel)
+{
+	var isMaxZoom = newZoomLevel >= this.mapOptions.maxZoomLevel;
+	var isMinZoom = newZoomLevel <= this.mapOptions.minZoomLevel;
+	
+	if (isMaxZoom)
+	{
+		this.mapControlZoomIn.removeClass('gmMapControlZoomHover');
+		this.mapControlZoomIn.addClass('gmMapControlZoomDisable');
+	}
+	else
+	{
+		this.mapControlZoomIn.addClass('gmMapControlZoomHover');
+		this.mapControlZoomIn.removeClass('gmMapControlZoomDisable');
+	}
+	
+	if (isMinZoom)
+	{
+		this.mapControlZoomOut.removeClass('gmMapControlZoomHover');
+		this.mapControlZoomOut.addClass('gmMapControlZoomDisable');
+	}
+	else
+	{
+		this.mapControlZoomOut.addClass('gmMapControlZoomHover');
+		this.mapControlZoomOut.removeClass('gmMapControlZoomDisable');
+	}
+	
+	
+}
+
+
 uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 {
+	this.updateZoomControlButtons(this.zoomLevel + 1);
 	if (this.zoomLevel >= this.mapOptions.maxZoomLevel) return;
 	
 	var curPos= this.getGamePositionOfCenter();
@@ -2021,6 +2053,7 @@ uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 
 uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 {
+	this.updateZoomControlButtons(this.zoomLevel - 1);
 	if (this.zoomLevel <= this.mapOptions.minZoomLevel) return;
 	
 	this.zoomLevel--;
@@ -2758,12 +2791,14 @@ uesp.gamemap.Map.prototype.createMapControls = function ()
 	this.mapControlZoomIn = $('<div />')
 								.html('+')
 								.addClass('gmMapControlZoom')
+								.addClass('gmMapControlZoomHover')
 								.click(function(e) { self.zoomIn(); })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlZoomOut = $('<div />')
 								.text('-')
 								.addClass('gmMapControlZoom')
+								.addClass('gmMapControlZoomHover')
 								.click(function(e) { self.zoomOut(); })
 								.appendTo(this.mapControlRoot);
 }
