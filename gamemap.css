@@ -27,7 +27,7 @@
 .gmMapLoc {
 	position: absolute;
 	white-space: nowrap;
-	z-index: 10;
+	z-index: 20;
 	color: #33ff33;
 	font-weight: 400;
 	font-family: "Arial", sans-serif;
@@ -47,7 +47,7 @@
 	width: 32px;
 	height: 32px;
 	position: absolute;
-	z-index: 9;
+	z-index: 19;
 	display: inline-block;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -76,7 +76,7 @@
 .gmMapPopupRoot {
 	display: block;
 	position: absolute;
-	z-index: 20;
+	z-index: 30;
 }
 
 .gmMapPopup {
@@ -85,7 +85,7 @@
 	height: 100px;
 	background-color: #ffffff;
 	border: none;
-	z-index: 20;
+	z-index: 30;
 	font-family: "Arial", sans-serif;
 	font-size: 13px;
 	padding: 4px;
@@ -102,7 +102,7 @@
 	height: 330px;
 	background-color: #ffffff;
 	border: none;
-	z-index: 20;
+	z-index: 30;
 	padding: 4px;
 	border-radius: 5px;
 	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
@@ -631,7 +631,7 @@ input[type=checkbox].gmMapEditPopupInput {
 }
 
 .gmLocToolTip {
-	z-index: 25;
+	z-index: 45;
 	position: absolute;
 	border: 2px solid #606030;
 	background-color: rgba(0,0,0,0.85);

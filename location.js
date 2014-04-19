@@ -413,10 +413,15 @@ uesp.gamemap.Location.prototype.updateIcon = function ()
 		return true;
 	}
 	
+	// TODO: Don't hard code z-index calc
+	var ZIndex = 20 - this.displayLevel;
+	
 	if (this.iconElement == null)
 	{	
+			// TODO: Don't hard code z-index calc
 		this.iconElement = $('<div />')
 				.addClass('gmMapLocIconDiv')
+				.css('z-index', ZIndex)
 				.appendTo(this.parentMap.mapRoot);
 		
 		$('<span />').addClass('gmMapLocIconHelper').appendTo(this.iconElement);
@@ -437,6 +442,7 @@ uesp.gamemap.Location.prototype.updateIcon = function ()
 	else
 	{
 		$(this.iconElement.children()[1]).attr('src', imageURL);
+		this.iconElement.css('z-index', ZIndex);
 	}
 	
 	this.updateIconOffset();
