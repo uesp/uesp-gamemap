@@ -2540,7 +2540,8 @@ uesp.gamemap.Map.prototype.createSearchControls = function ()
 	var searchContent = "<form  onsubmit='return false;'>" +
 						"<div class='gmMapSearchInputDiv'>" + 
 						"<input class='gmMapSearchInput' type='text' name='search' value='' size='25' maxlength='100' />" +
-						"<input class='gmMapSearchButton' type='submit' value='Search' />" +
+						"<input class='gmMapSearchButton' type='submit' value='Search' /><br />" +
+						"<div class='gmMapSearchSmall'><input class='gmMapSearchCheck' type='checkbox' name='searchMapOnly' /> Only Search in Current Map</div>" + 
 						"</div>" + 
 						"</form>" +
 						"<div class='gmMapSearchResultsWrapper'>" + 
@@ -2573,27 +2574,31 @@ uesp.gamemap.Map.prototype.createSearchControls = function ()
 uesp.gamemap.Map.prototype.onSearchButton = function (event)
 {
 	var mapSearchForm = this.mapSearchRoot.find('form');
-	var searchText = mapSearchForm.find('input').val();
+	var searchText = mapSearchForm.find('input[name=search]').val();
+	var searchMapOnly = mapSearchForm.find('input[name=searchMapOnly]').is(':checked');
 	
-	this.doSearch(searchText);
+	console.log(searchMapOnly);
+	
+	this.doSearch(searchText, searchMapOnly);
 	
 	return false;
 }
 
 
-uesp.gamemap.Map.prototype.createSearchQuery = function (searchText)
+uesp.gamemap.Map.prototype.createSearchQuery = function (searchText, searchMapOnly)
 {
 	var queryParams = { };
 	
 	queryParams.action = 'search';
 	queryParams.search = encodeURIComponent(searchText);
 	if (this.isShowHidden()) queryParams.showhidden = 1;
+	if (searchMapOnly === true) queryParams.world = this.currentWorldId;
 	
 	return queryParams;
 }
 
 
-uesp.gamemap.Map.prototype.doSearch = function (searchText)
+uesp.gamemap.Map.prototype.doSearch = function (searchText, searchMapOnly)
 {
 	var self = this;
 	
@@ -2608,7 +2613,7 @@ uesp.gamemap.Map.prototype.doSearch = function (searchText)
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, 'Search for: ', searchText);
 	this.searchText = searchText;
 	
-	var queryParams = this.createSearchQuery(searchText);
+	var queryParams = this.createSearchQuery(searchText, searchMapOnly);
 	
 	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
 		self.onReceiveSearchResults(data); 

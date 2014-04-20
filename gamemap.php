@@ -45,6 +45,7 @@ class GameMap
 	public $showHidden = 0;
 	
 	public $search = '';
+	public $searchWorldId = 0;
 	
 	public $locWidth = 0;
 	public $locHeight = 0;
@@ -385,6 +386,13 @@ class GameMap
 	
 	public function doWorldSearch ()
 	{
+		if ($this->world != '')
+		{
+			$this->searchWorldId = $this->FindWorld($this->world);
+			if ($this->searchWorldId == 0) return $this->reportError("Invalid world '{$this->world}' for search!");
+			return true;
+		}
+		
 		$query = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") ." AND MATCH(displayName, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY displayName LIMIT {$this->limitCount};";
 		
 		$result = $this->db->query($query);
@@ -419,7 +427,7 @@ class GameMap
 	}
 	
 	
-	public function FindWorldCenterOn ($world)
+	public function FindWorld ($world)
 	{
 		
 		if (is_numeric($world))
@@ -467,7 +475,10 @@ class GameMap
 	
 	public function doLocationSearch ()
 	{
-		$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND MATCH(name, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY name, worldId LIMIT {$this->limitCount};";
+		if ($this->searchWorldId != 0)
+			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId={$this->searchWorldId} AND MATCH(name, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY name, worldId LIMIT {$this->limitCount};";
+		else
+			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND MATCH(name, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY name, worldId LIMIT {$this->limitCount};";
 				
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed searching for locations!");
@@ -568,7 +579,7 @@ class GameMap
 		
 		if ($this->world !== '')
 		{
-			$worldId = $this->FindWorldCenterOn($this->world);
+			$worldId = $this->FindWorld($this->world);
 			//if ($worldId === 0) return $this->reportError("Could not find world '{$this->world}'!");
 		}
 		else
@@ -1065,7 +1076,9 @@ class GameMap
 			$this->world = $worldParam;
 			
 			if (is_numeric($worldParam))
+			{
 				$this->worldId = intval($worldParam);
+			}
 			else
 			{
 				$this->worldName = $worldParam;
@@ -1092,6 +1105,8 @@ class GameMap
 			$this->limitRight = $this->limitLeft;
 			$this->limitLeft = $tmp;
 		}
+		
+		if ($this->action == 'default' && $this->search != '') $this->action = 'search';
 	}
 	
 	
