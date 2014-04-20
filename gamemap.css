@@ -816,6 +816,13 @@ input[type=checkbox].gmMapEditPopupInput {
 	background-color: white;
 	border: none;
 	pointer-events: auto;
+	height: 36px;
+}
+
+.gmMapSearchCheck {
+	padding: 0;
+	margin: 0;
+	vertical-align: -2px;
 }
 
 .gmMapSearchButton {
@@ -830,13 +837,21 @@ input[type=checkbox].gmMapEditPopupInput {
 	border: 2px inset;
 }
 
+.gmMapSearchSmall {
+	font-size: 11px;
+	vertical-align: middle;
+	line-height: 16px;
+	height: 16px;
+	float: right;
+}
+
 .gmMapSearchResults {
 	pointer-events: visible;
 }
 
 .gmMapSearchResultsWrapper {
 	position: absolute;
-	top: 20px;
+	top: 36px;
 	bottom: 20px;
 	width: 100%;
 	pointer-events: none;
