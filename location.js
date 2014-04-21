@@ -393,7 +393,7 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 			break;
 	}
 	
-	this.labelElement.css({ textAlign: labelTextAlign, width: labelWidth });
+	this.labelElement.css({ textAlign: labelTextAlign });
 	this.updateLabelOffset();
 }
 
