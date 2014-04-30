@@ -288,7 +288,7 @@
 			<li>Klathzgar</li>
 			<li>Mournoth</li>
 			<li>Murcien's Claim</li>
-			<li>Nchuduabthar Threshold</li>
+			<li>Nchu Duabthar Threshold</li>
 			<li>Nilata Ruins</li>
 			<li>Onsi's Breath Mine</li>
 			<li>Razak's Wheel</li>
@@ -587,7 +587,6 @@
 		<li class='gmMapListHeader'>Coldharbor</li>
 			<ul>
 			<li>Aba-Loria</li>
-			<li>Blackforge</li>
 			<li>Black Garrison</li>
 			<li>Cave of Trophies</li>
 			<li>Cave of Trophies Upper</li>
@@ -595,8 +594,7 @@
 			<li>Daedric Anchor Mooring</li>
 			<li>Fist of Stone</li>
 			<li>Foundry of Woe</li>
-			<li>Great Shackle</li>
-			<li>Grundas Gatehouse Main</li>
+			<li>Grunda's Gatehouse</li>
 			<li>Grundas Gatehouse Room</li>
 			<li>Haj Uxith</li>
 			<li>Library of Dusk</li>
@@ -611,8 +609,10 @@
 			<li>Shrouded Plain</li>
 			<li>Stirk</li>
 			<li>The Ashen Mines</li>
+			<li>The Black Forge</li>
 			<li>The Bleeding Forge</li>
 			<li>The Endless Stair</li>
+			<li>The Great Shackle</li>
 			<li>The Grotto of Depravity</li>
 			<li>The Hollow City</li>
 			<li>The Manor of Revelry</li>
