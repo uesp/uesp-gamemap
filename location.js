@@ -1018,7 +1018,7 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
 		labelPos.val(0);
 	}
-	else if (nameValue == "heavy sack")
+	else if (nameValue == "heavy sack" || nameValue == "heavy crate")
 	{
 		this.setIconTypeCustomListValue(89);
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
