@@ -40,9 +40,13 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	
 	this.mapKeyElement = null;
 	
+	this.isShowingRecentChanges = false;
+	
 		// TODO: Better way of limiting which map worlds to show
 	this.minValidWorldId = 50;
 	this.maxValidWorldId = 10000;
+	
+	this.recentChangesRoot = null;
 	
 	this.mapControlRoot = null;
 	this.mapSearchRoot  = null;
@@ -109,6 +113,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.createMapTiles();
 	this.createMapControls();
 	this.createSearchControls();
+	this.createRecentChanges();
 	//this.createMapList(this.mapContainer);
 	this.createEvents();
 	
@@ -720,7 +725,7 @@ uesp.gamemap.onMapTileLoadFunctionEx = function (element, imageURL, gameMap, ori
 uesp.gamemap.Map.prototype.onJumpToDestinationLoad = function (eventData)
 {
 	if (eventData.destId == null) return;
-	this.jumpToDestination(eventData.destId);
+	this.jumpToDestination(eventData.destId, eventData.openPopup, eventData.useEditPopup);
 }
 
 
@@ -732,7 +737,7 @@ uesp.gamemap.Map.prototype.jumpToWorld = function (worldId)
 }
 
 
-uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
+uesp.gamemap.Map.prototype.jumpToDestination = function (destId, openPopup, useEditPopup)
 {
 	if (destId == null || destId == 0) return;
 	
@@ -744,7 +749,7 @@ uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
 	if (!this.hasLocation(destId))
 	{
 		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Don't have data for destination location #" + destId + "!");
-		this.retrieveLocation(destId, this.onJumpToDestinationLoad, { destId: destId });
+		this.retrieveLocation(destId, this.onJumpToDestinationLoad, { destId: destId, openPopup:openPopup, useEditPoup:useEditPopup });
 		return;
 	}
 	
@@ -757,10 +762,15 @@ uesp.gamemap.Map.prototype.jumpToDestination = function (destId)
 	
 		//TODO: Use stored zoomLevel in world?
 	newState.zoomLevel = this.zoomLevel;
+	if (newState.zoomLevel < destLoc.displayLevel) newState.zoomLevel = destLoc.displayLevel;
 	
 	this.setMapState(newState);
 	
-	if (this.openPopupOnJump && (destLoc.displayData.labelPos != 0 || destLoc.iconType != 0)) destLoc.showPopup();
+	if (openPopup === true || (this.openPopupOnJump && (destLoc.displayData.labelPos != 0 || destLoc.iconType != 0)))
+	{
+		if (useEditPopup === true) destLoc.useEditPopup = true;
+		destLoc.showPopup();
+	}
 }
 
 
@@ -2527,6 +2537,17 @@ uesp.gamemap.Map.prototype.setEventsForMapGroupList = function ()
 }
 
 
+uesp.gamemap.Map.prototype.createRecentChanges = function ()
+{
+	if (this.recentChangesRoot != null) return;
+	var self = this;
+	
+	this.recentChangesRoot = $('<div />')
+								.addClass('gmMapRCRoot')
+								.insertAfter(this.mapContainer);
+}
+
+
 uesp.gamemap.Map.prototype.createSearchControls = function ()
 {
 	if (this.mapSearchRoot != null) return;
@@ -3041,6 +3062,91 @@ uesp.gamemap.Map.prototype.testGroupMap = function()
 	else
 		uesp.logError("Found " + count + " missing group map names!");
 
+}
+
+
+uesp.gamemap.Map.prototype.onRecentChanges = function (element)
+{
+	this.isShowingRecentChanges = !this.isShowingRecentChanges;
+	
+	if (this.isShowingRecentChanges)
+	{
+		$(element).addClass('gmToggleButtonDown');
+		this.recentChangesRoot.width('340px');
+		this.mapContainer.css('right', '350px');
+		
+		this.updateRecentChanges();
+	}
+	else
+	{
+		$(element).removeClass('gmToggleButtonDown');
+		this.recentChangesRoot.width('0px');
+		this.mapContainer.css('right', '0px');
+	}
+	return false;
+}
+
+
+uesp.gamemap.Map.prototype.updateRecentChanges  = function ()
+{
+	var self = this;
+	
+	var queryParams = {};
+	queryParams.action = "get_rc";
+	
+	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+		self.onReceiveRecentChanges(data); 
+	});
+}
+
+
+uesp.gamemap.Map.prototype.onReceiveRecentChanges  = function (data)
+{
+	
+	if (data == null || data.recentChanges == null)
+	{
+		this.clearRecentChanges();
+		return false;
+	}
+	
+	var output = "";
+	
+	for (key in data.recentChanges)
+	{
+		recentChange = data.recentChanges[key];
+		/*
+		 * id BIGINT NOT NULL AUTO_INCREMENT,
+		parentId BIGINT,
+		worldId BIGINT,
+		locationId BIGINT,
+		worldHistoryId BIGINT,
+		locationHistoryId BIGINT,
+		editUserId BIGINT NOT NULL,
+		editUserText TEXT NOT NULL,
+		editTimestamp TIMESTAMP NOT NULL,
+		editComment TEXT NOT NULL,
+		patrolled TINYINT NOT NULL,
+		PRIMARY KEY (id)
+		 */
+		
+		var imageURL = this.mapOptions.iconPath + recentChange.iconType + ".png";
+		
+			// TODO: No hardcode names
+		output += "<div class='gmMapRCItem' onclick='g_GameMap.jumpToDestination(" + recentChange.locationId + ", true, true);'>";
+		output += "<img src='" + imageURL + "' class='gmMapRCItemIcon' />";
+		output += "<div class='gmMapRCItemName'>" + recentChange.locationName  + "</div>";
+		output += " <div class='gmMapRCItemSmall'>(" + recentChange.worldDisplayName + ") -- " + recentChange.editTimestamp + "</div>";
+		output += "</div>";
+	}
+	
+	this.recentChangesRoot.html(output);
+	
+	return true;
+}
+
+uesp.gamemap.Map.prototype.clearRecentChanges  = function ()
+{
+	this.recentChangesRoot.text("");
 }
 
 

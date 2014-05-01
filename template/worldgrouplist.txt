@@ -34,6 +34,7 @@
 			<li>The Banished Cells</li>
 			<li>The Refuge of Dread</li>
 			<li>The Vault of Exile</li>
+			<li>The Veiled Keep</li>
 			<li>The Worm's Retreat</li>
 			<li>Toothmaul Gully</li>
 			<li>Torinaan 1</li>
@@ -42,7 +43,6 @@
 			<li>Torinaan 4</li>
 			<li>Torinaan 5</li>
 			<li>Vafe</li>
-			<li>Veiled Keep Base</li>
 			<li>Vulkhel Guard</li>
 			<li>Wansalen</li>
 			</ul>
