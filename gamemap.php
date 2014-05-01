@@ -264,6 +264,8 @@ class GameMap
 				return $this->doGetPermissions();
 			case 'search':
 				return $this->doSearch();
+			case 'get_rc':
+				return $this->doGetRecentChanges();
 			case 'default':
 			default:
 				break;
@@ -648,6 +650,54 @@ class GameMap
 		$this->addOutputItem("locationCount", $count);
 		
 		if ($this->includeWorld != 0) return $this->doGetWorld();
+		return true;
+	}
+	
+	
+	public function doGetRecentChanges ()
+	{
+		if (!$this->initDatabase()) return false;
+		
+		//select * from revision join location on location.id=revision.locationId join world on world.id=revision.worldId limit 10;
+		$query  = "SELECT revision.*, world.name as worldName, world.displayName as worldDisplayName, location.iconType as iconType, location.name as locationName from revision JOIN location ON location.id=revision.locationId JOIN world ON world.id=revision.worldId ORDER BY editTimestamp DESC LIMIT {$this->limitCount};";
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to retrieve recent changes data!");
+		
+		$recentChanges = Array();
+		$count = 0;
+		$result->data_seek(0);
+		/*
+		 * id BIGINT NOT NULL AUTO_INCREMENT,
+					parentId BIGINT,
+					worldId BIGINT,
+					locationId BIGINT,
+					worldHistoryId BIGINT,
+					locationHistoryId BIGINT,
+					editUserId BIGINT NOT NULL,
+					editUserText TEXT NOT NULL,
+					editTimestamp TIMESTAMP NOT NULL,
+					editComment TEXT NOT NULL,
+					patrolled TINYINT NOT NULL,
+					PRIMARY KEY (id)
+		*/
+		
+		while ( ($row = $result->fetch_assoc()) )
+		{
+			settype($row['id'], "integer");
+			settype($row['worldId'], "integer");
+			settype($row['locationId'], "integer");
+			settype($row['destinationId'], "integer");
+			settype($row['worldHistoryId'], "integer");
+			settype($row['locationHistoryId'], "integer");
+			settype($row['editUserId'], "integer");
+			
+			$recentChanges[] = $row;
+			$count += 1;
+		}
+		
+		$this->addOutputItem("recentChanges", $recentChanges);
+		$this->addOutputItem("recentChangeCount", $count);
+		
 		return true;
 	}
 	

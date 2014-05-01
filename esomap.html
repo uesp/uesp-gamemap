@@ -187,6 +187,7 @@
 				$("#addPathButton").show();
 				$("#addAreaButton").show();
 				$("#editWorldButton").show();
+				$("#showRecentChangeButton").show();
 			}
 			else
 			{
@@ -194,6 +195,7 @@
 				$("#addPathButton").hide();
 				$("#addAreaButton").hide();
 				$("#editWorldButton").hide();
+				$("#showRecentChangeButton").hide();
 			}
 			
 			updateMenuBarHeight();
@@ -305,6 +307,8 @@
 			<button id="addLocationButton" style="display:none;" onclick="g_GameMap.onAddLocationStart();">Add Location</button>
 			<button id="addPathButton" style="display:none;" onclick="g_GameMap.onAddPathStart();">Add Path</button>
 			<button id="addAreaButton" style="display:none;" onclick="g_GameMap.onAddAreaStart();">Add Area</button>
+			&nbsp;
+			<div id="showRecentChangeButton" class="gmToggleButton" style="display:none;" onclick="g_GameMap.onRecentChanges(this);">Recent Changes</div>
 		</div>
 </div>
 
