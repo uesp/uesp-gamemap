@@ -51,6 +51,7 @@
 			<li>Bone Orchard</li>
 			<li>Brackenleaf</li>
 			<li>Burroot Kwama Mine</li>
+			<li>Cathedral of the Golden Path</li>
 			<li>Cave of Broken Sails</li>
 			<li>Coromount</li>
 			<li>Elden Hollow</li>
@@ -78,16 +79,15 @@
 			<li>Longsnout Cave</li>
 			<li>Mobar Mine</li>
 			<li>Ne Salas</li>
-			<li>Orrery</li>
 			<li>Ossuary of Telacar</li>
 			<li>Rajhin's Vault</li>
 			<li>Rajhins Vault Small Room</li>
 			<li>Redfur Trading Post</li>
 			<li>Reliquary Ruins</li>
 			<li>Root Sunder Ruins</li>
-			<li>Southpoint</li>
 			<li>Tarlain Heights</li>
 			<li>The Middens</li>
+			<li>The Orrery</li>
 			<li>The Scuttle Pit</li>
 			<li>Tomb of Anahbi</li>
 			<li>Eldenhollow A</li>
@@ -128,7 +128,7 @@
 			<li>Rulanyil's Fall</li>
 			<li>Serpent's Grotto</li>
 			<li>Shademist Enclave</li>
-			<li>Shrouded Hollow Area 1</li>
+			<li>Shrouded Hollow</li>
 			<li>Shrouded Hollow Area 2</li>
 			<li>Silatar</li>
 			<li>The Underroot</li>
