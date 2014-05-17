@@ -71,7 +71,7 @@ class GameMap
 	
 	public $outputItems = array();
 	
-	public $limitCount = 100;
+	public $limitCount = 200;
 	
 	private $db = null;
 	private $skipCheckTables = true;
