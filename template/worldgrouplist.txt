@@ -203,6 +203,52 @@
 			<li>Weeping Wind Cave</li>
 			</ul>
 		</ul>
+	<li class='gmMapListHeader'>Craglorn</li>
+		<ul>
+		
+		<li>Aetherian Archive</li>
+		<li>Aetherian Archive End</li>
+		<li>Aetherian Archive Island A</li>
+		<li>Aetherian Archive Island B</li>
+		<li>Aetherian Archive Island C</li>
+		<li>Aetherian Archive Middle</li>
+		<li>Balamath</li>
+		<li>Balamath Air Monarch Chamber</li>
+		<li>Balamath Library</li>
+		<li>Belkarth</li>
+		<li>Buried Sands</li>
+		<li>Chiselshriek Mine</li>
+		<li>Craglorn</li>
+		<li>Crypt of Tarishzi</li>
+		<li>Crypt of Tarishzi 2</li>
+		<li>Crypt of Tarishzi Zone</li>
+		<li>Elinhir Mage Vision</li>
+		<li>Elinhir Sewerworks</li>
+		<li>Frost Monarch Lair</li>
+		<li>Haddock's Market</li>
+		<li>Helra Citadel</li>
+		<li>Helra Citadel Entry</li>
+		<li>Helra Citadel Hall of Warrior</li>
+		<li>Kardala</li>
+		<li>Molavar</li>
+		<li>Mtharnaz</li>
+		<li>Rahniza</li>
+		<li>Rahniza 2</li>
+		<li>Rahniza 3</li>
+		<li>Reinhold's Retreat</li>
+		<li>Rkhardahrk</li>
+		<li>Rkundzelft</li>
+		<li>Seeker's Archive Down</li>
+		<li>Seeker's Archive Up</li>
+		<li>Shada Burial Grounds</li>
+		<li>Shada City District</li>
+		<li>Shada Hall of Worship</li>
+		<li>Shada Main City</li>
+		<li>Shada Temple Wing</li>
+		<li>Storm Lair</li>
+		<li>Thalia's Retreat</li>
+		<li>The Mage's Staff</li>
+		</ul>
 	<li class='gmMapListHeader'>Cyrodiil</li>
 		<ul>
 		<li>Ava Aldmeri</li>
