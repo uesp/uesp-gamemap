@@ -104,8 +104,8 @@
 			<li>City of Ash Main</li>
 			<li>Court of Wilderking</li>
 			<li>Drowned Coast</li>
-			<li>Falinesti Cave</li
-			<li>Fading Tree</li>>
+			<li>Falinesti Cave</li>
+			<li>Fading Tree</li>
 			<li>Greenshade</li>
 			<li>Green's Marrow</li>
 			<li>Gurzag's Mine</li>
@@ -232,7 +232,7 @@
 		<li>Kardala</li>
 		<li>Molavar</li>
 		<li>Mtharnaz</li>
-		<li>Rahniza</li>
+		<li>Rahniza 1</li>
 		<li>Rahniza 2</li>
 		<li>Rahniza 3</li>
 		<li>Reinhold's Retreat</li>
