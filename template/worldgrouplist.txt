@@ -226,9 +226,9 @@
 		<li>Elinhir Sewerworks</li>
 		<li>Frost Monarch Lair</li>
 		<li>Haddock's Market</li>
-		<li>Helra Citadel</li>
-		<li>Helra Citadel Entry</li>
-		<li>Helra Citadel Hall of Warrior</li>
+		<li>Hel Ra Citadel</li>
+		<li>Hel Ra Citadel Entry</li>
+		<li>Hel Ra Citadel Hall of Warrior</li>
 		<li>Kardala</li>
 		<li>Molavar</li>
 		<li>Mtharnaz</li>
