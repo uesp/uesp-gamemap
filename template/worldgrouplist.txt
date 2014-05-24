@@ -246,8 +246,8 @@
 		<li>Shada Main City</li>
 		<li>Shada Temple Wing</li>
 		<li>Storm Lair</li>
-		<li>Thalia's Retreat</li>
 		<li>The Mage's Staff</li>
+		<li>Zalgaz's Den</li>
 		</ul>
 	<li class='gmMapListHeader'>Cyrodiil</li>
 		<ul>
