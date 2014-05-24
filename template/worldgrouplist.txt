@@ -221,7 +221,6 @@
 		<li>Craglorn</li>
 		<li>Crypt of Tarishzi</li>
 		<li>Crypt of Tarishzi 2</li>
-		<li>Crypt of Tarishzi Zone</li>
 		<li>Elinhir Mage Vision</li>
 		<li>Elinhir Sewerworks</li>
 		<li>Frost Monarch Lair</li>
@@ -247,6 +246,7 @@
 		<li>Shada Temple Wing</li>
 		<li>Storm Lair</li>
 		<li>The Mage's Staff</li>
+		<li>Tombs of the Na-Totambu</li>
 		<li>Zalgaz's Den</li>
 		</ul>
 	<li class='gmMapListHeader'>Cyrodiil</li>
