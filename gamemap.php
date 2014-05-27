@@ -45,6 +45,7 @@ class GameMap
 	public $showHidden = 0;
 	
 	public $search = '';
+	public $searchType = 0;
 	public $searchWorldId = 0;
 	
 	public $locWidth = 0;
@@ -373,8 +374,54 @@ class GameMap
 	}
 	
 	
+	public function doTypeSearch ()
+	{
+		
+		if ($this->searchWorldId != 0)
+			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId={$this->searchWorldId} AND iconType={$this->searchType} ORDER BY name, worldId LIMIT {$this->limitCount};";
+		else
+			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND iconType={$this->searchType} ORDER BY name, worldId LIMIT {$this->limitCount};";
+		
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed searching for locations by type!");
+		
+		$locations = Array();
+		$count = 0;
+		$result->data_seek(0);
+		
+		while ( ($row = $result->fetch_assoc()) )
+		{
+			settype($row['id'], "integer");
+			settype($row['worldId'], "integer");
+			settype($row['revisionId'], "integer");
+			settype($row['destinationId'], "integer");
+			settype($row['locType'], "integer");
+			settype($row['iconType'], "integer");
+			settype($row['x'], "integer");
+			settype($row['y'], "integer");
+			settype($row['width'], "integer");
+			settype($row['height'], "integer");
+			settype($row['displayLevel'], "integer");
+			settype($row['visible'], "integer");
+		
+			$locations[] = $row;
+			$count += 1;
+		}
+		
+		$this->addOutputItem("locations", $locations);
+		$this->addOutputItem("locationCount", $count);
+		
+		return true;
+	}
+	
+	
 	public function doSearch ()
 	{
+		if ($this->searchType > 0)
+		{
+			return $this->doTypeSearch();
+		}
+			
 		$this->searchWords = preg_split('/\s+/', $this->search);
 		$this->searchWordWildcard = implode('*', $this->searchWords);
 		
@@ -1112,6 +1159,7 @@ class GameMap
 		if (array_key_exists('parentid',  $this->inputParams)) $this->worldParentId = intval($this->db->real_escape_string($this->inputParams['parentid']));
 		if (array_key_exists('revisionid',  $this->inputParams)) $this->revisionId = intval($this->db->real_escape_string($this->inputParams['revisionid']));
 		if (array_key_exists('search',  $this->inputParams)) $this->search = $this->db->real_escape_string($this->inputParams['search']);
+		if (array_key_exists('searchtype',  $this->inputParams)) $this->searchType = intval($this->db->real_escape_string($this->inputParams['searchtype']));
 		if (array_key_exists('centeron',  $this->inputParams)) $this->locCenterOn = $this->db->real_escape_string($this->inputParams['centeron']);
 		if (array_key_exists('showhidden',  $this->inputParams)) $this->showHidden = intval($this->db->real_escape_string($this->inputParams['showhidden']));
 		

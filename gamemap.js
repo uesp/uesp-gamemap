@@ -1487,8 +1487,6 @@ uesp.gamemap.Map.prototype.onReceiveCenterOnLocationData = function (data)
 		worldId = data.worlds[0].id
 	}
 	
-	console.log("worldid", worldId);
-	
 	if (this.mapWorlds[worldId] == null) 
 	{
 		this.changeWorld(668); //TODO: Not hardcoded?
@@ -1501,8 +1499,6 @@ uesp.gamemap.Map.prototype.onReceiveCenterOnLocationData = function (data)
 	mapState.zoomLevel = this.mapWorlds[worldId].maxZoom;
 	mapState.gamePos.x = data.locations[0].x + data.locations[0].width/2;
 	mapState.gamePos.y = data.locations[0].y - data.locations[0].height/2;
-	
-	console.log(mapState);
 	
 	this.changeWorld(data.worlds[0].id, mapState);
 	
@@ -2598,11 +2594,25 @@ uesp.gamemap.Map.prototype.onSearchButton = function (event)
 	var searchText = mapSearchForm.find('input[name=search]').val();
 	var searchMapOnly = mapSearchForm.find('input[name=searchMapOnly]').is(':checked');
 	
-	console.log(searchMapOnly);
-	
 	this.doSearch(searchText, searchMapOnly);
 	
 	return false;
+}
+
+
+uesp.gamemap.Map.prototype.FindMapLocTypeString = function (locTypeString)
+{
+	var checkTypeString = locTypeString.trim().toLowerCase();
+	
+	if (this.mapOptions == null || this.mapOptions.iconTypeMap == null || checkTypeString == "") return null;
+	
+	for (locType in this.mapOptions.iconTypeMap)
+	{
+		if (checkTypeString === this.mapOptions.iconTypeMap[locType].toLowerCase()) return locType;
+	}
+	
+	return null;
+
 }
 
 
@@ -2614,6 +2624,12 @@ uesp.gamemap.Map.prototype.createSearchQuery = function (searchText, searchMapOn
 	queryParams.search = encodeURIComponent(searchText);
 	if (this.isShowHidden()) queryParams.showhidden = 1;
 	if (searchMapOnly === true) queryParams.world = this.currentWorldId;
+	
+	if (searchText.substring(0, 5) === "type:")
+	{
+		var locType = this.FindMapLocTypeString(searchText.substring(5));
+		if (locType != null) queryParams.searchtype = locType;
+	}
 	
 	return queryParams;
 }
