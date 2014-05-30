@@ -1115,6 +1115,12 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		displayLevel.val(this.parentMap.mapOptions.minZoomLevel-2);
 		wikiPage.val(rawNameValue);
 	}
+	else if (nameValue == "dark fissure")
+	{
+		this.setIconTypeCustomListValue(129);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		wikiPage.val(rawNameValue);
+	}
 	else if (uesp.endsWith(nameValue, "fighters guild"))
 	{
 		this.setIconTypeCustomListValue(30);
