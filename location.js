@@ -1024,6 +1024,11 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
 		labelPos.val(0);
 	}
+	else if (nameValue == "ayleid well")
+	{
+		this.setIconTypeCustomListValue(131);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+	}
 	else if (nameValue == "heavy sack" || nameValue == "heavy crate")
 	{
 		this.setIconTypeCustomListValue(89);
