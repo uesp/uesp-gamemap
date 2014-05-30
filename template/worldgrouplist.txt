@@ -48,6 +48,7 @@
 			</ul>
 		<li class='gmMapListHeader'>Grahtwood</li>
 			<ul>
+			<li>Ancient Cave</li>
 			<li>Bone Orchard</li>
 			<li>Brackenleaf</li>
 			<li>Burroot Kwama Mine</li>
@@ -78,6 +79,7 @@
 			<li>Long Coast</li>
 			<li>Longsnout Cave</li>
 			<li>Mobar Mine</li>
+			<li>Nairume's Prison</li>
 			<li>Ne Salas</li>
 			<li>Ossuary of Telacar</li>
 			<li>Rajhin's Vault</li>
@@ -97,7 +99,7 @@
 			</ul>
 		<li class='gmMapListHeader'>Greenshade</li>
 			<ul>
-			<li>Albecean Sea</li>
+			<li>Abecean Sea</li>
 			<li>Barrow Trench</li>
 			<li>Carac Dena</li>
 			<li>City of Ash Boss</li>
@@ -118,7 +120,7 @@
 			<li>Hollow Lair</li>
 			<li>Ilmyris</li>
 			<li>Imperial Underground</li>
-			<li>Imperial Underground Part 1</li>
+			<li>Imperial Underground Old Map</li>
 			<li>Imperial Underground Part 2</li>
 			<li>Isles of Torment</li>
 			<li>Marbruk</li>
@@ -137,10 +139,11 @@
 		<li>Khenarthi's Roost</li>
 		<li class='gmMapListHeader'>Malabal Tor</li>
 			<ul>
-			<li>Abamath</li>
+			<li>Abamath Ruins</li>
 			<li>Baandari Trading Post</li>
 			<li>Black Vine Ruins</li>
 			<li>Broken Coast</li>
+			<li>Cat's Eye Quay</li>
 			<li>Crimson Cove</li>
 			<li>Dead Man's Drop</li>
 			<li>Hazak's Hollow</li>
@@ -168,38 +171,38 @@
 			<ul>
 			<li>Arenthia</li>
 			<li>Claw's Strike</li>
-			<li>Dawnmeade</li>
+			<li>Dawnmead</li>
+			<li>Den of Lorkhaj</li>
 			<li>Do'Krin Monastery</li>
 			<li>Dune</li>
 			<li>Fadir's Folly</li>
 			<li>Fort Sphinxmoth</li>
 			<li>Greenhill Catacombs</li>
 			<li>Halls of Ichor</li>
-			<li>Jode Plane</li>
 			<li>Jode's Light</li>
 			<li>Jodewood</li>
-			<li>Khajrawlith</li>
+			<li>Khaj Rawlith</li>
 			<li>Kuna's Delve</li>
 			<li>Moonmont Temple</li>
 			<li>Northern Woods</li>
-			<li>Planeofjode Cave</li>
-			<li>Plane of Jode Denoflorkhaj</li>
-			<li>Plane of Jodehubhillbos</li>
-			<li>Plane of Jode Temple</li>
 			<li>Rawl'kha</li>
-			<li>Rawlkha Temple</li>
+			<li>Rawl'kha Temple</li>
 			<li>Reaper's March</li>
-			<li>Rendro Caverns</li>
+			<li>Ren-dro Caverns</li>
 			<li>Selene's Web</li>
 			<li>Selene's Web Final Boss Area</li>
 			<li>Senalana</li>
-			<li>Sren-Ja</li>
-			<li>Sren-Ja1</li>
-			<li>Sren-Ja2</li>
+			<li>S'ren-ja Bandit Cave</li>
+			<li>S'ren-ja Cave</li>
+			<li>S'ren-ja Well</li>
+			<li>Temple of the Dance</li>
+			<li>The Demi-Plane of Jode</li>
+			<li>The Demi-Plane of Jode - Cave</li>
 			<li>The Vile Manse First Floor</li>
 			<li>The Vile Manse Second Floor</li>
+			<li>The Wild Hunt</li>
 			<li>Thibaut's Cairn</li>
-			<li>Urcelmos Betrayal</li>
+			<li>Urcelmo's Betrayal</li>
 			<li>Weeping Wind Cave</li>
 			</ul>
 		</ul>
@@ -228,7 +231,7 @@
 		<li>Hel Ra Citadel</li>
 		<li>Hel Ra Citadel Entry</li>
 		<li>Hel Ra Citadel Hall of Warrior</li>
-		<li>Kardala</li>
+		<li>Hircine's Haunt</li>
 		<li>Molavar</li>
 		<li>Mtharnaz</li>
 		<li>Rahniza 1</li>
@@ -237,6 +240,7 @@
 		<li>Reinhold's Retreat</li>
 		<li>Rkhardahrk</li>
 		<li>Rkundzelft</li>
+		<li>Ruins of Kardala</li>
 		<li>Seeker's Archive Down</li>
 		<li>Seeker's Archive Up</li>
 		<li>Shada Burial Grounds</li>
@@ -634,10 +638,10 @@
 			<ul>
 			<li>Aba-Loria</li>
 			<li>Black Garrison</li>
-			<li>Cave of Trophies</li>
 			<li>Cave of Trophies Upper</li>
 			<li>Coldharbour</li>
 			<li>Daedric Anchor Mooring</li>
+			<li>Eyes Chamber</li>
 			<li>Fist of Stone</li>
 			<li>Foundry of Woe</li>
 			<li>Grunda's Gatehouse</li>
@@ -657,6 +661,7 @@
 			<li>The Ashen Mines</li>
 			<li>The Black Forge</li>
 			<li>The Bleeding Forge</li>
+			<li>The Cave of Trophies</li>
 			<li>The Endless Stair</li>
 			<li>The Great Shackle</li>
 			<li>The Grotto of Depravity</li>
@@ -692,7 +697,7 @@
 		<li>Cheese Mongers Hollow</li>
 		<li>Circus of Cheerful Slaughter</li>
 		<li>Eyevea</li>
-		<li>Fort Virak Ruin</li>
+		<li>Fort Virak</li>
 		<li>Glade of the Divine Asakala</li>
 		<li>Glade of the Divine Shivering</li>
 		<li>Glade of the Divine Vuldngrav</li>
@@ -728,15 +733,16 @@
 		</ul>
 	<li class='gmMapListHeader'>Unknown</li>
 		<ul>
-		<li>Topal Island</li>
 		<li>Balfiera Island</li>
 		<li>Blackvine Ruins I</li>
 		<li>Canulus Refuge</li>
-		<li>Craglorn</li>
+		<li>Guardian's Orbit</li>
+		<li>Mudshallow Cave</li>
 		<li>Overhead</li>
 		<li>Pvetest</li>
 		<li>Silaseli Ruins</li>
 		<li>Slavepits</li>
+		<li>Topal Island</li>
 		<li>Towers</li>
 		<li>Vog</li>
 		<li>Zehtswater Lower</li>
