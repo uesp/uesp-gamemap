@@ -1018,6 +1018,12 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
 		labelPos.val(0);
 	}
+	else if (nameValue == "fishing hole")
+	{
+		this.setIconTypeCustomListValue(36);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
 	else if (nameValue == "heavy sack" || nameValue == "heavy crate")
 	{
 		this.setIconTypeCustomListValue(89);
