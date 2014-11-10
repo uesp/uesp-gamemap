@@ -18,9 +18,9 @@
 			<li>Entila's Folly</li>
 			<li>Ezduiin</li>
 			<li>Firsthold</li>
-			<li>Iluvamir</li>
 			<li>Inner Tanzelwil</li>
 			<li>Lair</li>
+			<li>Lluvamir</li>
 			<li>Mehrunes' Spite</li>
 			<li>Ondil</li>
 			<li>Phaer Catacombs</li>
@@ -80,7 +80,7 @@
 			<li>Faltonias Mine</li>
 			<li>Gilvardelle Abandon Cave</li>
 			<li>Grahtwood</li>
-			<li>Greenhall</li>
+			<li>Green Hall</li>
 			<li>Gray Mire</li>
 			<li>Haven</li>
 			<li>Haven Sewers</li>
@@ -175,7 +175,7 @@
 			<li>Shrine of Mauloch</li>
 			<li>Silvenar Vale</li>
 			<li>Stormwarden Undercroft</li>
-			<li>Stridriver Basin</li>
+			<li>Strid River Basin</li>
 			<li>Tempest Island</li>
 			<li>Tempest Island N Cave</li>
 			<li>Tempest Island SE Cave</li>
@@ -194,7 +194,7 @@
 			<li>Den of Lorkhaj</li>
 			<li>Do'Krin Monastery</li>
 			<li>Dune</li>
-			<li>Fadir's Folly</li>
+			<li>Fardir's Folly</li>
 			<li>Fort Sphinxmoth</li>
 			<li>Greenhill Catacombs</li>
 			<li>Halls of Ichor</li>
@@ -342,7 +342,7 @@
 		<li>Pothole Caverns</li>
 		<li>Quickwater Cave</li>
 		<li>Quickwater Depths</li>
-		<li>Redruby Cave</li>
+		<li>Red Ruby Cave</li>
 		<li>Serpent Hollow Cave</li>
 		<li>Southern High Rock Gate</li>
 		<li>Southern Morrowind Gate</li>
@@ -456,10 +456,10 @@
 			<li>Farwatch Tower</li>
 			<li>Glenumbra</li>
 			<li>Halls of Submission</li>
-			<li>Highrock</li>
+			<li>High Rock</li>
 			<li>Ilessan Tower</li>
 			<li>King's Guard</li>
-			<li>Mine's of Khuras</li>
+			<li>Mines of Khuras</li>
 			<li>Silumm</li>
 			<li>Spindleclutch</li>
 			<li>Spindleclutch Heroic</li>
@@ -472,8 +472,8 @@
 		<li class='gmMapListHeader'>Rivenspire</li>
 			<ul>
 			<li>Boralis</li>
-			<li>Breaghafin Lower</li>
-			<li>Breaghafin Upper</li>
+			<li>Breagha-Fin Lower</li>
+			<li>Breagha-Fin Upper</li>
 			<li>Crestshade Mine</li>
 			<li>Crypt of Hearts</li>
 			<li>Crypt of Hearts Heroic</li>
@@ -491,11 +491,11 @@
 			<li>Fevered Mews Subzone</li>
 			<li>Flyleaf Catacombs</li>
 			<li>Hildune's Secret Refuge</li>
-			<li>Hoarfrost</li>
+			<li>Hoarfrost Downs</li>
 			<li>Lorkrata Ruins</li>
 			<li>Northpoint</li>
 			<li>Obsidian Scar</li>
-			<li>Orcsfinger Ruins</li>
+			<li>Orc's Finger Ruins</li>
 			<li>Rivenspire</li>
 			<li>Shadowfate Cavern</li>
 			<li>Shornhelm</li>
@@ -508,10 +508,10 @@
 			<ul>
 			<li>Alcaire</li>
 			<li>Alcaire Castle</li>
-			<li>Aphrens Hold</li>
+			<li>Aphren's Hold</li>
 			<li>Bearclaw Mine</li>
 			<li>Bonesnap Ruins</li>
-			<li>Bonesnapruin's Secret</li>
+			<li>Bonesnap Ruin's Secret</li>
 			<li>Emeric's Dream</li>
 			<li>Emerics Dream Part 2</li>
 			<li>Emerics Quagmire Portion</li>
@@ -563,10 +563,10 @@
 			<li>Darkshade Caverns Heroic</li>
 			<li>Deepcrag Den</li>
 			<li>Deshaan</li>
-			<li>Eidolons Hollow</li>
-			<li>Eidolons Hollow 2</li>
-			<li>Eidolons Hollow North</li>
-			<li>Eidolons Hollow South</li>
+			<li>Eidolon's Hollow</li>
+			<li>Eidolon's Hollow 2</li>
+			<li>Eidolon's Hollow North</li>
+			<li>Eidolon's Hollow South</li>
 			<li>Forgotten Crypts</li>
 			<li>Knife Ear Grotto</li>
 			<li>Lady Llarel's Shelter</li>
@@ -578,12 +578,12 @@
 			<li>Narsis</li>
 			<li>Narsis Ruins</li>
 			<li>Obsidian Gorge</li>
-			<li>Quarantineserk</li>
+			<li>Quarantine Serk</li>
 			<li>Redolent Loam</li>
-			<li>Shadastula</li>
+			<li>Shad Astula</li>
 			<li>Siaebony Mine</li>
 			<li>Siltreen</li>
-			<li>Taldeic Crypts</li>
+			<li>Tal'Deic Crypts</li>
 			<li>Taleon's Crag</li>
 			<li>The Corpse Garden</li>
 			<li>The Shrine of Stveloth</li>
@@ -609,7 +609,7 @@
 			<li>Hall of Trials</li>
 			<li>Icehammer's Vault</li>
 			<li>Icewind Peaks</li>
-			<li>Lostknife Cave</li>
+			<li>Lost Knife Cave</li>
 			<li>Mistwatch Crevasse Crypt</li>
 			<li>Mistwatch Tower</li>
 			<li>Mzulft</li>
@@ -646,7 +646,7 @@
 			<li>Shadowfen</li>
 			<li>Shadowscale Enclave</li>
 			<li>Shrine of the Black Maw</li>
-			<li>Skinstealer Lair</li>
+			<li>Skin Stealer Lair</li>
 			<li>Stillrise Village</li>
 			<li>Stormhold</li>
 			<li>Stormhold Ayleid Ruin</li>
@@ -663,10 +663,10 @@
 			</ul>
 		<li class='gmMapListHeader'>Stonefalls</li>
 			<ul>
-			<li>Apocryphas Gate</li>
+			<li>Apocrypha's Gate</li>
 			<li>Ash Mountain</li>
 			<li>Charred Ridge</li>
-			<li>Coralheart Chamber</li>
+			<li>Coral Heart Chamber</li>
 			<li>Crow's Wood</li>
 			<li>Crows Wood Dungeon</li>
 			<li>Daen Seeth</li>
@@ -726,7 +726,7 @@
 			<li>Shroud Hearth Barrow</li>
 			<li>Smokefrost Peaks</li>
 			<li>Snapleg Cave</li>
-			<li>Stony Pass</li>
+			<li>Stony Basin</li>
 			<li>Taarengrav</li>
 			<li>The Lion's Den</li>
 			<li>The Rift</li>
