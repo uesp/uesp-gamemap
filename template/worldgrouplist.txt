@@ -7,6 +7,7 @@
 			<ul>
 			<li>Abandoned Mine</li>
 			<li>Auridon</li>
+			<li>Auridon Outlaw Refuge</li>
 			<li>Bewan</li>
 			<li>Bliss Lower</li>
 			<li>Bliss Top</li>
@@ -31,6 +32,7 @@
 			<li>Saltspray Cave</li>
 			<li>Shattered Shoals</li>
 			<li>Skywatch</li>
+			<li>Smuggler's Tunnel</li>
 			<li>South Ruins</li>
 			<li>Temple</li>
 			<li>The Banished Cells</li>
@@ -80,6 +82,7 @@
 			<li>Faltonias Mine</li>
 			<li>Gilvardelle Abandon Cave</li>
 			<li>Grahtwood</li>
+			<li>Grahtwood Outlaw Refuge</li>
 			<li>Green Hall</li>
 			<li>Gray Mire</li>
 			<li>Haven</li>
@@ -167,6 +170,7 @@
 			<li>Hazak's Hollow</li>
 			<li>Hoarvor Pit</li>
 			<li>Malabal Tor</li>
+			<li>Malabal Tol Outlaw Refuge</li>
 			<li>Mistral</li>
 			<li>Ouze</li>
 			<li>Roots of Silvenar</li>
@@ -207,6 +211,7 @@
 			<li>Rawl'kha</li>
 			<li>Rawl'kha Temple</li>
 			<li>Reaper's March</li>
+			<li>Reaper's March Outlaw Refuge</li>
 			<li>Ren-dro Caverns</li>
 			<li>Selene's Web</li>
 			<li>Selene's Web Final Boss Area</li>
@@ -246,6 +251,7 @@
 		<li>Buried Sands</li>
 		<li>Chiselshriek Mine</li>
 		<li>Craglorn</li>
+		<li>Craglorn Outlaw Refuge</li>
 		<li>Crgwamasu Cave</li>
 		<li>Crypt of Tarishzi</li>
 		<li>Crypt of Tarishzi 2</li>
@@ -326,12 +332,31 @@
 		<li>Bloodmayne Cave</li>
 		<li>Breakneck Cave</li>
 		<li>Capstone Cave</li>
+		<li>Cold Harbor Nobels1</li>
+		<li>Cold Harbor Nobels2</li>
+		<li>Cold Harbor Nobels3</li>
+		<li>Cold Harbor Arboretum1</li>
+		<li>Cold Harbor Arboretum2</li>
+		<li>Cold Harbor Arboretum3</li>
 		<li>Cracked Wood Cave</li>
 		<li>Cyrodiil</li>
 		<li>Eastern Elsweyr Gate</li>
 		<li>Echo Cave</li>
 		<li>Haynote Cave</li>
+		<li>Imperial City</li>
+		<li>Imperial Prison District</li>
+		<li>Imperial Prison Dunint1</li>
+		<li>Imperial Prison Dunint2</li>	
+		<li>Imperial Prison Dunint3</li>	
+		<li>Imperial Prison Dunint4</li>	
 		<li>Imperial Sewers</li>
+		<li>Imperial Sewers Ald1</li>
+		<li>Imperial Sewers Ald2</li>
+		<li>Imperial Sewers Dagger1</li>
+		<li>Imperial Sewers Dagger2</li>
+		<li>Imperial Sewers Ebon1</li>
+		<li>Imperial Sewers Ebon2</li>
+		<li>Imperial Sewers Hub</li>
 		<li>Kingscrest</li>
 		<li>Lipsand Tarn</li>
 		<li>Muck Valley Cavern</li>
@@ -342,6 +367,7 @@
 		<li>Pothole Caverns</li>
 		<li>Quickwater Cave</li>
 		<li>Quickwater Depths</li>
+		<li>Rayle's Catacombs</li>
 		<li>Red Ruby Cave</li>
 		<li>Serpent Hollow Cave</li>
 		<li>Southern High Rock Gate</li>
@@ -359,6 +385,7 @@
 			<ul>
 			<li>Aldunz</li>
 			<li>Alik'r Desert</li>
+			<li>Alik'r Outlaw Refuge</li>
 			<li>Ash'abah Pass</li>
 			<li>Bergama</li>
 			<li>Coldrock Diggings</li>
@@ -394,6 +421,7 @@
 			<li>Bangkorai</li>
 			<li>Bangkorai Garrison 1</li>
 			<li>Bangkorai Garrison Sewer</li>
+			<li>Bangkorai Outlaw Refuge</li>
 			<li>Bisnensel</li>
 			<li>Blackheart Haven Area 1</li>
 			<li>Blackheart Haven Area 2</li>
@@ -436,6 +464,7 @@
 		<li class='gmMapListHeader'>Glenumbra</li>
 			<ul>
 			<li>Aldcroft</li>
+			<li>Ancient Carzog's Demise</li>
 			<li>Angof's Chambers</li>
 			<li>Badmans Cave</li>
 			<li>Badman's End</li>
@@ -451,16 +480,20 @@
 			<li>Desolations End</li>
 			<li>Dourstone Vault</li>
 			<li>Dresan Keep</li>
+			<li>East Hut Portal Cave</li>
 			<li>Ebon Crypt</li>
 			<li>Enduum</li>
 			<li>Farwatch Tower</li>
 			<li>Glenumbra</li>
+			<li>Glenumbra Outlaw Refuge</li>
 			<li>Halls of Submission</li>
 			<li>High Rock</li>
 			<li>Ilessan Tower</li>
 			<li>King's Guard</li>
 			<li>Mines of Khuras</li>
+			<li>North Hut Portal Cave</li>
 			<li>Silumm</li>
+			<li>South Hut Portal Cave</li>
 			<li>Spindleclutch</li>
 			<li>Spindleclutch Heroic</li>
 			<li>Stonetooth Fortress</li>
@@ -468,6 +501,7 @@
 			<li>Themond Mine</li>
 			<li>Tomb of Lost Kings</li>
 			<li>Vault of Lost Kings</li>
+			<li>West Hut Portal Cave</li>
 			</ul>
 		<li class='gmMapListHeader'>Rivenspire</li>
 			<ul>
@@ -497,6 +531,7 @@
 			<li>Obsidian Scar</li>
 			<li>Orc's Finger Ruins</li>
 			<li>Rivenspire</li>
+			<li>Rivenspire Outlaw Refuge</li>
 			<li>Shadowfate Cavern</li>
 			<li>Shornhelm</li>
 			<li>Shrouded Pass</li>
@@ -525,6 +560,7 @@
 			<li>Pariah Catacombs</li>
 			<li>Portdun Watch</li>
 			<li>Stormhaven</li>
+			<li>Stormhaven Outlaw Refuge</li>
 			<li>Wayrest</li>
 			<li>Wayrest Sewers</li>
 			<li>Windridge Cave</li>
@@ -573,6 +609,7 @@
 			<li>Lagomere</li>
 			<li>Lower Bthanual</li>
 			<li>Mournhold</li>
+			<li>Mournhold Outlaw Refuge</li>
 			<li>Mournhold Sewers</li>
 			<li>Mzithumz</li>
 			<li>Narsis</li>
@@ -601,6 +638,7 @@
 			<li>Direfrost Keep Heroic</li>
 			<li>Direfrost Keep Summit</li>
 			<li>Eastmarch</li>
+			<li>Eastmarch Outlaw Refuge</li>
 			<li>Fort Amol</li>
 			<li>Fort Morvunskar</li>
 			<li>Frostwater Tundra</li>
@@ -644,6 +682,7 @@
 			<li>Reticulated Spine</li>
 			<li>Sanguine's Demesne</li>
 			<li>Shadowfen</li>
+			<li>Shadowfen Outlaw Refuge</li>
 			<li>Shadowscale Enclave</li>
 			<li>Shrine of the Black Maw</li>
 			<li>Skin Stealer Lair</li>
@@ -691,6 +730,7 @@
 			<li>Softloam Cavern</li>
 			<li>Starved Planes</li>
 			<li>Stonefalls</li>
+			<li>Stonefalls Outlaw Refuge</li>
 			<li>The Ebonheart Harborage</li>
 			<li>Tormented Spire</li>
 			<li>Varanis</li>
@@ -721,6 +761,7 @@
 			<li>Pinepeak Caverns</li>
 			<li>Ragged Hills</li>
 			<li>Riften</li>
+			<li>Rift Outlaw Refuge</li>
 			<li>Shor's Stone</li>
 			<li>Shor's Stone Mine</li>
 			<li>Shroud Hearth Barrow</li>
