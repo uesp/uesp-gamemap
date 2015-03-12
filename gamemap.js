@@ -167,7 +167,7 @@ uesp.gamemap.Map.prototype.createMapList = function (parentObject)
 	
 	this.mapListContainer.html(listHtml);
 	
-	$('#gmMapListButtonAlpha').click(function(e) {
+	$('#gmMapListButtonAlpha').bind("touchstart click", function(e) {
 		$('#gmMapListButtonAlpha').addClass('gmMapListButtonSelect');
 		$('#gmMapListButtonGroup').removeClass('gmMapListButtonSelect');
 		$('#gmMapListAlpha').show();
@@ -175,7 +175,7 @@ uesp.gamemap.Map.prototype.createMapList = function (parentObject)
 		$('#gmMapListAlphaSelect').focus();
 	});
 	
-	$('#gmMapListButtonGroup').click(function(e) {
+	$('#gmMapListButtonGroup').bind("touchstart click", function(e) {
 		$('#gmMapListButtonGroup').addClass('gmMapListButtonSelect');
 		$('#gmMapListButtonAlpha').removeClass('gmMapListButtonSelect');
 		$('#gmMapListGroup').show();
@@ -882,11 +882,11 @@ uesp.gamemap.Map.prototype.displayEditNotice = function(Notice, FinishButton, Ca
 	this.editNoticeDiv.html(Notice);
 	this.editNoticeDiv.show();
 	
-	$('#gmMapEditNoticeCancel').click(function(event) {
+	$('#gmMapEditNoticeCancel').bind("touchstart click", function(event) {
 		self.onCancelEditMode(event);
 	});
 	
-	$('#gmMapEditNoticeFinish').click(function(event) {
+	$('#gmMapEditNoticeFinish').bind("touchstart click", function(event) {
 		self.onFinishEditMode(event);
 	});
 }
@@ -1282,13 +1282,17 @@ uesp.gamemap.Map.prototype.onMouseDown = function(event)
 uesp.gamemap.Map.prototype.onTouchStart = function(event)
 {
 	var self = event.data.self;
-	event.preventDefault();
 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onTouchStart");
 	
-	var touch = event.touches[0];
+	if (event.originalEvent == null) return;
+	if (event.originalEvent.touches == null) return;
+	if (event.originalEvent.touches[0] == null) return;
+	
+	var touch = event.originalEvent.touches[0];
 	
 	event.pageX = touch.pageX;
 	event.pageY = touch.pageY;
+	event.which = 1;
 	
 	self.onMouseDown(event);
 }
@@ -1297,13 +1301,25 @@ uesp.gamemap.Map.prototype.onTouchStart = function(event)
 uesp.gamemap.Map.prototype.onTouchEnd = function(event)
 {
 	var self = event.data.self;
-	event.preventDefault();
 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onTouchEnd");
 	
-	var touch = event.touches[0];
+	if (event.originalEvent == null) return;
+	if (event.originalEvent.touches == null) return;
 	
-	event.pageX = touch.pageX;
-	event.pageY = touch.pageY;
+	if (event.originalEvent.touches[0] != null)
+	{
+		var touch = event.originalEvent.touches[0];
+		event.pageX = touch.pageX;
+		event.pageY = touch.pageY;
+		event.which = 1;
+	}
+	else
+	{
+		var offset = self.mapRoot.offset();
+		event.pageX = offset.left + self.dragStartLeft;
+		event.pageY = offset.top + self.dragStartTop;
+		event.which = 1;
+	}
 	
 	self.onMouseUp(event);
 }
@@ -1343,7 +1359,11 @@ uesp.gamemap.Map.prototype.onTouchMove = function(event)
 	event.preventDefault();
 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onTouchMove");
 	
-	var touch = event.touches[0];
+	if (event.originalEvent == null) return;
+	if (event.originalEvent.touches == null) return;
+	if (event.originalEvent.touches[0] == null) return;
+	
+	var touch = event.originalEvent.touches[0];
 	
 	event.pageX = touch.pageX;
 	event.pageY = touch.pageY;
@@ -1414,6 +1434,7 @@ uesp.gamemap.Map.prototype.onMouseUp = function(event)
 	
 	if (self.isDragging)
 	{
+		uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseUp::EndDrag");
 		self.onDragEnd(event);
 		event.preventDefault();
 	}
@@ -2149,7 +2170,7 @@ uesp.gamemap.Map.prototype.addEditClickWall = function(cursor)
 				.attr('id', 'gmMapRootClickWall')
 				.appendTo(this.mapContainer);
 		
-		this.editClickWall.click({ self: this }, this.onClick);
+		this.editClickWall.bind("touchstart click", { self: this }, this.onClick);
 		this.editClickWall.mousemove({ self: this }, this.onMouseMove);
 		this.editClickWall.mouseup({ self: this }, this.onMouseUp);
 		this.editClickWall.mousedown({ self: this }, this.onMouseDown);
@@ -2312,15 +2333,15 @@ uesp.gamemap.Map.prototype.showWorldEditForm = function()
 	
 	this.worldEditPopup.find('input[name=name]').focus();
 	
-	this.worldEditPopup.find('.gmMapPopupClose').click(function(event) {
+	this.worldEditPopup.find('.gmMapPopupClose').bind("touchstart click", function(event) {
 		self.onCloseWorldEditPopup(event);
 	});
 	
-	this.worldEditPopup.find('.gmMapEditPopupButtonClose').click(function(event) {
+	this.worldEditPopup.find('.gmMapEditPopupButtonClose').bind("touchstart click", function(event) {
 		self.onCloseWorldEditPopup(event);
 	});
 	
-	this.worldEditPopup.find('.gmMapEditPopupButtonSave').click(function(event) {
+	this.worldEditPopup.find('.gmMapEditPopupButtonSave').bind("touchstart click", function(event) {
 		self.onSaveWorldEditPopup(event);
 	});
 	
@@ -2494,7 +2515,7 @@ uesp.gamemap.Map.prototype.setEventsForMapGroupList = function ()
 {
 	var self = this;
 	
-	$("#gmMapList li").click(function(e) {
+	$("#gmMapList li").bind("touchstart click", function(e) {
 		if ($(this).hasClass('gmMapListHeader')) return false;
 		if (self.mapListLastSelectedItem != null) self.mapListLastSelectedItem.removeClass('gmMapListSelect');
 		$(this).addClass('gmMapListSelect');
@@ -2506,7 +2527,7 @@ uesp.gamemap.Map.prototype.setEventsForMapGroupList = function ()
 		self.hideMapList();
 	});
 	
-	$("#gmMapList li.gmMapListHeader").click(function(e) {
+	$("#gmMapList li.gmMapListHeader").bind("touchstart click", function(e) {
 		childList = $(this).next('ul');
 		
 		if (childList)
@@ -2521,7 +2542,7 @@ uesp.gamemap.Map.prototype.setEventsForMapGroupList = function ()
 		}
 	});
 	
-	$(document).mousedown(function (e) {
+	$(document).bind("mousedown", function (e) {
 		var container = $("#gmMapListRoot");
 		
 		if (!container.is(e.target) && container.has(e.target).length === 0)
@@ -2578,11 +2599,11 @@ uesp.gamemap.Map.prototype.createSearchControls = function ()
 	this.mapSearchResults = this.mapSearchRoot.find('.gmMapSearchResults');
 	var mapSearchResultsButton = this.mapSearchRoot.find('.gmMapSearchResultsButton');
 	
-	mapSearchButton.click(function (e) {
+	mapSearchButton.bind("touchstart click", function (e) {
 		self.onSearchButton(e);
 	});
 	
-	mapSearchResultsButton.click(function (e) {
+	mapSearchResultsButton.bind("touchstart click", function (e) {
 		self.onSearchResultsButton(e);
 	});
 }
@@ -2728,7 +2749,7 @@ uesp.gamemap.Map.prototype.addSearchResultLocation = function (locationId)
 	
 	var searchResult = $('<div />')
 							.addClass('gmMapSearchResultLocation')
-							.click(function (e) { self.setMapState(locState, true); })
+							.bind("touchstart click", function (e) { self.setMapState(locState, true); })
 							.appendTo(this.mapSearchResults);
 	
 	var iconURL   = this.mapOptions.iconPath + location.iconType + ".png";
@@ -2764,7 +2785,7 @@ uesp.gamemap.Map.prototype.addSearchResultWorld = function (worldId)
 	
 	var searchResult = $('<div />')
 							.addClass('gmMapSearchResultWorld')
-							.click(function (e) { self.setMapState(worldState, true); })
+							.bind("touchstart click", function (e) { self.setMapState(worldState, true); })
 							.appendTo(this.mapSearchResults);
 	
 		// TODO: Change to external template
@@ -2844,40 +2865,40 @@ uesp.gamemap.Map.prototype.createMapControls = function ()
 								.html('&#x2C4;')
 								.addClass('gmMapControlPan')
 								.addClass('gmMapControlPanBreak')
-								.click(function(e) { self.panUp(); })
+								.bind("touchstart click", function(e) { self.panUp(); })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlPanLeft = $('<div />')
 								.html('&#x2C2;')
 								.addClass('gmMapControlPan')
-								.click(function(e) { self.panLeft(); })
+								.bind("touchstart click", function(e) { self.panLeft(); })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlPanRight = $('<div />')
 								.html('&#x2C3;')
 								.addClass('gmMapControlPan')
-								.click(function(e) { self.panRight(); })
+								.bind("touchstart click", function(e) { self.panRight(); })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlPanDown = $('<div />')
 								.html('&#x2C5;')
 								.addClass('gmMapControlPan')
 								.addClass('gmMapControlPanBreak')
-								.click(function(e) { self.panDown(); })
+								.bind("touchstart click", function(e) { self.panDown(); })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlZoomIn = $('<div />')
 								.html('+')
 								.addClass('gmMapControlZoom')
 								.addClass('gmMapControlZoomHover')
-								.click(function(e) { self.zoomIn(); })
+								.bind("touchstart click", function(e) { self.zoomIn(); })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlZoomOut = $('<div />')
 								.text('-')
 								.addClass('gmMapControlZoom')
 								.addClass('gmMapControlZoomHover')
-								.click(function(e) { self.zoomOut(); })
+								.bind("touchstart click", function(e) { self.zoomOut(); })
 								.appendTo(this.mapControlRoot);
 }
 
@@ -2950,7 +2971,7 @@ uesp.gamemap.Map.prototype.createMapKey = function()
 			.html(MapKeyContent)
 			.appendTo(this.mapContainer);
 	
-	this.mapKeyElement.find('.gmMapKeyCloseButton').click(function(event) {
+	this.mapKeyElement.find('.gmMapKeyCloseButton').bind("touchstart click", function(event) {
 		self.hideMapKey();
 	});
 	

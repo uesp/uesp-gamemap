@@ -17,7 +17,7 @@ uesp.LOG_LEVEL_ERROR    = 4;
 uesp.LOG_LEVEL_WARNING  = 3;
 uesp.LOG_LEVEL_INFO     = 2;
 uesp.LOG_LEVEL_ALL      = 1;
-uesp.DEFAULT_LOG_LEVEL = uesp.LOG_LEVEL_ERROR;
+uesp.DEFAULT_LOG_LEVEL = uesp.LOG_LEVEL_WARNING;
 
 
 	// Simple position/point class
@@ -290,4 +290,10 @@ uesp.getFormData = function (form)
 	});
 	
 	return formValues;
+}
+
+
+uesp.isMobileDevice = function ()
+{
+	return (navigator.userAgent.match(/Mobi/));
 }

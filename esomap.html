@@ -3,7 +3,9 @@
 <head>
 	<title>UESP:Elder Scrolls Online Map</title>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 	<link rel="stylesheet" href="gamemap.css?date=29march2014a" />
+	<link rel="stylesheet" media="only screen and (max-device-width:799px)" href="gamemap-mobile.css?date=29march2014a"/>
 	<script type="text/javascript" src="jquery-1.10.2.js"></script>
 	<script type="text/javascript" src="common.js?date=29march2014a"></script>
 	<script type="text/javascript" src="bounds.js?date=29march2014a"></script>
@@ -162,6 +164,8 @@
 				initialGamePosX : 400000,
 				initialGamePosY : 600000,
 				initialZoom : 10,
+				tileCountX : 11,
+				tileCountY : 9,
 		};
 		
 		
@@ -183,7 +187,7 @@
 		
 		function onPermLoad()
 		{
-			canEdit = this.canEdit();
+			canEdit = this.canEdit() && !uesp.isMobileDevice();
 			
 			if (canEdit)
 			{
@@ -291,29 +295,29 @@
 		<div id="gmTitle">UESP:Elder Scrolls Online Map</div>
 		
 		<ol class="gmMenuLinks">
-			<li class="gmMenuItem" id="gmMapNameLabel" onclick="g_GameMap.showMapList();">Map:</li>
-			<li class="gmMenuItem"><a title="Goto the wiki page for the current map" href="" id="gmMapWikiLink">Goto Wiki Page</a></li>
-			<li class="gmMenuItem"><a title="The permanent and complete link for the current map view" href="" id="gmMapLink">Link</a></li>
-			<li class="gmMenuItem"><a title="Reset the map state" href="" id="gmMapReset">Reset</a></li>
+			<li class="gmMenuItem" id="gmMapNameLabel" onclick="g_GameMap.showMapList();" ontouchstart="g_GameMap.showMapList();">Map:</li>
+			<li class="gmMenuItem gmNoMobile"><a title="Goto the wiki page for the current map" href="" id="gmMapWikiLink">Goto Wiki Page</a></li>
+			<li class="gmMenuItem gmNoMobile"><a title="The permanent and complete link for the current map view" href="" id="gmMapLink">Link</a></li>
+			<li class="gmMenuItem gmNoMobile"><a title="Reset the map state" href="" id="gmMapReset">Reset</a></li>
 		</ol>
 		<div id="gmMapListRoot" tabindex="0" style="display:none;"></div>
 		
 		<div id="gmMenuLinksRight">
 			<ol class="gmMenuLinks">
-				<li class="gmMenuItem" onclick="g_GameMap.showMapKey();">Map Key</li>
-				<li class="gmMenuItem"><a href="http://www.uesp.net/wiki/UESPWiki:ESO_Map_Design" target="_new">Help</a></li>
-				<li class="gmMenuItem"><a href="http://www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design">Discuss</a></li>
-				<li class="gmMenuItem"><a href="http://www.uesp.net/wiki/Main_Page">UESP Home</a></li>
+				<li class="gmMenuItem gmNoMobile" onclick="g_GameMap.showMapKey();" ontouchstart="g_GameMap.showMapKey();" id="gmMapShowKey">Map Key</li>
+				<li class="gmMenuItem gmNoMobile"><a href="http://www.uesp.net/wiki/UESPWiki:ESO_Map_Design" target="_new" id="gmMapHelp">Help</a></li>
+				<li class="gmMenuItem gmNoMobile"><a href="http://www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design" id="gmMapDiscuss">Discuss</a></li>
+				<li class="gmMenuItem gmNoMobile"><a href="http://www.uesp.net/wiki/Main_Page" id="gmMapHome">UESP Home</a></li>
 			</ol>
 		</div>
 		
 		<div id="gmMapEditButtons" style="display:none;">
-			<button id="editWorldButton" style="display:none;" onclick="g_GameMap.onEditWorld();">Edit World</button>
-			<button id="addLocationButton" style="display:none;" onclick="g_GameMap.onAddLocationStart();">Add Location</button>
-			<button id="addPathButton" style="display:none;" onclick="g_GameMap.onAddPathStart();">Add Path</button>
-			<button id="addAreaButton" style="display:none;" onclick="g_GameMap.onAddAreaStart();">Add Area</button>
+			<button id="editWorldButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onEditWorld();" ontouchstart="g_GameMap.onEditWorld();">Edit World</button>
+			<button id="addLocationButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddLocationStart();"  ontouchstart="g_GameMap.onAddLocationStart();">Add Location</button>
+			<button id="addPathButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddPathStart();"  ontouchstart="g_GameMap.onAddPathStart();">Add Path</button>
+			<button id="addAreaButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddAreaStart();"  ontouchstart="g_GameMap.onAddAreaStart();">Add Area</button>
 			&nbsp;
-			<div id="showRecentChangeButton" class="gmToggleButton" style="display:none;" onclick="g_GameMap.onRecentChanges(this);">Recent Changes</div>
+			<div id="showRecentChangeButton" class="gmToggleButton gmNoMobile" style="display:none;" onclick="g_GameMap.onRecentChanges(this);" ontouchstart="g_GameMap.onRecentChanges(this);">Recent Changes</div>
 		</div>
 </div>
 
