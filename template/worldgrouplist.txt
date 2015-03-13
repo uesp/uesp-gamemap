@@ -141,6 +141,7 @@
 			<li>Imperial Underground Part 2</li>
 			<li>Isles of Torment</li>
 			<li>Marbruk</li>
+			<li>Marbruk Outlaw Refuge</li>
 			<li>Naril Nagaia</li>
 			<li>Nereid Temple</li>
 			<li>Old Merchant Caves</li>
@@ -170,7 +171,7 @@
 			<li>Hazak's Hollow</li>
 			<li>Hoarvor Pit</li>
 			<li>Malabal Tor</li>
-			<li>Malabal Tol Outlaw Refuge</li>
+			<li>Malabal Tor Outlaw Refuge</li>
 			<li>Mistral</li>
 			<li>Ouze</li>
 			<li>Roots of Silvenar</li>
@@ -338,6 +339,9 @@
 		<li>Cold Harbor Arboretum1</li>
 		<li>Cold Harbor Arboretum2</li>
 		<li>Cold Harbor Arboretum3</li>
+		<li>Cold Harbor Market1</li>
+		<li>Cold Harbor Market2</li>
+		<li>Cold Harbor Market3</li>
 		<li>Cracked Wood Cave</li>
 		<li>Cyrodiil</li>
 		<li>Eastern Elsweyr Gate</li>
@@ -852,6 +856,7 @@
 		<li>Chateau Ravenous Rodent</li>
 		<li>Cheese Mongers Hollow</li>
 		<li>Circus of Cheerful Slaughter</li>
+		<li>Earth Forge Pressure Room III</li>
 		<li>Eyevea</li>
 		<li>Fort Virak</li>
 		<li>Glade of the Divine Asakala</li>
@@ -861,9 +866,7 @@
 		<li>Mzendeldt</li>
 		<li>Ragnthar</li>
 		<li>Stonefang</li>
-		<li>The Earthforge</li>
-		<li>The Earthforge Public</li>
-		</ul>
+		<li>The Earth Forge</li>
 	<li class='gmMapListHeader'>Main</li>
 		<ul>
 		<li>Castle of the Worm 1</li>
