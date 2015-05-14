@@ -464,6 +464,7 @@
 			<li>Betnikh</li>
 			<li>Carzog's Demise</li>
 			<li>Moriseli</li>
+			<li>Stonetooth Fortress</li>
 			</ul>
 		<li class='gmMapListHeader'>Glenumbra</li>
 			<ul>
@@ -500,7 +501,6 @@
 			<li>South Hut Portal Cave</li>
 			<li>Spindleclutch</li>
 			<li>Spindleclutch Heroic</li>
-			<li>Stonetooth Fortress</li>
 			<li>The Daggerfall Harborage</li>
 			<li>Themond Mine</li>
 			<li>Tomb of Lost Kings</li>
