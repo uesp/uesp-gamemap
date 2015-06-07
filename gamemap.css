@@ -1005,8 +1005,17 @@ input[type=checkbox].gmMapEditPopupInput {
 	height: 30px;
 }
 
+.gmMapKeyImageImage
+{
+	width: 32px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
 .gmMapKeyItem img {
 	vertical-align: middle;	
+	display: block;
+	margin: auto auto;
 }
 
 .gmMapKeyItemLabel {
