@@ -231,8 +231,8 @@
 			<li>Urcelmo's Betrayal</li>
 			<li>Vilemanse House 1</li>
 			<li>Vilemanse House 2</li>
-			<li>Vineduck Village</li>
-			<li>Vineduck Village Corridor</li>
+			<li>Vinedusk Village</li>
+			<li>Vinedusk Village Corridor</li>
 			<li>Weeping Wind Cave</li>
 			</ul>
 		</ul>
