@@ -1140,6 +1140,18 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		labelPos.val(0);
 		wikiPage.val(rawNameValue);
 	}
+	else if (nameValue == "dye station")
+	{
+		this.setIconTypeCustomListValue(135);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
+	else if (nameValue == "fence")
+	{
+		this.setIconTypeCustomListValue(133);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
 	
 	//this.isFirstEdit = false;
 }
