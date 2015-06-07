@@ -3014,7 +3014,7 @@ uesp.gamemap.Map.prototype.createMapKeyContent = function()
 		iconType = reverseIconTypeMap[iconTypeLabel];
 		
 		output += "<div class='gmMapKeyItem'>";
-		output += "<img src='" + this.mapOptions.iconPath + iconType + ".png' />";
+		output += "<div class='gmMapKeyImageImage'><img src='" + this.mapOptions.iconPath + iconType + ".png' /></div>";
 		output += "<div class='gmMapKeyItemLabel'>"+ iconTypeLabel + "</div>";
 		output += "</div><br />";
 		
