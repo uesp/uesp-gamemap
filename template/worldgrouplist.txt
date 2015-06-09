@@ -229,8 +229,8 @@
 			<li>The Wild Hunt</li>
 			<li>Thibaut's Cairn</li>
 			<li>Urcelmo's Betrayal</li>
-			<li>Vilemanse House 1</li>
-			<li>Vilemanse House 2</li>
+			<li>Vile Manse House 1</li>
+			<li>Vile Manse House 2</li>
 			<li>Vinedusk Village</li>
 			<li>Vinedusk Village Corridor</li>
 			<li>Weeping Wind Cave</li>
