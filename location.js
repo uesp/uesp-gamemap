@@ -1096,6 +1096,13 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		labelPos.val(0);
 		wikiPage.val(rawNameValue);
 	}
+	else if (uesp.endsWith(nameValue, "world event"))
+	{
+		this.setIconTypeCustomListValue(140);
+		displayLevel.val(this.parentMap.mapOptions.minZoomLevel);
+		labelPos.val(0);
+		wikiPage.val(rawNameValue);
+	}
 	else if (uesp.endsWith(nameValue, "crafting node"))
 	{
 		this.setIconTypeCustomListValue(90);
