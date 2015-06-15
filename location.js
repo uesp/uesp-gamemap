@@ -1131,6 +1131,7 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 	{
 		this.setIconTypeCustomListValue(129);
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
 		wikiPage.val(rawNameValue);
 	}
 	else if (uesp.endsWith(nameValue, "fighters guild"))

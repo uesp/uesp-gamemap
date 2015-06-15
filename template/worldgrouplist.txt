@@ -46,7 +46,7 @@
 			<li>Torinaan 3</li>
 			<li>Torinaan 4</li>
 			<li>Torinaan 5</li>
-			<li>The Aldmiri Harborage</li>
+			<li>The Aldmeri Harborage</li>
 			<li>The Man Groves</li>
 			<li>Vafe</li>
 			<li>Vulkhel Guard</li>
@@ -591,6 +591,7 @@
 			<ul>
 			<li>Bleakrock Isle</li>
 			<li>Bleakrock Village</li>
+			<li>Last Rest</li>
 			<li>Orkey's Hollow</li>
 			<li>Hozzin's Folly</li>
 			<li>Skyshroud Barrow</li>
@@ -714,7 +715,6 @@
 			<li>Crows Wood Dungeon</li>
 			<li>Daen Seeth</li>
 			<li>Davon's Watch</li>
-			<li>Davon's Watch Crypt</li>
 			<li>Ebonheart</li>
 			<li>Emberflint Mine</li>
 			<li>Fort Arand</li>
@@ -723,10 +723,10 @@
 			<li>Heimlyn Keep Reliquary</li>
 			<li>Hightide Hollow</li>
 			<li>House Dres Crypts</li>
-			<li>Iliath Temple Tunnels</li>
+			<li>House Indoril Crypt</li>
+			<li>Iliath Temple Mine</li>
 			<li>Inner Sea Armature</li>
 			<li>Kragenmoor</li>
-			<li>Last Resort Barrow</li>
 			<li>Mephala's Nest</li>
 			<li>Pagglers Hollow</li>
 			<li>Sheogorath's Tongue</li>
