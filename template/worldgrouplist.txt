@@ -244,16 +244,15 @@
 		<li>Aetherian Archive Island B</li>
 		<li>Aetherian Archive Island C</li>
 		<li>Aetherian Archive Middle</li>
-		<li>Atelier Twice Born Star</li>
+		<li>Atelier of the Twice-Born Star</li>
 		<li>Balamath</li>
 		<li>Balamath Air Monarch Chamber</li>
 		<li>Balamath Library</li>
 		<li>Belkarth</li>
+		<li>Belkarth Outlaw Refuge</li>
 		<li>Buried Sands</li>
 		<li>Chiselshriek Mine</li>
 		<li>Craglorn</li>
-		<li>Craglorn Outlaw Refuge</li>
-		<li>Crgwamasu Cave</li>
 		<li>Crypt of Tarishzi</li>
 		<li>Crypt of Tarishzi 2</li>
 		<li>Dragonstar</li>
@@ -271,8 +270,8 @@
 		<li>Dragonstar Arena Vault</li>
 		<li>Elinhir Mage Vision</li>
 		<li>Elinhir Sewerworks</li>
-		<li>Ex Archs Stronghold</li>
-		<li>Fearfang</li>
+		<li>Exarch's Stronghold</li>
+		<li>Fearfangs Cavern</li>
 		<li>Frost Monarch Lair</li>
 		<li>Gladiators Assembly</li>
 		<li>Haddock's Market</li>
@@ -280,13 +279,12 @@
 		<li>Hel Ra Citadel Entry</li>
 		<li>Hel Ra Citadel Hall of Warrior</li>
 		<li>Hircine's Haunt</li>
-		<li>Howling Sepulchers Cave</li>
 		<li>Howling Sepulchers Overlan</li>
 		<li>Howling Sepulchers Overland</li>
 		<li>Howling Sepulchers Scrying</li>
-		<li>Ilthags Undertower</li>
-		<li>Ilthags Undertower 2</li>
-		<li>Lothna</li>
+		<li>Ilthag's Undertower</li>
+		<li>Ilthag's Undertower 2</li>
+		<li>Loth'Na Caverns</li>
 		<li>Molavar</li>
 		<li>Mtharnaz</li>
 		<li>Rahniza 1</li>
@@ -298,7 +296,7 @@
 		<li>Ruins of Kardala</li>
 		<li>Scale Court Laboratory</li>
 		<li>Scaled Court Laboratory</li>
-		<li>Serpents Nest</li>
+		<li>Serpent's Nest</li>
 		<li>Seeker's Archive Down</li>
 		<li>Seeker's Archive Up</li>
 		<li>Shada Burial Grounds</li>
@@ -321,6 +319,8 @@
 		<li>SO Map 2</li>
 		<li>SO Map 3</li>
 		<li>Storm Lair</li>
+		<li>Sunken Lair</li>
+		<li>The Howling Sepulchers</li>
 		<li>The Mage's Staff</li>
 		<li>Tombs of the Na-Totambu</li>
 		<li>Zalgaz's Den</li>
@@ -539,8 +539,8 @@
 			<li>Shadowfate Cavern</li>
 			<li>Shornhelm</li>
 			<li>Shrouded Pass</li>
-			<li>Shrouded Pass 2</li>
 			<li>Tribulation Crypt</li>
+			<li>Varlasel</li>
 			<li>Westmark Moor</li>
 			</ul>
 		<li class='gmMapListHeader'>Stormhaven</li>
@@ -724,7 +724,7 @@
 			<li>Hightide Hollow</li>
 			<li>House Dres Crypts</li>
 			<li>House Indoril Crypt</li>
-			<li>Iliath Temple Mine</li>
+			<li>Iliath Temple Mines</li>
 			<li>Inner Sea Armature</li>
 			<li>Kragenmoor</li>
 			<li>Mephala's Nest</li>
@@ -853,8 +853,8 @@
 		<ul>
 		<li>Abagarlas</li>
 		<li>Chateau Master Bedroom</li>
-		<li>Chateau Ravenous Rodent</li>
-		<li>Cheese Mongers Hollow</li>
+		<li>Chateau of the Ravenous Rodent</li>
+		<li>Cheesemonger's Hollow</li>
 		<li>Circus of Cheerful Slaughter</li>
 		<li>Earth Forge Pressure Room III</li>
 		<li>Eyevea</li>
