@@ -1148,6 +1148,13 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		labelPos.val(0);
 		wikiPage.val(rawNameValue);
 	}
+	else if (uesp.beginsWith(nameValue, "strongbox"))
+	{
+		this.setIconTypeCustomListValue(143);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+		wikiPage.val("Strongbox");
+	}
 	else if (nameValue == "dye station")
 	{
 		this.setIconTypeCustomListValue(135);
