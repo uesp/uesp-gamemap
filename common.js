@@ -40,6 +40,13 @@ uesp.endsWith = function (str, suffix)
 }
 
 
+uesp.beginsWith = function (str, suffix)
+{
+	return str.substring(0, suffix.length) === suffix;
+}
+
+
+
 uesp.gamemap.createMergedObject = function (obj1, obj2)
 {
 	var obj3 = {};
