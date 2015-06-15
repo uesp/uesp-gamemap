@@ -44,8 +44,6 @@
 }
 
 .gmMapLocIconDiv {
-	width: 32px;
-	height: 32px;
 	position: absolute;
 	z-index: 19;
 	display: inline-block;
