@@ -1148,12 +1148,12 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		labelPos.val(0);
 		wikiPage.val(rawNameValue);
 	}
-	else if (uesp.beginsWith(nameValue, "strongbox"))
+	else if (uesp.beginsWith(nameValue, "safebox") || uesp.beginsWith(nameValue, "strongbox") || uesp.beginsWith(nameValue, "lockbox"))
 	{
 		this.setIconTypeCustomListValue(143);
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
 		labelPos.val(0);
-		wikiPage.val("Strongbox");
+		wikiPage.val("Lockbox");
 	}
 	else if (nameValue == "dye station")
 	{
