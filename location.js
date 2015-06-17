@@ -1099,7 +1099,7 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 	else if (uesp.endsWith(nameValue, "world event"))
 	{
 		this.setIconTypeCustomListValue(140);
-		displayLevel.val(this.parentMap.mapOptions.minZoomLevel);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
 		labelPos.val(0);
 		wikiPage.val(rawNameValue);
 	}
