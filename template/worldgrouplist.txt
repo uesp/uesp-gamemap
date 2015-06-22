@@ -605,7 +605,6 @@
 			<li>Deepcrag Den</li>
 			<li>Deshaan</li>
 			<li>Eidolon's Hollow</li>
-			<li>Eidolon's Hollow 2</li>
 			<li>Eidolon's Hollow North</li>
 			<li>Eidolon's Hollow South</li>
 			<li>Forgotten Crypts</li>
@@ -622,18 +621,18 @@
 			<li>Obsidian Gorge</li>
 			<li>Quarantine Serk</li>
 			<li>Redolent Loam</li>
+			<li>Reservoir of Souls</li>
 			<li>Shad Astula</li>
 			<li>Siaebony Mine</li>
 			<li>Siltreen</li>
 			<li>Tal'Deic Crypts</li>
 			<li>Taleon's Crag</li>
 			<li>The Corpse Garden</li>
-			<li>The Shrine of Stveloth</li>
+			<li>The Shrine of St.Veloth</li>
 			<li>The Triple Circle Mine</li>
 			<li>Triple Circle Mine</li>
 			<li>Tribunal Temple</li>
 			<li>Vale of the Ghost Snake</li>
-			<li>Well of Lost Souls</li>
 			</ul>
 		<li class='gmMapListHeader'>Eastmarch</li>
 			<ul>
@@ -676,7 +675,9 @@
 			<li>Crypt of Hearts</li>
 			<li>Gandranen Ruins</li>
 			<li>Hall of the Dead</li>
-			<li>Hissmirruins</li>
+			<li>Hei-Halai</li>
+			<li>Hissmir Ruins</li>
+			<li>Lair of the Skin Stealer</li>
 			<li>Leafwater</li>
 			<li>Loriasel</li>
 			<li>Loriasel Lower Level</li>
@@ -688,19 +689,16 @@
 			<li>Sanguine's Demesne</li>
 			<li>Shadowfen</li>
 			<li>Shadowfen Outlaw Refuge</li>
-			<li>Shadowscale Enclave</li>
 			<li>Shrine of the Black Maw</li>
-			<li>Skin Stealer Lair</li>
-			<li>Stillrise Village</li>
-			<li>Stormhold</li>
-			<li>Stormhold Ayleid Ruin</li>
+			<li>Silyanorn Ruins</li>
+			<li>Stormhold</li>			
 			<li>Stormhold Guildhall</li>
 			<li>Stormhold Mortuary</li>
-			<li>Sunscale Enclave</li>
+			<li>Sunscale Ruins</li>
 			<li>Temple of Sul</li>
-			<li>Ten-Maur-Wolk</li>
+			<li>Ruisn of Ten-Maur-Wolk</li>
 			<li>Tormented Spire Instance</li>
-			<li>Tsanji</li>
+			<li>Tsanji's Hideout</li>
 			<li>Venomous Fens</li>
 			<li>Vision of the Hist</li>
 			<li>White Rose Prison</li>
