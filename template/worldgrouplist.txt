@@ -749,13 +749,14 @@
 			<li>Blessed Crucible 5</li>
 			<li>Blessed Crucible 6</li>
 			<li>Blessed Crucible 7</li>
+			<li>Broken Helm</li>
 			<li>Faldar's Tooth</li>
 			<li>Fallowstone Vault</li>
 			<li>Forelhost</li>
 			<li>Fort Greenwall</li>
 			<li>Lions Den Hidden Tunnel</li>
 			<li>Lost Prospect</li>
-			<li>Lost Prospect 2</li>
+			<li>Lost Prospect Sanctum</li>
 			<li>Nimalten</li>
 			<li>Nimalten Part 1</li>
 			<li>Nimalten Part 2</li>
@@ -776,7 +777,7 @@
 			<li>Trolhetta</li>
 			<li>Trolhetta Cave</li>
 			<li>Trolhetta Summit</li>
-			<li>Vernim Woods</li>
+			<li>Vaults of Vernim</li>
 			</ul>
 		</ul>
 	<li class='gmMapListHeader'>Oblivion</li>
