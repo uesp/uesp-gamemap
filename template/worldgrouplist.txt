@@ -749,7 +749,7 @@
 			<li>Blessed Crucible 5</li>
 			<li>Blessed Crucible 6</li>
 			<li>Blessed Crucible 7</li>
-			<li>Broken Helm</li>
+			<li>Broken Helm Hollow</li>
 			<li>Faldar's Tooth</li>
 			<li>Fallowstone Vault</li>
 			<li>Forelhost</li>
