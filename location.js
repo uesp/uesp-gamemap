@@ -2423,16 +2423,14 @@ uesp.gamemap.Location.prototype.removetooltip = function ()
 
 uesp.gamemap.Location.prototype.onLabelMouseOver = function (event)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, 'onLabelMouseOver');
-	
+	//uesp.logDebug(uesp.LOG_LEVEL_WARNING, 'onLabelMouseOver');
 	if (this.shouldShowTooltip()) this.showTooltip();
 }
 
 
 uesp.gamemap.Location.prototype.onLabelMouseOut = function (event)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, 'onLabelMouseOut');
-	
+	//uesp.logDebug(uesp.LOG_LEVEL_WARNING, 'onLabelMouseOut');
 	this.hideTooltip();
 }
 
