@@ -19,7 +19,7 @@ class GameMap
 	const LOCTYPE_PATH  = 2;
 	const LOCTYPE_AREA  = 3;
 	
-	const USE_MEMCACHED_SESSIONS = false;
+	const USE_MEMCACHED_SESSIONS = true;
 	
 	public $inputParams = array();
 	
