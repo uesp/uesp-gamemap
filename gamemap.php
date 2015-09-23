@@ -8,6 +8,7 @@
 
 
 require '/home/uesp/secrets/gamemap.secrets';
+require 'UespMemcachedSession.php';
 
 
 class GameMap
@@ -17,6 +18,8 @@ class GameMap
 	const LOCTYPE_POINT = 1;
 	const LOCTYPE_PATH  = 2;
 	const LOCTYPE_AREA  = 3;
+	
+	const USE_MEMCACHED_SESSIONS = false;
 	
 	public $inputParams = array();
 	
@@ -84,6 +87,8 @@ class GameMap
 	
 	function __construct ()
 	{
+		if (self::USE_MEMCACHED_SESSIONS) UespMemcachedSession::install();
+		
 		$this->setInputParams();
 		$this->parseInputParams();
 		
@@ -92,7 +97,7 @@ class GameMap
 		
 		if (!$this->startedSession) error_log("Failed to start session!");
 		
-		if (isset($_SESSION['wsUserID'])) $this->canEdit = true;
+		if (isset($_SESSION['wsUserID']) && $_SESSION['wsUserID'] > 0) $this->canEdit = true;
 	}
 	
 	
