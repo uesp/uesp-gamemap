@@ -610,14 +610,9 @@ class GameMap
 		
 		if ($worldId === 0 && $count > 0)
 		{
-			error_log("WorldID1 = " . $locations[0]['worldId']);
 			$worldId = $locations[0]['worldId'];
 			$this->worldId = $worldId;
 			$this->doGetWorld();
-		}
-		else
-		{
-			error_log("WorldID2 = " . $worldId);
 		}
 		
 		return $locations[0]['id'];
@@ -978,8 +973,6 @@ class GameMap
 		else
 			return $this->reportError("World ID/name not specified!");
 		
-		error_log($query);
-		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve world data!");
 		
@@ -1190,7 +1183,6 @@ class GameMap
 				$this->worldName = str_replace('%27', "\'", $this->worldName);
 				$this->world = $this->worldName;
 				$this->worldName = strtolower($this->worldName);
-				error_log("WorldName: " . $this->world);
 			}
 	
 		}
