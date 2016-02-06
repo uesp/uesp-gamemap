@@ -1167,6 +1167,18 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
 		labelPos.val(0);
 	}
+	else if (nameValue == "hiding spot")
+	{
+		this.setIconTypeCustomListValue(170);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
+	else if (nameValue == "thieves trove")
+	{
+		this.setIconTypeCustomListValue(167);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
 	
 	//this.isFirstEdit = false;
 }
