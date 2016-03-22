@@ -281,8 +281,7 @@
 				uesp.logDebug(uesp.LOG_LEVEL_ERROR, 'Received world group list contents!');
 				$('#gmMapList').html(data);
 				g_GameMap.setEventsForMapGroupList();
-			});
-			
+			});			
 			
 		});
 		
@@ -343,7 +342,7 @@
 		<div id="gmMenuLinksRight">
 			<ol class="gmMenuLinks">
 				<li class="gmMenuItem gmNoMobile" onclick="g_GameMap.showMapKey();" ontouchstart="g_GameMap.showMapKey();" id="gmMapShowKey">Map Key</li>
-				<li class="gmMenuItem gmNoMobile"><a href="http://www.uesp.net/wiki/UESPWiki:ESO_Map_Design" target="_new" id="gmMapHelp">Help</a></li>
+				<li class="gmMenuItem gmNoMobile" onclick="g_GameMap.showHelpBlock();" ontouchstart="g_GameMap.showHelpBlock();" id="gmHelp">Help</li>
 				<li class="gmMenuItem gmNoMobile"><a href="http://www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design" id="gmMapDiscuss">Discuss</a></li>
 				<li class="gmMenuItem gmNoMobile"><a href="http://www.uesp.net/wiki/Main_Page" id="gmMapHome">UESP Home</a></li>
 			</ol>
