@@ -2946,14 +2946,25 @@ uesp.gamemap.Map.prototype.panDown = function ()
 
 uesp.gamemap.Map.prototype.hideMapKey = function()
 {
+	if (this.currentEditMode == 'showmapkey')
+	{
+		this.currentEditMode = '';
+		this.removeEditClickWall();
+	}
+	
 	if (this.mapKeyElement != null) this.mapKeyElement.hide();
 }
 
 
 uesp.gamemap.Map.prototype.showMapKey = function()
 {
-	if (this.mapKeyElement == null) this.createMapKey();
+	if (this.currentEditMode != '') return false;
 	
+	this.addEditClickWall('default');
+	this.setEditClickWallBackground('rgba(0,0,0,0.5)');
+	this.currentEditMode = 'showmapkey';
+	
+	if (this.mapKeyElement == null) this.createMapKey();
 	this.mapKeyElement.show();
 }
 
