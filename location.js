@@ -175,9 +175,9 @@ uesp.gamemap.Location.prototype.shiftElements = function (shiftX, shiftY)
 	
 	if ( !(this.iconElement == null))
 	{
-		curOffset = $(this.iconElement).offset();
+		curOffset = this.iconElement.offset();
 	
-		$(this.iconElement).offset({
+		this.iconElement.offset({
 			left: curOffset.left - shiftX,
 			top : curOffset.top  - shiftY
 		});
@@ -329,7 +329,13 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 	}
 	
 	var iconSize = 8;
-	if (this.iconElement != null) iconSize = this.iconElement.width()/2 - 2;
+	
+	if (this.iconElement != null) 
+	{
+		var width = this.iconElement.width();
+		if (width == 0) width = 32;
+		iconSize = width/2 - 2;
+	}
 	
 	//var labelWidth = this.name.length*6 + 2;
 	var labelWidth  = this.labelElement.width();
@@ -418,16 +424,8 @@ uesp.gamemap.Location.prototype.updateIcon = function ()
 	
 	if (this.iconElement == null)
 	{	
-			// TODO: Don't hard code z-index calc
-		this.iconElement = $('<div />')
-				.addClass('gmMapLocIconDiv')
-				.css('z-index', ZIndex)
-				.appendTo(this.parentMap.mapRoot);
-		
-		$('<span />').addClass('gmMapLocIconHelper').appendTo(this.iconElement);
-		
-		imageElement = $('<img />').addClass('gmMapLocIcon')
-			.load(uesp.gamemap.onLoadIconSuccess)
+		var imageElement = $('<img />').addClass('gmMapLocIcon')
+			.load(this, uesp.gamemap.onLoadIconSuccess)
 			.error(uesp.gamemap.onLoadIconFailed(missingURL))
 			.attr('src', imageURL)
 			.click(this.onLabelClickFunction())
@@ -436,8 +434,17 @@ uesp.gamemap.Location.prototype.updateIcon = function ()
 			.mouseout(this.onLabelMouseOutFunction())
 			.attr('unselectable', 'on')
 			.css('user-select', 'none')
-			.on('selectstart', false)
-			.appendTo(this.iconElement);
+			.on('selectstart', false);
+		
+			// TODO: Don't hard code z-index calc
+		this.iconElement = $('<div />')
+				.addClass('gmMapLocIconDiv')
+				.css('z-index', ZIndex)
+				.appendTo(this.parentMap.mapRoot);
+		
+		imageElement.appendTo(this.iconElement);
+		
+		$('<span />').addClass('gmMapLocIconHelper').appendTo(this.iconElement);
 	}
 	else
 	{
@@ -1282,7 +1289,12 @@ uesp.gamemap.Location.prototype.updateIconOffset = function ()
 {
 	if (this.iconElement == null) return;
 	
-	$(this.iconElement).offset( { left: this.offsetLeft - $(this.iconElement).width()/2, top: this.offsetTop - $(this.iconElement).height()/2 });
+	var width  = this.iconElement.width();
+	var height = this.iconElement.height();
+	if (width  == 0 || height == 0) height = 32;
+	if (width  == 0) width = 32;
+		
+	this.iconElement.offset( { left: this.offsetLeft - width/2, top: this.offsetTop - height/2 });
 }
 
 
