@@ -1127,3 +1127,35 @@ body {
 	display: inline-block;
 	font-size: 11px;
 }
+
+.gmHelpBlock {
+	background-color: #EBDDB4;
+	border: 1px solid gray;
+	color: #000000;
+	font-family: sans-serif;
+	font-size: 12px;
+	position: absolute;
+	top: 50px;
+	margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    width: 500px;
+	z-index: 150;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 5px;
+}
+
+.gmHelpCloseButton {
+	float: right;
+}
+
+.gmHelpBlockTitle {
+	font-size: 18px;
+	font-weight: bold;
+	display: inline-block;
+	width: 400px;
+	text-align: center;
+}

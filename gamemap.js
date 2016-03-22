@@ -39,6 +39,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.mapListLastSelectedItem = null;
 	
 	this.mapKeyElement = null;
+	this.helpBlockElement = null;
 	
 	this.isShowingRecentChanges = false;
 	
@@ -96,6 +97,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.currentEditWorld = null;
 	
 	this.worldGroupListContents = '';
+	this.helpBlockContents = '';
 	
 	this.mapTiles = [];
 	
@@ -2941,6 +2943,62 @@ uesp.gamemap.Map.prototype.panUp = function ()
 uesp.gamemap.Map.prototype.panDown = function ()
 {
 	this.pan(0, -uesp.gamemap.Map.PANAMOUNT);
+}
+
+
+uesp.gamemap.Map.prototype.createHelpBlockElement = function()
+{
+	var self = this;
+	
+	this.helpBlockElement = $('<div />')
+				.addClass('gmHelpBlock')
+				.html("Loading...")
+				.appendTo(this.mapContainer);
+	
+	$.get( 'template/helpblock.txt', function( data ) {
+		self.helpBlockContents = data;
+		uesp.logDebug(uesp.LOG_LEVEL_ERROR, 'Received help block contents!', data);
+		$('.gmHelpBlock').html(data);
+		
+		self.helpBlockElement.find('.gmHelpCloseButton').bind("touchstart click", function(event) {
+			self.hideHelpBlock();
+		});
+		
+		$(document).mousedown(function(e){
+			var container = self.helpBlockElement;
+			
+			if (!container.is(e.target) && container.has(e.target).length === 0)
+			{
+				self.hideHelpBlock();
+			}
+		});
+	});
+
+}
+
+
+uesp.gamemap.Map.prototype.hideHelpBlock = function()
+{
+	if (this.currentEditMode == 'showhelpblock')
+	{
+		this.currentEditMode = '';
+		this.removeEditClickWall();
+	}
+	
+	if (this.helpBlockElement != null) this.helpBlockElement.hide();
+}
+
+
+uesp.gamemap.Map.prototype.showHelpBlock = function()
+{
+	if (this.currentEditMode != '') return false;
+	
+	this.addEditClickWall('default');
+	this.setEditClickWallBackground('rgba(0,0,0,0.5)');
+	this.currentEditMode = 'showhelpblock';
+	
+	if (this.helpBlockElement == null) this.createHelpBlockElement();
+	this.helpBlockElement.show();
 }
 
 
