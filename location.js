@@ -448,7 +448,8 @@ uesp.gamemap.Location.prototype.updateIcon = function ()
 	}
 	else
 	{
-		$(this.iconElement.children()[1]).attr('src', imageURL);
+		var imageTarget = this.iconElement.children("img");
+		imageTarget.attr('src', imageURL);
 		this.iconElement.css('z-index', ZIndex);
 	}
 	
