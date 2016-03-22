@@ -321,7 +321,7 @@
 			
 			$('#gmMapListAlphaSelect').val(newWorld.id);
 			
-			$('#gmMapNameLabel').text("Map: " + newWorld.displayName);
+			$('#gmMapNameLabel').text(newWorld.displayName);
 		}
 		
 		
@@ -333,7 +333,7 @@
 		<div id="gmTitle">UESP:Elder Scrolls Online Map</div>
 		
 		<ol class="gmMenuLinks">
-			<li class="gmMenuItem" id="gmMapNameLabel" onclick="g_GameMap.showMapList();" ontouchstart="g_GameMap.showMapList();">Map:</li>
+			<li class="gmMenuItem" id="gmMapNameLabel" onclick="g_GameMap.showMapList();" ontouchstart="g_GameMap.showMapList();"></li>
 			<li class="gmMenuItem gmNoMobile"><a title="Goto the wiki page for the current map" href="" id="gmMapWikiLink">Goto Wiki Page</a></li>
 			<li class="gmMenuItem gmNoMobile"><a title="The permanent and complete link for the current map view" href="" id="gmMapLink">Link</a></li>
 			<li class="gmMenuItem gmNoMobile"><a title="Reset the map state" href="" id="gmMapReset">Reset</a></li>
