@@ -1,4 +1,4 @@
-	<li>Mundus</li>
+	<li>The Aurbis</li>
 	<li>Tamriel</li>
 	<li class='gmMapListHeader'>Aldmeri</li>
 		<ul>
@@ -47,7 +47,7 @@
 			<li>Torinaan 4</li>
 			<li>Torinaan 5</li>
 			<li>The Aldmeri Harborage</li>
-			<li>The Man Groves</li>
+			<li>The Mangroves</li>
 			<li>Vafe</li>
 			<li>Vulkhel Guard</li>
 			<li>Vulkel Guard Prison</li>
@@ -167,12 +167,14 @@
 			<li>Broken Coast</li>
 			<li>Cat's Eye Quay</li>
 			<li>Crimson Cove</li>
+			<li>Crimson Cove 1</li>
 			<li>Dead Man's Drop</li>
 			<li>Hazak's Hollow</li>
 			<li>Hoarvor Pit</li>
 			<li>Malabal Tor</li>
 			<li>Malabal Tor Outlaw Refuge</li>
 			<li>Mistral</li>
+			<li>Ogrims Yawn</li>
 			<li>Ouze</li>
 			<li>Roots of Silvenar</li>
 			<li>Roots of Treehenge</li>
@@ -207,6 +209,10 @@
 			<li>Jodewood</li>
 			<li>Khaj Rawlith</li>
 			<li>Kuna's Delve</li>
+			<li>Maw of Lorkaj</li>
+			<li>Maw of Lorkaj: Hall</li>
+			<li>Maw of Lorkaj: Seven Riddles</li>
+			<li>Maw of Lorkaj: Suthay Sanctuary</li>
 			<li>Moonmont Temple</li>
 			<li>Northern Woods</li>
 			<li>Rawl'kha</li>
@@ -279,9 +285,9 @@
 		<li>Hel Ra Citadel Entry</li>
 		<li>Hel Ra Citadel Hall of Warrior</li>
 		<li>Hircine's Haunt</li>
-		<li>Howling Sepulchers Overlan</li>
+		<li>Howling Sepulchers Cave</li>
 		<li>Howling Sepulchers Overland</li>
-		<li>Howling Sepulchers Scrying</li>
+		<li>Howling Sepulchers: Sanctum of Farsight</li>
 		<li>Ilthag's Undertower</li>
 		<li>Ilthag's Undertower 2</li>
 		<li>Loth'Na Caverns</li>
@@ -294,6 +300,9 @@
 		<li>Rkhardahrk</li>
 		<li>Rkundzelft</li>
 		<li>Ruins of Kardala</li>
+		<li>Sanctum Ophidia 1</li>
+		<li>Sanctum Ophidia 2</li>
+		<li>Sanctum Ophidia 3</li>
 		<li>Scale Court Laboratory</li>
 		<li>Scaled Court Laboratory</li>
 		<li>Serpent's Nest</li>
@@ -315,12 +324,8 @@
 		<li>Skyreach Hold 4</li>
 		<li>Skyreach Pinnacle</li>
 		<li>Skyreach Temple</li>
-		<li>SO Map 1</li>
-		<li>SO Map 2</li>
-		<li>SO Map 3</li>
 		<li>Storm Lair</li>
 		<li>Sunken Lair</li>
-		<li>The Howling Sepulchers</li>
 		<li>The Mage's Staff</li>
 		<li>Tombs of the Na-Totambu</li>
 		<li>Zalgaz's Den</li>
@@ -348,18 +353,31 @@
 		<li>Echo Cave</li>
 		<li>Haynote Cave</li>
 		<li>Imperial City</li>
+		<li>Imperial Dragonfire Cathedral</li>
+		<li>Imperial Dragonfire Tunnel</li>
 		<li>Imperial Prison District</li>
 		<li>Imperial Prison Dunint1</li>
 		<li>Imperial Prison Dunint2</li>	
 		<li>Imperial Prison Dunint3</li>	
-		<li>Imperial Prison Dunint4</li>	
-		<li>Imperial Sewers</li>
+		<li>Imperial Prison Dunint4</li>
 		<li>Imperial Sewers Ald1</li>
 		<li>Imperial Sewers Ald2</li>
+		<li>Imperial Sewers Aldmeri 1</li>
+		<li>Imperial Sewers Aldmeri 2</li>
+		<li>Imperial Sewers Aldmeri 3</li>
 		<li>Imperial Sewers Dagger1</li>
 		<li>Imperial Sewers Dagger2</li>
+		<li>Imperial Sewers Daggerfall 1</li>
+		<li>Imperial Sewers Daggerfall 2</li>
+		<li>Imperial Sewers Daggerfall 3</li>
+		<li>Imperial Sewers Daggerfall 3b</li>
 		<li>Imperial Sewers Ebon1</li>
 		<li>Imperial Sewers Ebon2</li>
+		<li>Imperial Sewers Ebonheart 1</li>
+		<li>Imperial Sewers Ebonheart 2</li>
+		<li>Imperial Sewers Ebonheart 3</li>
+		<li>Imperial Sewers Ebonheart 3b</li>
+		<li>Imperial Sewers Ebonheart 3m</li>
 		<li>Imperial Sewers Hub</li>
 		<li>Kingscrest</li>
 		<li>Lipsand Tarn</li>
@@ -382,6 +400,18 @@
 		<li>Vahtacen</li>
 		<li>Western Elsweyr Gate</li>
 		<li>Whitefall Mountain</li>
+		<li>White Gold Tower: Battlemage</li>
+		<li>White Gold Tower: Green Emperor Way</li>
+		<li>White Gold Tower: Imperial Guard Quarters</li>
+		<li>White Gold Tower: Imperial Throne Room</li>
+		<li>White Gold Tower: Library Hall</li>
+		<li>White Gold Tower: Library Main</li>
+		<li>White Gold Tower: Palace Sewers</li>
+		<li>White Gold Tower: Pinnacle</li>
+		<li>White Gold Tower: Pinnacle Boss</li>
+		<li>White Gold Tower: Regents Quarters</li>
+		<li>White Gold Tower: Void 1</li>
+		<li>White Gold Tower: Void 2</li>
 		</ul>
 	<li class='gmMapListHeader'>Daggerfall</li>
 		<ul>
@@ -424,7 +454,9 @@
 			<ul>
 			<li>Bangkorai</li>
 			<li>Bangkorai Garrison 1</li>
+			<li>Bangkorai Garrison Bottom</li>
 			<li>Bangkorai Garrison Sewer</li>
+			<li>Bangkorai Garrison Top</li>
 			<li>Bangkorai Outlaw Refuge</li>
 			<li>Bisnensel</li>
 			<li>Blackheart Haven Area 1</li>
@@ -441,6 +473,7 @@
 			<li>Hallin's Stand</li>
 			<li>Hall of Heroes</li>
 			<li>Hircines Woods</li>
+			<li>Hircines Woods Group</li>
 			<li>Klathzgar</li>
 			<li>Mournoth</li>
 			<li>Murcien's Claim</li>
@@ -490,6 +523,7 @@
 			<li>Enduum</li>
 			<li>Farwatch Tower</li>
 			<li>Glenumbra</li>
+			<li>Glenumbra Camlorn Keep</li>
 			<li>Glenumbra Outlaw Refuge</li>
 			<li>Halls of Submission</li>
 			<li>High Rock</li>
@@ -646,6 +680,7 @@
 			<li>Fort Amol</li>
 			<li>Fort Morvunskar</li>
 			<li>Frostwater Tundra</li>
+			<li>Giants Run</li>
 			<li>Giant's Run</li>
 			<li>Hall of the Dead</li>
 			<li>Hall of Trials</li>
@@ -683,6 +718,8 @@
 			<li>Loriasel Lower Level</li>
 			<li>Mudmines of Skulrpahan</li>
 			<li>Mud Tree Mine</li>
+			<li>Mudtree Mine</li>
+			<li>Odious Chapel</li>
 			<li>Onkobra Kwama Mine</li>
 			<li>Percolating Mire</li>
 			<li>Reticulated Spine</li>
@@ -696,7 +733,7 @@
 			<li>Stormhold Mortuary</li>
 			<li>Sunscale Ruins</li>
 			<li>Temple of Sul</li>
-			<li>Ruisn of Ten-Maur-Wolk</li>
+			<li>Ruins of Ten-Maur-Wolk</li>
 			<li>Tormented Spire Instance</li>
 			<li>Tsanji's Hideout</li>
 			<li>Venomous Fens</li>
@@ -761,7 +798,7 @@
 			<li>Nimalten Part 1</li>
 			<li>Nimalten Part 2</li>
 			<li>Northwind Mine</li>
-			<li>Pinepeak Caverns</li>
+			<li>Pinepeak Cavern</li>
 			<li>Ragged Hills</li>
 			<li>Riften</li>
 			<li>Rift Outlaw Refuge</li>
@@ -866,6 +903,89 @@
 		<li>Ragnthar</li>
 		<li>Stonefang</li>
 		<li>The Earth Forge</li>
+	<li class='gmMapListHeader'>Hew's Bane</li>
+		<ul>
+		<li>Abah's Landing</li>
+		<li>Abah's Landing Sulima</li>
+		<li>Abah's Landing Velmont</li>
+		<li>al-Danobia</li>
+		<li>al-Danobia Tomb</li>
+		<li>Bahraha's Gloom</li>
+		<li>Bahraha's Gloom Secret 1</li>
+		<li>Bahraha's Gloom Secret 2</li>
+		<li>Bahraha's Gloom Secret 3</li>
+		<li>Bandit Den 10 Room 1</li>
+		<li>Bandit Den 10 Room 2</li>
+		<li>Bandit Den 10 Room 3</li>
+		<li>Bandit Den 10 Room 4</li>
+		<li>Bandit Den 10 Room 5</li>
+		<li>Bandit Den 10 Room 6</li>
+		<li>Bandit Den 10 Room 7</li>
+		<li>Bandit Den 10 Room 8</li>
+		<li>Bandit Den 12 Room 1</li>
+		<li>Bandit Den 12 Room 2</li>
+		<li>Bandit Den 12 Room 3</li>
+		<li>Bandit Den 12 Room 4</li>
+		<li>Bandit Den 12 Room 5</li>
+		<li>Bandit Den 7 Room 1</li>
+		<li>Bandit Den 7 Room 2</li>
+		<li>Bandit Den 7 Room 3</li>
+		<li>Bandit Den 7 Room 4</li>
+		<li>Bandit Den 9 Floor 2</li>
+		<li>Deadhollow Halls</li>
+		<li>Death Hollow Halls Room 1</li>
+		<li>Death Hollow Halls Room 2</li>
+		<li>Death Hollow Halls Room 3</li>
+		<li>Death Hollow Halls Room 4</li>
+		<li>Death Hollow Halls Room 5</li>
+		<li>Fulstrom Catacombs</li>
+		<li>Fulstrom Homestead</li>
+		<li>Glittering Grotto</li>
+		<li>Glittering Grotto Room 1</li>
+		<li>Glittering Grotto Room 2</li>
+		<li>Glittering Grotto Room 3</li>
+		<li>Glittering Grotto Room 4</li>
+		<li>Glittering Grotto Room 5</li>
+		<li>Glittering Grotto Room 6</li>
+		<li>Glittering Grotto Room 7</li>
+		<li>Glittering Grotto Room 8</li>
+		<li>Hew's Bane</li>
+		<li>Hiradirge Citadel Secret 1</li>
+		<li>Hiradirge Citadel Secret 2</li>
+		<li>Hiradirge Citadel Secret 3</li>
+		<li>Hiradirge Citadel TG6 Secret 1</li>
+		<li>Hiradirge Citadel TG6 Secret 2</li>
+		<li>Hubalajad Palace</li>
+		<li>Hubalajad Palace Interior 1h</li>
+		<li>Hubalajad Palace Second Floor</li>
+		<li>Hubalajad Palace Interior 2h</li>
+		<li>Hubalajad Palace First Floor</li>
+		<li>Iron Wheel Headquarters</li>
+		<li>Iron Wheel Headquarters Lower</li>
+		<li>Secluded Sewers</li>
+		<li>Secluded Sewers Room 1</li>
+		<li>Secluded Sewers Room 2</li>
+		<li>Secluded Sewers Room 3</li>
+		<li>Secluded Sewers Room 4</li>
+		<li>Secluded Sewers Room 5</li>
+		<li>Seps Gullet</li>
+		<li>Shark's Teeth Grotto Upper</li>
+		<li>Shark's Teeth Grotto</li>
+		<li>Sulima Mansion</li>
+		<li>Sulima Mansion Floor 1</li>
+		<li>Sulima Mansion Secret 1</li>
+		<li>Sulima Mansion Floor 2</li>
+		<li>Sulima Mansion Secret 2</li>
+		<li>Thieves Den</li>
+		<li>The Hideaway</li>
+		<li>The Hideaway Floor 2</li>
+		<li>Underground Sepulcher Cave</li>
+		<li>Underground Sepulcher</li>
+		<li>Underground Sepulcher Room 1</li>
+		<li>Underground Sepulcher Room 2</li>
+		<li>Underground Sepulcher Room 3</li>
+		<li>Underground Sepulcher Tunnel</li>
+		</ul>		
 	<li class='gmMapListHeader'>Main</li>
 		<ul>
 		<li>Castle of the Worm 1</li>
@@ -890,13 +1010,30 @@
 		<li>Valley of Blades 2</li>
 		<li>Vision of the Companions</li>
 		</ul>
+	<li class='gmMapListHeader'>Maelstrom Arena</li>
+		<ul>
+		<li>Arenas Murkmire Cave Inter</li>
+		<li>Maelstrom Arena: Lobby</li>
+		<li>Maelstrom Arena 1: Vale of the Surreal</li>
+		<li>Maelstrom Arena 2: Seht's Balcony</li>
+		<li>Maelstrom Arena 3: Drome of Toxic Shock</li>
+		<li>Maelstrom Arena 4: Seht's Flywheel</li>
+		<li>Maelstrom Arena 5: Rink of Frozen Blood</li>
+		<li>Maelstrom Arena 6: Spiral Shadows</li>
+		<li>Maelstrom Arena 7: Vault of Umbrage</li>
+		<li>Maelstrom Arena 8: Igneous Cistern</li>
+		<li>Maelstrom Arena 9: Theater of Despair</li>
+		</ul>
 	<li class='gmMapListHeader'>Unknown</li>
 		<ul>
 		<li>Balfiera Island</li>
 		<li>Blackvine Ruins I</li>
 		<li>Canulus Refuge</li>
 		<li>Colovian Crossing</li>
+		<li>Eidolon's Hollow (Old Map)</li>
 		<li>Guardian's Orbit</li>
+		<li>Imperial Sewers Dev1</li>
+		<li>Imperial Sewers Dev2</li>
 		<li>Mudshallow Cave</li>
 		<li>Overhead</li>
 		<li>Pvetest</li>
@@ -907,4 +1044,64 @@
 		<li>Vog</li>
 		<li>Zehtswater Lower</li>
 		<li>Zehtswater Upper</li>
+		</ul>
+	<li class='gmMapListHeader'>Wrothgar</li>
+		<ul>
+		<li>Animus Resonation Chamber</li>
+		<li>Argent Mine</li>
+		<li>Bloody Knoll</li>
+		<li>Bonerock Caverns</li>
+		<li>Coldwind's Den</li>
+		<li>Chambers of Loyalty</li>
+		<li>Coldperch Cavern</li>
+		<li>Exiles Barrow</li>
+		<li>Exiles Barrow Map</li>
+		<li>Fharun Prison</li>
+		<li>Fharun Stronghold 1</li>
+		<li>Fharun Stronghold 2</li>
+		<li>Fharun Stronghold 3</li>
+		<li>Fharun Stronghold 3b</li>
+		<li>Frostbreak Fortress</li>
+		<li>Graystone Quarry</li>
+		<li>Honor's Rest Desert</li>
+		<li>Honor's Rest Final C</li>
+		<li>Honor's Rest Final V</li>
+		<li>Honor's Rest Left</li>
+		<li>Honor's Rest C</li>
+		<li>Honor's Rest Right</li>
+		<li>Ice-Heart's Lair</li>
+		<li>Nikolvara's Kennel</li>
+		<li>Morkul Stronghold</li>
+		<li>Morkul Descent</li>
+		<li>Morkuldin</li>
+		<li>Old Orsinium Map 1</li>
+		<li>Old Orsinium Map 2</li>
+		<li>Old Orsinium Map 3</li>
+		<li>Old Orsinium Map 4</li>
+		<li>Old Orsinium Map 5</li>
+		<li>Old Orsinium Map 6</li>
+		<li>Old Orsinium Map 7</li>
+		<li>Orsinium</li>
+		<li>Orsinium Outlaw Refuge</li>
+		<li>Rkindaleft 1</li>
+		<li>Rkindaleft 3</li>
+		<li>Rkindaleft Outside</li>
+		<li>Paragon's Remembrance</li>
+		<li>Path to the Moot</li>
+		<li>Sanctum of Prowess</li>
+		<li>Scarp Keep Lower</li>
+		<li>Scarp Keep Upper</li>
+		<li>Scarp Keep Throne Room</li>
+		<li>Sorrow</li>
+		<li>Sorrow Interior 1</li>
+		<li>Sorrow Interior 2</li>
+		<li>Sorrow Interior 3</li>
+		<li>Temple of Ire Lower</li>
+		<li>Temple of Ire Upper</li>
+		<li>Temple of Ire: Library</li>
+		<li>Temple of Ire Rectory</li>
+		<li>Thukhozod's Sanctum</li>
+		<li>Watchers Hold</li>
+		<li>Wrothgar</li>
+		<li>Zthenganaz</li>
 		</ul>
