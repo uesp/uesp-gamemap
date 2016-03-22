@@ -472,8 +472,9 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 }
 
 
-uesp.gamemap.onLoadIconSuccess = function()
+uesp.gamemap.onLoadIconSuccess = function(event)
 {
+	event.data.updateOffset();
 	$(this).show();
 }
 
