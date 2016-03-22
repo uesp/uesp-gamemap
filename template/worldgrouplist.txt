@@ -885,24 +885,6 @@
 			<li>Wailing Prison 7</li>
 			</ul>
 		</ul>
-	<li class='gmMapListHeader'>Guildmaps</li>
-		<ul>
-		<li>Abagarlas</li>
-		<li>Chateau Master Bedroom</li>
-		<li>Chateau of the Ravenous Rodent</li>
-		<li>Cheesemonger's Hollow</li>
-		<li>Circus of Cheerful Slaughter</li>
-		<li>Earth Forge Pressure Room III</li>
-		<li>Eyevea</li>
-		<li>Fort Virak</li>
-		<li>Glade of the Divine Asakala</li>
-		<li>Glade of the Divine Shivering</li>
-		<li>Glade of the Divine Vuldngrav</li>
-		<li>Halls of Submission</li>
-		<li>Mzendeldt</li>
-		<li>Ragnthar</li>
-		<li>Stonefang</li>
-		<li>The Earth Forge</li>
 	<li class='gmMapListHeader'>Hew's Bane</li>
 		<ul>
 		<li>Abah's Landing</li>
@@ -985,68 +967,23 @@
 		<li>Underground Sepulcher Room 2</li>
 		<li>Underground Sepulcher Room 3</li>
 		<li>Underground Sepulcher Tunnel</li>
-		</ul>		
-	<li class='gmMapListHeader'>Main</li>
-		<ul>
-		<li>Castle of the Worm 1</li>
-		<li>Castle of the Worm 2</li>
-		<li>Castle of the Worm 3</li>
-		<li>Castle of the Worm 4</li>
-		<li>Castle of the Worm 5</li>
-		<li>Colored Rooms</li>
-		<li>Halls of Torment</li>
-		<li>Heart's Grief 1</li>
-		<li>Heart's Grief 2</li>
-		<li>Heart's Grief 3</li>
-		<li>Sancre Tor 1</li>
-		<li>Sancre Tor 2</li>
-		<li>Sancre Tor 3</li>
-		<li>Sancre Tor 4</li>
-		<li>Sancre Tor 5</li>
-		<li>Sancre Tor 6</li>
-		<li>Sancre Tor 7</li>
-		<li>Sancre Tor 8</li>
-		<li>Valley of Blades 1</li>
-		<li>Valley of Blades 2</li>
-		<li>Vision of the Companions</li>
-		</ul>
-	<li class='gmMapListHeader'>Maelstrom Arena</li>
-		<ul>
-		<li>Arenas Murkmire Cave Inter</li>
-		<li>Maelstrom Arena: Lobby</li>
-		<li>Maelstrom Arena 1: Vale of the Surreal</li>
-		<li>Maelstrom Arena 2: Seht's Balcony</li>
-		<li>Maelstrom Arena 3: Drome of Toxic Shock</li>
-		<li>Maelstrom Arena 4: Seht's Flywheel</li>
-		<li>Maelstrom Arena 5: Rink of Frozen Blood</li>
-		<li>Maelstrom Arena 6: Spiral Shadows</li>
-		<li>Maelstrom Arena 7: Vault of Umbrage</li>
-		<li>Maelstrom Arena 8: Igneous Cistern</li>
-		<li>Maelstrom Arena 9: Theater of Despair</li>
-		</ul>
-	<li class='gmMapListHeader'>Unknown</li>
-		<ul>
-		<li>Balfiera Island</li>
-		<li>Blackvine Ruins I</li>
-		<li>Canulus Refuge</li>
-		<li>Colovian Crossing</li>
-		<li>Eidolon's Hollow (Old Map)</li>
-		<li>Guardian's Orbit</li>
-		<li>Imperial Sewers Dev1</li>
-		<li>Imperial Sewers Dev2</li>
-		<li>Mudshallow Cave</li>
-		<li>Overhead</li>
-		<li>Pvetest</li>
-		<li>Silaseli Ruins</li>
-		<li>Slavepits</li>
-		<li>Topal Island</li>
-		<li>Towers</li>
-		<li>Vog</li>
-		<li>Zehtswater Lower</li>
-		<li>Zehtswater Upper</li>
-		</ul>
+		</ul>	
 	<li class='gmMapListHeader'>Wrothgar</li>
 		<ul>
+		<li class='gmMapListHeader'>Maelstrom Arena</li>
+			<ul>
+			<li>Arenas Murkmire Cave Inter</li>
+			<li>Maelstrom Arena: Lobby</li>
+			<li>Maelstrom Arena 1: Vale of the Surreal</li>
+			<li>Maelstrom Arena 2: Seht's Balcony</li>
+			<li>Maelstrom Arena 3: Drome of Toxic Shock</li>
+			<li>Maelstrom Arena 4: Seht's Flywheel</li>
+			<li>Maelstrom Arena 5: Rink of Frozen Blood</li>
+			<li>Maelstrom Arena 6: Spiral Shadows</li>
+			<li>Maelstrom Arena 7: Vault of Umbrage</li>
+			<li>Maelstrom Arena 8: Igneous Cistern</li>
+			<li>Maelstrom Arena 9: Theater of Despair</li>
+			</ul>	
 		<li>Animus Resonation Chamber</li>
 		<li>Argent Mine</li>
 		<li>Bloody Knoll</li>
@@ -1104,4 +1041,68 @@
 		<li>Watchers Hold</li>
 		<li>Wrothgar</li>
 		<li>Zthenganaz</li>
+		</ul> 		
+	<li class='gmMapListHeader'>Guildmaps</li>
+		<ul>
+		<li>Abagarlas</li>
+		<li>Chateau Master Bedroom</li>
+		<li>Chateau of the Ravenous Rodent</li>
+		<li>Cheesemonger's Hollow</li>
+		<li>Circus of Cheerful Slaughter</li>
+		<li>Earth Forge Pressure Room III</li>
+		<li>Eyevea</li>
+		<li>Fort Virak</li>
+		<li>Glade of the Divine Asakala</li>
+		<li>Glade of the Divine Shivering</li>
+		<li>Glade of the Divine Vuldngrav</li>
+		<li>Halls of Submission</li>
+		<li>Mzendeldt</li>
+		<li>Ragnthar</li>
+		<li>Stonefang</li>
+		<li>The Earth Forge</li>
+	
+	<li class='gmMapListHeader'>Main</li>
+		<ul>
+		<li>Castle of the Worm 1</li>
+		<li>Castle of the Worm 2</li>
+		<li>Castle of the Worm 3</li>
+		<li>Castle of the Worm 4</li>
+		<li>Castle of the Worm 5</li>
+		<li>Colored Rooms</li>
+		<li>Halls of Torment</li>
+		<li>Heart's Grief 1</li>
+		<li>Heart's Grief 2</li>
+		<li>Heart's Grief 3</li>
+		<li>Sancre Tor 1</li>
+		<li>Sancre Tor 2</li>
+		<li>Sancre Tor 3</li>
+		<li>Sancre Tor 4</li>
+		<li>Sancre Tor 5</li>
+		<li>Sancre Tor 6</li>
+		<li>Sancre Tor 7</li>
+		<li>Sancre Tor 8</li>
+		<li>Valley of Blades 1</li>
+		<li>Valley of Blades 2</li>
+		<li>Vision of the Companions</li>
+		</ul>
+	<li class='gmMapListHeader'>Unknown</li>
+		<ul>
+		<li>Balfiera Island</li>
+		<li>Blackvine Ruins I</li>
+		<li>Canulus Refuge</li>
+		<li>Colovian Crossing</li>
+		<li>Eidolon's Hollow (Old Map)</li>
+		<li>Guardian's Orbit</li>
+		<li>Imperial Sewers Dev1</li>
+		<li>Imperial Sewers Dev2</li>
+		<li>Mudshallow Cave</li>
+		<li>Overhead</li>
+		<li>Pvetest</li>
+		<li>Silaseli Ruins</li>
+		<li>Slavepits</li>
+		<li>Topal Island</li>
+		<li>Towers</li>
+		<li>Vog</li>
+		<li>Zehtswater Lower</li>
+		<li>Zehtswater Upper</li>
 		</ul>

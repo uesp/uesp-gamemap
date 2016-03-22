@@ -1548,7 +1548,7 @@ uesp.gamemap.Map.prototype.mergeWorldData = function (worlds)
 	for (key in worlds)
 	{
 		var world = worlds[key];
-		uesp.logDebug(uesp.LOG_LEVEL_WARNING, world);
+		//uesp.logDebug(uesp.LOG_LEVEL_WARNING, world);
 		
 			//TODO: Better world filter
 		if (world.id < this.minValidWorldId) continue;
@@ -1561,7 +1561,7 @@ uesp.gamemap.Map.prototype.mergeWorldData = function (worlds)
 			this.mapWorlds[world.id].mergeFromJson(world);
 			this.mapWorldNameIndex[world.name] = world.id;
 			this.mapWorldDisplayNameIndex[world.displayName] = world.id;
-			uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Merging to existing world " + world.name);
+			//uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Merging to existing world " + world.name);
 		}
 		else
 		{
@@ -1569,7 +1569,7 @@ uesp.gamemap.Map.prototype.mergeWorldData = function (worlds)
 			this.mapWorlds[world.id].mergeFromJson(world);
 			this.mapWorldNameIndex[world.name] = world.id;
 			this.mapWorldDisplayNameIndex[world.displayName] = world.id;
-			uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Creating new world " + world.name);
+			//uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Creating new world " + world.name);
 		}
 	}
 	
@@ -1578,8 +1578,8 @@ uesp.gamemap.Map.prototype.mergeWorldData = function (worlds)
 
 uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received world data");
-	uesp.logDebug(uesp.LOG_LEVEL_INFO, data);
+	//uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received world data");
+	//uesp.logDebug(uesp.LOG_LEVEL_INFO, data);
 	
 	if (!uesp.gamemap.isNullorUndefined(data.isError)) return uesp.logError("Error retrieving world data!", data.errorMsg);
 	if (uesp.gamemap.isNullorUndefined(data.worlds))   return uesp.logError("World data not found in JSON response!", data);
