@@ -437,23 +437,33 @@ class GameMap
 		$this->safeSearchWordWildcard = $this->db->real_escape_string($this->searchWordWildcard);
 		$this->safeSearchWord = $this->db->real_escape_string($this->unsafeSearch);
 		
-		$this->doWorldSearch();
-		$this->doLocationSearch();
+		$this->searchWorldId = $this->FindWorld($this->world, false);
+		
+			/* Try an exact match first */
+		$worldCount = $this->doWorldSearch(true);
+		$locCount = $this->doLocationSearch(true);
+		
+		if ($locCount == 0)
+		{
+			$worldCount = $this->doWorldSearch(false);
+			$locCount = $this->doLocationSearch(false);
+		}
+		
 		return true;
 	}
 	
 	
-	public function doWorldSearch ()
+	public function doWorldSearch ($doExactSearch)
 	{
 		if ($this->world != '')
 		{
 			//$this->searchWorldId = $this->FindWorld($this->world);
 			//if ($this->searchWorldId == 0) return $this->reportError("Invalid world '{$this->world}' for search!");
-			return true;
+			return 0;
 		}
 		
-		$query  = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") ." AND ";
-		$query .= "(MATCH(displayName, description) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) OR ";
+		$query  = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") ." AND (";
+		if (!$doExactSearch) $query .= "MATCH(displayName, description) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) OR ";
 		$query .= "displayName LIKE '%{$this->safeSearchWord}%' or description LIKE '%{$this->safeSearchWord}%') ";
 		$query .= "ORDER BY displayName LIMIT {$this->limitCount};";
 		
@@ -486,11 +496,11 @@ class GameMap
 		$this->addOutputItem("worlds", $worlds);
 		$this->addOutputItem("worldCount", $count);
 				
-		return true;
+		return $count;
 	}
 	
 	
-	public function FindWorld ($world)
+	public function FindWorld ($world, $saveData = true)
 	{
 		
 		if (is_numeric($world))
@@ -530,17 +540,22 @@ class GameMap
 			$count += 1;
 		}
 	
-		$this->addOutputItem("worlds", $worlds);
-		$this->addOutputItem("worldCount", $count);
+		if ($saveData)
+		{
+			$this->addOutputItem("worlds", $worlds);
+			$this->addOutputItem("worldCount", $count);
+		}
+		
 		return $worlds[0]['id'];
 	}
 	
 	
-	public function doLocationSearch ()
+	public function doLocationSearch ($doExactSearch)
 	{
 		$query  = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND ";
 		if ($this->searchWorldId != 0) $query .= " worldId={$this->searchWorldId} AND ";
-		$query .= "(MATCH(name, description) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) OR ";
+		$query .= " (";
+		if (!$doExactSearch) $query .= "MATCH(name, description) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) OR ";
 		$query .= "name LIKE '%{$this->safeSearchWord}%' or description LIKE '%{$this->safeSearchWord}%') ";
 		$query .= "ORDER BY name, worldId LIMIT {$this->limitCount};";
 				
@@ -573,7 +588,7 @@ class GameMap
 		$this->addOutputItem("locations", $locations);
 		$this->addOutputItem("locationCount", $count);
 		
-		return true;
+		return $count;
 	}
 	
 	
