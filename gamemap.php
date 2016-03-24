@@ -426,11 +426,16 @@ class GameMap
 		{
 			return $this->doTypeSearch();
 		}
-			
-		$this->searchWords = preg_split('/\s+/', $this->search);
+		
+		$matches = array();
+		preg_match_all('#([A-Za-z0-9_]+)([[:punct:]]+[A-Za-z0-9_]+)?\s*#', $this->unsafeSearch, $matches);
+		$this->searchWords = $matches[1];
 		$this->searchWordWildcard = implode('*', $this->searchWords);
 		
 		if ($this->searchWordWildcard != '') $this->searchWordWildcard .= '*';
+		
+		$this->safeSearchWordWildcard = $this->db->real_escape_string($this->searchWordWildcard);
+		$this->safeSearchWord = $this->db->real_escape_string($this->unsafeSearch);
 		
 		$this->doWorldSearch();
 		$this->doLocationSearch();
@@ -447,7 +452,10 @@ class GameMap
 			return true;
 		}
 		
-		$query = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") ." AND MATCH(displayName, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY displayName LIMIT {$this->limitCount};";
+		$query  = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") ." AND ";
+		$query .= "(MATCH(displayName, description) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) OR ";
+		$query .= "displayName LIKE '%{$this->safeSearchWord}%' or description LIKE '%{$this->safeSearchWord}%') ";
+		$query .= "ORDER BY displayName LIMIT {$this->limitCount};";
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed searching for worlds!");
@@ -530,10 +538,11 @@ class GameMap
 	
 	public function doLocationSearch ()
 	{
-		if ($this->searchWorldId != 0)
-			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId={$this->searchWorldId} AND MATCH(name, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY name, worldId LIMIT {$this->limitCount};";
-		else
-			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND MATCH(name, description) AGAINST ('{$this->searchWordWildcard}' IN BOOLEAN MODE) ORDER BY name, worldId LIMIT {$this->limitCount};";
+		$query  = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND ";
+		if ($this->searchWorldId != 0) $query .= " worldId={$this->searchWorldId} AND ";
+		$query .= "(MATCH(name, description) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) OR ";
+		$query .= "name LIKE '%{$this->safeSearchWord}%' or description LIKE '%{$this->safeSearchWord}%') ";
+		$query .= "ORDER BY name, worldId LIMIT {$this->limitCount};";
 				
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed searching for locations!");
@@ -1155,8 +1164,19 @@ class GameMap
 		if (array_key_exists('posbottom',  $this->inputParams)) $this->worldPosBottom = intval($this->db->real_escape_string($this->inputParams['posbottom']));
 		if (array_key_exists('parentid',  $this->inputParams)) $this->worldParentId = intval($this->db->real_escape_string($this->inputParams['parentid']));
 		if (array_key_exists('revisionid',  $this->inputParams)) $this->revisionId = intval($this->db->real_escape_string($this->inputParams['revisionid']));
-		if (array_key_exists('search',  $this->inputParams)) $this->search = $this->db->real_escape_string($this->inputParams['search']);
-		if (array_key_exists('searchtype',  $this->inputParams)) $this->searchType = intval($this->db->real_escape_string($this->inputParams['searchtype']));
+		
+		if (array_key_exists('search',  $this->inputParams))
+		{
+			$this->unsafeSearch = urldecode($this->inputParams['search']);
+			$this->search = $this->db->real_escape_string($this->unsafeSearch);
+		}
+		
+		if (array_key_exists('searchtype',  $this->inputParams))
+		{
+			$this->unsafeSearchType = urldecode($this->inputParams['searchtype']);
+			$this->searchType = intval($this->db->real_escape_string($this->unsafeSearchType));
+		}
+		
 		if (array_key_exists('centeron',  $this->inputParams)) $this->locCenterOn = $this->db->real_escape_string($this->inputParams['centeron']);
 		if (array_key_exists('showhidden',  $this->inputParams)) $this->showHidden = intval($this->db->real_escape_string($this->inputParams['showhidden']));
 		
