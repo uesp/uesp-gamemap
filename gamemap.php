@@ -442,8 +442,8 @@ class GameMap
 	{
 		if ($this->world != '')
 		{
-			$this->searchWorldId = $this->FindWorld($this->world);
-			if ($this->searchWorldId == 0) return $this->reportError("Invalid world '{$this->world}' for search!");
+			//$this->searchWorldId = $this->FindWorld($this->world);
+			//if ($this->searchWorldId == 0) return $this->reportError("Invalid world '{$this->world}' for search!");
 			return true;
 		}
 		
@@ -452,7 +452,7 @@ class GameMap
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed searching for worlds!");
 		
-		$worlds = Array();
+		$worlds = array();
 		$count = 0;
 		$result->data_seek(0);
 		
@@ -477,6 +477,7 @@ class GameMap
 		
 		$this->addOutputItem("worlds", $worlds);
 		$this->addOutputItem("worldCount", $count);
+				
 		return true;
 	}
 	
@@ -813,8 +814,6 @@ class GameMap
 		$query .= "enabled={$this->worldEnabled} ";
 		$query .= " WHERE id={$this->worldId};";
 		
-		error_log($query);
-	
 		$result = $this->db->query($query);
 	
 		if ($result === FALSE) {
