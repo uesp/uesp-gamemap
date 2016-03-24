@@ -2731,6 +2731,7 @@ uesp.gamemap.Map.prototype.updateSearchResults = function ()
 	
 }
 
+
 uesp.gamemap.Map.prototype.addSearchResultLocation = function (locationId)
 {
 	var self = this;
@@ -2752,7 +2753,7 @@ uesp.gamemap.Map.prototype.addSearchResultLocation = function (locationId)
 	
 	var searchResult = $('<div />')
 							.addClass('gmMapSearchResultLocation')
-							.bind("touchstart click", function (e) { self.setMapState(locState, true); })
+							.bind("touchstart click", function (e) { self.onClickSearchResult(location, locState); })
 							.appendTo(this.mapSearchResults);
 	
 	var iconURL   = this.mapOptions.iconPath + location.iconType + ".png";
@@ -2769,6 +2770,14 @@ uesp.gamemap.Map.prototype.addSearchResultLocation = function (locationId)
 	
 	searchResult.html(resultHtml);
 }
+
+
+uesp.gamemap.Map.prototype.onClickSearchResult = function(location, locState)
+{
+	this.setMapState(locState, true);
+	location.showPopup();
+}
+
 
 
 uesp.gamemap.Map.prototype.addSearchResultWorld = function (worldId)
