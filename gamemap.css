@@ -968,8 +968,8 @@ input[type=checkbox].gmMapEditPopupInput {
 	font-family: sans-serif;
 	font-size: 12px;
 	position: absolute;
-	top: 50px;
-	left: 500px;
+	top: 10px;
+	left: 325px;
 	z-index: 150;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -978,7 +978,9 @@ input[type=checkbox].gmMapEditPopupInput {
 }
 
 .gmMapKeyCloseButton {
-	float: right;
+	position: absolute;
+    right: 5px;
+    top: 5px;
 }
 
 .gmMapKeyContainer {
@@ -995,7 +997,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	font-size: 18px;
 	font-weight: bold;
 	display: inline-block;
-	width: 500px;
+	width: 100%;
 	text-align: center;
 }
 
