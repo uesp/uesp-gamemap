@@ -84,6 +84,8 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.jumpToDestinationOnClick = true;
 	this.openPopupOnJump = false;
 	
+	this.mapKeyNumColumns = 8;
+	
 		// This just controls the client-side editing abilities.
 		// All security for writes is handled on the server side.
 	this.enableEdit = false;
@@ -3083,7 +3085,7 @@ uesp.gamemap.Map.prototype.createMapKeyContent = function()
 	sortedIconTypeArray.sort();
 	
 	var output = "<div class='gmMapKeyContainer'><div class='gmMapKeyColumn'>";
-	var numColumns = 6;
+	var numColumns = this.mapKeyNumColumns;
 	var itemsPerColumn = sortedIconTypeArray.length / numColumns;
 	var itemCount = 0;
 	
