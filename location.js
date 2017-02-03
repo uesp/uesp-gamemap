@@ -2107,7 +2107,7 @@ uesp.gamemap.Location.prototype.setIconTypeCustomListValue = function(iconType)
 		iconLabel = this.parentMap.mapOptions.iconTypeMap[iconType];
 	}
 	
-	listHeader.text(iconLabel + " (" + iconType + ")");
+	listHeader.text(iconLabel);
 	this.popupElement.find('.gmMapIconTypeListContainer input[name="iconType"]').val(iconType);
 	this.updateEditPopupIconPreview(iconType);
 }
@@ -2305,14 +2305,14 @@ uesp.gamemap.Location.prototype.getIconTypeCustomList = function(currentIconType
 	output += "<div class='gmMapIconTypeListHeader'></div>"
 	output += "<input type='hidden' name='iconType' value='{iconType}' />";
 	output += "<ul tabindex='0' class='gmMapIconTypeList' style='display: none'>";
-	output += "<li><div class='gmMapIconTypeValue'>0</div><div class='gmMapIconTypeLabel" + (currentIconType == 0 ? ' gmMapIconTypeLabelSelected' : '') + "'> None (0)</div></li>";
+	output += "<li><div class='gmMapIconTypeValue'>0</div><div class='gmMapIconTypeLabel" + (currentIconType == 0 ? ' gmMapIconTypeLabelSelected' : '') + "'> None</div></li>";
 	
 	for (key in sortedIconTypeArray)
 	{
 		iconTypeLabel = sortedIconTypeArray[key];
 		iconType = reverseIconTypeMap[iconTypeLabel];
 		
-		output += "<li><div class='gmMapIconTypeValue'>" + iconType + "</div><div class='gmMapIconTypeLabel" + (currentIconType == iconType ? ' gmMapIconTypeLabelSelected' : '') + "'>" + iconTypeLabel + " (" + iconType + ")"
+		output += "<li><div class='gmMapIconTypeValue'>" + iconType + "</div><div class='gmMapIconTypeLabel" + (currentIconType == iconType ? ' gmMapIconTypeLabelSelected' : '') + "'>" + iconTypeLabel;
 		output += "<img src='" + this.parentMap.mapOptions.iconPath + iconType + ".png' />";
 		output += "</div></li>";
 	}
