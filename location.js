@@ -1142,6 +1142,13 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		labelPos.val(0);
 		wikiPage.val(rawNameValue);
 	}
+	else if (nameValue == "celestial rift")
+	{
+		this.setIconTypeCustomListValue(128);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+		wikiPage.val(rawNameValue);
+	}
 	else if (uesp.endsWith(nameValue, "fighters guild"))
 	{
 		this.setIconTypeCustomListValue(30);
