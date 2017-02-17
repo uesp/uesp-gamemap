@@ -1168,7 +1168,7 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		this.setIconTypeCustomListValue(143);
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
 		labelPos.val(0);
-		wikiPage.val("Lockbox");
+		wikiPage.val("Safebox");
 	}
 	else if (nameValue == "dye station")
 	{
