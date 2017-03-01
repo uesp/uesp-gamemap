@@ -1161,3 +1161,8 @@ body {
 	width: 400px;
 	text-align: center;
 }
+
+.gmLocTooltipDesc {
+	font-weight: normal;
+	font-size: 0.9em;
+}
