@@ -2417,7 +2417,7 @@ uesp.gamemap.Location.prototype.updateTooltip = function ()
 	}
 	
 	this.updateTooltipOffset();
-	this.tooltipElement.text(this.name);
+	this.tooltipElement.html(this.name + "<div class='gmLocTooltipDesc'>" + this.description + "</div>");
 	
 	return true;
 }
