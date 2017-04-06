@@ -219,9 +219,9 @@
 		
 		var g_DefaultMapOptions = {
 				getMapTileFunction : getDefaultMapTile,
-				wikiUrl: "http://www.uesp.net/wiki/",
-				mapUrl : "http://esomap.uesp.net/esomap.html",
-				missingMapTile:  "http://maps.uesp.net/esomap/blacknulltile.jpg",
+				wikiUrl: "//www.uesp.net/wiki/",
+				mapUrl : "//esomap.uesp.net/esomap.html",
+				missingMapTile:  "//maps.uesp.net/esomap/blacknulltile.jpg",
 				iconPath: "icons/",
 				wikiNamespace: "ESO",
 				iconTypeMap: esoIconMap,
@@ -318,7 +318,7 @@
 		
 		function getDefaultMapTile(xPos, yPos, zoom, worldName)
 		{
-			return "http://maps.uesp.net/esomap/" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + ".jpg";
+			return "//maps.uesp.net/esomap/" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + ".jpg";
 		}
 		
 		
@@ -373,8 +373,8 @@
 			<ol class="gmMenuLinks">
 				<li class="gmMenuItem gmNoMobile" onclick="g_GameMap.showMapKey();" ontouchstart="g_GameMap.showMapKey();" id="gmMapShowKey">Map Key</li>
 				<li class="gmMenuItem gmNoMobile" onclick="g_GameMap.showHelpBlock();" ontouchstart="g_GameMap.showHelpBlock();" id="gmHelp">Help</li>
-				<li class="gmMenuItem gmNoMobile"><a href="http://www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design" id="gmMapDiscuss">Discuss</a></li>
-				<li class="gmMenuItem gmNoMobile"><a href="http://www.uesp.net/wiki/Main_Page" id="gmMapHome">UESP Home</a></li>
+				<li class="gmMenuItem gmNoMobile"><a href="//www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design" id="gmMapDiscuss">Discuss</a></li>
+				<li class="gmMenuItem gmNoMobile"><a href="//www.uesp.net/wiki/Main_Page" id="gmMapHome">UESP Home</a></li>
 			</ol>
 		</div>
 		
