@@ -4,6 +4,9 @@
  * 
  */
 
+if (!class_exists("UespMemcachedSession"))
+{
+
 class UespMemcachedSession
 {
 	
@@ -90,3 +93,4 @@ class UespMemcachedSession
 };
 
 
+}

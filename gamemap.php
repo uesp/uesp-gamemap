@@ -8,7 +8,7 @@
 
 
 require '/home/uesp/secrets/gamemap.secrets';
-require 'UespMemcachedSession.php';
+require_once 'UespMemcachedSession.php';
 
 
 class GameMap
