@@ -84,6 +84,9 @@ class GameMap
 	private $startedSession = false;
 	private $canEdit = false;
 	
+	public $canViewEsoMorrowindPts = false;
+	public $ESO_MORROWIND_FIRSTWORLDID = 1235;
+	
 	
 	function __construct ()
 	{
@@ -98,6 +101,18 @@ class GameMap
 		if (!$this->startedSession) error_log("Failed to start session!");
 		
 		if (isset($_SESSION['wsUserID']) && $_SESSION['wsUserID'] > 0) $this->canEdit = true;
+		
+		if ($_SESSION['uesp_eso_morrowind'] == 654321)
+		{
+			$this->canViewEsoMorrowindPts = true;
+		}
+	}
+	
+	
+	public function CanViewWorldId($id)
+	{
+		if ($id < $this->ESO_MORROWIND_FIRSTWORLDID) return true;
+		return $this->canViewEsoMorrowindPts;
 	}
 	
 	
@@ -396,6 +411,8 @@ class GameMap
 		
 		while ( ($row = $result->fetch_assoc()) )
 		{
+			if (!$this->CanViewWorldId($row['worldId'])) return false;
+			
 			settype($row['id'], "integer");
 			settype($row['worldId'], "integer");
 			settype($row['revisionId'], "integer");
@@ -476,6 +493,8 @@ class GameMap
 		
 		while ( ($row = $result->fetch_assoc()) )
 		{
+			if (!$this->CanViewWorldId($row['id'])) return false;
+			
 			settype($row['id'], "integer");
 			settype($row['parentId'], "integer");
 			settype($row['revisionId'], "integer");
@@ -523,6 +542,8 @@ class GameMap
 	
 		while ( ($row = $result->fetch_assoc()) )
 		{
+			if (!$this->CanViewWorldId($row['id'])) return false;
+			
 			settype($row['id'], "integer");
 			settype($row['parentId'], "integer");
 			settype($row['revisionId'], "integer");
@@ -568,6 +589,8 @@ class GameMap
 		
 		while ( ($row = $result->fetch_assoc()) )
 		{
+			if (!$this->CanViewWorldId($row['worldId'])) return false;
+			
 			settype($row['id'], "integer");
 			settype($row['worldId'], "integer");
 			settype($row['revisionId'], "integer");
@@ -613,6 +636,8 @@ class GameMap
 	
 		while ( ($row = $result->fetch_assoc()) )
 		{
+			if (!$this->CanViewWorldId($row['worldId'])) return false;
+			
 			settype($row['id'], "integer");
 			settype($row['worldId'], "integer");
 			settype($row['revisionId'], "integer");
@@ -701,6 +726,8 @@ class GameMap
 		
 		while ( ($row = $result->fetch_assoc()) )
 		{
+			if (!$this->CanViewWorldId($row['worldId'])) return false;
+			
 			settype($row['id'], "integer");
 			settype($row['worldId'], "integer");
 			settype($row['revisionId'], "integer");
@@ -778,6 +805,8 @@ class GameMap
 	{
 		if (!$this->initDatabaseWrite()) return false;
 		
+		if (!$this->CanViewWorldId($this->worldId)) return false;
+		
 		$query = "INSERT INTO location(worldId, locType, name, description, wikiPage, displayLevel, visible, x, y, width, height, iconType, destinationId, displayData) VALUES (";
 		$query .= "{$this->worldId}, ";
 		$query .= "{$this->locType}, ";
@@ -820,7 +849,9 @@ class GameMap
 	{
 		if ($this->worldId <= 0) return $this->reportError("Cannot create worlds yet!");
 		if (!$this->initDatabaseWrite()) return false;
-	
+		
+		if (!$this->CanViewWorldId($this->worldId)) return false;
+		
 		$query  = "UPDATE world SET ";
 		$query .= "name='{$this->locName}', ";
 		$query .= "displayName='{$this->worldDisplayName}', ";
@@ -906,6 +937,8 @@ class GameMap
 		if ($this->locationId <= 0) return $this->doAddLocation();
 		if (!$this->initDatabaseWrite()) return false;
 		
+		if (!$this->CanViewWorldId($this->worldId)) return false;
+		
 		$query  = "UPDATE location SET ";
 		$query .= "worldId={$this->worldId}, ";
 		$query .= "locType={$this->locType}, ";
@@ -959,6 +992,8 @@ class GameMap
 	
 		while ( ($row = $result->fetch_assoc()) )
 		{
+			if (!$this->CanViewWorldId($row['worldId'])) continue;
+			
 			settype($row['id'], "integer");
 			settype($row['worldId'], "integer");
 			settype($row['destinationId'], "integer");
@@ -1005,6 +1040,8 @@ class GameMap
 		
 		while ( ($row = $result->fetch_assoc()) )
 		{
+			if (!$this->CanViewWorldId($row['id'])) continue;
+				
 			settype($row['id'], "integer");
 			settype($row['parentId'], "integer");
 			settype($row['revisionId'], "integer");
@@ -1055,6 +1092,8 @@ class GameMap
 		
 		while ( ($row = $result->fetch_assoc()) )
 		{
+			if (!$this->CanViewWorldId($row['id'])) continue;
+			
 			settype($row['id'], "integer");
 			settype($row['parentId'], "integer");
 			settype($row['revisionId'], "integer");
@@ -1091,6 +1130,9 @@ class GameMap
 		
 		settype($row['id'], "integer");
 		if ($row['id'] == 0) return $this->reportError("Failed to get the ID for world '". $worldName ."'! " . $result);
+		
+		if (!$this->CanViewWorldId($row['id'])) return $this->reportError("Permission Denied!");
+		
 		return $row['id'];
 	}
 	
@@ -1295,5 +1337,3 @@ $g_GameMap = new GameMap();
 $g_GameMap->doAction();
 $g_GameMap->writeJson();
 
-
-?>
