@@ -84,7 +84,7 @@ class GameMap
 	private $startedSession = false;
 	private $canEdit = false;
 	
-	public $canViewEsoMorrowindPts = false;
+	public $canViewEsoMorrowindPts = true;
 	public $ESO_MORROWIND_FIRSTWORLDID = 1235;
 	
 	
@@ -411,7 +411,7 @@ class GameMap
 		
 		while ( ($row = $result->fetch_assoc()) )
 		{
-			if (!$this->CanViewWorldId($row['worldId'])) return false;
+			if (!$this->CanViewWorldId($row['worldId'])) continue;
 			
 			settype($row['id'], "integer");
 			settype($row['worldId'], "integer");
@@ -493,7 +493,7 @@ class GameMap
 		
 		while ( ($row = $result->fetch_assoc()) )
 		{
-			if (!$this->CanViewWorldId($row['id'])) return false;
+			if (!$this->CanViewWorldId($row['id'])) continue;
 			
 			settype($row['id'], "integer");
 			settype($row['parentId'], "integer");
@@ -542,7 +542,7 @@ class GameMap
 	
 		while ( ($row = $result->fetch_assoc()) )
 		{
-			if (!$this->CanViewWorldId($row['id'])) return false;
+			if (!$this->CanViewWorldId($row['id'])) continue;
 			
 			settype($row['id'], "integer");
 			settype($row['parentId'], "integer");
@@ -589,7 +589,7 @@ class GameMap
 		
 		while ( ($row = $result->fetch_assoc()) )
 		{
-			if (!$this->CanViewWorldId($row['worldId'])) return false;
+			if (!$this->CanViewWorldId($row['worldId'])) continue;
 			
 			settype($row['id'], "integer");
 			settype($row['worldId'], "integer");
@@ -636,7 +636,7 @@ class GameMap
 	
 		while ( ($row = $result->fetch_assoc()) )
 		{
-			if (!$this->CanViewWorldId($row['worldId'])) return false;
+			if (!$this->CanViewWorldId($row['worldId'])) continue;
 			
 			settype($row['id'], "integer");
 			settype($row['worldId'], "integer");
@@ -726,7 +726,7 @@ class GameMap
 		
 		while ( ($row = $result->fetch_assoc()) )
 		{
-			if (!$this->CanViewWorldId($row['worldId'])) return false;
+			if (!$this->CanViewWorldId($row['worldId'])) continue;
 			
 			settype($row['id'], "integer");
 			settype($row['worldId'], "integer");
