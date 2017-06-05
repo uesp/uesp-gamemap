@@ -2383,7 +2383,7 @@ uesp.gamemap.Location.prototype.isPopupOpen = function ()
 uesp.gamemap.Location.prototype.shouldShowTooltip = function ()
 {
 	if (this.isPopupOpen()) return false;
-	if (this.displayData.labelPos != 0) return false;
+	//if (this.displayData.labelPos != 0) return false;
 	
 	return true;
 }
