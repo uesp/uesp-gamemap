@@ -86,6 +86,8 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	
 	this.mapKeyNumColumns = 8;
 	
+	this.showPopupOnLoadLocationId = -1;
+	
 		// This just controls the client-side editing abilities.
 		// All security for writes is handled on the server side.
 	this.enableEdit = false;
@@ -1542,6 +1544,12 @@ uesp.gamemap.Map.prototype.onReceiveLocationData = function (data)
 	
 	this.mergeLocationData(data.locations, true);
 	
+	if (this.showPopupOnLoadLocationId > 0 && this.locations[this.showPopupOnLoadLocationId] != null)
+	{
+		this.locations[this.showPopupOnLoadLocationId].showPopup();
+		this.showPopupOnLoadLocationId = -1;
+	}
+	
 	return true;
 }
 
@@ -2755,7 +2763,7 @@ uesp.gamemap.Map.prototype.addSearchResultLocation = function (locationId)
 	
 	var searchResult = $('<div />')
 							.addClass('gmMapSearchResultLocation')
-							.bind("touchstart click", function (e) { self.onClickSearchResult(location, locState); })
+							.bind("touchstart click", function (e) { self.onClickSearchResultId(locationId, locState); })
 							.appendTo(this.mapSearchResults);
 	
 	var iconURL   = this.mapOptions.iconPath + location.iconType + ".png";
@@ -2778,6 +2786,25 @@ uesp.gamemap.Map.prototype.onClickSearchResult = function(location, locState)
 {
 	this.setMapState(locState, true);
 	location.showPopup();
+}
+
+
+uesp.gamemap.Map.prototype.onClickSearchResultId = function(locationId, locState)
+{
+	this.setMapState(locState, true);
+	
+	var location = this.locations[locationId];
+	
+	if (location != null) 
+	{
+		location.showPopup();
+		return;
+	}
+	
+	this.showPopupOnLoadLocationId = locationId;
+	//setTimeout(function() { location.showPopup(); }, 500);
+	//location.showPopup();
+	//this.setMapState(locState, true);
 }
 
 
