@@ -35,6 +35,12 @@ uesp.gamemap.World = function(worldName, mapOptions, worldId)
 	this.mapState.gamePos.x = this.mapOptions.initialGamePosX;
 	this.mapState.gamePos.y = this.mapOptions.initialGamePosY;
 	this.mapState.zoomLevel = this.mapOptions.initialZoom;
+	
+		/* Special case for ESO Tamriel Mundus map */
+	if (worldId == 667) 
+	{
+		this.mapState.zoomLevel = 9;
+	}
 }
 
 
@@ -75,6 +81,13 @@ uesp.gamemap.World.prototype.updateStateFromOptions = function()
 	this.mapState.gamePos.x = this.mapOptions.initialGamePosX;
 	this.mapState.gamePos.y = this.mapOptions.initialGamePosY;
 	this.mapState.zoomLevel = this.mapOptions.initialZoom;
+	
+		/* Special case for ESO Tamriel Mundus map */
+	if (this.id == 667) 
+	{
+		this.mapState.gamePos.y = 500000;
+		this.mapState.zoomLevel = 9;
+	}
 }
 
 
