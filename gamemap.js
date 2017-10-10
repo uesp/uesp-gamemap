@@ -2590,7 +2590,7 @@ uesp.gamemap.Map.prototype.createSearchControls = function ()
 		// TODO: Change to external template
 	var searchContent = "<form  onsubmit='return false;'>" +
 						"<div class='gmMapSearchInputDiv'>" + 
-						"<input class='gmMapSearchInput' type='text' name='search' value='' size='25' maxlength='100' />" +
+						"<input class='gmMapSearchInput' type='text' name='search' value='' size='25' maxlength='100' autocomplete='on' />" +
 						"<input class='gmMapSearchButton' type='submit' value='Search' /><br />" +
 						"<div class='gmMapSearchSmall'><input class='gmMapSearchCheck' type='checkbox' name='searchMapOnly' /> Only Search in Current Map</div>" + 
 						"</div>" + 
@@ -2611,6 +2611,7 @@ uesp.gamemap.Map.prototype.createSearchControls = function ()
 	var mapSearchButton = this.mapSearchRoot.find('.gmMapSearchButton');
 	this.mapSearchResults = this.mapSearchRoot.find('.gmMapSearchResults');
 	var mapSearchResultsButton = this.mapSearchRoot.find('.gmMapSearchResultsButton');
+	var mapSearchInput = $(".gmMapSearchInput");
 	
 	mapSearchButton.bind("touchstart click", function (e) {
 		self.onSearchButton(e);
@@ -2619,6 +2620,15 @@ uesp.gamemap.Map.prototype.createSearchControls = function ()
 	mapSearchResultsButton.bind("touchstart click", function (e) {
 		self.onSearchResultsButton(e);
 	});
+	
+	mapSearchInput.keypress(function(e){ 
+	    if (!e) e = window.event;   
+	    if (e.keyCode == '13'){
+	    	mapSearchInput.blur();
+	    	mapSearchInput.focus();
+	    	return true;
+	    }
+	  });
 }
 
 
