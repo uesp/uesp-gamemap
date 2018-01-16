@@ -1170,7 +1170,7 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		labelPos.val(0);
 		wikiPage.val("Safebox");
 	}
-	else if (nameValue == "dye station")
+	else if (nameValue == "dye station" || nameValue == "outfit station")
 	{
 		this.setIconTypeCustomListValue(135);
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
