@@ -83,10 +83,7 @@ class GameMap
 	private $dbWriteInitialized = false;
 	private $startedSession = false;
 	private $canEdit = false;
-	
-	public $canViewEsoMorrowindPts = true;
-	public $ESO_MORROWIND_FIRSTWORLDID = 1235;
-	
+
 	
 	function __construct ()
 	{
@@ -101,18 +98,12 @@ class GameMap
 		if (!$this->startedSession) error_log("Failed to start session!");
 		
 		if (isset($_SESSION['wsUserID']) && $_SESSION['wsUserID'] > 0) $this->canEdit = true;
-		
-		if ($_SESSION['uesp_eso_morrowind'] == 654321)
-		{
-			$this->canViewEsoMorrowindPts = true;
-		}
 	}
 	
 	
 	public function CanViewWorldId($id)
 	{
-		if ($id < $this->ESO_MORROWIND_FIRSTWORLDID) return true;
-		return $this->canViewEsoMorrowindPts;
+		return true;
 	}
 	
 	
