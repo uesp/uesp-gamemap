@@ -97,7 +97,10 @@ class GameMap
 		
 		if (!$this->startedSession) error_log("Failed to start session!");
 		
-		if (isset($_SESSION['wsUserID']) && $_SESSION['wsUserID'] > 0) $this->canEdit = true;
+		if (isset($_SESSION['wsUserID']) && $_SESSION['wsUserID'] > 0) 
+		{
+			if ($_SESSION['UESP_EsoMap_canEdit'] === true) $this->canEdit = true;
+		}
 	}
 	
 	
