@@ -243,6 +243,8 @@ uesp.gamemap.Map.prototype.createMapWikiLink = function ()
 	nameSpace = '';
 	if (this.mapOptions.wikiNamespace != null && this.mapOptions.wikiNamespace != '') nameSpace = this.mapOptions.wikiNamespace + ':';
 	
+	wikiPage = encodeURIComponent (wikiPage);
+	
 	return this.mapOptions.wikiUrl + nameSpace + wikiPage;
 }
 

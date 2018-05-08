@@ -2003,11 +2003,11 @@ uesp.gamemap.Location.prototype.createWikiLink = function()
 	if (this.parentMap.mapOptions.wikiNamespace != null && this.parentMap.mapOptions.wikiNamespace.length > 0)
 	{
 		if (this.wikiPage == "") return "";
-		return this.parentMap.mapOptions.wikiUrl + this.parentMap.mapOptions.wikiNamespace + ':' + this.wikiPage;
+		return this.parentMap.mapOptions.wikiUrl + this.parentMap.mapOptions.wikiNamespace + ':' + encodeURIComponent(this.wikiPage);
 	}
 	
 	if (this.wikiPage == "") return "";
-	return this.parentMap.mapOptions.wikiUrl + this.wikiPage;
+	return this.parentMap.mapOptions.wikiUrl + encodeURIComponent(this.wikiPage);
 }
 
 
