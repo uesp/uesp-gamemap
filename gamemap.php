@@ -1190,7 +1190,14 @@ class GameMap
 		if (array_key_exists('locid',  $this->inputParams)) $this->locationId = intval($this->db->real_escape_string($this->inputParams['locid']));
 		if (array_key_exists('incworld',  $this->inputParams)) $this->includeWorld = intval($this->db->real_escape_string($this->inputParams['incworld']));
 		if (array_key_exists('worldid',  $this->inputParams)) $this->worldId = intval($this->db->real_escape_string($this->inputParams['worldid']));
-		if (array_key_exists('displaylevel',  $this->inputParams)) $this->locDisplayLevel = intval($this->db->real_escape_string($this->inputParams['displaylevel']));
+		
+		if (array_key_exists('displaylevel',  $this->inputParams)) 
+		{
+			$this->locDisplayLevel = intval($this->db->real_escape_string($this->inputParams['displaylevel']));
+			if ($this->locDisplayLevel <  0) $this->locDisplayLevel = 0;
+			if ($this->locDisplayLevel > 11) $this->locDisplayLevel = 11;
+		}
+		
 		if (array_key_exists('visible',  $this->inputParams)) $this->locVisible = intval($this->db->real_escape_string($this->inputParams['visible']));
 		if (array_key_exists('destid',  $this->inputParams)) $this->locDestId = intval($this->db->real_escape_string($this->inputParams['destid']));
 		if (array_key_exists('x',  $this->inputParams)) $this->locX = intval($this->db->real_escape_string($this->inputParams['x']));
