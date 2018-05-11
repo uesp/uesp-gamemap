@@ -919,7 +919,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 		popupDiv = this.popupElement.children()[0];
 	}
 	
-	popupHtml = uesp.template(popupContent, this);
+	popupHtml = uesp.templateEsc(popupContent, this);
 	$(popupDiv).html(popupHtml);
 	
 	this.createIconTypeCustomListEvents();
