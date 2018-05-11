@@ -165,6 +165,19 @@ uesp.template = function (templateText, data)
 {
 	return templateText.replace(/{(\w*)\.?(\w*)?\.?(\w*)?}/g, function(m, key1, key2, key3) {
 		if (!data.hasOwnProperty(key1)) return '';
+		if (key2 == null || key2 == '') return (data[key1]);
+		if (!data[key1].hasOwnProperty(key2)) return '';
+		if (key3 == null || key3 == '') return (data[key1][key2]);
+		if (!data[key1][key2].hasOwnProperty(key3)) return '';
+		return (data[key1][key2][key3]);
+	});
+}
+
+
+uesp.templateEsc = function (templateText, data)
+{
+	return templateText.replace(/{(\w*)\.?(\w*)?\.?(\w*)?}/g, function(m, key1, key2, key3) {
+		if (!data.hasOwnProperty(key1)) return '';
 		if (key2 == null || key2 == '') return uesp.escapeAttribute(data[key1]);
 		if (!data[key1].hasOwnProperty(key2)) return '';
 		if (key3 == null || key3 == '') return uesp.escapeAttribute(data[key1][key2]);
