@@ -148,7 +148,10 @@ class GameMap
 					`posRight` INTEGER NOT NULL,
 					`posBottom` INTEGER NOT NULL,
 					`enabled` TINYINT NOT NULL,
-					PRIMARY KEY ( id )
+					PRIMARY KEY ( id ),
+					FULLTEXT(displayName),
+					FULLTEXT(description),
+					FULLTEXT(wikiPage)
 				);";
 		
 		$result = $this->db->query($query);
@@ -172,9 +175,7 @@ class GameMap
 					posRight INTEGER NOT NULL,
 					posBottom INTEGER NOT NULL,
 					enabled TINYINT NOT NULL,
-					PRIMARY KEY ( id ),
-					FULLTEXT(displayName),
-					FULLTEXT(description)
+					PRIMARY KEY ( id ),					
 				);";
 		
 		$result = $this->db->query($query);
@@ -199,7 +200,8 @@ class GameMap
 					visible TINYINT NOT NULL,
 					PRIMARY KEY ( id ),
 					FULLTEXT(name),
-					FULLTEXT(description)
+					FULLTEXT(description),
+					FULLTEXT(wikiPage)
 				);";
 		
 		$result = $this->db->query($query);
@@ -474,8 +476,8 @@ class GameMap
 		}
 		
 		$query  = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") ." AND (";
-		if (!$doExactSearch) $query .= "MATCH(displayName, description) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) OR ";
-		$query .= "displayName LIKE '%{$this->safeSearchWord}%' or description LIKE '%{$this->safeSearchWord}%') ";
+		if (!$doExactSearch) $query .= "MATCH(displayName, description, wikiPage) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) OR ";
+		$query .= "displayName LIKE '%{$this->safeSearchWord}%' or description LIKE '%{$this->safeSearchWord}%' or wikiPage LIKE '%{$this->safeSearchWord}%') ";
 		$query .= "ORDER BY displayName LIMIT {$this->limitCount};";
 		
 		$result = $this->db->query($query);
@@ -570,8 +572,8 @@ class GameMap
 		$query  = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND ";
 		if ($this->searchWorldId != 0) $query .= " worldId={$this->searchWorldId} AND ";
 		$query .= " (";
-		if (!$doExactSearch) $query .= "MATCH(name, description) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) OR ";
-		$query .= "name LIKE '%{$this->safeSearchWord}%' or description LIKE '%{$this->safeSearchWord}%') ";
+		if (!$doExactSearch) $query .= "MATCH(name, description, wikiPage) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) OR ";
+		$query .= "name LIKE '%{$this->safeSearchWord}%' or description LIKE '%{$this->safeSearchWord}%' or wikiPage LIKE '%{$this->safeSearchWord}%') ";
 		$query .= "ORDER BY name, worldId LIMIT {$this->limitCount};";
 				
 		$result = $this->db->query($query);
