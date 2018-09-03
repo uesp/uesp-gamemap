@@ -1598,7 +1598,8 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 	avgScale = (this.pixelWidth / this.width + this.pixelHeight / this.height) / 2.0;
 	if (avgScale === 0) avgScale = 1;
 	
-	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) )
+	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) ||
+		co.isPointInStroke(event.pageX - offset.left, event.pageY - offset.top) )
 	{
 		if (this.isPathHovering) return;
 		this.isPathHovering = true;
@@ -1612,15 +1613,17 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 		
 		co.lineWidth = this.displayData.hover.lineWidth / avgScale;
 		co.strokeStyle = this.displayData.hover.strokeStyle;
-		co.stroke();
+		co.stroke();		
 		
 		this.onLabelMouseOver(event);
+		ca.style.cursor = "pointer";
 	}
 	else
 	{
 		if (!this.isPathHovering) return;
 		this.isPathHovering = false;
 		co.clearRect(this.x, this.y - this.height, this.width, this.height);
+		
 		
 		if (this.locType == uesp.gamemap.LOCTYPE_AREA)
 		{
@@ -1633,6 +1636,8 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 		co.stroke();
 		
 		this.onLabelMouseOut(event);
+		
+		ca.style.cursor = "url(grab.cur) 8 8, default";
 	}
 }
 
@@ -1809,10 +1814,21 @@ uesp.gamemap.Location.prototype.onPathMouseDown = function (event)
 	
 	if (this.editPathHandles) return this.onPathEditHandlesMouseDown(event);
 	
+	var ca = event.target;
+	var co = ca.getContext('2d');
+	var offset = $(ca).offset();
+	
+	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) || 
+		co.isPointInStroke(event.pageX - offset.left, event.pageY - offset.top))
+	{
+		return false;
+	}
+	
 	var bottomEvent = new $.Event("mousedown");
 	
 	bottomEvent.pageX = event.pageX;
 	bottomEvent.pageY = event.pageY;
+	bottomEvent.which = event.which;
 	
 	$(".gmMapTile:first").trigger(bottomEvent);
 	
@@ -1822,6 +1838,8 @@ uesp.gamemap.Location.prototype.onPathMouseDown = function (event)
 
 uesp.gamemap.Location.prototype.onPathMouseOut = function (event)
 {
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onPathMouseOut");
+	
 	var ca = event.target;
 	var co = ca.getContext('2d');
 	
@@ -1907,7 +1925,8 @@ uesp.gamemap.Location.prototype.onPathClick = function (event)
 	var co = ca.getContext('2d');
 	var offset = $(ca).offset();
 	
-	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) )
+	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) ||
+		co.isPointInStroke(event.pageX - offset.left, event.pageY - offset.top) )
 	{
 		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "clicked path");
 		
@@ -1955,6 +1974,7 @@ uesp.gamemap.Location.prototype.onPathDblClick = function (event)
 	
 	bottomEvent.pageX = event.pageX;
 	bottomEvent.pageY = event.pageY;
+	bottomEvent.which = event.which;
 	
 	$(".gmMapTile:first").trigger(bottomEvent);
 	
@@ -1967,8 +1987,9 @@ uesp.gamemap.Location.prototype.createPath = function ()
 	var divSize = this.parentMap.convertGameToPixelSize(this.width, this.height);
 	var divW = divSize.x;
 	var divH = divSize.y;
+	var elementClass = (this.locType == uesp.gamemap.LOCTYPE_PATH) ? 'gmMapPathCanvas' : 'gmMapAreaCanvas';  
 	
-	this.pathElement = $('<canvas></canvas>').addClass('gmMapPathCanvas')
+	this.pathElement = $('<canvas></canvas>').addClass(elementClass)
 		.attr({'width': divW,'height': divH})
 		.on('selectstart', false)
 		.appendTo(this.parentMap.mapRoot);
@@ -2402,6 +2423,7 @@ uesp.gamemap.Location.prototype.onTooltipMouseMove = function (event)
 		var bottomEvent = new $.Event("mousemove");
 		bottomEvent.pageX = event.pageX;
 		bottomEvent.pageY = event.pageY;
+		bottomEvent.which = event.which;
 		
 		this.pathElement.trigger(bottomEvent);
 		event.preventDefault();

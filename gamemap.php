@@ -708,8 +708,13 @@ class GameMap
 			$query .= "worldId=" . $this->worldId . " ";
 		else
 			return $this->reportError("No world specified to retrieve locations for!");
-			
-		$query .= "AND x >= " . $this->limitLeft ." AND x <= ". $this->limitRight ." AND y >= ". $this->limitBottom ." AND y <= ". $this->limitTop ." ";
+		
+		$query .= "AND (";
+		$query .= "(x >= " . $this->limitLeft ." AND x <= ". $this->limitRight ." AND y >= ". $this->limitBottom ." AND y <= ". $this->limitTop .") ";
+		$query .= " OR ";
+		$query .= "(x + width >= " . $this->limitLeft ." AND x + width <= ". $this->limitRight ." AND y - height >= ". $this->limitBottom ." AND y - height <= ". $this->limitTop .") ";
+		$query .= ") ";
+		
 		$query .= " AND displayLevel <= ". $this->limitDisplayLevel ." ";
 		$query .= " LIMIT ".$this->limitCount.";";
 		
