@@ -1530,6 +1530,8 @@ uesp.gamemap.Map.prototype.onReceiveCenterOnLocationData = function (data)
 	mapState.gamePos.x = data.locations[0].x + data.locations[0].width/2;
 	mapState.gamePos.y = data.locations[0].y - data.locations[0].height/2;
 	
+	this.showPopupOnLoadLocationId = data.locations[0].id;
+	
 	this.changeWorld(data.worlds[0].id, mapState);
 	
 	return true;
