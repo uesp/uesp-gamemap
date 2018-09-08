@@ -620,7 +620,7 @@ class GameMap
 		}
 		else
 		{
-			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId={$worldId} AND name='{$centerOn}' LIMIT {$this->limitCount};";
+			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND name='{$centerOn}' LIMIT {$this->limitCount};";
 		}
 		
 		$result = $this->db->query($query);
@@ -1242,13 +1242,16 @@ class GameMap
 			$this->searchType = intval($this->db->real_escape_string($this->unsafeSearchType));
 		}
 		
-		if (array_key_exists('centeron',  $this->inputParams)) $this->locCenterOn = $this->db->real_escape_string($this->inputParams['centeron']);
+		if (array_key_exists('centeron',  $this->inputParams)) $this->locCenterOn = $this->inputParams['centeron'];
 		if (array_key_exists('showhidden',  $this->inputParams)) $this->showHidden = intval($this->db->real_escape_string($this->inputParams['showhidden']));
 		
 			// Unsure why these are not being replaced automatically
-		$this->locCenterOn = str_replace('+', ' ', $this->locCenterOn);
-		$this->locCenterOn = str_replace('%20', ' ', $this->locCenterOn);
-		$this->locCenterOn = str_replace('%27', "'", $this->locCenterOn);
+		$this->locCenterOn = urldecode($this->locCenterOn);
+		//$this->locCenterOn = str_replace('+', ' ', $this->locCenterOn);
+		//$this->locCenterOn = str_replace('%20', ' ', $this->locCenterOn);
+		//$this->locCenterOn = str_replace('%27', "'", $this->locCenterOn);
+		$this->locCenterOnRaw = $this->locCenterOn;
+		$this->locCenterOn = $this->db->real_escape_string($this->locCenterOn);
 		
 		if (array_key_exists('world',  $this->inputParams))
 		{
