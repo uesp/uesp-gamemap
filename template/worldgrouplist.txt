@@ -20,7 +20,7 @@
 			<li>Firsthold</li>
 			<li>Inner Tanzelwil</li>
 			<li>Lair</li>
-			<li>Lluvamir</li>
+			<li>Iluvamir</li>
 			<li>Mehrunes' Spite</li>
 			<li>Ondil</li>
 			<li>Phaer Catacombs</li>
@@ -36,6 +36,7 @@
 			<li>Temple</li>
 			<li>The Banished Cells</li>
 			<li>The Refuge of Dread</li>
+			<li>The Spiral Skein (Bewan)</li>
 			<li>The Vault of Exile</li>
 			<li>The Veiled Keep</li>
 			<li>The Worm's Retreat</li>
@@ -143,6 +144,7 @@
 			<li>Isles of Torment</li>
 			<li>Marbruk</li>
 			<li>Marbruk Outlaws Refuge</li>
+			<li>March of Sacrifices</li>
 			<li>Naril Nagaia</li>
 			<li>Nereid Temple</li>
 			<li>Old Merchant Caves</li>
@@ -243,6 +245,74 @@
 			<li>Weeping Wind Cave</li>
 			</ul>
 		</ul>
+	<li class='gmMapListHeader'>Artaeum</li>
+		<ul>
+		<li>Artaeum</li>
+		<li>Artaeum Vault</li>
+		<li>College of Psijics Ruins</li>
+		<li>College of Psijics Ruins Lower</li>
+		<li>Psijic Vaults</li>
+		</ul>
+	<li class='gmMapListHeader'>Battlegrounds</li>
+		<ul>
+		<li>Arcane University</li>
+		<li>Deeping Drome</li>
+		<li>Istirus</li>
+		<li>Mor Khazgur</li>
+		</ul>		
+	<li class='gmMapListHeader'>Clockwork City</li>
+		<ul>
+		<li>Asylum Sanctorum 1</li>
+		<li>Asylum Sanctorum 2</li>
+		<li>Brass Fortress</li>
+		<li>Clockwork Basilica</li>
+		<li>Clockwork Basilica 2</li>
+		<li>Clockwork Basilica: Sotha Sacristy</li>
+		<li>Clockwork City</li>
+		<li>Clockwork City Access Bridge</li>
+		<li>Clockwork City Atelier Courtyard</li>
+		<li>Clockwork City Divinity Atelier</li>
+		<li>Clockwork City Dockworks</li>
+		<li>Clockwork City Engineering Junction</li>		
+		<li>Clockwork City Maintenance Junction</li>
+		<li>Clockwork Outlaws Refuge</li>		
+		<li>Clockwork City Pneumatic Forge</li>
+		<li>Clockwork City Vaults</li>
+		<li>Cogitum Centralis</li>
+		<li>Cogitum Centralis: All-Axle</li>
+		<li>Cogitum Centralis: Halls of Convention</li>
+		<li>Cogitum Centralis: Lower All-Axle</li>
+		<li>Cogitum Centralis: The Throne Aligned</li>
+		<li>Evergloam</li>
+		<li>Evergloam Cave</li>
+		<li>Everwound Wellspring</li>
+		<li>Everwound Wellspring: Sunless Garden</li>
+		<li>Everwound Wellspring: Viewing Garden</li>
+		<li>Halls of Regulation</li>
+		<li>Halls of Regulation: Upper Level</li>
+		<li>Incarnatorium</li>
+		<li>Incarnatorium: Floor 2</li>
+		<li>Incarnatorium 3</li>
+		<li>Mechanical Fundament</li>
+		<li>Mechanical Fundament Lower 2</li>
+		<li>Mechanical Fundament Underground</li>
+		<li>Mechanical Fundament Underground 2</li>
+		<li>Mechanical Fundament Upper</li>
+		<li>Mechanical Fundament Upper 2</li>
+		<li>Mnemonic Planisphere</li>
+		<li>Mnemonic Planisphere: Level 1</li>
+		<li>Mnemonic Planisphere: Level 2</li>
+		<li>Mnemonic Planisphere: Level 3</li>
+		<li>Planisphere 3rd Sphere</li>
+		<li>Seht's Vault</li>
+		<li>Seht's Vault 2</li>
+		<li>Serviflume</li>
+		<li>Serviflume: Administration Nexus</li>
+		<li>Serviflume: Administration Nexus 2</li>
+		<li>Shadowcleft</li>
+		<li>Ventral Terminus</li>
+		<li>Ventral Terminus Upper</li>
+		</ul>
 	<li class='gmMapListHeader'>Craglorn</li>
 		<ul>
 		<li>Aetherian Archive</li>
@@ -257,9 +327,9 @@
 		<li>Balamath Library</li>
 		<li>Belkarth</li>
 		<li>Belkarth Outlaws Refuge</li>
-		<li>Bloodroot Ext1</li>
-		<li>Bloodroot Int1</li>
-		<li>Bloodroot Int2</li>
+		<li>Bloodroot Forge</li>
+		<li>Bloodroot Forge: Jerall Cleft</li>
+		<li>Bloodroot Forge: Sanguinary Veins</li>
 		<li>Buried Sands</li>
 		<li>Chiselshriek Mine</li>
 		<li>Craglorn</li>
@@ -281,6 +351,12 @@
 		<li>Elinhir Mage Vision</li>
 		<li>Elinhir Sewerworks</li>
 		<li>Exarch's Stronghold</li>
+		<li class='gmMapListHeader'>Falkreath Hold</li>
+			<ul>
+			<li>Falkreath Hold</li>
+			<li>Falkreath Hold: Hall of the Dead</li>
+			<li>Falkreath Hold: Jarl's Hall</li>
+			</ul>
 		<li>Fearfangs Cavern</li>
 		<li>Frost Monarch Lair</li>
 		<li>Gladiators Assembly</li>
@@ -457,6 +533,7 @@
 			<ul>
 			<li>Bangkorai</li>
 			<li>Bangkorai Garrison 1</li>
+			<li>Bangkorai Garrison Alt</li>
 			<li>Bangkorai Garrison Bottom</li>
 			<li>Bangkorai Garrison Sewer</li>
 			<li>Bangkorai Garrison Top</li>
@@ -471,6 +548,8 @@
 			<li>Ephesus</li>
 			<li>Evermore</li>
 			<li>Evermore Outlaws Refuge</li>
+			<li>Fang Lair</li>
+			<li>Fang Lair Exterior</li>
 			<li>Fallen Wastes</li>
 			<li>Halcyon Lake</li>
 			<li>Hallin's Stand</li>
@@ -494,7 +573,6 @@
 			<li>Viridian Hideaway</li>
 			<li>Viridian Watch</li>
 			</ul>
-		<li>Daggerfall Alliance</li>
 		<li class='gmMapListHeader'>Betnikh</li>
 			<ul>
 			<li>Betnikh</li>
@@ -600,6 +678,10 @@
 			<li>Norvulk Ruins</li>
 			<li>Pariah Catacombs</li>
 			<li>Portdun Watch</li>
+			<li>Scalecaller Peak</li>
+			<li>Scalecaller Peak: Frostspike Caverns</li>
+			<li>Scalecaller Peak: Scalecaller Rise</li>
+			<li>Scalecaller Peak: Zaan's Temple</li>
 			<li>Stormhaven</li>
 			<li>Wayrest</li>
 			<li>Wayrest Outlaws Refuge</li>
@@ -665,7 +747,7 @@
 			<li>Tal'Deic Crypts</li>
 			<li>Taleon's Crag</li>
 			<li>The Corpse Garden</li>
-			<li>The Shrine of St.Veloth</li>
+			<li>The Shrine of St. Veloth</li>
 			<li>The Triple Circle Mine</li>
 			<li>Triple Circle Mine</li>
 			<li>Tribunal Temple</li>
@@ -803,6 +885,8 @@
 			<li>Fallowstone Vault</li>
 			<li>Forelhost</li>
 			<li>Fort Greenwall</li>
+			<li>Hunter's Glade (exterior)</li>
+			<li>Hunter's Glade (interior)</li>
 			<li>Lions Den Hidden Tunnel</li>
 			<li>Lost Prospect</li>
 			<li>Lost Prospect Sanctum</li>
@@ -839,7 +923,7 @@
 		<li>At-Himah Estate Caves</li>
 		<li>At-Himah Family Estate</li>
 		<li>At-Himah Family Estate Second Floor</li>
-		<li>At-Himah Family Estate 3</li>
+		<li>At-Himah Family Estate Third Floor</li>
 		<li>Blackwoods Borderlands</li>
 		<li>Castle Anvil 3b</li>
 		<li>Castle Kvatch</li>
@@ -870,123 +954,6 @@
 		<li>Varo Estate Caves 2</li>
 		<li>Varo Estate Tunnels 1b</li>
 		<li>Varo Estate Tunnels 2</li>
-		</ul>
-	<li class='gmMapListHeader'>Housing</li>
-		<ul>
-		<li>Aldmeri Apartment</li>
-		<li>Aldmeri Inn Room</li>
-		<li>Aldmeri Manor</li>
-		<li>Altmer Large</li>
-		<li>Altmer Medium</li>
-		<li>Argonian Medium</li>
-		<li>Bosmer Medium</li>
-		<li>Bosmer Small</li>
-		<li>Breton Large</li>
-		<li>Breton Medium</li>
-		<li>Breton Small</li>
-		<li>Daggerfall Apartment</li>
-		<li>Daggerfall Inn Room</li>
-		<li>Dunmer Large</li>
-		<li>Dunmer Medium</li>
-		<li>Dunmer Small</li>
-		<li>Ebonheart Apartment</li>
-		<li>Ebonheart Inn Room</li>
-		<li>Ebonheart Manor</li>
-		<li>Earthtear Cavern</li>
-		<li>Glenumbra Manor</li>
-		<li>Glenumbra Manor Floor1</li>
-		<li>Glenumbra Manor Floor2</li>
-		<li>Grand Topal Island</li>
-		<li>Imperial Large</li>
-		<li>Imperial Small</li>
-		<li>Khajiit Large</li>
-		<li>Khajiit Small</li>
-		<li>Khajit Medium</li>
-		<li>Large Argonian House</li>
-		<li>Large Bosmer House</li>
-		<li>Nord Large</li>
-		<li>Nord Medium</li>
-		<li>Nord Small</li>
-		<li>Orc House</li>
-		<li>Orc Large</li>
-		<li>Orc Medium</li>
-		<li>Order Enclave Raw</li>
-		<li>Redguard Large</li>
-		<li>Redguard Medium</li>
-		<li>Redguard Small</li>
-		<li>Small Altmer House</li>
-		<li>Small Argonian House</li>
-		<li>Tel Galen</li>
-		<li>Tel Galen 2</li>
-		<li>Tel Galen Courtyard</li>		
-		</ul>
-	<li class='gmMapListHeader'>Oblivion</li>
-		<ul>
-		<li class='gmMapListHeader'>Coldharbor</li>
-			<ul>
-			<li>Aba-Loria</li>
-			<li>Black Garrison</li>
-			<li>Cave of Trophies Upper</li>
-			<li>Coldharbour</li>
-			<li>Court of Contempt</li>
-			<li>Daedric Anchor Mooring</li>
-			<li>Eyes Chamber</li>
-			<li>Fist of Stone</li>
-			<li>Foundry of Woe</li>
-			<li>Grunda's Gatehouse</li>
-			<li>Grundas Gatehouse Room</li>
-			<li>Haj Uxith</li>
-			<li>Library of Dusk</li>
-			<li>Lightless Cell</li>
-			<li>Lightless Oubliette</li>
-			<li>Lightless Oubliette Lava</li>
-			<li>Mainquest 1 Map 1</li>
-			<li>Mainquest 1 Map 2</li>
-			<li>Mainquest 1 Map 3</li>
-			<li>Mainquest 1 Map 4</li>
-			<li>Mal Sorra's Tomb</li>
-			<li>Manor of Revelry 1</li>
-			<li>Manor of Revelry 2</li>
-			<li>Manor of Revelry 3</li>
-			<li>Manor of Revelry 4</li>
-			<li>Manor of Revelry 5</li>
-			<li>Manor of Revelry Cave</li>
-			<li>Reaver Citadel Pyramid</li>
-			<li>Shrouded Plain</li>
-			<li>Stirk</li>
-			<li>The Ashen Mines</li>
-			<li>The Black Forge</li>
-			<li>The Bleeding Forge</li>
-			<li>The Cave of Trophies</li>
-			<li>The Endless Stair</li>
-			<li>The Everfull Flagon</li>
-			<li>The Great Shackle</li>
-			<li>The Grotto of Depravity</li>
-			<li>The Hollow City</li>
-			<li>The Library Dusk</li>
-			<li>The Lost Fleet</li>
-			<li>The Manor of Revelry</li>
-			<li>The Mooring</li>
-			<li>The Prohets Enclosure</li>
-			<li>The Towers of Eyes</li>
-			<li>The Undercroft</li>
-			<li>The Vault of Haman Forgefire</li>
-			<li>The Vile Laboratory</li>
-			<li>The Wailing Prison</li>
-			<li>The Wailing Maw</li>
-			<li>Tower of Lies</li>
-			<li>Vaults of Madness</li>
-			<li>Vaults of Madness 1</li>
-			<li>Vaults of Madness 2</li>
-			<li>Village of the Lost</li>
-			<li>Wailing Prison 1</li>
-			<li>Wailing Prison 2</li>
-			<li>Wailing Prison 3</li>
-			<li>Wailing Prison 4</li>
-			<li>Wailing Prison 5</li>
-			<li>Wailing Prison 6</li>
-			<li>Wailing Prison 7</li>
-			</ul>
 		</ul>
 	<li class='gmMapListHeader'>Hew's Bane</li>
 		<ul>
@@ -1074,93 +1041,390 @@
 		<li>Underground Sepulcher Room 3</li>
 		<li>Underground Sepulcher Tunnel</li>
 		</ul>
+	<li class='gmMapListHeader'>Housing</li>
+		<ul>
+		<li>Aldmeri Apartment</li>
+		<li>Aldmeri Inn Room</li>
+		<li>Aldmeri Manor</li>
+		<li>Altmer Large</li>
+		<li>Altmer Medium</li>
+		<li>Argonian Medium</li>
+		<li>Bosmer Medium</li>
+		<li>Bosmer Small</li>
+		<li>Breton Large</li>
+		<li>Breton Medium</li>
+		<li>Breton Small</li>
+		<li>Daggerfall Apartment</li>
+		<li>Daggerfall Inn Room</li>
+		<li>Daggerfall Overlook</li>
+		<li>Dunmer Large</li>
+		<li>Dunmer Medium</li>
+		<li>Dunmer Small</li>
+		<li>Ebonheart Apartment</li>
+		<li>Ebonheart Inn Room</li>
+		<li>Ebonheart Manor</li>
+		<li>Earthtear Cavern</li>
+		<li>Enchanted Snow Globe Home (downstairs)</li>
+		<li>Enchanted Snow Globe Home (exterior)</li>
+		<li>Enchanted Snow Globe Home (upstairs)</li>		
+		<li>Erstwhile Sanctuary</li>
+		<li>Falkreath Housing</li>
+		<li>Glenumbra Manor Floor1</li>
+		<li>Glenumbra Manor Floor2</li>
+		<li>Grand Psijic Villa</li>
+		<li>Grand Topal Beach</li>
+		<li>Imperial Large</li>
+		<li>Imperial Small</li>
+		<li>Khajiit Large</li>
+		<li>Khajiit Small</li>
+		<li>Khajit Medium</li>
+		<li>Lakemire Xanmer Manor (downstairs)</li>
+		<li>Lakemire Xanmer Manor (exterior)</li>
+		<li>Lakemire Xanmer Manor (main floor)</li>
+		<li>Lakemire Xanmer Manor (upstairs)</li>
+		<li>Large Argonian House</li>
+		<li>Large Bosmer House</li>
+		<li>Nord Large</li>
+		<li>Nord Medium</li>
+		<li>Nord Small</li>
+		<li>Orc House</li>
+		<li>Orc Large</li>
+		<li>Orc Medium</li>
+		<li>Order Enclave Raw</li>
+		<li>Psijic Villa Grand Hall (downstairs)</li>
+		<li>Psijic Villa Grand Hall (upstairs)</li>
+		<li>Redguard Large</li>
+		<li>Redguard Medium</li>
+		<li>Redguard Small</li>
+		<li>Small Altmer House</li>
+		<li>Small Argonian House</li>
+		<li>Tel Galen</li>
+		<li>Tel Galen 2</li>
+		<li>Tel Galen Courtyard</li>		
+		</ul>
+	<li class='gmMapListHeader'>Murkmire</li>
+		<ul>
+		<li>Blackrose Prison</li>
+		<li>Blighted Bog Cavern</li>
+		<li>Bright-Throat Village</li>
+		<li>Dead-Water Village</li>
+		<li>Deep Mire 1</li>
+		<li>Deep Mire 2</li>
+		<li>Deep Mire 3</li>
+		<li>Deeproot Base</li>
+		<li>Echoing Hollow</li>
+		<li>Lilmoth</li>
+		<li>Lilmoth Outlaws Refuge</li>
+		<li>Lilmoth Outlaws Refuge Tunnels</li>
+		<li>Lost Legion</li>
+		<li>Mrkdw Cave</li>
+		<li>Moon Hunter Keep</li>
+		<li>Moon Hunter Keep 2</li>
+		<li>Moon Hunter Keep 3</li>
+		<li>Murkmire</li>
+		<li>Norg-Tzel</li>
+		<li>Norg-Tzel (Alternate)</li>
+		<li>Remnant of Argon</li>
+		<li>Root-Whisper Village</li>
+		<li>Sunken Xanmeer 1</li>
+		<li>Sunken Xanmeer 2</li>
+		<li>Swallowed Grove</li>
+		<li>Swamp Island</li>
+		<li>Teeth of Sithis</li>
+		<li>Teeth of Sithis Interior</li>
+		<li>Teeth of Sithis Lower</li>
+		<li>The Mists 1</li>
+		<li>The Mists 2</li>
+		<li>The Mists 3</li>
+		<li>The Mists 4</li>
+		<li>Tomb of Spears</li>
+		<li>Tsofeer Cavern</li>
+		<li>Xal-Vakka 1</li>
+		<li>Xal-Vakka 2</li>
+		<li>Xal-Vakka 3</li>
+		<li>Xal-Vakka 4</li>
+		<li>Xal-Vakka 5</li>
+		<li>Xal-Vakka 6</li>
+		<li>Xal-Vakka 7</li>
+		<li>Xal-Vakka 8</li>
+		<li>Xal-Vakka 9</li>
+		<li>Wither Vault</li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		</ul>
+	<li class='gmMapListHeader'>Oblivion</li>
+		<ul>
+		<li class='gmMapListHeader'>Coldharbor</li>
+			<ul>
+			<li>Aba-Loria</li>
+			<li>Black Garrison</li>
+			<li>Cave of Trophies Upper</li>
+			<li>Coldharbour</li>
+			<li>Court of Contempt</li>
+			<li>Daedric Anchor Mooring</li>
+			<li>Eye Chamber</li>
+			<li>Fist of Stone</li>
+			<li>Foundry of Woe</li>
+			<li>Grunda's Gatehouse</li>
+			<li>Grundas Gatehouse Room</li>
+			<li>Haj Uxith</li>
+			<li>Library of Dusk</li>
+			<li>Lightless Cell</li>
+			<li>Lightless Oubliette</li>
+			<li>Lightless Oubliette Lava</li>
+			<li>Mainquest 1 Map 1</li>
+			<li>Mainquest 1 Map 2</li>
+			<li>Mainquest 1 Map 3</li>
+			<li>Mainquest 1 Map 4</li>
+			<li>Mal Sorra's Tomb</li>
+			<li>Manor of Revelry 1</li>
+			<li>Manor of Revelry 2</li>
+			<li>Manor of Revelry 3</li>
+			<li>Manor of Revelry 4</li>
+			<li>Manor of Revelry 5</li>
+			<li>Manor of Revelry Cave</li>
+			<li>Reaver Citadel Pyramid</li>
+			<li>Shrouded Plain</li>
+			<li>Stirk</li>
+			<li>The Ashen Mines</li>
+			<li>The Black Forge</li>
+			<li>The Bleeding Forge</li>
+			<li>The Cave of Trophies</li>
+			<li>The Endless Stair</li>
+			<li>The Everfull Flagon</li>
+			<li>The Great Shackle</li>
+			<li>The Grotto of Depravity</li>
+			<li>The Hollow City</li>
+			<li>The Library Dusk</li>
+			<li>The Lost Fleet</li>
+			<li>The Manor of Revelry</li>
+			<li>The Mooring</li>
+			<li>The Prohets Enclosure</li>
+			<li>The Towers of Eyes</li>
+			<li>The Undercroft</li>
+			<li>The Vault of Haman Forgefire</li>
+			<li>The Vile Laboratory</li>
+			<li>The Wailing Prison</li>
+			<li>The Wailing Maw</li>
+			<li>Tower of Lies</li>
+			<li>Vaults of Madness</li>
+			<li>Vaults of Madness 1</li>
+			<li>Vaults of Madness 2</li>
+			<li>Village of the Lost</li>
+			<li>Wailing Prison 1</li>
+			<li>Wailing Prison 2</li>
+			<li>Wailing Prison 3</li>
+			<li>Wailing Prison 4</li>
+			<li>Wailing Prison 5</li>
+			<li>Wailing Prison 6</li>
+			<li>Wailing Prison 7</li>
+			</ul>
+		</ul>
+	<li class='gmMapListHeader'>Summerset</li>
+		<ul>
+		<li>Alinor</li>
+		<li>Alinor Outlaws Refuge 1</li>
+		<li>Alinor Outlaws Refuge 2</li>
+		<li>Alinor Royal Palace</li>
+		<li>Alinor Royal Palace 1</li>
+		<li>Alinor Royal Palace 2</li>
+		<li>Archon's Grove</li>
+		<li>Cainar's Mind Trap</li>
+		<li>Cathedral of Webs</li>
+		<li>Cathedral of Webs Lower Level</li>
+		<li>Ceporah Main Hall</li>
+		<li>Ceporah Tower Studies</li>
+		<li>Ceporah Tower Studies 2</li>
+		<li>Ceytarn Dungeon 1</li>
+		<li>Ceytarn Dungeon 2</li>
+		<li>Ceytarn Dungeon 3</li>
+		<li>Cloudrest</li>
+		<li>College of Sapiarchs</li>
+		<li>College of Sapiarchs Labyrinth</li>
+		<li>Colossal Aldmeri Grotto</li>
+		<li>Corgrad Wastes</li>
+		<li>Corgrad Wastes Lower</li>
+		<li>Corgrad Wastes Higher</li>
+		<li>Coral-Splitter Caves</li>
+		<li>Crystal Tower Artifact Vault 1</li>
+		<li>Crystal Tower Artifact Vault 2</li>
+		<li>Crystal Tower Approach</li>
+		<li>Crystal Tower Entryway</li>
+		<li>Crystal Tower Entryway 2</li>
+		<li>Crystal Tower Exterior</li>
+		<li>Crystal Tower Library</li>
+		<li>Crystal Tower Mausoleum</li>
+		<li>Crystal Tower Pinnacle 1</li>
+		<li>Crystal Tower Pinnacle 2</li>
+		<li>Crystal Tower Summit Approach</li>
+		<li>Crystal Tower Trophy</li>
+		<li>Crystal Tower Walkway</li>
+		<li>Dranil Kir Island</li>
+		<li>Ebon Sanctum</li>
+		<li>Ebon Sanctum 2</li>
+		<li>Ebon Sanctum 3</li>
+		<li>Eldbur Ruins</li>
+		<li>Eldbur Ruins: Lower Level</li>
+		<li>Eton Nir Grotto</li>
+		<li>Illumination Academy 1</li>
+		<li>Illumination Academy 2</li>
+		<li>Illumination Academy 3</li>
+		<li>Illumination Academy 4</li>
+		<li>Imperial Throne Room</li>
+		<li>Karndar 1</li>
+		<li>Karndar 2</li>
+		<li>Karndar 3</li>
+		<li>Karndar 3b</li>
+		<li>Karndar 4</li>
+		<li>Karndar 5</li>
+		<li>Karndar 6</li>
+		<li>Karnwasten</li>
+		<li>King's Haven Pass</li>
+		<li>Lillandrill</li>
+		<li>Mind Trap Interior</li>
+		<li>Miriya's Mind Trap</li>
+		<li>Monastery of Serene Harmony</li>		
+		<li>Oriandra's Mind Trap</li>
+		<li>Saltbreeze Cave (Upper Level)</li>
+		<li>Saltbreeze Cave (Lower Level)</li>
+		<li>Rellenthil Sinkhole</li>
+		<li>Russafeld Red Temple 1</li>
+		<li>Russafeld Red Temple 2</li>
+		<li>Sea Keep</li>
+		<li>Seakeep 1</li>
+		<li>Seakeep 2</li>
+		<li>Seakeep 3</li>
+		<li>Shimmerene</li>
+		<li>Shimmerene Waterworks</li>
+		<li>Shimmerene Waterworks 2</li>
+		<li>Sload Mindscape</li>
+		<li>Summerset</li>
+		<li>Sunhold</li>
+		<li>The Dreaming Cave</li>
+		<li>The Mind Trap</li>
+		<li>The Spiral Skein Exterior</li>
+		<li>The Spiral Skein Interior 1</li>
+		<li>The Spiral Skein Interior 1b</li>
+		<li>The Spiral Skein Interior 2</li>
+		<li>The Spiral Skein Interior 2b</li>
+		<li>The Spiral Skein Interior 3</li>
+		<li>The Vaults of Heinarwe 1</li>
+		<li>The Vaults of Heinarwe 2 Downstairs</li>
+		<li>The Vaults of Heinarwe 2 Upstairs</li>
+		<li>The Vaults of Heinarwe 3 Downstairs</li>
+		<li>The Vaults of Heinarwe 3 Upstairs</li>		
+		<li>The Vaults of Heinarwe Exterior</li>
+		<li>Tor-Hame-Khard</li>
+		<li>Traitor's Vault</li>
+		<li>Wasten Coraldale</li>
+		<li>Wasten Coraldale 2</li>
+		<li>Uprooted Hideout</li>
+		<li>Uprooted Hideout AD1</li>
+		<li>Uprooted Hideout AD2</li>
+		<li>Uprooted Hideout DC1</li>
+		<li>Uprooted Hideout DC2</li>
+		<li>Uprooted Hideout EP</li>				
+		<li>Uprooted Hideout EP1</li>
+		<li>Uprooted Hideout EP2</li>
+		<li></li>
+		<li></li>
+		<li></li>
+		</ul>
 	<li class='gmMapListHeader'>Vvardenfell</li>
 		<ul>
 		<li>Aldcarac</li>
 		<li>Andrano Ancestral Tomb</li>
-		<li>Arkngthunch</li>
+		<li>Arkngthunch-Sturdumz</li>
 		<li>Ashalmawia</li>
-		<li>Ashalmawia 2</li>
-		<li>Ashalmawia 3</li>
-		<li>Ashimanu</li>
-		<li>Ashimanu 1</li>
+		<li>Ashalmawia Lower Level</li>
+		<li>Ashalmawia Sunken Vaults</li>
+		<li>Ashimanu Lower</li>
+		<li>Ashimanu Upper</li>
 		<li>Ashimanu 2</li>
 		<li>Ashurnibibi</li>
-		<li>Balfel</li>
+		<li>Bal Fell</li>
 		<li>Balmora</li>
 		<li>Balur</li>
+		<li>Barilzar's Tower</li>
 		<li>Cavern of the Incarnate</li>
 		<li>Caverns of Kogoruhn</li>
-		<li>Clockwork 1</li>
-		<li>Clockwork 2</li>
-		<li>Clockwork 3</li>
-		<li>Clockwork 4</li>
-		<li>Clockwork 5</li>
-		<li>Clockwork 6</li>
-		<li>Clockwork 7</li>
-		<li>Clockwork 8</li>
+		<li>Clavicus Vile Shrine</li>
 		<li>Cold Blood Cavern</li>
 		<li>Cold Blood Cavern 1</li>
 		<li>Cold Blood Cavern 2</li>
 		<li>Cold Blood Cavern 3</li>
 		<li>Cold Blood Cavern 4</li>
-		<li>Dreloth</li>
+		<li>Dreloth Ancestral Tomb</li>
+		<li>Dreudurai Glass Mine</li>
 		<li>Drinith Tomb</li>
 		<li>Drinith Tomb 1</li>
-		<li>Dyzera Realm</li>
+		<li>Dyzera's Realm</li>
 		<li>Firemoth Island</li>
 		<li>Firemoth Island 2</li>
 		<li>Firemoth Island 3</li>
 		<li>Forgotten Depths</li>
 		<li>Forgotten Wastes</li>
 		<li>Foyada</li>
-		<li>Galomdaeus</li>
-		<li>Galomdaeus End</li>
+		<li>Galom Daeus</li>
+		<li>Galom Daeus End</li>
 		<li>Gnisis Egg Mine</li>
+		<li class='gmMapListHeader'>Halls of Fabrication</li>
+			<ul>
+			<li>Abanabi Cave</li>
+			<li>Core Assembly</li>
+			<li>Reprocessing Yard</li>
+			<li>Reprocessing Yard Hallway</li>
+			<li>Reprocessing Yard Hallway 2</li>
+			<li>Transport Circuit</li>
+			</ul>		
 		<li>Hleran Ancestral Tomb</li>
-		<li>Inanius</li>
+		<li>Inanius Egg Mine</li>
 		<li>Kaushtarari</li>
 		<li>Kaushtarari 2</li>
 		<li>Khartag Point</li>
 		<li>Koradurfw 2</li>
-		<li>Kudanat</li>
-		<li>Library of Andule 1</li>
-		<li>Library of Andule 2</li>
-		<li>Mallapi</li>
+		<li>Kudanat Mine</li>
+		<li>Library of Andule</li>
+		<li>Library of Andule: Ancient Vaults</li>
+		<li>Magister Otheri's Laboratory</li>
+		<li>Mallapi Cave</li>
 		<li>Matusakin</li>
-		<li>Molagmar Glass Mine</li>
+		<li>Mzanchend</li>
 		<li>Nchuleft</li>
 		<li>Nchuleft 2</li>
 		<li>Nchuleft Depths</li>
 		<li>Nchuleftingth Approach</li>
 		<li>Nchuleftingth Approach 2</li>
-		<li>Nchuleftingth 2</li>
+		<li>Nchuleftingth Approach 3</li>
 		<li>Nchuleftingth Bailey</li>
 		<li>Nchuleftingth Lavaworks</li>
 		<li>Nchuleftingth Lavaworks 2</li>
 		<li>Nchuleftingth Core</li>
-		<li>Nchuleftingth Sanctum</li>
-		<li>Odirniran</li>
+		<li>Nchuleftingth Sanctum</li>		
 		<li>Pinsun</li>
 		<li>Prison of Xykenaz</li>
 		<li>Pulk</li>
 		<li>Pulk Lower</li>
 		<li>Pulk Upper</li>
 		<li>Ramimilk</li>
-		<li>Redoran Council Hall 1</li>
-		<li>Redoran Council Hall 2</li>
-		<li>Redoran Council Hall 3</li>
+		<li>Redoran Garrison</li>
+		<li>Redoran Garrison Downstairs</li>
+		<li>Redoran Garrison Upstairs</li>
 		<li>Sadrith Mora</li>
-		<li>Shulk</li>
+		<li>Shulk Ore Mine</li>
 		<li>Skar</li>
 		<li>Tusenend</li>
 		<li>Ularra</li>
-		<li>Vassamsi Grotto</li>
-		<li>Vassirdidanat 1</li>
-		<li>Vassirdidanat 2</li>
-		<li>Veloth 1</li>
-		<li>Veloth 2</li>
-		<li>Veloth 3</li>
+		<li>Vassamsi Mine</li>
+		<li>Vassir-Didanat Mine</li>
+		<li>Vassir-Didanat Lift Room</li>
+		<li>Veloth Ancestral Tomb</li>
+		<li>Veloth Ancestral Tomb: Tomb of the Matriarch</li>
+		<li>Veloth Undertomb</li>
 		<li>Vivec City</li>
 		<li>Vivec City: Archcanon's Office</li>
 		<li>Vivec City: Halls of Justice</li>
@@ -1169,20 +1433,18 @@
 		<li>Vivec City: Saint Delyn Plaza</li>
 		<li>Vivec City: Saint Delyn Square</li>
 		<li>Vivec City: Saint Delyn Waistworks</li>
-		<li>Vivec City: Saint Delyn's Inn</li>
+		<li>Vivec City: Saint Delyn's Abbey</li>
 		<li>Vivec City: Saint Olms Guild Halls</li>
 		<li>Vivec City: Saint Olms Plaza</li>
 		<li>Vivec City: Saint Olms Square</li>
 		<li>Vivec City: Saint Olms Waistworks</li>
 		<li>Vivec City: Throne Room</li>
-		<li>Vivec City: Throne Room 2</li>
+		<li>Vivec City: Throne Room Lower Level</li>
 		<li>Vivec Outlaws Refuge</li>
 		<li>Vvardenfell</li>		
 		<li>Zainsipilu</li>
 		<li>Zaintiraris</li>
-		<li>Zalkinsul 1</li>
-		<li>Zalkinsul 2</li>
-		<li>Zalkinsul 3</li>
+		<li>Zalkin-Sul Egg Mine</li>
 		</ul>	
 	<li class='gmMapListHeader'>Wrothgar</li>
 		<ul>
@@ -1351,30 +1613,47 @@
 		<li>Blackvine Ruins I</li>
 		<li>Canulus Refuge</li>
 		<li>Castle Anvil 3</li>
+		<li>corgradwastes_01</li>
+		<li>corgradwastes_01b</li>
+		<li>corgradwastes_02</li>
+		<li>Cograd Wastes</li>
+		<li>Cograd Wastes Alt</li>
 		<li>Colovian Crossing</li>
+		<li>Daggerfall Covenant</li>
+		<li>dcuprootedhideout</li>
 		<li>Ebonheart Inn Room 2</li>
 		<li>Eidolon's Hollow (Old Map)</li>
 		<li>Guardian's Orbit</li>
 		<li>Hollow Wastes</li>
 		<li>Imperial Sewers Dev1</li>
 		<li>Imperial Sewers Dev2</li>
+		<li>kingshaven_ext</li>
+		<li>kingshaven_int1</li>
+		<li>kingshaven_int2</li>
 		<li>Mudshallow Cave</li>
 		<li>Order Enclave Raw</li>
 		<li>Overhead</li>
 		<li>Pvetest</li>
 		<li>Silaseli Ruins</li>
 		<li>Slavepits</li>
+		<li>Teeth of Sithis 2</li>
 		<li>Topal Island</li>
 		<li>Towers</li>
 		<li>UI Maps Kvatch</li>
-		<li>UI Map Hofabric Boss3</li>
-		<li>UI Map Hofabric Caves</li>
-		<li>UI Map Hofabric Ext1</li>
-		<li>UI Map Hofabric Hall1</li>
-		<li>UI Map Hofabric Hall2</li>
-		<li>UI Map Hofabric Loop</li>
+		<li>ui_map_argoniantemple01</li>
+		<li>ui_map_argoniantemple02</li>
+		<li>ui_map_argoniantemple03</li>
+		<li>ui_map_argoniantemple04</li>
+		<li>ui_map_argoniantemple05</li>
+		<li>ui_map_argoniantemple06</li>
+		<li>ui_map_argoniantemple07</li>
+		<li>ui_map_argoniantemple08</li>
+		<li>ui_map_argoniantemple09</li>
+		<li>ui_map_swallowedgrove01</li>
+		<li>ui_map_xalvakka</li>
 		<li>Vog</li>
 		<li>Xylo River Basin</li>
+		<li>wastencordale</li>
 		<li>Zehtswater Lower</li>
 		<li>Zehtswater Upper</li>
 		</ul>
