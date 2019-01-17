@@ -1593,9 +1593,9 @@ uesp.gamemap.Location.prototype.onPathMouseMove = function (event)
 	
 	avgScale = (this.pixelWidth / this.width + this.pixelHeight / this.height) / 2.0;
 	if (avgScale === 0) avgScale = 1;
-	
+
 	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) ||
-		co.isPointInStroke(event.pageX - offset.left, event.pageY - offset.top) )
+		(co.isPointInStroke && co.isPointInStroke(event.pageX - offset.left, event.pageY - offset.top)) )
 	{
 		if (this.isPathHovering) return;
 		this.isPathHovering = true;
@@ -1814,7 +1814,7 @@ uesp.gamemap.Location.prototype.onPathMouseDown = function (event)
 	var offset = $(ca).offset();
 	
 	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) || 
-		co.isPointInStroke(event.pageX - offset.left, event.pageY - offset.top))
+		(co.isPointInStroke && co.isPointInStroke(event.pageX - offset.left, event.pageY - offset.top)))
 	{
 		return false;
 	}
@@ -1923,7 +1923,7 @@ uesp.gamemap.Location.prototype.onPathClick = function (event)
 	var offset = $(ca).offset();
 	
 	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) ||
-		co.isPointInStroke(event.pageX - offset.left, event.pageY - offset.top) )
+		(co.isPointInStroke && co.isPointInStroke(event.pageX - offset.left, event.pageY - offset.top)) )
 	{
 		uesp.logDebug(uesp.LOG_LEVEL_WARNING, "clicked path");
 		
