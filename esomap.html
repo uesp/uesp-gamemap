@@ -327,7 +327,7 @@
 				// TODO: Temporary call to get the group-world list for ESO
 			$.get( 'template/worldgrouplist.txt', function( data ) {
 				g_GameMap.worldGroupListContents = data;
-				uesp.logDebug(uesp.LOG_LEVEL_ERROR, 'Received world group list contents!');
+				uesp.logDebug(uesp.LOG_LEVEL_INFO, 'Received world group list contents!');
 				$('#gmMapList').html(data);
 				g_GameMap.setEventsForMapGroupList();
 			});			
