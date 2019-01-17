@@ -218,7 +218,7 @@ uesp.gamemap.Location.prototype.shiftElements = function (shiftX, shiftY)
 
 uesp.gamemap.Location.prototype.onLabelClick = function(event)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Label Click", event);
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Label Click", event);
 	
 	if (event.shiftKey && this.parentMap.canEdit())
 	{
@@ -238,7 +238,7 @@ uesp.gamemap.Location.prototype.onLabelClick = function(event)
 
 uesp.gamemap.Location.prototype.onLabelDblClick = function(event)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Label Double-Click");
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Label Double-Click");
 	
 	if (this.parentMap.canEdit())
 	{
@@ -735,8 +735,8 @@ uesp.gamemap.Location.prototype.createSaveQuery = function()
 
 uesp.gamemap.Location.prototype.onSavedLocation = function (data)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Received onSavedLocation data");
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, data);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Received onSavedLocation data");
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, data);
 	
 	if (!(data.isError == null) || data.success === false)
 	{
@@ -792,7 +792,7 @@ uesp.gamemap.Location.prototype.doSaveQuery = function()
 
 uesp.gamemap.Location.prototype.onJumpToDestination = function()
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Jumping to destination " + this.destinationId);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Jumping to destination " + this.destinationId);
 	this.parentMap.jumpToDestination(this.destinationId);
 	return false;
 }
@@ -1734,7 +1734,7 @@ uesp.gamemap.Location.prototype.findClosestLineSegment = function (px, py)
 		}
 	}
 	
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "findClosestLineSegment", minPointIndex, minDistance);
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, "findClosestLineSegment", minPointIndex, minDistance);
 	return minPointIndex;
 }
 
@@ -1800,7 +1800,7 @@ uesp.gamemap.Location.prototype.computePathSize = function ()
 
 uesp.gamemap.Location.prototype.onPathMouseUp = function (event)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "onPathMouseUp");
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, "onPathMouseUp");
 	
 	if (this.draggingPathHandle >= 0) return this.onPathEditHandlesDragEnd(event);
 	
@@ -1810,7 +1810,7 @@ uesp.gamemap.Location.prototype.onPathMouseUp = function (event)
 
 uesp.gamemap.Location.prototype.onPathMouseDown = function (event)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onPathMouseDown");
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, "onPathMouseDown");
 	
 	if (this.editPathHandles) return this.onPathEditHandlesMouseDown(event);
 	
@@ -1840,7 +1840,7 @@ uesp.gamemap.Location.prototype.onPathMouseDown = function (event)
 
 uesp.gamemap.Location.prototype.onPathMouseOut = function (event)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onPathMouseOut");
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, "onPathMouseOut");
 	
 	var ca = event.target;
 	var co = ca.getContext('2d');
@@ -1886,7 +1886,7 @@ uesp.gamemap.Location.prototype.onPathEditHandlesClick = function (event)
 
 uesp.gamemap.Location.prototype.onPathKeyDown = function (event)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, 'onPathKeyDown');
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, 'onPathKeyDown');
 	
 	if (this.editPathHandles) return this.onPathEditHandlesKeyDown(event);
 	
@@ -1904,7 +1904,7 @@ uesp.gamemap.Location.prototype.onPathEditHandlesKeyDown = function (event)
 
 uesp.gamemap.Location.prototype.onPathKeyUp = function (event)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, 'onPathKeyUp');
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, 'onPathKeyUp');
 	
 	if (this.editPathHandles) return this.onPathEditHandlesKeyUp(event);
 	
@@ -1930,7 +1930,7 @@ uesp.gamemap.Location.prototype.onPathClick = function (event)
 	if (co.isPointInPath(event.pageX - offset.left, event.pageY - offset.top) ||
 		co.isPointInStroke(event.pageX - offset.left, event.pageY - offset.top) )
 	{
-		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "clicked path");
+		uesp.logDebug(uesp.LOG_LEVEL_WARNING, "clicked path");
 		
 		if (this.parentMap.canEdit() && event.shiftKey)
 		{
@@ -1954,7 +1954,7 @@ uesp.gamemap.Location.prototype.onPathClick = function (event)
 
 uesp.gamemap.Location.prototype.onPathDblClick = function (event)
 {
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "double-clicked path");
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "double-clicked path");
 	
 	if (this.editPathHandles) return false;
 	
