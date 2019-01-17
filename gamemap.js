@@ -51,6 +51,8 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.minValidWorldId = this.mapOptions.minValidWorldId;
 	this.maxValidWorldId = this.mapOptions.maxValidWorldId;
 	
+	this.mapLinkElement = this.mapOptions.mapLinkElement;
+	
 	this.recentChangesRoot = null;
 	
 	this.mapControlRoot = null;
@@ -234,9 +236,8 @@ uesp.gamemap.Map.prototype.canEdit = function ()
 
 uesp.gamemap.Map.prototype.updateMapLink = function ()
 {
-		// TODO: Don't hard code link element ID (allow multiple links to be updated)
-	linkElement = $('#gmMapLink');
-	
+	linkElement = $(this.mapLinkElement);
+		
 	if (linkElement != null)
 	{
 		linkElement.attr('href', this.createMapLink());
@@ -960,18 +961,8 @@ uesp.gamemap.Map.prototype.loadMapTilesCanvas = function()
 		
 		for (var x = 0; x < this.mapOptions.tileCountX; ++x)
 		{
-			var tileX = x + this.startTileCanvasX;
-			var tileY = y + this.startTileCanvasY;
-			
-			/*
-			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
-			var element  = this.mapTiles[y][x].element;
-			
-			$('<img/>').attr('src', imageURL)
-				//.load(uesp.gamemap.onMapTileLoadFunction(element, imageURL))
-				.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentWorldId))
-				.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
-			*/
+			let tileX = x + this.startTileCanvasX;
+			let tileY = y + this.startTileCanvasY;
 			
 			let imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
 			let newImage = new Image();
@@ -1016,7 +1007,14 @@ uesp.gamemap.Map.prototype.loadMapTilesCanvas = function()
 	            newImage.isLoaded = true;
 			};
 			
-			newImage.src = imageURL;
+			if (tileX < 0 || tileY < 0)
+			{
+				newImage.onerror();
+			}
+			else
+			{
+				newImage.src = imageURL;
+			}
 		}
 	}
 
@@ -1082,6 +1080,7 @@ uesp.gamemap.Map.prototype.loadMapTilesCanvasRowColPriv = function(startX, start
 			
 			let tileX = x + this.origStartTileCanvasX;
 			let tileY = y + this.origStartTileCanvasY;			
+			
 			let imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
 			let newImage = new Image();
 			let canvasX = tileX * this.mapOptions.tileSize;
@@ -1125,7 +1124,14 @@ uesp.gamemap.Map.prototype.loadMapTilesCanvasRowColPriv = function(startX, start
 	            newImage.isLoaded = true;
 			};
 			
-			newImage.src = imageURL;
+			if (tileX < 0 || tileY < 0)
+			{
+				newImage.onerror();
+			}
+			else
+			{
+				newImage.src = imageURL;
+			}
 			
 		}
 	}
