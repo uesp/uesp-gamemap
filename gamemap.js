@@ -1015,8 +1015,6 @@ uesp.gamemap.Map.prototype.loadMapTilesCanvas = function()
 				}
 				
 				newImage.isError = true;
-	            
-				return true;
 			}
 			
 			newImage.onload = function () {
@@ -1126,8 +1124,6 @@ uesp.gamemap.Map.prototype.loadMapTilesCanvasRowColPriv = function(startX, start
 				}
 				
 				newImage.isError = true;
-	            
-				return true;
 			}
 			
 			newImage.onload = function () {
