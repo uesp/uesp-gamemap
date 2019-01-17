@@ -31,7 +31,12 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	else
 		this.userEvents = userEvents;
 	
+	this.USE_CANVAS_DRAW = true;
+	this.PANAMOUNT = this.mapOptions.tileSize;
+	
 	this.mapRoot = null;
+	this.mapCanvas = null;
+	this.mapContext = null;
 	this.mapContainer = $('#' + mapContainerId);
 	if (this.mapContainer == null) uesp.logError('The gamemap container \'' + mapContainerId + '\' was not found!');
 	
@@ -70,11 +75,17 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.zoomLevel = 15;
 	this.startTileX = 0;
 	this.startTileY = 0;
+	this.startTileCanvasX = 0;
+	this.startTileCanvasY = 0;
+	this.origStartTileCanvasX = 0;
+	this.origStartTileCanvasY = 0;
 	
 	this.isDragging = false;
 	this.draggingObject = null;
 	this.dragStartLeft = 0;
 	this.dragStartTop  = 0;
+	this.dragStartLeftCanvas = 0;
+	this.dragStartTopCanvas  = 0;
 	this.dragStartEventX = 0;
 	this.dragStartEventY = 0;
 	this.checkTilesOnDrag = true;
@@ -87,6 +98,16 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.mapKeyNumColumns = 8;
 	
 	this.showPopupOnLoadLocationId = -1;
+	
+	this.canvasBGColor = "black";
+	this.mapTransformX = 0;
+	this.mapTransformY = 0;
+	this.canvasLastDragX = 0;
+	this.canvasLastDragY = 0;
+	this.canvasImages = [];
+	this.canvasImageMap = {};
+	this.canvasTileCountX = 0;
+	this.canvasTileCountY = 0;
 	
 		// This just controls the client-side editing abilities.
 		// All security for writes is handled on the server side.
@@ -294,6 +315,8 @@ uesp.gamemap.Map.prototype.changeWorld = function (world, newState)
 
 uesp.gamemap.Map.prototype.checkTileEdges = function ()
 {
+	if (this.USE_CANVAS_DRAW) return this.checkTileEdgesCanvas();
+	
 	tilesLeft = 0;
 	tilesRight = 0;
 	tilesTop = 0;
@@ -325,6 +348,43 @@ uesp.gamemap.Map.prototype.checkTileEdges = function ()
 	else if (tilesBottom < this.mapOptions.tileEdgeLoadCount)
 	{
 		this.shiftMapTiles(0, 1);
+	}
+}
+
+
+uesp.gamemap.Map.prototype.checkTileEdgesCanvas = function ()
+{
+	let tilesLeft = 0;
+	let tilesRight = 0;
+	let tilesTop = 0;
+	let tilesBottom = 0;
+	
+	//-10 7 (-7)
+	// 0 -4 (4)
+	// 4 -8
+	tilesLeft = -(this.startTileCanvasX + Math.floor(this.mapTransformX / this.mapOptions.tileSize));
+	tilesTop  = -(this.startTileCanvasY + Math.floor(this.mapTransformY / this.mapOptions.tileSize));
+	tilesRight  = this.canvasTileCountX - tilesLeft - Math.floor(this.mapCanvas.width / this.mapOptions.tileSize);
+	tilesBottom = this.canvasTileCountY - tilesTop - Math.floor(this.mapCanvas.height / this.mapOptions.tileSize);
+	
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Extra Tiles: " + tilesLeft + ", " + tilesTop + ", " + tilesRight + ", " + tilesBottom);
+	
+	if (tilesRight < this.mapOptions.tileEdgeLoadCount)
+	{
+		this.loadMapTilesCanvasRowCol(0, 1, 0, 0);
+	}
+	else if (tilesLeft < this.mapOptions.tileEdgeLoadCount)
+	{
+		this.loadMapTilesCanvasRowCol(1, 0, 0, 0);
+	}
+	
+	if (tilesTop < this.mapOptions.tileEdgeLoadCount)
+	{
+		this.loadMapTilesCanvasRowCol(0, 0, 1, 0);
+	}
+	else if (tilesBottom < this.mapOptions.tileEdgeLoadCount)
+	{
+		this.loadMapTilesCanvasRowCol(0, 0, 0, 1);
 	}
 }
 
@@ -417,6 +477,12 @@ uesp.gamemap.Map.prototype.createEvents = function()
 	$('.gmMapTile').on("mousedown", { self: this }, this.onMouseDown);
 	$('.gmMapTile').on("touchstart", { self: this }, this.onTouchStart);
 	$('.gmMapTile').on("click", { self: this }, this.onClick);
+	
+	$('#gmMapCanvas').on("mousedown", { self: this }, this.onMouseDown);
+	$('#gmMapCanvas').on("touchstart", { self: this }, this.onTouchStart);
+	$('#gmMapCanvas').on("click", { self: this }, this.onClick);
+	$(this.mapCanvas).on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScrollCanvas);
+	
 	$(window).on("mouseup", { self: this }, this.onMouseUp);
 	$(window).on("touchend touchcancel", { self: this }, this.onTouchEnd);
 	this.mapRoot.on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
@@ -432,11 +498,49 @@ uesp.gamemap.Map.prototype.createEvents = function()
 uesp.gamemap.Map.prototype.createMapRoot = function()
 {
 	this.mapRoot = $('<div />').attr('id', 'gmMapRoot').appendTo(this.mapContainer);
+	
+	if (this.USE_CANVAS_DRAW) this.createMapCanvas();
+}
+
+
+uesp.gamemap.Map.prototype.createMapCanvas = function()
+{
+	let canvasWidth = this.mapContainer.width();
+	let canvasHeight = this.mapContainer.height();
+	
+	this.mapCanvas = $('<canvas />').
+						attr('id', 'gmMapCanvas').
+						attr('width', canvasWidth).
+						attr('height', canvasHeight).
+						css('width', canvasWidth).
+						css('height', canvasHeight).
+						appendTo(this.mapContainer)[0];
+	
+	this.mapContext = this.mapCanvas.getContext("2d");
+	
+	this.mapContext.fillStyle = this.canvasBGColor;
+	this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
+	
+	//this.mapRoot.hide();
+}
+
+
+uesp.gamemap.Map.prototype.clearMapCanvas = function()
+{
+	this.mapContext.save();
+	this.mapContext.setTransform(1, 0, 0, 1, 0, 0);
+	
+	this.mapContext.fillStyle = this.canvasBGColor;
+	this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
+	
+	this.mapContext.restore();
 }
 
 
 uesp.gamemap.Map.prototype.createMapTiles = function()
 {
+	if (this.USE_CANVAS_DRAW) return;
+	
 	offsetX = this.mapContainer.offset().left;
 	offsetY = this.mapContainer.offset().top;
 	
@@ -468,6 +572,8 @@ uesp.gamemap.Map.prototype.createMapTile = function(x, y)
 					.appendTo(this.mapRoot)
 					.offset({ top: yPos, left: xPos })
 					.attr('unselectable', 'on')
+					.attr('deltax', x)
+					.attr('deltay', y)
 					.css('user-select', 'none')
 					.on('selectstart', false);
 	
@@ -785,6 +891,8 @@ uesp.gamemap.Map.prototype.jumpToDestination = function (destId, openPopup, useE
 
 uesp.gamemap.Map.prototype.loadMapTiles = function()
 {
+	if (this.USE_CANVAS_DRAW) return this.loadMapTilesCanvas();
+	
 	if (this.mapOptions.getMapTileFunction == null) return;
 	var self = this;
 	
@@ -821,6 +929,222 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 				.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
 		}
 	}
+}
+
+
+uesp.gamemap.Map.prototype.clearOldCanvasTiles = function()
+{
+	for (var i in this.canvasImages)
+	{
+		let image = this.canvasImages[i];
+		image.image.showTile = false;
+	}
+}
+
+
+uesp.gamemap.Map.prototype.loadMapTilesCanvas = function()
+{
+	if (this.mapOptions.getMapTileFunction == null) return;
+	var self = this;
+	
+	if (!(this.currentWorldId in this.mapWorlds))
+	{
+		uesp.logError("Unknown worldID " + this.currentWorldId + "!");
+		return;
+	}
+	
+	this.clearOldCanvasTiles();
+	
+	var worldName = this.mapWorlds[this.currentWorldId].name;
+	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
+	
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "worldID: " + this.currentWorldId + " worldName: " + worldName);
+	
+	this.canvasImages = [];
+	this.canvasImageMap = {};
+	this.canvasTileCountX = this.mapOptions.tileCountX;
+	this.canvasTileCountY = this.mapOptions.tileCountY;
+			
+	for (var y = 0; y < this.mapOptions.tileCountY; ++y)
+	{
+		this.canvasImageMap[y] = {};
+		
+		for (var x = 0; x < this.mapOptions.tileCountX; ++x)
+		{
+			var tileX = x + this.startTileCanvasX;
+			var tileY = y + this.startTileCanvasY;
+			
+			/*
+			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
+			var element  = this.mapTiles[y][x].element;
+			
+			$('<img/>').attr('src', imageURL)
+				//.load(uesp.gamemap.onMapTileLoadFunction(element, imageURL))
+				.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentWorldId))
+				.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
+			*/
+			
+			let imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
+			let newImage = new Image();
+			let canvasX = tileX * this.mapOptions.tileSize;
+			let canvasY = tileY * this.mapOptions.tileSize;
+			
+			newImage.isError = false;
+			newImage.showTile = true;
+			newImage.isLoaded = false;
+			
+			let imageInfo = {
+					image: newImage,
+					x: x,
+					y: y,
+					canvasX: canvasX,
+					canvasY: canvasY,
+					tileX : tileX,
+					tileY : tileY,
+			};
+			
+			this.canvasImages.push(imageInfo);
+			this.canvasImageMap[y][x] = imageInfo;
+			
+			newImage.onerror = function() {
+				
+				if (newImage.showTile)
+				{
+					self.mapContext.fillStyle = this.canvasBGColor;
+					self.mapContext.fillRect(canvasX, canvasY, self.mapOptions.tileSize, self.mapOptions.tileSize);
+				}
+				
+				newImage.isError = true;
+	            
+				return true;
+			}
+			
+			newImage.onload = function () {
+				
+				if (newImage.showTile)
+				{
+					self.mapContext.drawImage(newImage, canvasX, canvasY, self.mapOptions.tileSize, self.mapOptions.tileSize);
+				}
+	            
+	            newImage.isLoaded = true;
+			};
+			
+			newImage.src = imageURL;
+		}
+	}
+
+}
+
+
+uesp.gamemap.Map.prototype.loadMapTilesCanvasRowCol = function(left, right, top, bottom)
+{
+	if (uesp.gamemap.isNullorUndefined(this.mapOptions.getMapTileFunction)) return;
+	
+	if (!(this.currentWorldId in this.mapWorlds))
+	{
+		uesp.logError("Unknown worldID " + this.currentWorldId + "!");
+		return;
+	}
+	
+	let ix = this.startTileCanvasX - this.origStartTileCanvasX;
+	let iy = this.startTileCanvasY - this.origStartTileCanvasY;
+	
+	if (left) 
+	{
+		this.startTileCanvasX -= 1;
+		this.canvasTileCountX++;
+		this.loadMapTilesCanvasRowColPriv(ix - 1, iy, left, this.canvasTileCountY)
+	}
+	
+	if (right) 
+	{
+		this.canvasTileCountX++;
+		this.loadMapTilesCanvasRowColPriv(ix + this.canvasTileCountX - 1, iy, right, this.canvasTileCountY)
+	}
+	
+	if (top) 
+	{
+		this.startTileCanvasY -= 1;
+		this.canvasTileCountY++;
+		this.loadMapTilesCanvasRowColPriv(ix, iy - 1, this.canvasTileCountX, top)
+	}
+	
+	if (bottom) 
+	{
+		this.canvasTileCountY++;
+		this.loadMapTilesCanvasRowColPriv(ix, iy + this.canvasTileCountY - 1, this.canvasTileCountX, bottom)
+	}
+	
+	
+}
+
+
+uesp.gamemap.Map.prototype.loadMapTilesCanvasRowColPriv = function(startX, startY, dx, dy)
+{
+	let worldName = this.mapWorlds[this.currentWorldId].name;
+	let maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
+	let self = this;
+	
+	for (y = startY; y < startY + dy; ++y)
+	{
+		if (this.canvasImageMap[y] == null)	this.canvasImageMap[y] = {};
+		
+		for (x = startX; x < startX + dx; ++x)
+		{
+			if (this.canvasImageMap[y][x] != null) continue;
+			
+			let tileX = x + this.origStartTileCanvasX;
+			let tileY = y + this.origStartTileCanvasY;			
+			let imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
+			let newImage = new Image();
+			let canvasX = tileX * this.mapOptions.tileSize;
+			let canvasY = tileY * this.mapOptions.tileSize;
+			
+			newImage.isError = false;
+			newImage.showTile = true;
+			newImage.isLoaded = false;
+			
+			let imageInfo = {
+					image: newImage,
+					x: x,
+					y: y,
+					canvasX: canvasX,
+					canvasY: canvasY,
+					tileX : tileX,
+					tileY : tileY,
+			};
+			
+			this.canvasImages.push(imageInfo);
+			this.canvasImageMap[y][x] = imageInfo;
+			
+			newImage.onerror = function() {
+				
+				if (newImage.showTile)
+				{
+					self.mapContext.fillStyle = this.canvasBGColor;
+					self.mapContext.fillRect(canvasX, canvasY, self.mapOptions.tileSize, self.mapOptions.tileSize);
+				}
+				
+				newImage.isError = true;
+	            
+				return true;
+			}
+			
+			newImage.onload = function () {
+				
+				if (newImage.showTile)
+				{
+					self.mapContext.drawImage(newImage, canvasX, canvasY, self.mapOptions.tileSize, self.mapOptions.tileSize);
+				}
+	            
+	            newImage.isLoaded = true;
+			};
+			
+			newImage.src = imageURL;
+			
+		}
+	}
+	
 }
 
 
@@ -1185,6 +1509,8 @@ uesp.gamemap.Map.prototype.onAddAreaClick = function (event)
 
 uesp.gamemap.Map.prototype.onDragEnd = function(event)
 {
+	if (this.USE_CANVAS_DRAW) return this.onDragEndCanvas(event);
+	
 	this.isDragging = false;
 	if (uesp.gamemap.isNullorUndefined(this.draggingObject)) return;
 	
@@ -1194,13 +1520,29 @@ uesp.gamemap.Map.prototype.onDragEnd = function(event)
 	deltaX = event.pageX - this.dragStartEventX;
 	deltaY = event.pageY - this.dragStartEventY;
 	
-	if (deltaX != 0 || deltaY != 0)	this.updateLocations();
+	if (deltaX != 0 || deltaY != 0) this.updateLocations();
+}
+
+
+uesp.gamemap.Map.prototype.onDragEndCanvas = function(event)
+{
+	this.isDragging = false;
+	if (uesp.gamemap.isNullorUndefined(this.draggingObject)) return;
+	
+	this.draggingObject = null;
+	this.checkTileEdgesCanvas();
+	
+	deltaX = event.pageX - this.dragStartEventX;
+	deltaY = event.pageY - this.dragStartEventY;
+	
+	if (deltaX != 0 || deltaY != 0) this.updateLocationsCanvas();
 }
 
 
 uesp.gamemap.Map.prototype.onDragMove = function(event)
 {
 	if (this.draggingObject == null) return;
+	if (this.USE_CANVAS_DRAW) return this.onDragMoveCanvas(event);	
 	
 	this.mapRoot.offset({
 			left: event.pageX - this.dragStartLeft,
@@ -1211,15 +1553,100 @@ uesp.gamemap.Map.prototype.onDragMove = function(event)
 }
 
 
+uesp.gamemap.Map.prototype.onDragMoveCanvas = function(event)
+{
+	if (this.draggingObject == null) return;
+
+	let x = event.pageX - this.dragStartLeftCanvas; 
+	let y = event.pageY - this.dragStartTopCanvas;
+	let diffX = x - this.canvasLastDragX;
+	let diffY = y - this.canvasLastDragY;
+	
+	this.translateCanvas(diffX, diffY);
+	
+	if (this.checkTilesOnDrag) this.checkTileEdgesCanvas();
+	
+	this.redrawCanvas();
+	
+	this.canvasLastDragX = x;
+	this.canvasLastDragY = y;
+	
+	this.mapRoot.offset({
+		left: event.pageX - this.dragStartLeft,
+		top:  event.pageY - this.dragStartTop
+});
+
+}
+
+
+uesp.gamemap.Map.prototype.redrawCanvas = function()
+{
+	this.redrawImages();
+}
+
+
+uesp.gamemap.Map.prototype.redrawImages = function()
+{
+	for (var i in this.canvasImages)
+	{
+		let image = this.canvasImages[i];
+		
+		if (image.image.isLoaded)
+		{
+			this.mapContext.drawImage(image.image, image.canvasX, image.canvasY, this.mapOptions.tileSize, this.mapOptions.tileSize);
+		}
+		else
+		{
+			this.mapContext.fillStyle = this.canvasBGColor;
+			this.mapContext.fillRect(image.canvasX, image.canvasY, this.mapOptions.tileSize, this.mapOptions.tileSize);
+		}
+	}
+}
+
+	/* For Testing Only */
+uesp.gamemap.Map.prototype.shiftCanvas = function(dx, dy)
+{
+	this.mapContext.globalCompositeOperation = "copy";
+	this.mapContext.drawImage(this.mapContext.canvas, dx, dy);
+
+	this.mapContext.globalCompositeOperation = "source-over"
+}
+
+
 uesp.gamemap.Map.prototype.onDragStart = function(event)
 {
-	mapOffset = this.mapRoot.offset();
+	if (this.USE_CANVAS_DRAW) return this.onDragStartCanvas(event);
+		
+	let mapOffset = this.mapRoot.offset();
 	
 	this.dragStartLeft = event.pageX - mapOffset.left;
 	this.dragStartTop = event.pageY - mapOffset.top;
 	
 	this.dragStartEventX = event.pageX;
 	this.dragStartEventY = event.pageY;
+	
+	this.draggingObject = $(event.target);
+	this.isDragging = true;
+
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Drag Start Offset: " + this.dragStartLeft + ", " + this.dragStartTop);
+}
+
+
+uesp.gamemap.Map.prototype.onDragStartCanvas = function(event)
+{
+	let mapOffset = this.mapRoot.offset();
+	
+	this.dragStartLeft = event.pageX - mapOffset.left;
+	this.dragStartTop = event.pageY - mapOffset.top;
+	
+	this.dragStartLeftCanvas = event.pageX;
+	this.dragStartTopCanvas = event.pageY;
+		
+	this.dragStartEventX = event.pageX;
+	this.dragStartEventY = event.pageY;
+		
+	this.canvasLastDragX = 0;
+	this.canvasLastDragY = 0;
 	
 	this.draggingObject = $(event.target);
 	this.isDragging = true;
@@ -1411,6 +1838,29 @@ uesp.gamemap.Map.prototype.onKeyUp = function(event)
 
 
 uesp.gamemap.Map.prototype.onMouseScroll = function(event)
+{
+	var self = event.data.self;
+	var rootOffset = self.mapContainer.offset();
+	
+	if (uesp.gamemap.isNullorUndefined(event.pageX)) event.pageX = event.originalEvent.pageX;
+	if (uesp.gamemap.isNullorUndefined(event.pageY)) event.pageY = event.originalEvent.pageY;
+	
+	var zoomX = event.pageX - rootOffset.left;
+	var zoomY = event.pageY - rootOffset.top;
+	
+	if (event.originalEvent.detail > 0 || event.originalEvent.wheelDelta < 0)
+	{
+		self.zoomOut(zoomX, zoomY);
+	} else {
+		self.zoomIn(zoomX, zoomY);
+	}
+	
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "onMouseScroll");
+	event.preventDefault();
+}
+
+
+uesp.gamemap.Map.prototype.onMouseScrollCanvas = function(event)
 {
 	var self = event.data.self;
 	var rootOffset = self.mapContainer.offset();
@@ -1812,9 +2262,14 @@ uesp.gamemap.Map.prototype.setGamePosNoUpdate = function(x, y, zoom)
 	var tilePos = this.convertGameToTilePos(x, y);
 	tilePos.x -= this.mapOptions.tileCountX/2;
 	tilePos.y -= this.mapOptions.tileCountY/2;
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "setGamePos(): tilePos = ", x, y, tilePos.x, tilePos.y);
 	
 	this.startTileX = Math.floor(tilePos.x);
 	this.startTileY = Math.floor(tilePos.y);
+	this.startTileCanvasX = this.startTileX;
+	this.startTileCanvasY = this.startTileY;
+	this.origStartTileCanvasX = this.startTileX;
+	this.origStartTileCanvasY = this.startTileY;
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "setGamePos(): startTile = " + this.startTileX + ", " + this.startTileY);
 	
 	newOffsetX = Math.round(mapOffset.left + this.mapContainer.width()/2  - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - tilePos.x) * this.mapOptions.tileSize);
@@ -1822,6 +2277,18 @@ uesp.gamemap.Map.prototype.setGamePosNoUpdate = function(x, y, zoom)
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newOffset = " + newOffsetX + ", " + newOffsetY);
 	
 	this.mapRoot.offset({ left: newOffsetX, top: newOffsetY});
+	
+	if (this.USE_CANVAS_DRAW)
+	{
+		tilePos = this.convertGameToTilePos(x, y);
+		
+		newOffsetX = Math.round(this.mapCanvas.width/2 - tilePos.x * this.mapOptions.tileSize);
+		newOffsetY = Math.round(this.mapCanvas.height/2 - tilePos.y * this.mapOptions.tileSize);
+		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newOffsetCanvas = " + newOffsetX + ", " + newOffsetY, tilePos.x, tilePos.y);
+		
+		this.resetTranslateCanvas();
+		this.translateCanvas(newOffsetX, newOffsetY);		
+	}
 }
 
 
@@ -1844,6 +2311,10 @@ uesp.gamemap.Map.prototype.setGameZoom = function(zoom)
 	
 	this.startTileX = Math.floor(newTileX);
 	this.startTileY = Math.floor(newTileY);
+	this.startTileCanvasX = this.startTileX;
+	this.startTileCanvasY = this.startTileY;
+	this.origStartTileCanvasX = this.startTileX;
+	this.origStartTileCanvasY = this.startTileY;
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "setGameZoom(): startTile = " + this.startTileX + ", " + this.startTileY);
 	
 	newOffsetX = Math.round(mapOffset.left + this.mapContainer.width()/2  - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - newTileX) * this.mapOptions.tileSize);
@@ -1851,6 +2322,16 @@ uesp.gamemap.Map.prototype.setGameZoom = function(zoom)
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newOffset = " + newOffsetX + ", " + newOffsetY);
 	
 	this.mapRoot.offset({ left: newOffsetX, top: newOffsetY});
+	
+	if (this.USE_CANVAS_DRAW)
+	{
+		newOffsetX = -Math.round(this.mapCanvas.width/2  - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - tilePos.x) * this.mapOptions.tileSize);
+		newOffsetY = -Math.round(this.mapCanvas.height/2 - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - tilePos.y) * this.mapOptions.tileSize);
+		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newOffsetCanvas = " + newOffsetX + ", " + newOffsetY);
+		
+		this.resetTranslateCanvas();
+		this.translateCanvas(newOffsetX, newOffsetY);		
+	}
 	
 	this.updateLocations();
 	this.loadMapTiles();
@@ -1967,6 +2448,23 @@ uesp.gamemap.Map.prototype.shiftLocations = function (deltaX, deltaY)
 
 
 uesp.gamemap.Map.prototype.updateLocations = function(animate)
+{
+	if (this.USE_CANVAS_DRAW) return this.updateLocationsCanvas(animate);
+	
+	this.updateMapLink();
+	
+	this.removeExtraLocations();
+	this.updateLocationDisplayLevels();
+	this.updateLocationOffsets(animate);
+	
+	this.redrawLocations();
+	
+	this.retrieveLocations();
+	
+}
+
+
+uesp.gamemap.Map.prototype.updateLocationsCanvas = function(animate)
 {
 	this.updateMapLink();
 	
@@ -2090,16 +2588,32 @@ uesp.gamemap.Map.prototype.updateZoomControlButtons = function(newZoomLevel)
 		this.mapControlZoomOut.removeClass('gmMapControlZoomDisable');
 	}
 	
+}
+
+
+uesp.gamemap.Map.prototype.translateCanvas = function(dx, dy, animate = false)
+{
+	dx = Math.floor(dx);
+	dy = Math.floor(dy);
+		
+	this.mapTransformX += dx;
+	this.mapTransformY += dy;
 	
+		/* TODO: Animate optionally
+		 *  	window.requestAnimationFrame()
+		 */
+	this.mapContext.translate(dx, dy);
 }
 
 
 uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 {
+	if (this.USE_CANVAS_DRAW) return this.zoomInCanvas(x, y);
+	
 	this.updateZoomControlButtons(this.zoomLevel + 1);
 	if (this.zoomLevel >= this.mapOptions.maxZoomLevel) return;
 	
-	var curPos= this.getGamePositionOfCenter();
+	var curPos = this.getGamePositionOfCenter();
 	
 	this.zoomLevel++;
 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Zoom In (" + x + ", " + y + ") = " + this.zoomLevel);
@@ -2123,7 +2637,7 @@ uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 	
 	newOffsetX = Math.round(mapOffset.left + x - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - newTileX) * this.mapOptions.tileSize);
 	newOffsetY = Math.round(mapOffset.top  + y - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - newTileY) * this.mapOptions.tileSize);
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomin newOffset = " + newOffsetX + ", " + newOffsetY);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomin newOffset = " + newOffsetX + ", " + newOffsetY, mapOffset, this.startTileX);
 	this.mapRoot.offset({ left: newOffsetX, top: newOffsetY});
 	
 	this.updateLocations(true);
@@ -2131,13 +2645,94 @@ uesp.gamemap.Map.prototype.zoomIn = function(x, y)
 }
 
 
+uesp.gamemap.Map.prototype.zoomInCanvas = function(x, y)
+{
+	this.updateZoomControlButtons(this.zoomLevel + 1);
+	if (this.zoomLevel >= this.mapOptions.maxZoomLevel) return;
+	
+	var curPos = this.getGamePositionOfCenter();
+	
+	this.zoomLevel++;
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Zoom In (" + x + ", " + y + ") = " + this.zoomLevel);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomin OrigOffset = " + this.mapTransformX + ", " + this.mapTransformY);
+	
+	if (x == null) x = this.mapCanvas.width/2;
+	if (y == null) y = this.mapCanvas.height/2;
+
+	let tileX = (x - this.mapTransformX) / this.mapOptions.tileSize;
+	let tileY = (y - this.mapTransformY) / this.mapOptions.tileSize;
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomin tile = " + tileX + ", " + tileY);
+	
+	let newOffsetX = x - tileX * 2 * this.mapOptions.tileSize;
+	let newOffsetY = y - tileY * 2 * this.mapOptions.tileSize;
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomin newOffset = " + newOffsetX + ", " + newOffsetY);
+	
+	let origTileX = tileX*2 - this.mapOptions.tileCountX/2;
+	let origTileY = tileY*2 - this.mapOptions.tileCountY/2;
+	
+	var mapOffset  = this.mapContainer.offset();
+	var rootOffset = this.mapRoot.offset();
+	
+	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapOptions.tileSize;
+	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapOptions.tileSize;
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomin tile = " + tileX + ", " + tileY);
+	
+	let newTileX = tileX*2 - this.mapOptions.tileCountX/2;
+	let newTileY = tileY*2 - this.mapOptions.tileCountY/2;
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomin newTile = " + newTileX + ", " + newTileY);
+	
+	this.startTileX = Math.floor(origTileX);
+	this.startTileY = Math.floor(origTileY);
+	this.startTileCanvasX = this.startTileX;
+	this.startTileCanvasY = this.startTileY;
+	this.origStartTileCanvasX = this.startTileX;
+	this.origStartTileCanvasY = this.startTileY;
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomin startTile = " + this.startTileX + ", " + this.startTileY);
+	
+	let newOffsetX1 = (mapOffset.left + x - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - newTileX) * this.mapOptions.tileSize);
+	let newOffsetY1 = (mapOffset.top  + y - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - newTileY) * this.mapOptions.tileSize);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomin newOffset1 = " + newOffsetX1 + ", " + newOffsetY1, mapOffset, this.startTileX);
+	
+		/* Fix for slow drift when zooming in/out multiple times */
+	let diffX = newOffsetX - newOffsetX1;
+	let diffY = newOffsetY - newOffsetY1;
+	let newOffsetX2 = newOffsetX - Math.round(diffX / this.mapOptions.tileSize) * this.mapOptions.tileSize + mapOffset.left;
+	let newOffsetY2 = newOffsetY - Math.round(diffY / this.mapOptions.tileSize) * this.mapOptions.tileSize + mapOffset.top;
+	
+	this.mapRoot.offset({ left: newOffsetX2, top: newOffsetY2});
+
+	this.resetTranslateCanvas();
+	this.translateCanvas(newOffsetX, newOffsetY);
+	
+	this.mapContext.scale(2, 2);
+	this.clearMapCanvas();
+	this.redrawCanvas();
+	
+	this.resetTranslateCanvas();
+	this.translateCanvas(newOffsetX, newOffsetY);
+		
+	this.updateLocationsCanvas(true);
+	this.loadMapTiles();
+}
+
+
+uesp.gamemap.Map.prototype.resetTranslateCanvas = function()
+{
+	this.mapContext.setTransform(1, 0, 0, 1, 0, 0);
+	this.mapTransformX = 0;
+	this.mapTransformY = 0;
+}
+
+
 uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 {
+	if (this.USE_CANVAS_DRAW) return this.zoomOutCanvas(x, y);
+	
 	this.updateZoomControlButtons(this.zoomLevel - 1);
 	if (this.zoomLevel <= this.mapOptions.minZoomLevel) return;
 	
 	this.zoomLevel--;
-	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Zoom Out (" + x + ", " + y + ") = " + this.zoomLevel);
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "ZoomOut (" + x + ", " + y + ") = " + this.zoomLevel);
 	
 	if (x == null) x = this.mapContainer.width() /2;
 	if (y == null) y = this.mapContainer.height()/2;
@@ -2147,21 +2742,84 @@ uesp.gamemap.Map.prototype.zoomOut = function(x, y)
 	
 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapOptions.tileSize;
 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapOptions.tileSize;
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomout tile = " + tileX + ", " + tileY);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "ZoomOut tile = " + tileX + ", " + tileY);
 	
 	newTileX = tileX/2 - this.mapOptions.tileCountX/2;
 	newTileY = tileY/2 - this.mapOptions.tileCountY/2;
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomout newTile = " + newTileX + ", " + newTileY);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "ZoomOut newTile = " + newTileX + ", " + newTileY);
 	
 	this.startTileX = Math.floor(newTileX);
 	this.startTileY = Math.floor(newTileY);
 	
 	newOffsetX = Math.round(mapOffset.left + x - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - newTileX) * this.mapOptions.tileSize);
 	newOffsetY = Math.round(mapOffset.top  + y - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - newTileY) * this.mapOptions.tileSize);
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Zoomout newOffset = " + newOffsetX + ", " + newOffsetY);
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "ZoomOut newOffset = " + newOffsetX + ", " + newOffsetY);
 	this.mapRoot.offset({ left: newOffsetX, top: newOffsetY});
 		
 	this.updateLocations(true);
+	this.loadMapTiles();
+}
+
+
+uesp.gamemap.Map.prototype.zoomOutCanvas = function(x, y)
+{
+	this.updateZoomControlButtons(this.zoomLevel - 1);
+	if (this.zoomLevel <= this.mapOptions.minZoomLevel) return;
+	
+	this.zoomLevel--;
+	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "ZoomOut (" + x + ", " + y + ") = " + this.zoomLevel);
+	
+	if (x == null) x = this.mapCanvas.width/2;
+	if (y == null) y = this.mapCanvas.height/2;
+	
+	let tileX = (x - this.mapTransformX) / this.mapOptions.tileSize;
+	let tileY = (y - this.mapTransformY) / this.mapOptions.tileSize;
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "ZoomOut tile = " + tileX + ", " + tileY);
+	
+	let newOffsetX = x - tileX / 2 * this.mapOptions.tileSize;
+	let newOffsetY = y - tileY / 2 * this.mapOptions.tileSize;
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "ZoomOut newOffset = " + newOffsetX + ", " + newOffsetY);
+	
+	let origTileX = tileX/2 - this.mapOptions.tileCountX/2;
+	let origTileY = tileY/2 - this.mapOptions.tileCountY/2;
+	
+	var mapOffset  = this.mapContainer.offset();
+	var rootOffset = this.mapRoot.offset();
+	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapOptions.tileSize;
+	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapOptions.tileSize;
+	let newTileX = tileX/2 - this.mapOptions.tileCountX/2;
+	let newTileY = tileY/2 - this.mapOptions.tileCountY/2;
+	
+	this.startTileX = Math.floor(origTileX);
+	this.startTileY = Math.floor(origTileY);
+	this.startTileCanvasX = this.startTileX;
+	this.startTileCanvasY = this.startTileY;
+	this.origStartTileCanvasX = this.startTileX;
+	this.origStartTileCanvasY = this.startTileY;
+	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "ZoomOut startTile = " + this.startTileX + ", " + this.startTileY);
+	
+	let newOffsetX1 = (mapOffset.left + x - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - newTileX) * this.mapOptions.tileSize);
+	let newOffsetY1 = (mapOffset.top  + y - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - newTileY) * this.mapOptions.tileSize);
+	
+		/* Fix for slow drift when zooming in/out multiple times */
+	let diffX = newOffsetX - newOffsetX1;
+	let diffY = newOffsetY - newOffsetY1;
+	let newOffsetX2 = newOffsetX - Math.round(diffX / this.mapOptions.tileSize) * this.mapOptions.tileSize + mapOffset.left;
+	let newOffsetY2 = newOffsetY - Math.round(diffY / this.mapOptions.tileSize) * this.mapOptions.tileSize + mapOffset.top;
+	
+	this.mapRoot.offset({ left: newOffsetX2, top: newOffsetY2});
+		
+	this.resetTranslateCanvas();
+	this.translateCanvas(newOffsetX, newOffsetY);
+	
+	this.mapContext.scale(0.5, 0.5);
+	this.clearMapCanvas();
+	this.redrawCanvas();
+	
+	this.resetTranslateCanvas();
+	this.translateCanvas(newOffsetX, newOffsetY);
+		
+	this.updateLocationsCanvas(true);
 	this.loadMapTiles();
 }
 
@@ -2960,6 +3618,8 @@ uesp.gamemap.Map.prototype.createMapControls = function ()
 
 uesp.gamemap.Map.prototype.pan = function (deltaX, deltaY)
 {
+	if (this.USE_CANVAS_DRAW) return this.panCanvas(deltaX, deltaY);
+	
 	var self = this;
 	
 	this.mapRoot.animate({ left: '+=' + deltaX, top: '+=' + deltaY }, 500);
@@ -2972,30 +3632,45 @@ uesp.gamemap.Map.prototype.pan = function (deltaX, deltaY)
 
 }
 
-uesp.gamemap.Map.PANAMOUNT = 256;
+
+uesp.gamemap.Map.prototype.panCanvas = function (deltaX, deltaY)
+{
+	let self = this;
+	
+	this.translateCanvas(deltaX, deltaY);
+	this.redrawCanvas();
+	
+	this.mapRoot.animate({ left: '+=' + deltaX, top: '+=' + deltaY }, 0);
+	
+	setTimeout(function() {
+		self.checkTileEdges();
+		self.updateLocations();
+		self.loadMapTiles();
+	}, 1);
+}
 
 
 uesp.gamemap.Map.prototype.panLeft = function ()
 {
-	this.pan(uesp.gamemap.Map.PANAMOUNT, 0);
+	this.pan(this.PANAMOUNT, 0);
 }
 
 
 uesp.gamemap.Map.prototype.panRight = function ()
 {
-	this.pan(-uesp.gamemap.Map.PANAMOUNT, 0);
+	this.pan(-this.PANAMOUNT, 0);
 }
 
 
 uesp.gamemap.Map.prototype.panUp = function ()
 {
-	this.pan(0, uesp.gamemap.Map.PANAMOUNT);
+	this.pan(0, this.PANAMOUNT);
 }
 
 
 uesp.gamemap.Map.prototype.panDown = function ()
 {
-	this.pan(0, -uesp.gamemap.Map.PANAMOUNT);
+	this.pan(0, -this.PANAMOUNT);
 }
 
 
