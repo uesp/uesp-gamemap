@@ -2,6 +2,7 @@
  * mapoptions.js -- Created by Dave Humphrey (dave@uesp.net) on 22 Jan 2014
  * 		Released under the GPL v2
  *
+ * Note that most of the options here are valid for the ESO map.
  */
 
 uesp.gamemap.MapOptions = function(mapOptions)
@@ -39,6 +40,8 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.initialZoom     = 10;
 	
 	this.mapLinkElement = '#gmMapLink';
+	
+	this.homeWorldId = 668;
 	
 		// Map iconTypes values to strings
 	this.iconTypeMap = null;
