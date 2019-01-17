@@ -48,9 +48,8 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	
 	this.isShowingRecentChanges = false;
 	
-		// TODO: Better way of limiting which map worlds to show
-	this.minValidWorldId = 50;
-	this.maxValidWorldId = 10000;
+	this.minValidWorldId = this.mapOptions.minValidWorldId;
+	this.maxValidWorldId = this.mapOptions.maxValidWorldId;
 	
 	this.recentChangesRoot = null;
 	
