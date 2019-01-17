@@ -1830,7 +1830,9 @@ uesp.gamemap.Location.prototype.onPathMouseDown = function (event)
 	bottomEvent.pageY = event.pageY;
 	bottomEvent.which = event.which;
 	
-	$(".gmMapTile:first").trigger(bottomEvent);
+	let bottomLayer = $(".gmMapTile:first");
+	if (bottomLayer.length == 0) bottomLayer = $("#gmMapCanvas");
+	bottomLayer.trigger(bottomEvent);
 	
 	return false;
 }
@@ -1976,7 +1978,9 @@ uesp.gamemap.Location.prototype.onPathDblClick = function (event)
 	bottomEvent.pageY = event.pageY;
 	bottomEvent.which = event.which;
 	
-	$(".gmMapTile:first").trigger(bottomEvent);
+	let bottomLayer = $(".gmMapTile:first");
+	if (bottomLayer.length == 0) bottomLayer = $("#gmMapCanvas");
+	bottomLayer.trigger(bottomEvent);
 	
 	return false;
 }
