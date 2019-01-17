@@ -84,7 +84,6 @@ uesp.gamemap.Location.prototype.getNextPopupId = function ()
 
 uesp.gamemap.Location.prototype.isInBounds = function (mapBounds)
 {
-		//TODO: Proper checking for all location types
 	
 	if (mapBounds.left < mapBounds.right)
 	{
@@ -419,7 +418,6 @@ uesp.gamemap.Location.prototype.updateIcon = function ()
 		return true;
 	}
 	
-	// TODO: Don't hard code z-index calc
 	var ZIndex = 20 - this.displayLevel;
 	
 	if (this.iconElement == null)
@@ -436,7 +434,6 @@ uesp.gamemap.Location.prototype.updateIcon = function ()
 			.css('user-select', 'none')
 			.on('selectstart', false);
 		
-			// TODO: Don't hard code z-index calc
 		this.iconElement = $('<div />')
 				.addClass('gmMapLocIconDiv')
 				.css('z-index', ZIndex)
@@ -762,7 +759,6 @@ uesp.gamemap.Location.prototype.onSavedLocation = function (data)
 	this.popupElement.remove();
 	this.popupElement = null;
 	
-		// TODO: Temporay way to delete elements
 	if (!this.visible)
 	{
 		this.removeElements();
@@ -997,7 +993,7 @@ uesp.gamemap.Location.prototype.updateEditPopup = function ()
 
 uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 {
-	console.log("onEditLocationNameBlur");
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, "onEditLocationNameBlur");
 	
 		/* Only works on new locations on their first edit */
 	if (this.isFirstEdit == null || this.isFirstEdit === false) return;
@@ -1787,7 +1783,6 @@ uesp.gamemap.Location.prototype.computePathSize = function ()
 		if (y > yMax) yMax = y;
 	}
 	
-		//TODO: Proper handling of inverse coordinate systems
 	this.x = xMin;
 	this.y = yMax;
 	
@@ -2322,7 +2317,6 @@ uesp.gamemap.Location.prototype.createIconTypeCustomListEvents = function()
 }
 
 
-//TODO: Put the custom iconType list into its own class
 uesp.gamemap.Location.prototype.getIconTypeCustomList = function(currentIconType)
 {
 	if (this.parentMap.mapOptions.iconTypeMap == null) return '';
@@ -2361,7 +2355,6 @@ uesp.gamemap.Location.prototype.getIconTypeCustomList = function(currentIconType
 }
 
 
-//TODO: Remove when no longer needed
 uesp.gamemap.Location.prototype.getIconTypeSelectOptions = function (selectedValue)
 {
 	if (this.parentMap.mapOptions.iconTypeMap == null) return '';
