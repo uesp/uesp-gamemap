@@ -4,14 +4,9 @@
  * 		Main source code for the game map system. 
  *
  * TODO:
- * 		- Remove new location when cancelled before save
  * 		- Delete location
  * 		- Enable display of non-visible locations when editing
- * 		- Tooltips for areas/paths?
  * 		- Disable locations when adding path/area points?
- * 		- Jump to destination on path/area double-click
- *		- Help for edit fields (and in general)
- *		- Todo add padding around path div
  *		- Better cursor icons for adding/deleting path nodes
  *		- Move world editing to world class
  *		- Add edit comment input field
@@ -3228,7 +3223,6 @@ uesp.gamemap.Map.prototype.createSearchControls = function ()
 								.addClass('gmMapSearchRoot')
 								.appendTo(this.mapContainer);
 	
-		// TODO: Change to external template
 	var searchContent = "<form  onsubmit='return false;'>" +
 						"<div class='gmMapSearchInputDiv'>" + 
 						"<input class='gmMapSearchInput' type='text' name='search' value='' size='25' maxlength='100' autocomplete='on' />" +
@@ -3422,7 +3416,6 @@ uesp.gamemap.Map.prototype.addSearchResultLocation = function (locationId)
 	
 	if (location.iconType == 0) imageContent = "<div class='gmMapSearchResultIcon' />";
 	
-		// TODO: Change to external template
 	var resultContent = imageContent +
 						"<div class='gmMapSearchResultTitle'>{location.name}</div> " + 
 						"<div class='gnMapSearchResultLocWorld'>(in {world.displayName})</div>";
@@ -3480,7 +3473,6 @@ uesp.gamemap.Map.prototype.addSearchResultWorld = function (worldId)
 							.bind("touchstart click", function (e) { self.setMapState(worldState, true); })
 							.appendTo(this.mapSearchResults);
 	
-		// TODO: Change to external template
 	var resultContent = "<div class='gmMapSearchResultTitle'>{displayName}</div>";
 	var resultHtml = uesp.template(resultContent, world);
 	
@@ -3927,24 +3919,9 @@ uesp.gamemap.Map.prototype.onReceiveRecentChanges  = function (data)
 	for (key in data.recentChanges)
 	{
 		recentChange = data.recentChanges[key];
-		/*
-		 * id BIGINT NOT NULL AUTO_INCREMENT,
-		parentId BIGINT,
-		worldId BIGINT,
-		locationId BIGINT,
-		worldHistoryId BIGINT,
-		locationHistoryId BIGINT,
-		editUserId BIGINT NOT NULL,
-		editUserText TEXT NOT NULL,
-		editTimestamp TIMESTAMP NOT NULL,
-		editComment TEXT NOT NULL,
-		patrolled TINYINT NOT NULL,
-		PRIMARY KEY (id)
-		 */
 		
-		var imageURL = this.mapOptions.iconPath + recentChange.iconType + ".png";
+		let imageURL = this.mapOptions.iconPath + recentChange.iconType + ".png";
 		
-			// TODO: No hardcode names
 		output += "<div class='gmMapRCItem' onclick='g_GameMap.jumpToDestination(" + recentChange.locationId + ", true, true);'>";
 		output += "<img src='" + imageURL + "' class='gmMapRCItemIcon' />";
 		output += "<div class='gmMapRCItemName'>" + recentChange.locationName  + "</div>";
