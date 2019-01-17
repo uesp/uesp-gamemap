@@ -47,12 +47,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.helpBlockElement = null;
 	
 	this.isShowingRecentChanges = false;
-	
-	this.minValidWorldId = this.mapOptions.minValidWorldId;
-	this.maxValidWorldId = this.mapOptions.maxValidWorldId;
-	
-	this.mapLinkElement = this.mapOptions.mapLinkElement;
-	
+
 	this.recentChangesRoot = null;
 	
 	this.mapControlRoot = null;
@@ -236,7 +231,7 @@ uesp.gamemap.Map.prototype.canEdit = function ()
 
 uesp.gamemap.Map.prototype.updateMapLink = function ()
 {
-	linkElement = $(this.mapLinkElement);
+	let linkElement = $(this.mapOptions.mapLinkElement);
 		
 	if (linkElement != null)
 	{
@@ -866,7 +861,6 @@ uesp.gamemap.Map.prototype.jumpToDestination = function (destId, openPopup, useE
 	newState.gamePos.x = destLoc.x;
 	newState.gamePos.y = destLoc.y;
 	
-		//TODO: Use stored zoomLevel in world?
 	newState.zoomLevel = this.zoomLevel;
 	if (newState.zoomLevel < destLoc.displayLevel) newState.zoomLevel = destLoc.displayLevel;
 	
@@ -1932,7 +1926,7 @@ uesp.gamemap.Map.prototype.onReceiveCenterOnLocationData = function (data)
 	{
 		if (data.worlds == null || data.worlds.length === 0)
 		{
-			this.changeWorld(668); //TODO: Not hardcoded?
+			this.changeWorld(this.mapOptions.homeWorldId);
 			this.centerOnError = true;
 		}
 		else
@@ -1960,7 +1954,7 @@ uesp.gamemap.Map.prototype.onReceiveCenterOnLocationData = function (data)
 	
 	if (this.mapWorlds[worldId] == null) 
 	{
-		this.changeWorld(668); //TODO: Not hardcoded?
+		this.changeWorld(this.mapOptions.homeWorldId);
 		this.centerOnError = true;
 		return true;		
 	}
@@ -2007,8 +2001,8 @@ uesp.gamemap.Map.prototype.mergeWorldData = function (worlds)
 	{
 		var world = worlds[key];
 		
-		if (world.id < this.minValidWorldId) continue;
-		if (world.id > this.maxValidWorldId) continue;
+		if (world.id < this.mapOptions.minValidWorldId) continue;
+		if (world.id > this.mapOptions.maxValidWorldId) continue;
 		
 		if (uesp.gamemap.isNullorUndefined(world.name)) continue;
 		
