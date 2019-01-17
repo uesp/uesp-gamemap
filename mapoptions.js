@@ -41,9 +41,12 @@ uesp.gamemap.MapOptions = function(mapOptions)
 		// Map iconTypes values to strings
 	this.iconTypeMap = null;
 	
-		//Temporary values for the initial ESO maps
+		// Temporary values for the initial ESO maps
 	this.initialGamePosX = 500000;
 	this.initialGamePosY = 600000;
+	
+	this.minValidWorldId = 50;
+	this.maxValidWorldId = 20000;
 
 	this.mergeOptions(mapOptions);
 }
