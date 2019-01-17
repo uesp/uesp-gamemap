@@ -38,6 +38,8 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.initialGamePosY = 0;
 	this.initialZoom     = 10;
 	
+	this.mapLinkElement = '#gmMapLink';
+	
 		// Map iconTypes values to strings
 	this.iconTypeMap = null;
 	
