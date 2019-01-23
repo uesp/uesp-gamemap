@@ -26,7 +26,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	else
 		this.userEvents = userEvents;
 	
-	this.USE_CANVAS_DRAW = true;
+	this.USE_CANVAS_DRAW = false;
 	this.PANAMOUNT = this.mapOptions.tileSize;
 	
 	this.mapRoot = null;
@@ -450,8 +450,49 @@ uesp.gamemap.Map.prototype.convertPixelToGamePos = function(pixelX, pixelY)
 }
 
 
+uesp.gamemap.Map.prototype.onResize = function(event)
+{
+	let self = event.data.self;
+	
+	let canvasWidth = self.mapContainer.width();
+	let canvasHeight = self.mapContainer.height();
+	
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, "OnResize: " + canvasWidth + ", " + canvasHeight);
+	
+	$(self.mapCanvas).attr('id', 'gmMapCanvas').
+						attr('width', canvasWidth).
+						attr('height', canvasHeight).
+						css('width', canvasWidth).
+						css('height', canvasHeight);
+	
+	self.mapContext.fillStyle = self.canvasBGColor;
+	self.mapContext.fillRect(0, 0, self.mapCanvas.width, self.mapCanvas.height);
+	
+	self.mapContext.translate(self.mapTransformX, self.mapTransformY);
+	self.redrawCanvas();
+}
+
+
+uesp.gamemap.Map.prototype.onDocReady = function()
+{
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, "onDocReady");
+	
+	if (this.USE_CANVAS_DRAW)
+	{
+		let event = {};
+		event.data = {};
+		event.data.self = this;
+		
+		this.onResize(event);
+		this.redrawCanvas();
+	}
+}
+
+
 uesp.gamemap.Map.prototype.createEvents = function()
 {
+	let self = this;
+	
 	$(window).on("mousemove", { self: this }, this.onMouseMove);
 	$(window).on("touchmove", { self: this }, this.onTouchMove);
 	$('.gmMapTile').on("mousedown", { self: this }, this.onMouseDown);
@@ -471,6 +512,12 @@ uesp.gamemap.Map.prototype.createEvents = function()
 	$(window).on("keyup", { self: this }, this.onKeyUp);
 	$(window).on("keydown", { self: this }, this.onKeyDown);
 	
+	$(window).on('resize', { self: this }, this.onResize);
+	
+	$(document).ready(function() {
+			self.onDocReady();
+		});
+	
 	$('.gmMapTile').dblclick({ self: this }, this.onDoubleClick);
 }
 
@@ -488,6 +535,8 @@ uesp.gamemap.Map.prototype.createMapCanvas = function()
 	let canvasWidth = this.mapContainer.width();
 	let canvasHeight = this.mapContainer.height();
 	
+	uesp.logDebug(uesp.LOG_LEVEL_INFO, "createMapCanvas: " + canvasWidth + ", " + canvasHeight);
+	
 	this.mapCanvas = $('<canvas />').
 						attr('id', 'gmMapCanvas').
 						attr('width', canvasWidth).
@@ -500,8 +549,6 @@ uesp.gamemap.Map.prototype.createMapCanvas = function()
 	
 	this.mapContext.fillStyle = this.canvasBGColor;
 	this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
-	
-	//this.mapRoot.hide();
 }
 
 
