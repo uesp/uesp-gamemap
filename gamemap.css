@@ -1182,3 +1182,7 @@ body {
 	font-weight: normal;
 	font-size: 0.9em;
 }
+
+#gmMapRoot, #gmMapCanvas {
+	touch-action: none;
+}
