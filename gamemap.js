@@ -2612,7 +2612,7 @@ uesp.gamemap.Map.prototype.updateZoomControlButtons = function(newZoomLevel)
 }
 
 
-uesp.gamemap.Map.prototype.translateCanvas = function(dx, dy, animate = false)
+uesp.gamemap.Map.prototype.translateCanvas = function(dx, dy, animate)
 {
 	dx = Math.floor(dx);
 	dy = Math.floor(dy);
