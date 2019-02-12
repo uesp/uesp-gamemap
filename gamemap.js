@@ -3745,6 +3745,26 @@ uesp.gamemap.Map.prototype.createHelpBlockElement = function()
 {
 	var self = this;
 	
+	if (this.mapOptions.isOffline)
+	{
+		this.helpBlockElement = $(".gmHelpBlock");
+		
+		self.helpBlockElement.find('.gmHelpCloseButton').bind("touchstart click", function(event) {
+			self.hideHelpBlock();
+		});
+		
+		$(document).mousedown(function(e){
+			var container = self.helpBlockElement;
+			
+			if (!container.is(e.target) && container.has(e.target).length === 0)
+			{
+				self.hideHelpBlock();
+			}
+		});
+		
+		return;
+	}
+	
 	this.helpBlockElement = $('<div />')
 				.addClass('gmHelpBlock')
 				.html("Loading...")
