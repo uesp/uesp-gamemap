@@ -52,6 +52,8 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	
 	this.minValidWorldId = 50;
 	this.maxValidWorldId = 20000;
+	
+	this.isOffline = false;
 
 	this.mergeOptions(mapOptions);
 }

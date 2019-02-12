@@ -762,7 +762,7 @@ uesp.gamemap.Map.prototype.getMapBounds = function()
 	rightTile   = this.startTileX + (mapOffset.left - rootOffset.left + width )/this.mapOptions.tileSize;
 	bottomTile  = this.startTileY + (mapOffset.top  - rootOffset.top  + height)/this.mapOptions.tileSize;
 	
-	this.startTileX + this.mapOptions.tileCountX, this.startTileY + this.mapOptions.tileCountY
+	//this.startTileX + this.mapOptions.tileCountX, this.startTileY + this.mapOptions.tileCountY
 		
 	leftTop     = this.convertTileToGamePos(leftTile, topTile);
 	rightBottom = this.convertTileToGamePos(rightTile, bottomTile);
@@ -2116,10 +2116,17 @@ uesp.gamemap.Map.prototype.requestPermissions = function ()
 	var queryParams = {};
 	queryParams.action = "get_perm";
 	
-	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
-		self.onReceivePermissions(data); 
-		//if ( !(onLoadFunction == null) ) onLoadFunction.call(self, eventData);
-	});
+	if (this.mapOptions.isOffline)
+	{
+		setTimeout(	function() { self.onReceivePermissions({ action: "get_perm", canEdit: false }); }, 10);
+	}
+	else
+	{
+		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+			self.onReceivePermissions(data); 
+			//if ( !(onLoadFunction == null) ) onLoadFunction.call(self, eventData);
+		});
+	}
 }
 
 
@@ -2133,10 +2140,17 @@ uesp.gamemap.Map.prototype.retrieveLocation = function(locId, onLoadFunction, ev
 	queryParams.locid  = locId;
 	if (this.isShowHidden()) queryParams.showhidden = 1;
 	
-	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
-			self.onReceiveLocationData(data); 
-			if ( !(onLoadFunction == null) ) onLoadFunction.call(self, eventData);
-		});
+	if (this.mapOptions.isOffline)
+	{
+		setTimeout(	function() { ugmLoadOfflineLocation(self, queryParams, onLoadFunction, eventData); }, 10);
+	}
+	else
+	{
+		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+				self.onReceiveLocationData(data); 
+				if ( !(onLoadFunction == null) ) onLoadFunction.call(self, eventData, data);
+			});
+	}
 	
 	return true;
 	
@@ -2156,7 +2170,14 @@ uesp.gamemap.Map.prototype.retrieveCenterOnLocation = function(world, locationNa
 	//if (!this.hasWorld(this.worldId)) queryParams.incworld = 1;
 	//if (queryParams.world <= 0) return uesp.logError("Unknown worldId " + this.currentWorldId + "!");
 	
-	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveCenterOnLocationData(data); });
+	if (this.mapOptions.isOffline)
+	{
+		setTimeout(	function() { ugmLoadOfflineCenterOnLocation(self, queryParams); }, 10);
+	}
+	else
+	{
+		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveCenterOnLocationData(data); });
+	}
 	
 }
 
@@ -2179,7 +2200,14 @@ uesp.gamemap.Map.prototype.retrieveLocations = function()
 	
 	if (queryParams.world <= 0) return uesp.logError("Unknown worldId for current world " + this.currentWorldId + "!");
 	
-	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveLocationData(data); });
+	if (this.mapOptions.isOffline)
+	{
+		setTimeout( function() { ugmLoadOfflineLocations(self, queryParams); }, 10);
+	}
+	else
+	{
+		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveLocationData(data); });
+	}
 	
 	return true;
 }
@@ -2192,7 +2220,14 @@ uesp.gamemap.Map.prototype.retrieveWorldData = function()
 	queryParams.action = "get_worlds";
 	if (this.isShowHidden()) queryParams.showhidden = 1;
 	
-	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveWorldData(data); });
+	if (this.mapOptions.isOffline)
+	{
+		setTimeout( function() { ugmLoadOfflineWorlds(self, queryParams); }, 10);
+	}
+	else
+	{
+		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveWorldData(data); });
+	}
 }
 
 
@@ -3111,9 +3146,16 @@ uesp.gamemap.Map.prototype.doWorldSaveQuery = function(world)
 	
 	queryParams = world.createSaveQuery();
 	
-	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
-		self.onSavedWorld(data); 
-	});
+	if (this.mapOptions.isOffline)
+	{
+		// Do nothing
+	}
+	else
+	{
+		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+			self.onSavedWorld(data); 
+		});
+	}
 	
 	return true;
 }
@@ -3378,9 +3420,16 @@ uesp.gamemap.Map.prototype.doSearch = function (searchText, searchMapOnly)
 	
 	var queryParams = this.createSearchQuery(searchText, searchMapOnly);
 	
-	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
-		self.onReceiveSearchResults(data); 
-	});
+	if (this.mapOptions.isOffline)
+	{
+		setTimeout( function() { ugmSearchOfflineLocations(self, queryParams); }, 10);
+	}
+	else
+	{
+		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+			self.onReceiveSearchResults(data); 
+		});
+	}
 	
 	return true;
 }
@@ -3946,9 +3995,16 @@ uesp.gamemap.Map.prototype.updateRecentChanges  = function ()
 	var queryParams = {};
 	queryParams.action = "get_rc";
 	
-	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
-		self.onReceiveRecentChanges(data); 
-	});
+	if (this.mapOptions.isOffline)
+	{
+		// Do nothing
+	}
+	else
+	{
+		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+			self.onReceiveRecentChanges(data); 
+		});
+	}
 }
 
 
