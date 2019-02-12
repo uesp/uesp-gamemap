@@ -1145,7 +1145,7 @@ class GameMap
 		if ($this->dbReadInitialized || $this->dbWriteInitialized) return true;
 		
 		$this->db = new mysqli($uespGameMapReadDBHost, $uespGameMapReadUser, $uespGameMapReadPW, $uespGameMapDatabase);
-		if ($db->connect_error) return $this->reportError("Could not connect to mysql database!");
+		if ($this->db->connect_error) return $this->reportError("Could not connect to mysql database!");
 		
 		$this->dbReadInitialized = true;
 		$this->dbWriteInitialized = false;
@@ -1172,7 +1172,7 @@ class GameMap
 		}
 		
 		$this->db = new mysqli($uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW, $uespGameMapDatabase);
-		if ($db->connect_error) return $this->reportError("Could not connect to mysql database!");
+		if ($this->db->connect_error) return $this->reportError("Could not connect to mysql database!");
 		
 		$this->dbReadInitialized = true;
 		$this->dbWriteInitialized = true;
