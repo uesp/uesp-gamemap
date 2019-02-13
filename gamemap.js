@@ -929,8 +929,15 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 		return;
 	}
 	
-	var worldName = this.mapWorlds[this.currentWorldId].name;
+	var world = this.mapWorlds[this.currentWorldId];
+	var worldName = world.name;
 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
+	var isFakeMaxZoom = false;
+	
+	if (this.zoomLevel == world.maxZoom && this.mapOptions.useFakeMaxZoom)
+	{
+		isFakeMaxZoom = true;
+	}
 	
 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "worldID: " + this.currentWorldId + " worldName: " + worldName);
 			
@@ -950,9 +957,33 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
 			var element  = this.mapTiles[y][x].element;
 			
-			$('<img/>').attr('src', imageURL)
-				.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentWorldId))
-				.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
+			if (isFakeMaxZoom)
+			{
+				var xPos = "left";
+				var yPos = "top";
+				
+				if (tileX % 2 == 1) xPos = "right";
+				if (tileY % 2 == 1) yPos = "bottom";
+				
+				element.css("background-size", "200%");
+				element.css("background-position", xPos + " " + yPos);
+				
+				imageURL = this.mapOptions.getMapTileFunction(Math.floor(tileX/2), Math.floor(tileY/2), this.zoomLevel-1, worldName);
+				
+				$('<img/>').attr('src', imageURL)
+					.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentWorldId))
+					.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
+			}
+			else
+			{
+				element.css("background-size", "");
+				element.css("background-position", "");
+				
+				$('<img/>').attr('src', imageURL)
+					.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentWorldId))
+					.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
+			}			
+			
 		}
 	}
 }
@@ -1185,8 +1216,16 @@ uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
 		return;
 	}
 	
+	var world = this.mapWorlds[this.currentWorldId];
+	var worldName = world.name;
 	var worldName = this.mapWorlds[this.currentWorldId].name;
 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
+	var isFakeMaxZoom = false;
+	
+	if (this.zoomLevel == world.maxZoom && this.mapOptions.useFakeMaxZoom)
+	{
+		isFakeMaxZoom = true;
+	}
 	
 	for (y = 0; y < this.mapOptions.tileCountY; ++y)
 	{
@@ -1207,9 +1246,33 @@ uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
 			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
 			var element  = this.mapTiles[y][x].element;
 			
-			$('<img/>').attr('src', imageURL)
-				.load( uesp.gamemap.onMapTileLoadFunction(element, imageURL))
-				.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
+			if (isFakeMaxZoom)
+			{
+				var xPos = "left";
+				var yPos = "top";
+				
+				if (tileX % 2 == 1) xPos = "right";
+				if (tileY % 2 == 1) yPos = "bottom";
+				
+				element.css("background-size", "200%");
+				element.css("background-position", xPos + " " + yPos);
+				
+				imageURL = this.mapOptions.getMapTileFunction(Math.floor(tileX/2), Math.floor(tileY/2), this.zoomLevel-1, worldName);
+				
+				$('<img/>').attr('src', imageURL)
+					.load( uesp.gamemap.onMapTileLoadFunction(element, imageURL))
+					.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
+			}
+			else
+			{
+				element.css("background-size", "");
+				element.css("background-position", "");
+				
+				$('<img/>').attr('src', imageURL)
+					.load( uesp.gamemap.onMapTileLoadFunction(element, imageURL))
+					.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
+			}			
+
 		}
 	}
 }

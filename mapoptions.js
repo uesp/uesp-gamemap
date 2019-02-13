@@ -54,6 +54,7 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.maxValidWorldId = 20000;
 	
 	this.isOffline = false;
+	this.useFakeMaxZoom = false;
 
 	this.mergeOptions(mapOptions);
 }
