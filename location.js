@@ -327,15 +327,9 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 		this.labelElement.text(this.name);
 	}
 	
-	var iconSize = 8;
-	
-	if (this.iconElement != null) 
-	{
-		var width = this.iconElement.width();
-		if (width == 0) width = 32;
-		iconSize = width/2 - 2;
-	}
-	
+	var iconSizeX = this.parentMap.mapOptions.defaultIconWidth;
+	var iconSizeY = this.parentMap.mapOptions.defaultIconHeight;
+		
 	//var labelWidth = this.name.length*6 + 2;
 	var labelWidth  = this.labelElement.width();
 	var labelHeight = this.labelElement.height();
@@ -344,44 +338,44 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 		case 1:
 			anchorPoint = 'bottomRight';
 			labelTextAlign = 'right';
-			this.labelOffsetLeft = labelWidth + iconSize;
-			this.labelOffsetTop  = iconSize*2;
+			this.labelOffsetLeft = labelWidth + iconSizeX/2;
+			this.labelOffsetTop  = iconSizeY;
 			break;
 		case 2:
 			anchorPoint = 'bottomCenter';
 			labelTextAlign = 'center';
 			this.labelOffsetLeft = labelWidth/2;
-			this.labelOffsetTop  = iconSize*2;
+			this.labelOffsetTop  = iconSizeY;
 			break;
 		case 3:
 			anchorPoint = 'bottomLeft';
 			labelTextAlign = 'left';
-			this.labelOffsetLeft = -iconSize;
-			this.labelOffsetTop  = iconSize*2;
+			this.labelOffsetLeft = -iconSizeX/2;
+			this.labelOffsetTop  = iconSizeY;
 			break;
 		case 4:
 			anchorPoint = 'midRight';
 			labelTextAlign = 'right';
-			this.labelOffsetLeft = labelWidth + iconSize;
-			this.labelOffsetTop  = iconSize + labelHeight/2 - 4;
+			this.labelOffsetLeft = labelWidth + iconSizeX/2;
+			this.labelOffsetTop  = iconSizeY/2 + labelHeight/2 - 4;
 			break;
 		case 5:
 			anchorPoint = 'center';
 			labelTextAlign = 'center';
 			this.labelOffsetLeft = labelWidth/2;
-			this.labelOffsetTop  = iconSize + labelHeight/2 - 4;
+			this.labelOffsetTop  = iconSizeY/2 + labelHeight/2 - 4;
 			break;
 		case 6:
 		default:
 			anchorPoint = 'midLeft';
 			labelTextAlign = 'left';
-			this.labelOffsetLeft = -iconSize;
-			this.labelOffsetTop  = iconSize + labelHeight/2 - 4;
+			this.labelOffsetLeft = -iconSizeX/2;
+			this.labelOffsetTop  = iconSizeY/2 + labelHeight/2 - 4;
 			break;
 		case 7:
 			anchorPoint = 'topRight';
 			labelTextAlign = 'right';
-			this.labelOffsetLeft = labelWidth + iconSize;
+			this.labelOffsetLeft = labelWidth + iconSizeX/2;
 			this.labelOffsetTop  = 0;
 			break;
 		case 8:
@@ -393,7 +387,7 @@ uesp.gamemap.Location.prototype.updateLabel = function ()
 		case 9:
 			anchorPoint = 'topLeft';
 			labelTextAlign = 'left';
-			this.labelOffsetLeft = -iconSize;
+			this.labelOffsetLeft = -iconSizeX/2;
 			this.labelOffsetTop  = 0;
 			break;
 	}
@@ -720,6 +714,7 @@ uesp.gamemap.Location.prototype.createSaveQuery = function()
 	query += '&destid=' + this.destinationId;
 	query += '&locwidth=' + this.width;
 	query += '&locheight=' + this.height;
+	query += '&db=' + this.parentMap.mapOptions.dbPrefix;	
 	
 	if (this.locType > 1)
 	{
@@ -1301,8 +1296,8 @@ uesp.gamemap.Location.prototype.updateIconOffset = function ()
 	
 	var width  = this.iconElement.width();
 	var height = this.iconElement.height();
-	if (width  == 0 || height == 0) height = 32;
-	if (width  == 0) width = 32;
+	if (width  == 0 || height == 0) height = this.parentMap.mapOptions.defaultIconHeight;
+	if (width  == 0) width = this.parentMap.mapOptions.defaultIconWidth;
 		
 	this.iconElement.offset( { left: this.offsetLeft - width/2, top: this.offsetTop - height/2 });
 }

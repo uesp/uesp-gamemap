@@ -57,6 +57,8 @@
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	/* background-color: rgba(0,0,0,0.3);
+    box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.3); */
 }
 
 .gmMapLocIconHelper {
@@ -758,6 +760,7 @@ input[type=checkbox].gmMapEditPopupInput {
 }
 
 .gmMapControlRoot {
+	text-align: center;
 	position: absolute;
 	background-color: transparent;
 	border: none;
@@ -861,6 +864,12 @@ input[type=checkbox].gmMapEditPopupInput {
 	margin: 0;
 	padding: 0;
 	border: 2px inset;
+    padding-left: 5px;
+    border: none;
+    -webkit-appearance: none;
+    background-color: transparent;
+    outline: none;
+    font-size: 14px;
 }
 
 .gmMapSearchSmall {
@@ -970,7 +979,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	display: inline-block;
 }
 
-.gnMapSearchResultLocWorld {
+.gmMapSearchResultLocWorld {
 	display: inline-block;
 	font-size: 9px;
 }
@@ -1185,4 +1194,147 @@ body {
 
 #gmMapRoot, #gmMapCanvas {
 	touch-action: none;
+}
+
+#gmMapRoot {
+	z-index: 3;
+}
+
+#gmMapCanvas, #gmMapCanvasGrid {
+	touch-action: none;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+#gmMapCanvas {
+	z-index: 1;
+}
+
+#gmMapCanvasGrid {
+	z-index: 2;
+}
+
+.gmMenuForm {
+	display: inline;
+}
+
+#gmCellResourceGuide {
+	display: block;
+	position: absolute;
+	z-index: 4;
+}
+
+.gmCRGuideBox1 {
+	display: inline-block;
+	background-color: #ff00ff;
+	text-align: center;
+	text-shadow: 1px 1px black;
+	width: 36px;
+}
+
+.gmCRGuideBox2 {
+	display: inline-block;
+	background-color: #0000ff;
+	text-align: center;
+	text-shadow: 1px 1px black;
+	width: 36px;
+}
+
+.gmCRGuideBox3 {
+	display: inline-block;
+	background-color: #00ff00;
+	text-align: center;
+	text-shadow: 1px 1px black;
+	width: 36px;
+}
+
+.gmCRGuideBox4 {
+	display: inline-block;
+	background-color: #ffff00;
+	text-align: center;
+	text-shadow: 1px 1px black;
+	width: 36px;
+}
+
+.gmCRGuideBox5 {
+	display: inline-block;
+	background-color: #ff6633;
+	text-align: center;
+	text-shadow: 1px 1px black;
+	width: 36px;
+}
+
+.gmCRGuideBox6 {
+	display: inline-block;
+	background-color: #ff0000;
+	text-align: center;
+	text-shadow: 1px 1px black;
+	width: 36px;
+}
+
+.gmMapControlDisplayStates {
+	margin: 4px;
+}
+
+.gmMapControlDisplayState {
+    direction: ltr;
+    overflow: hidden;
+    text-align: center;
+    height: 30px;
+    display: block;
+    vertical-align: middle;
+    color: rgb(0, 0, 0);
+    font-family: Arial, sans-serif;
+    user-select: none;
+    font-size: 16px;
+    background-color: rgb(255, 255, 255);
+    padding: 0px 23px;
+    border-bottom-left-radius: 2px;
+    border-top-left-radius: 2px;
+    background-clip: padding-box;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+    min-width: 25px;
+    font-weight: normal;
+    cursor: pointer;
+    line-height: 30px;
+    margin: 2px;
+}
+
+.gmMapControlDisplayState:hover {
+	background-color: rgb(200, 200, 200);
+}
+
+.gmMapControlDisplayStateSelected {
+	font-weight: bold;
+	background-color: rgb(255, 255, 128);
+}
+
+.gmMapSearchButton {
+    background-image: none;
+    background: none;
+    border: medium none;
+    cursor: pointer;
+    margin: 0;
+    padding: 0.2em 0.4em 0.2em 0.2em;
+    width: 20px;
+    outline: none;
+    margin: 2px;
+}
+
+.gmSearchResetButton {
+    background-image: none;
+    background: none;
+    border: medium none;
+    cursor: pointer;
+    margin: 0;
+    padding: 0.2em 0.4em 0.2em 0.15em;
+    width: 16px;
+    outline: none;
+    margin: 2px;
+}
+
+.gmMapSearchButton:hover,
+.gmSearchResetButton:hover {
+	background-color: #ccc;
 }

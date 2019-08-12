@@ -1,0 +1,397 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>UESP:Test Skyrim Map</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+	 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+	 	integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+	<link rel="stylesheet" href="gamemap.css?date=15May2018" />
+	<link rel="stylesheet" href="srgamemap.css?date=15May2018" />
+	<link rel="stylesheet" media="only screen and (max-device-width:799px)" href="gamemap-mobile.css?date=29march2014a"/>
+	<script type="text/javascript" src="jquery-1.10.2.js"></script>
+	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"  integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+	<script type="text/javascript" src="common.js?date=8May2018"></script>
+	<script type="text/javascript" src="bounds.js?date=29march2014a"></script>
+	<script type="text/javascript" src="mapoptions.js?date=29march2014a"></script>
+	<script type="text/javascript" src="mapstate.js?date=29march2014a"></script>
+	<script type="text/javascript" src="location.js?date=3Sept2018"></script>
+	<script type="text/javascript" src="world.js?date=25sept2017"></script>
+	<script type="text/javascript" src="maptile.js?date=29march2014a"></script>
+	<script type="text/javascript" src="gamemap.js?date=8Sept2018"></script>
+	<!--OFFLINE_JAVASCRIPT-->
+	<script type="text/javascript">
+		var srIconMap = {
+				0: "None",
+				1: "City",
+				2: "Town",
+				3: "Settlement",
+				4: "Cave",
+				5: "Camp",
+				6: "Fort",
+				7: "Nordic Ruin",
+				8: "Dwarven Ruin",
+				9: "Shipwreck",
+				10: "Grove",
+				11: "Landmark",
+				12: "Dragon Lair",
+				13: "Farm",
+				14: "Wood Mill",
+				15: "Mine",
+				16: "Imperial Camp",
+				17: "Stormcloak Camp",
+				18: "Standing Stone",
+				19: "Wheat Mill",
+				20: "Smelter",
+				21: "Stable",
+				22: "Watchtower",
+				23: "Clearing",
+				24: "Pass",
+				25: "Altar",
+				26: "Rock",
+				27: "Lighthouse",
+				28: "Orc Stronghold",
+				29: "Giant Camp",
+				30: "Shack",
+				31: "Nordic Tower",
+				32: "Ruin",
+				33: "Dock",
+				34: "Daedric Shrine",
+				35: "Riften Castle",
+				36: "Riften",
+				37: "Windhelm Castle",
+				38: "Windhelm",
+				39: "Whiterun Castle",
+				40: "Whiterun",
+				41: "Solitude Castle",
+				42: "Solitude",
+				43: "Markarth Castle",
+				44: "Markarth",
+				45: "Winterhold Castle",
+				46: "Winterhold",
+				47: "Morthal Castle",
+				48: "Morthal",
+				49: "Falkreath Castle",
+				50: "Falkreath",
+				51: "Dawnstar Castle",
+				52: "Dawnstar",
+				53: "Temple Miraak",
+				54: "Raven Rock",
+				55: "Standing Stone",
+				56: "Telvanni Tower",
+				57: "To Skyrim",
+				58: "To Solstheim",
+				59: "Castle Karstaag",
+				60: "Door",
+				61: "Shrine",
+				62: "Ore Vein",
+				63: "Dragon Mound",
+				124: "Other",
+				191: "Other",
+				123: "Other",
+				82: "Other",
+				77: "Other",
+				100: "Beehive",
+		};
+		
+		var g_GameMap = null;
+		var g_MapState = null;
+		
+		var g_DefaultMapOptions = {
+				useLeaflet: true,
+				leafletTileLayer: '//maps.uesp.net/srmap/color/zoom{z}/skyrim-{x}-{y}-{z}.jpg',
+				
+				getMapTileFunction : getDefaultMapTile,
+				wikiUrl: "//en.uesp.net/wiki/",
+				wikiNamespace: "Skyrim",
+				mapUrl : "//esomap.uesp.net/srmap.html",
+				missingMapTile:  "//maps.uesp.net/images/sroutofrange-color.jpg",
+				missingMapTileFunction: getMissingMapTile,
+				iconPath: "sricons/",				
+				iconTypeMap: srIconMap,
+				gamePosX1: -233472,
+				gamePosX2: 262144,
+				gamePosY1: 192512,
+				gamePosY2: -180224,
+				initialGamePosX : 100000,
+				initialGamePosY : -100000,
+				initialZoom : 11,
+				tileCountX : 11,
+				tileCountY : 9,
+				mapLinkElement : '#gmMapLink',
+				homeWorldId : 1,
+				minValidWorldId : 0,
+				maxValidWorldId : 20000,
+				dbPrefix: "sr",
+				helpTemplate: "template/srhelpblock.txt",
+				showSearchThisLocation: false,
+				defaultIconWidth: 16,
+				defaultIconHeight: 30,
+				canvasBGColor: "#284358",
+				canvasBGColorFunction: getCanvasBackgroundColor,
+				
+				gridStartX: -233472,
+				gridStartY: -188416,
+				gridStopX: 262144,
+				gridStopY: 192512,
+				gridDeltaX: 4096,
+				gridDeltaY: 4096,
+				gridStyle: "rgba(255,255,0,0.5)",
+				gridStartLabelZoom: 13,
+				gridShowLabels: true,
+				gridLabelOffsetX: 0,
+				gridLabelOffsetY: -4096,
+				gridOffsetPowerY: 2,
+				gridOffsetY: 37,
+				
+				cellResourceStartX: -57,
+				cellResourceStartY: -45,
+				cellResourceStopX: 63,
+				cellResourceStopY: 48,
+				cellResourceDeltaX: 4096,
+				cellResourceDeltaY: 4096,
+				
+				displayStates: [ "Day", "Night" ],
+				
+				// TODO: Permissions?
+				<!--OFFLINE_OPTIONS-->
+		};
+		
+		
+		function getCanvasBackgroundColor(worldName, displayState)
+		{
+			if (displayState == "Night") return "#000000";
+			return "#284358";
+		}
+		
+		
+		function getMissingMapTile(worldName, displayState)
+		{
+			if (displayState == "Night") return "//maps.uesp.net/images/sroutofrange-night.jpg";
+			return "//maps.uesp.net/images/sroutofrange-color.jpg";
+		}
+		
+		
+		function getDefaultMapTile(xPos, yPos, zoom, worldName, displayState)
+		{
+			if (displayState == "Night") return "//maps.uesp.net/srmap/night/zoom" + zoom + "/skyrim-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
+			return "//maps.uesp.net/srmap/color/zoom" + zoom + "/skyrim-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
+		}
+						
+				
+		function getDefaultMapTile_Offline(xPos, yPos, zoom, worldName)
+		{
+				//TODO
+			return "/zoom" + zoom + "/skyrim-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
+		}
+
+		
+		function onWorldLoad()
+		{
+			if (this.hasCenterOnParam()) return;
+			
+			defaultMapState = new uesp.gamemap.MapState();
+			
+			defaultMapState.worldId = 1;
+			defaultMapState.zoomLevel = 11;
+			defaultMapState.gamePos.x = 110000;
+			defaultMapState.gamePos.y = -20000;
+			defaultMapState.grid = false;
+			defaultMapState.cellResource = "";
+			defaultMapState.displayState = "Day";
+			
+			mapState = this.getMapStateFromQuery(defaultMapState);
+			this.setMapState(mapState);
+		}
+		
+		
+		if (g_DefaultMapOptions.isOffline)
+		{
+			g_DefaultMapOptions.getMapTileFunction = getDefaultMapTile_Offline;
+			g_DefaultMapOptions.missingMapTile = "blacknulltile.jpg";
+		}
+		
+		
+		function onPermLoad()
+		{
+			canEdit = this.canEdit() && !uesp.isMobileDevice();
+			
+			if (canEdit)
+			{
+				$("#gmMapEditButtons").show();
+				$("#addLocationButton").show();
+				$("#addPathButton").show();
+				$("#addAreaButton").show();
+				$("#editWorldButton").show();
+				$("#showRecentChangeButton").show();
+			}
+			else
+			{
+				$("#addLocationButton").hide();
+				$("#addPathButton").hide();
+				$("#addAreaButton").hide();
+				$("#editWorldButton").hide();
+				$("#showRecentChangeButton").hide();
+			}
+			
+			updateMenuBarHeight();
+		}
+		
+		
+		$(window).resize( function(e) {
+			updateMenuBarHeight();
+		});
+		
+		
+		function updateMenuBarHeight()
+		{
+			var menuBar = $("#gmMenuBar");
+			var map = $('#gmMap');
+			
+			var height = menuBar.height();
+			map.css('top', '' + height + 'px');
+		}
+		
+		$( document ).ready( function()
+		{
+			userEvents = {
+				onMapWorldsLoaded   : onWorldLoad,
+				onPermissionsLoaded : onPermLoad,
+			};
+			
+			g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
+			
+			$("#gmMapCellGrid").bind("touchstart click", { self: g_GameMap }, g_GameMap.onCellGridClick);
+			
+			updateMenuBarHeight();
+		});
+		
+		
+	</script>
+</head>
+<body>
+
+<div id="gmMenuBar">
+		<div id="gmTitle">UESP:Skyrim Map</div>
+		
+		<ol class="gmMenuLinks">
+			<li class="gmMenuItem gmNoMobile"><a title="The permanent and complete link for the current map view" href="" id="gmMapLink">Link</a></li>
+			<li class="gmMenuItem gmNoMobile"><a title="Reset the map state" href="" id="gmMapReset">Reset</a></li>
+			<li class="gmMenuItem gmNoMobile"><div title="Show the cell grid line boundaries and coordinates" id="gmMapCellGrid">Show Cell Grid</div></li>
+			<li class="gmMenuItem gmNoMobile" id="gmShowCellResource">
+				<form class="gmMenuForm" action="none" onSubmit="return false;">
+				Show Resource 
+				<select id="gmCellResourceList" name="cellresource" onchange="g_GameMap.onCellResourceChange(this);">
+					<option value="">None</option>
+					<option value='NordicBarnacleCluster01'>Barnacle</option>
+					<option value='BirdsNest'>Bird Nest</option>
+					<option value='FloraMushroom02'>Bleeding Crown</option>
+					<option value='FloraMushroom06'>Blisterwort</option>
+					<option value='TreeFloraCabbage01'>Cabbage</option>
+					<option value='TreeFloraCanisRoot01'>Canis Root</option>
+					<option value='CharredSkeever03'>Charred Skeever</option>
+					<option value='ChickenNest'>Chicken Nest</option>
+					<option value='Clam01'>Clam</option>
+					<option value='ClayDepositHF'>Clay Deposit (HF)</option>
+					<option value='CorundumOreVein'>Corundum Ore Vein</option>
+					<option value='FloraCreepCluster'>Creep Cluster</option>
+					<option value='TreeFloraDeathBell01'>Deathbell</option>
+					<option value='TreeFloraDragonsTongue01'>Dragon's Tongue</option>
+					<option value='EbonyOreVein'>Ebony Ore Vein</option>
+					<option value='HangingElvesEar01'>Elves Ear</option>
+					<option value='FloraMushroom01'>Fly Amanita</option>
+					<option value='HangingFrostMirriam'>Frost Mirriam</option>
+					<option value='FloraSwampFungalPod01'>Fungal Pod</option>
+					<option value='HangingGarlicBraid'>Garlic</option>
+					<option value='FloraGiantLichen'>Giant Lichen</option>
+					<option value='GoldOreVein'>Gold Ore Vein</option>
+					<option value='TreeGourdCluster01'>Gourd</option>
+					<option value='TreeFloraHangingMoss01'>Hanging Moss</option>
+					<option value='FloraMushroom04'>Imp Stool</option>
+					<option value='IronOreVein'>Iron Ore Vein</option>
+					<option value='TreeFloraJazBay01'>Jazbay</option>
+					<option value='TreeFloraJuniper01'>Juniper</option>
+					<option value='TreeFloraLavender01'>Lavender</option>
+					<option value='TreeFloraLeek01'>Leek</option>
+					<option value='MalachiteOreVein'>Malachite Ore Vein</option>
+					<option value='MammothCheese01'>Mammoth Cheese</option>
+					<option value='MoonstoneOreVein'>Moonstone Ore Vein</option>
+					<option value='TreePineForestHollow01BMoraTapinella'>Mora Tapinella</option>
+					<option value='TreeFloraMountainFlower01Blue'>Mountain Flower (Blue)</option>
+					<option value='TreeFloraMountainFlower01Purple'>Mountain Flower (Purple)</option>
+					<option value='TreeFloraMountainFlower01Red'>Mountain Flower (Red)</option>
+					<option value='FloraMushroom05'>Namira's Rot</option>
+					<option value='TreeFloraNightshade01'>Nightshade</option>
+					<option value='OrichalcumOreVein'>Orichalcum Ore Vein</option>
+					<option value='HangingPheasant01'>Pheasant</option>
+					<option value='TreeFloraPotatoPlant01'>Potato</option>
+					<option value='QuicksilverOreVein'>Quicksilver Ore Vein</option>
+					<option value='HangingRabbit01'>Rabbit</option>
+					<option value='DeadSalmon01'>Salmon</option>
+					<option value='TreeAspenLog01ScalyPholiota'>Scaly Pholiota</option>
+					<option value='SilverOreVein'>Silver Ore Vein</option>
+					<option value='SlaughterfishEggNest01'>Slaughterfish Egg</option>
+					<option value='TreeFloraSnowberry01'>Snowberry</option>
+					<option value='TreeFloraSpikyGrass01'>Spiky Grass</option>
+					<option value='StoneQuarryHF'>Stone Quarry (HF)</option>
+					<option value='TreeFloraThistle01'>Thistle</option>
+					<option value='TreeFloraTundraCotton01'>Tundra Cotton</option>
+					<option value='TreeFloraWheat01'>Wheat</option>
+					<option value='FloraMushroom03'>White Cap</option>
+				</select>
+			</form>
+			<br/>
+			<div id="gmCellResourceGuide" style="display: none;">
+				<div class="gmCRGuideBox1">1-2</div>
+				<div class="gmCRGuideBox2">3-5</div>
+				<div class="gmCRGuideBox3">6-10</div>
+				<div class="gmCRGuideBox4">11-20</div>
+				<div class="gmCRGuideBox5">21-50</div>
+				<div class="gmCRGuideBox6">+51</div>
+			</div>
+			</li>
+		</ol>
+		<div id="gmMapListRoot" tabindex="0" style="display:none;">
+			<!--OFFLINE_GROUPLIST-->
+		</div>
+		
+		<div id="gmMenuLinksRight">
+			<ol class="gmMenuLinks">
+				<li class="gmMenuItem gmNoMobile" onclick="g_GameMap.showMapKey();" ontouchstart="g_GameMap.showMapKey();" id="gmMapShowKey">Map Key</li>
+				<li class="gmMenuItem gmNoMobile" onclick="g_GameMap.showHelpBlock();" ontouchstart="g_GameMap.showHelpBlock();" id="gmHelp">Help</li>
+				<li class="gmMenuItem gmNoMobile"><a href="//www.uesp.net/wiki/UESPWiki_talk:Skyrim_Map_Design" id="gmMapDiscuss">Discuss</a></li>
+				<li class="gmMenuItem gmNoMobile"><a href="//www.uesp.net/wiki/Main_Page" id="gmMapHome">UESP Home</a></li>
+			</ol>
+		</div>
+		
+		<div id="gmMapEditButtons" style="display:none;">
+			<button id="editWorldButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onEditWorld();" ontouchstart="g_GameMap.onEditWorld();">Edit World</button>
+			<button id="addLocationButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddLocationStart();"  ontouchstart="g_GameMap.onAddLocationStart();">Add Location</button>
+			<button id="addPathButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddPathStart();"  ontouchstart="g_GameMap.onAddPathStart();">Add Path</button>
+			<button id="addAreaButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddAreaStart();"  ontouchstart="g_GameMap.onAddAreaStart();">Add Area</button>
+			&nbsp;
+			<div id="showRecentChangeButton" class="gmToggleButton gmNoMobile" style="display:none;" onclick="g_GameMap.onRecentChanges(this);" ontouchstart="g_GameMap.onRecentChanges(this);">Recent Changes</div>
+		</div>
+</div>
+
+<div id="gmMap">
+	<!--OFFLINE_HELPBLOCK-->
+</div>
+
+<script type="text/javascript">
+if (!g_DefaultMapOptions.isOffline)
+{
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-1386039-6']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+}
+</script>
+
+</body>
+</html>
