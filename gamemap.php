@@ -77,12 +77,15 @@ class GameMap
 	
 	public $limitCount = 200;
 	
-	private $db = null;
-	private $skipCheckTables = true;
-	private $dbReadInitialized  = false;
-	private $dbWriteInitialized = false;
-	private $startedSession = false;
-	private $canEdit = false;
+	public $cellResourceEditorId = "";
+	
+	public $db = null;
+	public $dbPrefix = "";
+	public $skipCheckTables = true;
+	public $dbReadInitialized  = false;
+	public $dbWriteInitialized = false;
+	public $startedSession = false;
+	public $canEdit = false;
 
 	
 	function __construct ()
@@ -116,7 +119,7 @@ class GameMap
 	}
 	
 	
-	private function checkTables()
+	public function checkTables()
 	{
 		$result = $this->db->query('select 1 from `world`;');
 		
@@ -129,7 +132,7 @@ class GameMap
 	}
 	
 	
-	private function createTables()
+	public function createTables()
 	{
 		$query = "CREATE TABLE IF NOT EXISTS `world` (
 					`id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -249,6 +252,19 @@ class GameMap
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to create revision table!");
 		
+		$query = "CREATE TABLE IF NOT EXISTS cellResource (
+					worldId BIGINT,
+					formId BIGINT NOT NULL,
+					name TEXT NOT NULL,
+					editorId TEXT NOT NULL,
+					data TEXT NOT NULL,
+					PRIMARY KEY (formId),
+					INDEX index_editorid(editorId(24))
+				);";
+		
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to create cellResource table!");
+		
 		$this->addOutputItem("createResult", true);
 		return true;
 	}
@@ -283,6 +299,8 @@ class GameMap
 				return $this->doSearch();
 			case 'get_rc':
 				return $this->doGetRecentChanges();
+			case 'get_cellresource':
+				return $this->doGetCellResource();
 			case 'default':
 			default:
 				break;
@@ -502,7 +520,7 @@ class GameMap
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
-			settype($row['zoomOffset'], "integer");
+			settype($row['zoomOffset'], "float");
 				
 			$worlds[] = $row;
 			$count += 1;
@@ -551,7 +569,7 @@ class GameMap
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
-			settype($row['zoomOffset'], "integer");
+			settype($row['zoomOffset'], "float");
 	
 			$worlds[] = $row;
 			$count += 1;
@@ -687,6 +705,37 @@ class GameMap
 		
 		$this->addOutputItem("worldId", $worldId);
 		$this->addOutputItem("locationId", $locId);
+		
+		return true;
+	}
+	
+	
+	public function doGetCellResource()
+	{
+		if (!$this->initDatabase()) return false;
+		
+		if ($this->worldId <= 0) return $this->reportError("No world specified to retrieve cell resources for!");
+		
+		$query  = "SELECT * from cellResource WHERE worldId='{$this->worldId}' AND editorId='{$this->cellResourceEditorId}';";
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to retrieve cell resource data!");
+		
+		$resources = array();
+		$count = 0;
+		
+		while ( ($row = $result->fetch_assoc()) )
+		{
+			settype($row['formId'], "integer");
+			settype($row['worldId'], "integer");
+			
+			$row['data'] = json_decode($row['data']);
+			
+			$resources[] = $row;
+			$count += 1;
+		}
+		
+		$this->addOutputItem("resources", $resources);
+		$this->addOutputItem("resourceCount", $count);
 		
 		return true;
 	}
@@ -1054,7 +1103,7 @@ class GameMap
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
-			settype($row['zoomOffset'], "integer");
+			settype($row['zoomOffset'], "float");
 				
 			$worlds[] = $row;
 			$count += 1;
@@ -1106,13 +1155,14 @@ class GameMap
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
-			settype($row['zoomOffset'], "integer");
+			settype($row['zoomOffset'], "float");
 			
 			$worlds[] = $row;
 			$count += 1;
 		}
 		
 		$this->addOutputItem("worlds", $worlds);
+		$this->addOutputItem("dbPrefix", $this->dbPrefix);
 		$this->addOutputItem("worldCount", $count);
 		return true;
 	}
@@ -1144,7 +1194,10 @@ class GameMap
 		
 		if ($this->dbReadInitialized || $this->dbWriteInitialized) return true;
 		
-		$this->db = new mysqli($uespGameMapReadDBHost, $uespGameMapReadUser, $uespGameMapReadPW, $uespGameMapDatabase);
+		$database = $uespGameMapDatabase;
+		if ($this->dbPrefix != "") $database = $uespGameMapDatabase . "_" . $this->dbPrefix;
+		
+		$this->db = new mysqli($uespGameMapReadDBHost, $uespGameMapReadUser, $uespGameMapReadPW, $database);
 		if ($this->db->connect_error) return $this->reportError("Could not connect to mysql database!");
 		
 		$this->dbReadInitialized = true;
@@ -1171,7 +1224,10 @@ class GameMap
 			$this->dbReadInitialized = false;
 		}
 		
-		$this->db = new mysqli($uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW, $uespGameMapDatabase);
+		$database = $uespGameMapDatabase;
+		if ($this->dbPrefix != "") $database = $uespGameMapDatabase . "_" . $this->dbPrefix; 
+		
+		$this->db = new mysqli($uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW, $database);
 		if ($this->db->connect_error) return $this->reportError("Could not connect to mysql database!");
 		
 		$this->dbReadInitialized = true;
@@ -1184,51 +1240,76 @@ class GameMap
 	
 	private function parseInputParams ()
 	{
+		
+		if (array_key_exists("db", $this->inputParams))
+		{
+			$dbPrefix = $this->inputParams['db'];
+			
+			switch ($dbPrefix)
+			{
+				case 'sr':
+					$this->dbPrefix = "sr";
+					break;
+				case 'ob':
+					$this->dbPrefix = "ob";
+					break;
+				case 'db':
+					$this->dbPrefix = "db";
+					break;
+				case 'mw':
+					$this->dbPrefix = "mw";
+					break;
+				case 'si':
+					$this->dbPrefix = "si";
+					break;
+			}
+		}
+		
 			//TODO: Need to change to write db connection afterwards if required
-		if (!$this->initDatabase()) return false;
+		if (!$this->initDatabase()) return false;		
 		
 			//TODO: Better parameter handling
 		if (array_key_exists('action', $this->inputParams)) $this->action = $this->db->real_escape_string(strtolower($this->inputParams['action']));
-		if (array_key_exists('top',    $this->inputParams)) $this->limitTop    = intval($this->db->real_escape_string($this->inputParams['top']));
-		if (array_key_exists('left',   $this->inputParams)) $this->limitLeft   = intval($this->db->real_escape_string($this->inputParams['left']));
-		if (array_key_exists('bottom', $this->inputParams)) $this->limitBottom = intval($this->db->real_escape_string($this->inputParams['bottom']));
-		if (array_key_exists('right',  $this->inputParams)) $this->limitRight  = intval($this->db->real_escape_string($this->inputParams['right']));
-		if (array_key_exists('zoom',   $this->inputParams)) $this->limitDisplayLevel = intval($this->db->real_escape_string($this->inputParams['zoom']));
-		if (array_key_exists('locid',  $this->inputParams)) $this->locationId = intval($this->db->real_escape_string($this->inputParams['locid']));
-		if (array_key_exists('incworld',  $this->inputParams)) $this->includeWorld = intval($this->db->real_escape_string($this->inputParams['incworld']));
-		if (array_key_exists('worldid',  $this->inputParams)) $this->worldId = intval($this->db->real_escape_string($this->inputParams['worldid']));
+		if (array_key_exists('top',    $this->inputParams)) $this->limitTop    = intval($this->inputParams['top']);
+		if (array_key_exists('left',   $this->inputParams)) $this->limitLeft   = intval($this->inputParams['left']);
+		if (array_key_exists('bottom', $this->inputParams)) $this->limitBottom = intval($this->inputParams['bottom']);
+		if (array_key_exists('right',  $this->inputParams)) $this->limitRight  = intval($this->inputParams['right']);
+		if (array_key_exists('zoom',   $this->inputParams)) $this->limitDisplayLevel = intval($this->inputParams['zoom']);
+		if (array_key_exists('locid',  $this->inputParams)) $this->locationId = intval($this->inputParams['locid']);
+		if (array_key_exists('incworld',  $this->inputParams)) $this->includeWorld = intval($this->inputParams['incworld']);
+		if (array_key_exists('worldid',  $this->inputParams)) $this->worldId = intval($this->inputParams['worldid']);
 		
 		if (array_key_exists('displaylevel',  $this->inputParams)) 
 		{
-			$this->locDisplayLevel = intval($this->db->real_escape_string($this->inputParams['displaylevel']));
+			$this->locDisplayLevel = intval($this->inputParams['displaylevel']);
 			if ($this->locDisplayLevel <  0) $this->locDisplayLevel = 0;
 			if ($this->locDisplayLevel > 11) $this->locDisplayLevel = 11;
 		}
 		
-		if (array_key_exists('visible',  $this->inputParams)) $this->locVisible = intval($this->db->real_escape_string($this->inputParams['visible']));
-		if (array_key_exists('destid',  $this->inputParams)) $this->locDestId = intval($this->db->real_escape_string($this->inputParams['destid']));
-		if (array_key_exists('x',  $this->inputParams)) $this->locX = intval($this->db->real_escape_string($this->inputParams['x']));
-		if (array_key_exists('y',  $this->inputParams)) $this->locY = intval($this->db->real_escape_string($this->inputParams['y']));
-		if (array_key_exists('locwidth',  $this->inputParams)) $this->locWidth = intval($this->db->real_escape_string($this->inputParams['locwidth']));
-		if (array_key_exists('locheight',  $this->inputParams)) $this->locHeight = intval($this->db->real_escape_string($this->inputParams['locheight']));
-		if (array_key_exists('loctype',  $this->inputParams)) $this->locType = intval($this->db->real_escape_string($this->inputParams['loctype']));
-		if (array_key_exists('icontype',  $this->inputParams)) $this->locIconType = intval($this->db->real_escape_string($this->inputParams['icontype']));
+		if (array_key_exists('visible',  $this->inputParams)) $this->locVisible = intval($this->inputParams['visible']);
+		if (array_key_exists('destid',  $this->inputParams)) $this->locDestId = intval($this->inputParams['destid']);
+		if (array_key_exists('x',  $this->inputParams)) $this->locX = intval($this->inputParams['x']);
+		if (array_key_exists('y',  $this->inputParams)) $this->locY = intval($this->inputParams['y']);
+		if (array_key_exists('locwidth',  $this->inputParams)) $this->locWidth = intval($this->inputParams['locwidth']);
+		if (array_key_exists('locheight',  $this->inputParams)) $this->locHeight = intval($this->inputParams['locheight']);
+		if (array_key_exists('loctype',  $this->inputParams)) $this->locType = intval($this->inputParams['loctype']);
+		if (array_key_exists('icontype',  $this->inputParams)) $this->locIconType = intval($this->inputParams['icontype']);
 		if (array_key_exists('name', $this->inputParams)) $this->locName = $this->db->real_escape_string($this->inputParams['name']);
 		if (array_key_exists('description', $this->inputParams)) $this->locDescription = $this->db->real_escape_string($this->inputParams['description']);
 		if (array_key_exists('wikipage', $this->inputParams)) $this->locWikiPage = $this->db->real_escape_string($this->inputParams['wikipage']);
 		if (array_key_exists('displaydata', $this->inputParams)) $this->locDisplayData = $this->db->real_escape_string($this->inputParams['displaydata']);
 		if (array_key_exists('displayname', $this->inputParams)) $this->worldDisplayName = $this->db->real_escape_string($this->inputParams['displayname']);
 		if (array_key_exists('missingtile', $this->inputParams)) $this->worldMissingTile = $this->db->real_escape_string($this->inputParams['missingtile']);
-		if (array_key_exists('enabled',  $this->inputParams)) $this->worldEnabled = intval($this->db->real_escape_string($this->inputParams['enabled']));
-		if (array_key_exists('minzoom',  $this->inputParams)) $this->worldMinZoom = intval($this->db->real_escape_string($this->inputParams['minzoom']));
-		if (array_key_exists('maxzoom',  $this->inputParams)) $this->worldMaxZoom = intval($this->db->real_escape_string($this->inputParams['maxzoom']));
-		if (array_key_exists('zoomoffset',  $this->inputParams)) $this->worldZoomOffset = intval($this->db->real_escape_string($this->inputParams['zoomoffset']));
-		if (array_key_exists('posleft',  $this->inputParams)) $this->worldPosLeft = intval($this->db->real_escape_string($this->inputParams['posleft']));
-		if (array_key_exists('posright',  $this->inputParams)) $this->worldPosRight = intval($this->db->real_escape_string($this->inputParams['posright']));
-		if (array_key_exists('postop',  $this->inputParams)) $this->worldPosTop = intval($this->db->real_escape_string($this->inputParams['postop']));
-		if (array_key_exists('posbottom',  $this->inputParams)) $this->worldPosBottom = intval($this->db->real_escape_string($this->inputParams['posbottom']));
-		if (array_key_exists('parentid',  $this->inputParams)) $this->worldParentId = intval($this->db->real_escape_string($this->inputParams['parentid']));
-		if (array_key_exists('revisionid',  $this->inputParams)) $this->revisionId = intval($this->db->real_escape_string($this->inputParams['revisionid']));
+		if (array_key_exists('enabled',  $this->inputParams)) $this->worldEnabled = intval($this->inputParams['enabled']);
+		if (array_key_exists('minzoom',  $this->inputParams)) $this->worldMinZoom = intval($this->inputParams['minzoom']);
+		if (array_key_exists('maxzoom',  $this->inputParams)) $this->worldMaxZoom = intval($this->inputParams['maxzoom']);
+		if (array_key_exists('zoomoffset',  $this->inputParams)) $this->worldZoomOffset = intval($this->inputParams['zoomoffset']);
+		if (array_key_exists('posleft',  $this->inputParams)) $this->worldPosLeft = intval($this->inputParams['posleft']);
+		if (array_key_exists('posright',  $this->inputParams)) $this->worldPosRight = intval($this->inputParams['posright']);
+		if (array_key_exists('postop',  $this->inputParams)) $this->worldPosTop = intval($this->inputParams['postop']);
+		if (array_key_exists('posbottom',  $this->inputParams)) $this->worldPosBottom = intval($this->inputParams['posbottom']);
+		if (array_key_exists('parentid',  $this->inputParams)) $this->worldParentId = intval($this->inputParams['parentid']);
+		if (array_key_exists('revisionid',  $this->inputParams)) $this->revisionId = intval($this->inputParams['revisionid']);
 		
 		if (array_key_exists('search',  $this->inputParams))
 		{
@@ -1239,11 +1320,12 @@ class GameMap
 		if (array_key_exists('searchtype',  $this->inputParams))
 		{
 			$this->unsafeSearchType = urldecode($this->inputParams['searchtype']);
-			$this->searchType = intval($this->db->real_escape_string($this->unsafeSearchType));
+			$this->searchType = intval($this->unsafeSearchType);
 		}
 		
 		if (array_key_exists('centeron',  $this->inputParams)) $this->locCenterOn = $this->inputParams['centeron'];
-		if (array_key_exists('showhidden',  $this->inputParams)) $this->showHidden = intval($this->db->real_escape_string($this->inputParams['showhidden']));
+		if (array_key_exists('showhidden',  $this->inputParams)) $this->showHidden = intval($$this->inputParams['showhidden']);
+		if (array_key_exists('editorid',  $this->inputParams)) $this->cellResourceEditorId = $this->db->real_escape_string($this->inputParams['editorid']);
 		
 			// Unsure why these are not being replaced automatically
 		$this->locCenterOn = urldecode($this->locCenterOn);
@@ -1289,6 +1371,8 @@ class GameMap
 		}
 		
 		if ($this->action == 'default' && $this->search != '') $this->action = 'search';
+		
+
 	}
 	
 	

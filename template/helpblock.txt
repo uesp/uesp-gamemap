@@ -1,8 +1,8 @@
 <div class='gmHelpBlockTitle'>Quick Help</div>
 <button class='gmHelpCloseButton'>Close</button>
 <p>					
-The following are some basic tips for using the map. See the <a href="http://www.uesp.net/wiki/UESPWiki:ESO_Map_Design">ESO Map Design</a>
-page for more details or see the map's <a href="http://www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design">Talk Page</a> to discuss or ask
+The following are some basic tips for using the map. See the <a href="//en.uesp.net/wiki/UESPWiki:ESO_Map_Design">ESO Map Design</a>
+page for more details or see the map's <a href="//en.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design">Talk Page</a> to discuss or ask
 questions about this map.
 
 <ul>

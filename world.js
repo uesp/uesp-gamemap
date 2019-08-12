@@ -121,6 +121,7 @@ uesp.gamemap.World.prototype.createSaveQuery = function()
 	query += '&posbottom=' + this.posBottom;
 	query += '&zoomoffset=' + this.zoomOffset;
 	query += '&enabled=' + (this.enabled ? '1' : '0');
+	query += '&db=' + this.mapOptions.dbPrefix;
 	
 	if (this.locType > 1)
 	{

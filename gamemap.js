@@ -26,12 +26,16 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	else
 		this.userEvents = userEvents;
 	
-	this.USE_CANVAS_DRAW = false;
+	this.USE_CANVAS_DRAW = this.mapOptions.useCanvasDraw;
+	this.USE_LEAFLET = this.mapOptions.useLeaflet;
 	this.PANAMOUNT = this.mapOptions.tileSize;
 	
 	this.mapRoot = null;
 	this.mapCanvas = null;
+	this.mapCanvasGrid = null;
 	this.mapContext = null;
+	this.mapContextGrid = null;
+	this.mapContainerId = mapContainerId;
 	this.mapContainer = $('#' + mapContainerId);
 	if (this.mapContainer == null) uesp.logError('The gamemap container \'' + mapContainerId + '\' was not found!');
 	
@@ -90,7 +94,6 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	
 	this.showPopupOnLoadLocationId = -1;
 	
-	this.canvasBGColor = "black";
 	this.mapTransformX = 0;
 	this.mapTransformY = 0;
 	this.canvasLastDragX = 0;
@@ -99,6 +102,9 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.canvasImageMap = {};
 	this.canvasTileCountX = 0;
 	this.canvasTileCountY = 0;
+	
+	this.isPinching = false;
+	this.lastPinchDistance = 0;
 	
 		// This just controls the client-side editing abilities.
 		// All security for writes is handled on the server side.
@@ -112,10 +118,17 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.worldEditPopup = null;
 	this.currentEditWorld = null;
 	
+	this.isDrawGrid = false;
+	this.cellResource = "";
+	this.loadedCellResource = "";
+	this.cellResourceData = {};
+	
 	this.worldGroupListContents = '';
 	this.helpBlockContents = '';
 	
 	this.mapTiles = [];
+	
+	this.displayState = "";
 	
 	this.queryParams = uesp.parseQueryParams();
 	
@@ -127,6 +140,8 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 		this.retrieveCenterOnLocation(this.queryParams.world, this.queryParams.centeron);
 	}
 	
+	if (this.USE_LEAFLET) this.initializeLeaflet();
+	
 	this.createMapRoot();
 	this.createMapTiles();
 	this.createMapControls();
@@ -137,6 +152,20 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	
 	this.setGamePosNoUpdate(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY, this.mapOptions.initialZoom);
 	this.updateMapStateFromQuery(false);
+}
+
+
+uesp.gamemap.Map.prototype.initializeLeaflet = function()
+{
+	$('<div />').attr('id', 'gmMapLeafletRoot').appendTo(this.mapContainer);
+	this.leafletMap = L.map("gmMapLeafletRoot", { crs: L.CRS.Simple });
+	//this.leafletMap = L.map("gmMapLeafletRoot", );
+	this.leafletMap.setView([1, 1], 16);
+	
+	L.tileLayer(this.mapOptions.leafletTileLayer, {
+	    maxZoom: 17,
+	    id: 'mapbox.streets',
+	}).addTo(this.leafletMap);
 }
 
 
@@ -191,6 +220,7 @@ uesp.gamemap.Map.prototype.createMapList = function (parentObject)
 		$('#gmMapListAlpha').show();
 		$('#gmMapListGroup').hide();
 		$('#gmMapListAlphaSelect').focus();
+		return false;
 	});
 	
 	$('#gmMapListButtonGroup').bind("touchstart click", function(e) {
@@ -201,10 +231,11 @@ uesp.gamemap.Map.prototype.createMapList = function (parentObject)
 		$('#gmMapListGroup').focus();
 		
 		selItem = $('#gmMapList li.gmMapListSelect');
-		if (selItem == null) return;
+		if (selItem == null) return false;
 			
 		container = $('#gmMapListGroup');
 		container.scrollTop(selItem.offset().top - container.offset().top + container.scrollTop() - 200);
+		return false;
 	});
 	
 	$('#gmMapListAlphaSelect').change(function(e) {
@@ -270,6 +301,10 @@ uesp.gamemap.Map.prototype.createMapLink = function (mapState)
 	mapLink += '&x=' + mapState.gamePos.x;
 	mapLink += '&y=' + mapState.gamePos.y;
 	mapLink += '&zoom=' + mapState.zoomLevel;
+	
+	if (mapState.grid) mapLink += "&grid=true";
+	if (mapState.cellResource != "") mapLink += "&cellResource=" + mapState.cellResource;
+	if (mapState.displayState != "") mapLink += "&displayState=" + mapState.displayState;
 	
 	return mapLink;
 }
@@ -459,17 +494,27 @@ uesp.gamemap.Map.prototype.onResize = function(event)
 	
 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "OnResize: " + canvasWidth + ", " + canvasHeight);
 	
-	$(self.mapCanvas).attr('id', 'gmMapCanvas').
-						attr('width', canvasWidth).
+	$(self.mapCanvas).attr('width', canvasWidth).
 						attr('height', canvasHeight).
 						css('width', canvasWidth).
 						css('height', canvasHeight);
 	
-	self.mapContext.fillStyle = self.canvasBGColor;
+	$(self.mapCanvasGrid).attr('width', canvasWidth).
+						attr('height', canvasHeight).
+						css('width', canvasWidth).
+						css('height', canvasHeight);
+	
+	let worldName = self.mapWorlds[self.currentWorldId].name;
+	let canvasBGColor = self.mapOptions.canvasBGColor;
+	if (self.mapOptions.canvasBGColorFunction !== null) canvasBGColor = self.mapOptions.canvasBGColorFunction(worldName, self.displayState);
+	
+	self.mapContext.fillStyle = canvasBGColor;
 	self.mapContext.fillRect(0, 0, self.mapCanvas.width, self.mapCanvas.height);
 	
 	self.mapContext.translate(self.mapTransformX, self.mapTransformY);
-	self.redrawCanvas();
+	self.mapContextGrid.translate(self.mapTransformX, self.mapTransformY);
+	
+	self.redrawCanvas(true);
 }
 
 
@@ -484,7 +529,7 @@ uesp.gamemap.Map.prototype.onDocReady = function()
 		event.data.self = this;
 		
 		this.onResize(event);
-		this.redrawCanvas();
+		this.redrawCanvas(true);
 	}
 }
 
@@ -499,14 +544,27 @@ uesp.gamemap.Map.prototype.createEvents = function()
 	$('.gmMapTile').on("touchstart", { self: this }, this.onTouchStart);
 	$('.gmMapTile').on("click", { self: this }, this.onClick);
 	
-	$('#gmMapCanvas').on("mousedown", { self: this }, this.onMouseDown);
-	$('#gmMapCanvas').on("touchstart", { self: this }, this.onTouchStart);
-	$('#gmMapCanvas').on("click", { self: this }, this.onClick);
-	$(this.mapCanvas).on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScrollCanvas);
+	if (this.USE_CANVAS_DRAW)
+	{
+		$('#gmMapCanvas').on("mousedown", { self: this }, this.onMouseDown);
+		$('#gmMapCanvas').on("touchstart", { self: this }, this.onTouchStart);
+		$('#gmMapCanvas').on("click", { self: this }, this.onClick);
+		$(this.mapCanvas).on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScrollCanvas);
+	
+		$('#gmMapCanvasGrid').on("mousedown", { self: this }, this.onMouseDown);
+		$('#gmMapCanvasGrid').on("touchstart", { self: this }, this.onTouchStart);
+		$('#gmMapCanvasGrid').on("click", { self: this }, this.onClick);
+		$(this.mapCanvasGrid).on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScrollCanvas);
+	}
 	
 	$(window).on("mouseup", { self: this }, this.onMouseUp);
 	$(window).on("touchend touchcancel", { self: this }, this.onTouchEnd);
-	this.mapRoot.on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
+	
+	if (!this.USE_LEAFLET)
+	{
+		this.mapRoot.on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
+	}
+	
 	this.mapContainer.on("contextmenu", {self: this}, this.onRightClick);
 	
 	$(window).on("keyup", { self: this }, this.onKeyUp);
@@ -524,6 +582,8 @@ uesp.gamemap.Map.prototype.createEvents = function()
 
 uesp.gamemap.Map.prototype.createMapRoot = function()
 {
+	if (this.USE_LEAFLET) return;
+		
 	this.mapRoot = $('<div />').attr('id', 'gmMapRoot').appendTo(this.mapContainer);
 	
 	if (this.USE_CANVAS_DRAW) this.createMapCanvas();
@@ -545,9 +605,18 @@ uesp.gamemap.Map.prototype.createMapCanvas = function()
 						css('height', canvasHeight).
 						appendTo(this.mapContainer)[0];
 	
-	this.mapContext = this.mapCanvas.getContext("2d");
+	this.mapCanvasGrid = $('<canvas />').
+						attr('id', 'gmMapCanvasGrid').
+						attr('width', canvasWidth).
+						attr('height', canvasHeight).
+						css('width', canvasWidth).
+						css('height', canvasHeight).
+						appendTo(this.mapContainer)[0];
 	
-	this.mapContext.fillStyle = this.canvasBGColor;
+	this.mapContext = this.mapCanvas.getContext("2d");
+	this.mapContextGrid = this.mapCanvasGrid.getContext("2d");
+	
+	this.mapContext.fillStyle = this.mapOptions.canvasBGColor;
 	this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
 }
 
@@ -557,15 +626,44 @@ uesp.gamemap.Map.prototype.clearMapCanvas = function()
 	this.mapContext.save();
 	this.mapContext.setTransform(1, 0, 0, 1, 0, 0);
 	
-	this.mapContext.fillStyle = this.canvasBGColor;
+	let worldName = this.mapWorlds[this.currentWorldId].name;
+	let canvasBGColor = this.mapOptions.canvasBGColor;
+	if (this.mapOptions.canvasBGColorFunction !== null) canvasBGColor = this.mapOptions.canvasBGColorFunction(worldName, this.displayState);
+	
+	this.mapContext.fillStyle = canvasBGColor;
 	this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
 	
 	this.mapContext.restore();
+	
+	
+	this.mapContextGrid.save();
+	this.mapContextGrid.setTransform(1, 0, 0, 1, 0, 0);
+	
+	this.mapContextGrid.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
+	
+	this.mapContextGrid.restore();
+}
+
+
+uesp.gamemap.Map.prototype.clearMapGrid = function()
+{
+	if (!this.USE_CANVAS_DRAW) return;
+	return this.clearMapGridCanvas();
+}
+
+
+uesp.gamemap.Map.prototype.clearMapGridCanvas = function()
+{
+	this.mapContextGrid.save();
+	this.mapContextGrid.setTransform(1, 0, 0, 1, 0, 0);
+	this.mapContextGrid.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
+	this.mapContextGrid.restore();
 }
 
 
 uesp.gamemap.Map.prototype.createMapTiles = function()
 {
+	if (this.USE_LEAFLET) return;
 	if (this.USE_CANVAS_DRAW) return;
 	
 	offsetX = this.mapContainer.offset().left;
@@ -711,6 +809,9 @@ uesp.gamemap.Map.prototype.getMapStateFromQuery = function (defaultMapState)
 	var gameY   = gamePos.y;
 	var zoom    = this.zoomLevel;
 	var worldId = this.currentWorldId;
+	var grid    = this.isDrawGrid;
+	var cellResource = this.cellResource;
+	var displayState = this.displayState;
 	
 	if ( !(defaultMapState == null) )
 	{
@@ -718,6 +819,9 @@ uesp.gamemap.Map.prototype.getMapStateFromQuery = function (defaultMapState)
 		gameY   = defaultMapState.gamePos.y;
 		zoom    = defaultMapState.zoomLevel;
 		worldId = defaultMapState.worldId;
+		grid    = defaultMapState.grid;
+		cellResource = defaultMapState.cellResource;
+		displayState = defaultMapState.displayState;
 	}
 	
 	if ( !(this.queryParams.x     == null)) gameX   = parseInt(this.queryParams.x);
@@ -728,6 +832,30 @@ uesp.gamemap.Map.prototype.getMapStateFromQuery = function (defaultMapState)
 	{
 		worldId = this.getWorldId(this.queryParams.world);
 	}
+	
+	if ( ! (this.queryParams.world == null))
+	{
+		worldId = this.getWorldId(this.queryParams.world);
+	}
+	
+	if ( ! (this.queryParams.grid == null))
+	{
+		if (this.queryParams.grid == "true")
+			grid = true;
+		else if (this.queryParams.grid == "false")
+			grid = false;
+	}
+	
+	if ( ! (this.queryParams.cellResource == null))
+	{
+		//TODO
+		cellResource = this.queryParams.cellResource;
+	}
+	
+	if ( ! (this.queryParams.displayState == null))
+	{
+		displayState = this.queryParams.displayState;
+	}
 
 	var newState = new uesp.gamemap.MapState();
 	
@@ -735,6 +863,9 @@ uesp.gamemap.Map.prototype.getMapStateFromQuery = function (defaultMapState)
 	newState.gamePos.y = gameY;
 	newState.zoomLevel = zoom;
 	newState.worldId   = worldId;
+	newState.grid      = grid;
+	newState.cellResource = cellResource;
+	newState.displayState = displayState;
 	
 	return newState;
 }
@@ -784,9 +915,12 @@ uesp.gamemap.Map.prototype.getMapState = function()
 {
 	var mapState = new uesp.gamemap.MapState();
 	
-	mapState.zoomLevel = this.zoomLevel;
-	mapState.gamePos   = this.getGamePositionOfCenter();
-	mapState.worldId   = this.currentWorldId;
+	mapState.zoomLevel    = this.zoomLevel;
+	mapState.gamePos      = this.getGamePositionOfCenter();
+	mapState.worldId      = this.currentWorldId;
+	mapState.grid         = this.isDrawGrid;
+	mapState.cellResource = this.cellResource;
+	mapState.displayState = this.displayState;
 	
 	return mapState;
 }
@@ -934,6 +1068,9 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
 	var isFakeMaxZoom = false;
 	
+	var missingTile = this.mapOptions.missingMapTile;
+	if (this.mapOptions.missingMapTileFunction !== null) missingTile = this.mapOptions.missingMapTileFunction(worldName, this.displayState);
+	
 	if (this.zoomLevel == world.maxZoom && this.mapOptions.useFakeMaxZoom)
 	{
 		isFakeMaxZoom = true;
@@ -948,13 +1085,14 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 			var tileX = this.mapTiles[y][x].deltaTileX + this.startTileX;
 			var tileY = this.mapTiles[y][x].deltaTileY + this.startTileY;
 			
-			if (tileX < 0 || tileY < 0 || tileX >= maxTiles || tileY >= maxTiles)
+			//if (tileX < 0 || tileY < 0 || tileX >= maxTiles || tileY >= maxTiles)
+			if (tileX < 0 || tileY < 0)
 			{
-				this.mapTiles[y][x].element.css("background-image", "url(" + this.mapOptions.missingMapTile + ")");
+				this.mapTiles[y][x].element.css("background-image", "url(" + missingTile + ")");
 				continue;
 			}
 			
-			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
+			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
 			var element  = this.mapTiles[y][x].element;
 			
 			if (isFakeMaxZoom)
@@ -968,11 +1106,11 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 				element.css("background-size", "200%");
 				element.css("background-position", xPos + " " + yPos);
 				
-				imageURL = this.mapOptions.getMapTileFunction(Math.floor(tileX/2), Math.floor(tileY/2), this.zoomLevel-1, worldName);
+				imageURL = this.mapOptions.getMapTileFunction(Math.floor(tileX/2), Math.floor(tileY/2), this.zoomLevel-1, worldName, this.displayState);
 				
 				$('<img/>').attr('src', imageURL)
 					.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentWorldId))
-					.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
+					.error(uesp.gamemap.onMapTileLoadFunction(element, missingTile));
 			}
 			else
 			{
@@ -981,7 +1119,7 @@ uesp.gamemap.Map.prototype.loadMapTiles = function()
 				
 				$('<img/>').attr('src', imageURL)
 					.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentWorldId))
-					.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
+					.error(uesp.gamemap.onMapTileLoadFunction(element, missingTile));
 			}			
 			
 		}
@@ -1021,6 +1159,9 @@ uesp.gamemap.Map.prototype.loadMapTilesCanvas = function()
 	this.canvasImageMap = {};
 	this.canvasTileCountX = this.mapOptions.tileCountX;
 	this.canvasTileCountY = this.mapOptions.tileCountY;
+	
+	let canvasBGColor = this.mapOptions.canvasBGColor;
+	if (this.mapOptions.canvasBGColorFunction !== null) canvasBGColor = this.mapOptions.canvasBGColorFunction(worldName, this.displayState);
 			
 	for (var y = 0; y < this.mapOptions.tileCountY; ++y)
 	{
@@ -1031,7 +1172,7 @@ uesp.gamemap.Map.prototype.loadMapTilesCanvas = function()
 			let tileX = x + this.startTileCanvasX;
 			let tileY = y + this.startTileCanvasY;
 			
-			let imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
+			let imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
 			let newImage = new Image();
 			let canvasX = tileX * this.mapOptions.tileSize;
 			let canvasY = tileY * this.mapOptions.tileSize;
@@ -1057,7 +1198,7 @@ uesp.gamemap.Map.prototype.loadMapTilesCanvas = function()
 				
 				if (newImage.showTile)
 				{
-					self.mapContext.fillStyle = this.canvasBGColor;
+					self.mapContext.fillStyle = canvasBGColor;
 					self.mapContext.fillRect(canvasX, canvasY, self.mapOptions.tileSize, self.mapOptions.tileSize);
 				}
 				
@@ -1137,6 +1278,9 @@ uesp.gamemap.Map.prototype.loadMapTilesCanvasRowColPriv = function(startX, start
 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
 	let self = this;
 	
+	let canvasBGColor = this.mapOptions.canvasBGColor;
+	if (this.mapOptions.canvasBGColorFunction !== null) canvasBGColor = this.mapOptions.canvasBGColorFunction(worldName, this.displayState);
+	
 	for (y = startY; y < startY + dy; ++y)
 	{
 		if (this.canvasImageMap[y] == null)	this.canvasImageMap[y] = {};
@@ -1148,7 +1292,7 @@ uesp.gamemap.Map.prototype.loadMapTilesCanvasRowColPriv = function(startX, start
 			let tileX = x + this.origStartTileCanvasX;
 			let tileY = y + this.origStartTileCanvasY;			
 			
-			let imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
+			let imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
 			let newImage = new Image();
 			let canvasX = tileX * this.mapOptions.tileSize;
 			let canvasY = tileY * this.mapOptions.tileSize;
@@ -1174,7 +1318,7 @@ uesp.gamemap.Map.prototype.loadMapTilesCanvasRowColPriv = function(startX, start
 				
 				if (newImage.showTile)
 				{
-					self.mapContext.fillStyle = this.canvasBGColor;
+					self.mapContext.fillStyle = canvasBGColor;
 					self.mapContext.fillRect(canvasX, canvasY, self.mapOptions.tileSize, self.mapOptions.tileSize);
 				}
 				
@@ -1222,6 +1366,9 @@ uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
 	var isFakeMaxZoom = false;
 	
+	var missingTile = this.mapOptions.missingMapTile;
+	if (this.mapOptions.missingMapTileFunction !== null) missingTile = this.mapOptions.missingMapTileFunction(worldName, this.displayState);
+	
 	if (this.zoomLevel == world.maxZoom && this.mapOptions.useFakeMaxZoom)
 	{
 		isFakeMaxZoom = true;
@@ -1237,13 +1384,14 @@ uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
 			var tileX = this.mapTiles[y][x].deltaTileX + this.startTileX;
 			var tileY = this.mapTiles[y][x].deltaTileY + this.startTileY;
 			
-			if (tileX < 0 || tileY < 0 || tileX >= maxTiles || tileY >= maxTiles)
+			//if (tileX < 0 || tileY < 0 || tileX >= maxTiles || tileY >= maxTiles)
+			if (tileX < 0 || tileY < 0)
 			{
-				this.mapTiles[y][x].element.css("background-image", "url(" + this.mapOptions.missingMapTile + ")");
+				this.mapTiles[y][x].element.css("background-image", "url(" + missingTile + ")");
 				continue;
 			}
 			
-			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName);
+			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
 			var element  = this.mapTiles[y][x].element;
 			
 			if (isFakeMaxZoom)
@@ -1257,11 +1405,11 @@ uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
 				element.css("background-size", "200%");
 				element.css("background-position", xPos + " " + yPos);
 				
-				imageURL = this.mapOptions.getMapTileFunction(Math.floor(tileX/2), Math.floor(tileY/2), this.zoomLevel-1, worldName);
+				imageURL = this.mapOptions.getMapTileFunction(Math.floor(tileX/2), Math.floor(tileY/2), this.zoomLevel-1, worldName, this.displayState);
 				
 				$('<img/>').attr('src', imageURL)
 					.load( uesp.gamemap.onMapTileLoadFunction(element, imageURL))
-					.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
+					.error(uesp.gamemap.onMapTileLoadFunction(element, missingTile));
 			}
 			else
 			{
@@ -1270,7 +1418,7 @@ uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
 				
 				$('<img/>').attr('src', imageURL)
 					.load( uesp.gamemap.onMapTileLoadFunction(element, imageURL))
-					.error(uesp.gamemap.onMapTileLoadFunction(element, this.mapOptions.missingMapTile));
+					.error(uesp.gamemap.onMapTileLoadFunction(element, missingTile));
 			}			
 
 		}
@@ -1307,10 +1455,12 @@ uesp.gamemap.Map.prototype.displayEditNotice = function(Notice, FinishButton, Ca
 	
 	$('#gmMapEditNoticeCancel').bind("touchstart click", function(event) {
 		self.onCancelEditMode(event);
+		return false;
 	});
 	
 	$('#gmMapEditNoticeFinish').bind("touchstart click", function(event) {
 		self.onFinishEditMode(event);
+		return false;
 	});
 }
 
@@ -1655,9 +1805,7 @@ uesp.gamemap.Map.prototype.onDragMoveCanvas = function(event)
 	this.translateCanvas(diffX, diffY);
 	
 	if (this.checkTilesOnDrag) this.checkTileEdgesCanvas();
-	
-	this.redrawCanvas();
-	
+		
 	this.canvasLastDragX = x;
 	this.canvasLastDragY = y;
 	
@@ -1665,18 +1813,27 @@ uesp.gamemap.Map.prototype.onDragMoveCanvas = function(event)
 		left: event.pageX - this.dragStartLeft,
 		top:  event.pageY - this.dragStartTop
 });
+	
+	this.redrawCanvas(true);
 
 }
 
 
-uesp.gamemap.Map.prototype.redrawCanvas = function()
+uesp.gamemap.Map.prototype.redrawCanvas = function(redrawGrid)
 {
 	this.redrawImages();
+	if (this.isDrawGrid) this.canvasDrawGrid();
+	this.drawCellResources();
 }
 
 
 uesp.gamemap.Map.prototype.redrawImages = function()
 {
+	let worldName = this.mapWorlds[this.currentWorldId].name;
+	
+	let canvasBGColor = this.mapOptions.canvasBGColor;
+	if (this.mapOptions.canvasBGColorFunction !== null) canvasBGColor = this.mapOptions.canvasBGColorFunction(worldName, this.displayState);
+	
 	for (var i in this.canvasImages)
 	{
 		let image = this.canvasImages[i];
@@ -1687,7 +1844,7 @@ uesp.gamemap.Map.prototype.redrawImages = function()
 		}
 		else
 		{
-			this.mapContext.fillStyle = this.canvasBGColor;
+			this.mapContext.fillStyle = canvasBGColor;
 			this.mapContext.fillRect(image.canvasX, image.canvasY, this.mapOptions.tileSize, this.mapOptions.tileSize);
 		}
 	}
@@ -1820,6 +1977,17 @@ uesp.gamemap.Map.prototype.onTouchStart = function(event)
 	event.pageX = touch.pageX;
 	event.pageY = touch.pageY;
 	event.which = 1;
+	self.isPinching = false;
+	
+	if (event.originalEvent.touches.length === 2)
+	{
+		self.isPinching = true;
+		event.pinchDistance = Math.hypot(
+				event.originalEvent.touches[0].pageX - event.originalEvent.touches[1].pageX,
+				event.originalEvent.touches[0].pageY - event.originalEvent.touches[1].pageY);
+		self.onPinchStart(event);
+		return;
+	}
 	
 	self.onMouseDown(event);
 }
@@ -1848,7 +2016,63 @@ uesp.gamemap.Map.prototype.onTouchEnd = function(event)
 		event.which = 1;
 	}
 	
+	if (self.isPinching)
+	{
+		if (event.originalEvent.touches.length === 2)
+		{
+			event.pinchDistance = Math.hypot(
+					event.originalEvent.touches[0].pageX - event.originalEvent.touches[1].pageX,
+					event.originalEvent.touches[0].pageY - event.originalEvent.touches[1].pageY);
+		}
+		else
+		{
+			event.pinchDistance = -1;
+		}
+		
+		self.onPinchEnd(event);
+		return;
+	}
+	
 	self.onMouseUp(event);
+}
+
+
+uesp.gamemap.Map.prototype.onPinchStart = function(event)
+{
+	self.lastPinchDistance = event.pinchDistance;
+}
+
+
+uesp.gamemap.Map.prototype.onPinchMove = function(event)
+{
+	
+	if (event.pinchDistance >= 0)
+	{
+		if (event.pinchDistance > self.lastPinchDistance) this.onPinchZoomIn(); 
+		if (event.pinchDistance < self.lastPinchDistance) this.onPinchZoomOut();
+	}
+	
+	if (event.pinchDistance >= 0)
+	{
+		this.lastPinchDistance = event.pinchDistance;
+	}
+}
+
+
+uesp.gamemap.Map.prototype.onPinchZoomOut = function(event)
+{
+	this.zoomOut();
+}
+
+
+uesp.gamemap.Map.prototype.onPinchZoomIn = function(event)
+{
+	this.zoomIn();
+}
+
+
+uesp.gamemap.Map.prototype.onPinchEnd = function(event)
+{
 }
 
 
@@ -1896,6 +2120,23 @@ uesp.gamemap.Map.prototype.onTouchMove = function(event)
 	
 	event.pageX = touch.pageX;
 	event.pageY = touch.pageY;
+	
+	if (self.isPinching)
+	{
+		if (event.originalEvent.touches.length === 2)
+		{
+			event.pinchDistance = Math.hypot(
+					event.originalEvent.touches[0].pageX - event.originalEvent.touches[1].pageX,
+					event.originalEvent.touches[0].pageY - event.originalEvent.touches[1].pageY);
+		}
+		else
+		{
+			event.pinchDistance = -1;
+		}
+		
+		self.onPinchMove(event);
+		return;
+	}
 	
 	self.onMouseMove(event);
 }
@@ -2178,6 +2419,7 @@ uesp.gamemap.Map.prototype.requestPermissions = function ()
 	
 	var queryParams = {};
 	queryParams.action = "get_perm";
+	queryParams.db = this.mapOptions.dbPrefix;
 	
 	if (this.mapOptions.isOffline)
 	{
@@ -2201,6 +2443,8 @@ uesp.gamemap.Map.prototype.retrieveLocation = function(locId, onLoadFunction, ev
 	var queryParams = {};
 	queryParams.action = "get_loc";
 	queryParams.locid  = locId;
+	queryParams.db = this.mapOptions.dbPrefix; 
+		
 	if (this.isShowHidden()) queryParams.showhidden = 1;
 	
 	if (this.mapOptions.isOffline)
@@ -2228,6 +2472,7 @@ uesp.gamemap.Map.prototype.retrieveCenterOnLocation = function(world, locationNa
 	queryParams.action = "get_centeron";
 	if (world != null) queryParams.world  = world;
 	queryParams.centeron = locationName;
+	queryParams.db = this.mapOptions.dbPrefix;
 	if (this.isShowHidden()) queryParams.showhidden = 1;
 	
 	//if (!this.hasWorld(this.worldId)) queryParams.incworld = 1;
@@ -2260,6 +2505,7 @@ uesp.gamemap.Map.prototype.retrieveLocations = function()
 	queryParams.zoom   = this.zoomLevel;
 	if (this.isShowHidden()) queryParams.showhidden = 1;
 	if (!this.hasWorld(this.currentWorldId)) queryParams.incworld = 1;
+	queryParams.db = this.mapOptions.dbPrefix;
 	
 	if (queryParams.world <= 0) return uesp.logError("Unknown worldId for current world " + this.currentWorldId + "!");
 	
@@ -2281,6 +2527,7 @@ uesp.gamemap.Map.prototype.retrieveWorldData = function()
 	var queryParams = {};
 	var self = this;
 	queryParams.action = "get_worlds";
+	queryParams.db = this.mapOptions.dbPrefix;
 	if (this.isShowHidden()) queryParams.showhidden = 1;
 	
 	if (this.mapOptions.isOffline)
@@ -2302,6 +2549,12 @@ uesp.gamemap.Map.prototype.setGamePos = function(x, y, zoom, updateMap)
 	{
 		this.updateLocations();
 		this.loadMapTiles();
+		if (this.isDrawGrid) this.drawGrid();
+		this.updateCellGridLabel();
+		this.updateCellResourceLabel();
+		this.updateDisplayStateLabel();
+		
+		if (this.cellResource != "") this.getCellResourceData(this.cellResource);
 	}
 }
 
@@ -2461,6 +2714,10 @@ uesp.gamemap.Map.prototype.setMapState = function (newState, updateMap)
 {
 	if (newState == null) return;
 	if (updateMap == null) updateMap = true;
+	
+	this.isDrawGrid = newState.grid;
+	this.cellResource = newState.cellResource;
+	this.displayState = newState.displayState;
 	
 	if (this.currentWorldId != newState.worldId)
 	{
@@ -2722,6 +2979,7 @@ uesp.gamemap.Map.prototype.translateCanvas = function(dx, dy, animate)
 		 *  	window.requestAnimationFrame()
 		 */
 	this.mapContext.translate(dx, dy);
+	this.mapContextGrid.translate(dx, dy);
 }
 
 
@@ -2825,7 +3083,7 @@ uesp.gamemap.Map.prototype.zoomInCanvas = function(x, y)
 	
 	this.mapContext.scale(2, 2);
 	this.clearMapCanvas();
-	this.redrawCanvas();
+	this.redrawCanvas(false);
 	
 	this.resetTranslateCanvas();
 	this.translateCanvas(newOffsetX, newOffsetY);
@@ -2838,6 +3096,7 @@ uesp.gamemap.Map.prototype.zoomInCanvas = function(x, y)
 uesp.gamemap.Map.prototype.resetTranslateCanvas = function()
 {
 	this.mapContext.setTransform(1, 0, 0, 1, 0, 0);
+	this.mapContextGrid.setTransform(1, 0, 0, 1, 0, 0);
 	this.mapTransformX = 0;
 	this.mapTransformY = 0;
 }
@@ -2933,7 +3192,7 @@ uesp.gamemap.Map.prototype.zoomOutCanvas = function(x, y)
 	
 	this.mapContext.scale(0.5, 0.5);
 	this.clearMapCanvas();
-	this.redrawCanvas();
+	this.redrawCanvas(false);
 	
 	this.resetTranslateCanvas();
 	this.translateCanvas(newOffsetX, newOffsetY);
@@ -2976,6 +3235,7 @@ uesp.gamemap.Map.prototype.addEditClickWall = function(cursor)
 		this.editClickWall.css('cursor', cursor);
 	
 	this.editClickWall.css('z-index', 101);
+	this.editClickWall.show();
 }
 
 
@@ -2986,6 +3246,7 @@ uesp.gamemap.Map.prototype.removeEditClickWall = function()
 	this.editClickWall.css('cursor', '');
 	this.editClickWall.css('background', '');
 	this.editClickWall.css('z-index', 0);
+	this.editClickWall.hide();
 }
 
 
@@ -3129,14 +3390,17 @@ uesp.gamemap.Map.prototype.showWorldEditForm = function()
 	
 	this.worldEditPopup.find('.gmMapPopupClose').bind("touchstart click", function(event) {
 		self.onCloseWorldEditPopup(event);
+		return false;
 	});
 	
 	this.worldEditPopup.find('.gmMapEditPopupButtonClose').bind("touchstart click", function(event) {
 		self.onCloseWorldEditPopup(event);
+		return false;
 	});
 	
 	this.worldEditPopup.find('.gmMapEditPopupButtonSave').bind("touchstart click", function(event) {
 		self.onSaveWorldEditPopup(event);
+		return false;
 	});
 	
 	this.worldEditPopup.show();
@@ -3208,6 +3472,7 @@ uesp.gamemap.Map.prototype.doWorldSaveQuery = function(world)
 	var self = this;
 	
 	queryParams = world.createSaveQuery();
+	queryParams.db = this.mapOptions.dbPrefix;
 	
 	if (this.mapOptions.isOffline)
 	{
@@ -3326,6 +3591,7 @@ uesp.gamemap.Map.prototype.setEventsForMapGroupList = function ()
 		g_GameMap.changeWorld(worldName);
 		
 		self.hideMapList();
+		return false;
 	});
 	
 	$("#gmMapList li.gmMapListHeader").bind("touchstart click", function(e) {
@@ -3341,6 +3607,8 @@ uesp.gamemap.Map.prototype.setEventsForMapGroupList = function ()
 			else
 				$(this).css('background-image', 'url(images/downarrow.gif)');
 		}
+		
+		return false;
 	});
 	
 	$(document).bind("mousedown", function (e) {
@@ -3375,11 +3643,21 @@ uesp.gamemap.Map.prototype.createSearchControls = function ()
 								.addClass('gmMapSearchRoot')
 								.appendTo(this.mapContainer);
 	
+	var searchOnlyThisMap = "<div class='gmMapSearchSmall'><input class='gmMapSearchCheck' type='checkbox' name='searchMapOnly' /> Only Search in Current Map</div>";
+	if (!this.mapOptions.showSearchThisLocation) searchOnlyThisMap = "";
+	
+	
+	
 	var searchContent = "<form  onsubmit='return false;'>" +
 						"<div class='gmMapSearchInputDiv'>" + 
 						"<input class='gmMapSearchInput' type='text' name='search' value='' size='25' maxlength='100' autocomplete='on' />" +
-						"<input class='gmMapSearchButton' type='submit' value='Search' /><br />" +
-						"<div class='gmMapSearchSmall'><input class='gmMapSearchCheck' type='checkbox' name='searchMapOnly' /> Only Search in Current Map</div>" + 
+						"<button class='gmMapSearchButton' title='Search the map for this text' name='button' type='submit'>" +
+						"<img width='12' height='13' alt='Search' src='images/search-icon.png'>" +
+						"</button>" + 
+						"<button class='gmSearchResetButton' title='Reset the map search' name='button' type='reset' >" +
+						"<img width='12' height='13' alt='Search' src='images/searchreseticon.png'>" +
+						"</button>" +
+						searchOnlyThisMap + 
 						"</div>" + 
 						"</form>" +
 						"<div class='gmMapSearchResultsWrapper'>" + 
@@ -3396,16 +3674,26 @@ uesp.gamemap.Map.prototype.createSearchControls = function ()
 	
 	var mapSearchForm = this.mapSearchRoot.find('form');
 	var mapSearchButton = this.mapSearchRoot.find('.gmMapSearchButton');
+	var mapResetButton = this.mapSearchRoot.find('.gmSearchResetButton');
+	
 	this.mapSearchResults = this.mapSearchRoot.find('.gmMapSearchResults');
+	
 	var mapSearchResultsButton = this.mapSearchRoot.find('.gmMapSearchResultsButton');
 	var mapSearchInput = $(".gmMapSearchInput");
 	
+	mapResetButton.bind("touchstart click", function (e) {
+		self.onResetSearchButton(e);
+		return false;
+	});
+	
 	mapSearchButton.bind("touchstart click", function (e) {
 		self.onSearchButton(e);
+		return false;
 	});
 	
 	mapSearchResultsButton.bind("touchstart click", function (e) {
 		self.onSearchResultsButton(e);
+		return false;
 	});
 	
 	mapSearchInput.keypress(function(e){ 
@@ -3416,6 +3704,17 @@ uesp.gamemap.Map.prototype.createSearchControls = function ()
 	    	return true;
 	    }
 	  });
+}
+
+
+uesp.gamemap.Map.prototype.onResetSearchButton = function (event)
+{
+	this.clearSearchResults();
+	
+	$(".gmMapSearchInput").val("");
+	this.hideSearchResults();
+	
+	return false;
 }
 
 
@@ -3455,6 +3754,7 @@ uesp.gamemap.Map.prototype.createSearchQuery = function (searchText, searchMapOn
 	queryParams.search = encodeURIComponent(searchText);
 	if (this.isShowHidden()) queryParams.showhidden = 1;
 	if (searchMapOnly === true) queryParams.world = this.currentWorldId;
+	queryParams.db = this.mapOptions.dbPrefix;
 	
 	if (searchText.substring(0, 5) === "type:")
 	{
@@ -3567,7 +3867,7 @@ uesp.gamemap.Map.prototype.addSearchResultLocation = function (locationId)
 	
 	var searchResult = $('<div />')
 							.addClass('gmMapSearchResultLocation')
-							.bind("touchstart click", function (e) { self.onClickSearchResultId(locationId, locState); })
+							.bind("touchstart click", function (e) { self.onClickSearchResultId(locationId, locState); return false; })
 							.appendTo(this.mapSearchResults);
 	
 	var iconURL   = this.mapOptions.iconPath + location.iconType + ".png";
@@ -3577,7 +3877,7 @@ uesp.gamemap.Map.prototype.addSearchResultLocation = function (locationId)
 	
 	var resultContent = imageContent +
 						"<div class='gmMapSearchResultTitle'>{location.name}</div> " + 
-						"<div class='gnMapSearchResultLocWorld'>(in {world.displayName})</div>";
+						"<div class='gmMapSearchResultLocWorld'>(in {world.displayName})</div>";
 	var data = { world: world, location: location };
 	var resultHtml = uesp.template(resultContent, data);
 	
@@ -3629,7 +3929,7 @@ uesp.gamemap.Map.prototype.addSearchResultWorld = function (worldId)
 	
 	var searchResult = $('<div />')
 							.addClass('gmMapSearchResultWorld')
-							.bind("touchstart click", function (e) { self.setMapState(worldState, true); })
+							.bind("touchstart click", function (e) { self.setMapState(worldState, true); return false; })
 							.appendTo(this.mapSearchResults);
 	
 	var resultContent = "<div class='gmMapSearchResultTitle'>{displayName}</div>";
@@ -3704,44 +4004,63 @@ uesp.gamemap.Map.prototype.createMapControls = function ()
 								.addClass('gmMapControlRoot')
 								.appendTo(this.mapContainer);
 	
+	if (this.mapOptions.displayStates.length > 0)
+	{
+		this.mapControlDisplayStateRoot = $('<div />')
+												.addClass('gmMapControlDisplayStates')
+												.appendTo(this.mapControlRoot);
+		
+		for (var i in this.mapOptions.displayStates)
+		{
+			let displayState = this.mapOptions.displayStates[i];
+			
+			$('<div />')
+				.html(displayState)
+				.attr("id", "gmMapControlDisplayState_" + displayState)
+				.addClass('gmMapControlDisplayState')
+				.bind("touchstart click", function(e) { self.onDisplayStateChange(displayState); return false; })
+				.appendTo(this.mapControlDisplayStateRoot);
+		}
+	}
+	
 	this.mapControlPanUp = $('<div />')
 								.html('&#x2C4;')
 								.addClass('gmMapControlPan')
 								.addClass('gmMapControlPanBreak')
-								.bind("touchstart click", function(e) { self.panUp(); })
+								.bind("touchstart click", function(e) { self.panUp(); return false; })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlPanLeft = $('<div />')
 								.html('&#x2C2;')
 								.addClass('gmMapControlPan')
-								.bind("touchstart click", function(e) { self.panLeft(); })
+								.bind("touchstart click", function(e) { self.panLeft(); return false; })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlPanRight = $('<div />')
 								.html('&#x2C3;')
 								.addClass('gmMapControlPan')
-								.bind("touchstart click", function(e) { self.panRight(); })
+								.bind("touchstart click", function(e) { self.panRight(); return false; })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlPanDown = $('<div />')
 								.html('&#x2C5;')
 								.addClass('gmMapControlPan')
 								.addClass('gmMapControlPanBreak')
-								.bind("touchstart click", function(e) { self.panDown(); })
+								.bind("touchstart click", function(e) { self.panDown(); return false; })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlZoomIn = $('<div />')
 								.html('+')
 								.addClass('gmMapControlZoom')
 								.addClass('gmMapControlZoomHover')
-								.bind("touchstart click", function(e) { self.zoomIn(); })
+								.bind("touchstart click", function(e) { self.zoomIn(); return false; })
 								.appendTo(this.mapControlRoot);
 	
 	this.mapControlZoomOut = $('<div />')
 								.text('-')
 								.addClass('gmMapControlZoom')
 								.addClass('gmMapControlZoomHover')
-								.bind("touchstart click", function(e) { self.zoomOut(); })
+								.bind("touchstart click", function(e) { self.zoomOut(); return false; })
 								.appendTo(this.mapControlRoot);
 }
 
@@ -3768,7 +4087,7 @@ uesp.gamemap.Map.prototype.panCanvas = function (deltaX, deltaY)
 	let self = this;
 	
 	this.translateCanvas(deltaX, deltaY);
-	this.redrawCanvas();
+	this.redrawCanvas(true);
 	
 	this.mapRoot.animate({ left: '+=' + deltaX, top: '+=' + deltaY }, 0);
 	
@@ -3814,6 +4133,7 @@ uesp.gamemap.Map.prototype.createHelpBlockElement = function()
 		
 		self.helpBlockElement.find('.gmHelpCloseButton').bind("touchstart click", function(event) {
 			self.hideHelpBlock();
+			return false;
 		});
 		
 		$(document).mousedown(function(e){
@@ -3833,13 +4153,14 @@ uesp.gamemap.Map.prototype.createHelpBlockElement = function()
 				.html("Loading...")
 				.appendTo(this.mapContainer);
 	
-	$.get( 'template/helpblock.txt', function( data ) {
+	$.get( this.mapOptions.helpTemplate, function( data ) {
 		self.helpBlockContents = data;
 		uesp.logDebug(uesp.LOG_LEVEL_WARNING, 'Received help block contents!', data);
 		$('.gmHelpBlock').html(data);
 		
 		self.helpBlockElement.find('.gmHelpCloseButton').bind("touchstart click", function(event) {
 			self.hideHelpBlock();
+			return false;
 		});
 		
 		$(document).mousedown(function(e){
@@ -3920,6 +4241,7 @@ uesp.gamemap.Map.prototype.createMapKey = function()
 	
 	this.mapKeyElement.find('.gmMapKeyCloseButton').bind("touchstart click", function(event) {
 		self.hideMapKey();
+		return false;
 	});
 	
 	$(document).mousedown(function(e){
@@ -3944,8 +4266,12 @@ uesp.gamemap.Map.prototype.createMapKeyContent = function()
 	for (key in this.mapOptions.iconTypeMap)
 	{
 		var keyValue = this.mapOptions.iconTypeMap[key];
+		
+			// Only permit unique icon names to display
+			// TODO: Check for different icon images? 	
+		if (reverseIconTypeMap[keyValue] == null) sortedIconTypeArray.push(keyValue);
+		
 		reverseIconTypeMap[keyValue] = key;
-		sortedIconTypeArray.push(keyValue);
 	}
 	
 	sortedIconTypeArray.sort();
@@ -4071,12 +4397,13 @@ uesp.gamemap.Map.prototype.onRecentChanges = function (element)
 }
 
 
-uesp.gamemap.Map.prototype.updateRecentChanges  = function ()
+uesp.gamemap.Map.prototype.updateRecentChanges = function ()
 {
 	var self = this;
 	
 	var queryParams = {};
 	queryParams.action = "get_rc";
+	queryParams.db = this.mapOptions.dbPrefix;
 	
 	if (this.mapOptions.isOffline)
 	{
@@ -4091,7 +4418,7 @@ uesp.gamemap.Map.prototype.updateRecentChanges  = function ()
 }
 
 
-uesp.gamemap.Map.prototype.onReceiveRecentChanges  = function (data)
+uesp.gamemap.Map.prototype.onReceiveRecentChanges = function (data)
 {
 	
 	if (data == null || data.recentChanges == null)
@@ -4120,9 +4447,319 @@ uesp.gamemap.Map.prototype.onReceiveRecentChanges  = function (data)
 	return true;
 }
 
-uesp.gamemap.Map.prototype.clearRecentChanges  = function ()
+
+uesp.gamemap.Map.prototype.clearRecentChanges = function ()
 {
 	this.recentChangesRoot.text("");
+}
+
+
+uesp.gamemap.Map.prototype.drawGrid = function()
+{
+	if (!this.USE_CANVAS_DRAW) return;
+	
+	this.canvasDrawGrid();
+}
+
+
+uesp.gamemap.Map.prototype.canvasDrawGrid = function()
+{
+	var deltaX = this.mapOptions.gridDeltaX;
+	var deltaY = this.mapOptions.gridDeltaY;
+	var gridOffsetY = this.mapOptions.gridOffsetY;
+	var zoomDiff = this.zoomLevel - this.mapOptions.minZoomLevel
+	
+	console.log("canvasDrawGrid");
+	this.clearMapGridCanvas();
+
+	for (z = 1; z <= zoomDiff; ++z)
+	{
+		gridOffsetY += Math.pow(2, z + this.mapOptions.gridOffsetPowerY)
+	}
+	
+	for (var y = this.mapOptions.gridStartY; y <= this.mapOptions.gridStopY; y += deltaY)
+	{
+		var pos1 = this.convertGameToPixelPos(this.mapOptions.gridStartX, y);
+		var pos2 = this.convertGameToPixelPos(this.mapOptions.gridStopX, y);
+
+		pos1.x -= this.mapTransformX;
+		pos2.x -= this.mapTransformX;
+		pos1.y -= this.mapTransformY + gridOffsetY;
+		pos2.y -= this.mapTransformY + gridOffsetY;
+		
+		this.mapContextGrid.beginPath();
+		this.mapContextGrid.moveTo(pos1.x, pos1.y);
+		this.mapContextGrid.lineTo(pos2.x, pos2.y);
+		this.mapContextGrid.lineWidth = 1;
+		this.mapContextGrid.strokeStyle = this.mapOptions.gridStyle;
+		this.mapContextGrid.stroke();
+	}
+	
+	for (var x = this.mapOptions.gridStartX; x <= this.mapOptions.gridStopX; x += deltaX)
+	{
+		var pos1 = this.convertGameToPixelPos(x, this.mapOptions.gridStartY);
+		var pos2 = this.convertGameToPixelPos(x, this.mapOptions.gridStopY);
+		
+		pos1.x -= this.mapTransformX;
+		pos2.x -= this.mapTransformX;
+		pos1.y -= this.mapTransformY + gridOffsetY;
+		pos2.y -= this.mapTransformY + gridOffsetY;
+		
+		this.mapContextGrid.beginPath();
+		this.mapContextGrid.moveTo(pos1.x, pos1.y);
+		this.mapContextGrid.lineTo(pos2.x, pos2.y);
+		this.mapContextGrid.lineWidth = 1;
+		this.mapContextGrid.strokeStyle = this.mapOptions.gridStyle;
+		this.mapContextGrid.stroke();
+	}
+	
+	if (!this.mapOptions.gridShowLabels) return;
+	if (this.zoomLevel < this.mapOptions.gridStartLabelZoom) return;
+	
+	var labelStartX = Math.ceil(this.mapOptions.gridStartX / this.mapOptions.gridDeltaX / this.mapOptions.gridLabelDeltaX) * this.mapOptions.gridLabelDeltaX;
+	var labelStartY = Math.ceil(this.mapOptions.gridStartY / this.mapOptions.gridDeltaY / this.mapOptions.gridLabelDeltaY) * this.mapOptions.gridLabelDeltaY;
+	var labelEndX = Math.floor(this.mapOptions.gridStopX / this.mapOptions.gridDeltaX / this.mapOptions.gridLabelDeltaX) * this.mapOptions.gridLabelDeltaX;
+	var labelEndY = Math.floor(this.mapOptions.gridStopY / this.mapOptions.gridDeltaY / this.mapOptions.gridLabelDeltaY) * this.mapOptions.gridLabelDeltaY; 
+	
+	for (var cellY = labelStartY; cellY <= labelEndY; cellY += this.mapOptions.gridLabelDeltaY)
+	{
+		var y = cellY * this.mapOptions.gridDeltaY + this.mapOptions.gridLabelOffsetY;
+		
+		for (var cellX = labelStartX; cellX <= labelEndX; cellX += this.mapOptions.gridLabelDeltaX)
+		{
+			var x = cellX * this.mapOptions.gridDeltaX + this.mapOptions.gridLabelOffsetX;
+			var pos = this.convertGameToPixelPos(x, y);
+			
+			pos.x += 1 - this.mapTransformX;
+			pos.y += 10 - this.mapTransformY - gridOffsetY;
+			
+			gridText = "" + cellX + "," + cellY;
+			
+			//console.log(gridText, pos.x, pos.y, x, y, cellX, cellY);
+			
+			this.mapContextGrid.font = "8px Arial";
+			this.mapContextGrid.textBaseLine = "bottom";
+			this.mapContextGrid.fillStyle = this.mapOptions.gridStyle;
+			this.mapContextGrid.fillText(gridText, pos.x, pos.y);
+		}
+		
+	}
+	
+}
+
+
+uesp.gamemap.Map.prototype.onCellGridClick = function(e)
+{
+	let self = e.data.self;
+	
+	self.isDrawGrid = !self.isDrawGrid;
+	
+	if (self.isDrawGrid)
+	{
+		self.drawGrid();
+	}
+	else
+	{
+		self.clearMapGrid();
+	}
+	
+	self.updateCellGridLabel();
+	self.updateMapLink();
+	self.drawCellResources();
+}
+
+
+uesp.gamemap.Map.prototype.updateCellGridLabel = function()
+{
+		// TODO: No hard coded ID?
+	if (this.isDrawGrid)
+	{
+		$("#gmMapCellGrid").text("Hide Cell Grid");
+	}
+	else
+	{
+		$("#gmMapCellGrid").text("Show Cell Grid");
+	}
+}
+
+
+uesp.gamemap.Map.prototype.onCellResourceChange = function(list)
+{
+	var cellResource = $(list).val();
+	
+	if (cellResource == this.cellResource) return;
+	
+	this.cellResource = cellResource;
+	
+	this.showCellResourceGuide(cellResource != "");
+	
+	this.clearMapGrid();
+	if (this.isDrawGrid) this.drawGrid();
+		
+	this.getCellResourceData(cellResource);
+	
+	this.updateMapLink();
+}
+
+
+uesp.gamemap.Map.prototype.drawCellResources = function() 
+{
+	if (this.cellResource == "") return;
+	if (this.USE_CANVAS_DRAW) return this.drawCellResourcesCanvas();	
+}
+
+
+uesp.gamemap.Map.prototype.drawCellResourcesCanvas = function() 
+{
+	var startX = this.mapOptions.cellResourceStartX;
+	var startY = this.mapOptions.cellResourceStartY;
+	var endX = this.mapOptions.cellResourceStopX;
+	var endY = this.mapOptions.cellResourceStopY;
+	var color = "white";
+	var x1, y1, x2, y2;
+	var zoomDiff = this.zoomLevel - this.mapOptions.minZoomLevel
+	var gridOffsetY = this.mapOptions.gridOffsetY;
+	
+	for (var z = 1; z <= zoomDiff; ++z)
+	{
+		gridOffsetY += Math.pow(2, z + this.mapOptions.gridOffsetPowerY)
+	}
+	
+	if (!this.isDrawGrid) this.clearMapGridCanvas();
+
+	for (var x = startX; x <= endX; x++) 
+	{
+		let xData = this.cellResourceData.data[x - startX];
+		if (xData == null) continue;
+		
+		for (var y = startY; y <= endY; y++)
+		{
+			resourceCount = xData[y - startY];
+			if (resourceCount == null) continue;
+
+			
+			if (resourceCount == 0) 
+			{
+				continue;	//do nothing
+			}
+			else if (resourceCount <= 2)
+			{
+				color = "rgba(255,0,255,0.5)";		//TODO: No hardcode colors?
+			}
+			else if (resourceCount <= 5)
+			{
+				color = "rgba(0,0,255,0.5)";
+			}
+			else if (resourceCount <= 10)
+			{
+				color = "rgba(0,255,0,0.5)";
+			}
+			else if (resourceCount <= 20)
+			{
+				color = "rgba(255,255,0,0.5)";
+			}
+			else if (resourceCount <= 50) 
+			{
+				color = "rgba(255,102,51,0.5)";
+			}
+			else
+			{
+				color = "rgba(255,0,0,0.5)";
+			}
+			
+			x1 = x * this.mapOptions.cellResourceDeltaX;
+			y1 = y * this.mapOptions.cellResourceDeltaY;
+			x2 = (x + 1) * this.mapOptions.cellResourceDeltaX;
+			y2 = (y + 1) * this.mapOptions.cellResourceDeltaY;
+			
+			var pos1 = this.convertGameToPixelPos(x1, y2);
+			var pos2 = this.convertGameToPixelPos(x2, y1);
+			
+			pos1.x -= this.mapTransformX;
+			pos1.y -= this.mapTransformY + gridOffsetY;
+			pos2.x -= this.mapTransformX;
+			pos2.y -= this.mapTransformY + gridOffsetY;
+			
+			this.mapContextGrid.fillStyle = color;
+			this.mapContextGrid.fillRect(pos1.x + 1, pos1.y + 1, pos2.x - pos1.x - 2, pos2.y - pos1.y - 2);
+		}
+		
+	}
+	
+}
+
+
+uesp.gamemap.Map.prototype.updateCellResourceLabel = function()
+{
+		// TODO: No hard coded ID?
+	$("#gmCellResourceList").val(this.cellResource);
+	
+	this.showCellResourceGuide(this.cellResource != "")
+}
+
+
+uesp.gamemap.Map.prototype.showCellResourceGuide = function(display)
+{
+		// TODO: No hard coded ID?
+	$("#gmCellResourceGuide").toggle(display);
+}
+
+
+uesp.gamemap.Map.prototype.getCellResourceData = function(resourceEditorID) 
+{
+	var self = this;
+	
+	if (resourceEditorID === "") return;
+	
+	if (this.loadedCellResource == resourceEditorID) 
+	{
+		this.drawCellResources();
+		return;
+	}
+	
+	var queryParams = { };
+	queryParams.action = "get_cellresource";
+	queryParams.db = this.mapOptions.dbPrefix;
+	queryParams.worldid = this.currentWorldId;
+	queryParams.editorid = resourceEditorID;
+
+	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+		self.parseGetCellResourceRequest(data, resourceEditorID); 
+	});
+
+}
+
+
+uesp.gamemap.Map.prototype.parseGetCellResourceRequest = function(data, resourceEditorID) 
+{
+	if (data === null || data.isError === true || data.resources === null || data.resources[0] === null)
+	{
+		this.showCellResourceGuide(false);
+		return;
+	}
+
+	this.loadedCellResource = resourceEditorID;
+	this.cellResourceData = data.resources[0];
+	this.drawCellResources();
+}
+
+
+uesp.gamemap.Map.prototype.onDisplayStateChange = function(displayState)
+{
+	this.displayState = displayState;
+	
+	this.loadMapTiles();
+	this.updateDisplayStateLabel();
+	this.updateMapLink();
+}
+
+
+uesp.gamemap.Map.prototype.updateDisplayStateLabel = function()
+{
+	var label = $("#gmMapControlDisplayState_" + this.displayState);
+	
+	$(".gmMapControlDisplayState").removeClass("gmMapControlDisplayStateSelected");
+	label.addClass("gmMapControlDisplayStateSelected");
 }
 
 
@@ -4133,5 +4770,6 @@ uesp.gamemap.defaultGetMapTile = function(tileX, tileY, zoom, world)
 	else
 		return world + "/zoom" + zoom + "/maptile-" + tileX + "-" + tileY + ".jpg"; 
 }
+
 
 

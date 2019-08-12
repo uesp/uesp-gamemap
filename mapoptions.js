@@ -9,6 +9,12 @@ uesp.gamemap.MapOptions = function(mapOptions)
 {
 	this.getMapTileFunction = uesp.gamemap.defaultGetMapTile;
 	this.missingMapTile = "missingtile.jpg";
+	this.missingMapTileFunction = null;
+	
+	this.useCanvasDraw = false;
+	
+	this.useLeaflet = false;
+	this.leafletTileLayer = '';
 	
 	this.wikiUrl       = '';
 	this.wikiNamespace = '';
@@ -55,7 +61,44 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	
 	this.isOffline = false;
 	this.useFakeMaxZoom = false;
-
+	
+	this.dbPrefix = "";
+	this.helpTemplate = "template/helpblock.txt";
+	this.showSearchThisLocation = true;
+	
+	this.defaultIconWidth = 32;
+	this.defaultIconHeight = 32;
+	
+	this.canvasBGColor = "black";
+	this.canvasBGColorFunction = null;
+	
+	this.gridStartX = 0;
+	this.gridStartY = 0;
+	this.gridStopX = 0;
+	this.gridStopY = 0;
+	this.gridDeltaX = 256;
+	this.gridDeltaY = 256;
+	this.gridLabelDeltaX = 5;
+	this.gridLabelDeltaY = 5;
+	this.gridStartLabelZoom = 10;
+	this.gridShowLabels = true;
+	this.gridLabelOffsetX = 0;
+	this.gridLabelOffsetY = 0;	
+	this.gridStyle = "yellow";
+	
+	this.gridOffsetX = 0;
+	this.gridOffsetY = 0;
+	this.gridOffsetPowerY = 0;
+	
+	this.cellResourceStartX = 0;
+	this.cellResourceStartY = 0;
+	this.cellResourceStopX = 0;
+	this.cellResourceStopY = 0;
+	this.cellResourceDeltaX = 256;
+	this.cellResourceDeltaY = 256;
+	
+	this.displayStates = [];
+	
 	this.mergeOptions(mapOptions);
 }
 
