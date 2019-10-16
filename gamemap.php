@@ -1253,6 +1253,9 @@ class GameMap
 				case 'beyond':
 					$this->dbPrefix = "beyond";
 					break;
+				case 'tr':
+					$this->dbPrefix = "tr";
+					break;
 				case 'ob':
 					$this->dbPrefix = "ob";
 					break;

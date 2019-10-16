@@ -2018,7 +2018,16 @@ uesp.gamemap.Location.prototype.createWikiLink = function()
 	if (this.parentMap.mapOptions.wikiNamespace != null && this.parentMap.mapOptions.wikiNamespace.length > 0)
 	{
 		if (this.wikiPage == "") return "";
-		return this.parentMap.mapOptions.wikiUrl + this.parentMap.mapOptions.wikiNamespace + ':' + encodeURIComponent(this.wikiPage);
+		
+		if (this.wikiPage.indexOf(":") >= 0)
+		{
+			var safeWikiPage = encodeURIComponent(this.wikiPage).replace("%3A", ":").replace("%2F", "/");
+			return this.parentMap.mapOptions.wikiUrl + safeWikiPage;
+		}
+		else
+		{
+			return this.parentMap.mapOptions.wikiUrl + this.parentMap.mapOptions.wikiNamespace + ':' + encodeURIComponent(this.wikiPage);
+		}
 	}
 	
 	if (this.wikiPage == "") return "";

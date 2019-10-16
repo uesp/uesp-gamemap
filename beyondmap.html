@@ -98,19 +98,11 @@
 				getMapTileFunction : getDefaultMapTile,
 				wikiUrl: "//en.uesp.net/wiki/",
 				wikiNamespace: "Skyrim",
-				mapUrl : "//content3.uesp.net/gamemap/beyondmap.html",
-				//missingMapTile:  "//maps.uesp.net/images/sroutofrange-color.jpg",
-				missingMapTile:  "//content3.uesp.net/gamemap/images/beyondoutofrange.jpg",
-				missingMapTileFunction: getMissingMapTile,
+				mapUrl : "//bsmap.uesp.net/beyondmap.html",
+				missingMapTile:  "//maps.uesp.net/images/beyondoutofrange.png",
+				//missingMapTile:  "//content3.uesp.net/gamemap/images/beyondoutofrange.png",
 				iconPath: "sricons/",				
 				iconTypeMap: srIconMap,
-				gamePosX1: -233472,
-				gamePosX2: 262144,
-				gamePosY1: 192512,
-				gamePosY2: -180224,
-				initialGamePosX : 100000,
-				initialGamePosY : -100000,
-				initialZoom : 11,
 				tileCountX : 11,
 				tileCountY : 9,
 				mapLinkElement : '#gmMapLink',
@@ -123,7 +115,6 @@
 				defaultIconWidth: 16,
 				defaultIconHeight: 30,
 				canvasBGColor: "#284358",
-				canvasBGColorFunction: getCanvasBackgroundColor,
 				
 				gridStartX: -233472,
 				gridStartY: -188416,
@@ -160,18 +151,11 @@
 		}
 		
 		
-		function getMissingMapTile(worldName, displayState)
-		{
-			//if (displayState == "Night") return "//maps.uesp.net/images/sroutofrange-night.jpg";
-			//return "//maps.uesp.net/images/sroutofrange-color.jpg";
-			return "//content3.uesp.net/gamemap/images/beyondoutofrange.jpg";
-		}
-		
-		
 		function getDefaultMapTile(xPos, yPos, zoom, worldName, displayState)
 		{
 			//if (displayState == "Night") return "//maps.uesp.net/srmap/night/zoom" + zoom + "/skyrim-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
 			//return "//maps.uesp.net/srmap/color/zoom" + zoom + "/skyrim-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
+			return "//maps.uesp.net/bsmap/zoom" + zoom + "/bs-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
 			return "//content3.uesp.net/beyond/zoom" + zoom + "/bs-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
 		}
 				
@@ -190,12 +174,11 @@
 			defaultMapState = new uesp.gamemap.MapState();
 			
 			defaultMapState.worldId = 1;
-			defaultMapState.zoomLevel = 11;
-			defaultMapState.gamePos.x = 110000;
-			defaultMapState.gamePos.y = -20000;
+			defaultMapState.zoomLevel = 12;
+			defaultMapState.gamePos.x = 115000;
+			defaultMapState.gamePos.y = 225000;
 			defaultMapState.grid = false;
 			defaultMapState.cellResource = "";
-			//defaultMapState.displayState = "Day";
 			
 			mapState = this.getMapStateFromQuery(defaultMapState);
 			this.setMapState(mapState);
