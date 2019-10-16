@@ -1,17 +1,17 @@
 <?php
 
-$INPUT_DATABASE = "si_map_data";
-$OUTPUT_DATABASE = "uesp_gamemap_si";
+$INPUT_DATABASE = "tamrielrebuilt";
+$OUTPUT_DATABASE = "uesp_gamemap_tr";
 
-$WORLD_NAME = "Shivering Isles";
+$WORLD_NAME = "Tamriel Rebuilt";
 $MIN_ZOOM = 10;
-$MAX_ZOOM = 16;
+$MAX_ZOOM = 17;
 $ZOOM_OFFSET = 9;
 $CELL_SIZE = 4096;
-$POS_LEFT = -30 * 4096;
-$POS_TOP = 35 * 4096;
-$POS_RIGHT = 34 * 4096;
-$POS_BOTTOM = -29 * 4096;
+$POS_LEFT = -43 * 4096;
+$POS_TOP = 32 * 4096;
+$POS_RIGHT = 50 * 4096;
+$POS_BOTTOM = -60 * 4096;
 
 if (php_sapi_name() != "cli") die("Can only be run from command line!");
 
@@ -22,7 +22,7 @@ if ($db == null || $db->connect_error) die("Could not connect to mysql database!
 
 $query = "SELECT * FROM $INPUT_DATABASE.mapdata";
 $result = $db->query($query);
-if (!$result) die("Failed to load map data!");
+if (!$result) die("Failed to load map data!\n" . $db->error);
 
 $mapData = array();
 
@@ -81,7 +81,15 @@ foreach ($mapData as $i => $data)
 	if ($data['SearchTags'] != "") $descriptions[] = "{$data['SearchTags']}";
 	if ($data['EditorID'] != "") $descriptions[] = "editorID={$data['EditorID']}";
 	if ($data['FormID'] != "") $descriptions[] = "formID={$data['FormID']}";
-	if ($data['Namespace'] != "" && $data['Namespace'] != "Skyrim") $descriptions[] = "{$data['Namespace']}";
+	
+	if ($WORLD_NAME == "Tamriel Rebuilt" && $data['Namespace'] != "")
+	{
+		if ($data["Wikipage"] != "") $data["WikiPage"] = $data["Namespace"] . ":" . $data["Wikipage"];
+		//print("\t" . $data["WikiPage"] . "\n");
+	}
+	else if ($data['Namespace'] != "" && $data['Namespace'] != "Skyrim") 
+		$descriptions[] = "{$data['Namespace']}";
+	
 	if ($data['WorldSpace'] != "" && $data['WorldSpace'] != "Skyrim") $descriptions[] = "{$data['WorldSpace']}";
 	if ($data['Region'] != "") $descriptions[] = "{$data['Region']}";
 	if ($data['ObLocZ'] != "") $descriptions[] = "z={$data['ObLocZ']}";
@@ -103,6 +111,7 @@ foreach ($mapData as $i => $data)
 		case 8: $labelPos = 6; break;
 		case 9: $labelPos = 5; break;
 	}
+	
 	$displayData = '{"labelPos":'. $labelPos .',"points":[' . $data['ObLocX'] . ','. $data['ObLocY'] .']}';
 	
 	$locData = array(
