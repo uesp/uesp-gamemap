@@ -508,11 +508,14 @@ uesp.gamemap.Map.prototype.onResize = function(event)
 	let canvasBGColor = self.mapOptions.canvasBGColor;
 	if (self.mapOptions.canvasBGColorFunction !== null) canvasBGColor = self.mapOptions.canvasBGColorFunction(worldName, self.displayState);
 	
-	self.mapContext.fillStyle = canvasBGColor;
-	self.mapContext.fillRect(0, 0, self.mapCanvas.width, self.mapCanvas.height);
+	if (self.mapContext)
+	{
+		self.mapContext.fillStyle = canvasBGColor;
+		self.mapContext.fillRect(0, 0, self.mapCanvas.width, self.mapCanvas.height);
 	
-	self.mapContext.translate(self.mapTransformX, self.mapTransformY);
-	self.mapContextGrid.translate(self.mapTransformX, self.mapTransformY);
+		self.mapContext.translate(self.mapTransformX, self.mapTransformY);
+		self.mapContextGrid.translate(self.mapTransformX, self.mapTransformY);
+	}
 	
 	self.redrawCanvas(true);
 }
