@@ -1107,6 +1107,8 @@ body {
 	height: 17px;
 	font-family: arial, sans-serif;
 	font-size: 13px;
+	color: black;
+	line-height: 16px;
 }
 
 .gmToggleButtonDown {
