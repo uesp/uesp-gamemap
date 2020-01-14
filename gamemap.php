@@ -1289,7 +1289,7 @@ class GameMap
 		{
 			$this->locDisplayLevel = intval($this->inputParams['displaylevel']);
 			if ($this->locDisplayLevel <  0) $this->locDisplayLevel = 0;
-			if ($this->locDisplayLevel > 11) $this->locDisplayLevel = 11;
+			if ($this->locDisplayLevel > 17) $this->locDisplayLevel = 17;
 		}
 		
 		if (array_key_exists('visible',  $this->inputParams)) $this->locVisible = intval($this->inputParams['visible']);
