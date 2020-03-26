@@ -12,7 +12,7 @@ class UespMemcachedSession
 	
 		/* Should match the MediaWiki settings */
 	const UESP_DBNAME = 'uesp_net_wiki5';
-	const UESP_MEMCACHED_HOST = '10.7.143.70';
+	const UESP_MEMCACHED_HOST = '10.12.222.22';
 	const UESP_MEMCACHED_PORT = 11000;
 	
 	public static $MEMCACHE = null;
