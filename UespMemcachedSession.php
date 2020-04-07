@@ -4,6 +4,8 @@
  * 
  */
 
+require_once("/home/uesp/secrets/uespservers.secrets");
+
 if (!class_exists("UespMemcachedSession"))
 {
 
@@ -11,11 +13,18 @@ class UespMemcachedSession
 {
 	
 		/* Should match the MediaWiki settings */
-	const UESP_DBNAME = 'uesp_net_wiki5';
-	const UESP_MEMCACHED_HOST = '10.12.222.22';
-	const UESP_MEMCACHED_PORT = 11000;
+	protected $UESP_DBNAME = 'uesp_net_wiki5';
+	protected $UESP_MEMCACHED_HOST = '10.12.222.22';
+	protected $UESP_MEMCACHED_PORT = 11000;
 	
 	public static $MEMCACHE = null;
+	
+	public function __construct()
+	{
+		global $UESP_SERVER_MEMCACHED;
+		
+		$this->UESP_MEMCACHED_HOST = $UESP_SERVER_MEMCACHED;
+	}
 	
 	static function install()
 	{
@@ -35,14 +44,14 @@ class UespMemcachedSession
 	static function connect()
 	{
 		self::$MEMCACHE = new Memcache;
-		self::$MEMCACHE->connect(self::UESP_MEMCACHED_HOST, self::UESP_MEMCACHED_PORT);
+		self::$MEMCACHE->connect($this->UESP_MEMCACHED_HOST, $this->UESP_MEMCACHED_PORT);
 	}
 	
 	
 	static function getKey( /* ... */ )
 	{
 		$args = func_get_args();
-		$key = self::UESP_DBNAME . ':' . implode( ':', $args );
+		$key = $this->UESP_DBNAME . ':' . implode( ':', $args );
 		$key = str_replace( ' ', '_', $key );
 		return $key;
 	}
@@ -91,6 +100,5 @@ class UespMemcachedSession
 	}
 	
 };
-
 
 }
