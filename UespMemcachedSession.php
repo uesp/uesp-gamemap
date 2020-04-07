@@ -13,21 +13,18 @@ class UespMemcachedSession
 {
 	
 		/* Should match the MediaWiki settings */
-	protected $UESP_DBNAME = 'uesp_net_wiki5';
-	protected $UESP_MEMCACHED_HOST = '10.12.222.22';
-	protected $UESP_MEMCACHED_PORT = 11000;
+	public static $UESP_DBNAME = 'uesp_net_wiki5';
+	public static $UESP_MEMCACHED_HOST = '10.12.222.22';
+	public static $UESP_MEMCACHED_PORT = 11000;
 	
 	public static $MEMCACHE = null;
 	
-	public function __construct()
+		
+	static function install()
 	{
 		global $UESP_SERVER_MEMCACHED;
 		
-		$this->UESP_MEMCACHED_HOST = $UESP_SERVER_MEMCACHED;
-	}
-	
-	static function install()
-	{
+		self::$UESP_MEMCACHED_HOST = $UESP_SERVER_MEMCACHED;
 		
 		session_set_save_handler(
 			array( __CLASS__, 'open' ),
@@ -44,14 +41,14 @@ class UespMemcachedSession
 	static function connect()
 	{
 		self::$MEMCACHE = new Memcache;
-		self::$MEMCACHE->connect($this->UESP_MEMCACHED_HOST, $this->UESP_MEMCACHED_PORT);
+		self::$MEMCACHE->connect(self::$UESP_MEMCACHED_HOST, self::$UESP_MEMCACHED_PORT);
 	}
 	
 	
 	static function getKey( /* ... */ )
 	{
 		$args = func_get_args();
-		$key = $this->UESP_DBNAME . ':' . implode( ':', $args );
+		$key = self::$UESP_DBNAME . ':' . implode( ':', $args );
 		$key = str_replace( ' ', '_', $key );
 		return $key;
 	}
