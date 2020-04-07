@@ -155,7 +155,7 @@ class GameMap
 					FULLTEXT(displayName),
 					FULLTEXT(description),
 					FULLTEXT(wikiPage)
-				);";
+				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to create world table!");
@@ -179,7 +179,7 @@ class GameMap
 					posBottom INTEGER NOT NULL,
 					enabled TINYINT NOT NULL,
 					PRIMARY KEY ( id ),					
-				);";
+				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to create world_history table!");
@@ -205,7 +205,7 @@ class GameMap
 					FULLTEXT(name),
 					FULLTEXT(description),
 					FULLTEXT(wikiPage)
-				);";
+				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to create location table!");
@@ -229,7 +229,7 @@ class GameMap
 					displayLevel INTEGER NOT NULL,
 					visible TINYINT NOT NULL,
 					PRIMARY KEY ( id ),
-				);";
+				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to create location_history table!");
@@ -247,7 +247,7 @@ class GameMap
 					editComment TEXT NOT NULL,
 					patrolled TINYINT NOT NULL,
 					PRIMARY KEY (id)
-				);";
+				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to create revision table!");
@@ -260,7 +260,7 @@ class GameMap
 					data TEXT NOT NULL,
 					PRIMARY KEY (formId),
 					INDEX index_editorid(editorId(24))
-				);";
+				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to create cellResource table!");
