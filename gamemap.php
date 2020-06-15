@@ -178,7 +178,7 @@ class GameMap
 					posRight INTEGER NOT NULL,
 					posBottom INTEGER NOT NULL,
 					enabled TINYINT NOT NULL,
-					PRIMARY KEY ( id ),					
+					PRIMARY KEY ( id ),
 				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
@@ -1265,6 +1265,9 @@ class GameMap
 				case 'mw':
 					$this->dbPrefix = "mw";
 					break;
+				case 'ptmw':
+					$this->dbPrefix = "ptmw";
+					break;
 				case 'si':
 					$this->dbPrefix = "si";
 					break;
@@ -1272,7 +1275,7 @@ class GameMap
 		}
 		
 			//TODO: Need to change to write db connection afterwards if required
-		if (!$this->initDatabase()) return false;		
+		if (!$this->initDatabase()) return false;
 		
 			//TODO: Better parameter handling
 		if (array_key_exists('action', $this->inputParams)) $this->action = $this->db->real_escape_string(strtolower($this->inputParams['action']));
