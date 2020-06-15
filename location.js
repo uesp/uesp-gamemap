@@ -994,14 +994,16 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 	if (this.isFirstEdit == null || this.isFirstEdit === false) return;
 	if (this.id > 0) return;
 	
-	rawNameValue = this.popupElement.find("input[name=name]").val();
+	var nameInput = this.popupElement.find("input[name=name]");
+	
+	rawNameValue = nameInput.val();
 	nameValue = rawNameValue.toLowerCase();
 	if (nameValue == null || nameValue === "") return;
 	
-	iconType = this.popupElement.find("input[name=iconType]");
-	displayLevel = this.popupElement.find("input[name=displayLevel]");
-	labelPos = this.popupElement.find("select[name='displayData.labelPos']");
-	wikiPage = this.popupElement.find("input[name=wikiPage]");
+	var iconType = this.popupElement.find("input[name=iconType]");
+	var displayLevel = this.popupElement.find("input[name=displayLevel]");
+	var labelPos = this.popupElement.find("select[name='displayData.labelPos']");
+	var wikiPage = this.popupElement.find("input[name=wikiPage]");
 	
 		// TODO: Don't hardcode values?
 	if (nameValue == "skyshard")
@@ -1049,6 +1051,20 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 	else if (nameValue == "enchanting station")
 	{
 		this.setIconTypeCustomListValue(85);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
+	else if (nameValue == "enchanting table")
+	{
+		nameInput.val("Enchanting Station");	//To be consistent with everything else named as "station"
+		this.setIconTypeCustomListValue(85);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		labelPos.val(0);
+	}
+	else if (nameValue == "jewelry station" || nameValue == "jewel station" || nameValue == "jewelry crafting station")
+	{
+		nameInput.val("Jewelry Crafting Station");
+		this.setIconTypeCustomListValue(215);
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
 		labelPos.val(0);
 	}
