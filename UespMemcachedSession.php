@@ -48,7 +48,13 @@ class UespMemcachedSession
 	static function getKey( /* ... */ )
 	{
 		$args = func_get_args();
-		$key = self::$UESP_DBNAME . ':' . implode( ':', $args );
+		$key = self::$UESP_DBNAME;
+		
+		foreach ( $args as $arg ) {
+			$arg = str_replace( ':', '%3A', $arg );
+			$key = $key . ':' . $arg;
+		}
+		
 		$key = str_replace( ' ', '_', $key );
 		return $key;
 	}
@@ -66,15 +72,25 @@ class UespMemcachedSession
 	}
 	
 	
+	static function readKey($key) 
+	{
+		$data = UespMemcachedSession::read(session_id());
+		return $data[$key];
+	}
+	
+	
 	static function read( $id )
 	{
 		if (self::$MEMCACHE == null) self::connect();
 		
-		$key = self::getKey( 'session', $id );
+		//$key = self::getKey( 'session', $id );	//Pre MW 1.27
+		$key = self::getKey( 'MWSession', $id );
+		
 		$data = self::$MEMCACHE->get($key);
 		
-		if ( $data === false ) return '';
-		return $data;
+		if ( $data === false ) return array();
+		if ( $data['data'] == null) return array();
+		return $data['data'];
 	}
 	
 	static function write( $id, $data )

@@ -19,7 +19,7 @@ class GameMap
 	const LOCTYPE_PATH  = 2;
 	const LOCTYPE_AREA  = 3;
 	
-	const USE_MEMCACHED_SESSIONS = true;
+	const USE_MEMCACHED_SESSIONS = true;	//Must be true or session reading will break as of MW 1.27
 	
 	public $inputParams = array();
 	
@@ -100,9 +100,11 @@ class GameMap
 		
 		if (!$this->startedSession) error_log("Failed to start session!");
 		
-		if (isset($_SESSION['wsUserID']) && $_SESSION['wsUserID'] > 0) 
+		$userId = UespMemcachedSession::readKey('wsUserID');
+		
+		if ($userId > 0) 
 		{
-			if ($_SESSION['UESP_EsoMap_canEdit'] === true) $this->canEdit = true;
+			if (UespMemcachedSession::readKey('UESP_EsoMap_canEdit') === true) $this->canEdit = true;
 		}
 	}
 	
@@ -337,8 +339,10 @@ class GameMap
 		$userId = 0;
 		$revisionId = 0;
 		
-		if (isset($_SESSION['wsUserID'])) $userId = $_SESSION['wsUserID'];
-		if (isset($_SESSION['wsUserName'])) $userName = $_SESSION['wsUserName'];
+		$userId = UespMemcachedSession::readKey('wsUserId');
+		$userName = UespMemcachedSession::readKey('wsUserName');
+		if ($userId == null) $userId = 0;
+		if ($userName == null) $userName = $_SERVER["REMOTE_ADDR"];
 		
 		$userName = $this->db->real_escape_string($userName);
 		
