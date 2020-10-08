@@ -177,11 +177,11 @@ uesp.template = function (templateText, data)
 uesp.templateEsc = function (templateText, data)
 {
 	return templateText.replace(/{(\w*)\.?(\w*)?\.?(\w*)?}/g, function(m, key1, key2, key3) {
-		if (!data.hasOwnProperty(key1)) return '';
+		if (!data.hasOwnProperty(key1) || data[key1] == null) return '';
 		if (key2 == null || key2 == '') return uesp.escapeAttribute(data[key1]);
-		if (!data[key1].hasOwnProperty(key2)) return '';
+		if (!data[key1].hasOwnProperty(key2) || data[key1][key2] == null) return '';
 		if (key3 == null || key3 == '') return uesp.escapeAttribute(data[key1][key2]);
-		if (!data[key1][key2].hasOwnProperty(key3)) return '';
+		if (!data[key1][key2].hasOwnProperty(key3) || data[key1][key2][key3] == null) return '';
 		return uesp.escapeAttribute(data[key1][key2][key3]);
 	});
 }
@@ -198,6 +198,7 @@ uesp.ESC_MAP = {
 
 uesp.escapeHTML = function (unsafeStr, forAttribute)
 {
+	if (unsafeStr == null) return "";
 	if (unsafeStr.replace == null) return unsafeStr;
 	return unsafeStr.replace(forAttribute ? /[&<>'"]/g : /[&<>]/g, function(c) {
 	        return uesp.ESC_MAP[c];
