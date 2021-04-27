@@ -1656,6 +1656,9 @@ uesp.gamemap.Map.prototype.createNewLocation = function (gamePos)
 	location.visible = true;
 	location.useEditPopup = true;
 	location.isFirstEdit = true;
+	location.displayData = {};
+	location.displayData.points = [];
+	location.displayData.labelPos = 0;
 	
 	location.displayData.labelPos = 6;
 	location.iconType = 1;
@@ -3260,7 +3263,7 @@ uesp.gamemap.Map.prototype.onEditDragLocationStart = function (location)
 	this.displayEditNotice('Click to move location to a new position.<br/>Hit \'Finish\' on the right when done.', 'Finish', 'Cancel');
 	this.currentEditPathPoints = uesp.cloneObject(location.displayData.points);
 	
-	this.addEditClickWall('default');
+	this.addEditClickWall();
 	
 	this.displayLocation(this.currentEditLocation);
 }
