@@ -1,7 +1,7 @@
 /*
  * common.js -- Created by Dave Humphrey (dave@uesp.net) on 21 Jan 2014
  * 		Released under the GPL v2
- * 		Contains common code for the GameMap system. 
+ * 		Contains common code for the GameMap system.
  *
  */
 
@@ -341,3 +341,15 @@ uesp.isMobileDevice = function ()
 {
 	return (navigator.userAgent.match(/Mobi/));
 }
+
+
+jQuery.event.special.touchstart = {
+	setup: function( _, ns, handle ) {
+		this.addEventListener('touchstart', handle, { passive: !ns.includes('noPreventDefault') });
+	}
+};
+jQuery.event.special.touchmove = {
+	setup: function( _, ns, handle ) {
+		this.addEventListener('touchmove', handle, { passive: !ns.includes('noPreventDefault') });
+	}
+};
