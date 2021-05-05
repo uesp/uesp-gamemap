@@ -162,8 +162,6 @@ uesp.gamemap.Location.prototype.removeElements = function ()
 	this.popupElement = null;
 	this.pathElement  = null;
 	this.tooltipElement = null;
-	
-	this.parentMap.redrawCanvas();
 }
 
 
@@ -716,6 +714,7 @@ uesp.gamemap.Location.prototype.onCloseEditPopup = function (event)
 	{
 		delete this.parentMap.locations[this.id];
 		this.removeElements();
+		this.parentMap.redrawCanvas();
 	}
 
 }
@@ -760,12 +759,16 @@ uesp.gamemap.Location.prototype.onSaveEditPopup = function (event)
 	this.setPopupEditNotice('Saving location...');
 	this.enablePopupEditButtons(false);
 	
+	this.iconImage = null;
+	
 	this.getFormData();
-
+	
 	this.updateOffset();
 	this.update();
 	
 	this.doSaveQuery();
+	
+	this.parentMap.redrawCanvas();
 }
 
 
@@ -789,6 +792,8 @@ uesp.gamemap.Location.prototype.onDeleteEditPopup = function (event)
 		this.removeElements();
 		
 		delete this.parentMap.locations[this.id];
+		
+		this.parentMap.redrawCanvas();
 		return true;
 	}
 	
@@ -937,10 +942,12 @@ uesp.gamemap.Location.prototype.onSavedLocation = function (data)
 	if (!this.visible)
 	{
 		this.removeElements();
+		this.parentMap.redrawCanvas();
 	}
 	else if (this.displayLevel > this.parentMap.zoomLevel)
 	{
 		this.removeElements();
+		this.parentMap.redrawCanvas();
 	}
 	
 	return true;

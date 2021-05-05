@@ -342,6 +342,26 @@ uesp.isMobileDevice = function ()
 	return (navigator.userAgent.match(/Mobi/));
 }
 
+uesp.startProfile = function()
+{
+	if (window.performance && window.performance.now) return window.performance.now();
+	return 0;
+}
+
+
+uesp.profile = function(startProfile, name)
+{
+	if (window.performance && window.performance.now) 
+	{
+		var now = window.performance.now();
+		var diff = now - startProfile;
+		uesp.logDebug(uesp.LOG_LEVEL_INFO, "Profile" + name + " = " + diff + " ms");
+		return now;
+	}
+	
+	return 0;
+}
+
 
 jQuery.event.special.touchstart = {
 	setup: function( _, ns, handle ) {

@@ -330,7 +330,7 @@ uesp.gamemap.Map.prototype.changeWorld = function (world, newState)
 	if (! (worldId in this.mapWorlds)) return uesp.logError("Unknown world ID " + worldId + "!");
 	
 	this.clearLocationElements();
-		
+	
 	this.currentWorldId = worldId;
 	this.mapOptions = this.mapWorlds[this.currentWorldId].mapOptions;
 	
@@ -2816,6 +2816,7 @@ uesp.gamemap.Map.prototype.setGamePos = function(x, y, zoom, updateMap)
 	
 	if (updateMap == null || updateMap === true)
 	{
+		this.redrawCanvas();
 		this.updateLocations();
 		this.loadMapTiles();
 		if (this.isDrawGrid) this.drawGrid();
