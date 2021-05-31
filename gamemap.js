@@ -2650,6 +2650,11 @@ uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 	if (this.userEvents.onMapWorldsLoaded != null) this.userEvents.onMapWorldsLoaded.call(this);
 	this.fillWorldList('#gmMapListAlphaSelect');
 	
+	if (this.queryParams.search != null)
+	{
+		this.doSearch(this.queryParams.search, false);
+	}
+	
 	return true;
 }
 
@@ -3895,7 +3900,7 @@ uesp.gamemap.Map.prototype.getWorldFormData = function()
 	formValues.posRight = parseInt(formValues.posRight);
 	formValues.posTop = parseInt(formValues.posTop);
 	formValues.posLeft = parseInt(formValues.posLeft);
-		
+	
 	if (formValues.enabled == null)
 		formValues.enabled = false;
 	else
@@ -4043,6 +4048,8 @@ uesp.gamemap.Map.prototype.createSearchControls = function ()
 	
 	var mapSearchResultsButton = this.mapSearchRoot.find('.gmMapSearchResultsButton');
 	var mapSearchInput = $(".gmMapSearchInput");
+	
+	if (this.queryParams.search) mapSearchInput.val(this.queryParams.search);
 	
 	mapResetButton.bind("touchstart click", function (e) {
 		self.onResetSearchButton(e);
