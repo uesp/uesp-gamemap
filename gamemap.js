@@ -874,9 +874,14 @@ uesp.gamemap.Map.prototype.getMapStateFromQuery = function (defaultMapState)
 		displayState = defaultMapState.displayState;
 	}
 	
-	if ( !(this.queryParams.x     == null)) gameX   = parseInt(this.queryParams.x);
-	if ( !(this.queryParams.y     == null)) gameY   = parseInt(this.queryParams.y);
-	if ( !(this.queryParams.zoom  == null)) zoom    = parseInt(this.queryParams.zoom);
+	if (this.queryParams.x != null && this.queryParams.y != null)
+	{
+		gameX = parseInt(this.queryParams.x);
+		gameY = parseInt(this.queryParams.y);
+		if (this.queryParams.zoom == null) zoom = 15;
+	}
+	
+	if (this.queryParams.zoom != null) zoom = parseInt(this.queryParams.zoom);
 	
 	if ( ! (this.queryParams.world == null))
 	{
