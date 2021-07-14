@@ -5,6 +5,7 @@
 name = uesp.gamemap
 
 ignore = .hg*
+ignore = .git*
 ignore = *.deploy
 ignore = *.sh
 
