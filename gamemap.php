@@ -85,8 +85,12 @@ class GameMap
 	public $dbReadInitialized  = false;
 	public $dbWriteInitialized = false;
 	public $startedSession = false;
+	
 	public $canEdit = false;
-
+	public $canEditEso = false;
+	public $canEditTR = false;
+	public $canEditOther = false;
+	
 	
 	function __construct ()
 	{
@@ -102,10 +106,38 @@ class GameMap
 		
 		$userId = UespMemcachedSession::readKey('wsUserID');
 		
-		if ($userId > 0) 
+		if ($userId > 0)
 		{
-			if (UespMemcachedSession::readKey('UESP_EsoMap_canEdit') === true) $this->canEdit = true;
+			if (UespMemcachedSession::readKey('UESP_AllMap_canEdit') === true)
+			{
+				$this->canEdit = true;
+				$this->canEditESO = true;
+				$this->canEditTR = true;
+				$this->canEditOther = true;
+			}
+			
+			if (UespMemcachedSession::readKey('UESP_EsoMap_canEdit') === true) $this->canEditESO = true;
+			if (UespMemcachedSession::readKey('UESP_TRMap_canEdit') === true) $this->canEditTR = true;
+			if (UespMemcachedSession::readKey('UESP_OtherMap_canEdit') === true) $this->canEditOther = true;
 		}
+	}
+	
+	
+	public function canEditMap($dbPrefix)
+	{
+		if ($dbPrefix === null) return false;
+		
+		if ($this->canEdit) return true;
+		
+		if ($dbPrefix == "" || $dbPrefix == "eso") return $this->canEditESO;
+		if ($dbPrefix == "tr") return $this->canEditTR;
+		
+		if ($dbPrefix == "sr" || $dbPrefix == "si" || $dbPrefix == "mw" || $dbPrefix == "ob" || $dbPrefix == "si" || $dbPrefix == "db" || $dbPrefix == "ptmw")
+		{
+			return $this->canEditOther;
+		}
+		
+		return false;
 	}
 	
 	
@@ -328,7 +360,7 @@ class GameMap
 	
 	public function doGetPermissions ()
 	{
-		$this->addOutputItem("canEdit", $this->canEdit);
+		$this->addOutputItem("canEdit", $this->canEditMap($this->dbPrefix));
 		return true;
 	}
 	
@@ -1216,7 +1248,7 @@ class GameMap
 	{
 		global $uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW, $uespGameMapDatabase;
 		
-		if (!$this->canEdit) return $this->reportError('You do not have sufficient permissions!');
+		if (!$this->canEditMap($this->dbPrefix)) return $this->reportError('You do not have sufficient permissions!');
 		
 		if ($this->dbWriteInitialized) return true;
 		
