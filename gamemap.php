@@ -667,14 +667,31 @@ class GameMap
 	
 	public function FindLocationCenterOn ($centerOn, &$worldId)
 	{
-		if (is_numeric($centerOn))
+		if ($worldId > 0)
 		{
-			$locId = intval($centerOn);
-			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND id={$locId} LIMIT {$this->limitCount};";
+			$worldId = intval($worldId);
+			
+			if (is_numeric($centerOn))
+			{
+				$locId = intval($centerOn);
+				$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId='$worldId' AND id={$locId} LIMIT {$this->limitCount};";
+			}
+			else
+			{
+				$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId='$worldId' AND name='{$centerOn}' LIMIT {$this->limitCount};";
+			}
 		}
 		else
 		{
-			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND name='{$centerOn}' LIMIT {$this->limitCount};";
+			if (is_numeric($centerOn))
+			{
+				$locId = intval($centerOn);
+				$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND id={$locId} LIMIT {$this->limitCount};";
+			}
+			else
+			{
+				$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND name='{$centerOn}' LIMIT {$this->limitCount};";
+			}
 		}
 		
 		$result = $this->db->query($query);
@@ -729,6 +746,7 @@ class GameMap
 		if ($this->world !== '')
 		{
 			$worldId = $this->FindWorld($this->world);
+			//error_log("doGetCenterOn: $worldId");
 			//if ($worldId === 0) return $this->reportError("Could not find world '{$this->world}'!");
 		}
 		else
@@ -1374,6 +1392,7 @@ class GameMap
 		
 			// Unsure why these are not being replaced automatically
 		$this->locCenterOn = urldecode($this->locCenterOn);
+		//error_log("locCenterOn: {$this->locCenterOn}");
 		//$this->locCenterOn = str_replace('+', ' ', $this->locCenterOn);
 		//$this->locCenterOn = str_replace('%20', ' ', $this->locCenterOn);
 		//$this->locCenterOn = str_replace('%27', "'", $this->locCenterOn);
