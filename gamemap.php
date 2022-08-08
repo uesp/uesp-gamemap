@@ -132,7 +132,7 @@ class GameMap
 		if ($dbPrefix == "" || $dbPrefix == "eso") return $this->canEditESO;
 		if ($dbPrefix == "tr") return $this->canEditTR;
 		
-		if ($dbPrefix == "sr" || $dbPrefix == "si" || $dbPrefix == "mw" || $dbPrefix == "ob" || $dbPrefix == "si" || $dbPrefix == "db" || $dbPrefix == "ptmw")
+		if ($dbPrefix == "sr" || $dbPrefix == "si" || $dbPrefix == "mw" || $dbPrefix == "ob" || $dbPrefix == "si" || $dbPrefix == "db" || $dbPrefix == "ptmw" || $dbPrefix == "test")
 		{
 			return $this->canEditOther;
 		}
@@ -1324,6 +1324,9 @@ class GameMap
 					break;
 				case 'si':
 					$this->dbPrefix = "si";
+					break;
+				case 'test':
+					$this->dbPrefix = "test";
 					break;
 			}
 		}
