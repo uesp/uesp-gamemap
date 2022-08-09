@@ -36,12 +36,6 @@
 	z-index: 200;
 }
 
-.gmMapControlRoot {
-	right: 2px;
-	top: auto;
-	bottom: 2px;
-}
-
 .gmMapControlZoom {
 	width: 42px;
 	height: 42px;
