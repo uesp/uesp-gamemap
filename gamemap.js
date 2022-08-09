@@ -28,7 +28,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	
 	this.USE_CANVAS_DRAW = this.mapOptions.useCanvasDraw;
 	this.USE_LEAFLET = this.mapOptions.useLeaflet;
-	this.PANAMOUNT = this.mapOptions.tileSize;
+	this.PANAMOUNT = this.mapOptions.tileSize/2;
 	
 	this.mapRoot = null;
 	this.mapCanvas = null;

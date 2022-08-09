@@ -753,9 +753,9 @@ input[type=checkbox].gmMapEditPopupInput {
 	background-color: #999999;
 }
 
-/* 
-	Zoom / pan buttons
-*/
+/*========================================
+	        Zoom / pan buttons
+=========================================*/
 
 .gmMapControlRoot {
 	text-align: center;
