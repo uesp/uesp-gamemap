@@ -1,2 +1,3 @@
 *.secrets
 *.pyc
+.vscode/sftp.json
