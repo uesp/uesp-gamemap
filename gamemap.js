@@ -2175,16 +2175,15 @@ uesp.gamemap.Map.prototype.onPinchStart = function(event)
 uesp.gamemap.Map.prototype.onPinchMove = function(event)
 {
 	
-	if (event.pinchDistance >= 0)
+	if (event.pinchDistance >= 500)
 	{
 		if (event.pinchDistance > self.lastPinchDistance) this.onPinchZoomIn(); 
 		if (event.pinchDistance < self.lastPinchDistance) this.onPinchZoomOut();
-	}
-	
-	if (event.pinchDistance >= 0)
-	{
+
 		this.lastPinchDistance = event.pinchDistance;
+
 	}
+
 }
 
 
