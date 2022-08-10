@@ -21,7 +21,7 @@
 	border: none;
 	position: absolute;
 	z-index: 1;
-	cursor: url(grab.cur) 8 8, default;
+	cursor: grab;
 }
 
 .gmMapLoc {
@@ -183,7 +183,7 @@
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	cursor: url(grab.cur) 8 8, default;
+	cursor: grab;
 }
 
 .gmMapAreaCanvas {

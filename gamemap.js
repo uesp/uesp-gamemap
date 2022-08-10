@@ -648,7 +648,7 @@ uesp.gamemap.Map.prototype.createMapCanvas = function()
 						attr('height', canvasHeight).
 						css('width', canvasWidth).
 						css('height', canvasHeight).
-						css('cursor', "url(grab.cur) 8 8, default").
+						css('cursor', "grab").
 						appendTo(this.mapContainer)[0];
 	
 	this.mapCanvasGrid = $('<canvas />').
@@ -657,7 +657,7 @@ uesp.gamemap.Map.prototype.createMapCanvas = function()
 						attr('height', canvasHeight).
 						css('width', canvasWidth).
 						css('height', canvasHeight).
-						css('cursor', "url(grab.cur) 8 8, default").
+						css('cursor', "grab").
 						appendTo(this.mapContainer)[0];
 	
 	this.mapCanvasElement = $("#gmMapCanvas");
@@ -2329,7 +2329,7 @@ uesp.gamemap.Map.prototype.checkCanvasHover = function(event)
 		}
 		else
 		{
-			this.mapCanvasGridElement.css('cursor', "url(grab.cur) 8 8, default")
+			this.mapCanvasGridElement.css('cursor', "grab")
 		}
 	}
 }
