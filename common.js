@@ -82,6 +82,9 @@ uesp.setDebug = function(debug)
 uesp.setDebug(uesp.DEFAULT_DEBUG);
 
 
+function on_resize(c,t){onresize=function(){clearTimeout(t);t=setTimeout(c,100)};return c};
+
+
 uesp.priv_log = function () {
 	var args = Array.prototype.slice.call(arguments);
 	var logLevel = args[0];

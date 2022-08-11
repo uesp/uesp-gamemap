@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
    <head>
+      <!-- TODO: Auto generate title -->
       <title>UESP:Elder Scrolls Online Map</title>
 
       <!-- TODO: Add more generated meta tags here? -->
@@ -21,7 +22,7 @@
       <script type="text/javascript" src="maptile.js?date=29march2014a"></script>
       <script type="text/javascript" src="gamemap.js?date=8Sept2018"></script>
       
-      <!--OFFLINE_JAVASCRIPT-->
+      <!-- TODO: Replace this with a dynamic list -->
       <script type="text/javascript">
          var esoIconMap = {
                1  : "Artifact Gate",
@@ -298,12 +299,10 @@
             this.setMapState(mapState);
          }
          
-         
          function onPermLoad() {
             canEdit = this.canEdit() && !uesp.isMobileDevice();
             
-            if (canEdit)
-            {
+            if (canEdit) {
                $("#gmMapEditButtons").show();
                $("#addLocationButton").show();
                $("#addPathButton").show();
@@ -311,8 +310,7 @@
                $("#editWorldButton").show();
                $("#showRecentChangeButton").show();
             }
-            else
-            {
+            else {
                $("#addLocationButton").hide();
                $("#addPathButton").hide();
                $("#addAreaButton").hide();
@@ -323,7 +321,7 @@
             updateMenuBarHeight();
          }
          
-         
+         // on window resize
          $(window).resize( function(e) {
             updateMenuBarHeight();
          });
