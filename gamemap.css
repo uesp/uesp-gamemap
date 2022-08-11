@@ -9,29 +9,34 @@
 :root {
 	/* surface colours */
 	--background: #000000;
-	--popup_background: #eee5cf;
-	--debug: rgb(225, 0, 255);
+	--surface: #FBF1DA;
+	--surface_variant: #eee5cf;
+	--surface_variant_dark: #F7E9CB;
+	--surface_debug: rgb(225, 0, 255);
+
+	--primary: #f8f2e1;
+	--primary_variant:#e5dfd0;
+	--primary_variant_light: #faf4e6;
+
+	--highlight_dark:#6B5F50;
+	--highlight_light: #FFE893;
+
+	--primary_dark: #3E3E3E;
+	--primary_dark_variant: #373737;
 
 	/* text colours */
-	--loc_name: #33ff33;
-	--loc_disabled: #ff3333;
-	/* --surfacevariant: #eee5cf;
-	--background: #FBF1DA;
-	--text: ;
-	--link: rgba(138,90,68,1);
-	  --surface: #F7E9CB;
-  --surfacevariant: #eee5cf;
-  --background: #FBF1DA;
-  --text: #000000;
-  --link: rgba(138,90,68,1);
-  --selection: rgba(138,90,68, 0.30);
-  --redlink: rgba(186,43,69,1);
-  --redlinkselection: rgba(186,43,69, 0.30);
-  --divider: rgba(164, 163, 163, 0.30);
-	--selection: rgba(138,90,68, 0.30);
-	--redlink: rgba(186,43,69,1);
-	--redlinkselection: rgba(186,43,69, 0.30);
-	--divider: rgba(164, 163, 163, 0.30); */
+	--text_loc_name: #33ff33;
+	--text_loc_disabled: #ff3333;
+	--text_link: rgba(138,90,68,1);
+	--text_primary: black;
+	--text_low_emphasis: #474747;
+
+	/* misc colours */
+	--divider: rgba(164, 163, 163, 0.30);
+	--shadow: rgba(0,0,0,0.3);
+	--secondary: #8a5a44;
+	--secondary_variant: #A69480;
+  	--selection: rgba(138,90,68, 0.30);
 }
 
 #gmMap {
@@ -63,19 +68,19 @@
 	position: absolute;
 	white-space: nowrap;
 	z-index: 20;
-	color: var(--loc_name);
+	color: var(--text_loc_name);
 	font-weight: 400;
 	font-family: "Arial", sans-serif;
 	font-size: 11px;
-	text-shadow: 0px 0px 5px #000000;
-	background-color: rgba(0,0,0,0.4);
+	text-shadow: 0px 0px 5px var(--background);
+	background-color: var(--shadow);
 	display: inline-block;
-	box-shadow: 0px 0px 2px 5px rgba(0,0,0,0.3);
+	box-shadow: 0px 0px 2px 5px var(--shadow);
 	cursor: pointer;
 }
 
 .gmMapLocDisabled {
-	color: var(--loc_disabled) !important;
+	color: var(--text_loc_disabled) !important;
 }
 
 .gmMapLocIconDiv {
@@ -128,14 +133,14 @@
 	display: block;
 	width: 210px;
 	height: 100px;
-	background-color: var(--popup_background);
+	background-color: var(--surface);
 	border: none;
 	z-index: 30;
 	font-family: "Arial", sans-serif;
 	font-size: 13px;
 	padding: 4px;
 	border-radius: 5px;
-	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
+	box-shadow: 0px 0px 2px 2px var(--shadow);
 }
 
 
@@ -145,12 +150,12 @@
 	display: block;
 	width: 302px;
 	height: 330px;
-	background-color: #ffffff;
+	background-color: var(--surface);
 	border: none;
 	z-index: 30;
 	padding: 4px;
 	border-radius: 5px;
-	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
+	box-shadow: 0px 0px 2px 2px var(--shadow);
 }
 
 .gmMapPopupClose {
@@ -158,16 +163,16 @@
 	top: 6px;
 	right: 7px;
 	cursor: pointer;
-	background-color: transparent;
+	background-color: rgb(184, 22, 22);
 }
 
 .gmMapEditPopup .gmMapPopupClose {
-	border: 1px solid gray;
+	border: 1px solid var(--selection);
 }
 
 .gmMapPopupClose:hover {
-	background-color: #ccc;
-	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
+	background-color: rgb(184, 22, 22);
+	box-shadow: 0px 0px 2px 2px var(--shadow);
 }
 
 .gmMapPopupTitle {
@@ -181,14 +186,16 @@
 }
 
 .gmMapPopupEditLabel {
-	text-align: right;
+	margin-top: 10px;
+	text-align: center;
+	font-weight: bold;
 	width: 100%;
-	color: #0000ff;
+	color: var(--text_link);
 	cursor: pointer;
 }
 
 .gmMapPopupEditLabel:hover {
-	background: #999999;
+	background: var(--selection);
 }
 
 .gmMapPopupDesc {
@@ -244,10 +251,10 @@
 	top: 2px;
 	width: 300px;
 	bottom: 2px;
-	border: 1px solid gray;
+	box-shadow: 0px 0px 4px 4px var(--shadow);
 	list-style-type: none;
 	z-index: 50;
-	background-color: #ffffff;
+	background-color: var(--surface);
 }
 
 #gmMapListGroup {
@@ -279,16 +286,16 @@
 }
 
 #gmMapListTitle {
-	background-color: #cccccc;
+	background-color: var(--primary_variant);
 	font-family: sans-serif;
 	font-size: 12px;
 	font-weight: bold;
-	width: 299px;
+	width: auto;
 	height: 20px;
 	line-height: 20px;
 	vertical-align: middle;
 	text-align: center;
-	border: 1px solid gray;
+	box-shadow: 0 2px 2px 0px var(--shadow);
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
@@ -312,11 +319,12 @@
 	height: 12px;
 	line-height: 12px;
 	font-size: 10px;
-	background-color: #999999;
-	border: 1px solid gray;
+	background-color: var(--primary_variant_light);
+	border: 1px solid var(--divider);
 	display: inline-block;
 	padding: 1px;
 	margin-right: 2px;
+	margin-left: 5px;
 	margin-top: 2px;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -328,11 +336,11 @@
 
 .gmMapListButtonSelect
 {
-	background-color: #ffff99 !important;
+	background-color: var(--secondary_variant) !important;
 }
 
 #gmMapListButtonGroup:hover, #gmMapListButtonAlpha:hover {
-	background-color: #eeeeee;
+	background-color: var(--surface_variant_dark);
 }
 
 #gmMapListAlpha {
@@ -356,13 +364,13 @@
 
 .gmMapListHeader {
 	font-weight: bold;
-	background-color: #eeeeee;
-	color: #000000;
+	background-color: var(--surface_variant);
+	color: var(--text_primary);
 	background-image: url(images/uparrow.gif);
 }
 
 ul ul .gmMapListHeader {
-	color: #666666;
+	color: var(--text_low_emphasis);
 	background-image: url(images/downarrow.gif);
 }
 
@@ -373,8 +381,8 @@ ul ul .gmMapListHeader {
 }
 
 .gmMapListSelect {
-	background-color: #0000cc;
-	color: #ffffff;
+	background-color: var(--secondary);
+	color: lightgray;
 }
 
 #gmMapList li {
@@ -385,15 +393,15 @@ ul ul .gmMapListHeader {
 }
 
 #gmMapList li:hover {
-	background-color: #ccccff;
+	background-color: var(--surface_variant_dark);
 }
 
 #gmMapList li.gmMapListSelect:hover {
-	background-color: #3333cc;
+	background-color: var(--secondary_variant);
 }
 
 #gmMapList .gmMapListHeader:hover {
-	background-color: #cccccc;
+	background-color: var(--surface_variant_dark);
 }
 
 #gmMapList ul li {
@@ -457,7 +465,7 @@ ul ul .gmMapListHeader {
 	display: inline-block;
 	position: relative;
 	width: 100%;
-	background-color: #ccccff;
+	background-color: var(--secondary_variant);
 	height: 18px;
 	line-height: 18px;
 	font-size: 13px;
@@ -616,7 +624,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	display: block;
 	width: 300px;
 	height: 330px;
-	background-color: #ffffff;
+	background-color: var(--surface);
 	border: none;
 	z-index: 300;
 	padding: 4px;
@@ -678,11 +686,33 @@ input[type=checkbox].gmMapEditPopupInput {
 	padding-left: 5px;
 	vertical-align: top;
 	text-align: -webkit-match-parent;
-	border-top: 2px solid #cc0000;
+	border-top: 2px solid var(--highlight_dark);
+}
+
+.gmMenuItemTitle {
+	position: relative;
+	top: 3px;
+	left: 5px;
+	display: inline;
+	font-family: Arial;
+	font-size: 20px;
+	font-weight: bold;
+	color: white;
+	padding-right: 25px;
+}
+
+.gmMenuItemTitle a {
+	text-decoration: none !important;
+	color: white;	
 }
 
 .gmMenuItem:hover {
+	border-top: 2px solid var(--highlight_light);
 	background-color: #666;
+}
+
+.gmMenuItemTitle:hover {
+	text-decoration: underline;
 }
 
 .gmMenuItem a {
