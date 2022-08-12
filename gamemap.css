@@ -39,12 +39,80 @@
   	--selection: rgba(138,90,68, 0.30);
 }
 
+/*================================================
+	               Mobile CSS
+================================================*/
+
+@media only screen and (max-device-width:799px) {
+
+	#gmMenuBar {
+		display: none !important;
+	}
+
+	#gmMenuItemTitle {
+		display: none;
+	}
+	
+	#gmMapEditButtons {
+		display: none;
+	}
+	
+	#gmMapWikiLink {
+		display: none;
+	}
+	
+	#gmMapLink, #gmMapReset {
+		display: none;
+	}
+	
+	#gmMapShowKey, #gmMapHelp, #gmMapDiscuss, #gmMapHome {
+		display: none;
+	}
+	
+	#editWorldButton, #addLocationButton, #addPathButton, #addAreaButton, #showRecentChangeButton {
+		display: none;
+	}
+	
+	.gmNoMobile {
+		display: none;
+	}
+	
+	#gmMapListRoot {
+		position: absolute;
+		left: 2px;
+		top: 22px;
+		height: 600px;
+		width: 252px;
+		z-index: 200;
+	}
+	
+	.gmMapControlZoom {
+		width: 42px;
+		height: 42px;
+		line-height: 42px;
+		text-align: center;
+		vertical-align: middle;
+		font-size: 36px;
+		border: 1px solid gray;
+		background-color: #cccccc;
+		color: #000;
+		border-color:#bbb #888 #666 #aaa;
+		border-width:2px 3px 3px 2px;
+		margin: 0 auto;
+		margin-top: 5px;
+	}
+
+	.gmMapSearchRoot {
+		width: 100% !important;
+	}
+
+}
+
 #gmMap {
 	bottom: 0px;
 	top: 29px;
 	left: 0px;
 	right: 0px;
-	border: 1px solid var(--background);
 	overflow: hidden;
 	position: absolute;
 }
@@ -635,13 +703,11 @@ input[type=checkbox].gmMapEditPopupInput {
 
 #gmMenuBar {
 	display: inline-block;
-	padding: 0px;
-	top: 0px;
-	left: 0px;
+	position: absolute;
 	width: 100%;
-	background-color: #333333;
-	z-index: 899;
-	border-bottom: 1px solid #000;
+	background-color: var(--primary_dark_variant);
+	z-index: 900;
+	box-shadow: 0 3px 4px 0px var(--shadow);
 }
 
 #gmTitle {
@@ -736,6 +802,10 @@ input[type=checkbox].gmMapEditPopupInput {
 	white-space: nowrap;
 	border-image: url(images/tooltip-border.png) 2 2 2 2 stretch;
 }
+
+
+
+
 
 .gmMapIconTypeListContainer {
 	display: inline-block;
@@ -897,11 +967,15 @@ input[type=checkbox].gmMapEditPopupInput {
 	border-width: 3px 2px 2px 3px;
 }
 
+
+/*================================================
+	              Search Box
+================================================*/
+
 .gmMapSearchRoot {
 	position: absolute;
-	left: 2px;
-	top: 2px;
-	bottom: 2px;
+	width: 400px;
+	margin: 12px;
 	z-index: 100;
 	font-family: Arial, sans-serif;
 	font-size: 12px;
@@ -912,7 +986,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	background-color: white;
 	border: none;
 	pointer-events: auto;
-	height: 36px;
+	height: 50px;
 }
 
 .gmMapSearchCheck {
