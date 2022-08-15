@@ -63,7 +63,7 @@ uesp.gamemap.MapOptions = function(mapOptions)
 	this.useFakeMaxZoom = false;
 	
 	this.dbPrefix = "";
-	this.helpTemplate = "template/helpblock.txt";
+	this.helpTemplate = "templates/helpblock.txt";
 	this.showSearchThisLocation = true;
 	
 	this.defaultIconWidth = 32;

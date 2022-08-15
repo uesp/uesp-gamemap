@@ -5,7 +5,7 @@
  *
  */
 
-	// Namespace definitions
+// Namespace definitions
 var uesp = uesp || {};
 uesp.gamemap = uesp.gamemap || {};
 
