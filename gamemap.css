@@ -975,16 +975,19 @@ input[type=checkbox].gmMapEditPopupInput {
 .gmMapSearchRoot {
 	position: absolute;
 	width: 400px;
+	height: 100%;
 	margin: 12px;
 	z-index: 100;
 	font-family: Arial, sans-serif;
 	font-size: 12px;
 	pointer-events: none;
+	box-shadow: 0px 0px 4px 4px var(--shadow);
+	border-radius: 16px;
 }
 
 .gmMapSearchInputDiv {
 	background-color: white;
-	border: none;
+	border-radius: 16px;
 	pointer-events: auto;
 	height: 50px;
 }

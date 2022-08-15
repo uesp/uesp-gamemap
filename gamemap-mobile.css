@@ -1,0 +1,53 @@
+#gmTitle {
+	display: none;
+}
+
+
+#gmMapEditButtons {
+	display: none;
+}
+
+#gmMapWikiLink {
+	display: none;
+}
+
+#gmMapLink, #gmMapReset {
+	display: none;
+}
+
+#gmMapShowKey, #gmMapHelp, #gmMapDiscuss, #gmMapHome {
+	display: none;
+}
+
+#editWorldButton, #addLocationButton, #addPathButton, #addAreaButton, #showRecentChangeButton {
+	display: none;
+}
+
+.gmNoMobile {
+	display: none;
+}
+
+#gmMapListRoot {
+	position: absolute;
+	left: 2px;
+	top: 22px;
+	height: 600px;
+	width: 252px;
+	z-index: 200;
+}
+
+.gmMapControlZoom {
+	width: 42px;
+	height: 42px;
+	line-height: 42px;
+	text-align: center;
+	vertical-align: middle;
+	font-size: 36px;
+	border: 1px solid gray;
+	background-color: #cccccc;
+	color: #000;
+	border-color:#bbb #888 #666 #aaa;
+	border-width:2px 3px 3px 2px;
+	margin: 0 auto;
+	margin-top: 5px;
+}

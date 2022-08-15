@@ -2,12 +2,12 @@
 <html>
    <head>
       <!-- TODO: Auto generate title -->
-      <title>UESP:Elder Scrolls Online Map</title>
+      <title>UESP:ESO Map</title>
 
       <!-- TODO: Add more generated meta tags here? -->
       <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
       <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-      
+
       <link rel="stylesheet" href="gamemap.css?date=15May2018" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,200" />
       
@@ -354,7 +354,7 @@
                g_GameMap.createMapList($("#gmMapListRoot"));
 
                // TODO: Temporary call to get the group-world list for ESO
-               $.get( 'template/worldgrouplist.txt', function( data ) {
+               $.get( 'templates/worldgrouplist.txt', function( data ) {
                   g_GameMap.worldGroupListContents = data;
                   uesp.logDebug(uesp.LOG_LEVEL_INFO, 'Received world group list contents!');
                   $('#gmMapList').html(data);
@@ -406,7 +406,7 @@
 
    <body>
       <div id="gmMenuBar">
-         <li class="gmMenuItemTitle"><a href="//www.uesp.net/wiki/Main_Page">UESP:Elder Scrolls Online Map</a></li>
+         <li class="gmMenuItemTitle"><a href="//www.uesp.net/wiki/Main_Page">UESP:ESO Map</a></li>
          <ol class="gmMenuLinks">
             <li class="gmMenuItem" id="gmMapNameLabel" onclick="g_GameMap.showMapList();" ontouchstart="g_GameMap.showMapList();"></li>
             <li class="gmMenuItem gmNoMobile"><a title="Generate permalink to this location" href="" id="gmMapLink"><span class="material-symbols-outlined">Link</span></a></li>
