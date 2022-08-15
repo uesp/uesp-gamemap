@@ -10,6 +10,6 @@ easily used for other game maps on other sites if desired.
 
 Note that currently the GameMap project is under very early development.
 
-Source code is released under the GPL v2.
+Source code is released under the MIT license.
 
 
