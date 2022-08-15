@@ -4,7 +4,7 @@ The UESP Gamemap is a custom built Google Maps alternative for the Unofficial El
 
 ## Vality
 
-Vality is an in-development overhaul of the map system, focusing on usability and performance, named after Vality7, the modder currently overhauling the Morrowind mod Project Tamriel's heightmap.
+Vality is an in-development overhaul of the map system, focusing on usability and performance. It is named after Vality7 the modder that overhauled the Morrowind mod Project Tamriel's heightmap.
 
 ## Licensing
 

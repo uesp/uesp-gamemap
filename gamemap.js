@@ -4006,8 +4006,7 @@ uesp.gamemap.Map.prototype.createRecentChanges = function ()
 }
 
 
-uesp.gamemap.Map.prototype.createSearchControls = function ()
-{
+uesp.gamemap.Map.prototype.createSearchControls = function () {
 	if (this.mapSearchRoot != null) return;
 	var self = this;
 	

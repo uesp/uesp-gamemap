@@ -40,6 +40,19 @@
 }
 
 /*================================================
+	                   Fonts
+================================================*/
+
+@font-face {
+    font-family: wikiTitle;
+    src:url("/assets/fonts/Goudy_Mediaeval_Regular.ttf");
+}
+
+.wikiTitle{
+    font-family: wikiTitle;
+}
+
+/*================================================
 	               Mobile CSS
 ================================================*/
 
@@ -701,7 +714,7 @@ input[type=checkbox].gmMapEditPopupInput {
 }
 
 
-#gmMenuBar {
+#menubar{
 	display: inline-block;
 	position: absolute;
 	width: 100%;

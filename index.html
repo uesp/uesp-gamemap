@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
    <head>
       <!-- TODO: Auto generate title -->
@@ -326,7 +326,7 @@
          
          
          function updateMenuBarHeight() {
-            var menuBar = $("#gmMenuBar");
+            var menuBar = $("#menubar");
             var map = $('#gmMap');
             
             var height = menuBar.height();
@@ -404,8 +404,8 @@
    </head>
 
    <body>
-      <div id="gmMenuBar">
-         <li class="gmMenuItemTitle"><a href="//www.uesp.net/wiki/Main_Page">UESP:ESO Map</a></li>
+      <div id="menubar">
+         <li class="gmMenuItemTitle"><a href="//www.uesp.net/wiki/Main_Page"><b class="wikiTitle">UESP</b> | ESO Map</a></li>
          <ol class="gmMenuLinks">
             <li class="gmMenuItem" id="gmMapNameLabel" onclick="g_GameMap.showMapList();" ontouchstart="g_GameMap.showMapList();"></li>
             <li class="gmMenuItem gmNoMobile"><a title="Generate permalink to this location" href="" id="gmMapLink"><span class="material-symbols-outlined">Link</span></a></li>
@@ -436,6 +436,33 @@
 
       <!-- Map container -->
       <div id="gmMap"></div>
+
+      <!-- Search container
+      <div class="gmMapSearchRoot">
+
+         <form  onsubmit='return false;'>
+            <div class='gmMapSearchInputDiv'>
+               <input class='gmMapSearchInput' type='text' name='search' value='' size='25' maxlength='100' autocomplete='on' />
+               <button class='gmMapSearchButton' title='Search the map for this text' name='button' type='submit'>
+                  <img width='12' height='13' alt='Search' src='images/search-icon.png'>
+               </button>
+               <button class='gmSearchResetButton' title='Reset the map search' name='button' type='reset' >
+                  <img width='12' height='13' alt='Search' src='images/searchreseticon.png'>
+               </button>
+               
+               <div class='gmMapSearchSmall'><input class='gmMapSearchCheck' type='checkbox' name='searchMapOnly' /> Only Search in Current Map </div>
+            </div>
+         </form>
+
+         <div class='gmMapSearchResultsWrapper'>
+            <div class='gmMapSearchResults' style='display:none;'></div>
+            <div class='gmMapSearchResultsButton'>
+               <img class='gmMapSearchResultsButtonImage' src='images/downarrows.gif' />
+               <div class='gmMapSearchResultsButtonLabel'>Show Search Results </div>
+               <img class='gmMapSearchResultsButtonImage' src='images/downarrows.gif' />
+            </div>
+         </div>
+      </div> -->
 
       <!-- Google Analytics stuff -->
       <script type="text/javascript">
