@@ -8,4 +8,4 @@ Vality is an in-development overhaul of the map system, focusing on usability an
 
 ## Licensing
 
-Source code is released under the GPL v2 by Dave Humphrey (dave@uesp.net).
+Source code is released under the MIT by Dave Humphrey (dave@uesp.net).
