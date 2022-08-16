@@ -12,6 +12,7 @@
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,200" />
       
       <script type="text/javascript" src="libs/jquery-1.10.2.js"></script>
+      <script type="text/javascript" src="main.js"></script>
       <script type="text/javascript" src="common.js"></script>
       <script type="text/javascript" src="mapoptions.js?date=29march2014a"></script>
       <script type="text/javascript" src="mapstate.js?date=29march2014a"></script>
@@ -445,13 +446,15 @@
             </div>
 
             <div class='searchbox_container'>
-               <input class='search_box' type='text' name='searchbox' placeholder="Where would you like to go?" size='25' maxlength='100' autocomplete='off' />
+               <input class='search_box' type='text' id='searchbox' placeholder="Where would you like to go?" size='25' maxlength='100' autocomplete='off' />
             </div>
     
             <div class='clear_search_container' >
                <button id="btn_clear_search" class='btn_bgless_icon_button' name='button' title="Clear the current search" type='reset'><span class="material-symbols-outlined">close</span></button>
             </div>
          </div>
+
+         <!-- <button id="btn_location_list" class='btn_icon_button' name='btn_location_list' title="Open location list" type='reset'><span class="material-symbols-outlined">assistant_direction</span></button> -->
       </div>
 
       <!-- Google Analytics stuff -->
