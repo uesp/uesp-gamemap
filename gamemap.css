@@ -1,4 +1,42 @@
 /*================================================
+	            	 General
+================================================*/
+
+/* hide elements that request to be hidden */
+[class*='hidedefault'] {
+	visibility: hidden;
+}
+
+/* banish elements that are gone by default */
+[class*='banishdefault'] {
+	display: none;
+}
+
+/* prevent icons being selectable */
+span[class^="material-symbols"] { 
+	-webkit-user-select: none;  
+	-moz-user-select: none;    
+	-ms-user-select: none;      
+	user-select: none;
+}
+
+/*================================================
+	               Mobile CSS
+================================================*/
+
+@media only screen and (max-device-width:799px) {
+
+	#menubar {
+		display: none !important;
+	}
+
+	.search_root {
+		width: 100% !important;
+	}
+
+}
+
+/*================================================
 	            	Colours
 ================================================*/
 
@@ -53,21 +91,11 @@
 }
 
 /*================================================
-	              Components
+	              	 	Buttons
 ================================================*/
 
-/* icon components*/
-
-span[class^="material-symbols"] { /* prevent icon classes being selectable */
-	-webkit-user-select: none;  
-	-moz-user-select: none;    
-	-ms-user-select: none;      
-	user-select: none;
-  }
-
-/* buttons*/
-
-button { /* prevent buttons being selectable */
+/* prevent buttons being selectable */
+button { 
   -webkit-user-select: none;  
   -moz-user-select: none;    
   -ms-user-select: none;      
@@ -87,6 +115,7 @@ button[class*="icon_button"] {
 
 button[class*="icon_button"]:hover {
   background: var(--divider);
+  cursor: pointer;
 }
 
 button[class*="icon_button"]:active {
@@ -100,25 +129,10 @@ button[class*="bgless"] {
 }
 
 /*================================================
-	               Mobile CSS
-================================================*/
-
-@media only screen and (max-device-width:799px) {
-
-	#menubar {
-		display: none !important;
-	}
-
-	.search_root {
-		width: 100% !important;
-	}
-
-}
-
-/*================================================
 	                  Search
 ================================================*/
 
+/* --- root search view --- */
 .search_root {
 	position: absolute;
 	width: 420px;
@@ -127,8 +141,6 @@ button[class*="bgless"] {
 	font-size: 12px;
 	pointer-events: none;
 }
-
-/* --- search bar --- */
 
 .search_bar {
   	display: flex;
@@ -153,7 +165,7 @@ button[class*="bgless"] {
 
 .search_bar:hover {
 	background-color: var(--primary_variant);
-  box-shadow: 0px 1.5px 5px 6px var(--shadow);
+	box-shadow: 0px 1.5px 5px 6px var(--shadow);
 }
 
 .search_box {
