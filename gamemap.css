@@ -1,10 +1,6 @@
-
 /*================================================
-	               Base Colours
-==================================================
-   Use var(--colournamehere) to refer to colours
-				  semantically
-------------------------------------------------*/
+	            	Colours
+================================================*/
 
 :root {
 	/* surface colours */
@@ -44,12 +40,63 @@
 ================================================*/
 
 @font-face {
-    font-family: wikiTitle;
-    src:url("/assets/fonts/Goudy_Mediaeval_Regular.ttf");
+    font-family: 'wikiType';
+    src: url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('embedded-opentype'), /* Internet Explorer */
+         url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('woff2'),             /* Super Modern Browsers */
+         url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('woff'),              /* Pretty Modern Browsers */
+         url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('truetype'),          /* Safari, Android, iOS */
+         url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('svg');               /* Legacy iOS */
 }
 
 .wikiTitle{
-    font-family: wikiTitle;
+    font-family: 'wikiType', Arial, sans-serif;
+}
+
+/*================================================
+	              Components
+================================================*/
+
+/* material design icon components*/
+
+span[class^="material-symbols"] { /* prevent icon classes being selectable */
+	-webkit-user-select: none;  
+	-moz-user-select: none;    
+	-ms-user-select: none;      
+	user-select: none;
+  }
+
+/* buttons*/
+
+button { /* prevent buttons being selectable */
+  -webkit-user-select: none;  
+  -moz-user-select: none;    
+  -ms-user-select: none;      
+  user-select: none;
+}
+
+button[class*="icon_button"] {
+  background: var(--shadow);
+  border: none;
+  color: white;
+  padding: auto;
+  border-radius: 50%;
+  transition: all ease-in 150ms;
+  height: 50px;
+  width: 50px;
+}
+
+button[class*="icon_button"]:hover {
+  background: var(--divider);
+}
+
+button[class*="icon_button"]:active {
+  transition: width 0s;
+  background: var(--shadow);
+}
+
+button[class*="bgless"] {
+  background: 0;
+  color: black;
 }
 
 /*================================================
@@ -58,68 +105,196 @@
 
 @media only screen and (max-device-width:799px) {
 
-	#gmMenuBar {
+	#menubar {
 		display: none !important;
 	}
 
-	#gmMenuItemTitle {
-		display: none;
-	}
-	
-	#gmMapEditButtons {
-		display: none;
-	}
-	
-	#gmMapWikiLink {
-		display: none;
-	}
-	
-	#gmMapLink, #gmMapReset {
-		display: none;
-	}
-	
-	#gmMapShowKey, #gmMapHelp, #gmMapDiscuss, #gmMapHome {
-		display: none;
-	}
-	
-	#editWorldButton, #addLocationButton, #addPathButton, #addAreaButton, #showRecentChangeButton {
-		display: none;
-	}
-	
-	.gmNoMobile {
-		display: none;
-	}
-	
-	#gmMapListRoot {
-		position: absolute;
-		left: 2px;
-		top: 22px;
-		height: 600px;
-		width: 252px;
-		z-index: 200;
-	}
-	
-	.gmMapControlZoom {
-		width: 42px;
-		height: 42px;
-		line-height: 42px;
-		text-align: center;
-		vertical-align: middle;
-		font-size: 36px;
-		border: 1px solid gray;
-		background-color: #cccccc;
-		color: #000;
-		border-color:#bbb #888 #666 #aaa;
-		border-width:2px 3px 3px 2px;
-		margin: 0 auto;
-		margin-top: 5px;
-	}
-
-	.gmMapSearchRoot {
+	.search_root {
 		width: 100% !important;
 	}
 
 }
+
+/*================================================
+	                  Search Root
+================================================*/
+
+.search_root {
+	position: absolute;
+	width: 400px;
+	height: 100%;
+	padding: 12px;
+	z-index: 100;
+	font-size: 12px;
+	pointer-events: none;
+}
+
+/*================================================
+	                  Search Bar
+================================================*/
+
+.search_bar {
+  	display: flex;
+  	flex-wrap: nowrap;
+	flex-grow: 5;
+	background-color: var(--primary);
+	border-radius: 32px;
+	pointer-events: auto;
+  	transition: all ease-in-out 150ms;
+	height: 50px;
+  	box-shadow: 0px 1.5px 4px 4px var(--shadow);
+}
+
+.disable-select {
+  -webkit-user-select: none;  
+  -moz-user-select: none;    
+  -ms-user-select: none;      
+  user-select: none;
+}
+
+.search_icon {
+  flex-grow: 0.1;
+  color: var(--text_low_emphasis);
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 12px;
+}
+
+.search_bar:hover {
+	background-color: var(--primary_variant);
+  box-shadow: 0px 1.5px 5px 6px var(--shadow);
+}
+
+.search_box {
+  margin-top: -1.1%;
+	width: 100%;
+  height: 100%;
+  position: relative;
+  padding-left: 5px;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  font-size: 1.5em;
+}
+
+.gmMapSearchCheck {
+	padding: 0;
+	margin: 0;
+	vertical-align: -2px;
+}
+
+.gmMapSearchResults {
+	pointer-events: visible;
+}
+
+.gmMapSearchResultsWrapper {
+	position: absolute;
+	top: 36px;
+	bottom: 20px;
+	width: 100%;
+	pointer-events: none;
+}
+
+.gmMapSearchResults {
+	background-color: white;
+	border: 1px solid gray;
+	position: relative;
+	top: 0px;
+	left: 0px;
+	overflow: auto;
+	height: 100%;
+}
+
+.gmMapSearchResultsButton {
+	background-color: #cccccc;
+	color: #666666;
+	height: 18px;
+	line-height: 18px;
+	text-align: center;
+	vertical-align: middle;
+	border-style: solid;
+	border-color: #bbb #888 #666 #aaa;
+	border-width: 1px 2px 2px 1px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: visible;
+	cursor: default;
+	position: relative;
+	top: 0px;
+	left: 0px;
+	
+}
+
+.gmMapSearchResultsButton:hover {
+	background-color: #999999;
+	border-color: #666 #aaa #bbb #888;
+	border-width: 2px 1px 1px 2px;
+}
+
+.gmMapSearchResultsButtonLabel {
+	display: inline-block;
+	padding-left: 5px;
+	padding-right: 5px;
+	cursor: default;
+}
+
+.gmMapSearchResultsButtonImage {
+	cursor: default;
+}
+
+.gmMapSearchResultLocation {
+	cursor: pointer;
+	height: 20px;
+	line-height: 20px;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+.gmMapSearchResultLocation:hover {
+	background-color: #cccccc;
+}
+
+.gmMapSearchResultWorld {
+	cursor: pointer;
+	height: 20px;
+	line-height: 20px;
+	vertical-align: middle;
+	white-space: nowrap;
+	font-weight: bold;
+}
+
+.gmMapSearchResultWorld:hover {
+	background-color: #cccccc;
+}
+
+.gmMapSearchResultIcon {
+	display: inline-block;
+	max-height: 16px;
+	width: 16px;
+	vertical-align: middle;
+}
+
+.gmMapSearchResultTitle {
+	display: inline-block;
+}
+
+.gmMapSearchResultLocWorld {
+	display: inline-block;
+	font-size: 9px;
+}
+
+
+
+
+
+
+
+
 
 #gmMap {
 	bottom: 0px;
@@ -766,6 +941,12 @@ input[type=checkbox].gmMapEditPopupInput {
 	vertical-align: top;
 	text-align: -webkit-match-parent;
 	border-top: 2px solid var(--highlight_dark);
+	transition: all ease-in-out 150ms
+}
+
+.gmMenuItem:hover {
+	border-top: 2px solid var(--highlight_light);
+	background-color: #666;
 }
 
 .gmMenuItemTitle {
@@ -783,11 +964,6 @@ input[type=checkbox].gmMapEditPopupInput {
 .gmMenuItemTitle a {
 	text-decoration: none !important;
 	color: white;	
-}
-
-.gmMenuItem:hover {
-	border-top: 2px solid var(--highlight_light);
-	background-color: #666;
 }
 
 .gmMenuItemTitle:hover {
@@ -815,9 +991,6 @@ input[type=checkbox].gmMapEditPopupInput {
 	white-space: nowrap;
 	border-image: url(images/tooltip-border.png) 2 2 2 2 stretch;
 }
-
-
-
 
 
 .gmMapIconTypeListContainer {

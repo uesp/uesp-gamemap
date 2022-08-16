@@ -437,32 +437,22 @@
       <!-- Map container -->
       <div id="gmMap"></div>
 
-      <!-- Search container
-      <div class="gmMapSearchRoot">
-
-         <form  onsubmit='return false;'>
-            <div class='gmMapSearchInputDiv'>
-               <input class='gmMapSearchInput' type='text' name='search' value='' size='25' maxlength='100' autocomplete='on' />
-               <button class='gmMapSearchButton' title='Search the map for this text' name='button' type='submit'>
-                  <img width='12' height='13' alt='Search' src='images/search-icon.png'>
-               </button>
-               <button class='gmSearchResetButton' title='Reset the map search' name='button' type='reset' >
-                  <img width='12' height='13' alt='Search' src='images/searchreseticon.png'>
-               </button>
-               
-               <div class='gmMapSearchSmall'><input class='gmMapSearchCheck' type='checkbox' name='searchMapOnly' /> Only Search in Current Map </div>
+      <!-- Search container -->
+      <div class = 'search_root'>
+         <div class='search_bar'>
+            <div class="search_icon">
+               <span class="material-symbols-outlined">search</span>
             </div>
-         </form>
 
-         <div class='gmMapSearchResultsWrapper'>
-            <div class='gmMapSearchResults' style='display:none;'></div>
-            <div class='gmMapSearchResultsButton'>
-               <img class='gmMapSearchResultsButtonImage' src='images/downarrows.gif' />
-               <div class='gmMapSearchResultsButtonLabel'>Show Search Results </div>
-               <img class='gmMapSearchResultsButtonImage' src='images/downarrows.gif' />
+            <div class='searchbox_container'>
+               <input class='search_box' type='text' name='searchbox' placeholder="Where would you like to go?" size='25' maxlength='100' autocomplete='off' />
+            </div>
+    
+            <div class='clear_search_container' >
+               <button id="btn_clear_search" class='btn_bgless_icon_button' name='button' title="Clear the current search" type='reset'><span class="material-symbols-outlined">close</span></button>
             </div>
          </div>
-      </div> -->
+      </div>
 
       <!-- Google Analytics stuff -->
       <script type="text/javascript">
