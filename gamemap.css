@@ -142,11 +142,23 @@ button[class*="bgless"] {
 	pointer-events: none;
 }
 
+.clear_search_container {
+	margin-left: auto;
+}
+
+.searchbox_container {
+	margin:auto;
+	width: 100%;
+}
+
 .search_bar {
   	display: flex;
 	margin: 16px;
+	position: relative;
+	top: 30px;
   	flex-wrap: nowrap;
-	flex-grow: 5;
+	flex-grow: 2;
+	justify-content: space-between;
 	background-color: var(--primary);
 	border-radius: 32px;
 	pointer-events: auto;
@@ -156,7 +168,6 @@ button[class*="bgless"] {
 }
 
 .search_icon {
-  flex-grow: 0.1;
   color: var(--text_low_emphasis);
   margin-top: auto;
   margin-bottom: auto;
@@ -175,6 +186,7 @@ button[class*="bgless"] {
   position: relative;
   padding-left: 5px;
   border: none;
+  align-self: stretch;
   outline: none;
   -webkit-appearance: none;
   background-color: transparent;

@@ -4013,6 +4013,8 @@ uesp.gamemap.Map.prototype.createSearchControls = function () {
 	this.mapSearchRoot = $('<div />')
 								.addClass('gmMapSearchRoot')
 								.appendTo(this.mapContainer);
+
+	this.mapSearchRoot = document.getElementById("search_root");
 	
 	var searchOnlyThisMap = "<div class='gmMapSearchSmall'><input class='gmMapSearchCheck' type='checkbox' name='searchMapOnly' /> Only Search in Current Map</div>";
 	if (!this.mapOptions.showSearchThisLocation) searchOnlyThisMap = "";
