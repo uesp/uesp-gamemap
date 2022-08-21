@@ -4749,18 +4749,11 @@ small {
     bottom: 0%;
   }
 }
-@media only screen and (min-width : 601px) and (max-width : 992.99px) {
+@media only screen and (min-width : 601px) {
   #toast-container {
     left: 5%;
     bottom: 7%;
     max-width: 90%;
-  }
-}
-@media only screen and (min-width : 993px) {
-  #toast-container {
-    top: 10%;
-    right: 7%;
-    max-width: 86%;
   }
 }
 

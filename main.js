@@ -41,6 +41,7 @@ window.onload = function() {
 
 function focusSearch() {
     searchbox.focus();
+    M.toast({text: 'CTRL + F Pressed!'})
 }
 
 function clearSearch() {
