@@ -1146,28 +1146,17 @@ input[type=checkbox].gmMapEditPopupInput {
 #zoom_widget {
 	position: absolute;
 	background: var(--primary_variant_light);
+	border-radius: 64px;
 	z-index: 1000;
 	bottom: 45px;
 	right: 16px;
-	width: var(--appbar_dimen);
-	height: 100px;
-	border-radius: 64px;
-	box-shadow: 0px 1.5px 4px 4px var(--shadow);
-}
-
-#zoom_widget {
-	position: fixed;
-	background: var(--primary_variant_light);
-	clip-path: inset(100% 0% 100% 0% round 64px);
-	z-index: 1000;
-	bottom: 0.4;
-	right: 0;
 	width: var(--appbar_dimen);
 	margin-right: 10px;
 	height: 100px;
 	display: flex;
 	flex-direction: column;
 	flex: auto;
+	box-shadow: 0px 1.5px 4px 4px var(--shadow);
 }
   
 .btn_zoom {
@@ -1175,6 +1164,9 @@ input[type=checkbox].gmMapEditPopupInput {
 	flex-grow: 1;
 	background: transparent;
 	border: none;
+	transform: translateZ(0);
+	z-index: 1001;
+	border-radius: 64px;
 }
   
 .btn_zoom:hover {
@@ -1188,6 +1180,7 @@ input[type=checkbox].gmMapEditPopupInput {
 .gmMapControlRoot {
 	display: none;
 }
+
 
 /*================================================
 	              Search Box

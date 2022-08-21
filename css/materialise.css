@@ -4739,6 +4739,7 @@ small {
 }
 
 #toast-container {
+  font-weight: bold;
   display: block;
   position: fixed;
   z-index: 10000;
@@ -5772,7 +5773,7 @@ body.keyboard-focused .dropdown-content li:focus {
   position: relative;
   -webkit-transition: opacity 0.4s;
   transition: opacity 0.4s;
-  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 .materialboxed:hover:not(.active) {
   opacity: 0.8;
