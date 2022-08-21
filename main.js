@@ -60,4 +60,13 @@ function updateSearch(query) {
         btn_clear_search.style.visibility = 'hidden';
     }
 }
+
+
+// Or with jQuery
+$(document).ready(function(){
+    $('.tooltipped').tooltip({
+        enterDelay : 700,
+      // specify options here
+    });
+});
   
