@@ -4,22 +4,18 @@
       <!-- TODO: Auto generate title -->
       <title>UESP:ESO Map</title>
 
-      <!--Import Google Icon Font-->
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-      <!--Import materialize.css-->
-      <link type="text/css" rel="stylesheet" href="libs/Materialize/css/materialize.css"  media="screen,projection"/>
-   
       <!-- Let the browser know this site is optimized for mobile -->
       <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
       <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 
-      <!-- TODO: Add more generated meta tags here? -->
+      <!-- Import css -->
       <link rel="stylesheet" href="gamemap.css?date=15May2018" />
+      <link type="text/css" rel="stylesheet" href="css/materialise.css"  media="screen,projection"/>
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,200" />
-   
          
-      <script type="text/javascript" src="libs/jQuery/jquery-1.10.2.js"></script>
+      <!-- Import scripts -->
+      <script type="text/javascript" src="src/jquery-1.10.2.js"></script>
       <script type="text/javascript" src="main.js"></script>
       <script type="text/javascript" src="common.js"></script>
       <script type="text/javascript" src="mapoptions.js?date=29march2014a"></script>
@@ -445,7 +441,7 @@
 
       <!-- Search container -->
       <div class = 'search_root' id="search_root">
-         <div class='search_bar '>
+         <div class='search_bar hover' data-position="bottom" data-tooltip="I am a tooltip">
             <div class="search_icon">
                <span class="material-symbols-outlined">search</span>
             </div>
@@ -472,6 +468,12 @@
          <a href="//www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design" title="Give feedback about this map">Send Feedback</a>
        </div>
 
+      <div id="zoom_widget">
+           <button class="btn_zoom waves-effect"><i class="material-icons">add</i></button>
+           <div class="horizontal_divider"></div>
+           <button class="btn_zoom waves-effect"><i class="material-icons">remove</i></button>
+      </div>
+
       <!-- Google Analytics stuff -->
       <script type="text/javascript">
          if (!g_DefaultMapOptions.isOffline) {
@@ -488,7 +490,7 @@
       </script>
 
       <!--JavaScript at end of body for optimized loading-->
-      <script type="text/javascript" src="js/materialize.min.js"></script>
+      <script type="text/javascript" src="src/materialise.min.js"></script>
 
    </body>
 </html>

@@ -24,6 +24,14 @@ window.onload = function() {
             focusSearch();
         }
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.tooltipped');
+        var instances = M.Tooltip.init(elems, {
+          // specify options here
+        });
+        console.log("benis");
+      });
     
 }
 
