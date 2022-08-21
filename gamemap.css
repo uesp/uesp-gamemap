@@ -1167,17 +1167,14 @@ input[type=checkbox].gmMapEditPopupInput {
 	transform: translateZ(0);
 	z-index: 1001;
 	border-radius: 64px;
-}
-  
-.btn_zoom:hover {
-	background: var(--surface_variant);
+	transition: all ease-in-out 50ms;
 }
 
 .btn_zoom:focus {
 	background: transparent;
 }
   
-.btn_zoom:active {
+.btn_zoom:active, .btn_zoom:hover {
 	background: var(--divider);
 }
 
