@@ -1172,6 +1172,10 @@ input[type=checkbox].gmMapEditPopupInput {
 .btn_zoom:hover {
 	background: var(--surface_variant);
 }
+
+.btn_zoom:focus {
+	background: transparent;
+}
   
 .btn_zoom:active {
 	background: var(--divider);
