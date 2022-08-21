@@ -304,8 +304,41 @@ button[class*="bgless"] {
 }
 
 
+/*================================================
+	               	Infobar
+================================================*/
 
+.infobar {
+	position: fixed;
+	background: var(--primary_variant_light);
+	z-index: 1000;
+	bottom: 0;
+	right: 0;
+	width: auto;
+	padding: 3px;
+	padding-left: 12px;
+	padding-right: 12px;
+	border-radius: 12px 0px 0px 0px;
+	font-size: 12px;
+	opacity: 0.40;
+	transition: opacity ease-in-out 150ms;
+}
 
+.infobar:hover {
+	opacity: 1.0;
+}
+
+.infobar a {
+	text-decoration: none !important;
+	color: black;	
+}
+
+.infobar a:hover {
+	text-decoration: underline;
+	border-bottom: solid black;
+	border-width: medium;
+}
+  
 
 
 

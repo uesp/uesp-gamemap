@@ -411,7 +411,6 @@
          <ol class="gmMenuLinks">
             <li class="gmMenuItem" id="gmMapNameLabel" onclick="g_GameMap.showMapList();" ontouchstart="g_GameMap.showMapList();"></li>
             <li class="gmMenuItem gmNoMobile"><a title="Generate permalink to this location" href="" id="gmMapLink"><span class="material-symbols-outlined">Link</span></a></li>
-            <li class="gmMenuItem gmNoMobile"><a title="Reset the map state" href="" id="gmMapReset"><span class="material-symbols-outlined">restart_alt</span></a></li>
             <li class="gmMenuItem gmNoMobile"><a title="Goto the wiki page for the current map" href="" id="gmMapWikiLink">Goto Page</a></li>
          </ol>
          <div id="gmMapListRoot" tabindex="0" style="display:none;">
@@ -421,7 +420,6 @@
          <div id="gmMenuLinksRight">
             <ol class="gmMenuLinks">
                <li class="gmMenuItem gmNoMobile" onclick="g_GameMap.showMapKey();" ontouchstart="g_GameMap.showMapKey();" id="gmMapShowKey">Key</li>
-               <li class="gmMenuItem gmNoMobile"><a href="//www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design" title="Go to discussion page for this map" id="gmMapDiscuss"><span class="material-symbols-outlined">mode_comment</span></a></li>
                <li class="gmMenuItem gmNoMobile" onclick="g_GameMap.showHelpBlock();" ontouchstart="g_GameMap.showHelpBlock();" id="gmHelp"><span class="material-symbols-outlined">help</span></li>
             </ol>
          </div>
@@ -459,6 +457,14 @@
 
          <!-- <button id="btn_location_list" class='btn_icon_button' name='btn_location_list' title="Open location list" type='reset'><span class="material-symbols-outlined">assistant_direction</span></button> -->
       </div>
+
+      <div class="infobar">
+         <a href="//www.uesp.net/wiki/Main_Page" title="Go UESP home"><b class="wikiTitle">UESP</b></a>
+         <b> | </b>
+         <a href="" id="gmMapReset" title="Reset the map view">ESO Map</a>
+         <b> | </b>
+         <a href="//www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design" title="Give feedback about this map">Send Feedback</a>
+       </div>
 
       <!-- Google Analytics stuff -->
       <script type="text/javascript">
