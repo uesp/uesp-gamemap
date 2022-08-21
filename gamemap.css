@@ -310,7 +310,7 @@ button[class*="bgless"] {
 
 .infobar {
 	position: fixed;
-	background: var(--primary_variant_light);
+	background: var(--primary_dark_variant);
 	z-index: 1000;
 	bottom: 0;
 	right: 0;
@@ -320,8 +320,14 @@ button[class*="bgless"] {
 	padding-right: 12px;
 	border-radius: 12px 0px 0px 0px;
 	font-size: 12px;
-	opacity: 0.40;
+	color: white;
+	opacity: 0.45;
 	transition: opacity ease-in-out 150ms;
+	-webkit-user-select: none;  
+	-moz-user-select: none;    
+	-ms-user-select: none;      
+	user-select: none;
+	
 }
 
 .infobar:hover {
@@ -330,12 +336,12 @@ button[class*="bgless"] {
 
 .infobar a {
 	text-decoration: none !important;
-	color: black;	
+	color: white;	
 }
 
 .infobar a:hover {
 	text-decoration: underline;
-	border-bottom: solid black;
+	border-bottom: solid white;
 	border-width: medium;
 }
   

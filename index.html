@@ -4,10 +4,17 @@
       <!-- TODO: Auto generate title -->
       <title>UESP:ESO Map</title>
 
-      <!-- TODO: Add more generated meta tags here? -->
-      <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-      <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+      <!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+      <!--Import materialize.css-->
+      <link type="text/css" rel="stylesheet" href="libs/Materialize/css/materialize.css"  media="screen,projection"/>
+   
+      <!-- Let the browser know this site is optimized for mobile -->
+      <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+      <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+      <!-- TODO: Add more generated meta tags here? -->
       <link rel="stylesheet" href="gamemap.css?date=15May2018" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,200" />
    
@@ -407,7 +414,6 @@
 
    <body>
       <div id="menubar">
-         <li class="gmMenuItemTitle"><a href="//www.uesp.net/wiki/Main_Page"><b class="wikiTitle">UESP</b> | ESO Map</a></li>
          <ol class="gmMenuLinks">
             <li class="gmMenuItem" id="gmMapNameLabel" onclick="g_GameMap.showMapList();" ontouchstart="g_GameMap.showMapList();"></li>
             <li class="gmMenuItem gmNoMobile"><a title="Generate permalink to this location" href="" id="gmMapLink"><span class="material-symbols-outlined">Link</span></a></li>
@@ -480,6 +486,9 @@
             })();
          }
       </script>
+
+      <!--JavaScript at end of body for optimized loading-->
+      <script type="text/javascript" src="js/materialize.min.js"></script>
 
    </body>
 </html>
