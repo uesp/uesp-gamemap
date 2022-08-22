@@ -1,5 +1,5 @@
 /*================================================
-	            	 General
+					 General
 ================================================*/
 
 /* hide elements that request to be hidden */
@@ -13,15 +13,15 @@
 }
 
 /* prevent icons being selectable */
-span[class^="material-symbols"] { 
-	-webkit-user-select: none;  
-	-moz-user-select: none;    
-	-ms-user-select: none;      
+span[class^="material-symbols"] {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 	user-select: none;
 }
 
 /*================================================
-	               Mobile CSS
+				   Mobile CSS
 ================================================*/
 
 @media only screen and (max-device-width:799px) {
@@ -37,7 +37,7 @@ span[class^="material-symbols"] {
 }
 
 /*================================================
-	            	Colours
+					Colours
 ================================================*/
 
 :root {
@@ -76,31 +76,31 @@ span[class^="material-symbols"] {
 }
 
 /*================================================
-	                   Fonts
+					   Fonts
 ================================================*/
 
 @font-face {
-    font-family: 'wikiType';
-    src: url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('embedded-opentype'), /* Internet Explorer */
-         url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('woff2'),             /* Super Modern Browsers */
-         url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('woff'),              /* Pretty Modern Browsers */
-         url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('truetype'),          /* Safari, Android, iOS */
-         url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('svg');               /* Legacy iOS */
+	font-family: 'wikiType';
+	src: url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('embedded-opentype'), /* Internet Explorer */
+		 url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('woff2'),             /* Super Modern Browsers */
+		 url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('woff'),              /* Pretty Modern Browsers */
+		 url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('truetype'),          /* Safari, Android, iOS */
+		 url('./assets/fonts/Goudy_Medieval_Alternate.ttf') format('svg');               /* Legacy iOS */
 }
 
 .wikiTitle{
-    font-family: 'wikiType', Arial, sans-serif;
+	font-family: 'wikiType', Arial, sans-serif;
 }
 
 /*================================================
-	              	 	Buttons
+				  	 	Buttons
 ================================================*/
 
 /* prevent buttons being selectable */
-button { 
-  -webkit-user-select: none;  
-  -moz-user-select: none;    
-  -ms-user-select: none;      
+button {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 
@@ -131,7 +131,7 @@ button[class*="bgless"] {
 }
 
 /*================================================
-	                  Search
+					  Search
 ================================================*/
 
 /* --- root search view --- */
@@ -244,7 +244,7 @@ button[class*="bgless"] {
 	position: relative;
 	top: 0px;
 	left: 0px;
-	
+
 }
 
 .gmMapSearchResultsButton:hover {
@@ -307,7 +307,7 @@ button[class*="bgless"] {
 
 
 /*================================================
-	               	Infobar
+				   	Infobar
 ================================================*/
 
 .infobar {
@@ -325,11 +325,11 @@ button[class*="bgless"] {
 	color: white;
 	opacity: 0.45;
 	transition: opacity ease-in-out 150ms;
-	-webkit-user-select: none;  
-	-moz-user-select: none;    
-	-ms-user-select: none;      
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 	user-select: none;
-	
+
 }
 
 .infobar:hover {
@@ -338,7 +338,7 @@ button[class*="bgless"] {
 
 .infobar a {
 	text-decoration: none !important;
-	color: white;	
+	color: white;
 }
 
 .infobar a:hover {
@@ -346,7 +346,7 @@ button[class*="bgless"] {
 	border-bottom: solid white;
 	border-width: medium;
 }
-  
+
 .horizontal_divider {
 	background: var(--divider);
 	height: 1.8px;
@@ -415,7 +415,7 @@ button[class*="bgless"] {
 	-ms-user-select: none;
 	user-select: none;
 	/* background-color: rgba(0,0,0,0.3);
-    box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.3); */
+	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.3); */
 }
 
 .gmMapLocIconHelper {
@@ -437,7 +437,7 @@ button[class*="bgless"] {
 }
 
 /*================================================
-	              Pop-up Windows
+				  Pop-up Windows
 ================================================*/
 
 .gmMapPopupRoot {
@@ -526,14 +526,14 @@ button[class*="bgless"] {
 }
 
 .gmMapPopupDownArrow {
-	width: 0; 
-	height: 0; 
+	width: 0;
+	height: 0;
 	border-left: 10px solid transparent;
 	border-right: 10px solid transparent;
 	border-top: 10px solid #fff;
 	top: -1px;
 	position: relative;
-	margin: 0 auto;	
+	margin: 0 auto;
 }
 
 .gmMapPathCanvas {
@@ -694,7 +694,7 @@ ul ul .gmMapListHeader {
 #gmMapList ul {
 	list-style-type: none;
 	padding: 0;
-    white-space: nowrap;
+	white-space: nowrap;
 }
 
 .gmMapListSelect {
@@ -1024,7 +1024,7 @@ input[type=checkbox].gmMapEditPopupInput {
 
 .gmMenuItemTitle a {
 	text-decoration: none !important;
-	color: white;	
+	color: white;
 }
 
 .gmMenuItemTitle:hover {
@@ -1035,7 +1035,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	cursor: pointer;
 	display: block;
 	text-decoration: none !important;
-	color: #ccc;	
+	color: #ccc;
 }
 
 .gmLocToolTip {
@@ -1140,7 +1140,7 @@ input[type=checkbox].gmMapEditPopupInput {
 }
 
 /*================================================
-	              Zoom Widget
+				  Zoom Widget
 ================================================*/
 
 #zoom_widget {
@@ -1157,7 +1157,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	flex: auto;
 	box-shadow: 0px 1.5px 4px 4px var(--shadow);
 }
-  
+
 .btn_zoom {
 	width: 100%;
 	flex-grow: 1;
@@ -1179,7 +1179,7 @@ input[type=checkbox].gmMapEditPopupInput {
 
 
 /*================================================
-	              Search Box
+				  Search Box
 ================================================*/
 
 .gmMapSearchRoot {
@@ -1218,12 +1218,12 @@ input[type=checkbox].gmMapEditPopupInput {
 	margin: 0;
 	padding: 0;
 	border: 2px inset;
-    padding-left: 5px;
-    border: none;
-    -webkit-appearance: none;
-    background-color: transparent;
-    outline: none;
-    font-size: 14px;
+	padding-left: 5px;
+	border: none;
+	-webkit-appearance: none;
+	background-color: transparent;
+	outline: none;
+	font-size: 14px;
 }
 
 .gmMapSearchSmall {
@@ -1277,7 +1277,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	position: relative;
 	top: 0px;
 	left: 0px;
-	
+
 }
 
 .gmMapSearchResultsButton:hover {
@@ -1353,13 +1353,13 @@ input[type=checkbox].gmMapEditPopupInput {
 	box-sizing: border-box;
 	padding: 5px;
 	overflow-y: auto;
-    max-height: 95%;
+	max-height: 95%;
 }
 
 .gmMapKeyCloseButton {
 	position: absolute;
-    right: 5px;
-    top: 5px;
+	right: 5px;
+	top: 5px;
 }
 
 .gmMapKeyColumn {
@@ -1511,10 +1511,10 @@ body {
 	position: absolute;
 	top: 50px;
 	margin-left: auto;
-    margin-right: auto;
-    left: 0;
-    right: 0;
-    width: 500px;
+	margin-right: auto;
+	left: 0;
+	right: 0;
+	width: 500px;
 	z-index: 150;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -1625,26 +1625,26 @@ body {
 }
 
 .gmMapControlDisplayState {
-    direction: ltr;
-    overflow: hidden;
-    text-align: center;
-    height: 30px;
-    display: block;
-    color: rgb(0, 0, 0);
-    font-family: Arial, sans-serif;
-    user-select: none;
-    font-size: 16px;
-    background-color: rgb(255, 255, 255);
-    padding: 0px 23px;
-    border-bottom-left-radius: 2px;
-    border-top-left-radius: 2px;
-    background-clip: padding-box;
-    box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
-    min-width: 25px;
-    font-weight: normal;
-    cursor: pointer;
-    line-height: 30px;
-    margin: 2px;
+	direction: ltr;
+	overflow: hidden;
+	text-align: center;
+	height: 30px;
+	display: block;
+	color: rgb(0, 0, 0);
+	font-family: Arial, sans-serif;
+	user-select: none;
+	font-size: 16px;
+	background-color: rgb(255, 255, 255);
+	padding: 0px 23px;
+	border-bottom-left-radius: 2px;
+	border-top-left-radius: 2px;
+	background-clip: padding-box;
+	box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+	min-width: 25px;
+	font-weight: normal;
+	cursor: pointer;
+	line-height: 30px;
+	margin: 2px;
 }
 
 .gmMapControlDisplayState:hover {
@@ -1657,27 +1657,27 @@ body {
 }
 
 .gmMapSearchButton {
-    background-image: none;
-    background: none;
-    border: medium none;
-    cursor: pointer;
-    margin: 0;
-    padding: 0.2em 0.4em 0.2em 0.2em;
-    width: 20px;
-    outline: none;
-    margin: 2px;
+	background-image: none;
+	background: none;
+	border: medium none;
+	cursor: pointer;
+	margin: 0;
+	padding: 0.2em 0.4em 0.2em 0.2em;
+	width: 20px;
+	outline: none;
+	margin: 2px;
 }
 
 .gmSearchResetButton {
-    background-image: none;
-    background: none;
-    border: medium none;
-    cursor: pointer;
-    margin: 0;
-    padding: 0.2em 0.4em 0.2em 0.15em;
-    width: 16px;
-    outline: none;
-    margin: 2px;
+	background-image: none;
+	background: none;
+	border: medium none;
+	cursor: pointer;
+	margin: 0;
+	padding: 0.2em 0.4em 0.2em 0.15em;
+	width: 16px;
+	outline: none;
+	margin: 2px;
 }
 
 .gmMapSearchButton:hover,
@@ -1740,4 +1740,3 @@ body {
 	  transform: translate(24px, 0);
 	}
   }
-  
