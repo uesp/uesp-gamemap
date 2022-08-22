@@ -1149,9 +1149,8 @@ input[type=checkbox].gmMapEditPopupInput {
 	border-radius: 64px;
 	z-index: 1000;
 	bottom: 45px;
-	right: 16px;
+	right: 12px;
 	width: var(--appbar_dimen);
-	margin-right: 10px;
 	height: 100px;
 	display: flex;
 	flex-direction: column;

@@ -15,7 +15,7 @@
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,200" />
          
       <!-- Import scripts -->
-      <script type="text/javascript" src="src/jquery-1.10.2.js"></script>
+      <script type="text/javascript" src="src/jquery.js?version=1-10-2"></script>
       <script type="text/javascript" src="main.js"></script>
       <script type="text/javascript" src="common.js"></script>
       <script type="text/javascript" src="mapoptions.js?date=29march2014a"></script>
@@ -447,7 +447,7 @@
             </div>
 
             <div class='searchbox_container'>
-               <input class='search_box' type='text' id='searchbox' placeholder="Where would you like to go?" size='25' maxlength='100' autocomplete='off' />
+               <input class='search_box' type='search' id='searchbox' placeholder="Where would you like to go?" size='25' maxlength='100' autocomplete='off' />
             </div>
     
             <div class='clear_search_container waves-effect waves-circle' >
@@ -473,6 +473,10 @@
            <div class="horizontal_divider"></div>
            <button class="btn_zoom waves-effect tooltipped" data-position="top" data-tooltip="Zoom out" id="btn_zoom_out" tabindex="-1"><i class="material-icons">remove</i></button>
       </div>
+
+      <!-- <div class="progress">
+         <div class="indeterminate"></div>
+     </div> -->
 
       <!-- Google Analytics stuff -->
       <script type="text/javascript">
