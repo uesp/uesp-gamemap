@@ -13,7 +13,7 @@
 }
 
 /* prevent icons being selectable */
-span[class^="material-symbols"] {
+span[class^="material-symbols"] { /* get all span classes that begin with "material-symbols */
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -24,7 +24,7 @@ span[class^="material-symbols"] {
 				   Mobile CSS
 ================================================*/
 
-@media only screen and (max-device-width:799px) {
+@media only screen and (max-device-width:650px) {
 
 	#menubar {
 		display: none !important;
@@ -33,6 +33,10 @@ span[class^="material-symbols"] {
 	.search_root {
 		width: 100% !important;
 	}
+
+	.search_bar {
+		width: 85% !important;
+  	}
 
 }
 
@@ -71,8 +75,17 @@ span[class^="material-symbols"] {
 	--secondary: #8a5a44;
 	--secondary_variant: #A69480;
   	--selection: rgba(138,90,68, 0.30);
+	--bubble_selection: rgba(35, 32, 34, 0.5);
+}
 
+/*================================================
+					Dimens
+================================================*/
+
+:root {
 	--appbar_dimen: 48px;
+	--padding_side: 12px;
+	--padding_general: 16px;
 }
 
 /*================================================
@@ -105,29 +118,34 @@ button {
 }
 
 button[class*="icon_button"] {
-  background: var(--shadow);
-  border: none;
-  color: white;
-  padding: auto;
-  border-radius: 50%;
-  transition: all ease-in 150ms;
-  height: 50px;
-  width: 50px;
+	background: var(--shadow);
+	border: none;
+	color: white;
+	padding: auto;
+	border-radius: 50%;
+	transition: all ease-in 150ms;
+	height: var(--appbar_dimen);
+	width: var(--appbar_dimen);
 }
-
+  
 button[class*="icon_button"]:hover {
-  background: var(--divider);
-  cursor: pointer;
+	background: var(--bubble_selection);
+	color: ghostwhite;
 }
-
+  
+button[class*="bgless"]:hover {
+	background: var(--divider);
+	color: black;
+}
+  
 button[class*="icon_button"]:active {
-  transition: width 0s;
-  background: var(--shadow);
+	transition: width 0s;
+	background: var(--shadow);
 }
-
+  
 button[class*="bgless"] {
-  background: 0;
-  color: black;
+	background: 0;
+	color: black;
 }
 
 /*================================================

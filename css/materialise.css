@@ -2774,14 +2774,12 @@ video.responsive-video {
 .breadcrumb [class^=mdi-], .breadcrumb [class*=mdi-],
 .breadcrumb i.material-icons {
   display: inline-block;
-  float: left;
   font-size: 24px;
 }
 .breadcrumb:before {
   content: "";
   color: rgba(255, 255, 255, 0.7);
   vertical-align: top;
-  display: inline-block;
   font-family: "Material Icons";
   font-weight: normal;
   font-style: normal;
@@ -5423,7 +5421,7 @@ body.keyboard-focused .dropdown-content li:focus {
 .waves-circle {
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
-  -webkit-mask-image: -webkit-radial-gradient(circle, white 100%, black 100%);
+  mask-image: -webkit-radial-gradient(circle, white 100%, black 100%);
 }
 
 .waves-button,
@@ -5477,6 +5475,7 @@ body.keyboard-focused .dropdown-content li:focus {
 }
 
 .waves-float {
+  mask-image: none;
   -webkit-mask-image: none;
   -webkit-box-shadow: 0px 1px 1.5px 1px rgba(0, 0, 0, 0.12);
   box-shadow: 0px 1px 1.5px 1px rgba(0, 0, 0, 0.12);
@@ -6545,9 +6544,6 @@ textarea.materialize-textarea {
   pointer-events: none;
 }
 
-[type=checkbox] {
-  /* checkbox aspect */
-}
 [type=checkbox] + span:not(.lever) {
   position: relative;
   padding-left: 35px;
