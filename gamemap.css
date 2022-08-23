@@ -35,7 +35,7 @@
 	}
 
 	.search_bar {
-		width: calc(100% - 120px) !important;
+		width: calc(100% - 100px) !important;
   	}
 
 	/* hide these elements on mobile */
@@ -97,6 +97,7 @@
 	/* heights, widths, and volume */
 	--appbar_dimen: 48px;
 	--zindex_floating: 900;
+	--search_pane_width: 420px;
 
 	/* padding */
 	--padding_small: 12px;
@@ -138,17 +139,17 @@ button {
 ================================================*/
 
 button[class*="icon_button"] {
-	background: var(--surface_dark_variant);
+	background: var(--surface_variant_dark);
 	border: none;
-	color: var(--text_on_secondary);
+	color: var(--text_on_primary);
 	padding: auto;
 	border-radius: var(--appbar_dimen);
 	transition: all ease-in 150ms;
 	height: var(--appbar_dimen);
 	min-width: var(--appbar_dimen);
 	box-shadow: 0px 1.5px 4px 4px var(--shadow);
-	vertical-align: middle;
 	text-align: center;
+	line-height: 100%;	
 }
 
 button[class*="icon_button"] i {
@@ -156,7 +157,7 @@ button[class*="icon_button"] i {
 }
   
 button[class*="icon_button"]:hover {
-	background: var(--surface_dark_variant_dark);
+	background: var(--surface_variant);
 	box-shadow: 0px 1.5px 5px 6px var(--shadow);
 }
   
@@ -184,7 +185,7 @@ b[class^="icon_button_label"] {
 /* --- root search view --- */
 .search_root {
 	position: absolute;
-	width: 420px;
+	width: var(--search_pane_width);
 	height: 100%;
 	z-index: 100;
 	font-size: 12px;
@@ -206,7 +207,7 @@ b[class^="icon_button_label"] {
 	margin-right: var(--padding_medium);
 	margin-bottom: var(--padding_medium);
 	position: relative;
-	top: var(--padding_big);
+	top: var(--padding_medium);
   	flex-wrap: nowrap;
 	flex-grow: 2;
 	justify-content: space-between;
@@ -1668,8 +1669,13 @@ div[class^="icon_bar"] {
 .icon_bar_persistent {
 	right: var(--padding_medium);
 	width: auto;
-	top: var(--padding_big);
-  }
+	top: var(--padding_medium);
+}
+
+.icon_bar_responsive {
+	top: var(--padding_medium);
+	left: calc(var(--search_pane_width) + var(--padding_small));
+}
 
 /*================================================
 				   Progress Bar
