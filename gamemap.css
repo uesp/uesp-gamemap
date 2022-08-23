@@ -52,26 +52,32 @@
 :root {
 	/* surface colours */
 	--background: #000000;
+	--background_dark: #1D1D1D;
+
 	--surface: #FBF1DA;
 	--surface_variant: #eee5cf;
 	--surface_variant_dark: #F7E9CB;
-	--surface_debug: rgb(225, 0, 255);
+
+	--surface_dark: #2E2E2E;
+	--surface_dark_variant: #353535;
+	--surface_dark_variant_dark: #252525;
 
 	--primary: #f8f2e1;
 	--primary_variant:#e5dfd0;
 	--primary_variant_light: #faf4e6;
 
-	--highlight_dark:#6B5F50;
-	--highlight_light: #FFE893;
-
 	--primary_dark: #3E3E3E;
 	--primary_dark_variant: #373737;
+
+	--highlight_dark:#6B5F50;
+	--highlight_light: #FFE893;
 
 	/* text colours */
 	--text_loc_name: #33ff33;
 	--text_loc_disabled: #ff3333;
 	--text_link: rgba(138,90,68,1);
-	--text_primary: black;
+	--text_on_primary: black;
+	--text_on_secondary: white;
 	--text_low_emphasis: #474747;
 
 	/* misc colours */
@@ -80,7 +86,7 @@
 	--secondary: #8a5a44;
 	--secondary_variant: #A69480;
   	--selection: rgba(138,90,68, 0.30);
-	--bubble_selection: rgba(35, 32, 34, 0.5);
+	--bubble_selection: rgba(84, 84, 84, 0.5)
 }
 
 /*================================================
@@ -127,20 +133,25 @@ button {
   user-select: none;
 }
 
+/*===============================================
+				  Icon Buttons
+================================================*/
+
 button[class*="icon_button"] {
-	background: var(--shadow);
+	background: var(--surface_dark_variant);
 	border: none;
-	color: white;
+	color: var(--text_on_secondary);
 	padding: auto;
 	border-radius: var(--appbar_dimen);
 	transition: all ease-in 150ms;
 	height: var(--appbar_dimen);
 	min-width: var(--appbar_dimen);
+	box-shadow: 0px 1.5px 4px 4px var(--shadow);
 }
   
 button[class*="icon_button"]:hover {
-	background: var(--bubble_selection);
-	color: ghostwhite;
+	background: var(--surface_dark_variant_dark);
+	box-shadow: 0px 1.5px 5px 6px var(--shadow);
 }
   
 button[class*="bgless"]:hover {
@@ -148,14 +159,15 @@ button[class*="bgless"]:hover {
 	color: black;
 }
   
-button[class*="icon_button"]:active {
-	transition: width 0s;
-	background: var(--shadow);
-}
   
 button[class*="bgless"] {
 	background: 0;
 	color: black;
+}
+
+b[class^="icon_button_label"] {
+	margin-left: 2px;
+	margin-right: 12px;
 }
 
 /*================================================
@@ -712,7 +724,7 @@ button[class*="bgless"] {
 .gmMapListHeader {
 	font-weight: bold;
 	background-color: var(--surface_variant);
-	color: var(--text_primary);
+	color: var(--text_on_primary);
 	background-image: url(images/uparrow.gif);
 }
 
