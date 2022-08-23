@@ -35,7 +35,7 @@ span[class^="material-symbols"] { /* get all span classes that begin with "mater
 	}
 
 	.search_bar {
-		width: 85% !important;
+		width: calc(100% - 120px) !important;
   	}
 
 }
@@ -86,10 +86,11 @@ span[class^="material-symbols"] { /* get all span classes that begin with "mater
 	--appbar_dimen: 48px;
 	--padding_side: 12px;
 	--padding_general: 16px;
+	--padding_big: 32px;
 }
 
 /*================================================
-					   Fonts
+					  Fonts
 ================================================*/
 
 @font-face {
@@ -175,7 +176,7 @@ button[class*="bgless"] {
   	display: flex;
 	margin: 16px;
 	position: relative;
-	top: 30px;
+	top: var(--padding_big);
   	flex-wrap: nowrap;
 	flex-grow: 2;
 	justify-content: space-between;
@@ -1757,4 +1758,21 @@ body {
 	100% {
 	  transform: translate(24px, 0);
 	}
+  }
+
+
+.progress_bar {
+	top: -9px;
+	width: 100%;
+	position: absolute;
+	z-index: 9999;
+	opacity: 0.85;
+}
+
+.progress {
+	background-color: var(--secondary_variant) !important;
+}
+
+.progress .indeterminate {
+	background-color: var(--secondary) !important;
   }
