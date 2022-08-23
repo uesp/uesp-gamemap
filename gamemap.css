@@ -79,13 +79,17 @@ span[class^="material-symbols"] { /* get all span classes that begin with "mater
 }
 
 /*================================================
-					Dimens
+					Dimensions
 ================================================*/
 
 :root {
+	/* heights, widths, and volume */
 	--appbar_dimen: 48px;
-	--padding_side: 12px;
-	--padding_general: 16px;
+	--zindex_floating: 900;
+
+	/* padding */
+	--padding_small: 12px;
+	--padding_medium: 16px;
 	--padding_big: 32px;
 }
 
@@ -174,7 +178,9 @@ button[class*="bgless"] {
 
 .search_bar {
   	display: flex;
-	margin: 16px;
+	margin-left: var(--padding_medium);
+	margin-right: var(--padding_medium);
+	margin-bottom: var(--padding_medium);
 	position: relative;
 	top: var(--padding_big);
   	flex-wrap: nowrap;
@@ -1168,7 +1174,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	border-radius: 64px;
 	z-index: 1000;
 	bottom: 45px;
-	right: 12px;
+	right: var(--padding_small);
 	width: var(--appbar_dimen);
 	height: 100px;
 	display: flex;
@@ -1188,7 +1194,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	transition: all ease-in-out 50ms;
 }
 
-.btn_zoom:hover, .btn_zoom:active, .btn_zoom:focus {
+.btn_zoom:hover, .btn_zoom:active {
 	background: var(--divider);
 }
 
@@ -1704,62 +1710,21 @@ body {
 	background-color: #ccc;
 }
 
-.loading_indicator {
-	display: inline-block;
-	position: relative;
-	width: 80px;
-	height: 80px;
-  }
-  .loading_indicator div {
+/*================================================
+				   	Icon Bars
+================================================*/
+
+.icon_bar_persistent {
 	position: absolute;
-	top: 33px;
-	width: 13px;
-	height: 13px;
-	border-radius: 50%;
-	background: var(--secondary);
-	animation-timing-function: cubic-bezier(0, 1, 1, 0);
-  }
-  .loading_indicator div:nth-child(1) {
-	left: 8px;
-	animation: lds-ellipsis1 0.6s infinite;
-  }
-  .loading_indicator div:nth-child(2) {
-	left: 8px;
-	animation: lds-ellipsis2 0.6s infinite;
-  }
-  .loading_indicator div:nth-child(3) {
-	left: 32px;
-	animation: lds-ellipsis2 0.6s infinite;
-  }
-  .loading_indicator div:nth-child(4) {
-	left: 56px;
-	animation: lds-ellipsis3 0.6s infinite;
-  }
-  @keyframes lds-ellipsis1 {
-	0% {
-	  transform: scale(0);
-	}
-	100% {
-	  transform: scale(1);
-	}
-  }
-  @keyframes lds-ellipsis3 {
-	0% {
-	  transform: scale(1);
-	}
-	100% {
-	  transform: scale(0);
-	}
-  }
-  @keyframes lds-ellipsis2 {
-	0% {
-	  transform: translate(0, 0);
-	}
-	100% {
-	  transform: translate(24px, 0);
-	}
+	left: 600px;
+	width: auto;
+	top: var(--padding_big);
+	z-index: var(--zindex_floating);
   }
 
+/*================================================
+				   Progress Bar
+================================================*/
 
 .progress_bar {
 	top: -9px;
@@ -1767,6 +1732,7 @@ body {
 	position: absolute;
 	z-index: 9999;
 	opacity: 0.85;
+	pointer-events: none;
 }
 
 .progress {
@@ -1775,4 +1741,4 @@ body {
 
 .progress .indeterminate {
 	background-color: var(--secondary) !important;
-  }
+}

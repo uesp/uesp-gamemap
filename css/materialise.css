@@ -5812,11 +5812,6 @@ select:focus {
   outline: 1px solid #c9f3ef;
 }
 
-button:focus {
-  outline: none;
-  background-color: #2ab7a9;
-}
-
 label {
   font-size: 0.8rem;
   color: #9e9e9e;
