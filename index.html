@@ -409,38 +409,28 @@
    </head>
 
    <body>
-	  <div id="menubar">
-		 <ol class="gmMenuLinks">
-			<li class="gmMenuItem" id="gmMapNameLabel" onclick="g_GameMap.showMapList();" ontouchstart="g_GameMap.showMapList();"></li>
-			<li class="gmMenuItem gmNoMobile"><a title="Generate permalink to this location" href="" id="gmMapLink"><span class="material-symbols-outlined">Link</span></a></li>
-			<li class="gmMenuItem gmNoMobile"><a title="Goto the wiki page for the current map" href="" id="gmMapWikiLink">Goto Page</a></li>
-		 </ol>
-		 <div id="gmMapListRoot" style="display:none;">
-			<!--OFFLINE_GROUPLIST-->
-		 </div>
-
-		 <div id="gmMenuLinksRight">
-			<ol class="gmMenuLinks">
-			   <li class="gmMenuItem gmNoMobile" onclick="g_GameMap.showMapKey();" ontouchstart="g_GameMap.showMapKey();" id="gmMapShowKey">Key</li>
-			   <li class="gmMenuItem gmNoMobile" onclick="g_GameMap.showHelpBlock();" ontouchstart="g_GameMap.showHelpBlock();" id="gmHelp"><span class="material-symbols-outlined">help</span></li>
-			</ol>
-		 </div>
-
-		 <div id="gmMapEditButtons" style="display:none;">
-			<button id="editWorldButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onEditWorld();" ontouchstart="g_GameMap.onEditWorld();">Edit World</button>
-			<button id="addLocationButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddLocationStart();"  ontouchstart="g_GameMap.onAddLocationStart();">Add Location</button>
-			<button id="addPathButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddPathStart();"  ontouchstart="g_GameMap.onAddPathStart();">Add Path</button>
-			<button id="addAreaButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddAreaStart();"  ontouchstart="g_GameMap.onAddAreaStart();">Add Area</button>
-			&nbsp;
-			<div id="showRecentChangeButton" class="gmToggleButton gmNoMobile" style="display:none;" onclick="g_GameMap.onRecentChanges(this);" ontouchstart="g_GameMap.onRecentChanges(this);">Recent Changes</div>
-		 </div>
-	  </div>
 
 	  <!-- Map container -->
 	  <div id="gmMap"></div>
 
+	<div class="icon_bar_responsive">
+        <button id="btn_location_list" class='btn_icon_button waves-effect waves-light' title="Jump to location"><i class="material-icons">location</i></button>
+		<!-- <li class="gmMenuItem" id="gmMapNameLabel" onclick="g_GameMap.showMapList();" ontouchstart="g_GameMap.showMapList();"></li> -->
+
+		<button id="btn_permalink" class='btn_icon_button waves-effect waves-light' title="Copy link to this location"><i class="material-icons">link</i></button>
+		<button id="btn_article" class='btn_icon_button waves-effect waves-light' title="Goto article for this location"><i class="material-icons">article</i></button>
+	</div>
+
 	<div class="icon_bar_persistent">
-        <button id="btn_more" class='btn_icon_button waves-effect waves-light' title="More"><i class="material-icons">more_vert</i></button>
+        <button id="btn_more" class='btn_icon_button waves-effect waves-light' title="More"><i class="material-icons">more_vert</i><b class="icon_button_label banishmobile">More</b></button>
+		<!-- <button id="btn_recent_changes" class='btn_icon_button waves-effect waves-light' title="Toggle recent changes"><i class="material-icons">more_vert</i></button> -->
+		<!-- <button id="btn_toggle_edit" class='btn_icon_button waves-effect waves-light' title="Toggle edit mode"><i class="material-icons">more_vert</i></button> -->
+
+		<!-- <button id="editWorldButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onEditWorld();" ontouchstart="g_GameMap.onEditWorld();">Edit World</button>
+		<button id="addLocationButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddLocationStart();"  ontouchstart="g_GameMap.onAddLocationStart();">Add Location</button>
+		<button id="addPathButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddPathStart();"  ontouchstart="g_GameMap.onAddPathStart();">Add Path</button>
+		<button id="addAreaButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddAreaStart();"  ontouchstart="g_GameMap.onAddAreaStart();">Add Area</button>
+		<div id="showRecentChangeButton" class="gmToggleButton gmNoMobile" style="display:none;" onclick="g_GameMap.onRecentChanges(this);" ontouchstart="g_GameMap.onRecentChanges(this);">Recent Changes</div> -->
 	</div>
 
 	  <!-- Search container -->
