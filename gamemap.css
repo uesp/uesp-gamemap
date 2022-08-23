@@ -147,6 +147,8 @@ button[class*="icon_button"] {
 	height: var(--appbar_dimen);
 	min-width: var(--appbar_dimen);
 	box-shadow: 0px 1.5px 4px 4px var(--shadow);
+	vertical-align: middle;
+	text-align: center;
 }
 
 button[class*="icon_button"] i {

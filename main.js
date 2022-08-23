@@ -13,6 +13,7 @@ window.onload = function() {
 	// setup event listeners
 	btn_clear_search.addEventListener("click", clearSearch);
 	searchbox.addEventListener("input", function(){ updateSearch(searchbox.value); });
+	M.AutoInit();
 
 	// TODO: add event listeners to up/down and enter here as well, to control the search list selection
 	// BEHAVIOUR: "Enter" selects the first item in the list, arrow keys move the selection, mouse takes priority
