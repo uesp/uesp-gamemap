@@ -38,8 +38,8 @@
 		width: calc(100% - 120px) !important;
   	}
 
-	/* banish these elements on mobile */
-	[class*='banishmobile'] {
+	/* hide these elements on mobile */
+	[class*='nomobile'] {
 		display: none;
 	}
 
@@ -148,6 +148,10 @@ button[class*="icon_button"] {
 	min-width: var(--appbar_dimen);
 	box-shadow: 0px 1.5px 4px 4px var(--shadow);
 }
+
+button[class*="icon_button"] i {
+	margin: 5px;
+}
   
 button[class*="icon_button"]:hover {
 	background: var(--surface_dark_variant_dark);
@@ -166,8 +170,9 @@ button[class*="bgless"] {
 }
 
 b[class^="icon_button_label"] {
-	margin-left: 2px;
+	margin-left: 4px;
 	margin-right: 12px;
+	font-size: medium;
 }
 
 /*================================================
@@ -398,6 +403,9 @@ b[class^="icon_button_label"] {
 	width: 65%;
 }
 
+/*================================================
+					Gamemap
+================================================*/
 
 #gmMap {
 	position: absolute;
@@ -406,6 +414,13 @@ b[class^="icon_button_label"] {
 	top: 0px;
 	left: 0px;
 	right: 0px;
+}
+
+#gmMap  * {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 #gmMapContainer {
@@ -1649,7 +1664,7 @@ div[class^="icon_bar"] {
 }
 
 .icon_bar_persistent {
-	left: 600px;
+	right: var(--padding_medium);
 	width: auto;
 	top: var(--padding_big);
   }
