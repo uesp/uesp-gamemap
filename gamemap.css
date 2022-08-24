@@ -25,7 +25,7 @@
 				   Mobile CSS
 ================================================*/
 
-@media only screen and (max-device-width:650px) {
+@media only screen and (max-device-width:900px) {
 
 	#menubar {
 		display: none !important;
@@ -36,18 +36,25 @@
 	}
 
 	.search_bar {
-		width: calc(100% - 100px) !important;
+		width: calc(100% - 80px) !important;
   	}
 
 	/* hide these elements on mobile */
 	[class*='nomobile'] {
-		display: none;
+		display: none !important;
 	}
 
-
-	/* show these elements on mobile */
+	/* show these elements only on mobile */
 	[class*='onlymobile'] {
 		display: inline-block !important;
+	}
+	
+	.icon_bar_responsive {
+		flex-direction: column !important;
+		top: calc(var(--padding_minimum) + var(--appbar_dimen) + var(--padding_small) + +8px) !important;
+		right: var(--padding_minimum) !important;
+		left: auto !important;
+		width: var(--appbar_dimen) !important;
 	}
 
 }
@@ -193,7 +200,7 @@ b[class^="icon_button_label"] {
 ================================================*/
 
 #btn_location_switcher{
-	border-radius: var(--padding_small);
+	border-radius: var(--padding_minimum);
 	color: var(--highlight_light);
 }
 
