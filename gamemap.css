@@ -1664,6 +1664,9 @@ body {
 div[class^="icon_bar"] { 
 	position: absolute;
 	z-index: var(--zindex_floating);
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: row;
 }
 
 .icon_bar_persistent {
