@@ -82,11 +82,11 @@
 
 	/* misc colours */
 	--divider: rgba(164, 163, 163, 0.30);
-	--shadow: rgba(0, 0, 0, 0.33);
+	--shadow: rgba(0, 0, 0, 0.35);
 	--secondary: #8a5a44;
 	--secondary_variant: #A69480;
   	--selection: rgba(138,90,68, 0.30);
-	--bubble_selection: rgba(84, 84, 84, 0.5)
+	--bubble_selection: rgba(84, 84, 84, 0.5);
 }
 
 /*================================================
@@ -140,15 +140,14 @@ button {
 ================================================*/
 
 button[class*="icon_button"] {
-	background: var(--surface_variant_dark);
+	background: var(--shadow);
 	border: none;
-	color: var(--text_on_primary);
+	color: var(--text_on_secondary);
 	padding: auto;
 	border-radius: var(--appbar_dimen);
 	transition: all ease-in 150ms;
 	height: var(--appbar_dimen);
 	min-width: var(--appbar_dimen);
-	box-shadow: 0px 1.5px 4px 4px var(--shadow);
 	text-align: center;
 	vertical-align: middle;
 	line-height: 100%;	
@@ -159,8 +158,7 @@ button[class*="icon_button"] i {
 }
   
 button[class*="icon_button"]:hover {
-	background: var(--surface_variant);
-	box-shadow: 0px 1.5px 5px 6px var(--shadow);
+	background: var(--bubble_selection);
 }
   
 button[class*="bgless"]:hover {
