@@ -179,6 +179,10 @@ button[class*="icon_button"] i {
 button[class*="icon_button"]:hover {
 	background: var(--bubble_selection);
 }
+
+button[class*="icon_button"]:active {
+	transform: scale(0.9);
+}
   
 button[class*="bgless"]:hover {
 	background: var(--divider);
