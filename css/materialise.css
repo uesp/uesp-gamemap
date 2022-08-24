@@ -5821,19 +5821,6 @@ label {
 
 /* Text Inputs + Textarea
    ========================================================================== */
-/* Style Placeholders */
-::-webkit-input-placeholder {
-  color: #d1d1d1;
-}
-::-moz-placeholder {
-  color: #d1d1d1;
-}
-::-ms-input-placeholder {
-  color: #d1d1d1;
-}
-::placeholder {
-  color: #d1d1d1;
-}
 
 /* Text inputs */
 input:not([type]):not(.browser-default),
