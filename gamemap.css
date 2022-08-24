@@ -2,22 +2,23 @@
 					 General
 ================================================*/
 
-/* hide elements that request to be hidden */
-[class*='hidedefault'] {
-	visibility: hidden;
-}
-
-/* banish elements that are gone by default */
-[class*='banishdefault'] {
-	display: none;
-}
-
 /* prevent icons being selectable */
 .material-icons { 
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+/* hide these elements by default */
+[class*='onlymobile'] {
+	display: none !important;
+}
+[class*='hidedefault'] {
+	visibility: hidden;
+}
+[class*='banishdefault'] {
+	display: none;
 }
 
 /*================================================
@@ -41,6 +42,12 @@
 	/* hide these elements on mobile */
 	[class*='nomobile'] {
 		display: none;
+	}
+
+
+	/* show these elements on mobile */
+	[class*='onlymobile'] {
+		display: inline-block !important;
 	}
 
 }
@@ -124,7 +131,7 @@
 }
 
 /*===============================================
-				  	Buttons
+				Buttons General
 ================================================*/
 
 /* prevent buttons being selectable */
@@ -140,6 +147,7 @@ button {
 ================================================*/
 
 button[class*="icon_button"] {
+	text-shadow: 0px 0px 5px var(--background);
 	background: var(--shadow);
 	border: none;
 	color: var(--text_on_secondary);
@@ -178,6 +186,15 @@ b[class^="icon_button_label"] {
 	white-space: nowrap;
 	position: relative;
 	top: -6.5px;
+}
+
+/*===============================================
+				Location Switcher
+================================================*/
+
+#btn_location_switcher{
+	border-radius: var(--padding_small);
+	color: var(--highlight_light);
 }
 
 /*================================================
