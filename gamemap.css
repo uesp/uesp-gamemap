@@ -100,9 +100,10 @@
 	--search_pane_width: 420px;
 
 	/* padding */
+	--padding_minimum: 8px;
 	--padding_small: 12px;
 	--padding_medium: 16px;
-	--padding_big: 32px;
+	--padding_large: 32px;
 }
 
 /*================================================
@@ -149,6 +150,7 @@ button[class*="icon_button"] {
 	min-width: var(--appbar_dimen);
 	box-shadow: 0px 1.5px 4px 4px var(--shadow);
 	text-align: center;
+	vertical-align: middle;
 	line-height: 100%;	
 }
 
@@ -166,7 +168,6 @@ button[class*="bgless"]:hover {
 	color: black;
 }
   
-  
 button[class*="bgless"] {
 	background: 0;
 	color: black;
@@ -176,6 +177,9 @@ b[class^="icon_button_label"] {
 	margin-left: 4px;
 	margin-right: 12px;
 	font-size: medium;
+	white-space: nowrap;
+	position: relative;
+	top: -6.5px;
 }
 
 /*================================================
@@ -203,11 +207,11 @@ b[class^="icon_button_label"] {
 
 .search_bar {
   	display: flex;
-	margin-left: var(--padding_medium);
+	margin-left: var(--padding_minimum);
 	margin-right: var(--padding_medium);
 	margin-bottom: var(--padding_medium);
 	position: relative;
-	top: var(--padding_medium);
+	top: var(--padding_minimum);
   	flex-wrap: nowrap;
 	flex-grow: 2;
 	justify-content: space-between;
@@ -1120,7 +1124,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	border-radius: 64px;
 	z-index: 1000;
 	bottom: 45px;
-	right: var(--padding_small);
+	right: var(--padding_minimum);
 	width: var(--appbar_dimen);
 	height: 100px;
 	display: flex;
@@ -1667,17 +1671,21 @@ div[class^="icon_bar"] {
 	display: flex;
 	flex-wrap: nowrap;
 	flex-direction: row;
+	gap: var(--padding_small);
 }
 
 .icon_bar_persistent {
-	right: var(--padding_medium);
+	right: var(--padding_minimum);
 	width: auto;
-	top: var(--padding_medium);
+	top: var(--padding_minimum);
+	flex: none;
 }
 
 .icon_bar_responsive {
-	top: var(--padding_medium);
-	left: calc(var(--search_pane_width) + var(--padding_small));
+	top: var(--padding_minimum);
+	left: calc(var(--search_pane_width) + 4px);
+	flex: none;
+	width: calc(100% - (var(--search_pane_width) + var(--appbar_dimen) + var(--padding_large)));
 }
 
 /*================================================
