@@ -54,17 +54,12 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.recentChangesRoot = null;
 
 	this.mapControlRoot = null;
-	this.mapSearchRoot  = null;
-	this.mapSearchResults = null;
 
 	this.mapWorlds = {};
 	this.mapWorldNameIndex = {};
 	this.mapWorldDisplayNameIndex = {};
 	this.mapWorldsLoaded = false;
 	this.centerOnError = false;
-
-	this.searchText = '';
-	this.searchResults = [ ];
 
 	this.currentWorldId = 0;
 	this.addWorld('__default', this.mapOptions, this.currentWorldId, '');
@@ -150,7 +145,6 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.createMapRoot();
 	this.createMapTiles();
 	this.createMapControls();
-	this.createSearchControls();
 	this.createRecentChanges();
 	//this.createMapList(this.mapContainer);
 	this.createEvents();
@@ -1999,7 +1993,6 @@ uesp.gamemap.Map.prototype.onRightClick = function(event)
 
 		/* Don't zoom out if right click in popup */
 	if ($(event.target).parents('.gmMapPopupRoot').length > 0) return true;
-	if ($(event.target).parents('.gmMapSearchRoot').length > 0) return true;
 
 	event.preventDefault();
 	self.onZoomOutWorld();
@@ -2653,11 +2646,6 @@ uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 	this.mapWorldsLoaded = true;
 	if (this.userEvents.onMapWorldsLoaded != null) this.userEvents.onMapWorldsLoaded.call(this);
 	this.fillWorldList('#gmMapListAlphaSelect');
-
-	if (this.queryParams.search != null)
-	{
-		this.doSearch(this.queryParams.search, false);
-	}
 
 	return true;
 }
@@ -4005,106 +3993,6 @@ uesp.gamemap.Map.prototype.createRecentChanges = function ()
 								.insertAfter(this.mapContainer);
 }
 
-
-uesp.gamemap.Map.prototype.createSearchControls = function () {
-	if (this.mapSearchRoot != null) return;
-	var self = this;
-
-	this.mapSearchRoot = $('<div />')
-								.addClass('gmMapSearchRoot')
-								.appendTo(this.mapContainer);
-
-	//this.mapSearchRoot = document.getElementById("search_root");
-
-	var searchOnlyThisMap = "<div class='gmMapSearchSmall'><input class='gmMapSearchCheck' type='checkbox' name='searchMapOnly' /> Only Search in Current Map</div>";
-	if (!this.mapOptions.showSearchThisLocation) searchOnlyThisMap = "";
-
-
-
-	var searchContent = "<form  onsubmit='return false;'>" +
-						"<div class='gmMapSearchInputDiv'>" +
-						"<input class='gmMapSearchInput' type='text' name='search' value='' size='25' maxlength='100' autocomplete='on' />" +
-						"<button class='gmMapSearchButton' title='Search the map for this text' name='button' type='submit'>" +
-						"<img width='12' height='13' alt='Search' src='images/search-icon.png'>" +
-						"</button>" +
-						"<button class='gmSearchResetButton' title='Reset the map search' name='button' type='reset' >" +
-						"<img width='12' height='13' alt='Search' src='images/searchreseticon.png'>" +
-						"</button>" +
-						searchOnlyThisMap +
-						"</div>" +
-						"</form>" +
-						"<div class='gmMapSearchResultsWrapper'>" +
-						"<div class='gmMapSearchResults' style='display:none;'>" +
-						"</div>" +
-						"<div class='gmMapSearchResultsButton'>" +
-						"<img class='gmMapSearchResultsButtonImage' src='images/downarrows.gif' />" +
-						"<div class='gmMapSearchResultsButtonLabel'>Show Search Results</div>" +
-						"<img class='gmMapSearchResultsButtonImage' src='images/downarrows.gif' />" +
-						"</div>" +
-						"</div>";
-
-	this.mapSearchRoot.html(searchContent);
-
-	var mapSearchForm = this.mapSearchRoot.find('form');
-	var mapSearchButton = this.mapSearchRoot.find('.gmMapSearchButton');
-	var mapResetButton = this.mapSearchRoot.find('.gmSearchResetButton');
-
-	this.mapSearchResults = this.mapSearchRoot.find('.gmMapSearchResults');
-
-	var mapSearchResultsButton = this.mapSearchRoot.find('.gmMapSearchResultsButton');
-	var mapSearchInput = $(".gmMapSearchInput");
-
-	if (this.queryParams.search) mapSearchInput.val(this.queryParams.search);
-
-	mapResetButton.bind("touchstart click", function (e) {
-		self.onResetSearchButton(e);
-		return false;
-	});
-
-	mapSearchButton.bind("touchstart click", function (e) {
-		self.onSearchButton(e);
-		return false;
-	});
-
-	mapSearchResultsButton.bind("touchstart click", function (e) {
-		self.onSearchResultsButton(e);
-		return false;
-	});
-
-	mapSearchInput.keypress(function(e){
-		if (!e) e = window.event;
-		if (e.keyCode == '13'){
-			mapSearchInput.blur();
-			mapSearchInput.focus();
-			return true;
-		}
-	  });
-}
-
-
-uesp.gamemap.Map.prototype.onResetSearchButton = function (event)
-{
-	this.clearSearchResults();
-
-	$(".gmMapSearchInput").val("");
-	this.hideSearchResults();
-
-	return false;
-}
-
-
-uesp.gamemap.Map.prototype.onSearchButton = function (event)
-{
-	var mapSearchForm = this.mapSearchRoot.find('form');
-	var searchText = mapSearchForm.find('input[name=search]').val();
-	var searchMapOnly = mapSearchForm.find('input[name=searchMapOnly]').is(':checked');
-
-	this.doSearch(searchText, searchMapOnly);
-
-	return false;
-}
-
-
 uesp.gamemap.Map.prototype.FindMapLocTypeString = function (locTypeString)
 {
 	var checkTypeString = locTypeString.trim().toLowerCase();
@@ -4119,256 +4007,6 @@ uesp.gamemap.Map.prototype.FindMapLocTypeString = function (locTypeString)
 	return null;
 
 }
-
-
-uesp.gamemap.Map.prototype.createSearchQuery = function (searchText, searchMapOnly)
-{
-	var queryParams = { };
-
-	queryParams.action = 'search';
-	queryParams.search = encodeURIComponent(searchText);
-	if (this.isShowHidden()) queryParams.showhidden = 1;
-	if (searchMapOnly === true) queryParams.world = this.currentWorldId;
-	queryParams.db = this.mapOptions.dbPrefix;
-
-	if (searchText.substring(0, 5) === "type:")
-	{
-		var locType = this.FindMapLocTypeString(searchText.substring(5));
-		if (locType != null) queryParams.searchtype = locType;
-	}
-
-	return queryParams;
-}
-
-
-uesp.gamemap.Map.prototype.doSearch = function (searchText, searchMapOnly)
-{
-	var self = this;
-
-	searchText = searchText.trim();
-
-	if (searchText == null || searchText == '')
-	{
-		this.clearSearchResults();
-		return false;
-	}
-
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, 'Search for: ', searchText);
-	this.searchText = searchText;
-
-	var queryParams = this.createSearchQuery(searchText, searchMapOnly);
-
-	if (this.mapOptions.isOffline)
-	{
-		setTimeout( function() { ugmSearchOfflineLocations(self, queryParams); }, 10);
-	}
-	else
-	{
-		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
-			self.onReceiveSearchResults(data);
-		});
-	}
-
-	return true;
-}
-
-
-uesp.gamemap.Map.prototype.onReceiveSearchResults = function (data)
-{
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Received search data");
-	uesp.logDebug(uesp.LOG_LEVEL_WARNING, data);
-
-	if (data.isError === true)  return uesp.logError("Error retrieving location data!", data.errorMsg);
-
-	this.searchResults = [ ];
-
-	this.mergeLocationData(data.locations, false);
-
-	for (key in data.worlds)
-	{
-		var world = data.worlds[key];
-		if (world.id == null) continue;
-
-		this.searchResults.push( { worldId : world.id });
-	}
-
-	for (key in data.locations)
-	{
-		var location = data.locations[key];
-		if (location.id == null) continue;
-
-		this.searchResults.push( { locationId : location.id });
-	}
-
-	this.showSearchResults();
-	this.updateSearchResults();
-	return true;
-}
-
-
-uesp.gamemap.Map.prototype.updateSearchResults = function ()
-{
-	this.clearSearchResults();
-
-	for (i in this.searchResults)
-	{
-		var searchResult = this.searchResults[i];
-
-		this.addSearchResultLocation(searchResult.locationId);
-		this.addSearchResultWorld(searchResult.worldId);
-	}
-
-}
-
-
-uesp.gamemap.Map.prototype.addSearchResultLocation = function (locationId)
-{
-	var self = this;
-
-	if (locationId == null) return;
-
-	var location = this.locations[locationId];
-	if (location == null) return uesp.logError('Failed to find location #' + locationId + ' data!');
-
-	var world = this.mapWorlds[location.worldId];
-	if (world == null) return uesp.logError('Failed to find world #' + location.worldId + ' data!');
-
-	var locState = new uesp.gamemap.MapState;
-	locState.zoomLevel = world.maxZoom;
-	//if (locState.zoomLevel < this.zoomLevel) locState.zoomLevel = this.zoomLevel;
-	locState.gamePos.x = location.x;
-	locState.gamePos.y = location.y;
-	locState.worldId = world.id;
-
-	var searchResult = $('<div />')
-							.addClass('gmMapSearchResultLocation')
-							.bind("touchstart click", function (e) { self.onClickSearchResultId(locationId, locState); return false; })
-							.appendTo(this.mapSearchResults);
-
-	var iconURL   = this.mapOptions.iconPath + location.iconType + ".png";
-	var imageContent = "<img class='gmMapSearchResultIcon' src='" + iconURL + "' />";
-
-	if (location.iconType == 0) imageContent = "<div class='gmMapSearchResultIcon' />";
-
-	var resultContent = imageContent +
-						"<div class='gmMapSearchResultTitle'>{location.name}</div> " +
-						"<div class='gmMapSearchResultLocWorld'>(in {world.displayName})</div>";
-	var data = { world: world, location: location };
-	var resultHtml = uesp.template(resultContent, data);
-
-	searchResult.html(resultHtml);
-}
-
-
-uesp.gamemap.Map.prototype.onClickSearchResult = function(location, locState)
-{
-	this.setMapState(locState, true);
-	location.showPopup();
-}
-
-
-uesp.gamemap.Map.prototype.onClickSearchResultId = function(locationId, locState)
-{
-	this.setMapState(locState, true);
-
-	var location = this.locations[locationId];
-
-	if (location != null)
-	{
-		location.showPopup();
-		return;
-	}
-
-	this.showPopupOnLoadLocationId = locationId;
-	//setTimeout(function() { location.showPopup(); }, 500);
-	//location.showPopup();
-	//this.setMapState(locState, true);
-}
-
-
-
-uesp.gamemap.Map.prototype.addSearchResultWorld = function (worldId)
-{
-	var self = this;
-
-	if (worldId == null) return;
-
-	var world = this.mapWorlds[worldId];
-	if (world == null) return uesp.logError('Failed to find world #' + worldId + ' data!');
-
-	var worldState = new uesp.gamemap.MapState;
-	worldState.zoomLevel = this.zoomLevel;
-	worldState.gamePos.x = (world.posLeft - world.posRight)/2 + world.posRight;
-	worldState.gamePos.y = (world.posTop - world.posBottom)/2 + world.posBottom;
-	worldState.worldId = world.id;
-
-	var searchResult = $('<div />')
-							.addClass('gmMapSearchResultWorld')
-							.bind("touchstart click", function (e) { self.setMapState(worldState, true); return false; })
-							.appendTo(this.mapSearchResults);
-
-	var resultContent = "<div class='gmMapSearchResultTitle'>{displayName}</div>";
-	var resultHtml = uesp.template(resultContent, world);
-
-	searchResult.html(resultHtml);
-}
-
-
-uesp.gamemap.Map.prototype.clearSearchResults = function ()
-{
-	this.mapSearchResults.text('');
-}
-
-
-uesp.gamemap.Map.prototype.onSearchResultsButton = function (event)
-{
-	this.toggleSearchResults();
-	return false;
-}
-
-
-uesp.gamemap.Map.prototype.updateSearchResultsButton = function (isVisible)
-{
-	if (isVisible == null) isVisible = this.mapSearchResults.is(':visible');
-
-	var mapSearchResultsButton = this.mapSearchRoot.find('.gmMapSearchResultsButton');
-	var mapSearchResultsImage = mapSearchResultsButton.find('.gmMapSearchResultsButtonImage');
-	var mapSearchResultsLabel = mapSearchResultsButton.find('.gmMapSearchResultsButtonLabel');
-
-	if (isVisible)
-	{
-		mapSearchResultsImage.attr('src', 'images/uparrows.gif');
-		mapSearchResultsLabel.text('Hide Search Results');
-	}
-	else
-	{
-		mapSearchResultsImage.attr('src', 'images/downarrows.gif');
-		mapSearchResultsLabel.text('Show Search Results');
-	}
-}
-
-
-uesp.gamemap.Map.prototype.toggleSearchResults = function ()
-{
-	var isVisible = this.mapSearchResults.is(':visible');
-	this.mapSearchResults.slideToggle(200);
-	this.updateSearchResultsButton(!isVisible);
-}
-
-
-uesp.gamemap.Map.prototype.showSearchResults = function ()
-{
-	this.mapSearchResults.show(200);
-	this.updateSearchResultsButton(true);
-}
-
-
-uesp.gamemap.Map.prototype.hideSearchResults = function ()
-{
-	this.mapSearchResults.hide(200);
-	this.updateSearchResultsButton(false);
-}
-
 
 uesp.gamemap.Map.prototype.createMapControls = function ()
 {

@@ -28,8 +28,8 @@
 /* disable animations for browsers requesting reduced motion */
 @media (prefers-reduced-motion) {
 	* {
-		transition: none 0ms;
-		animation: none;
+		transition: none 0ms !important;
+		animation: none !important;
 	}
 }
 
@@ -47,7 +47,7 @@
 		width: 100% !important;
 	}
 
-	.search_bar {
+	.search_container {
 		width: calc(100% - 80px) !important;
   	}
 
@@ -122,8 +122,9 @@
 :root {
 	/* heights, widths, and volume */
 	--appbar_dimen: 48px;
-	--zindex_floating: 900;
 	--search_pane_width: 420px;
+	--zindex_floating: 900;
+	--zindex_overlay: 9998;
 
 	/* padding */
 	--padding_minimum: 8px;
@@ -189,7 +190,7 @@ button[class*="icon_button"]:hover {
 }
 
 button[class*="icon_button"]:active {
-	transform: scale(0.9);
+	transform: scale(0.94);
 }
   
 button[class*="bgless"]:hover {
@@ -235,6 +236,7 @@ b[class^="icon_button_label"] {
 	height: 100%;
 	z-index: 100;
 	font-size: 12px;
+	z-index: var(--zindex_overlay);
 	pointer-events: none;
 }
 
@@ -242,22 +244,21 @@ b[class^="icon_button_label"] {
 	margin-left: auto;
 }
 
-.searchbox_container {
-	margin: auto;
-	width: 100%;
+.search_container {
+	margin-left: var(--padding_minimum);
+	margin-right: var(--padding_medium);
+	margin-bottom: var(--padding_medium);
 }
 
 .search_bar {
   	display: flex;
-	margin-left: var(--padding_minimum);
-	margin-right: var(--padding_medium);
-	margin-bottom: var(--padding_medium);
 	position: relative;
 	top: var(--padding_minimum);
   	flex-wrap: nowrap;
 	flex-grow: 2;
 	justify-content: space-between;
 	background-color: var(--primary);
+	z-index: var(--zindex_floating);
 	border-radius: 32px;
 	pointer-events: auto;
   	transition: all ease-in-out 150ms;
@@ -278,129 +279,34 @@ b[class^="icon_button_label"] {
 }
 
 .search_box {
-  margin-top: -1.1%;
+	margin-top: -1.1%;
 	width: 100%;
-  height: 100%;
-  position: relative;
-  padding-left: 5px;
-  border: none;
-  align-self: stretch;
-  outline: none;
-  -webkit-appearance: none;
-  background-color: transparent;
-  font-size: 1.5em;
-}
-
-.gmMapSearchCheck {
-	padding: 0;
-	margin: 0;
-	vertical-align: -2px;
-}
-
-.gmMapSearchResults {
-	pointer-events: visible;
-}
-
-.gmMapSearchResultsWrapper {
-	position: absolute;
-	top: 36px;
-	bottom: 20px;
-	width: 100%;
-	pointer-events: none;
-}
-
-.gmMapSearchResults {
-	background-color: white;
-	border: 1px solid gray;
-	position: relative;
-	top: 0px;
-	left: 0px;
-	overflow: auto;
 	height: 100%;
-}
-
-.gmMapSearchResultsButton {
-	background-color: #cccccc;
-	color: #666666;
-	height: 18px;
-	line-height: 18px;
-	text-align: center;
-	vertical-align: middle;
-	border-style: solid;
-	border-color: #bbb #888 #666 #aaa;
-	border-width: 1px 2px 2px 1px;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	pointer-events: visible;
-	cursor: default;
 	position: relative;
-	top: 0px;
-	left: 0px;
-
-}
-
-.gmMapSearchResultsButton:hover {
-	background-color: #999999;
-	border-color: #666 #aaa #bbb #888;
-	border-width: 2px 1px 1px 2px;
-}
-
-.gmMapSearchResultsButtonLabel {
-	display: inline-block;
 	padding-left: 5px;
-	padding-right: 5px;
-	cursor: default;
+	border: none;
+	align-self: stretch;
+	outline: none;
+	-webkit-appearance: none;
+	background-color: transparent;
+	font-size: 1.5em;
 }
 
-.gmMapSearchResultsButtonImage {
-	cursor: default;
+.searchbox_container {
+	margin: auto;
+	width: 100%;
 }
 
-.gmMapSearchResultLocation {
-	cursor: pointer;
-	height: 20px;
-	line-height: 20px;
-	vertical-align: middle;
-	white-space: nowrap;
+.search_results_container {
+	background-color: var(--surface);
+	pointer-events: visible;
+	position: relative;
+	top: -16px;
+	padding-top: var(--padding_large);
+	border-radius: var(--padding_small);
+	height: 100%;
+	box-shadow: 0px 1.5px 4px 4px var(--shadow);
 }
-
-.gmMapSearchResultLocation:hover {
-	background-color: #cccccc;
-}
-
-.gmMapSearchResultWorld {
-	cursor: pointer;
-	height: 20px;
-	line-height: 20px;
-	vertical-align: middle;
-	white-space: nowrap;
-	font-weight: bold;
-}
-
-.gmMapSearchResultWorld:hover {
-	background-color: #cccccc;
-}
-
-.gmMapSearchResultIcon {
-	display: inline-block;
-	max-height: 16px;
-	width: 16px;
-	vertical-align: middle;
-}
-
-.gmMapSearchResultTitle {
-	display: inline-block;
-}
-
-.gmMapSearchResultLocWorld {
-	display: inline-block;
-	font-size: 9px;
-}
-
 
 /*================================================
 				   	Infobar
@@ -449,7 +355,7 @@ b[class^="icon_button_label"] {
 	margin: 0 auto;
 	margin-top: 2px;
 	margin-bottom: 2px;
-	width: 65%;
+	width: 75%;
 }
 
 /*================================================
@@ -784,7 +690,6 @@ b[class^="icon_button_label"] {
 	-ms-user-select: none;
 	user-select: none;
 }
-
 
 .gmMapListHeader {
 	font-weight: bold;
@@ -1195,167 +1100,6 @@ input[type=checkbox].gmMapEditPopupInput {
 	display: none;
 }
 
-
-/*================================================
-				  Search Box
-================================================*/
-
-.gmMapSearchRoot {
-	position: absolute;
-	width: 400px;
-	height: 100%;
-	margin: 12px;
-	z-index: 100;
-	font-family: Arial, sans-serif;
-	font-size: 12px;
-	pointer-events: none;
-	box-shadow: 0px 0px 4px 4px var(--shadow);
-	border-radius: 16px;
-}
-
-.gmMapSearchInputDiv {
-	background-color: white;
-	border-radius: 16px;
-	pointer-events: auto;
-	height: 50px;
-}
-
-.gmMapSearchCheck {
-	padding: 0;
-	margin: 0;
-	vertical-align: -2px;
-}
-
-.gmMapSearchButton {
-	margin: 0;
-	padding: 0;
-}
-
-.gmMapSearchInput {
-	width: 250px;
-	margin: 0;
-	padding: 0;
-	border: 2px inset;
-	padding-left: 5px;
-	border: none;
-	-webkit-appearance: none;
-	background-color: transparent;
-	outline: none;
-	font-size: 14px;
-}
-
-.gmMapSearchSmall {
-	font-size: 11px;
-	vertical-align: middle;
-	line-height: 16px;
-	height: 16px;
-	text-align: center;
-}
-
-.gmMapSearchResults {
-	pointer-events: visible;
-}
-
-.gmMapSearchResultsWrapper {
-	position: absolute;
-	top: 36px;
-	bottom: 20px;
-	width: 100%;
-	pointer-events: none;
-}
-
-.gmMapSearchResults {
-	background-color: white;
-	border: 1px solid gray;
-	position: relative;
-	top: 0px;
-	left: 0px;
-	overflow: auto;
-	height: 100%;
-}
-
-.gmMapSearchResultsButton {
-	background-color: #cccccc;
-	color: #666666;
-	height: 18px;
-	line-height: 18px;
-	text-align: center;
-	vertical-align: middle;
-	border-style: solid;
-	border-color: #bbb #888 #666 #aaa;
-	border-width: 1px 2px 2px 1px;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	pointer-events: visible;
-	cursor: default;
-	position: relative;
-	top: 0px;
-	left: 0px;
-
-}
-
-.gmMapSearchResultsButton:hover {
-	background-color: #999999;
-	border-color: #666 #aaa #bbb #888;
-	border-width: 2px 1px 1px 2px;
-}
-
-.gmMapSearchResultsButtonLabel {
-	display: inline-block;
-	padding-left: 5px;
-	padding-right: 5px;
-	cursor: default;
-}
-
-.gmMapSearchResultsButtonImage {
-	cursor: default;
-}
-
-.gmMapSearchResultLocation {
-	cursor: pointer;
-	height: 20px;
-	line-height: 20px;
-	vertical-align: middle;
-	white-space: nowrap;
-}
-
-.gmMapSearchResultLocation:hover {
-	background-color: #cccccc;
-}
-
-.gmMapSearchResultWorld {
-	cursor: pointer;
-	height: 20px;
-	line-height: 20px;
-	vertical-align: middle;
-	white-space: nowrap;
-	font-weight: bold;
-}
-
-.gmMapSearchResultWorld:hover {
-	background-color: #cccccc;
-}
-
-.gmMapSearchResultIcon {
-	display: inline-block;
-	max-height: 16px;
-	width: 16px;
-	vertical-align: middle;
-}
-
-.gmMapSearchResultTitle {
-	display: inline-block;
-}
-
-.gmMapSearchResultLocWorld {
-	display: inline-block;
-	font-size: 9px;
-}
-
 .gmMapKey {
 	background-color: #EBDDB4;
 	border: 1px solid gray;
@@ -1672,35 +1416,6 @@ body {
 .gmMapControlDisplayStateSelected {
 	font-weight: bold;
 	background-color: rgb(255, 255, 128);
-}
-
-.gmMapSearchButton {
-	background-image: none;
-	background: none;
-	border: medium none;
-	cursor: pointer;
-	margin: 0;
-	padding: 0.2em 0.4em 0.2em 0.2em;
-	width: 20px;
-	outline: none;
-	margin: 2px;
-}
-
-.gmSearchResetButton {
-	background-image: none;
-	background: none;
-	border: medium none;
-	cursor: pointer;
-	margin: 0;
-	padding: 0.2em 0.4em 0.2em 0.15em;
-	width: 16px;
-	outline: none;
-	margin: 2px;
-}
-
-.gmMapSearchButton:hover,
-.gmSearchResetButton:hover {
-	background-color: #ccc;
 }
 
 /*================================================

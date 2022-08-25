@@ -395,7 +395,17 @@
 		<div id="gmMap"></div>
 
 		<div class="icon_bar_persistent">
-			<button id="btn_more" class='btn_icon_button waves-effect dropdown-trigger' title="More" data-target='overflow-menu'><i class="material-icons">more_vert</i></button>
+			<button id="btn_more" class='btn_icon_button waves-effect dropdown-trigger' title="More" data-target='overflow-menu'>
+				<i class="material-icons">more_vert</i>
+
+				<!-- Overflow Menu Items -->
+				<ul id='overflow-menu' class='dropdown-content'>
+					<li ontouchstart="g_GameMap.showHelpBlock();"><a onclick="g_GameMap.showHelpBlock();" href="javascript:void(0);">Help</a></li>
+					<li ontouchstart="g_GameMap.showMapKey();"><a onclick="g_GameMap.showMapKey();" href="javascript:void(0);">Map Key</a></li>
+					<li><a href="" id="gmMapReset">Reset Map</a></li>
+				</ul>
+			</button>
+
 			<!-- <button id="btn_recent_changes" class='btn_icon_button waves-effect waves-light' title="Toggle recent changes"><i class="material-icons">more_vert</i></button> -->
 			<!-- <button id="btn_toggle_edit" class='btn_icon_button waves-effect waves-light' title="Toggle edit mode"><i class="material-icons">more_vert</i></button> -->
 
@@ -413,39 +423,55 @@
 				<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>
 			</button>
 
-			<button id="btn_permalink" class='btn_icon_button waves-effect' title="Copy link to this location">
-				<i class="material-icons">link</i><b class="icon_button_label nomobile">Copy Link</b>
-
-				<!-- Overflow Menu Items -->
-				<ul id='overflow-menu' class='dropdown-content'>
-					<li ontouchstart="g_GameMap.showHelpBlock();"><a onclick="g_GameMap.showHelpBlock();" href="javascript:void(0);">Help</a></li>
-					<li ontouchstart="g_GameMap.showMapKey();"><a onclick="g_GameMap.showMapKey();" href="javascript:void(0);">Map Key</a></li>
-					<li><a href="" id="gmMapReset">Reset Map</a></li>
-				</ul>
-
-			</button>
 			<button id="btn_article" class='btn_icon_button waves-effect' title="Goto article for this location">
 				<i class="material-icons">article</i>
 				<b class="icon_button_label nomobile">Goto Article</b>
 			</button>
+
+			<button id="btn_permalink" class='btn_icon_button waves-effect' title="Copy link to this location">
+				<i class="material-icons">link</i><b class="icon_button_label nomobile">Copy Link</b>
+			</button>
 		</div>
 
-		<!-- Search container -->
+		<!-- Search Container -->
 		<div class = 'search_root' id="search_root">
-			<div class='search_bar' tabindex="0">
-				<div class="search_icon">
-					<span class="material-symbols-outlined">search</span>
-				</div>
 
-				<div class='searchbox_container'>
-				<input class='search_box' type='search' id='searchbox' placeholder="Where would you like to go?" size='25' maxlength='100' autocomplete='off' />
+			
+			<div class='search_container'>
+				<!-- Search Bar -->
+				<div class='search_bar' tabindex="0">
+					<div class="search_icon">
+						<span class="material-symbols-outlined">search</span>
+					</div>
+	
+					<div class='searchbox_container'>
+						<input class='search_box' type='search' id='searchbox' placeholder="Where would you like to go?" size='25' maxlength='100' autocomplete='off' />
+					</div>
+	
+					<div class='clear_search_container waves-effect waves-circle' >
+						<button id="btn_clear_search" class='btn_bgless_icon_button hidedefault' title="Clear the current search" type='reset'><span class="material-symbols-outlined">close</span></button>
+					</div>
 				</div>
+				<!-- Search Results -->
+				<div class='search_results_container'>
 
-				<div class='clear_search_container waves-effect waves-circle' >
-				<button id="btn_clear_search" class='btn_bgless_icon_button hidedefault' title="Clear the current search" type='reset'><span class="material-symbols-outlined">close</span></button>
+						<label class="waves-effect">
+						  <input type="checkbox" class="filled-in" checked="checked" />
+						  <span>Only show results from this map</span>
+						</label>
+
+
+					<div class="horizontal_divider"></div>
+					<div class='search_results'>
+						<p>blah blah blah</p>
+						<p>blah blah blah</p>
+						<p>blah blah blah</p>
+						<p>blah blah blah</p>
+						<p>blah blah blah</p>
+						<p>blah blah blah</p>
+					</div>
 				</div>
 			</div>
-
 		</div>
 
 		<div class="infobar">
