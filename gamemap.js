@@ -16,8 +16,7 @@
  */
 
 
-uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
-{
+uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents) {
 	this.defaultMapOptions = uesp.cloneObject(defaultMapOptions);
 	this.mapOptions        = new uesp.gamemap.MapOptions(this.defaultMapOptions);
 
@@ -106,8 +105,8 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.isPinching = false;
 	this.lastPinchDistance = 0;
 
-		// This just controls the client-side editing abilities.
-		// All security for writes is handled on the server side.
+	// This just controls the client-side editing abilities.
+	// All security for writes is handled on the server side.
 	this.enableEdit = false;
 	this.currentEditMode = '';
 	this.editNoticeDiv = null;
@@ -4017,14 +4016,12 @@ uesp.gamemap.Map.prototype.createMapControls = function ()
 								.addClass('gmMapControlRoot')
 								.appendTo(this.mapContainer);
 
-	if (this.mapOptions.displayStates.length > 0)
-	{
+	if (this.mapOptions.displayStates.length > 0) {
 		this.mapControlDisplayStateRoot = $('<div />')
 												.addClass('gmMapControlDisplayStates')
 												.appendTo(this.mapControlRoot);
 
-		for (var i in this.mapOptions.displayStates)
-		{
+		for (var i in this.mapOptions.displayStates) {
 			let displayState = this.mapOptions.displayStates[i];
 
 			$('<div />')
@@ -4036,45 +4033,20 @@ uesp.gamemap.Map.prototype.createMapControls = function ()
 		}
 	}
 
-	this.mapControlPanUp = $('<div />')
-								.html('&#x2C4;')
-								.addClass('gmMapControlPan')
-								.addClass('gmMapControlPanBreak')
-								.bind("touchstart click", function(e) { self.panUp(); return false; })
-								.appendTo(this.mapControlRoot);
+this.mapControlZoomIn = $('<div />')
+	.html('+')
+	.addClass('gmMapControlZoom')
+	.addClass('gmMapControlZoomHover')
+	.bind("touchstart click", function(e) { self.zoomIn(); return false; })
+	.appendTo(this.mapControlRoot);
 
-	this.mapControlPanLeft = $('<div />')
-								.html('&#x2C2;')
-								.addClass('gmMapControlPan')
-								.bind("touchstart click", function(e) { self.panLeft(); return false; })
-								.appendTo(this.mapControlRoot);
+this.mapControlZoomOut = $('<div />')
+	.text('-')
+	.addClass('gmMapControlZoom')
+	.addClass('gmMapControlZoomHover')
+	.bind("touchstart click", function(e) { self.zoomOut(); return false; })
+	.appendTo(this.mapControlRoot);
 
-	this.mapControlPanRight = $('<div />')
-								.html('&#x2C3;')
-								.addClass('gmMapControlPan')
-								.bind("touchstart click", function(e) { self.panRight(); return false; })
-								.appendTo(this.mapControlRoot);
-
-	this.mapControlPanDown = $('<div />')
-								.html('&#x2C5;')
-								.addClass('gmMapControlPan')
-								.addClass('gmMapControlPanBreak')
-								.bind("touchstart click", function(e) { self.panDown(); return false; })
-								.appendTo(this.mapControlRoot);
-
-	this.mapControlZoomIn = $('<div />')
-								.html('+')
-								.addClass('gmMapControlZoom')
-								.addClass('gmMapControlZoomHover')
-								.bind("touchstart click", function(e) { self.zoomIn(); return false; })
-								.appendTo(this.mapControlRoot);
-
-	this.mapControlZoomOut = $('<div />')
-								.text('-')
-								.addClass('gmMapControlZoom')
-								.addClass('gmMapControlZoomHover')
-								.bind("touchstart click", function(e) { self.zoomOut(); return false; })
-								.appendTo(this.mapControlRoot);
 }
 
 
@@ -4811,6 +4783,3 @@ uesp.gamemap.defaultGetMapTile = function(tileX, tileY, zoom, world)
 	else
 		return world + "/zoom" + zoom + "/maptile-" + tileX + "-" + tileY + ".jpg";
 }
-
-
-

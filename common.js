@@ -19,7 +19,6 @@ uesp.LOG_LEVEL_INFO     = 2;
 uesp.LOG_LEVEL_ALL      = 1;
 uesp.DEFAULT_LOG_LEVEL = uesp.LOG_LEVEL_INFO;
 
-
 	// Simple position/point class
 uesp.gamemap.Position = function (x, y)
 {
@@ -340,8 +339,7 @@ uesp.getFormData = function (form)
 }
 
 
-uesp.isMobileDevice = function ()
-{
+function isMobileDevice() {
 	return (navigator.userAgent.match(/Mobi/));
 }
 
@@ -364,15 +362,3 @@ uesp.profile = function(startProfile, name)
 	
 	return 0;
 }
-
-
-jQuery.event.special.touchstart = {
-	setup: function( _, ns, handle ) {
-		this.addEventListener('touchstart', handle, { passive: !ns.includes('noPreventDefault') });
-	}
-};
-jQuery.event.special.touchmove = {
-	setup: function( _, ns, handle ) {
-		this.addEventListener('touchmove', handle, { passive: !ns.includes('noPreventDefault') });
-	}
-};

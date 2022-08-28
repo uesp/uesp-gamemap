@@ -4,36 +4,34 @@
  * 	Contains main UI code for the Gamemap system.
  */
 
-window.onload = function() {
+/*================================================
+				  Initialisation
+================================================*/
 
-	// bind views from DOM
-	var searchbox = document.getElementById("searchbox");
-	var btn_clear_search = document.getElementById("btn_clear_search");
+var uesp = uesp || {};
+var gamemap = gamemap || {};
 
-	// setup event listeners
-	btn_clear_search.addEventListener("click", clearSearch);
-	searchbox.addEventListener("input", function(){ updateSearch(searchbox.value); });
-	M.AutoInit();
+// on page load
+console.log("Map initialising...");
+$(document).ready(function() {
 
-	// TODO: add event listeners to up/down and enter here as well, to control the search list selection
-	// BEHAVIOUR: "Enter" selects the first item in the list, arrow keys move the selection, mouse takes priority
+	var url = window.location.search;
+	url = url.replace("?", ''); // remove the ?
+	alert(url); //alerts ProjectID=462 is your case
 
-	// hijack ctrl + F to redirect to custom search
-	$(window).keydown(function(event){
-		if ((event.ctrlKey || event.metaKey) && event.keyCode === 70) {
-			event.preventDefault();
-			focusSearch();
-		}
-	});
 
-	document.addEventListener('DOMContentLoaded', function() {
-		var elems = document.querySelectorAll('.tooltipped');
-		var instances = M.Tooltip.init(elems, {
-		  // specify options here
-		});
-	  });
+	let paramsString = "name=foo&age=1337"
+	let searchParams = new URLSearchParams(paramsString);
 
-}
+	searchParams.has("name") === true; // true
+	searchParams.get("age") === "1337"; // true
+
+
+});
+
+
+
+//const obj = JSON.parse(text); 
 
 /*================================================
 					Map Utils
@@ -105,6 +103,10 @@ function doSearch(searchQuery, currentMapOnly) {
 	}
 
 }
+
+/*================================================
+					Gamemap
+================================================*/
 
 var esoIconMap = {
 	1  : "Artifact Gate",
@@ -356,9 +358,8 @@ var g_DefaultMapOptions = {
 	homeWorldId : 668,
 	minValidWorldId : 50,
 	maxValidWorldId : 20000,
-	dbPrefix: "test",
+	dbPrefix: "eso",
 	// useCanvasDraw : true,
-	// --OFFLINE_OPTIONS--
 };
 
 if (g_DefaultMapOptions.isOffline) {
@@ -377,57 +378,87 @@ function onWorldLoad() {
 	defaultMapState.gamePos.x = 500000;
 	defaultMapState.gamePos.y = 500000;
 
-	mapState = this.getMapStateFromQuery(defaultMapState);
-	this.setMapState(mapState);
+	g_MapState = this.getMapStateFromQuery(defaultMapState);
+	this.setMapState(g_MapState);
 }
 
 function onPermLoad() {
-	canEdit = this.canEdit() && !uesp.isMobileDevice();
+	canEdit = this.canEdit() && !isMobileDevice();
 
 	if (canEdit) {
-	$("#gmMapEditButtons").show();
-	$("#addLocationButton").show();
-	$("#addPathButton").show();
-	$("#addAreaButton").show();
-	$("#editWorldButton").show();
-	$("#showRecentChangeButton").show();
+		$("#gmMapEditButtons").show();
+		$("#addLocationButton").show();
+		$("#addPathButton").show();
+		$("#addAreaButton").show();
+		$("#editWorldButton").show();
+		$("#showRecentChangeButton").show();
 	}
 	else {
-	$("#addLocationButton").hide();
-	$("#addPathButton").hide();
-	$("#addAreaButton").hide();
-	$("#editWorldButton").hide();
-	$("#showRecentChangeButton").hide();
+		$("#addLocationButton").hide();
+		$("#addPathButton").hide();
+		$("#addAreaButton").hide();
+		$("#editWorldButton").hide();
+		$("#showRecentChangeButton").hide();
 	}
 
 }
 
 $(document).ready( function() {
+
+
+		// bind views from DOM
+		var searchbox = document.getElementById("searchbox");
+		var btn_clear_search = document.getElementById("btn_clear_search");
+	
+		// setup event listeners
+		btn_clear_search.addEventListener("click", clearSearch);
+		searchbox.addEventListener("input", function(){ updateSearch(searchbox.value); });
+		M.AutoInit();
+	
+		// TODO: add event listeners to up/down and enter here as well, to control the search list selection
+		// BEHAVIOUR: "Enter" selects the first item in the list, arrow keys move the selection, mouse takes priority
+	
+		// hijack ctrl + F to redirect to custom search
+		$(window).keydown(function(event){
+			if ((event.ctrlKey || event.metaKey) && event.keyCode === 70) {
+				event.preventDefault();
+				focusSearch();
+			}
+		});
+	
+		document.addEventListener('DOMContentLoaded', function() {
+			var elems = document.querySelectorAll('.tooltipped');
+			var instances = M.Tooltip.init(elems, {
+			  // specify options here
+			});
+		  });
+
+
 	userEvents = {
-	onMapWorldsLoaded   : onWorldLoad,
-	onPermissionsLoaded : onPermLoad,
-	onMapWorldChanged   : onWorldChanged
+		onMapWorldsLoaded   : onWorldLoad,
+		onPermissionsLoaded : onPermLoad,
+		onMapWorldChanged   : onWorldChanged
 	};
 
 	g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
 
 	if (g_GameMap.mapOptions.isOffline) {
-	g_GameMap.worldGroupListContents = $("#gmMapListRoot").html();
-	g_GameMap.createMapList($("#gmMapListRoot"));
-	$('#gmMapList').html(g_GameMap.worldGroupListContents);
-	g_GameMap.setEventsForMapGroupList();
+		g_GameMap.worldGroupListContents = $("#gmMapListRoot").html();
+		g_GameMap.createMapList($("#gmMapListRoot"));
+		$('#gmMapList').html(g_GameMap.worldGroupListContents);
+		g_GameMap.setEventsForMapGroupList();
 	}
 	else {
-	// TODO: Change how map list is created
-	g_GameMap.createMapList($("#gmMapListRoot"));
+		// TODO: Change how map list is created
+		g_GameMap.createMapList($("#gmMapListRoot"));
 
-	// TODO: Temporary call to get the group-world list for ESO
-	$.get( 'templates/worldgrouplist.txt', function( data ) {
-		g_GameMap.worldGroupListContents = data;
-		uesp.logDebug(uesp.LOG_LEVEL_INFO, 'Received world group list contents!');
-		$('#gmMapList').html(data);
-		g_GameMap.setEventsForMapGroupList();
-	});
+		// TODO: Temporary call to get the group-world list for ESO
+		$.get( 'templates/worldgrouplist.txt', function( data ) {
+			g_GameMap.worldGroupListContents = data;
+			uesp.logDebug(uesp.LOG_LEVEL_INFO, 'Received world group list contents!');
+			$('#gmMapList').html(data);
+			g_GameMap.setEventsForMapGroupList();
+		});
 	}
 });
 

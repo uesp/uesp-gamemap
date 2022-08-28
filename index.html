@@ -24,7 +24,6 @@
 		<script type="text/javascript" src="world.js?date=25sept2017"></script>
 		<script type="text/javascript" src="maptile.js?date=29march2014a"></script>
 		<script type="text/javascript" src="gamemap.js?date=8Sept2018"></script>
-
    </head>
 
    <body>
@@ -56,7 +55,7 @@
 		<div class="icon_bar_responsive">
 			<button id="btn_location_switcher" class='btn_icon_button waves-effect' title="Jump to location" onclick="g_GameMap.showMapList();" ontouchstart="g_GameMap.showMapList();">
 				<i class="material-icons onlymobile">explore</i>
-				<b class="icon_button_label nomobile" id="current_location_label">Tamriel</b>
+				<b class="icon_button_label nomobile" id="current_location_label">Loading...</b>
 				<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>
 			</button>
 
@@ -131,17 +130,15 @@
 
 		<!-- Google Analytics stuff -->
 		<script type="text/javascript">
-			if (!g_DefaultMapOptions.isOffline) {
-				var _gaq = _gaq || [];
-				_gaq.push(['_setAccount', 'UA-1386039-6']);
-				_gaq.push(['_trackPageview']);
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-1386039-6']);
+			_gaq.push(['_trackPageview']);
 
-				(function() {
+			(function() {
 				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
 				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-				})();
-			}
+			})();
 		</script>
 
 		<!--JavaScript at end of body for optimized loading-->
