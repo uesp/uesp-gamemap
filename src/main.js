@@ -12,9 +12,13 @@ import * as Utils from "./utils.js";
 ================================================*/
 
 var mapParams = null;
+var mapConfig = null;
+var mapType = null;
+
 var g_GameMap = null;
 var g_MapState = null;
-var mapType = null;
+
+var noAnalytics = true;
 
 var uesp = uesp || {};
 uesp.gamemap = uesp.gamemap || {};
@@ -36,7 +40,31 @@ $(document).ready(function() {
 		showError("No map was provided.");
 	} else {
 		mapType = mapParams.get("map");
-		alert(mapType);
+
+		//gamemap.php?action=search&search=morrowind&world=2282&db=eso
+		//const obj = JSON.parse(text); 
+
+		// load map config 
+
+		console.log("Getting map config...");
+		
+		let configURL = "configs/" + mapType + "/config.json";
+
+
+		alert(configURL);
+
+		$.getJSON(configURL, function(object) {
+			console.log(object);
+			mapConfig = object;
+		});
+
+
+		if (mapConfig === null) {
+			showError("Provided map doesn't exist or is invalid.");
+		}
+		
+
+		
 	}
 
 	Utils.foo();
@@ -92,7 +120,7 @@ $(document).ready(function() {
 	// }
 });
 
-//const obj = JSON.parse(text); 
+
 
 /*================================================
 					Map Utils
@@ -179,6 +207,7 @@ function showError(reason){
 	$("#error_box").show();
 	$('#error_box').css('visibility','visible');
 	$("#error_box_reason").text(reason);
+	console.log(reason);
 }
 
 /*================================================
@@ -672,3 +701,16 @@ function onWorldChanged(newWorld) {
 
 // 	searchResult.html(resultHtml);
 // }
+
+
+if (!noAnalytics) {
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-1386039-6']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+}
