@@ -117,19 +117,6 @@
 			<div class="progress"><div class="indeterminate"></div></div>
 		</div> -->
 
-		<!-- Google Analytics stuff -->
-		<script type="text/javascript">
-			var _gaq = _gaq || [];
-			_gaq.push(['_setAccount', 'UA-1386039-6']);
-			_gaq.push(['_trackPageview']);
-
-			(function() {
-				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-			})();
-		</script>
-
 		<!-- Load JS at end of body for optimised loading -->
 		<script src="./src/jquery.js"></script>
 		<script src="./src/main.js" type="module"></script>
@@ -139,5 +126,20 @@
 		<script src="./src/world.js?date=25sept2017"></script>
 		<script src="./src/gamemap.js?date=8Sept2018"></script>
 		<script src="./src/materialise.min.js"></script>
+
+		<!-- Google Analytics stuff -->
+		<script type="text/javascript">
+			if (!noAnalytics) {
+				var _gaq = _gaq || [];
+				_gaq.push(['_setAccount', 'UA-1386039-6']);
+				_gaq.push(['_trackPageview']);
+
+				(function() {
+					var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+					ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+					var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+				})();
+			}
+		</script>
 	</body>
 </html>

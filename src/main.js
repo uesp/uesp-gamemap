@@ -1,5 +1,5 @@
 import * as Utils from "./utils.js";
-import Gamemap from "./gamemap.js";
+// import Gamemap from "./gamemap.js";
 
 /*
  * main.js -- Created by Thal-J (thal-j@uesp.net) on 16th Aug 2022
@@ -11,6 +11,12 @@ import Gamemap from "./gamemap.js";
 				  Initialisation
 ================================================*/
 
+var mapParams = null;
+var g_GameMap = null;
+var g_MapState = null;
+
+
+
 var uesp = uesp || {};
 uesp.gamemap = uesp.gamemap || {};
 
@@ -18,17 +24,70 @@ uesp.gamemap = uesp.gamemap || {};
 console.log("Map initialising...");
 $(document).ready(function() {
 
+	// get params from URL
 	var url = window.location.search;
-	url = url.replace("?", ''); // remove the ?
-	alert(url); //alerts ProjectID=462 is your case
+	var urlParams = url.replace("?", '');
 
-	let paramsString = "name=foo&age=1337"
-	let searchParams = new URLSearchParams(paramsString);
+	mapParams = new URLSearchParams(urlParams); //create params array
 
-	searchParams.has("name") === true; // true
-	searchParams.get("age") === "1337"; // true
+	if (!mapParams.has("db")) {
+		alert("Map needs database param in URL!");
+	}
+
+	// searchParams.has("name") === true; // true
+	// searchParams.get("age") === "1337"; // true
 
 	Utils.foo();
+
+	// bind views from DOM
+	var searchbox = document.getElementById("searchbox");
+	var btn_clear_search = document.getElementById("btn_clear_search");
+
+	// setup event listeners
+	btn_clear_search.addEventListener("click", clearSearch);
+	searchbox.addEventListener("input", function(){ updateSearch(searchbox.value); });
+	M.AutoInit();
+
+	// TODO: add event listeners to up/down and enter here as well, to control the search list selection
+	// BEHAVIOUR: "Enter" selects the first item in the list, arrow keys move the selection, mouse takes priority
+
+	// hijack ctrl + F to redirect to custom search
+	$(window).keydown(function(event){
+		if ((event.ctrlKey || event.metaKey) && event.keyCode === 70) {
+			event.preventDefault();
+			focusSearch();
+		}
+	});
+
+	var callbacks = {
+		onMapWorldsLoaded   : onWorldLoad,
+		onPermissionsLoaded : onPermLoad,
+		onMapWorldChanged   : onWorldChanged
+	};
+
+	// var g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
+	//const g_GameMap = new Gamemap('gmMap', g_DefaultMapOptions, userEvents);
+
+	console.log(g_GameMap);
+
+	// if (g_GameMap.mapOptions.isOffline) {
+	// 	g_GameMap.worldGroupListContents = $("#gmMapListRoot").html();
+	// 	g_GameMap.createMapList($("#gmMapListRoot"));
+	// 	$('#gmMapList').html(g_GameMap.worldGroupListContents);
+	// 	g_GameMap.setEventsForMapGroupList();
+	// }
+	// else { 
+	// 	// TODO: Change how map list is created
+	// 	g_GameMap.createMapList($("#gmMapListRoot"));
+
+	// 	// TODO: Temporary call to get the group-world list for ESO
+	// 	$.get( 'templates/worldgrouplist.txt', function( data ) {
+	// 		g_GameMap.worldGroupListContents = data;
+	// 		uesp.logDebug(uesp.LOG_LEVEL_INFO, 'Received world group list contents!');
+	// 		$('#gmMapList').html(data);
+	// 		g_GameMap.setEventsForMapGroupList();
+	// 	});
+	// }
 });
 
 //const obj = JSON.parse(text); 
@@ -42,6 +101,16 @@ function getCurrentWorldID() {
 
 	return e;
 }
+
+
+/*================================================
+					  Gamemap
+================================================*/
+
+function loadGamemap() {
+
+}
+
 
 /*================================================
 					  Search
@@ -335,9 +404,6 @@ var esoIconMap = {
 	229: "Quest (Story)",
 };
 
-var g_GameMap = null;
-var g_MapState = null;
-
 var g_DefaultMapOptions = {
 	getMapTileFunction : getDefaultMapTile,
 	wikiUrl: "//en.uesp.net/wiki/",
@@ -402,60 +468,6 @@ function onPermLoad() {
 	}
 
 }
-
-$(document).ready( function() {
-
-		// bind views from DOM
-		var searchbox = document.getElementById("searchbox");
-		var btn_clear_search = document.getElementById("btn_clear_search");
-	
-		// setup event listeners
-		btn_clear_search.addEventListener("click", clearSearch);
-		searchbox.addEventListener("input", function(){ updateSearch(searchbox.value); });
-		M.AutoInit();
-	
-		// TODO: add event listeners to up/down and enter here as well, to control the search list selection
-		// BEHAVIOUR: "Enter" selects the first item in the list, arrow keys move the selection, mouse takes priority
-	
-		// hijack ctrl + F to redirect to custom search
-		$(window).keydown(function(event){
-			if ((event.ctrlKey || event.metaKey) && event.keyCode === 70) {
-				event.preventDefault();
-				focusSearch();
-			}
-		});
-	
-		var userEvents = {
-			onMapWorldsLoaded   : onWorldLoad,
-			onPermissionsLoaded : onPermLoad,
-			onMapWorldChanged   : onWorldChanged
-		};
-
-		// var g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
-
-		const g_GameMap = new Gamemap('gmMap', g_DefaultMapOptions, userEvents);
-
-		console.log(g_GameMap);
-
-		// if (g_GameMap.mapOptions.isOffline) {
-		// 	g_GameMap.worldGroupListContents = $("#gmMapListRoot").html();
-		// 	g_GameMap.createMapList($("#gmMapListRoot"));
-		// 	$('#gmMapList').html(g_GameMap.worldGroupListContents);
-		// 	g_GameMap.setEventsForMapGroupList();
-		// }
-		// else { 
-		// 	// TODO: Change how map list is created
-		// 	g_GameMap.createMapList($("#gmMapListRoot"));
-
-		// 	// TODO: Temporary call to get the group-world list for ESO
-		// 	$.get( 'templates/worldgrouplist.txt', function( data ) {
-		// 		g_GameMap.worldGroupListContents = data;
-		// 		uesp.logDebug(uesp.LOG_LEVEL_INFO, 'Received world group list contents!');
-		// 		$('#gmMapList').html(data);
-		// 		g_GameMap.setEventsForMapGroupList();
-		// 	});
-		// }
-});
 
 function getDefaultMapTile(xPos, yPos, zoom, worldName) {
 	return "//maps.uesp.net/esomap/" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + ".jpg";

@@ -25,6 +25,10 @@
 	color: var(--text_low_emphasis);
 }
 
+body {
+	background-color: var(--surface_dark_variant_dark);
+}
+
 /* disable animations for browsers requesting reduced motion */
 @media (prefers-reduced-motion) {
 	* {
