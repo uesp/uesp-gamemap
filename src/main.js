@@ -14,8 +14,7 @@ import * as Utils from "./utils.js";
 var mapParams = null;
 var g_GameMap = null;
 var g_MapState = null;
-
-
+var mapType = null;
 
 var uesp = uesp || {};
 uesp.gamemap = uesp.gamemap || {};
@@ -29,13 +28,16 @@ $(document).ready(function() {
 	var urlParams = url.replace("?", '');
 
 	mapParams = new URLSearchParams(urlParams); //create params array
-
-	if (!mapParams.has("db")) {
-		alert("Map needs database param in URL!");
-	}
-
 	// searchParams.has("name") === true; // true
 	// searchParams.get("age") === "1337"; // true
+
+	// get which map we are supposed to be loading
+	if (!mapParams.has("map")) {
+		showError("No map was provided.");
+	} else {
+		mapType = mapParams.get("map");
+		alert(mapType);
+	}
 
 	Utils.foo();
 
@@ -171,6 +173,12 @@ function doSearch(searchQuery, currentMapOnly) {
 
 	}
 
+}
+
+function showError(reason){
+	$("#error_box").show();
+	$('#error_box').css('visibility','visible');
+	$("#error_box_reason").text(reason);
 }
 
 /*================================================
