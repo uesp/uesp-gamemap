@@ -443,7 +443,7 @@ $(document).ready( function() {
 		// 	$('#gmMapList').html(g_GameMap.worldGroupListContents);
 		// 	g_GameMap.setEventsForMapGroupList();
 		// }
-		// else {
+		// else { 
 		// 	// TODO: Change how map list is created
 		// 	g_GameMap.createMapList($("#gmMapListRoot"));
 

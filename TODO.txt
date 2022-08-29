@@ -22,6 +22,14 @@ Game Map
 	- Shortcut keys
 	- Better/easier setting of conversion from game to pixel coordinates
 	- Smarter update of game locations when dragging and zooming
+ * 		- Add ability to delete location
+ * 		- Enable display of non-visible locations when editing
+ * 		- Disable locations when adding path/area points?
+ *		- Better cursor icons for adding/deleting path nodes
+ *		- Move world editing to world class
+ *		- Add edit comment input field
+ *		- Add patrolling
+ *		- Add reversion of edits
 
 
 Locations

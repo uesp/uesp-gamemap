@@ -3,17 +3,142 @@
  * 		Released under the GPL v2
  * 		Main source code for the game map system.
  *
- * TODO:
- * 		- Delete location
- * 		- Enable display of non-visible locations when editing
- * 		- Disable locations when adding path/area points?
- *		- Better cursor icons for adding/deleting path nodes
- *		- Move world editing to world class
- *		- Add edit comment input field
- *		- Add patrolling
- *		- Add reversion of edits
- *
  */
+
+/*================================================
+				  State variables
+================================================*/
+
+// Constants
+const USE_LEAFLET = false;
+
+this.USE_CANVAS_DRAW = this.mapOptions.useCanvasDraw;
+this.USE_LEAFLET = this.mapOptions.useLeaflet;
+this.PANAMOUNT = this.mapOptions.tileSize/2;
+
+this.mapRoot = null;
+this.mapCanvas = null;
+this.mapCanvasGrid = null;
+this.mapCanvasElement = null;
+this.mapCanvasGridElement = null;
+this.mapContext = null;
+this.mapContextGrid = null;
+this.mapContainerId = mapContainerId;
+this.mapContainer = $('#' + mapContainerId);
+
+if (this.mapContainer == null) {
+	uesp.logError('The gamemap container \'' + mapContainerId + '\' was not found!');
+} 
+
+this.mapListContainer = null;
+this.mapListLastSelectedItem = null;
+
+this.lastCanvasHoverLocation = null;
+
+this.mapKeyElement = null;
+this.helpBlockElement = null;
+
+this.isShowingRecentChanges = false;
+
+this.recentChangesRoot = null;
+
+this.mapControlRoot = null;
+
+this.mapWorlds = {};
+this.mapWorldNameIndex = {};
+this.mapWorldDisplayNameIndex = {};
+this.mapWorldsLoaded = false;
+this.centerOnError = false;
+
+this.currentWorldId = 0;
+addWorld('__default', this.mapOptions, this.currentWorldId, '');
+
+this.locations = {};
+
+this.zoomLevel = 15;
+this.startTileX = 0;
+this.startTileY = 0;
+this.startTileCanvasX = 0;
+this.startTileCanvasY = 0;
+this.origStartTileCanvasX = 0;
+this.origStartTileCanvasY = 0;
+
+this.isDragging = false;
+this.draggingObject = null;
+this.dragStartLeft = 0;
+this.dragStartTop  = 0;
+this.dragStartLeftCanvas = 0;
+this.dragStartTopCanvas  = 0;
+this.dragStartEventX = 0;
+this.dragStartEventY = 0;
+this.checkTilesOnDrag = true;
+
+this.defaultShowHidden = false;
+
+this.jumpToDestinationOnClick = true;
+this.openPopupOnJump = false;
+
+this.mapKeyNumColumns = 8;
+
+this.showPopupOnLoadLocationId = -1;
+
+this.mapTransformX = 0;
+this.mapTransformY = 0;
+this.canvasLastDragX = 0;
+this.canvasLastDragY = 0;
+this.canvasImages = [];
+this.canvasImageMap = {};
+this.canvasTileCountX = 0;
+this.canvasTileCountY = 0;
+this.lastCanvasRedrawRequest = 0;
+
+this.isPinching = false;
+this.lastPinchDistance = 0;
+
+// This just controls the client-side editing abilities.
+// All security for writes is handled on the server side.
+this.enableEdit = false;
+this.currentEditMode = '';
+this.editNoticeDiv = null;
+this.nextNewLocationId = -100;
+this.editClickWall = null;
+this.currentEditLocation = null;
+this.currentEditPathPoints = null;
+this.worldEditPopup = null;
+this.currentEditWorld = null;
+
+this.isDrawGrid = false;
+this.cellResource = "";
+this.loadedCellResource = "";
+this.cellResourceData = {};
+
+this.worldGroupListContents = '';
+this.helpBlockContents = '';
+
+this.mapTiles = [];
+
+this.displayState = "";
+
+this.queryParams = uesp.parseQueryParams();
+
+this.requestPermissions();
+this.retrieveWorldData();
+
+if (this.queryParams.centeron != null) {
+	this.retrieveCenterOnLocation(this.queryParams.world, this.queryParams.centeron);
+}
+
+if (this.USE_LEAFLET) this.initializeLeaflet();
+
+this.createMapRoot();
+this.createMapTiles();
+this.createMapControls();
+this.createRecentChanges();
+//this.createMapList(this.mapContainer);
+this.createEvents();
+
+this.setGamePosNoUpdate(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY, this.mapOptions.initialZoom);
+this.updateMapStateFromQuery(false);
 
 export default class Gamemap {
 	constructor(mapContainerId, defaultMapOptions, userEvents) {

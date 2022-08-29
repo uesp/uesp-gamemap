@@ -1,0 +1,1468 @@
+/*================================================
+					 General
+================================================*/
+
+/* prevent icons being selectable */
+.material-icons { 
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/* hide these elements by default */
+[class*='onlymobile'] {
+	display: none !important;
+}
+[class*='hidedefault'] {
+	visibility: hidden;
+}
+[class*='banishdefault'] {
+	display: none;
+}
+
+::placeholder {
+	color: var(--text_low_emphasis);
+}
+
+/* disable animations for browsers requesting reduced motion */
+@media (prefers-reduced-motion) {
+	* {
+		transition: none 0ms !important;
+		animation: none !important;
+	}
+}
+
+/*================================================
+				   Mobile CSS
+================================================*/
+
+@media only screen and (max-device-width:900px) {
+
+	#menubar {
+		display: none !important;
+	}
+
+	.search_root {
+		width: 100% !important;
+	}
+
+	.search_container {
+		width: calc(100% - 80px) !important;
+  	}
+
+	/* hide these elements on mobile */
+	[class*='nomobile'] {
+		display: none !important;
+	}
+
+	/* show these elements only on mobile */
+	[class*='onlymobile'] {
+		display: inline-block !important;
+	}
+	
+	.icon_bar_responsive {
+		flex-direction: column !important;
+		top: calc(var(--padding_minimum) + var(--appbar_dimen) + var(--padding_small) + +8px) !important;
+		right: var(--padding_minimum) !important;
+		left: auto !important;
+		width: var(--appbar_dimen) !important;
+	}
+
+}
+
+/*================================================
+					Colours
+================================================*/
+
+:root {
+	/* surface colours */
+	--background: #000000;
+	--background_dark: #1D1D1D;
+
+	--surface: #FBF1DA;
+	--surface_variant: #eee5cf;
+	--surface_variant_dark: #F7E9CB;
+
+	--surface_dark: #2E2E2E;
+	--surface_dark_variant: #353535;
+	--surface_dark_variant_dark: #252525;
+
+	--primary: #f8f2e1;
+	--primary_variant:#e5dfd0;
+	--primary_variant_light: #faf4e6;
+
+	--primary_dark: #3E3E3E;
+	--primary_dark_variant: #373737;
+
+	--highlight_dark:#6B5F50;
+	--highlight_light: #FFE893;
+
+	/* text colours */
+	--text_loc_name: #33ff33;
+	--text_loc_disabled: #ff3333;
+	--text_link: rgba(138,90,68,1);
+	--text_on_primary: black;
+	--text_on_secondary: white;
+	--text_low_emphasis: #474747;
+
+	/* misc colours */
+	--divider: rgba(164, 163, 163, 0.30);
+	--shadow: rgba(0, 0, 0, 0.35);
+	--secondary: #8a5a44;
+	--secondary_variant: #A69480;
+  	--selection: rgba(138,90,68, 0.30);
+	--bubble_selection: rgba(84, 84, 84, 0.5);
+}
+
+/*================================================
+					Dimensions
+================================================*/
+
+:root {
+	/* heights, widths, and volume */
+	--appbar_dimen: 48px;
+	--search_pane_width: 420px;
+	--zindex_floating: 900;
+	--zindex_overlay: 9998;
+
+	/* padding */
+	--padding_minimum: 8px;
+	--padding_small: 12px;
+	--padding_medium: 16px;
+	--padding_large: 32px;
+}
+
+/*================================================
+					  Fonts
+================================================*/
+
+@font-face {
+	font-family: 'wikiType';
+	src: url('../assets/fonts/Goudy_Medieval_Alternate.ttf') format('embedded-opentype'), /* Internet Explorer */
+		 url('../assets/fonts/Goudy_Medieval_Alternate.ttf') format('woff2'),             /* Super Modern Browsers */
+		 url('../assets/fonts/Goudy_Medieval_Alternate.ttf') format('woff'),              /* Pretty Modern Browsers */
+		 url('../assets/fonts/Goudy_Medieval_Alternate.ttf') format('truetype'),          /* Safari, Android, iOS */
+		 url('../assets/fonts/Goudy_Medieval_Alternate.ttf') format('svg');               /* Legacy iOS */
+}
+
+.wikiTitle{
+	font-family: 'wikiType', Arial, sans-serif;
+}
+
+/*===============================================
+				Buttons General
+================================================*/
+
+/* prevent buttons being selectable */
+button {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/*===============================================
+				  Icon Buttons
+================================================*/
+
+button[class*="icon_button"] {
+	text-shadow: 0px 0px 6px var(--background);
+	background: var(--shadow);
+	border: none;
+	color: var(--text_on_secondary);
+	padding: auto;
+	border-radius: var(--appbar_dimen);
+	transition: all ease-in 150ms;
+	height: var(--appbar_dimen);
+	min-width: var(--appbar_dimen);
+	text-align: center;
+	vertical-align: middle;
+	line-height: 100%;	
+}
+
+button[class*="icon_button"] i {
+	margin: 5px;
+}
+  
+button[class*="icon_button"]:hover {
+	background: var(--bubble_selection);
+}
+
+button[class*="icon_button"]:active {
+	transform: scale(0.94);
+}
+  
+button[class*="bgless"]:hover {
+	background: var(--divider);
+	color: black;
+}
+  
+button[class*="bgless"] {
+	background: 0;
+	color: black;
+}
+
+b[class^="icon_button_label"] {
+	margin-left: 4px;
+	margin-right: 12px;
+	font-size: medium;
+	white-space: nowrap;
+	position: relative;
+	top: -6.5px;
+}
+
+/*===============================================
+				Location Switcher
+================================================*/
+
+#btn_location_switcher{
+	border-radius: var(--padding_minimum);
+	color: var(--highlight_light);
+}
+
+#btn_location_switcher b{
+	margin-right: -2px;
+}
+
+/*================================================
+					  Search
+================================================*/
+
+/* --- root search view --- */
+.search_root {
+	position: absolute;
+	width: var(--search_pane_width);
+	height: 100%;
+	z-index: 100;
+	font-size: 12px;
+	z-index: var(--zindex_overlay);
+	pointer-events: none;
+}
+
+.clear_search_container {
+	margin-left: auto;
+}
+
+.search_container {
+	margin-left: var(--padding_minimum);
+	margin-right: var(--padding_medium);
+	margin-bottom: var(--padding_medium);
+}
+
+.search_bar {
+  	display: flex;
+	position: relative;
+	top: var(--padding_minimum);
+  	flex-wrap: nowrap;
+	flex-grow: 2;
+	justify-content: space-between;
+	background-color: var(--primary);
+	z-index: var(--zindex_floating);
+	border-radius: 32px;
+	pointer-events: auto;
+  	transition: all ease-in-out 150ms;
+	height: var(--appbar_dimen);
+  	box-shadow: 0px 1.5px 4px 4px var(--shadow);
+}
+
+.search_icon {
+  color: var(--text_low_emphasis);
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 12px;
+}
+
+.search_bar:hover {
+	background-color: var(--primary_variant);
+	box-shadow: 0px 1.5px 5px 6px var(--shadow);
+}
+
+.search_box {
+	margin-top: -1.1%;
+	width: 100%;
+	height: 100%;
+	position: relative;
+	padding-left: 5px;
+	border: none;
+	align-self: stretch;
+	outline: none;
+	-webkit-appearance: none;
+	background-color: transparent;
+	font-size: 1.5em;
+}
+
+.searchbox_container {
+	margin: auto;
+	width: 100%;
+}
+
+.search_results_container {
+	background-color: var(--surface);
+	pointer-events: visible;
+	position: relative;
+	top: -16px;
+	padding-top: var(--padding_large);
+	border-radius: var(--padding_small);
+	height: 100%;
+	box-shadow: 0px 1.5px 4px 4px var(--shadow);
+}
+
+/*================================================
+				   	Infobar
+================================================*/
+
+.infobar {
+	position: fixed;
+	background: var(--primary_dark_variant);
+	z-index: 1000;
+	bottom: 0;
+	right: 0;
+	width: auto;
+	padding: 3px;
+	padding-left: 12px;
+	padding-right: 12px;
+	border-radius: 12px 0px 0px 0px;
+	font-size: 12px;
+	color: white;
+	opacity: 0.45;
+	transition: opacity ease-in-out 150ms;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+}
+
+.infobar:hover {
+	opacity: 1.0;
+}
+
+.infobar a {
+	text-decoration: none !important;
+	color: white;
+}
+
+.infobar a:hover {
+	text-decoration: underline;
+	border-bottom: solid white;
+	border-width: medium;
+}
+
+.horizontal_divider {
+	background: var(--divider);
+	height: 1.8px;
+	margin: 0 auto;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	width: 75%;
+}
+
+/*================================================
+					Gamemap
+================================================*/
+
+#gmMap {
+	position: absolute;
+	overflow: hidden;
+	bottom: 0px;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+}
+
+#gmMap  * {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+#gmMapContainer {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+.gmMapTile {
+	width:256px;
+	height:256px;
+	border: none;
+	position: absolute;
+	z-index: 1;
+	cursor: grab;
+}
+
+.gmMapLoc {
+	border-radius: var(--padding_large);
+	position: absolute;
+	white-space: nowrap;
+	z-index: 20;
+	color: var(--text_loc_name);
+	font-weight: 400;
+	font-family: "Arial", sans-serif;
+	font-size: 11px;
+	text-shadow: 0px 0px 5px var(--background);
+	background-color: var(--shadow);
+	display: inline-block;
+	box-shadow: 0px 0px 10px 6px var(--shadow);
+	cursor: pointer;
+}
+
+.gmMapLocDisabled {
+	color: var(--text_loc_disabled) !important;
+}
+
+.gmMapLocIconDiv {
+	position: absolute;
+	z-index: 19;
+	display: inline-block;
+	background-position: center;
+	background-repeat: no-repeat;
+	border: none;
+	text-align: center;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	/* background-color: rgba(0,0,0,0.3);
+	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.3); */
+}
+
+.gmMapLocIconHelper {
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.gmMapLocIcon {
+	display: inline-block;
+	border: none;
+	cursor: pointer;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/*================================================
+				  Pop-up Windows
+================================================*/
+
+.gmMapPopupRoot {
+	display: block;
+	position: absolute;
+	z-index: 30;
+}
+
+.gmMapPopup {
+	display: block;
+	width: 210px;
+	height: 100px;
+	background-color: var(--surface);
+	border: none;
+	z-index: 30;
+	font-family: "Arial", sans-serif;
+	font-size: 13px;
+	padding: 4px;
+	border-radius: 5px;
+	box-shadow: 0px 0px 2px 2px var(--shadow);
+}
+
+
+.gmMapEditPopup {
+	font-size: 11px;
+	font-family: sans-serif;
+	display: block;
+	width: 302px;
+	height: 330px;
+	background-color: var(--surface);
+	border: none;
+	z-index: 30;
+	padding: 4px;
+	border-radius: 5px;
+	box-shadow: 0px 0px 2px 2px var(--shadow);
+}
+
+.gmMapPopupClose {
+	position: absolute;
+	top: 6px;
+	right: 7px;
+	cursor: pointer;
+	background-color: rgb(184, 22, 22);
+}
+
+.gmMapEditPopup .gmMapPopupClose {
+	border: 1px solid var(--selection);
+}
+
+.gmMapPopupClose:hover {
+	background-color: rgb(184, 22, 22);
+	box-shadow: 0px 0px 2px 2px var(--shadow);
+}
+
+.gmMapPopupTitle {
+	font-weight: bold;
+	font-size: 14px;
+}
+
+.gmMapPopupPos {
+	font-size: 9px;
+	padding-left: 10px;
+}
+
+.gmMapPopupEditLabel {
+	margin-top: 10px;
+	text-align: center;
+	font-weight: bold;
+	width: 100%;
+	color: var(--text_link);
+	cursor: pointer;
+}
+
+.gmMapPopupEditLabel:hover {
+	background: var(--selection);
+}
+
+.gmMapPopupDesc {
+	font-size: 10px;
+	padding-left: 10px;
+}
+
+.gmMapPopupWikiPage {
+	font-size: 11px;
+	padding-left: 10px;
+}
+
+.gmMapPopupDownArrow {
+	width: 0;
+	height: 0;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-top: 10px solid #fff;
+	top: -1px;
+	position: relative;
+	margin: 0 auto;
+}
+
+.gmMapPathCanvas {
+	position: absolute;
+	z-index: 5;
+	border: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: grab;
+}
+
+.gmMapAreaCanvas {
+	position: absolute;
+	z-index: 5;
+	border: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: pointer;
+}
+
+#gmMapListContainer {
+	position: absolute;
+	left: 2px;
+	top: 2px;
+	width: 300px;
+	bottom: 2px;
+	box-shadow: 0px 0px 4px 4px var(--shadow);
+	list-style-type: none;
+	z-index: 50;
+	background-color: var(--surface);
+}
+
+#gmMapListGroup {
+	overflow-x: hidden;
+	overflow-y: auto;
+	position: absolute;
+	top: 22px;
+	bottom: 0px;
+	width: 100%;
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+
+#gmMapList {
+	border: none;
+	margin: 0;
+	padding: 0;
+	width: 298px;
+	height: 100%;
+	font: 13px sans-serif;
+	cursor: default;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+#gmMapListTitle {
+	background-color: var(--primary_variant);
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	width: auto;
+	height: 20px;
+	line-height: 20px;
+	vertical-align: middle;
+	text-align: center;
+	box-shadow: 0 2px 2px 0px var(--shadow);
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+#gmMapListAlpha form {
+	height: 100%;
+}
+
+#gmMapListAlphaSelect {
+	width: 100%;
+	height: 100%;
+}
+
+#gmMapListButtonGroup, #gmMapListButtonAlpha {
+	cursor: pointer;
+	width: 50px;
+	height: 12px;
+	line-height: 12px;
+	font-size: 10px;
+	background-color: var(--primary_variant_light);
+	border: 1px solid var(--divider);
+	display: inline-block;
+	padding: 1px;
+	margin-right: 2px;
+	margin-left: 5px;
+	margin-top: 2px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.gmMapListButtonSelect
+{
+	background-color: var(--secondary_variant) !important;
+}
+
+#gmMapListButtonGroup:hover, #gmMapListButtonAlpha:hover {
+	background-color: var(--surface_variant_dark);
+}
+
+#gmMapListAlpha {
+	position: absolute;
+	top: 21px;
+	bottom: 0px;
+	width: 100%;
+	border: none;
+	margin: 0;
+	padding: 0;
+	font: 13px sans-serif;
+	cursor: default;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.gmMapListHeader {
+	font-weight: bold;
+	background-color: var(--surface_variant);
+	color: var(--text_on_primary);
+	background-image: url(images/uparrow.gif);
+}
+
+ul ul .gmMapListHeader {
+	color: var(--text_low_emphasis);
+	background-image: url(images/downarrow.gif);
+}
+
+#gmMapList ul {
+	list-style-type: none;
+	padding: 0;
+	white-space: nowrap;
+}
+
+.gmMapListSelect {
+	background-color: var(--secondary);
+	color: lightgray;
+}
+
+#gmMapList li {
+	list-style-type: none;
+	padding-left: 0px;
+	background-repeat: no-repeat;
+	background-position: right 20px top 3px;
+}
+
+#gmMapList li:hover {
+	background-color: var(--surface_variant_dark);
+}
+
+#gmMapList li.gmMapListSelect:hover {
+	background-color: var(--secondary_variant);
+}
+
+#gmMapList .gmMapListHeader:hover {
+	background-color: var(--surface_variant_dark);
+}
+
+#gmMapList ul li {
+	padding-left: 15px;
+}
+
+#gmMapList ul ul {
+	display: none;
+}
+
+#gmMapList ul ul li {
+	padding-left: 30px;
+}
+
+#gmMapList ul ul ul li {
+	padding-left: 45px;
+}
+
+#gmMapList ul ul ul ul li {
+	padding-left: 60px;
+}
+
+#gmMapEditNotice {
+	border: 1px solid gray;
+	background: rgba(0,0,0,0.7);
+	color: #ffff00;
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	width: auto;
+	height: auto;
+	position: absolute;
+	top: 5px;
+	left: 310px;
+	z-index: 200;
+	padding: 5px;
+	text-align: left;
+	vertical-align: middle;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+#gmMapEditNoticeCancel {
+	float: right;
+	cursor: pointer;
+	color: #000000;
+}
+
+#gmMapEditNoticeFinish {
+	float: right;
+	cursor: pointer;
+	color: #000000;
+}
+
+.gmMapEditPopupTitle {
+	border-radius: 2px;
+	display: inline-block;
+	position: relative;
+	width: 100%;
+	background-color: var(--secondary_variant);
+	height: 18px;
+	line-height: 18px;
+	font-size: 13px;
+	font-family: sans-serif;
+	font-weight: bold;
+	text-align: center;
+	vertical-align: middle;
+	margin-bottom: 5px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.gmMapEditPopupLabel {
+	width: 90px;
+	font-size: 11px;
+	font-family: sans-serif;
+	text-align: right;
+	display: inline-block;
+	position: relative;
+	height: 18px;
+	line-height: 18px;
+	vertical-align: middle;
+}
+
+.gmMapEditPopupInput {
+	left: 5px;
+	font-size: 11px;
+	font-family: sans-serif;
+	display: inline-block;
+	position: relative;
+	height: 11px;
+	padding-bottom: 2px;
+}
+
+.gmMapEditPopupCurrentZoom
+{
+	font-size: 9px;
+	display: inline-block;
+	position: relative;
+	padding-left: 10px;
+}
+
+.gmMapEditPopupStatus {
+	width: 100%;
+	height: 24px;
+	font-family: Arial, sans-serif;
+	font-size: 10px;
+	float: left;
+}
+
+.gmMapEditPopupStatusOk {
+	background-color: none;
+}
+
+.gmMapEditPopupStatusNote {
+	background-color: #99ff99;
+}
+
+.gmMapEditPopupStatusWarning {
+	background-color: #ffff99;
+}
+
+.gmMapEditPopupStatusError {
+	background-color: #ff9999;
+}
+
+.gmMapEditPopupButtons {
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+}
+
+.gmMapEditPopupButtonSave {
+	float: right;
+	font-weight: bold;
+}
+
+.gmMapEditPopupButtonClose {
+	float: right;
+}
+
+.gmMapEditPopupButtonDelete {
+	float: left;
+}
+
+div.gmMapEditPopupInput {
+	height: 16px;
+	top: 1px;
+}
+
+.gmMapEditPopupIconPreview
+{
+	background-repeat: no-repeat;
+	background-position: center;
+	display: inline-block;
+	position: absolute;
+	height: 32px;
+	width: 32px;
+	left: 260px;
+	top: 130px;
+}
+
+
+select.gmMapEditPopupInput {
+	border: 1px solid gray;
+	padding: 0;
+	margin: 0;
+	height: 17px;
+	top: 1px;
+	left: 5px;
+	width: 160px;
+	margin-bottom: 2px;
+}
+
+input.gmMapEditPopupInput {
+	border: 1px solid gray;
+	padding-left: 4px;
+}
+
+input[type=checkbox].gmMapEditPopupInput {
+	position: relative;
+	border: none;
+	outline: none;
+	margin: 0;
+	text-align: left;
+	height: 13px;
+	width: 20px;
+	right: 1px;
+	top: 4px;
+	font-family: Arial, sans-serif !important;
+	font-size: 11px !important;
+}
+
+#gmMapRootClickWall {
+	cursor: crosshair;
+	z-index: 0;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+#gmMapWorldEdit {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	font-size: 11px;
+	font-family: sans-serif;
+	display: block;
+	width: 300px;
+	height: 330px;
+	background-color: var(--surface);
+	border: none;
+	z-index: 300;
+	padding: 4px;
+	border-radius: 5px;
+	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
+}
+
+.gmLocToolTip {
+	z-index: 45;
+	position: absolute;
+	border: 2px solid #606030;
+	background-color: rgba(0,0,0,0.85);
+	padding: 3px;
+	display: inline-block;
+	color: #ffffff;
+	font-size: 11px;
+	font-weight: bold;
+	font-family: sans-serif;
+	white-space: nowrap;
+	border-image: url(images/tooltip-border.png) 2 2 2 2 stretch;
+}
+
+
+.gmMapIconTypeListContainer {
+	display: inline-block;
+	margin-left: 5px;
+	margin-top: 2px;
+}
+
+.gmMapIconTypeListHeader {
+	height: 16px;
+	line-height: 16px;
+	width: 154px;
+	border: 1px solid gray;
+	padding: 2px;
+	background-image: url(images/downarrow.gif);
+	background-repeat: no-repeat;
+	background-position: right 2px top 3px;
+	display: block;
+	padding-left: 4px;
+}
+
+.gmMapIconTypeListHeader:hover {
+	background-color: #cccccc;
+}
+
+.gmMapIconTypeListHeaderOpen {
+	background-image: url(images/uparrow.gif);
+}
+
+.gmMapIconTypeList {
+	display: block;
+	position: absolute;
+	background-color: white;
+	border: 1px solid gray;
+	height: 250px;
+	width: 185px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	margin: 0;
+	padding: 2px;
+	z-index: 2000;
+}
+
+.gmMapIconTypeList li {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	width: 100%;
+}
+
+.gmMapIconTypeList li img {
+	float: right;
+	max-height: 20px;
+}
+
+.gmMapIconTypeValue {
+	display: none;
+}
+
+.gmMapIconTypeLabel {
+	display: inline-block;
+	width: 100%;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: default;
+	line-height: 20px;
+	vertical-align: middle;
+}
+
+.gmMapIconTypeLabelSelected {
+	background-color: #0000ff;
+	color: #ffffff;
+}
+
+.gmMapIconTypeLabelSelected:hover {
+	background-color: #0000cc;
+}
+
+.gmMapIconTypeLabel:hover {
+	background-color: #999999;
+}
+
+/*================================================
+				  Zoom Widget
+================================================*/
+
+#zoom_widget {
+	position: absolute;
+	background: var(--primary_variant_light);
+	border-radius: 64px;
+	z-index: 1000;
+	bottom: 45px;
+	right: var(--padding_minimum);
+	width: var(--appbar_dimen);
+	height: 100px;
+	display: flex;
+	flex-direction: column;
+	flex: auto;
+	box-shadow: 0px 1.5px 4px 4px var(--shadow);
+}
+
+.btn_zoom {
+	width: 100%;
+	flex-grow: 1;
+	background: transparent;
+	border: none;
+	transform: translateZ(0);
+	z-index: 1001;
+	border-radius: 64px;
+	transition: all ease-in-out 50ms;
+}
+
+.btn_zoom:hover, .btn_zoom:active {
+	background: var(--divider);
+}
+
+.gmMapControlRoot {
+	display: none;
+}
+
+.gmMapKey {
+	background-color: #EBDDB4;
+	border: 1px solid gray;
+	color: #000000;
+	font-family: sans-serif;
+	font-size: 12px;
+	position: absolute;
+	top: 10px;
+	left: 325px;
+	z-index: 150;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 5px;
+	overflow-y: auto;
+	max-height: 95%;
+}
+
+.gmMapKeyCloseButton {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+}
+
+.gmMapKeyColumn {
+	float: left;
+	margin: 0;
+	padding-left: 5px;
+}
+
+.gmMapKeyTitle {
+	font-size: 18px;
+	font-weight: bold;
+	display: inline-block;
+	width: 100%;
+	text-align: center;
+}
+
+.gmMapKeyItem {
+	display: inline-block;
+	line-height: 30px;
+	height: 30px;
+}
+
+.gmMapKeyImageImage
+{
+	width: 32px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.gmMapKeyItem img {
+	display: block;
+	margin: auto auto;
+}
+
+.gmMapKeyItemLabel {
+	display: inline-block;
+	vertical-align: middle;
+	margin-left: 5px;
+}
+
+#gmMapNameLabel {
+	overflow: hidden;
+	white-space: nowrap;
+	font-weight: bold;
+	font-size: 14px;
+	color: #ffff99;
+	width: 320px;
+	background-repeat: no-repeat;
+	background-position: right 4px top 8px;
+	background-image: url(images/downarrow.gif)
+}
+
+.gmMapNameLabelUpArrow {
+	background-image: url(images/uparrow.gif) !important;
+}
+
+#gmMapListRoot {
+	position: absolute;
+	left: 325px;
+	height: 600px;
+	width: 252px;
+}
+
+#gmMapEditButtons {
+	display: inline-block;
+	text-align: center;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.gmToggleButton {
+	display: inline-block;
+	background: #eee;
+	cursor: pointer;
+	border-top: solid 2px #eaeaea;
+	border-left: solid 2px #eaeaea;
+	border-bottom: solid 2px #777;
+	border-right: solid 2px #777;
+	padding: 1px 1px;
+	margin: 2px;
+	height: 17px;
+	font-family: arial, sans-serif;
+	font-size: 13px;
+	color: black;
+	line-height: 16px;
+}
+
+.gmToggleButtonDown {
+	background: #bbb;
+	border-top: solid 2px #777;
+	border-left: solid 2px #777;
+	border-bottom:solid 2px  #eaeaea;
+	border-right: solid 2px #eaeaea;
+}
+
+.gmMapRCRoot {
+	position: absolute;
+	right: 2px;
+	top: 30px;
+	bottom: 2px;
+	z-index: 100;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+	z-index: 75;
+	overflow: auto;
+	padding: 2px;
+}
+
+.gmMapRCItemIcon {
+	max-height: 20px;
+	vertical-align: middle;
+}
+
+.gmMapRCItem {
+	display: block;
+	white-space: nowrap;
+	padding: 1px;
+}
+
+.gmMapRCItem:hover {
+	background-color: #3333ff;
+	color: #ffffff;
+}
+
+.gmMapRCItemName {
+	display: inline-block;
+}
+
+.gmMapRCItemSmall {
+	display: inline-block;
+	font-size: 11px;
+}
+
+.gmHelpBlock {
+	background-color: #EBDDB4;
+	border: 1px solid gray;
+	color: #000000;
+	font-family: sans-serif;
+	font-size: 12px;
+	position: absolute;
+	top: 50px;
+	margin-left: auto;
+	margin-right: auto;
+	left: 0;
+	right: 0;
+	width: 500px;
+	z-index: 150;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 5px;
+}
+
+.gmHelpCloseButton {
+	float: right;
+}
+
+.gmHelpBlockTitle {
+	font-size: 18px;
+	font-weight: bold;
+	display: inline-block;
+	width: 400px;
+	text-align: center;
+}
+
+.gmLocTooltipDesc {
+	font-weight: normal;
+	font-size: 0.9em;
+}
+
+#gmMapRoot, #gmMapCanvas {
+	touch-action: none;
+}
+
+#gmMapRoot {
+	z-index: 3;
+}
+
+#gmMapCanvas, #gmMapCanvasGrid {
+	touch-action: none;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+#gmMapCanvas {
+	z-index: 1;
+}
+
+#gmMapCanvasGrid {
+	z-index: 2;
+}
+
+.gmMenuForm {
+	display: inline;
+}
+
+#gmCellResourceGuide {
+	display: block;
+	position: absolute;
+	z-index: 4;
+}
+
+.gmCRGuideBox1 {
+	display: inline-block;
+	background-color: #ff00ff;
+	text-align: center;
+	text-shadow: 1px 1px black;
+	width: 36px;
+}
+
+.gmCRGuideBox2 {
+	display: inline-block;
+	background-color: #0000ff;
+	text-align: center;
+	text-shadow: 1px 1px black;
+	width: 36px;
+}
+
+.gmCRGuideBox3 {
+	display: inline-block;
+	background-color: #00ff00;
+	text-align: center;
+	text-shadow: 1px 1px black;
+	width: 36px;
+}
+
+.gmCRGuideBox4 {
+	display: inline-block;
+	background-color: #ffff00;
+	text-align: center;
+	text-shadow: 1px 1px black;
+	width: 36px;
+}
+
+.gmCRGuideBox5 {
+	display: inline-block;
+	background-color: #ff6633;
+	text-align: center;
+	text-shadow: 1px 1px black;
+	width: 36px;
+}
+
+.gmCRGuideBox6 {
+	display: inline-block;
+	background-color: #ff0000;
+	text-align: center;
+	text-shadow: 1px 1px black;
+	width: 36px;
+}
+
+.gmMapControlDisplayStates {
+	margin: 4px;
+}
+
+.gmMapControlDisplayState {
+	direction: ltr;
+	overflow: hidden;
+	text-align: center;
+	height: 30px;
+	display: block;
+	color: rgb(0, 0, 0);
+	font-family: Arial, sans-serif;
+	user-select: none;
+	font-size: 16px;
+	background-color: rgb(255, 255, 255);
+	padding: 0px 23px;
+	border-bottom-left-radius: 2px;
+	border-top-left-radius: 2px;
+	background-clip: padding-box;
+	box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+	min-width: 25px;
+	font-weight: normal;
+	cursor: pointer;
+	line-height: 30px;
+	margin: 2px;
+}
+
+.gmMapControlDisplayState:hover {
+	background-color: rgb(200, 200, 200);
+}
+
+.gmMapControlDisplayStateSelected {
+	font-weight: bold;
+	background-color: rgb(255, 255, 128);
+}
+
+/*================================================
+				   	Icon Bars
+================================================*/
+
+/* get all divs beginning with "icon_bar" */
+div[class^="icon_bar"] { 
+	position: absolute;
+	z-index: var(--zindex_floating);
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	gap: var(--padding_small);
+}
+
+.icon_bar_persistent {
+	right: var(--padding_minimum);
+	width: auto;
+	top: var(--padding_minimum);
+	flex: none;
+}
+
+.icon_bar_responsive {
+	top: var(--padding_minimum);
+	left: calc(var(--search_pane_width) + 4px);
+	flex: none;
+	width: calc(100% - (var(--search_pane_width) + var(--appbar_dimen) + var(--padding_large)));
+}
+
+/*================================================
+				   Progress Bar
+================================================*/
+
+.progress_bar {
+	top: -9px;
+	width: 100%;
+	position: absolute;
+	z-index: 9999;
+	opacity: 0.85;
+	pointer-events: none;
+}
+
+.progress {
+	background-color: var(--secondary_variant) !important;
+}
+
+.progress .indeterminate {
+	background-color: var(--secondary) !important;
+}
