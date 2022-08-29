@@ -1,3 +1,6 @@
+import * as Utils from "./utils.js";
+import Gamemap from "./gamemap.js";
+
 /*
  * main.js -- Created by Thal-J (thal-j@uesp.net) on 16th Aug 2022
  * 	Released under the GPL v2
@@ -9,7 +12,7 @@
 ================================================*/
 
 var uesp = uesp || {};
-var gamemap = gamemap || {};
+uesp.gamemap = uesp.gamemap || {};
 
 // on page load
 console.log("Map initialising...");
@@ -19,17 +22,14 @@ $(document).ready(function() {
 	url = url.replace("?", ''); // remove the ?
 	alert(url); //alerts ProjectID=462 is your case
 
-
 	let paramsString = "name=foo&age=1337"
 	let searchParams = new URLSearchParams(paramsString);
 
 	searchParams.has("name") === true; // true
 	searchParams.get("age") === "1337"; // true
 
-
+	Utils.foo();
 });
-
-
 
 //const obj = JSON.parse(text); 
 
@@ -405,7 +405,6 @@ function onPermLoad() {
 
 $(document).ready( function() {
 
-
 		// bind views from DOM
 		var searchbox = document.getElementById("searchbox");
 		var btn_clear_search = document.getElementById("btn_clear_search");
@@ -426,40 +425,36 @@ $(document).ready( function() {
 			}
 		});
 	
-		document.addEventListener('DOMContentLoaded', function() {
-			var elems = document.querySelectorAll('.tooltipped');
-			var instances = M.Tooltip.init(elems, {
-			  // specify options here
-			});
-		  });
+		var userEvents = {
+			onMapWorldsLoaded   : onWorldLoad,
+			onPermissionsLoaded : onPermLoad,
+			onMapWorldChanged   : onWorldChanged
+		};
 
+		// var g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
 
-	userEvents = {
-		onMapWorldsLoaded   : onWorldLoad,
-		onPermissionsLoaded : onPermLoad,
-		onMapWorldChanged   : onWorldChanged
-	};
+		const g_GameMap = new Gamemap('gmMap', g_DefaultMapOptions, userEvents);
 
-	g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
+		console.log(g_GameMap);
 
-	if (g_GameMap.mapOptions.isOffline) {
-		g_GameMap.worldGroupListContents = $("#gmMapListRoot").html();
-		g_GameMap.createMapList($("#gmMapListRoot"));
-		$('#gmMapList').html(g_GameMap.worldGroupListContents);
-		g_GameMap.setEventsForMapGroupList();
-	}
-	else {
-		// TODO: Change how map list is created
-		g_GameMap.createMapList($("#gmMapListRoot"));
+		// if (g_GameMap.mapOptions.isOffline) {
+		// 	g_GameMap.worldGroupListContents = $("#gmMapListRoot").html();
+		// 	g_GameMap.createMapList($("#gmMapListRoot"));
+		// 	$('#gmMapList').html(g_GameMap.worldGroupListContents);
+		// 	g_GameMap.setEventsForMapGroupList();
+		// }
+		// else {
+		// 	// TODO: Change how map list is created
+		// 	g_GameMap.createMapList($("#gmMapListRoot"));
 
-		// TODO: Temporary call to get the group-world list for ESO
-		$.get( 'templates/worldgrouplist.txt', function( data ) {
-			g_GameMap.worldGroupListContents = data;
-			uesp.logDebug(uesp.LOG_LEVEL_INFO, 'Received world group list contents!');
-			$('#gmMapList').html(data);
-			g_GameMap.setEventsForMapGroupList();
-		});
-	}
+		// 	// TODO: Temporary call to get the group-world list for ESO
+		// 	$.get( 'templates/worldgrouplist.txt', function( data ) {
+		// 		g_GameMap.worldGroupListContents = data;
+		// 		uesp.logDebug(uesp.LOG_LEVEL_INFO, 'Received world group list contents!');
+		// 		$('#gmMapList').html(data);
+		// 		g_GameMap.setEventsForMapGroupList();
+		// 	});
+		// }
 });
 
 function getDefaultMapTile(xPos, yPos, zoom, worldName) {

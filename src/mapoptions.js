@@ -109,4 +109,27 @@ uesp.gamemap.MapOptions.prototype.mergeOptions = function(mapOptions)
 	}
 }
 
+uesp.gamemap.Bounds = function(left, top, right, bottom)
+{
+	this.left   = (typeof left   === 'undefined' || left   === null) ? 0 : left;
+	this.right  = (typeof right  === 'undefined' || right  === null) ? 0 : right;
+	this.top    = (typeof top    === 'undefined' || top    === null) ? 0 : top;
+	this.bottom = (typeof bottom === 'undefined' || bottom === null) ? 0 : bottom;
+}
 
+uesp.gamemap.MapTile = function(x, y)
+{
+	this.element = null;
+	this.deltaTileX = (typeof x !== 'undefined') ? x : 0;
+	this.deltaTileY = (typeof y !== 'undefined') ? y : 0;
+}
+
+uesp.gamemap.MapState = function()
+{
+	this.zoomLevel = 10;
+	this.gamePos = new uesp.gamemap.Position(0, 0);
+	this.worldId = 0;
+	this.grid = false;
+	this.cellResource = "";
+	this.displayState = "";
+}

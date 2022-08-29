@@ -129,11 +129,3 @@ uesp.gamemap.World.prototype.createSaveQuery = function()
 	
 	return query;
 }
-
-uesp.gamemap.Bounds = function(left, top, right, bottom)
-{
-	this.left   = (typeof left   === 'undefined' || left   === null) ? 0 : left;
-	this.right  = (typeof right  === 'undefined' || right  === null) ? 0 : right;
-	this.top    = (typeof top    === 'undefined' || top    === null) ? 0 : top;
-	this.bottom = (typeof bottom === 'undefined' || bottom === null) ? 0 : bottom;
-}
