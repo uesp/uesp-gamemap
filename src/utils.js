@@ -41,7 +41,7 @@ export function getURLParams(url){
 ================================================*/
 
 window.print = (function(console) {
-    var canLog = !!console;
+    var canLog = !!console; // only print when devtools is open
     return function(txt) {
 
 		if (canLog) {

@@ -74,19 +74,18 @@ function initGamemap() {
 	if (!mapParams.has("map")) { 
 		showError("No map was provided.");
 	} else {
-		console.log("URL has map param!");
+		print("URL has map param!");
 		mapType = mapParams.get("map");
 
 		// load map config 
 		let configURL = "configs/" + mapType + "/config.json";
-		console.log("Getting map config at "+configURL+"...");
+		print("Getting map config at "+configURL+"...");
 
 		Utils.getJSON(configURL, function(error, object) {
 			if (error !== null) {
 				showError("Could not get map config: " + error +". Please check the URL.");
 			} else {
-				console.log("Imported map config successfully!");
-				console.log(object);
+				print("Imported map config successfully!");
 				print(object);
 				mapConfig = object;
 
@@ -144,12 +143,12 @@ function focusSearch() {
 
 function clearSearch() {
 	searchbox.value = "";
-	console.log("cleared search.");
+	print("cleared search.");
 	btn_clear_search.style.visibility = 'hidden';
 }
 
 function updateSearch(query) {
-	console.log("search query: " + query);
+	print("search query: " + query);
 
 	// toggle clear button visibility
 	if (query.length > 0) {
@@ -195,7 +194,7 @@ function showError(reason){
 	$("#error_box").show();
 	$('#error_box').css('visibility','visible');
 	$("#error_box_reason").text(reason);
-	console.log("Error: " + reason);
+	print("Error: " + reason);
 }
 
 /*================================================
