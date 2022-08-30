@@ -186,9 +186,7 @@ class GameMap
 					`posBottom` INTEGER NOT NULL,
 					`enabled` TINYINT NOT NULL,
 					PRIMARY KEY ( id ),
-					FULLTEXT(displayName),
-					FULLTEXT(description),
-					FULLTEXT(wikiPage)
+					FULLTEXT(displayName, description, wikiPage)
 				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
@@ -236,9 +234,7 @@ class GameMap
 					displayLevel INTEGER NOT NULL,
 					visible TINYINT NOT NULL,
 					PRIMARY KEY ( id ),
-					FULLTEXT(name),
-					FULLTEXT(description),
-					FULLTEXT(wikiPage)
+					FULLTEXT(name, description, wikiPage)
 				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
@@ -564,7 +560,7 @@ class GameMap
 		
 		$this->addOutputItem("worlds", $worlds);
 		$this->addOutputItem("worldCount", $count);
-				
+		
 		return $count;
 	}
 	
@@ -582,14 +578,14 @@ class GameMap
 			$worldName = strtolower($world);
 			$query = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") ." AND displayName='{$world}' or name='{$worldName}' LIMIT 1;";
 		}
-	
+		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return 0;
-	
+		
 		$worlds = Array();
 		$count = 0;
 		$result->data_seek(0);
-	
+		
 		while ( ($row = $result->fetch_assoc()) )
 		{
 			if (!$this->CanViewWorldId($row['id'])) continue;
@@ -606,11 +602,11 @@ class GameMap
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
 			settype($row['zoomOffset'], "float");
-	
+			
 			$worlds[] = $row;
 			$count += 1;
 		}
-	
+		
 		if ($saveData)
 		{
 			$this->addOutputItem("worlds", $worlds);
@@ -629,7 +625,7 @@ class GameMap
 		if (!$doExactSearch) $query .= "MATCH(name, description, wikiPage) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) OR ";
 		$query .= "name LIKE '%{$this->safeSearchWord}%' or description LIKE '%{$this->safeSearchWord}%' or wikiPage LIKE '%{$this->safeSearchWord}%') ";
 		$query .= "ORDER BY name, worldId LIMIT {$this->limitCount};";
-				
+		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed searching for locations!");
 		
@@ -653,7 +649,7 @@ class GameMap
 			settype($row['height'], "integer");
 			settype($row['displayLevel'], "integer");
 			settype($row['visible'], "integer");
-				
+			
 			$locations[] = $row;
 			$count += 1;
 		}
