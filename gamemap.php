@@ -617,19 +617,14 @@ class GameMap
 	}
 	
 	
-	public function doLocationSearch ($doWordSearch)
+	public function doLocationSearch ($doExactSearch)
 	{
 		$query  = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND ";
 		if ($this->searchWorldId != 0) $query .= " worldId={$this->searchWorldId} AND ";
 		$query .= " (";
-		
-			// Word search will be much faster than the string search
-		if ($doWordSearch) 
-			$query .= "MATCH(name, description, wikiPage) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) ";
-		else
-			$query .= "name LIKE '%{$this->safeSearchWord}%' OR description LIKE '%{$this->safeSearchWord}%' or wikiPage LIKE '%{$this->safeSearchWord}%' ";
-		
-		$query .= ") ORDER BY name, worldId LIMIT {$this->limitCount};";
+		if (!$doExactSearch) $query .= "MATCH(name, description, wikiPage) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) OR ";
+		$query .= "name LIKE '%{$this->safeSearchWord}%' or description LIKE '%{$this->safeSearchWord}%' or wikiPage LIKE '%{$this->safeSearchWord}%') ";
+		$query .= "ORDER BY name, worldId LIMIT {$this->limitCount};";
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed searching for locations!");
@@ -1478,8 +1473,6 @@ class GameMap
 	
 	public function writeHeaders ()
 	{
-		ob_start("ob_gzhandler");
-		
 		header("Expires: 0");
 		header("Pragma: no-cache");
 		header("Cache-Control: no-cache, no-store, must-revalidate");
