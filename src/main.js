@@ -1,11 +1,11 @@
-import * as Utils from "./utils.js";
-// import Gamemap from "./gamemap.js";
-
 /*
  * main.js -- Created by Thal-J (thal-j@uesp.net) on 16th Aug 2022
  * 	Released under the GPL v2
  * 	Contains main UI code for the Gamemap system.
  */
+
+import * as Utils from "./utils.js";
+// import Gamemap from "./gamemap.js";
 
 /*================================================
 				  Initialisation
@@ -23,51 +23,17 @@ var noAnalytics = true;
 var uesp = uesp || {};
 uesp.gamemap = uesp.gamemap || {};
 
+// searchParams.has("name") === true; // true
+// searchParams.get("age") === "1337"; // true
+//gamemap.php?action=search&search=morrowind&world=2282&db=eso
+
 // on page load
-console.log("Map initialising...");
+console.log("Page initialising...");
 $(document).ready(function() {
 
-	// get params from URL
-	var url = window.location.search;
-	var urlParams = url.replace("?", '');
-
-	mapParams = new URLSearchParams(urlParams); //create params array
-	// searchParams.has("name") === true; // true
-	// searchParams.get("age") === "1337"; // true
-
-	// get which map we are supposed to be loading
-	if (!mapParams.has("map")) {
-		showError("No map was provided.");
-	} else {
-		mapType = mapParams.get("map");
-
-		//gamemap.php?action=search&search=morrowind&world=2282&db=eso
-		//const obj = JSON.parse(text); 
-
-		// load map config 
-
-		console.log("Getting map config...");
-		
-		let configURL = "configs/" + mapType + "/config.json";
-
-
-		alert(configURL);
-
-		$.getJSON(configURL, function(object) {
-			console.log(object);
-			mapConfig = object;
-		});
-
-
-		if (mapConfig === null) {
-			showError("Provided map doesn't exist or is invalid.");
-		}
-		
-
-		
-	}
-
-	Utils.foo();
+	// load gamemap
+	console.log("Initialising gamemap...");
+	initGamemap();
 
 	// bind views from DOM
 	var searchbox = document.getElementById("searchbox");
@@ -89,6 +55,47 @@ $(document).ready(function() {
 		}
 	});
 
+});
+
+/*================================================
+					  Gamemap
+================================================*/
+
+function initGamemap() {
+
+	// get params from URL
+	mapParams = Utils.getURLParams(window.location.search)
+
+	// get which map we are supposed to be loading
+	if (!mapParams.has("map")) { 
+		showError("No map was provided.");
+	} else {
+		console.log("URL has map param!");
+		mapType = mapParams.get("map");
+
+		// load map config 
+		let configURL = "configs/" + mapType + "/config.json";
+		console.log("Getting map config at "+configURL+"...");
+
+		Utils.getJSON(configURL, function(error, object) {
+			if (error !== null) {
+				showError("Could not get map configuration: " + error +". Please check the URL.");
+			} else {
+				console.log("Map config loaded successfully!");
+				console.log(object);
+				mapConfig = object;
+
+				// load map
+				loadGamemap(mapConfig);
+				
+			}
+		})
+	}
+}
+
+function loadGamemap(mapConfig) {
+
+
 	var callbacks = {
 		onMapWorldsLoaded   : onWorldLoad,
 		onPermissionsLoaded : onPermLoad,
@@ -97,8 +104,6 @@ $(document).ready(function() {
 
 	// var g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
 	//const g_GameMap = new Gamemap('gmMap', g_DefaultMapOptions, userEvents);
-
-	console.log(g_GameMap);
 
 	// if (g_GameMap.mapOptions.isOffline) {
 	// 	g_GameMap.worldGroupListContents = $("#gmMapListRoot").html();
@@ -118,27 +123,6 @@ $(document).ready(function() {
 	// 		g_GameMap.setEventsForMapGroupList();
 	// 	});
 	// }
-});
-
-
-
-/*================================================
-					Map Utils
-================================================*/
-
-function getCurrentWorldID() {
-	// implementation shim
-
-	return e;
-}
-
-
-/*================================================
-					  Gamemap
-================================================*/
-
-function loadGamemap() {
-
 }
 
 
@@ -207,239 +191,12 @@ function showError(reason){
 	$("#error_box").show();
 	$('#error_box').css('visibility','visible');
 	$("#error_box_reason").text(reason);
-	console.log(reason);
+	console.log("Error: " + reason);
 }
 
 /*================================================
 					Gamemap
 ================================================*/
-
-var esoIconMap = {
-	1  : "Artifact Gate",
-	2  : "Bank",
-	3  : "Battle",
-	4  : "Border Keep",
-	5  : "Caravan",
-	6  : "Clothier",
-	7  : "Dock",
-	8  : "Elder Scroll",
-	9  : "Farm",
-	10 : "Forward Camp",
-	11 : "Inn",
-	12 : "Keep",
-	13 : "Lumber Mill",
-	14 : "Mine",
-	15 : "Outpost",
-	16 : "Smithy",
-	17 : "Temple",
-	18 : "Vendor",
-	19 : "Wayshrine",
-	20 : "Arcanist",
-	21 : "Woodworker",
-	22 : "Alchemist",
-	23 : "Brewer",
-	24 : "Armory",
-	25 : "Pack Merchant",
-	26 : "Banker",
-	27 : "Outfitter",
-	28 : "Cooking Fire",
-	29 : "Enchanter",
-	30 : "Fighters Guild",
-	31 : "Hall Steward",
-	32 : "Armorer",
-	33 : "Tailor",
-	34 : "Merchant",
-	35 : "Mages Guild",
-	36 : "Fishing Hole",
-	37 : "Leatherworker",
-	38 : "Perquisitor",
-	39 : "Provisioner",
-	40 : "Rededication Shrine",
-	41 : "Stable Master",
-	42 : "Weaponsmith",
-	43 : "Travel NPC",
-	44 : "Blacksmith",
-	50 : "Area of Interest",
-	51 : "Ayleid Ruin",
-	52 : "Camp",
-	53 : "Cave",
-	54 : "Cemetary",
-	55 : "City",
-	56 : "Crafting Site",
-	57 : "Crypt",
-	58 : "Daedric Ruin",
-	59 : "Delve",
-	60 : "Dwemer Ruin",
-	61 : "Estate",
-	62 : "Quest Start",
-	63 : "Group Boss",
-	64 : "Group Dungeon",
-	65 : "Group Delve",
-	66 : "Grove",
-	67 : "Lighthouse",
-	68 : "Mundus Stone",
-	69 : "Dark Anchor",
-	70 : "Public Dungeon",
-	71 : "Ruin",
-	72 : "Sewer",
-	73 : "Tower",
-	74 : "Town",
-	75 : "Skyshard",
-	76 : "Lore Book",
-	77 : "Quest",
-	78 : "Quest Door",
-	79 : "Treasure Map",
-	80 : "House",
-	81 : "NPC",
-	82 : "Named NPC",
-	83 : "Chest",
-	84 : "Alchemy Station",
-	85 : "Enchanting Station",
-	86 : "Blacksmith Station",
-	87 : "Woodworking Station",
-	88 : "Clothing Station",
-	89 : "Heavy Sack",
-	90 : "Crafting Node",
-	91 : "Container",
-	92 : "Artifact Gate (AD)",
-	93 : "Artifact Gate (DC)",
-	94 : "Artifact Gate (EP)",
-	95 : "Artifact Temple (AD)",
-	96 : "Artifact Temple (DC)",
-	97 : "Artifact Temple (EP)",
-	98 : "Border Keep (AD)",
-	99 : "Border Keep (DC)",
-	100: "Border Keep (EP)",
-	101: "Cemetary (AD)",
-	102: "Cemetary (DC)",
-	103: "Cemetary (EP)",
-	104: "Farm (AD)",
-	105: "Farm (DC)",
-	106: "Farm (EP)",
-	107: "Keep (AD)",
-	108: "Keep (DC)",
-	109: "Keep (EP)",
-	110: "Lumber Mill (AD)",
-	111: "Lumber Mill (DC)",
-	112: "Lumber Mill (EP)",
-	113: "Mine (AD)",
-	114: "Mine (DC)",
-	115: "Mine (EP)",
-	116: "Outpost (AD)",
-	117: "Outpost (DC)",
-	118: "Outpost (EP)",
-	119: "Carpenter",
-	120: "Armsman",
-	121: "Chef",
-	122: "Grocer",
-	123: "Mystic",
-	124: "Magus",
-	125: "Innkeeper",
-	126: "Boatswain",
-	127: "Stables",
-	128: "Celestial Rift",
-	129: "Dark Fissure",
-	130: "Magister",
-	131: "Ayleid Well",
-	132: "Misc",
-	133: "Outlaws Refuge",
-	134: "Guild Trader",
-	135: "Outfit Station",
-	136: "Dungeon",
-	137: "Solo Instance",
-	138: "Raid Dungeon",
-	139: "Group Instance",
-	140: "World Event",
-	141: "Undaunted",
-	142: "Moneylender",
-	143: "Safebox",
-	144: "Quest (Small)",
-	145: "Fence",
-	146: "Quest Door (Locked)",
-	147: "Survey Map",
-	148: "Stylemaster",
-	149: "Ladder",
-	150: "Sewer (AD)",
-	151: "Sewer (EB)",
-	152: "Sewer (DF)",
-	153: "Safehouse",
-	154: "Boneshard Vault",
-	155: "Dark Ether Vault",
-	156: "Mark Legion Vault",
-	157: "Monstrous Tooth Vault",
-	158: "Planar Armor Vault",
-	159: "Tiny Claw Vault",
-	160: "Daedric Ember Vault",
-	161: "Daedric Shackles Vault",
-	162: "Solo Trial",
-	163: "Trophy",
-	164: "Museum",
-	165: "Thieves Guild",
-	166: "Guild Trader (Small)",
-	167: "Thieves Trove",
-	168: "Quest Door (Trespass)",
-	169: "Dark Brotherhood",
-	170: "Hiding Spot",
-	171: "Achievement",
-	172: "Town (EP)",
-	173: "Town (DC)",
-	174: "Town (AD)",
-	175: "Sewer (Group)",
-	176: "Area of Interest (Group)",
-	177: "Ayleid Ruin (Group)",
-	178: "Camp (Group)",
-	179: "Cave (Group)",
-	180: "Cemetary (Group)",
-	181: "Crypt (Group)",
-	182: "Dwemer Ruin (Group)",
-	183: "Estate (Group)",
-	184: "Gate (Group)",
-	185: "Keep (Group)",
-	186: "Lighthouse (Group)",
-	187: "Mine (Group)",
-	188: "Ruin (Group)",
-	189: "Horse Race",
-	190: "Quest Start (Repeatable)",
-	191: "Book / Note",
-	192: "Furnisher (Achievement)",
-	193: "Furnisher (Prestige)",
-	194: "Furnisher (Home Goods)",
-	195: "Fishing Hole (Ocean)",
-	196: "Fishing Hole (River)",
-	197: "Fishing Hole (Lake)",
-	198: "Fishing Hole (Foul)",
-	199: "Mastercraft Mediator",
-	200: "Navigator",
-	201: "Quartermaster",
-	202: "Transmute Station",
-	203: "Jeweler",
-	204: "Psijic Portal",
-	205: "Stairs Up",
-	206: "Stairs Down",
-	207: "Oneway West",
-	208: "Oneway Southwest",
-	209: "Oneway Southeast",
-	210: "Oneway South",
-	211: "Oneway Northwest",
-	212: "Oneway Northeast",
-	213: "Oneway North",
-	214: "Oneway East",
-	215: "Jewelry Station",
-	216: "Imperial City Entrance",
-	217: "Bridge",
-	218: "Milegate",
-	219: "Event Merchant",
-	220: "Shrine",
-	221: "Dragon",
-	222: "Volendrung",
-	223: "Blackreach Lift",
-	224: "Nord Boat",
-	225: "Furnisher (Battlegrounds)",
-	226: "Battleground Merchant",
-	227: "Antiquity",
-	228: "Furnisher",
-	229: "Quest (Story)",
-};
 
 var g_DefaultMapOptions = {
 	getMapTileFunction : getDefaultMapTile,
@@ -702,6 +459,9 @@ function onWorldChanged(newWorld) {
 // 	searchResult.html(resultHtml);
 // }
 
+/*================================================
+				  	Analytics
+================================================*/
 
 if (!noAnalytics) {
 	var _gaq = _gaq || [];

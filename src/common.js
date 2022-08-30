@@ -338,11 +338,6 @@ uesp.getFormData = function (form)
 	return formValues;
 }
 
-
-function isMobileDevice() {
-	return (navigator.userAgent.match(/Mobi/));
-}
-
 uesp.startProfile = function()
 {
 	if (window.performance && window.performance.now) return window.performance.now();
