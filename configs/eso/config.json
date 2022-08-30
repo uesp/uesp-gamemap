@@ -45,7 +45,7 @@
     },
     
     "icons": {
-        "iconPath": "icons/",
+        "iconPath": "assets/icons/eso",
         "iconWidth" : 32,
         "iconHeight" : 32,
         "1"  : "Artifact Gate",

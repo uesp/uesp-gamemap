@@ -9,7 +9,7 @@
 ================================================*/
 
 import * as Utils from "./utils.js";
-// import Gamemap from "./gamemap.js";
+import Gamemap from "./gamemap.js";
 
 /*================================================
 				  Initialisation
@@ -99,36 +99,92 @@ function initGamemap() {
 
 function loadGamemap(mapConfig) {
 
-
 	var callbacks = {
 		onMapWorldsLoaded   : onWorldLoad,
 		onPermissionsLoaded : onPermLoad,
 		onMapWorldChanged   : onWorldChanged
 	};
 
-	// var g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
-	//const g_GameMap = new Gamemap('gmMap', g_DefaultMapOptions, userEvents);
+	var gamemap = new Gamemap('gmMap', mapConfig, callbacks);
 
-	// if (g_GameMap.mapOptions.isOffline) {
-	// 	g_GameMap.worldGroupListContents = $("#gmMapListRoot").html();
-	// 	g_GameMap.createMapList($("#gmMapListRoot"));
-	// 	$('#gmMapList').html(g_GameMap.worldGroupListContents);
-	// 	g_GameMap.setEventsForMapGroupList();
-	// }
-	// else { 
-	// 	// TODO: Change how map list is created
-	// 	g_GameMap.createMapList($("#gmMapListRoot"));
 
-	// 	// TODO: Temporary call to get the group-world list for ESO
-	// 	$.get( 'templates/worldgrouplist.txt', function( data ) {
-	// 		g_GameMap.worldGroupListContents = data;
-	// 		uesp.logDebug(uesp.LOG_LEVEL_INFO, 'Received world group list contents!');
-	// 		$('#gmMapList').html(data);
-	// 		g_GameMap.setEventsForMapGroupList();
-	// 	});
-	// }
+	// // TODO: Change how map list is created
+	// gamemap.createMapList($("#gmMapListRoot"));
+
+	// // TODO: Temporary call to get the group-world list for ESO
+	// $.get( 'templates/worldgrouplist.txt', function( data ) {
+	// 	gamemap.worldGroupListContents = data;
+	// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, 'Received world group list contents!');
+	// 	$('#gmMapList').html(data);
+	// 	gamemap.setEventsForMapGroupList();
+	// });
 }
 
+function onWorldLoad() {
+	if (this.hasCenterOnParam()) return;
+
+	defaultMapState = new uesp.gamemap.MapState();
+
+	defaultMapState.worldId = 668;
+	defaultMapState.zoomLevel = 9;
+	defaultMapState.gamePos.x = 500000;
+	defaultMapState.gamePos.y = 500000;
+
+	g_MapState = this.getMapStateFromQuery(defaultMapState);
+	this.setMapState(g_MapState);
+}
+
+function onPermLoad() {
+	canEdit = this.canEdit() && !isMobileDevice();
+
+	if (canEdit) {
+		$("#gmMapEditButtons").show();
+		$("#addLocationButton").show();
+		$("#addPathButton").show();
+		$("#addAreaButton").show();
+		$("#editWorldButton").show();
+		$("#showRecentChangeButton").show();
+	}
+	else {
+		$("#addLocationButton").hide();
+		$("#addPathButton").hide();
+		$("#addAreaButton").hide();
+		$("#editWorldButton").hide();
+		$("#showRecentChangeButton").hide();
+	}
+
+}
+
+// TODO: Move into Map class
+function onWorldChanged(newWorld) {
+	foundListItems = $('#gmMapList li:contains("' + newWorld.displayName +'")').not('.gmMapListHeader');
+
+	var foundListItem = null;
+	var minTextLength = 1000;
+
+	foundListItems.each(function( index ) {
+		textLen = $(this).text().length;
+
+		if (textLen < minTextLength) {
+			minTextLength = textLen;
+			foundListItem = $(this);
+		}
+	});
+
+	if (foundListItem != null) {
+		if (g_GameMap.mapListLastSelectedItem != null) g_GameMap.mapListLastSelectedItem.removeClass('gmMapListSelect');
+		foundListItem.addClass('gmMapListSelect');
+		g_GameMap.mapListLastSelectedItem = foundListItem;
+		$(foundListItem).parents('ul:first').show();
+	}
+
+	$('#gmMapListAlphaSelect').val(newWorld.id);
+	$('#current_location_label').text(newWorld.displayName);
+}
+
+function getDefaultMapTile(xPos, yPos, zoom, worldName) {
+	return "//maps.uesp.net/esomap/" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + ".jpg";
+}
 
 /*================================================
 					  Search
@@ -190,119 +246,6 @@ function doSearch(searchQuery, currentMapOnly) {
 	}
 
 }
-
-function showError(reason){
-	$("#error_box").show();
-	$('#error_box').css('visibility','visible');
-	$("#error_box_reason").text(reason);
-	print("Error: " + reason);
-}
-
-/*================================================
-					Gamemap
-================================================*/
-
-var g_DefaultMapOptions = {
-	getMapTileFunction : getDefaultMapTile,
-	wikiUrl: "//en.uesp.net/wiki/",
-	mapUrl : "//esomap.uesp.net/esomap.html",
-	missingMapTile:  "//maps.uesp.net/esomap/blacknulltile.jpg",
-	iconPath: "icons/",
-	wikiNamespace: "Online",
-	iconTypeMap: esoIconMap,
-	gamePosX1: 0,
-	gamePosX2: 1000000,
-	gamePosY1: 1000000,
-	gamePosY2: 0,
-	initialGamePosX : 400000,
-	initialGamePosY : 600000,
-	initialZoom : 10,
-	tileCountX : 11,
-	tileCountY : 9,
-	homeWorldId : 668,
-	minValidWorldId : 50,
-	maxValidWorldId : 20000,
-	dbPrefix: "eso",
-	// useCanvasDraw : true,
-};
-
-if (g_DefaultMapOptions.isOffline) {
-	g_DefaultMapOptions.getMapTileFunction = getDefaultMapTile_Offline;
-	g_DefaultMapOptions.missingMapTile = "blacknulltile.jpg";
-}
-
-
-function onWorldLoad() {
-	if (this.hasCenterOnParam()) return;
-
-	defaultMapState = new uesp.gamemap.MapState();
-
-	defaultMapState.worldId = 668;
-	defaultMapState.zoomLevel = 9;
-	defaultMapState.gamePos.x = 500000;
-	defaultMapState.gamePos.y = 500000;
-
-	g_MapState = this.getMapStateFromQuery(defaultMapState);
-	this.setMapState(g_MapState);
-}
-
-function onPermLoad() {
-	canEdit = this.canEdit() && !isMobileDevice();
-
-	if (canEdit) {
-		$("#gmMapEditButtons").show();
-		$("#addLocationButton").show();
-		$("#addPathButton").show();
-		$("#addAreaButton").show();
-		$("#editWorldButton").show();
-		$("#showRecentChangeButton").show();
-	}
-	else {
-		$("#addLocationButton").hide();
-		$("#addPathButton").hide();
-		$("#addAreaButton").hide();
-		$("#editWorldButton").hide();
-		$("#showRecentChangeButton").hide();
-	}
-
-}
-
-function getDefaultMapTile(xPos, yPos, zoom, worldName) {
-	return "//maps.uesp.net/esomap/" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + ".jpg";
-}
-
-function getDefaultMapTile_Offline(xPos, yPos, zoom, worldName) {
-	return "" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + ".jpg";
-}
-
-// TODO: Move into Map class
-function onWorldChanged(newWorld) {
-	foundListItems = $('#gmMapList li:contains("' + newWorld.displayName +'")').not('.gmMapListHeader');
-
-	var foundListItem = null;
-	var minTextLength = 1000;
-
-	foundListItems.each(function( index ) {
-		textLen = $(this).text().length;
-
-		if (textLen < minTextLength) {
-			minTextLength = textLen;
-			foundListItem = $(this);
-		}
-	});
-
-	if (foundListItem != null) {
-		if (g_GameMap.mapListLastSelectedItem != null) g_GameMap.mapListLastSelectedItem.removeClass('gmMapListSelect');
-		foundListItem.addClass('gmMapListSelect');
-		g_GameMap.mapListLastSelectedItem = foundListItem;
-		$(foundListItem).parents('ul:first').show();
-	}
-
-	$('#gmMapListAlphaSelect').val(newWorld.id);
-	$('#current_location_label').text(newWorld.displayName);
-}
-
-
 
 // uesp.gamemap.Map.prototype.onReceiveSearchResults = function (data)
 // {
@@ -462,6 +405,14 @@ function onWorldChanged(newWorld) {
 
 // 	searchResult.html(resultHtml);
 // }
+
+
+function showError(reason){
+	$("#error_box").show();
+	$('#error_box').css('visibility','visible');
+	$("#error_box_reason").text(reason);
+	print("Error: " + reason);
+}
 
 /*================================================
 				  	Analytics
