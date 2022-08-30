@@ -30,6 +30,7 @@ uesp.gamemap = uesp.gamemap || {};
 // searchParams.has("name") === true; // true
 // searchParams.get("age") === "1337"; // true
 //gamemap.php?action=search&search=morrowind&world=2282&db=eso
+//todo: change tab title to (mapname : location (UESP))
 
 // on page load
 print("Page initialising...");

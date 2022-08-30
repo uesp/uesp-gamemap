@@ -49,7 +49,6 @@ window.print = (function(console) {
 			if (typeof txt === "string" || txt instanceof String) {
 				console.log("debug: " + txt);
 			} else {
-				console.log("debug:");
 				console.log(txt);
 			}
 		}
