@@ -69,7 +69,7 @@ $(document).ready(function() {
 function initGamemap() {
 
 	// get params from URL
-	mapParams = Utils.getURLParams(window.location.search)
+	mapParams = Utils.getURLParams();
 
 	// get which map we are supposed to be loading
 	if (!mapParams.has("map")) { 
@@ -99,13 +99,13 @@ function initGamemap() {
 
 function loadGamemap(mapConfig) {
 
-	var callbacks = {
+	var mapCallbacks = {
 		onMapWorldsLoaded   : onWorldLoad,
 		onPermissionsLoaded : onPermLoad,
 		onMapWorldChanged   : onWorldChanged
 	};
 
-	var gamemap = new Gamemap('gmMap', mapConfig, callbacks);
+	var gamemap = new Gamemap('gmMap', mapConfig, mapCallbacks);
 
 
 	// // TODO: Change how map list is created

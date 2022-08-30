@@ -40,6 +40,7 @@
     "options" : {
         "useLocationSwitcher": true,
         "useCanvasDraw" : true,
+        "useLeaflet" : false,
         "useDatabase" : "eso",
         "isOffline" : false
     },

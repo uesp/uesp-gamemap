@@ -30,8 +30,8 @@ export var getJSON = function(url, callback) {
 			URL param splitting function
 ================================================*/
 
-export function getURLParams(url){
-	let urlParams = url.replace("?", '');
+export function getURLParams(){
+	let urlParams = window.location.search.replace("?", '');
 	urlParams = urlParams.toLowerCase();
 	return new URLSearchParams(urlParams); //create params array
 }
