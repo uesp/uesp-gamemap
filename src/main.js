@@ -4,6 +4,10 @@
  * 	Contains main UI code for the Gamemap system.
  */
 
+/*================================================
+				  Dependencies
+================================================*/
+
 import * as Utils from "./utils.js";
 // import Gamemap from "./gamemap.js";
 
@@ -28,11 +32,11 @@ uesp.gamemap = uesp.gamemap || {};
 //gamemap.php?action=search&search=morrowind&world=2282&db=eso
 
 // on page load
-console.log("Page initialising...");
+print("Page initialising...");
 $(document).ready(function() {
 
 	// load gamemap
-	console.log("Initialising gamemap...");
+	print("Initialising gamemap...");
 	initGamemap();
 
 	// bind views from DOM
@@ -79,15 +83,15 @@ function initGamemap() {
 
 		Utils.getJSON(configURL, function(error, object) {
 			if (error !== null) {
-				showError("Could not get map configuration: " + error +". Please check the URL.");
+				showError("Could not get map config: " + error +". Please check the URL.");
 			} else {
-				console.log("Map config loaded successfully!");
+				console.log("Imported map config successfully!");
 				console.log(object);
+				print(object);
 				mapConfig = object;
 
 				// load map
 				loadGamemap(mapConfig);
-				
 			}
 		})
 	}
