@@ -37,7 +37,7 @@ export default class Gamemap {
 	
 		// add the default world
 		this.currentWorldID = 0;
-		addWorld('__default', this.mapConfig, this.currentWorldID, '');
+		this.addWorld('__default', this.mapConfig, this.currentWorldID, '');
 	
 		// set up default zoom level
 		this.zoomLevel = this.mapConfig.zooming.initialZoom;
@@ -143,7 +143,10 @@ export default class Gamemap {
 		this.updateMapStateFromQuery(false);
 	}
 
-	// class methods
+/*================================================
+					Class methods
+================================================*/
+
 	areHiddenLocsShown() {
 		if (Utils.getURLParams().get("showHidden") === "true") {
 			return true;
@@ -156,18 +159,16 @@ export default class Gamemap {
 	hasCentreOnParam(){
 		return Utils.getURLParams().has("centreOn") && Utils.getURLParams().get("centreOn") != null && Utils.getURLParams().get("centreOn") !== '';
 	}
+
+	addWorld(worldName, mapOptions, worldId, displayName) {
+		this.mapWorlds[worldId] = new uesp.gamemap.World(worldName.toLowerCase(), this.defaultMapOptions, worldId);
+		this.mapWorlds[worldId].mergeMapOptions(mapOptions);
+	
+		this.mapWorldNameIndex[worldName.toLowerCase()] = worldId;
+		if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldId;
+	}
 	
 }
-
-
-function addWorld(worldName, mapOptions, worldId, displayName) {
-	this.mapWorlds[worldId] = new uesp.gamemap.World(worldName.toLowerCase(), this.defaultMapOptions, worldId);
-	this.mapWorlds[worldId].mergeMapOptions(mapOptions);
-
-	this.mapWorldNameIndex[worldName.toLowerCase()] = worldId;
-	if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldId;
-}
-
 
 // uesp.gamemap.Map.prototype.createMapList = function (parentObject)
 // {
