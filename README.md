@@ -1,6 +1,6 @@
 # UESP Gamemap
 
-The UESP Gamemap is a custom built Google Maps alternative for the Unofficial Elder Scrolls Pages (www.uesp.net). It was specifically designed for showing Elder Scrolls maps, but it can be modified to use other game maps if desired.
+The UESP Gamemap is a custom built, Google Maps alternative for the Unofficial Elder Scrolls Pages (www.uesp.net). It was specifically designed for showing Elder Scrolls maps, but it can be modified to use other game maps if desired.
 
 ## Vality
 

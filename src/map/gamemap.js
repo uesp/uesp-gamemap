@@ -4,7 +4,6 @@
  * @summary The main source code for the interactive gamemap.
  */
 
-
 /*================================================
 				  	Imports
 ================================================*/
