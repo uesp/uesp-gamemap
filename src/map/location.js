@@ -4,7 +4,6 @@
  * @summary Contains class definition for the gamemap's locations.
  */
 
-
 uesp.gamemap.LOCTYPE_NONE  = 0;
 uesp.gamemap.LOCTYPE_POINT = 1;
 uesp.gamemap.LOCTYPE_PATH  = 2;

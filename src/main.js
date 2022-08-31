@@ -431,3 +431,12 @@ if (!noAnalytics) {
 		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 	})();
 }
+
+/*================================================
+				   Debug mode
+================================================*/
+
+window.enableDebugging = function(){
+	document.cookie = "debugging=true"; 
+	console.log("Debug mode enabled!");
+}

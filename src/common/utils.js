@@ -4,7 +4,6 @@
  * @summary Contains general utility functions for the gamemap.
  */
 
-
 /*================================================
 			Is mobile device function
 ================================================*/
@@ -43,12 +42,35 @@ export function getURLParams(){
 }
 
 /*================================================
-			Debug print function
+			 	Get cookie function
+================================================*/
+
+export function getCookie(cname) {
+	let name = cname + "=";
+	let decodedCookie = decodeURIComponent(document.cookie);
+	let ca = decodedCookie.split(';');
+	for(let i = 0; i <ca.length; i++) {
+	  let c = ca[i];
+	  while (c.charAt(0) == ' ') {
+		c = c.substring(1);
+	  }
+	  if (c.indexOf(name) == 0) {
+		return c.substring(name.length, c.length);
+	  }
+	}
+	return null;
+}
+
+/*================================================
+				Debug print function
 ================================================*/
 
 window.print = (function(console) {
-    var canLog = !!console; // only print when devtools is open
-    return function(txt) {
+    
+	// only print if debugging is enabled
+	var canLog = (getCookie("debugging") == "true")
+    
+	return function(txt) {
 
 		if (canLog) {
 			// check if payload is string
@@ -84,7 +106,6 @@ export function endsWith(str, suffix) {
 export function beginsWith(str, suffix) {
 	return str.substring(0, suffix.length) === suffix;
 }
-
 
 /*================================================
 	  Create new instance of object function
