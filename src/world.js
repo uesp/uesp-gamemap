@@ -6,42 +6,43 @@
  * 		- parentId for zooming "out" to the parent map (if any)
  */
 
-
-uesp.gamemap.World = function(worldName, mapOptions, worldId)
-{
-	this.name = worldName.toLowerCase();
-	this.displayName = worldName;
-	
-	this.mapOptions = new uesp.gamemap.MapOptions(mapOptions);
-	
-	this.id = (worldId == null) ? 0 : worldId;
-	this.parentId = -1;
-	this.revisionId = 0;
-	this.description = '';
-	this.wikiPage = '';
-	this.cellSize = -1;
-	this.missingMapTile = this.mapOptions.missingMapTile;
-	this.minZoom = this.mapOptions.minZoomLevel;
-	this.maxZoom = this.mapOptions.maxZoomLevel;
-	this.zoomOffset = this.mapOptions.zoomOffset;
-	this.posLeft = this.mapOptions.gamePosX1;
-	this.posTop = this.mapOptions.gamePosY1;
-	this.posRight = this.mapOptions.gamePosX2;
-	this.posBottom = this.mapOptions.gamePosY2;
-	this.enabled = true;
-	
-	this.mapState = new uesp.gamemap.MapState();
-	this.mapState.worldId = this.id;
-	this.mapState.gamePos.x = this.mapOptions.initialGamePosX;
-	this.mapState.gamePos.y = this.mapOptions.initialGamePosY;
-	this.mapState.zoomLevel = this.mapOptions.initialZoom;
-	
-		/* Special case for ESO Tamriel Mundus map */
-	if (worldId == 667) 
-	{
-		this.mapState.zoomLevel = 9;
+export default class World {
+	constructor(worldName, mapConfig, worldID) {
+		this.name = worldName.toLowerCase();
+		this.displayName = worldName;
+		
+		this.mapConfig = mapConfig;
+		
+		this.id = (worldID == null) ? 0 : worldID;
+		this.parentId = -1;
+		this.revisionId = 0;
+		this.description = '';
+		this.wikiPage = '';
+		this.cellSize = -1;
+		this.missingMapTile = this.mapOptions.missingMapTile;
+		this.minZoom = this.mapOptions.minZoomLevel;
+		this.maxZoom = this.mapOptions.maxZoomLevel;
+		this.zoomOffset = this.mapOptions.zoomOffset;
+		this.posLeft = this.mapOptions.gamePosX1;
+		this.posTop = this.mapOptions.gamePosY1;
+		this.posRight = this.mapOptions.gamePosX2;
+		this.posBottom = this.mapOptions.gamePosY2;
+		this.enabled = true;
+		
+		this.mapState = new uesp.gamemap.MapState();
+		this.mapState.worldId = this.id;
+		this.mapState.gamePos.x = this.mapOptions.initialGamePosX;
+		this.mapState.gamePos.y = this.mapOptions.initialGamePosY;
+		this.mapState.zoomLevel = this.mapOptions.initialZoom;
+		
+			/* Special case for ESO Tamriel Mundus map */
+		if (worldId == 667) 
+		{
+			this.mapState.zoomLevel = 9;
+		}
 	}
 }
+
 
 
 uesp.gamemap.World.prototype.mergeFromJson = function(data)
@@ -123,8 +124,8 @@ uesp.gamemap.World.prototype.createSaveQuery = function()
 	query += '&enabled=' + (this.enabled ? '1' : '0');
 	query += '&db=' + this.mapOptions.dbPrefix;
 	
-	if (this.locType > 1)
-	{
+	if (this.locType > 1) {
+
 	}
 	
 	return query;

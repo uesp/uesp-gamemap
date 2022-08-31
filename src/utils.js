@@ -27,7 +27,7 @@ export var getJSON = function(url, callback) {
 };
 
 /*================================================
-			URL param splitting function
+			 Get URL parameters function
 ================================================*/
 
 export function getURLParams(){
@@ -54,3 +54,27 @@ window.print = (function(console) {
 		}
     };
 })(window.console);
+
+/*================================================
+			  Is variable null function
+================================================*/
+
+export function isNull(variable) {
+	return (typeof variable === 'undefined' || variable === null);
+}
+
+/*================================================
+			 String ends-with function
+================================================*/
+
+export function endsWith(str, suffix) {
+	return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
+/*================================================
+			 String begins-with function
+================================================*/
+
+export function beginsWith(str, suffix) {
+	return str.substring(0, suffix.length) === suffix;
+}

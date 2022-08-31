@@ -26,26 +26,6 @@ uesp.gamemap.Position = function (x, y)
 	this.y = (typeof y !== 'undefined') ? y : 0;
 }
 
-
-uesp.gamemap.isNullorUndefined = function (variable)
-{
-	return (typeof variable === 'undefined' || variable === null);
-}
-
-
-uesp.endsWith = function (str, suffix)
-{
-	return str.indexOf(suffix, str.length - suffix.length) !== -1;
-}
-
-
-uesp.beginsWith = function (str, suffix)
-{
-	return str.substring(0, suffix.length) === suffix;
-}
-
-
-
 uesp.gamemap.createMergedObject = function (obj1, obj2)
 {
 	var obj3 = {};
