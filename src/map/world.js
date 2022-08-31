@@ -19,6 +19,7 @@ export default class World {
 		this.description = '';
 		this.wikiPage = '';
 		this.cellSize = -1;
+
 		this.missingMapTile = this.mapOptions.missingMapTile;
 		this.minZoom = this.mapOptions.minZoomLevel;
 		this.maxZoom = this.mapOptions.maxZoomLevel;
@@ -27,6 +28,7 @@ export default class World {
 		this.posTop = this.mapOptions.gamePosY1;
 		this.posRight = this.mapOptions.gamePosX2;
 		this.posBottom = this.mapOptions.gamePosY2;
+		
 		this.enabled = true;
 		
 		this.mapState = new uesp.gamemap.MapState();
@@ -35,8 +37,8 @@ export default class World {
 		this.mapState.gamePos.y = this.mapOptions.initialGamePosY;
 		this.mapState.zoomLevel = this.mapOptions.initialZoom;
 		
-			/* Special case for ESO Tamriel Mundus map */
-		if (worldId == 667) 
+		/* Special case for ESO Tamriel Mundus map */
+		if (worldID == 667) 
 		{
 			this.mapState.zoomLevel = 9;
 		}

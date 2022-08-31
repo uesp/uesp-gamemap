@@ -5,10 +5,10 @@
  */
 
 /*================================================
-				  Dependencies
+				  	Imports
 ================================================*/
 
-import * as Utils from "./utils.js";
+import * as Utils from "../common/utils.js";
 
 /*================================================
 					Gamemap
@@ -26,7 +26,7 @@ export default class Gamemap {
 		this.mapCallbacks = mapCallbacks;
 
 		// set up important constants
-		this. USE_CANVAS_DRAW = this.mapConfig.options.useCanvasDraw;
+		this.USE_CANVAS_DRAW = this.mapConfig.options.useCanvasDraw;
 		this.PAN_AMOUNT = this.mapConfig.tiles.tileSize / 2;
 	
 		// set up the root map element
@@ -35,96 +35,74 @@ export default class Gamemap {
 			print('The gamemap container \'' + mapContainerID + '\' was not found!');
 		} 
 	
-		// add the default world
+		// set the default map info 	//TODO: figure out which of these are redundant
+		this.locations = {};
+		this.startTileX = 0;
+		this.startTileY = 0;
+		this.startTileCanvasX = 0;
+		this.startTileCanvasY = 0;
+		this.origStartTileCanvasX = 0;
+		this.origStartTileCanvasY = 0;
+		this.draggingObject = null;
+		this.dragStartLeft = 0;
+		this.dragStartTop  = 0;
+		this.dragStartLeftCanvas = 0;
+		this.dragStartTopCanvas  = 0;
+		this.dragStartEventX = 0;
+		this.dragStartEventY = 0;
+		this.mapRoot = null;
+		this.mapCanvas = null;
+		this.mapCanvasGrid = null;
+		this.mapCanvasElement = null;
+		this.mapCanvasGridElement = null;
+		this.mapContext = null;
+		this.mapContextGrid = null;
+		this.mapListContainer = null;
+		this.mapListLastSelectedItem = null;
+		this.mapKeyElement = null;
+		this.helpBlockElement = null;
+		this.recentChangesRoot = null;
+		this.mapControlRoot = null;
+		this.lastCanvasHoverLocation = null;
+		this.mapWorlds = {};
+		this.mapWorldNameIndex = {};
+		this.mapWorldDisplayNameIndex = {};
+		this.mapKeyNumColumns = 8;
+		this.showPopupOnLoadLocationId = -1;
+		this.mapTransformX = 0;
+		this.mapTransformY = 0;
+		this.canvasLastDragX = 0;
+		this.canvasLastDragY = 0;
+		this.canvasImages = [];
+		this.canvasImageMap = {};
+		this.canvasTileCountX = 0;
+		this.canvasTileCountY = 0;
+		this.lastCanvasRedrawRequest = 0;
+		this.lastPinchDistance = 0;
+		this.cellResource = "";
+		this.loadedCellResource = "";
+		this.cellResourceData = {};
+		this.worldGroupListContents = '';
+		this.helpBlockContents = '';
+		this.mapTiles = [];
+		this.displayState = "";
 		this.currentWorldID = 0;
 		this.addWorld('__default', this.mapConfig, this.currentWorldID, '');
-	
-		// set up default zoom level
 		this.zoomLevel = this.mapConfig.zooming.initialZoom;
 	
 		// set editing to false by default
-		this.editEnabled = false;
+		this.editingEnabled = false;
 
-		this.mapRoot = null;
-		var mapCanvas = null;
-		var mapCanvasGrid = null;
-		var mapCanvasElement = null;
-		var mapCanvasGridElement = null;
-		var mapContext = null;
-		var mapContextGrid = null;
-
-		var mapListContainer = null;
-		var mapListLastSelectedItem = null;
-
-		var lastCanvasHoverLocation = null;
-
-		var mapKeyElement = null;
-		var helpBlockElement = null;
-
-		var isShowingRecentChanges = false;
-
-		var recentChangesRoot = null;
-
-		var mapControlRoot = null;
-
-		var mapWorlds = {};
-		var mapWorldNameIndex = {};
-		var mapWorldDisplayNameIndex = {};
-		var mapWorldsLoaded = false;
-		var centerOnError = false;
-
-		var locations = {};
-
-		var startTileX = 0;
-		var startTileY = 0;
-		var startTileCanvasX = 0;
-		var startTileCanvasY = 0;
-		var origStartTileCanvasX = 0;
-		var origStartTileCanvasY = 0;
-
-		var isDragging = false;
-		var draggingObject = null;
-		var dragStartLeft = 0;
-		var dragStartTop  = 0;
-		var dragStartLeftCanvas = 0;
-		var dragStartTopCanvas  = 0;
-		var dragStartEventX = 0;
-		var dragStartEventY = 0;
-		var checkTilesOnDrag = true;
-
+		// set up state bools
 		this.defaultShowHidden = false;
-
-		var jumpToDestinationOnClick = true;
-		var openPopupOnJump = false;
-
-		var mapKeyNumColumns = 8;
-
-		var showPopupOnLoadLocationId = -1;
-
-		var mapTransformX = 0;
-		var mapTransformY = 0;
-		var canvasLastDragX = 0;
-		var canvasLastDragY = 0;
-		var canvasImages = [];
-		var canvasImageMap = {};
-		var canvasTileCountX = 0;
-		var canvasTileCountY = 0;
-		var lastCanvasRedrawRequest = 0;
-
-		var isPinching = false;
-		var lastPinchDistance = 0;
-
-		var isDrawGrid = false;
-		var cellResource = "";
-		var loadedCellResource = "";
-		var cellResourceData = {};
-
-		var worldGroupListContents = '';
-		var helpBlockContents = '';
-
-		var mapTiles = [];
-
-		var displayState = "";
+		this.jumpToDestinationOnClick = true;
+		this.openPopupOnJump = false;
+		this.isShowingRecentChanges = false;
+		this.mapWorldsLoaded = false;
+		this.checkTilesOnDrag = true;
+		this.isDrawGrid = false;
+		this.isDragging = false;
+		this.isPinching = false;
 
 		this.requestPermissions();
 		this.retrieveWorldData();
@@ -147,7 +125,7 @@ export default class Gamemap {
 					Class methods
 ================================================*/
 
-	areHiddenLocsShown() {
+	isHiddenLocsShown() {
 		if (Utils.getURLParams().get("showHidden") === "true") {
 			return true;
 		} else {
@@ -155,18 +133,23 @@ export default class Gamemap {
 		}
 		
 	}
+
+	isMapEditingEnabled() {
+		return this.editingEnabled;
+	}
 	
 	hasCentreOnParam(){
 		return Utils.getURLParams().has("centreOn") && Utils.getURLParams().get("centreOn") != null && Utils.getURLParams().get("centreOn") !== '';
 	}
 
 	addWorld(worldName, mapOptions, worldId, displayName) {
-		this.mapWorlds[worldId] = new uesp.gamemap.World(worldName.toLowerCase(), this.defaultMapOptions, worldId);
+		this.mapWorlds[worldId] = new World(worldName.toLowerCase(), this.defaultMapOptions, worldId);
 		this.mapWorlds[worldId].mergeMapOptions(mapOptions);
 	
 		this.mapWorldNameIndex[worldName.toLowerCase()] = worldId;
 		if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldId;
 	}
+
 	
 }
 
@@ -227,10 +210,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.canEdit = function ()
-// {
-// 	return this.enableEdit;
-// }
 
 
 // uesp.gamemap.Map.prototype.updateMapLink = function ()
@@ -4259,32 +4238,6 @@ export default class Gamemap {
 
 // 	output += "</div></div>"
 // 	return output;
-// }
-
-
-// uesp.gamemap.Map.prototype.toggleMapList = function()
-// {
-// 	visible = $('#gmMapListRoot').is(':visible');
-// 	$('#gmMapListRoot').toggle();
-
-// 	if (visible)
-// 		$('#gmMapNameLabel').removeClass('gmMapNameLabelUpArrow');
-// 	else
-// 		$('#gmMapNameLabel').addClass('gmMapNameLabelUpArrow');
-// }
-
-
-// uesp.gamemap.Map.prototype.showMapList = function()
-// {
-// 	$('#gmMapListRoot').show();
-// 	$('#gmMapNameLabel').addClass('gmMapNameLabelUpArrow');
-// }
-
-
-// uesp.gamemap.Map.prototype.hideMapList = function()
-// {
-// 	$('#gmMapListRoot').hide();
-// 	$('#gmMapNameLabel').removeClass('gmMapNameLabelUpArrow');
 // }
 
 

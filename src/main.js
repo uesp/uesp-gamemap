@@ -5,11 +5,11 @@
  */
 
 /*================================================
-				  Dependencies
+				  	Imports
 ================================================*/
 
-import * as Utils from "./utils.js";
-import Gamemap from "./gamemap.js";
+import * as Utils from "./common/utils.js";
+import Gamemap from "./map/gamemap.js";
 
 /*================================================
 				  Initialisation
