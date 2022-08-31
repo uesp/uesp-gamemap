@@ -1,3 +1,9 @@
+/**
+ * @name utils.js
+ * @author Thal-J <thal-j@uesp.net> (28th August 2022)
+ * @summary Contains general utility functions for the gamemap.
+ */
+
 
 /*================================================
 			Is mobile device function

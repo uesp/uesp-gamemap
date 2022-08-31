@@ -1,7 +1,7 @@
-/*
- * location.js -- Created by Dave Humphrey (dave@uesp.net) on 23 Jan 2014
- * 		Released under the GPL v2
- *
+/**
+ * @name location.js
+ * @author Dave Humphrey <dave@uesp.net> (23rd Jan 2014)
+ * @summary Contains class definition for the gamemap's locations.
  */
 
 

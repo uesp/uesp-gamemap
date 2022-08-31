@@ -1,9 +1,7 @@
-/*
- * world.js -- Created by Dave Humphrey (dave@uesp.net) on 22 Jan 2014
- * 		Released under the GPL v2
- *
- * TODO:
- * 		- parentId for zooming "out" to the parent map (if any)
+/**
+ * @name world.js
+ * @author Dave Humphrey <dave@uesp.net> (22nd Jan 2014)
+ * @summary Contains class definition for gamemap's "world".
  */
 
 export default class World {

@@ -1,9 +1,9 @@
-/*
- * mapoptions.js -- Created by Dave Humphrey (dave@uesp.net) on 22 Jan 2014
- * 		Released under the GPL v2
- *
- * Note that most of the options here are valid for the ESO map.
+/**
+ * @name mapoptions.js
+ * @author Dave Humphrey <dave@uesp.net> (22nd Jan 2014)
+ * @summary Contains default map configs for the gamemap.
  */
+
 
 uesp.gamemap.MapOptions = function(mapOptions)
 {

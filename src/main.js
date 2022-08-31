@@ -1,8 +1,11 @@
-/*
- * main.js -- Created by Thal-J (thal-j@uesp.net) on 16th Aug 2022
- * 	Released under the GPL v2
- * 	Contains main UI code for the Gamemap system.
+/**
+ * @name main.js
+ * @author Thal-J <thal-j@uesp.net> (16th Aug 2022)
+ * @summary Contains the main UI code for the gamemap.
+ * 	
+ * @see gamemap.js for actual map viewer implementation. 
  */
+
 
 /*================================================
 				  	Imports
