@@ -172,7 +172,7 @@ export function pointDistanceSquare (x1, y1, x2, y2) {
 		   Distance to segment function
 ================================================*/
 
-uesp.distToSegment = function (px, py, x1, y1, x2, y2) {
+export function distToSegment(px, py, x1, y1, x2, y2) {
 
 	let length2 = pointDistanceSquare(x1, y1, x2, y2);
 	if (length2 == 0) return pointDistanceSquare(px, py, x1, y1);
