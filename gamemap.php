@@ -76,6 +76,7 @@ class GameMap
 	public $outputItems = array();
 	
 	public $limitCount = 1000;
+	public $searchLimitCount = 100;
 	
 	public $cellResourceEditorId = "";
 	
@@ -444,9 +445,9 @@ class GameMap
 	{
 		
 		if ($this->searchWorldId != 0)
-			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId={$this->searchWorldId} AND iconType={$this->searchType} ORDER BY name, worldId LIMIT {$this->limitCount};";
+			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId={$this->searchWorldId} AND iconType={$this->searchType} ORDER BY name, worldId LIMIT {$this->searchLimitCount};";
 		else
-			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND iconType={$this->searchType} ORDER BY name, worldId LIMIT {$this->limitCount};";
+			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND iconType={$this->searchType} ORDER BY name, worldId LIMIT {$this->searchLimitCount};";
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed searching for locations by type!");
@@ -528,7 +529,7 @@ class GameMap
 		$query  = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") ." AND (";
 		if (!$doExactSearch) $query .= "MATCH(displayName, description, wikiPage) AGAINST ('{$this->safeSearchWordWildcard}' IN BOOLEAN MODE) OR ";
 		$query .= "displayName LIKE '%{$this->safeSearchWord}%' or description LIKE '%{$this->safeSearchWord}%' or wikiPage LIKE '%{$this->safeSearchWord}%') ";
-		$query .= "ORDER BY displayName LIMIT {$this->limitCount};";
+		$query .= "ORDER BY displayName LIMIT {$this->searchLimitCount};";
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed searching for worlds!");
@@ -629,7 +630,7 @@ class GameMap
 		else
 			$query .= "name LIKE '%{$this->safeSearchWord}%' OR description LIKE '%{$this->safeSearchWord}%' or wikiPage LIKE '%{$this->safeSearchWord}%' ";
 		
-		$query .= ") ORDER BY name, worldId LIMIT {$this->limitCount};";
+		$query .= ") ORDER BY name, worldId LIMIT {$this->searchLimitCount};";
 		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed searching for locations!");
@@ -675,11 +676,11 @@ class GameMap
 			if (is_numeric($centerOn))
 			{
 				$locId = intval($centerOn);
-				$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId='$worldId' AND id={$locId} LIMIT {$this->limitCount};";
+				$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId='$worldId' AND id={$locId} LIMIT {$this->searchLimitCount};";
 			}
 			else
 			{
-				$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId='$worldId' AND name='{$centerOn}' LIMIT {$this->limitCount};";
+				$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId='$worldId' AND name='{$centerOn}' LIMIT {$this->searchLimitCount};";
 			}
 		}
 		else
@@ -687,11 +688,11 @@ class GameMap
 			if (is_numeric($centerOn))
 			{
 				$locId = intval($centerOn);
-				$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND id={$locId} LIMIT {$this->limitCount};";
+				$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND id={$locId} LIMIT {$this->searchLimitCount};";
 			}
 			else
 			{
-				$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND name='{$centerOn}' LIMIT {$this->limitCount};";
+				$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND name='{$centerOn}' LIMIT {$this->searchLimitCount};";
 			}
 		}
 		
