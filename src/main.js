@@ -82,7 +82,7 @@ function initGamemap() {
 		mapType = mapParams.get("map");
 
 		// load map config 
-		let configURL = "configs/" + mapType + "/config.json";
+		let configURL = "assets/configs/" + mapType + "/config.json";
 		print("Getting map config at "+configURL+"...");
 
 		Utils.getJSON(configURL, function(error, object) {

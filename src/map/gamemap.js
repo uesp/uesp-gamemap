@@ -4734,3 +4734,10 @@ export default class Gamemap {
 // 	this.cellResource = "";
 // 	this.displayState = "";
 // }
+
+// // Simple position/point class
+// uesp.gamemap.Position = function (x, y)
+// {
+// 	this.x = (typeof x !== 'undefined') ? x : 0;
+// 	this.y = (typeof y !== 'undefined') ? y : 0;
+// }
