@@ -4,7 +4,7 @@
 
 		<!-- Favicon -->
 		<link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
-		
+
 		<!-- TODO: Pull title from config.json -->
 		<title>UESP:ESO Map</title>
 
@@ -40,9 +40,9 @@
 
 				<!-- Overflow Menu Items -->
 				<ul id='overflow-menu' class='dropdown-content'>
-					<li ontouchstart="g_GameMap.showHelpBlock();"><a onclick="g_GameMap.showHelpBlock();" href="javascript:void(0);">Help</a></li>
-					<li ontouchstart="g_GameMap.showMapKey();"><a onclick="g_GameMap.showMapKey();" href="javascript:void(0);">Map Key</a></li>
-					<li><a href="" id="gmMapReset">Reset Map</a></li>
+					<li><a onclick="showHelp()" href="javascript:void(0);">Help</a></li>
+					<li><a onclick="showMapKey()" href="javascript:void(0);">Map Key</a></li>
+					<li><a onclick="resetMap()" href="javascript:void(0);">Reset Map</a></li>
 				</ul>
 			</button>
 
@@ -57,18 +57,18 @@
 		</div>
 
 		<div class="icon_bar_responsive">
-			<button id="btn_location_switcher" class='btn_icon_button waves-effect' title="Jump to location" onclick="g_GameMap.showMapList();" ontouchstart="g_GameMap.showMapList();">
+			<button id="btn_location_switcher" class='btn_icon_button waves-effect' title="Jump to location" onclick="showLocationSwitcher();">
 				<i class="material-icons onlymobile">explore</i>
 				<b class="icon_button_label nomobile" id="current_location_label">Loading...</b>
 				<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>
 			</button>
 
-			<button id="btn_article" class='btn_icon_button waves-effect' title="Goto article for this location">
+			<button id="btn_article" class='btn_icon_button waves-effect' title="Goto article for this location" onclick="gotoArticle()">
 				<i class="material-icons">article</i>
 				<b class="icon_button_label nomobile">Goto Article</b>
 			</button>
 
-			<button id="btn_permalink" class='btn_icon_button waves-effect' title="Copy link to this location">
+			<button id="btn_permalink" class='btn_icon_button waves-effect' title="Copy link to this location" onclick="copyMapLink()">
 				<i class="material-icons">link</i><b class="icon_button_label nomobile">Copy Link</b>
 			</button>
 		</div>
@@ -117,15 +117,15 @@
 		<div class="infobar">
 			<a href="//www.uesp.net/wiki/Main_Page" title="Go UESP home"><b class="wikiTitle">UESP</b></a>
 			<b> | </b>
-			<a href="" id="gmMapReset" title="Reset the map view">ESO Map</a>
+			<a onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">ESO Map</a>
 			<b> | </b>
 			<a href="//www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design" title="Give feedback about this map">Send Feedback</a>
 		</div>
 
 		<div id="zoom_widget" class="hoverable">
-			<button class="btn_zoom waves-effect" id="btn_zoom_in" tabindex="-1" title="Zoom in"><i class="material-icons">add</i></button>
+			<button class="btn_zoom waves-effect" onclick="zoomIn()" id="btn_zoom_in" tabindex="-1" title="Zoom in"><i class="material-icons">add</i></button>
 			<div class="horizontal_divider"></div>
-			<button class="btn_zoom waves-effect" id="btn_zoom_out" tabindex="-1" title="Zoom out"><i class="material-icons">remove</i></button>
+			<button class="btn_zoom waves-effect" onclick="zoomOut()" id="btn_zoom_out" tabindex="-1" title="Zoom out"><i class="material-icons">remove</i></button>
 		</div>
 
 		<!-- <div class="progress_bar">

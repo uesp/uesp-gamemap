@@ -440,3 +440,8 @@ window.enableDebugging = function(){
 	document.cookie = "debugging=true"; 
 	console.log("Debug mode enabled!");
 }
+
+
+window.zoomIn = function(){
+	M.toast({text: 'Zoom in button clicked!'})
+}
