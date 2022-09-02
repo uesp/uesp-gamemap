@@ -5,6 +5,7 @@
  */
 
 import * as Utils from "../common/utils.js";
+import * as Constants from "../common/constants.js";
 import World from "./world.js";
 
 /*================================================
@@ -56,9 +57,6 @@ export default class Gamemap {
 		this.mapContextGrid = null;
 		this.mapListContainer = null;
 		this.mapListLastSelectedItem = null;
-		this.mapKeyElement = null;
-		this.helpBlockElement = null;
-		this.recentChangesRoot = null;
 		this.mapControlRoot = null;
 		this.lastCanvasHoverLocation = null;
 		this.mapWorlds = {};
@@ -95,14 +93,14 @@ export default class Gamemap {
 		this.jumpToDestinationOnClick = true;
 		this.openPopupOnJump = false;
 		this.isShowingRecentChanges = false;
-		this.mapWorldsLoaded = false;
 		this.checkTilesOnDrag = true;
 		this.isDrawGrid = false;
 		this.isDragging = false;
 		this.isPinching = false;
 
+		this.getWorldData();
 		this.requestPermissions();
-		this.retrieveWorldData();
+
 	
 		if (this.queryParams.centeron != null) {
 			this.retrieveCenterOnLocation(this.queryParams.world, this.queryParams.centeron);
@@ -118,9 +116,9 @@ export default class Gamemap {
 		this.updateMapStateFromQuery(false);
 	}
 
-/*================================================
-					Class methods
-================================================*/
+	/*================================================
+						Class methods
+	================================================*/
 
 	isHiddenLocsShown() {
 		if (Utils.getURLParams().get("showHidden") === "true") {
@@ -139,6 +137,11 @@ export default class Gamemap {
 		return Utils.getURLParams().get("centreOn") != null && Utils.getURLParams().get("centreOn") !== '';
 	}
 
+
+	/*================================================
+						  Worlds
+	================================================*/
+
 	addWorld(worldName, mapConfig, worldID, displayName) {
 		this.mapWorlds[worldID] = new World(worldName.toLowerCase(), DEFAULT_MAP_CONFIG, worldID);
 		this.mapWorlds[worldID].mergeMapConfig(mapConfig);
@@ -147,67 +150,67 @@ export default class Gamemap {
 		if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldID;
 	}
 
+	getWorldData() {
+		let queryParams = {};
+		var self = this;
+		queryParams.action = "get_worlds";
+		queryParams.db = this.mapConfig.database;
+		if (this.isHiddenLocsShown()) {
+			queryParams.showhidden = 1;
+		} 
 	
+		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
+			if (data.isError) {
+				print("Error retrieving world data!" + errorMsg);
+				return;
+			} else {
+				if (data.worlds == null) {
+					print ("World data not found in JSON response!" + data);
+					return;
+				}
+			}
+	
+			this.mergeWorldData(data.worlds);
+	
+			if (this.callbacks != null) {
+				this.callbacks.gamemapLoaded.call(this); // this is a bit dodgy, figure out a proper way to callback
+			}
+	
+			return true;
+		});
+	}
+
+	mergeWorldData(worlds) {
+
+		if (worlds == null) {
+			return;
+		}
+
+		for (var key in worlds)
+		{
+			var world = worlds[key];
+
+			if (world.id < this.mapOptions.minValidWorldId) continue;
+			if (world.id > this.mapOptions.maxValidWorldId) continue;
+
+			if (uesp.gamemap.isNullorUndefined(world.name)) continue;
+
+			if (world.id in this.mapWorlds)
+			{
+				this.mapWorlds[world.id].mergeFromJson(world);
+				this.mapWorldNameIndex[world.name] = world.id;
+				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
+			}
+			else
+			{
+				addWorld(world.name, this.defaultMapOptions, world.id, world.displayName);
+				this.mapWorlds[world.id].mergeFromJson(world);
+				this.mapWorldNameIndex[world.name] = world.id;
+				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
+			}
+		}
+	} 	
 }
-
-// uesp.gamemap.Map.prototype.createMapList = function (parentObject)
-// {
-// 	var self = this;
-// 	var listHtml = 	"<div id='gmMapListTitle'>" +
-// 						"Map List" +
-// 						"<div id='gmMapListButtonAlpha'>Alpha</div>" +
-// 						"<div id='gmMapListButtonGroup' class='gmMapListButtonSelect'>Group</div>" +
-// 					"</div>" +
-// 					"<div id='gmMapListAlpha' style='display: none;'>" +
-// 						"<form><select id='gmMapListAlphaSelect' size='4'></select></form>" +
-// 					"</div>" +
-// 					"<div id='gmMapListGroup'>" +
-// 					"<ul id='gmMapList'>" +
-// 						"<li>Loading world data...</li>" +
-// 					"</ul></div>";
-
-// 	this.mapListContainer = $('<div />')
-// 								.attr('id', 'gmMapListContainer')
-// 								.appendTo(parentObject);
-
-// 	this.mapListContainer.html(listHtml);
-
-// 	$('#gmMapListButtonAlpha').bind("touchstart click", function(e) {
-// 		$('#gmMapListButtonAlpha').addClass('gmMapListButtonSelect');
-// 		$('#gmMapListButtonGroup').removeClass('gmMapListButtonSelect');
-// 		$('#gmMapListAlpha').show();
-// 		$('#gmMapListGroup').hide();
-// 		$('#gmMapListAlphaSelect').focus();
-// 		return false;
-// 	});
-
-// 	$('#gmMapListButtonGroup').bind("touchstart click", function(e) {
-// 		$('#gmMapListButtonGroup').addClass('gmMapListButtonSelect');
-// 		$('#gmMapListButtonAlpha').removeClass('gmMapListButtonSelect');
-// 		$('#gmMapListGroup').show();
-// 		$('#gmMapListAlpha').hide();
-// 		$('#gmMapListGroup').focus();
-
-// 		selItem = $('#gmMapList li.gmMapListSelect');
-// 		if (selItem == null) return false;
-
-// 		container = $('#gmMapListGroup');
-// 		container.scrollTop(selItem.offset().top - container.offset().top + container.scrollTop() - 200);
-// 		return false;
-// 	});
-
-// 	$('#gmMapListAlphaSelect').change(function(e) {
-// 		var result = parseInt(this.options[this.selectedIndex].value);
-// 		self.changeWorld(result);
-
-// 		self.hideMapList();
-// 	});
-
-// 	return true;
-// }
-
-
-
 
 // uesp.gamemap.Map.prototype.updateMapLink = function ()
 // {
@@ -2558,52 +2561,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.mergeWorldData = function (worlds)
-// {
-// 	if (worlds == null) return;
-
-// 	for (key in worlds)
-// 	{
-// 		var world = worlds[key];
-
-// 		if (world.id < this.mapOptions.minValidWorldId) continue;
-// 		if (world.id > this.mapOptions.maxValidWorldId) continue;
-
-// 		if (uesp.gamemap.isNullorUndefined(world.name)) continue;
-
-// 		if (world.id in this.mapWorlds)
-// 		{
-// 			this.mapWorlds[world.id].mergeFromJson(world);
-// 			this.mapWorldNameIndex[world.name] = world.id;
-// 			this.mapWorldDisplayNameIndex[world.displayName] = world.id;
-// 		}
-// 		else
-// 		{
-// 			addWorld(world.name, this.defaultMapOptions, world.id, world.displayName);
-// 			this.mapWorlds[world.id].mergeFromJson(world);
-// 			this.mapWorldNameIndex[world.name] = world.id;
-// 			this.mapWorldDisplayNameIndex[world.displayName] = world.id;
-// 		}
-// 	}
-
-// }
-
-
-// uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
-// {
-// 	if (!uesp.gamemap.isNullorUndefined(data.isError)) return uesp.logError("Error retrieving world data!", data.errorMsg);
-// 	if (uesp.gamemap.isNullorUndefined(data.worlds))   return uesp.logError("World data not found in JSON response!", data);
-
-// 	this.mergeWorldData(data.worlds);
-
-// 	this.mapWorldsLoaded = true;
-// 	if (this.userEvents.onMapWorldsLoaded != null) this.userEvents.onMapWorldsLoaded.call(this);
-// 	this.fillWorldList('#gmMapListAlphaSelect');
-
-// 	return true;
-// }
-
-
 // uesp.gamemap.Map.prototype.removeExtraLocations = function()
 // {
 // 	var mapBounds = this.getMapRootBounds();
@@ -2640,7 +2597,7 @@ export default class Gamemap {
 // 	queryParams.action = "get_perm";
 // 	queryParams.db = this.mapOptions.dbPrefix;
 
-// 	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+// 	$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 // 		self.onReceivePermissions(data);
 // 		//if ( !(onLoadFunction == null) ) onLoadFunction.call(self, eventData);
 // 	});
@@ -2666,7 +2623,7 @@ export default class Gamemap {
 // 	}
 // 	else
 // 	{
-// 		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+// 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 // 				self.onReceiveLocationData(data);
 // 				if ( !(onLoadFunction == null) ) onLoadFunction.call(self, eventData, data);
 // 			});
@@ -2697,7 +2654,7 @@ export default class Gamemap {
 // 	}
 // 	else
 // 	{
-// 		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveCenterOnLocationData(data); });
+// 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) { self.onReceiveCenterOnLocationData(data); });
 // 	}
 
 // }
@@ -2728,31 +2685,11 @@ export default class Gamemap {
 // 	}
 // 	else
 // 	{
-// 		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveLocationData(data); });
+// 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) { self.onReceiveLocationData(data); });
 // 	}
 
 // 	return true;
 // }
-
-
-// uesp.gamemap.Map.prototype.retrieveWorldData = function()
-// {
-// 	var queryParams = {};
-// 	var self = this;
-// 	queryParams.action = "get_worlds";
-// 	queryParams.db = this.mapOptions.dbPrefix;
-// 	if (this.isShowHidden()) queryParams.showhidden = 1;
-
-// 	if (this.mapOptions.isOffline)
-// 	{
-// 		setTimeout( function() { ugmLoadOfflineWorlds(self, queryParams); }, 10);
-// 	}
-// 	else
-// 	{
-// 		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) { self.onReceiveWorldData(data); });
-// 	}
-// }
-
 
 // uesp.gamemap.Map.prototype.setGamePos = function(x, y, zoom, updateMap)
 // {
@@ -3787,7 +3724,7 @@ export default class Gamemap {
 // 	}
 // 	else
 // 	{
-// 		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+// 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 // 			self.onSavedWorld(data);
 // 		});
 // 	}
@@ -4318,7 +4255,7 @@ export default class Gamemap {
 // 	}
 // 	else
 // 	{
-// 		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+// 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 // 			self.onReceiveRecentChanges(data);
 // 		});
 // 	}
@@ -4630,7 +4567,7 @@ export default class Gamemap {
 // 	queryParams.worldid = this.currentWorldId;
 // 	queryParams.editorid = resourceEditorID;
 
-// 	$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+// 	$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 // 		self.parseGetCellResourceRequest(data, resourceEditorID);
 // 	});
 

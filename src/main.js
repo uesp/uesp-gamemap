@@ -108,7 +108,7 @@ function loadGamemap(mapConfig) {
 
 
 	var mapCallbacks = {
-		onMapWorldsLoaded   : onWorldLoad,
+		onGamemapLoaded   : onWorldLoad,
 		onPermissionsLoaded : onPermLoad,
 		onMapWorldChanged   : onWorldChanged
 	};
@@ -458,3 +458,62 @@ window.zoomIn = function(){
 	M.toast({text: 'Zoom in button clicked!'})
 	print(Constants.ASSETS_DIR);
 }
+
+
+
+
+// uesp.gamemap.Map.prototype.createMapList = function (parentObject)
+// {
+// 	var self = this;
+// 	var listHtml = 	"<div id='gmMapListTitle'>" +
+// 						"Map List" +
+// 						"<div id='gmMapListButtonAlpha'>Alpha</div>" +
+// 						"<div id='gmMapListButtonGroup' class='gmMapListButtonSelect'>Group</div>" +
+// 					"</div>" +
+// 					"<div id='gmMapListAlpha' style='display: none;'>" +
+// 						"<form><select id='gmMapListAlphaSelect' size='4'></select></form>" +
+// 					"</div>" +
+// 					"<div id='gmMapListGroup'>" +
+// 					"<ul id='gmMapList'>" +
+// 						"<li>Loading world data...</li>" +
+// 					"</ul></div>";
+
+// 	this.mapListContainer = $('<div />')
+// 								.attr('id', 'gmMapListContainer')
+// 								.appendTo(parentObject);
+
+// 	this.mapListContainer.html(listHtml);
+
+// 	$('#gmMapListButtonAlpha').bind("touchstart click", function(e) {
+// 		$('#gmMapListButtonAlpha').addClass('gmMapListButtonSelect');
+// 		$('#gmMapListButtonGroup').removeClass('gmMapListButtonSelect');
+// 		$('#gmMapListAlpha').show();
+// 		$('#gmMapListGroup').hide();
+// 		$('#gmMapListAlphaSelect').focus();
+// 		return false;
+// 	});
+
+// 	$('#gmMapListButtonGroup').bind("touchstart click", function(e) {
+// 		$('#gmMapListButtonGroup').addClass('gmMapListButtonSelect');
+// 		$('#gmMapListButtonAlpha').removeClass('gmMapListButtonSelect');
+// 		$('#gmMapListGroup').show();
+// 		$('#gmMapListAlpha').hide();
+// 		$('#gmMapListGroup').focus();
+
+// 		selItem = $('#gmMapList li.gmMapListSelect');
+// 		if (selItem == null) return false;
+
+// 		container = $('#gmMapListGroup');
+// 		container.scrollTop(selItem.offset().top - container.offset().top + container.scrollTop() - 200);
+// 		return false;
+// 	});
+
+// 	$('#gmMapListAlphaSelect').change(function(e) {
+// 		var result = parseInt(this.options[this.selectedIndex].value);
+// 		self.changeWorld(result);
+
+// 		self.hideMapList();
+// 	});
+
+// 	return true;
+// }
