@@ -82,7 +82,7 @@ function initGamemap() {
 		mapType = mapParams.get("map");
 
 		// load map config 
-		let configURL = Constants.CONFIG_DIR + mapType + "/config.json";
+		let configURL = "assets/configs/" + mapType + "/config.json";
 		print("Getting map config at "+configURL+"...");
 
 		Utils.getJSON(configURL, function(error, object) {
@@ -456,4 +456,5 @@ window.enableDebugging = function(){
 
 window.zoomIn = function(){
 	M.toast({text: 'Zoom in button clicked!'})
+	print(Constants.ASSETS_DIR);
 }

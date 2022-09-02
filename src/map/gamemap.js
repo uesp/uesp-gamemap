@@ -26,8 +26,8 @@ export default class Gamemap {
 		this.mapCallbacks = mapCallbacks;
 
 		// set up important constants
-		this.USE_CANVAS_DRAW = this.mapConfig.options.useCanvasDraw;
-		this.PAN_AMOUNT = this.mapConfig.tiles.tileSize / 2;
+		this.USE_CANVAS_DRAW = this.mapConfig.useCanvasDraw;
+		this.PAN_AMOUNT = this.mapConfig.tileSize / 2;
 	
 		// set up the root map element
 		this.mapContainer = $('#' + mapContainerID);
@@ -88,7 +88,7 @@ export default class Gamemap {
 		this.displayState = "";
 		this.currentWorldID = 0;
 		this.addWorld('__default', this.mapConfig, this.currentWorldID, '');
-		this.zoomLevel = this.mapConfig.zooming.initialZoom;
+		this.zoomLevel = this.mapConfig.initialZoom;
 	
 		// set editing to false by default
 		this.editingEnabled = false;
