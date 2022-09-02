@@ -5,6 +5,7 @@
  */
 
 import * as Utils from "../common/utils.js";
+import World from "./world.js";
 
 /*================================================
 					Gamemap
@@ -138,12 +139,12 @@ export default class Gamemap {
 		return Utils.getURLParams().get("centreOn") != null && Utils.getURLParams().get("centreOn") !== '';
 	}
 
-	addWorld(worldName, mapOptions, worldId, displayName) {
-		this.mapWorlds[worldId] = new World(worldName.toLowerCase(), this.defaultMapOptions, worldId);
-		this.mapWorlds[worldId].mergeMapOptions(mapOptions);
+	addWorld(worldName, mapConfig, worldID, displayName) {
+		this.mapWorlds[worldID] = new World(worldName.toLowerCase(), DEFAULT_MAP_CONFIG, worldID);
+		this.mapWorlds[worldID].mergeMapConfig(mapConfig);
 	
-		this.mapWorldNameIndex[worldName.toLowerCase()] = worldId;
-		if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldId;
+		this.mapWorldNameIndex[worldName.toLowerCase()] = worldID;
+		if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldID;
 	}
 
 	

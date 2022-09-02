@@ -4,7 +4,7 @@
     "wikiNamespace": "",
     "wikiURL": "",  // replace all of these when making new map config
     "mapURL" : "",
-    "useDatabase" : "",
+    "database" : "",
     "feedbackURL" : "https://github.com/uesp/uesp-gamemap/issues",
 
     // Map options
@@ -26,7 +26,7 @@
     "yPos" : 0,
 
     // Map tile info
-    "missingMapTile" : "assets/images/missingtile.jpg",
+    "missingMapTilePath" : "assets/images/missingtile.jpg",
     "numTilesX" : 10,
     "numTilesY" : 7,
     "tileSize" : 256,
