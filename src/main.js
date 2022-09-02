@@ -11,6 +11,7 @@
 ================================================*/
 
 import * as Utils from "./common/utils.js";
+import * as Constants from "./common/constants.js";
 import Gamemap from "./map/gamemap.js";
 
 /*================================================
@@ -81,16 +82,17 @@ function initGamemap() {
 		mapType = mapParams.get("map");
 
 		// load map config 
-		let configURL = "assets/configs/" + mapType + "/config.json";
+		let configURL = Constants.CONFIG_DIR + mapType + "/config.json";
 		print("Getting map config at "+configURL+"...");
 
 		Utils.getJSON(configURL, function(error, object) {
 			if (error !== null) {
 				showError("Could not get map config: " + error +". Please check the URL.");
 			} else {
-				print("Imported map config successfully!");
+
 				print(object);
 				mapConfig = object;
+				print("Imported map config successfully!");
 
 				// load map
 				loadGamemap(mapConfig);

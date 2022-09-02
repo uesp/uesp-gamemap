@@ -1,0 +1,123 @@
+{
+    // General map info
+    "mapTitle": "ESO Map", 
+    "wikiNamespace": "Online",
+    "wikiURL": "//en.uesp.net/wiki/",
+    "mapURL" : "//esomap.uesp.net/esomap.html",
+    "useDatabase" : "eso",
+    "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design",
+
+    // Map options
+    "useCanvasDraw" : false,
+    "useLeaflet" : false,
+    "isOffline" : false,
+    "useFakeMaxZoom" : false,
+    "initialZoom" : 10,
+    "minZoomLevel" : 9,
+    "maxZoomLevel" : 17,
+    "zoomOffset" : 0,
+
+    // Map coordinate system info
+    "minX": 0,
+    "maxX": 1000000,
+    "minY": 0,
+    "maxY": 1000000,
+    "initialXPos" : 400000,
+    "initialYPos" : 600000,
+
+    // Map tile info
+    "missingMapTile" : "assets/images/missingtile.jpg",
+    "numTilesX" : 11,
+    "numTilesY" : 9,
+    "tileSize" : 256,
+    "tileEdgeLoadCount" : 1,
+
+    // Map world info
+    "homeWorldId" : 668,
+    "minValidWorldId" : 50,
+    "maxValidWorldId" : 20000,
+    "mapLocationList" : {
+        // map location list goes here... 
+    },
+    
+    // Map icon info
+    "iconPath": "",
+    "iconWidth" : 32,
+    "iconHeight" : 32,
+    "icons": {
+        // icon list goes here...
+    },
+
+    // Map cell resource info    
+    "cellResourceStartX" : 0,
+    "cellResourceStartY" : 0,
+    "cellResourceStopX" : 0,
+    "cellResourceStopY" : 0,
+    "cellResourceDeltaX" : 256,
+    "cellResourceDeltaY" : 256,
+
+    // Map grid info
+    "gridStartX" : 0,
+    "gridStartY" : 0,
+    "gridStopX" : 0,
+    "gridStopY" : 0,
+    "gridDeltaX" : 256,
+    "gridDeltaY" : 256,
+    "gridLabelDeltaX" : 5,
+    "gridLabelDeltaY" : 5,
+    "gridStartLabelZoom" : 10,
+    "gridShowLabels" : true,
+    "gridLabelOffsetX" : 0,
+    "gridLabelOffsetY" : 0,	
+    "gridStyle" : "yellow",
+    "gridOffsetX" : 0,
+    "gridOffsetY" : 0,
+    "gridOffsetPowerY" : 0
+
+}
+
+
+this.missingMapTile = "missingtile.jpg";
+this.missingMapTileFunction = null;
+
+this.useCanvasDraw = false;
+
+this.useLeaflet = false;
+this.leafletTileLayer = '';
+
+this.wikiUrl       = '';
+this.wikiNamespace = '';
+
+this.mapUrl = '';
+
+this.iconPath    = "";
+this.iconMissing = "missing.png";
+
+this.gameDataScript = "gamemap.php";
+
+this.minZoomLevel = 9;
+this.maxZoomLevel = 17;
+this.zoomOffset   = 0;
+
+this.tileCountX = 10;
+this.tileCountY = 7;
+this.tileSize   = 256;
+
+this.tileEdgeLoadCount = 1;
+
+this.gamePosX1 = 0;
+this.gamePosX2 = 10000;
+this.gamePosY1 = 10000;
+this.gamePosY2 = 0;
+
+this.initialGamePosX = 0;
+this.initialGamePosY = 0;
+this.initialZoom     = 10;
+
+
+// Temporary values for the initial ESO maps
+this.initialGamePosX = 500000;
+this.initialGamePosY = 600000;
+
+this.minValidWorldId = 50;
+this.maxValidWorldId = 20000;

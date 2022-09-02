@@ -17,16 +17,14 @@ export function isMobileDevice() {
 ================================================*/
 
 export function getJSON(url, callback) {
-
 	try {
 		fetch(url)
-			.then((response) => response.text())
+			.then((response) => response.text()) // remove comments before parsing
 			.then((data) => callback(null, JSON.parse((data.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m)))));			
 	} catch (error){
 		callback(error, null);
 		console.log(error);
 	}
-
 }
 
 /*================================================
