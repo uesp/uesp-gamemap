@@ -100,7 +100,6 @@
 						  <span>Only show results from this map</span>
 						</label>
 
-
 					<div class="horizontal_divider"></div>
 					<div class='search_results'>
 						<p>blah blah blah</p>
@@ -114,12 +113,12 @@
 			</div>
 		</div>
 
-		<div class="infobar">
+		<div class="infobar banishdefault">
 			<a href="//www.uesp.net/wiki/Main_Page" title="Go UESP home"><b class="wikiTitle">UESP</b></a>
 			<b> | </b>
-			<a onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">ESO Map</a>
+			<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">ESO Map</a>
 			<b> | </b>
-			<a href="//www.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design" title="Give feedback about this map">Send Feedback</a>
+			<a id="mapFeedbackLink" href="javascript:void(0);" title="Give feedback about this map">Send Feedback</a>
 		</div>
 
 		<div id="zoom_widget" class="hoverable">

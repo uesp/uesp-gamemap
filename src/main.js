@@ -101,6 +101,11 @@ function initGamemap() {
 
 function loadGamemap(mapConfig) {
 
+	// set up infobar
+	$(".infobar").show();
+	$("#mapNameLink").text(mapConfig.mapTitle);
+	$("#mapFeedbackLink").attr("href", mapConfig.feedbackURL);
+
 	var mapCallbacks = {
 		onMapWorldsLoaded   : onWorldLoad,
 		onPermissionsLoaded : onPermLoad,
