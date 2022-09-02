@@ -139,7 +139,7 @@ export default class Gamemap {
 	}
 	
 	hasCentreOnParam(){
-		return Utils.getURLParams().has("centreOn") && Utils.getURLParams().get("centreOn") != null && Utils.getURLParams().get("centreOn") !== '';
+		return Utils.getURLParams().get("centreOn") != null && Utils.getURLParams().get("centreOn") !== '';
 	}
 
 	addWorld(worldName, mapOptions, worldId, displayName) {
@@ -4734,9 +4734,3 @@ export default class Gamemap {
 // 	this.displayState = "";
 // }
 
-// // Simple position/point class
-// uesp.gamemap.Position = function (x, y)
-// {
-// 	this.x = (typeof x !== 'undefined') ? x : 0;
-// 	this.y = (typeof y !== 'undefined') ? y : 0;
-// }

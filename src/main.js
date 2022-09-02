@@ -102,9 +102,8 @@ function initGamemap() {
 function loadGamemap(mapConfig) {
 
 	// set up infobar
-	$(".infobar").show();
-	$("#mapNameLink").text(mapConfig.mapTitle);
-	$("#mapFeedbackLink").attr("href", mapConfig.feedbackURL);
+	loadInfobar(mapConfig);
+
 
 	var mapCallbacks = {
 		onMapWorldsLoaded   : onWorldLoad,
@@ -125,6 +124,12 @@ function loadGamemap(mapConfig) {
 	// 	$('#gmMapList').html(data);
 	// 	gamemap.setEventsForMapGroupList();
 	// });
+}
+
+function loadInfobar(mapConfig){
+	$(".infobar").show();
+	$("#mapNameLink").text(mapConfig.mapTitle);
+	$("#mapFeedbackLink").attr("href", mapConfig.feedbackURL);
 }
 
 function onWorldLoad() {

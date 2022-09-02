@@ -16,20 +16,18 @@ export function isMobileDevice() {
 			JSON object parsing function
 ================================================*/
 
-export var getJSON = function(url, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.responseType = 'json';
-    xhr.onload = function() {
-      var status = xhr.status;
-      if (status === 200) {
-        callback(null, xhr.response);
-      } else {
-        callback(status, xhr.response);
-      }
-    };
-    xhr.send();
-};
+export function getJSON(url, callback) {
+
+	try {
+		fetch(url)
+			.then((response) => response.text())
+			.then((data) => callback(null, JSON.parse((data.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m)))));			
+	} catch (error){
+		callback(error, null);
+		console.log(error);
+	}
+
+}
 
 /*================================================
 			 Get URL parameters function
