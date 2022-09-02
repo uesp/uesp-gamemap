@@ -4,10 +4,6 @@
  * @summary The main source code for the interactive gamemap.
  */
 
-/*================================================
-				  	Imports
-================================================*/
-
 import * as Utils from "../common/utils.js";
 
 /*================================================
@@ -4724,13 +4720,5 @@ export default class Gamemap {
 // 	this.deltaTileY = (typeof y !== 'undefined') ? y : 0;
 // }
 
-// uesp.gamemap.MapState = function()
-// {
-// 	this.zoomLevel = 10;
-// 	this.gamePos = new uesp.gamemap.Position(0, 0);
-// 	this.worldId = 0;
-// 	this.grid = false;
-// 	this.cellResource = "";
-// 	this.displayState = "";
-// }
+
 

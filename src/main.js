@@ -6,10 +6,6 @@
  * @see gamemap.js for actual map viewer implementation. 
  */
 
-/*================================================
-				  	Imports
-================================================*/
-
 import * as Utils from "./common/utils.js";
 import * as Constants from "./common/constants.js";
 import Gamemap from "./map/gamemap.js";
@@ -90,12 +86,16 @@ function initGamemap() {
 				showError("Could not get map config: " + error +". Please check the URL.");
 			} else {
 
-				print(object);
 				mapConfig = object;
 				print("Imported map config successfully!");
 
+				print("Merging with default map config...")
+				let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
+
+				print(mergedMapConfig);
+
 				// load map
-				loadGamemap(mapConfig);
+				loadGamemap(mergedMapConfig);
 			}
 		})
 	}

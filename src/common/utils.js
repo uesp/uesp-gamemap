@@ -229,14 +229,10 @@ export function escapeAttribute(unsafeStr) {
 		      Merge objects functions
 ================================================*/
 
-export function createMergedObject(obj1, obj2) {
-	var obj3 = {};
-	for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-	for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
-	return obj3;
-}
-
 export function mergeObjects(obj1, obj2) {
-	for (var attrname in obj2) { obj1[attrname] = obj2[attrname]; }
-	return obj1;
+	let obj3 = {
+		...obj1,
+		...obj2
+	};
+	return obj3;
 }

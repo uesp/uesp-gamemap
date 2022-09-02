@@ -12,30 +12,31 @@ export default class World {
 		this.mapConfig = mapConfig;
 		
 		this.id = (worldID == null) ? 0 : worldID;
-		this.parentId = -1;
-		this.revisionId = 0;
+		this.parentID = -1;
+		this.revisionID = 0;
 		this.description = '';
 		this.wikiPage = '';
 		this.cellSize = -1;
 
-		this.missingMapTile = this.mapOptions.missingMapTile;
-		this.minZoom = this.mapOptions.minZoomLevel;
-		this.maxZoom = this.mapOptions.maxZoomLevel;
-		this.zoomOffset = this.mapOptions.zoomOffset;
-		this.posLeft = this.mapOptions.gamePosX1;
-		this.posTop = this.mapOptions.gamePosY1;
-		this.posRight = this.mapOptions.gamePosX2;
-		this.posBottom = this.mapOptions.gamePosY2;
+		this.missingMapTile = mapConfig.missingMapTile;
+		this.minZoomLevel = mapConfig.minZoomLevel;
+		this.maxZoomLevel = mapConfig.maxZoomLevel;
+		this.zoomOffset = mapOptions.zoomOffset;
+
+		this.minX = mapConfig.minX;
+		this.maxX = mapConfig.maxX;
+		this.minY = mapConfig.minY;
+		this.maxY = mapConfig.maxY;
 		
 		this.enabled = true;
 		
-		this.mapState = new uesp.gamemap.MapState();
-		this.mapState.worldId = this.id;
+		this.mapState = new MapState();
+		this.mapState.worldID = this.id;
 		this.mapState.gamePos.x = this.mapOptions.initialGamePosX;
 		this.mapState.gamePos.y = this.mapOptions.initialGamePosY;
 		this.mapState.zoomLevel = this.mapOptions.initialZoom;
 		
-		/* Special case for ESO Tamriel Mundus map */
+		/* Special case for ESO Tamriel Aurbis map */
 		if (worldID == 667) 
 		{
 			this.mapState.zoomLevel = 9;
@@ -83,7 +84,7 @@ uesp.gamemap.World.prototype.updateStateFromOptions = function()
 	this.mapState.gamePos.y = this.mapOptions.initialGamePosY;
 	this.mapState.zoomLevel = this.mapOptions.initialZoom;
 	
-	/* Special case for ESO Tamriel Mundus map */
+	/* Special case for ESO Tamriel Aurbis map */
 	if (this.id == 667) 
 	{
 		this.mapState.gamePos.y = 500000;
@@ -107,8 +108,8 @@ uesp.gamemap.World.prototype.createSaveQuery = function()
 	var query = 'action=set_world';
 	
 	query += '&worldid=' + this.id;
-	query += '&parentid=' + this.parentId;
-	query += '&revisionid=' + this.revisionId;
+	query += '&parentid=' + this.parentID;
+	query += '&revisionid=' + this.revisionID;
 	query += '&name=' + encodeURIComponent(this.name);
 	query += '&displayname=' + encodeURIComponent(this.displayName);
 	query += '&description=' + encodeURIComponent(this.description);
@@ -123,10 +124,6 @@ uesp.gamemap.World.prototype.createSaveQuery = function()
 	query += '&zoomoffset=' + this.zoomOffset;
 	query += '&enabled=' + (this.enabled ? '1' : '0');
 	query += '&db=' + this.mapOptions.dbPrefix;
-	
-	if (this.locType > 1) {
-
-	}
 	
 	return query;
 }
