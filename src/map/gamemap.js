@@ -65,7 +65,6 @@ export default class Gamemap {
 		this.mapContextGrid = null;
 		this.mapListContainer = null;
 		this.mapListLastSelectedItem = null;
-		this.mapControlRoot = null;
 		this.lastCanvasHoverLocation = null;
 
 		this.mapKeyNumColumns = 8;
@@ -310,6 +309,15 @@ export default class Gamemap {
 		this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
 	}
 
+	redrawCanvas = function(redrawGrid) {
+		this.redrawImages();
+		if (redrawGrid) {
+			this.canvasDrawGrid();
+		} 
+		this.drawCellResources();
+		this.redrawLocations();
+	}
+
 	createEvents = function() {
 		let self = this;
 	
@@ -352,7 +360,7 @@ export default class Gamemap {
 	================================================*/
 
 	onResize(event) {
-		let self = this;
+		let self = event.data.self;
 
 		let canvasWidth = self.mapContainer.width();
 		let canvasHeight = self.mapContainer.height();
@@ -369,16 +377,15 @@ export default class Gamemap {
 							css('width', canvasWidth).
 							css('height', canvasHeight);
 
-		let worldName = self.mapWorlds[this.currentWorldID].name;
-		let canvasBGColor = self.mapConfig.bgColour;
-		if (this.mapConfig.canvasBGColorFunction !== null) canvasBGColor = self.mapOptions.canvasBGColorFunction(worldName, self.displayState);
+		let worldName = self.mapWorlds[self.currentWorldID].name;
+		let canvasBGColor = DEFAULT_MAP_CONFIG.bgColour;
 
-		if (this.mapContext) {
-			this.mapContext.fillStyle = canvasBGColor;
-			this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
+		if (self.mapContext) {
+			self.mapContext.fillStyle = canvasBGColor;
+			self.mapContext.fillRect(0, 0, self.mapCanvas.width, self.mapCanvas.height);
 
-			this.mapContext.translate(this.mapTransformX, this.mapTransformY);
-			this.mapContextGrid.translate(this.mapTransformX, this.mapTransformY);
+			self.mapContext.translate(self.mapTransformX, self.mapTransformY);
+			self.mapContextGrid.translate(self.mapTransformX, self.mapTransformY);
 		}
 
 		self.redrawCanvas(true);
@@ -1803,24 +1810,7 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.redrawCanvas = function(redrawGrid)
-// {
-// 	if (!this.USE_CANVAS_DRAW) return;
 
-// 	var startTime = 0;
-// 	if (window.performance && window.performance.now) startTime = window.performance.now();
-
-// 	this.redrawImages();
-// 	if (this.isDrawGrid) this.canvasDrawGrid();
-// 	this.drawCellResources();
-
-// 	this.redrawLocations();
-
-// 	if (window.performance && window.performance.now) {
-// 		var diffTime = window.performance.now() - startTime;
-// 		//console.log("redrawCanvas time", diffTime);
-// 	}
-// }
 
 
 // uesp.gamemap.Map.prototype.redrawImages = function()
