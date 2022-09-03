@@ -137,7 +137,6 @@ export default class Gamemap {
 		return Utils.getURLParams().get("centreOn") != null && Utils.getURLParams().get("centreOn") !== '';
 	}
 
-
 	/*================================================
 						  Worlds
 	================================================*/
@@ -152,7 +151,6 @@ export default class Gamemap {
 
 	getWorldData() {
 		let queryParams = {};
-		var self = this;
 		queryParams.action = "get_worlds";
 		queryParams.db = this.mapConfig.database;
 		if (this.isHiddenLocsShown()) {

@@ -83,7 +83,7 @@ function initGamemap() {
 
 		Utils.getJSON(configURL, function(error, object) {
 			if (error !== null) {
-				showError("Could not get map config: " + error +". Please check the URL.");
+				showError("Could not get map config: " + error);
 			} else {
 
 				mapConfig = object;
@@ -106,6 +106,8 @@ function loadGamemap(mapConfig) {
 	// set up infobar
 	loadInfobar(mapConfig);
 
+	// hide spinner
+	$("#loading_spinner").hide();
 
 	var mapCallbacks = {
 		onGamemapLoaded   : onWorldLoad,
@@ -426,6 +428,7 @@ function showError(reason){
 	$('#error_box').css('visibility','visible');
 	$("#error_box_reason").text(reason);
 	print("Error: " + reason);
+	$("#loading_spinner").hide();
 }
 
 /*================================================

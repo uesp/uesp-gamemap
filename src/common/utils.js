@@ -19,11 +19,18 @@ export function isMobileDevice() {
 export function getJSON(url, callback) {
 	try {
 		fetch(url)
-			.then((response) => response.text()) // remove comments before parsing
-			.then((data) => callback(null, JSON.parse((data.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m)))));			
+			.then((response) => response.text()) 
+			.then((data) => {
+				try {
+					// remove comments before parsing
+					callback(null, JSON.parse((data.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m))));	
+				} catch (error) {
+					callback(error, null);
+				}
+			});
+
 	} catch (error){
 		callback(error, null);
-		console.log(error);
 	}
 }
 
