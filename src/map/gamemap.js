@@ -10,6 +10,7 @@ import World from "./world.js";
 import MapState from "./mapState.js";
 import MapTile from "./mapTile.js";
 import Position from "./mapPosition.js";
+import Bounds from "./bounds.js";
 
 /*================================================
 				Gamemap constructor
@@ -409,6 +410,20 @@ export default class Gamemap {
 		}
 	}
 
+	removeExtraLocations() {
+		var mapBounds = this.getMapRootBounds();
+	
+		// Remove locations in this world that are out of the current bounds
+		for (let key in this.locations) {
+			if (this.locations[key].worldID != this.currentWorldID) continue;
+			if (this.locations[key].isInBounds(mapBounds)) continue;
+	
+			this.locations[key].removeElements();
+			delete this.locations[key];
+		}
+	
+	}
+
 	redrawLocations() {
 	
 		let displayedLocations = {};
@@ -450,6 +465,17 @@ export default class Gamemap {
 		}
 	}
 
+	updateLocations(animate) {
+
+		this.removeExtraLocations();
+		this.updateLocationDisplayLevels();
+		this.updateLocationOffsets(animate);
+	
+		this.redrawCanvas();
+		//this.redrawLocations();
+	
+		this.retrieveLocations();
+	}
 
 	drawCellResources() {
 		if (this.cellResource == "") return;
@@ -925,6 +951,13 @@ export default class Gamemap {
 		return new Position(tileX, tileY);
 	}
 
+	getMapRootBounds() {
+		leftTop     = this.convertTileToGamePos(this.startTileX, this.startTileY);
+		rightBottom = this.convertTileToGamePos(this.startTileX + this.mapConfig.numTilesX, this.startTileY + this.mapConfig.numTilesY);
+
+		return Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
+	}
+
 }
 
 // uesp.gamemap.Map.prototype.checkTileEdges = function ()
@@ -1216,15 +1249,6 @@ export default class Gamemap {
 
 // 	leftTop     = this.convertTileToGamePos(leftTile, topTile);
 // 	rightBottom = this.convertTileToGamePos(rightTile, bottomTile);
-
-// 	return new uesp.gamemap.Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
-// }
-
-
-// uesp.gamemap.Map.prototype.getMapRootBounds = function()
-// {
-// 	leftTop     = this.convertTileToGamePos(this.startTileX, this.startTileY);
-// 	rightBottom = this.convertTileToGamePos(this.startTileX + this.mapOptions.tileCountX, this.startTileY + this.mapOptions.tileCountY);
 
 // 	return new uesp.gamemap.Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
 // }
@@ -2683,23 +2707,6 @@ export default class Gamemap {
 // 	return true;
 // }
 
-
-// uesp.gamemap.Map.prototype.removeExtraLocations = function()
-// {
-// 	var mapBounds = this.getMapRootBounds();
-
-// 		// Remove locations in this world that are out of the current bounds
-// 	for (key in this.locations)
-// 	{
-// 		if (this.locations[key].worldID != this.currentWorldID) continue;
-// 		if (this.locations[key].isInBounds(mapBounds)) continue;
-
-// 		this.locations[key].removeElements();
-// 		delete this.locations[key];
-// 	}
-
-// }
-
 // uesp.gamemap.Map.prototype.retrieveLocation = function(locId, onLoadFunction, eventData)
 // {
 // 	if (locId <= 0) return;
@@ -2990,40 +2997,6 @@ export default class Gamemap {
 // 		this.locations[key].shiftElements(shiftX, shiftY);
 // 	}
 // }
-
-
-// uesp.gamemap.Map.prototype.updateLocations = function(animate)
-// {
-// 	if (this.USE_CANVAS_DRAW) return this.updateLocationsCanvas(animate);
-
-// 	this.updateMapLink();
-
-// 	this.removeExtraLocations();
-// 	this.updateLocationDisplayLevels();
-// 	this.updateLocationOffsets(animate);
-
-// 	this.redrawLocations();
-
-// 	this.retrieveLocations();
-
-// }
-
-
-// uesp.gamemap.Map.prototype.updateLocationsCanvas = function(animate)
-// {
-// 	this.updateMapLink();
-
-// 	this.removeExtraLocations();
-// 	this.updateLocationDisplayLevels();
-// 	this.updateLocationOffsets(animate);
-
-// 	this.redrawCanvas();
-// 	//this.redrawLocations();
-
-// 	this.retrieveLocations();
-
-// }
-
 
 // uesp.gamemap.Map.prototype.redrawLocationPaths = function()
 // {
@@ -4421,14 +4394,6 @@ export default class Gamemap {
 // 		return "zoom" + zoom + "/maptile-" + tileX + "-" + tileY + ".jpg";
 // 	else
 // 		return world + "/zoom" + zoom + "/maptile-" + tileX + "-" + tileY + ".jpg";
-// }
-
-// uesp.gamemap.Bounds = function(left, top, right, bottom)
-// {
-// 	this.left   = (typeof left   === 'undefined' || left   === null) ? 0 : left;
-// 	this.right  = (typeof right  === 'undefined' || right  === null) ? 0 : right;
-// 	this.top    = (typeof top    === 'undefined' || top    === null) ? 0 : top;
-// 	this.bottom = (typeof bottom === 'undefined' || bottom === null) ? 0 : bottom;
 // }
 
 // /* For Testing Only */
