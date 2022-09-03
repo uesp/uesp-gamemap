@@ -147,22 +147,19 @@ function onWorldsLoaded(mapWorlds) {
 	$("#loading_spinner").hide();
 	$('#zoom_widget').css('visibility','visible');
 
+	if (!gamemap.hasCentreOnParam()) {
+		//jump to default map
+		let defaultMapState = new MapState();
 
-	
+		defaultMapState.worldID = gamemap.mapConfig.homeWorldID;
+		defaultMapState.zoomLevel = gamemap.mapConfig.zoomLevel;
+		defaultMapState.gamePos.x = gamemap.mapConfig.xPos;
+		defaultMapState.gamePos.y = gamemap.mapConfig.yPos;
 
-	// if (this.hasCenterOnParam()) return;
+		let mapState = gamemap.getMapStateFromQuery(defaultMapState);
+		gamemap.setMapState(mapState);
+	} 
 
-	// jump to default map
-
-	// defaultMapState = new uesp.gamemap.MapState();
-
-	// defaultMapState.worldId = 668;
-	// defaultMapState.zoomLevel = 9;
-	// defaultMapState.gamePos.x = 500000;
-	// defaultMapState.gamePos.y = 500000;
-
-	// g_MapState = this.getMapStateFromQuery(defaultMapState);
-	// this.setMapState(g_MapState);
 }
 
 function onPermissionsLoaded(enableEditing) {
