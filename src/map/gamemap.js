@@ -765,16 +765,16 @@ export default class Gamemap {
 	
 		wikiPage = encodeURIComponent (wikiPage);
 	
-		return this.mapConfig.wikiUrl + namespace + wikiPage;
+		return this.mapConfig.wikiURL + namespace + wikiPage;
 
 	}
 
 	createMapLink() { 
 
-		let mapLink = this.mapConfig.mapURL;
+		let mapLink = window.location;
 		let mapState = this.getMapState();
 	
-		mapLink += '?world=' + mapState.worldID;
+		mapLink += '&world=' + mapState.worldID;
 		mapLink += '&x=' + mapState.gamePos.x;
 		mapLink += '&y=' + mapState.gamePos.y;
 		mapLink += '&zoom=' + mapState.zoomLevel;

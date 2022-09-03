@@ -574,6 +574,20 @@ window.copyMapLink = function(){
 	}
 }
 
+// goto article button
+window.gotoArticle = function(){
+	if (gamemap != null) {
+		print("getting article link...");
+
+		let link = gamemap.getArticleLink();
+
+		if (link != null && link != "") {
+			window.open(link);
+		}
+
+	}
+}
+
 // zoom widget
 window.zoomIn = function(){
 	M.toast({text: 'Zoom in button clicked!'})
