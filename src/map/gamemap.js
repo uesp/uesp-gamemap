@@ -113,16 +113,15 @@ export default class Gamemap {
 
 		// start building map
 		this.getWorldData();
-		this.createMapRoot();
-		this.createMapTiles();
-		// this.createEvents();
+		this.createMapCanvas();
+		this.createEvents();
 	
 		// this.setGamePosNoUpdate(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY, this.mapOptions.initialZoom);
 		// this.updateMapStateFromQuery(false);
 	}
 
 	/*================================================
-						Class methods
+					General functions
 	================================================*/
 
 	isHiddenLocsShown() {
@@ -136,6 +135,19 @@ export default class Gamemap {
 	
 	hasCentreOnParam(){
 		return Utils.getURLParams().get("centreOn") != null && Utils.getURLParams().get("centreOn") !== '';
+	}
+
+	onDocReady() {
+
+		if (this.USE_CANVAS_DRAW) {
+			let event = {};
+			event.data = {};
+			event.data.self = this;
+
+			this.onResize(event);
+			this.redrawCanvas(true);
+		}
+	
 	}
 
 	/*================================================
@@ -263,51 +275,116 @@ export default class Gamemap {
 					 Gamemap Interface
 	================================================*/
 
-	createMapRoot() {
-		this.mapRoot = $('<div />').attr('id', Constants.GAMEMAP_ROOT_NAME).appendTo(this.mapContainer);
-		//if (this.USE_CANVAS_DRAW) this.createMapCanvas();
+	createMapCanvas() {
+
+		let canvasWidth = this.mapContainer.width();
+		let canvasHeight = this.mapContainer.height();
+	
+		print("Creating map canvas with width: " + canvasWidth + ", and height: " + canvasHeight);
+	
+		this.mapCanvas = $('<canvas />').
+							attr('id', 'gmMapCanvas').
+							attr('width', canvasWidth).
+							attr('height', canvasHeight).
+							css('width', canvasWidth).
+							css('height', canvasHeight).
+							css('cursor', "grab").
+							appendTo(this.mapContainer)[0];
+	
+		this.mapCanvasGrid = $('<canvas />').
+							attr('id', 'gmMapCanvasGrid').
+							attr('width', canvasWidth).
+							attr('height', canvasHeight).
+							css('width', canvasWidth).
+							css('height', canvasHeight).
+							css('cursor', "grab").
+							appendTo(this.mapContainer)[0];
+	
+		this.mapCanvasElement = $("#gmMapCanvas");
+		this.mapCanvasGridElement = $("#gmMapCanvasGrid");
+	
+		this.mapContext = this.mapCanvas.getContext("2d");
+		this.mapContextGrid = this.mapCanvasGrid.getContext("2d");
+	
+		this.mapContext.fillStyle = this.mapConfig.bgColour;
+		this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
 	}
 
-	createMapTiles() {
-		if (this.USE_LEAFLET) return;
-		if (this.USE_CANVAS_DRAW) return;
+	createEvents = function() {
+		let self = this;
+	
+		$(window).on("mousemove", { self: this }, this.onMouseMove);
+		$(window).on("touchmove", { self: this }, this.onTouchMove);
+	
+		if (this.USE_CANVAS_DRAW) {
+			$('#gmMapCanvas').on("mousedown", { self: this }, this.onMouseDown);
+			$('#gmMapCanvas').on("touchstart", { self: this }, this.onTouchStart);
+			$('#gmMapCanvas').on("click", { self: this }, this.onClick);
+			$('#gmMapCanvas').on("dblclick", { self: this }, this.onDblClickCanvas);
+			$(this.mapCanvas).on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScrollCanvas);
+	
+			$('#gmMapCanvasGrid').on("mousedown", { self: this }, this.onMouseDown);
+			$('#gmMapCanvasGrid').on("touchstart", { self: this }, this.onTouchStart);
+			$('#gmMapCanvasGrid').on("click", { self: this }, this.onClick);
+			$('#gmMapCanvasGrid').on("dblclick", { self: this }, this.onDblClickCanvas);
+			$(this.mapCanvasGrid).on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScrollCanvas);
+		}
+	
+		$(window).on("mouseup", { self: this }, this.onMouseUp);
+		$(window).on("touchend touchcancel", { self: this }, this.onTouchEnd);
 
-		this.mapTiles = [];
+		this.mapContainer.on("contextmenu", {self: this}, this.onRightClick);
+	
+		$(window).on("keyup", { self: this }, this.onKeyUp);
+		$(window).on("keydown", { self: this }, this.onKeyDown);
+	
+		$(window).on('resize', { self: this }, this.onResize);
+	
+		$(document).ready(function() {
+				self.onDocReady();
+		});
+	
+		$('.gmMapTile').dblclick({ self: this }, this.onDoubleClick);
+	}
 
-		for (let y = 0; y < this.mapConfig.numTilesY; ++y) {
-			this.mapTiles.push([]);
-			this.mapTiles[y].push( new Array(this.mapConfig.numTilesX));
+	/*================================================
+						Events 
+	================================================*/
 
-			for (let x = 0; x < this.mapConfig.numTilesX; ++x) {
-				this.mapTiles[y][x] = this.createMapTile(x, y);
-			}
+	onResize(event) {
+		let self = this;
+
+		let canvasWidth = self.mapContainer.width();
+		let canvasHeight = self.mapContainer.height();
+
+		print("OnResize: " + canvasWidth + ", " + canvasHeight);
+
+		$(self.mapCanvas).attr('width', canvasWidth).
+							attr('height', canvasHeight).
+							css('width', canvasWidth).
+							css('height', canvasHeight);
+
+		$(self.mapCanvasGrid).attr('width', canvasWidth).
+							attr('height', canvasHeight).
+							css('width', canvasWidth).
+							css('height', canvasHeight);
+
+		let worldName = self.mapWorlds[this.currentWorldID].name;
+		let canvasBGColor = self.mapConfig.bgColour;
+		if (this.mapConfig.canvasBGColorFunction !== null) canvasBGColor = self.mapOptions.canvasBGColorFunction(worldName, self.displayState);
+
+		if (this.mapContext) {
+			this.mapContext.fillStyle = canvasBGColor;
+			this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
+
+			this.mapContext.translate(this.mapTransformX, this.mapTransformY);
+			this.mapContextGrid.translate(this.mapTransformX, this.mapTransformY);
 		}
 
+		self.redrawCanvas(true);
 	}
 
-	createMapTile(x, y) {
-		let newTile = new MapTile(x, y);
 
-		let offsetX = this.mapContainer.offset().left;
-		let offsetY = this.mapContainer.offset().top;
-
-		let xPos = x * this.mapConfig.tileSize + offsetX;
-		let yPos = y * this.mapConfig.tileSize + offsetY;
-		let tileID = "Tile_" + x + "_" + y;
-
-		let newDiv = $('<div />').addClass('gmMapTile').attr('id', tileID)
-						.appendTo(this.mapRoot)
-						.offset({ top: yPos, left: xPos })
-						.attr('unselectable', 'on')
-						.attr('deltax', x)
-						.attr('deltay', y)
-						.css('user-select', 'none')
-						.on('selectstart', false);
-
-		newTile.element = newDiv;
-
-		return newTile;
-	}
 
 	/*================================================
 					Utility functions
@@ -563,142 +640,6 @@ export default class Gamemap {
 
 // 	return this.convertTileToGamePos(tileX, tileY);
 // }
-
-
-// uesp.gamemap.Map.prototype.onResize = function(event)
-// {
-// 	let self = event.data.self;
-
-// 	let canvasWidth = self.mapContainer.width();
-// 	let canvasHeight = self.mapContainer.height();
-
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "OnResize: " + canvasWidth + ", " + canvasHeight);
-
-// 	$(self.mapCanvas).attr('width', canvasWidth).
-// 						attr('height', canvasHeight).
-// 						css('width', canvasWidth).
-// 						css('height', canvasHeight);
-
-// 	$(self.mapCanvasGrid).attr('width', canvasWidth).
-// 						attr('height', canvasHeight).
-// 						css('width', canvasWidth).
-// 						css('height', canvasHeight);
-
-// 	let worldName = self.mapWorlds[self.currentWorldId].name;
-// 	let canvasBGColor = self.mapOptions.canvasBGColor;
-// 	if (self.mapOptions.canvasBGColorFunction !== null) canvasBGColor = self.mapOptions.canvasBGColorFunction(worldName, self.displayState);
-
-// 	if (self.mapContext)
-// 	{
-// 		self.mapContext.fillStyle = canvasBGColor;
-// 		self.mapContext.fillRect(0, 0, self.mapCanvas.width, self.mapCanvas.height);
-
-// 		self.mapContext.translate(self.mapTransformX, self.mapTransformY);
-// 		self.mapContextGrid.translate(self.mapTransformX, self.mapTransformY);
-// 	}
-
-// 	self.redrawCanvas(true);
-// }
-
-
-// uesp.gamemap.Map.prototype.onDocReady = function()
-// {
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "onDocReady");
-
-// 	if (this.USE_CANVAS_DRAW)
-// 	{
-// 		let event = {};
-// 		event.data = {};
-// 		event.data.self = this;
-
-// 		this.onResize(event);
-// 		this.redrawCanvas(true);
-// 	}
-// }
-
-
-// uesp.gamemap.Map.prototype.createEvents = function()
-// {
-// 	let self = this;
-
-// 	$(window).on("mousemove", { self: this }, this.onMouseMove);
-// 	$(window).on("touchmove", { self: this }, this.onTouchMove);
-// 	$('.gmMapTile').on("mousedown", { self: this }, this.onMouseDown);
-// 	$('.gmMapTile').on("touchstart", { self: this }, this.onTouchStart);
-// 	$('.gmMapTile').on("click", { self: this }, this.onClick);
-
-// 	if (this.USE_CANVAS_DRAW)
-// 	{
-// 		$('#gmMapCanvas').on("mousedown", { self: this }, this.onMouseDown);
-// 		$('#gmMapCanvas').on("touchstart", { self: this }, this.onTouchStart);
-// 		$('#gmMapCanvas').on("click", { self: this }, this.onClick);
-// 		$('#gmMapCanvas').on("dblclick", { self: this }, this.onDblClickCanvas);
-// 		$(this.mapCanvas).on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScrollCanvas);
-
-// 		$('#gmMapCanvasGrid').on("mousedown", { self: this }, this.onMouseDown);
-// 		$('#gmMapCanvasGrid').on("touchstart", { self: this }, this.onTouchStart);
-// 		$('#gmMapCanvasGrid').on("click", { self: this }, this.onClick);
-// 		$('#gmMapCanvasGrid').on("dblclick", { self: this }, this.onDblClickCanvas);
-// 		$(this.mapCanvasGrid).on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScrollCanvas);
-// 	}
-
-// 	$(window).on("mouseup", { self: this }, this.onMouseUp);
-// 	$(window).on("touchend touchcancel", { self: this }, this.onTouchEnd);
-
-// 	if (!this.USE_LEAFLET)
-// 	{
-// 		this.mapRoot.on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
-// 	}
-
-// 	this.mapContainer.on("contextmenu", {self: this}, this.onRightClick);
-
-// 	$(window).on("keyup", { self: this }, this.onKeyUp);
-// 	$(window).on("keydown", { self: this }, this.onKeyDown);
-
-// 	$(window).on('resize', { self: this }, this.onResize);
-
-// 	$(document).ready(function() {
-// 			self.onDocReady();
-// 		});
-
-// 	$('.gmMapTile').dblclick({ self: this }, this.onDoubleClick);
-// }
-
-// uesp.gamemap.Map.prototype.createMapCanvas = function()
-// {
-// 	let canvasWidth = this.mapContainer.width();
-// 	let canvasHeight = this.mapContainer.height();
-
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "createMapCanvas: " + canvasWidth + ", " + canvasHeight);
-
-// 	this.mapCanvas = $('<canvas />').
-// 						attr('id', 'gmMapCanvas').
-// 						attr('width', canvasWidth).
-// 						attr('height', canvasHeight).
-// 						css('width', canvasWidth).
-// 						css('height', canvasHeight).
-// 						css('cursor', "grab").
-// 						appendTo(this.mapContainer)[0];
-
-// 	this.mapCanvasGrid = $('<canvas />').
-// 						attr('id', 'gmMapCanvasGrid').
-// 						attr('width', canvasWidth).
-// 						attr('height', canvasHeight).
-// 						css('width', canvasWidth).
-// 						css('height', canvasHeight).
-// 						css('cursor', "grab").
-// 						appendTo(this.mapContainer)[0];
-
-// 	this.mapCanvasElement = $("#gmMapCanvas");
-// 	this.mapCanvasGridElement = $("#gmMapCanvasGrid");
-
-// 	this.mapContext = this.mapCanvas.getContext("2d");
-// 	this.mapContextGrid = this.mapCanvasGrid.getContext("2d");
-
-// 	this.mapContext.fillStyle = this.mapOptions.canvasBGColor;
-// 	this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
-// }
-
 
 // uesp.gamemap.Map.prototype.clearMapCanvas = function()
 // {
