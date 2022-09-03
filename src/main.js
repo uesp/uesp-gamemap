@@ -192,7 +192,6 @@ function loadInfobar(mapConfig){
 
 
 function onWorldChanged(newWorld) {
-	alert("bingus");
 	// foundListItems = $('#gmMapList li:contains("' + newWorld.displayName +'")').not('.gmMapListHeader');
 
 	// var foundListItem = null;
@@ -546,6 +545,37 @@ function doSearch(searchQuery, currentMapOnly) {
 
 // 	return true;
 // }
+
+
+
+// uesp.gamemap.Map.prototype.updateCellGridLabel = function()
+// {
+// 		// TODO: No hard coded ID?
+// 	if (this.isDrawGrid)
+// 	{
+// 		$("#gmMapCellGrid").text("Hide Cell Grid");
+// 	}
+// 	else
+// 	{
+// 		$("#gmMapCellGrid").text("Show Cell Grid");
+// 	}
+// }
+
+// uesp.gamemap.Map.prototype.updateCellResourceLabel = function()
+// {
+// 		// TODO: No hard coded ID?
+// 	$("#gmCellResourceList").val(this.cellResource);
+
+// 	this.showCellResourceGuide(this.cellResource != "")
+// }
+
+
+// uesp.gamemap.Map.prototype.showCellResourceGuide = function(display)
+// {
+// 		// TODO: No hard coded ID?
+// 	$("#gmCellResourceGuide").toggle(display);
+// }
+
 
 
 /*================================================

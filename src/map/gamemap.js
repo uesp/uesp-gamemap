@@ -362,7 +362,7 @@ export default class Gamemap {
 
 		//callback to notify world changed
 		if (this.mapCallbacks != null) {
-			mapCallbacks.onWorldChanged(this.mapWorlds[this.currentWorldID])
+			this.mapCallbacks.onWorldChanged(this.mapWorlds[this.currentWorldID])
 		}
 	
 	}
@@ -391,6 +391,44 @@ export default class Gamemap {
 
 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) { self.onReceiveLocationData(data); });
 	
+	}
+
+	onReceiveLocationData(data) {
+		print("Received location data");
+		print(data);
+
+		if (data.isError != null)  return print("Error retrieving location data!", data.errorMsg);
+		if (data.locations == null) return print("Location data not found in JSON response!", data);
+
+		this.mergeLocationData(data.locations, true);
+
+		if (this.showPopupOnLoadLocationId > 0 && this.locations[this.showPopupOnLoadLocationId] != null) {
+			this.locations[this.showPopupOnLoadLocationId].showPopup();
+			this.showPopupOnLoadLocationId = -1;
+		}
+
+		return true;
+ 	}
+
+	mergeLocationData(locations, displayLocation) {
+		if (locations == null) return;
+		if (displayLocation == null) displayLocation = false;
+
+		for (let key in locations) {
+			var location = locations[key];
+			if (location.id == null) continue;
+
+			if ( !(location.id in this.locations)) {
+				this.locations[location.id] = uesp.gamemap.createLocationFromJson(location, this);
+			}
+			else {
+				this.locations[location.id].mergeFromJson(location);
+			}
+
+			if (displayLocation && !this.USE_CANVAS_DRAW) this.displayLocation(this.locations[location.id]);
+		}
+
+		if (displayLocation && this.USE_CANVAS_DRAW) this.redrawCanvas();
 	}
 
 	findLocationAt(pageX, pageY) {
@@ -635,10 +673,7 @@ export default class Gamemap {
 		if (this.USE_LEAFLET) return;
 			
 		this.mapRoot = $('<div />').attr('id', 'gmMapRoot').appendTo(this.mapContainer);
-		
-		if (this.USE_CANVAS_DRAW){ 
-			this.createMapCanvas();
-		} 
+		this.createMapCanvas();
 	}
 
 	createMapCanvas() {
@@ -671,9 +706,41 @@ export default class Gamemap {
 	
 		this.mapContext = this.mapCanvas.getContext("2d");
 		this.mapContextGrid = this.mapCanvasGrid.getContext("2d");
+
+		print("stuff!");
 	
 		this.mapContext.fillStyle = this.mapConfig.bgColour;
 		this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
+	}
+
+	clearOldCanvasTiles() {
+		for (var i in this.canvasImages) {
+			let image = this.canvasImages[i];
+			image.image.showTile = false;
+		}
+	}
+
+	triggerCanvasRedraw() {
+		var self = this;
+
+		//console.log("triggerCanvasRedraw");
+	
+		setTimeout(function() { self.doCanvasRedraw(); } , 100);
+		this.lastCanvasRedrawRequest = Date.now();
+	}
+
+	doCanvasRedraw() {
+		var diffTime = Date.now() - this.lastCanvasRedrawRequest;
+
+		if (diffTime < 100) {
+			//setTimeout(this.doCanvasRedraw, 100);
+			return;
+		}
+	
+		//console.log("doCanvasRedraw");
+	
+		this.redrawCanvas(true);
+		this.lastCanvasRedrawRequest = 0;
 	}
 
 	loadMapTiles() {
@@ -698,17 +765,17 @@ export default class Gamemap {
 
 		let canvasBGColor = this.mapConfig.bgColour;
 
-		for (var y = 0; y < this.mapConfig.numTilesY; ++y) {
+		for (let y = 0; y < this.mapConfig.numTilesY; ++y) {
 			this.canvasImageMap[y] = {};
 
-			for (var x = 0; x < this.mapConfig.numTilesX; ++x) {
-				let tileX = x + this.startTileCanvasX;
-				let tileY = y + this.startTileCanvasY;
+			for (let x = 0; x < this.mapConfig.numTilesX; ++x) {
+				let tileX = x; //+ this.startTileCanvasX;
+				let tileY = y; //+ this.startTileCanvasY;
+
 				let world = this.mapWorlds[this.currentWorldID];
 
 				//getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
-				let pos = this.convertTileToGamePos(tileX, tileY);
-				let imageURL = this.getMapTileImageURL(pos.x, pos.y, zoom, world, this.mapConfig);
+				let imageURL = this.getMapTileImageURL(tileX, tileY, this.zoomLevel, world, this.mapConfig, this.displayState);
 				let newImage = new Image();
 				let canvasX = tileX * this.mapConfig.tileSize;
 				let canvasY = tileY * this.mapConfig.tileSize;
@@ -763,12 +830,11 @@ export default class Gamemap {
 	}
 
 	// tileX, tileY, zoom, world
-	getMapTileImageURL(xPos, yPos, zoom, world, mapConfig) {
+	getMapTileImageURL(tileX, tileY, zoom, world, mapConfig) {
 
 		if (mapConfig.database == "eso") { // unique stuff for eso
-			return mapConfig.tileURL + world.name + "/zoom" + zoom + "/" + world.name + "-" + xPos + "-" + yPos + ".jpg";
+			return mapConfig.tileURL + world.name + "/zoom" + zoom + "/" + world.name + "-" + tileX + "-" + tileY + ".jpg";
 		} else {
-			let tilePos = this.convertGameToTilePos(xPos, yPos);
 
 			if (world == null) {
 				return "zoom" + zoom + "/maptile-" + tilePos.x + "-" + tilePos.y + ".jpg";
@@ -776,6 +842,45 @@ export default class Gamemap {
 				return world + "/zoom" + zoom + "/maptile-" + tilePos.x + "-" + tilePos.y + ".jpg";
 			}
 		}
+	}
+
+	canvasDrawGrid() {
+		
+		var deltaX = this.mapConfig.gridDeltaX;
+		var deltaY = this.mapConfig.gridDeltaY;
+		var gridOffsetY = this.mapConfig.gridOffsetY;
+		var zoomDiff = this.zoomLevel - this.mapConfig.minZoomLevel
+
+		print("canvasDrawGrid");
+		this.clearMapGridCanvas();
+
+		for (let z = 1; z <= zoomDiff; ++z) {
+			gridOffsetY += Math.pow(2, z + this.mapConfig.gridOffsetPowerY)
+		}
+
+		for (var y = this.mapConfig.gridStartY; y <= this.mapConfig.gridStopY; y += deltaY) {
+			var pos1 = this.convertGameToPixelPos(this.mapConfig.gridStartX, y);
+			var pos2 = this.convertGameToPixelPos(this.mapConfig.gridStopX, y);
+
+			pos1.x -= this.mapTransformX;
+			pos2.x -= this.mapTransformX;
+			pos1.y -= this.mapTransformY + gridOffsetY;
+			pos2.y -= this.mapTransformY + gridOffsetY;
+
+			this.mapContextGrid.beginPath();
+			this.mapContextGrid.moveTo(pos1.x, pos1.y);
+			this.mapContextGrid.lineTo(pos2.x, pos2.y);
+			this.mapContextGrid.lineWidth = 1;
+			this.mapContextGrid.strokeStyle = this.mapConfig.gridStyle;
+			this.mapContextGrid.stroke();
+		}
+	}
+
+	clearMapGridCanvas = function() {
+		this.mapContextGrid.save();
+		this.mapContextGrid.setTransform(1, 0, 0, 1, 0, 0);
+		this.mapContextGrid.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
+		this.mapContextGrid.restore();
 	}
 
 	redrawCanvas = function(redrawGrid) {
@@ -1022,10 +1127,6 @@ export default class Gamemap {
 			this.updateLocations();
 			this.loadMapTiles();
 			if (this.isDrawGrid) this.drawGrid();
-			this.updateCellGridLabel();
-			this.updateCellResourceLabel();
-			this.updateDisplayStateLabel();
-
 			if (this.cellResource != "") this.getCellResourceData(this.cellResource);
 		}
 	}
@@ -1105,6 +1206,16 @@ export default class Gamemap {
 		tileY = (gameY - this.mapConfig.minY) * maxTiles / (this.mapConfig.maxY - this.mapConfig.minY);
 
 		return new Position(tileX, tileY);
+	}
+
+	convertGameToPixelPos(gameX, gameY) {
+		let mapOffset = this.mapRoot.offset();
+		let tilePos = this.convertGameToTilePos(gameX, gameY);
+	
+		let xPos = Math.round((tilePos.x - this.startTileX) * this.mapConfig.tileSize);
+		let yPos = Math.round((tilePos.y - this.startTileY) * this.mapConfig.tileSize);
+	
+		return new Position(xPos, yPos);
 	}
 
 	getMapRootBounds() {
@@ -1224,26 +1335,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.convertGameToPixelPos = function(gameX, gameY)
-// {
-// 	mapOffset = this.mapRoot.offset();
-// 	tilePos = this.convertGameToTilePos(gameX, gameY);
-
-// 	if (this.USE_CANVAS_DRAW)
-// 	{
-// 		xPos = Math.round((tilePos.x - this.startTileX) * this.mapConfig.tileSize);
-// 		yPos = Math.round((tilePos.y - this.startTileY) * this.mapConfig.tileSize);
-// 	}
-// 	else
-// 	{
-// 		xPos = Math.round((tilePos.x - this.startTileX) * this.mapConfig.tileSize + mapOffset.left);
-// 		yPos = Math.round((tilePos.y - this.startTileY) * this.mapConfig.tileSize + mapOffset.top);
-// 	}
-
-// 	return new uesp.gamemap.Position(xPos, yPos);
-// }
-
-
 // uesp.gamemap.Map.prototype.convertPixelToGamePos = function(pixelX, pixelY)
 // {
 // 	mapOffset = this.mapRoot.offset();
@@ -1309,15 +1400,6 @@ export default class Gamemap {
 // {
 // 	if (!this.USE_CANVAS_DRAW) return;
 // 	return this.clearMapGridCanvas();
-// }
-
-
-// uesp.gamemap.Map.prototype.clearMapGridCanvas = function()
-// {
-// 	this.mapContextGrid.save();
-// 	this.mapContextGrid.setTransform(1, 0, 0, 1, 0, 0);
-// 	this.mapContextGrid.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
-// 	this.mapContextGrid.restore();
 // }
 
 // uesp.gamemap.onLoadIconSuccess = function(event)
@@ -1521,16 +1603,6 @@ export default class Gamemap {
 // 	{
 // 		if (useEditPopup === true) destLoc.useEditPopup = true;
 // 		destLoc.showPopup();
-// 	}
-// }
-
-
-// uesp.gamemap.Map.prototype.clearOldCanvasTiles = function()
-// {
-// 	for (var i in this.canvasImages)
-// 	{
-// 		let image = this.canvasImages[i];
-// 		image.image.showTile = false;
 // 	}
 // }
 
@@ -2586,30 +2658,7 @@ export default class Gamemap {
 
 
 
-// uesp.gamemap.Map.prototype.mergeLocationData = function (locations, displayLocation)
-// {
-// 	if (locations == null) return;
-// 	if (displayLocation == null) displayLocation = false;
 
-// 	for (key in locations)
-// 	{
-// 		var location = locations[key];
-// 		if (location.id == null) continue;
-
-// 		if ( !(location.id in this.locations))
-// 		{
-// 			this.locations[location.id] = uesp.gamemap.createLocationFromJson(location, this);
-// 		}
-// 		else
-// 		{
-// 			this.locations[location.id].mergeFromJson(location);
-// 		}
-
-// 		if (displayLocation && !this.USE_CANVAS_DRAW) this.displayLocation(this.locations[location.id]);
-// 	}
-
-// 	if (displayLocation && this.USE_CANVAS_DRAW) this.redrawCanvas();
-// }
 
 
 // uesp.gamemap.Map.prototype.onReceiveCenterOnLocationData = function (data)
@@ -2668,24 +2717,7 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.onReceiveLocationData = function (data)
-// {
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Received location data");
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, data);
 
-// 	if (!uesp.gamemap.isNullorUndefined(data.isError))  return uesp.logError("Error retrieving location data!", data.errorMsg);
-// 	if (uesp.gamemap.isNullorUndefined(data.locations)) return uesp.logError("Location data not found in JSON response!", data);
-
-// 	this.mergeLocationData(data.locations, true);
-
-// 	if (this.showPopupOnLoadLocationId > 0 && this.locations[this.showPopupOnLoadLocationId] != null)
-// 	{
-// 		this.locations[this.showPopupOnLoadLocationId].showPopup();
-// 		this.showPopupOnLoadLocationId = -1;
-// 	}
-
-// 	return true;
-// }
 
 // uesp.gamemap.Map.prototype.retrieveLocation = function(locId, onLoadFunction, eventData)
 // {
@@ -4059,39 +4091,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.canvasDrawGrid = function()
-// {
-// 	var deltaX = this.mapConfig.gridDeltaX;
-// 	var deltaY = this.mapConfig.gridDeltaY;
-// 	var gridOffsetY = this.mapConfig.gridOffsetY;
-// 	var zoomDiff = this.zoomLevel - this.mapConfig.minZoomLevel
-
-// 	console.log("canvasDrawGrid");
-// 	this.clearMapGridCanvas();
-
-// 	for (z = 1; z <= zoomDiff; ++z)
-// 	{
-// 		gridOffsetY += Math.pow(2, z + this.mapConfig.gridOffsetPowerY)
-// 	}
-
-// 	for (var y = this.mapConfig.gridStartY; y <= this.mapConfig.gridStopY; y += deltaY)
-// 	{
-// 		var pos1 = this.convertGameToPixelPos(this.mapConfig.gridStartX, y);
-// 		var pos2 = this.convertGameToPixelPos(this.mapConfig.gridStopX, y);
-
-// 		pos1.x -= this.mapTransformX;
-// 		pos2.x -= this.mapTransformX;
-// 		pos1.y -= this.mapTransformY + gridOffsetY;
-// 		pos2.y -= this.mapTransformY + gridOffsetY;
-
-// 		this.mapContextGrid.beginPath();
-// 		this.mapContextGrid.moveTo(pos1.x, pos1.y);
-// 		this.mapContextGrid.lineTo(pos2.x, pos2.y);
-// 		this.mapContextGrid.lineWidth = 1;
-// 		this.mapContextGrid.strokeStyle = this.mapConfig.gridStyle;
-// 		this.mapContextGrid.stroke();
-// 	}
-
 // 	for (var x = this.mapConfig.gridStartX; x <= this.mapConfig.gridStopX; x += deltaX)
 // 	{
 // 		var pos1 = this.convertGameToPixelPos(x, this.mapConfig.gridStartY);
@@ -4166,20 +4165,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.updateCellGridLabel = function()
-// {
-// 		// TODO: No hard coded ID?
-// 	if (this.isDrawGrid)
-// 	{
-// 		$("#gmMapCellGrid").text("Hide Cell Grid");
-// 	}
-// 	else
-// 	{
-// 		$("#gmMapCellGrid").text("Show Cell Grid");
-// 	}
-// }
-
-
 // uesp.gamemap.Map.prototype.onCellResourceChange = function(list)
 // {
 // 	var cellResource = $(list).val();
@@ -4198,20 +4183,6 @@ export default class Gamemap {
 // 	this.updateMapLink();
 // }
 
-// uesp.gamemap.Map.prototype.updateCellResourceLabel = function()
-// {
-// 		// TODO: No hard coded ID?
-// 	$("#gmCellResourceList").val(this.cellResource);
-
-// 	this.showCellResourceGuide(this.cellResource != "")
-// }
-
-
-// uesp.gamemap.Map.prototype.showCellResourceGuide = function(display)
-// {
-// 		// TODO: No hard coded ID?
-// 	$("#gmCellResourceGuide").toggle(display);
-// }
 
 
 // uesp.gamemap.Map.prototype.getCellResourceData = function(resourceEditorID)
@@ -4272,32 +4243,8 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.triggerCanvasRedraw = function()
-// {
-// 	var self = this;
-
-// 	//console.log("triggerCanvasRedraw");
-
-// 	setTimeout(function() { self.doCanvasRedraw(); } , 100);
-// 	this.lastCanvasRedrawRequest = Date.now();
-// }
 
 
-// uesp.gamemap.Map.prototype.doCanvasRedraw = function()
-// {
-// 	var diffTime = Date.now() - this.lastCanvasRedrawRequest;
-
-// 	if (diffTime < 100)
-// 	{
-// 		//setTimeout(this.doCanvasRedraw, 100);
-// 		return;
-// 	}
-
-// 	//console.log("doCanvasRedraw");
-
-// 	this.redrawCanvas(true);
-// 	this.lastCanvasRedrawRequest = 0;
-// }
 
 
 
