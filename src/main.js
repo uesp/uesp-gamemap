@@ -192,6 +192,7 @@ function loadInfobar(mapConfig){
 
 
 function onWorldChanged(newWorld) {
+	alert("bingus");
 	// foundListItems = $('#gmMapList li:contains("' + newWorld.displayName +'")').not('.gmMapListHeader');
 
 	// var foundListItem = null;
@@ -214,7 +215,7 @@ function onWorldChanged(newWorld) {
 	// }
 
 	// $('#gmMapListAlphaSelect').val(newWorld.id);
-	// $('#current_location_label').text(newWorld.displayName);
+	$('#current_location_label').text(newWorld.displayName);
 }
 
 function getDefaultMapTile(xPos, yPos, zoom, worldName) {

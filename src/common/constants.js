@@ -29,3 +29,7 @@
 
 export const GAMEMAP_ROOT_NAME = "gmMapRoot";
 
+export const LOCTYPE_NONE = 0;
+export const LOCTYPE_POINT = 1;
+export const LOCTYPE_PATH = 2;
+export const LOCTYPE_AREA = 3;

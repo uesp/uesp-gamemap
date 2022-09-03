@@ -4,12 +4,6 @@
  * @summary Contains class definition for the gamemap's locations.
  */
 
-uesp.gamemap.LOCTYPE_NONE  = 0;
-uesp.gamemap.LOCTYPE_POINT = 1;
-uesp.gamemap.LOCTYPE_PATH  = 2;
-uesp.gamemap.LOCTYPE_AREA  = 3;
-
-
 uesp.gamemap.Location = function(parentMap)
 {
 	this.parentMap = parentMap;
@@ -59,14 +53,6 @@ uesp.gamemap.Location = function(parentMap)
 	this.labelOffsetTop  = 0;
 	this.isHoverCanvas = false;
 	
-	//this.iconFile = 0;
-	//this.editorId = 0;
-	//this.formId = 0;
-	//this.points = [];
-	//this.fontSize = 8;
-	//this.fontColor = '#ff9999';
-	//this.customStyle = '';
-	//this.customClass = '';
 }
 
 
@@ -141,10 +127,7 @@ uesp.gamemap.Location.prototype.mergeFromJson = function(data)
 	{
 		this.displayData = jQuery.parseJSON( this.displayData );
 	}
-	
-	//this.name = encodeURIComponent(this.name);
-	//this.description = encodeURIComponent(this.description);
-	//this.wikiPage = encodeURIComponent(this.wikiPage);
+
 }
 
 
@@ -612,13 +595,6 @@ uesp.gamemap.Location.prototype.updateIconCanvas = function ()
 	var pixelPos = this.parentMap.convertGameToPixelPos(this.x + this.width/2, this.y - this.height/2);
 	this.parentMap.mapContext.drawImage(this.iconImage, pixelPos.x - this.iconImage.width/2, pixelPos.y - this.iconImage.height/2, this.iconImage.width, this.iconImage.height);
 	
-		// For debug only
-	if (this.isHoverCanvas)
-	{
-		//this.parentMap.mapContext.strokeStyle = "#ff0";
-		//this.parentMap.mapContext.lineWidth = 1;
-		//this.parentMap.mapContext.strokeRect(pixelPos.x - this.iconImage.width/2 - 1, pixelPos.y - this.iconImage.height/2 - 1, this.iconImage.width + 2, this.iconImage.height + 2);
-	}
 }
 
 

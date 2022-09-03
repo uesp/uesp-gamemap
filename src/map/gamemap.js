@@ -356,7 +356,7 @@ export default class Gamemap {
 		}
 
 		//callback to notify world changed
-		if (mapCallbacks != null) {
+		if (this.mapCallbacks != null) {
 			mapCallbacks.onWorldChanged(this.mapWorlds[this.currentWorldID])
 		}
 	
@@ -371,7 +371,7 @@ export default class Gamemap {
 		for (let key in this.locations) {
 			var location = this.locations[key];
 
-			if (location.locType >= uesp.gamemap.LOCTYPE_PATH) continue;
+			if (location.locType >= Constants.LOCTYPE_PATH) continue;
 			if (location.worldID != this.currentWorldID) continue;
 			if (!location.visible && !this.isHiddenLocsShown()) continue;
 			if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
@@ -387,7 +387,7 @@ export default class Gamemap {
 		for (let key in this.locations) {
 			var location = this.locations[key];
 
-			if (location.locType < uesp.gamemap.LOCTYPE_PATH) continue;
+			if (location.locType < Constants.LOCTYPE_PATH) continue;
 			if (location.worldID != this.currentWorldID) continue;
 			if (!location.visible && !this.isHiddenLocsShown()) continue;
 			if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
@@ -419,13 +419,13 @@ export default class Gamemap {
 			if (location.worldID != this.currentWorldID) continue;
 			if (!location.visible && !this.isHiddenLocsShown()) continue;
 			if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapOptions.maxZoomLevel)) continue;
-			if (location.locType >= uesp.gamemap.LOCTYPE_PATH) location.updatePathSize(false);
+			if (location.locType >= Constants.LOCTYPE_PATH) location.updatePathSize(false);
 	
 			displayedLocations[key] = 1;
 			location.computeOffset();
 			location.updatePopupOffset();
 	
-			if (location.locType >= uesp.gamemap.LOCTYPE_PATH) location.updatePath();
+			if (location.locType >= Constants.LOCTYPE_PATH) location.updatePath();
 		}
 	
 		for (var key in displayedLocations) {
@@ -444,7 +444,7 @@ export default class Gamemap {
 			if (location.worldID != this.currentWorldID) continue;
 			if (!location.visible && !this.isHiddenLocsShown()) continue;
 			if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapOptions.maxZoomLevel)) continue;
-			if (location.locType >= uesp.gamemap.LOCTYPE_PATH) location.updatePathSize(false);
+			if (location.locType >= Constants.LOCTYPE_PATH) location.updatePathSize(false);
 
 			this.displayLocation(location);
 		}
@@ -1903,7 +1903,7 @@ export default class Gamemap {
 // 	this.displayEditNotice("Click on the map to add points to the path. Click 'Finish' when done...", 'Finish', 'Cancel');
 
 // 	this.currentEditLocation = new uesp.gamemap.Location(this);
-// 	this.currentEditLocation.locType = uesp.gamemap.LOCTYPE_PATH;
+// 	this.currentEditLocation.locType = Constants.LOCTYPE_PATH;
 // 	this.currentEditLocation.id = this.createNewLocationId();
 // 	this.currentEditLocation.worldID = this.currentWorldID;
 // 	this.currentEditLocation.name = 'New Path';
@@ -1933,7 +1933,7 @@ export default class Gamemap {
 
 // 	this.onAddPathStart();
 
-// 	this.currentEditLocation.locType = uesp.gamemap.LOCTYPE_AREA;
+// 	this.currentEditLocation.locType = Constants.LOCTYPE_AREA;
 // 	this.currentEditMode = 'addarea';
 
 // 	this.displayEditNotice("Click on the map to add points to the area. Click 'Finish' when done...", 'Finish', 'Cancel');
@@ -1959,7 +1959,7 @@ export default class Gamemap {
 // 	location.name = 'New Location';
 // 	location.x = Math.round(gamePos.x);
 // 	location.y = Math.round(gamePos.y);
-// 	location.locType = uesp.gamemap.LOCTYPE_POINT;
+// 	location.locType = Constants.LOCTYPE_POINT;
 // 	location.displayLevel = this.zoomLevel - 1;
 // 	location.visible = true;
 // 	location.useEditPopup = true;
@@ -3029,7 +3029,7 @@ export default class Gamemap {
 // {
 // 	for (key in this.locations)
 // 	{
-// 		if (this.locations[key].locType >= uesp.gamemap.LOCTYPE_PATH) this.locations[key].updatePathSize();
+// 		if (this.locations[key].locType >= Constants.LOCTYPE_PATH) this.locations[key].updatePathSize();
 // 	}
 // }
 
