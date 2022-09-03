@@ -265,6 +265,10 @@ export default class Gamemap {
 		if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldID;
 	}
 
+	hasWorld(worldID) {
+		return worldID in this.mapWorlds;
+	}
+
 	getWorldData() {
 		let self = this;
 		let queryParams = {};
@@ -367,6 +371,28 @@ export default class Gamemap {
 					  Map locations 
 	================================================*/
 
+	retrieveLocations() {
+		var self = this;
+		var mapBounds = this.getMapBounds();
+
+		var queryParams = {};
+		queryParams.action = "get_locs";
+		queryParams.world  = this.currentWorldID;
+		queryParams.top    = mapBounds.top;
+		queryParams.bottom = mapBounds.bottom;
+		queryParams.left   = mapBounds.left;
+		queryParams.right  = mapBounds.right;
+		queryParams.zoom   = this.zoomLevel;
+		if (this.isHiddenLocsShown()) queryParams.showhidden = 1;
+		if (!this.hasWorld(this.currentWorldID)) queryParams.incworld = 1;
+		queryParams.db = this.mapConfig.database;
+
+		if (queryParams.world <= 0) return print("Unknown worldID for current world " + this.currentWorldID + "!");
+
+		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) { self.onReceiveLocationData(data); });
+	
+	}
+
 	findLocationAt(pageX, pageY) {
 		// Look for icons first
 		for (let key in this.locations) {
@@ -433,7 +459,7 @@ export default class Gamemap {
 	
 			if (location.worldID != this.currentWorldID) continue;
 			if (!location.visible && !this.isHiddenLocsShown()) continue;
-			if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapOptions.maxZoomLevel)) continue;
+			if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
 			if (location.locType >= Constants.LOCTYPE_PATH) location.updatePathSize(false);
 	
 			displayedLocations[key] = 1;
@@ -458,7 +484,7 @@ export default class Gamemap {
 
 			if (location.worldID != this.currentWorldID) continue;
 			if (!location.visible && !this.isHiddenLocsShown()) continue;
-			if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapOptions.maxZoomLevel)) continue;
+			if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
 			if (location.locType >= Constants.LOCTYPE_PATH) location.updatePathSize(false);
 
 			this.displayLocation(location);
@@ -477,20 +503,46 @@ export default class Gamemap {
 		this.retrieveLocations();
 	}
 
+	updateLocationDisplayLevels() {
+		for (let key in this.locations) {
+			if (this.zoomLevel < this.locations[key].displayLevel)
+				this.locations[key].hideElements(0);
+			else
+				this.locations[key].showElements(0);
+		}
+	}
+
+	updateLocationOffsets (animate) {
+		for (let key in this.locations) {
+
+			/*
+			tilePos = this.convertGameToTilePos(location.x, location.y);
+
+			mapOffset  = this.mapRoot.offset();
+			xPos = (tilePos.x - this.startTileX) * this.mapConfig.tileSize + mapOffset.left;
+			yPos = (tilePos.y - this.startTileY) * this.mapConfig.tileSize + mapOffset.top;
+
+			location.updateOffset(xPos, yPos, animate); */
+
+			locations[key].computeOffset();
+			locations[key].updateOffset();
+		}
+	}
+
 	drawCellResources() {
 		if (this.cellResource == "") return;
 
-		var startX = this.mapOptions.cellResourceStartX;
-		var startY = this.mapOptions.cellResourceStartY;
-		var endX = this.mapOptions.cellResourceStopX;
-		var endY = this.mapOptions.cellResourceStopY;
+		var startX = this.mapConfig.cellResourceStartX;
+		var startY = this.mapConfig.cellResourceStartY;
+		var endX = this.mapConfig.cellResourceStopX;
+		var endY = this.mapConfig.cellResourceStopY;
 		var color = "white";
 		var x1, y1, x2, y2;
-		var zoomDiff = this.zoomLevel - this.mapOptions.minZoomLevel
-		var gridOffsetY = this.mapOptions.gridOffsetY;
+		var zoomDiff = this.zoomLevel - this.mapConfig.minZoomLevel
+		var gridOffsetY = this.mapConfig.gridOffsetY;
 	
 		for (var z = 1; z <= zoomDiff; ++z) {
-			gridOffsetY += Math.pow(2, z + this.mapOptions.gridOffsetPowerY)
+			gridOffsetY += Math.pow(2, z + this.mapConfig.gridOffsetPowerY)
 		}
 	
 		if (!this.isDrawGrid) this.clearMapGridCanvas();
@@ -624,6 +676,108 @@ export default class Gamemap {
 		this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
 	}
 
+	loadMapTiles() {
+		var self = this;
+
+		if (!(this.currentWorldID in this.mapWorlds)) {
+			print("Unknown worldID " + this.currentWorldID + "!");
+			return;
+		}
+
+		this.clearOldCanvasTiles();
+
+		var worldName = this.mapWorlds[this.currentWorldID].name;
+		var maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
+
+		print("worldID: " + this.currentWorldID + " worldName: " + worldName);
+
+		this.canvasImages = [];
+		this.canvasImageMap = {};
+		this.canvasTileCountX = this.mapConfig.numTilesX;
+		this.canvasTileCountY = this.mapConfig.numTilesY;
+
+		let canvasBGColor = this.mapConfig.bgColour;
+
+		for (var y = 0; y < this.mapConfig.numTilesY; ++y) {
+			this.canvasImageMap[y] = {};
+
+			for (var x = 0; x < this.mapConfig.numTilesX; ++x) {
+				let tileX = x + this.startTileCanvasX;
+				let tileY = y + this.startTileCanvasY;
+				let world = this.mapWorlds[this.currentWorldID];
+
+				//getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
+				let pos = this.convertTileToGamePos(tileX, tileY);
+				let imageURL = this.getMapTileImageURL(pos.x, pos.y, zoom, world, this.mapConfig);
+				let newImage = new Image();
+				let canvasX = tileX * this.mapConfig.tileSize;
+				let canvasY = tileY * this.mapConfig.tileSize;
+
+				newImage.isError = false;
+				newImage.showTile = true;
+				newImage.isLoaded = false;
+
+				let imageInfo = {
+						image: newImage,
+						x: x,
+						y: y,
+						canvasX: canvasX,
+						canvasY: canvasY,
+						tileX : tileX,
+						tileY : tileY,
+				};
+
+				this.canvasImages.push(imageInfo);
+				this.canvasImageMap[y][x] = imageInfo;
+
+				newImage.onerror = function() {
+
+					if (newImage.showTile) {
+						self.mapContext.fillStyle = canvasBGColor;
+						self.mapContext.fillRect(canvasX, canvasY, self.mapConfig.tileSize, self.mapConfig.tileSize);
+						self.triggerCanvasRedraw();
+					}
+
+					newImage.isError = true;
+				}
+
+				newImage.onload = function () {
+
+					if (newImage.showTile) {
+						self.mapContext.drawImage(newImage, canvasX, canvasY, self.mapConfig.tileSize, self.mapConfig.tileSize);
+						self.triggerCanvasRedraw();
+					}
+
+					newImage.isLoaded = true;
+				};
+
+				if (tileX < 0 || tileY < 0) {
+					newImage.onerror();
+				}
+				else {
+					newImage.src = imageURL;
+				}
+			}
+		}
+
+	}
+
+	// tileX, tileY, zoom, world
+	getMapTileImageURL(xPos, yPos, zoom, world, mapConfig) {
+
+		if (mapConfig.database == "eso") { // unique stuff for eso
+			return mapConfig.tileURL + world.name + "/zoom" + zoom + "/" + world.name + "-" + xPos + "-" + yPos + ".jpg";
+		} else {
+			let tilePos = this.convertGameToTilePos(xPos, yPos);
+
+			if (world == null) {
+				return "zoom" + zoom + "/maptile-" + tilePos.x + "-" + tilePos.y + ".jpg";
+			} else {
+				return world + "/zoom" + zoom + "/maptile-" + tilePos.x + "-" + tilePos.y + ".jpg";
+			}
+		}
+	}
+
 	redrawCanvas = function(redrawGrid) {
 		this.redrawImages();
 		if (redrawGrid) {
@@ -746,7 +900,7 @@ export default class Gamemap {
 					Utility functions
 	================================================*/
 
-	getcurrentWorldID() {
+	getCurrentWorldID() {
 		return this.currentWorldID;
 	}
 
@@ -844,6 +998,8 @@ export default class Gamemap {
 			}
 		}
 	}
+
+	
 
 	isValidZoom(zoom) {
 		if (zoom == null ) {
@@ -952,10 +1108,30 @@ export default class Gamemap {
 	}
 
 	getMapRootBounds() {
-		leftTop     = this.convertTileToGamePos(this.startTileX, this.startTileY);
-		rightBottom = this.convertTileToGamePos(this.startTileX + this.mapConfig.numTilesX, this.startTileY + this.mapConfig.numTilesY);
+		let leftTop     = this.convertTileToGamePos(this.startTileX, this.startTileY);
+		let rightBottom = this.convertTileToGamePos(this.startTileX + this.mapConfig.numTilesX, this.startTileY + this.mapConfig.numTilesY);
 
-		return Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
+		return new Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
+	}
+
+	getMapBounds() {
+		var rootOffset = this.mapRoot.offset();
+		var mapOffset  = this.mapContainer.offset();
+		var width  =  this.mapContainer.width();
+		var height =  this.mapContainer.height();
+
+		let leftTile = this.startTileX + (mapOffset.left - rootOffset.left - this.mapTransformX)/this.mapConfig.tileSize;
+		let topTile  = this.startTileY + (mapOffset.top  - rootOffset.top  - this.mapTransformY)/this.mapConfig.tileSize;
+
+		let rightTile   = this.startTileX + (mapOffset.left - rootOffset.left + width  - this.mapTransformX)/this.mapConfig.tileSize;
+		let bottomTile  = this.startTileY + (mapOffset.top  - rootOffset.top  + height - this.mapTransformY)/this.mapConfig.tileSize;
+
+		//this.startTileX + this.mapConfig.numTilesX, this.startTileY + this.mapConfig.numTilesY
+
+		let leftTop     = this.convertTileToGamePos(leftTile, topTile);
+		let rightBottom = this.convertTileToGamePos(rightTile, bottomTile);
+
+		return new Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
 	}
 
 }
@@ -969,28 +1145,28 @@ export default class Gamemap {
 // 	tilesTop = 0;
 // 	tilesBottom = 0;
 
-// 	extraX = this.mapOptions.tileCountX * this.mapOptions.tileSize - this.mapContainer.width();
-// 	extraY = this.mapOptions.tileCountY * this.mapOptions.tileSize - this.mapContainer.height();
+// 	extraX = this.mapConfig.numTilesX * this.mapConfig.tileSize - this.mapContainer.width();
+// 	extraY = this.mapConfig.numTilesY * this.mapConfig.tileSize - this.mapContainer.height();
 
-// 	tilesLeft = -Math.floor(this.mapRoot.offset().left / this.mapOptions.tileSize) - 1;
-// 	tilesTop  = -Math.floor(this.mapRoot.offset().top  / this.mapOptions.tileSize) - 1;
-// 	tilesRight  = Math.floor((extraX + this.mapRoot.offset().left) / this.mapOptions.tileSize);
-// 	tilesBottom = Math.floor((extraY + this.mapRoot.offset().top)  / this.mapOptions.tileSize);
+// 	tilesLeft = -Math.floor(this.mapRoot.offset().left / this.mapConfig.tileSize) - 1;
+// 	tilesTop  = -Math.floor(this.mapRoot.offset().top  / this.mapConfig.tileSize) - 1;
+// 	tilesRight  = Math.floor((extraX + this.mapRoot.offset().left) / this.mapConfig.tileSize);
+// 	tilesBottom = Math.floor((extraY + this.mapRoot.offset().top)  / this.mapConfig.tileSize);
 
-// 	if (tilesRight < this.mapOptions.tileEdgeLoadCount)
+// 	if (tilesRight < this.mapConfig.tileEdgeLoadCount)
 // 	{
 // 		this.shiftMapTiles(1, 0);
 // 	}
-// 	else if (tilesLeft < this.mapOptions.tileEdgeLoadCount)
+// 	else if (tilesLeft < this.mapConfig.tileEdgeLoadCount)
 // 	{
 // 		this.shiftMapTiles(-1, 0);
 // 	}
 
-// 	if (tilesTop < this.mapOptions.tileEdgeLoadCount)
+// 	if (tilesTop < this.mapConfig.tileEdgeLoadCount)
 // 	{
 // 		this.shiftMapTiles(0, -1);
 // 	}
-// 	else if (tilesBottom < this.mapOptions.tileEdgeLoadCount)
+// 	else if (tilesBottom < this.mapConfig.tileEdgeLoadCount)
 // 	{
 // 		this.shiftMapTiles(0, 1);
 // 	}
@@ -1004,25 +1180,25 @@ export default class Gamemap {
 // 	let tilesTop = 0;
 // 	let tilesBottom = 0;
 
-// 	tilesLeft = -(this.startTileCanvasX + Math.floor(this.mapTransformX / this.mapOptions.tileSize));
-// 	tilesTop  = -(this.startTileCanvasY + Math.floor(this.mapTransformY / this.mapOptions.tileSize));
-// 	tilesRight  = this.canvasTileCountX - tilesLeft - Math.floor(this.mapCanvas.width / this.mapOptions.tileSize);
-// 	tilesBottom = this.canvasTileCountY - tilesTop - Math.floor(this.mapCanvas.height / this.mapOptions.tileSize);
+// 	tilesLeft = -(this.startTileCanvasX + Math.floor(this.mapTransformX / this.mapConfig.tileSize));
+// 	tilesTop  = -(this.startTileCanvasY + Math.floor(this.mapTransformY / this.mapConfig.tileSize));
+// 	tilesRight  = this.canvasTileCountX - tilesLeft - Math.floor(this.mapCanvas.width / this.mapConfig.tileSize);
+// 	tilesBottom = this.canvasTileCountY - tilesTop - Math.floor(this.mapCanvas.height / this.mapConfig.tileSize);
 
-// 	if (tilesRight < this.mapOptions.tileEdgeLoadCount)
+// 	if (tilesRight < this.mapConfig.tileEdgeLoadCount)
 // 	{
 // 		this.loadMapTilesCanvasRowCol(0, 1, 0, 0);
 // 	}
-// 	else if (tilesLeft < this.mapOptions.tileEdgeLoadCount)
+// 	else if (tilesLeft < this.mapConfig.tileEdgeLoadCount)
 // 	{
 // 		this.loadMapTilesCanvasRowCol(1, 0, 0, 0);
 // 	}
 
-// 	if (tilesTop < this.mapOptions.tileEdgeLoadCount)
+// 	if (tilesTop < this.mapConfig.tileEdgeLoadCount)
 // 	{
 // 		this.loadMapTilesCanvasRowCol(0, 0, 1, 0);
 // 	}
-// 	else if (tilesBottom < this.mapOptions.tileEdgeLoadCount)
+// 	else if (tilesBottom < this.mapConfig.tileEdgeLoadCount)
 // 	{
 // 		this.loadMapTilesCanvasRowCol(0, 0, 0, 1);
 // 	}
@@ -1039,10 +1215,10 @@ export default class Gamemap {
 // {
 // 	let pixelW = 0;
 // 	let pixelH = 0;
-// 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
+// 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
 
-// 	pixelW = Math.round(width  * maxTiles / Math.abs(this.mapOptions.gamePosX2 - this.mapOptions.gamePosX1) * this.mapOptions.tileSize);
-// 	pixelH = Math.round(height * maxTiles / Math.abs(this.mapOptions.gamePosY2 - this.mapOptions.gamePosY1) * this.mapOptions.tileSize);
+// 	pixelW = Math.round(width  * maxTiles / Math.abs(this.mapConfig.gamePosX2 - this.mapConfig.gamePosX1) * this.mapConfig.tileSize);
+// 	pixelH = Math.round(height * maxTiles / Math.abs(this.mapConfig.gamePosY2 - this.mapConfig.gamePosY1) * this.mapConfig.tileSize);
 
 // 	return new uesp.gamemap.Position(pixelW, pixelH);
 // }
@@ -1055,13 +1231,13 @@ export default class Gamemap {
 
 // 	if (this.USE_CANVAS_DRAW)
 // 	{
-// 		xPos = Math.round((tilePos.x - this.startTileX) * this.mapOptions.tileSize);
-// 		yPos = Math.round((tilePos.y - this.startTileY) * this.mapOptions.tileSize);
+// 		xPos = Math.round((tilePos.x - this.startTileX) * this.mapConfig.tileSize);
+// 		yPos = Math.round((tilePos.y - this.startTileY) * this.mapConfig.tileSize);
 // 	}
 // 	else
 // 	{
-// 		xPos = Math.round((tilePos.x - this.startTileX) * this.mapOptions.tileSize + mapOffset.left);
-// 		yPos = Math.round((tilePos.y - this.startTileY) * this.mapOptions.tileSize + mapOffset.top);
+// 		xPos = Math.round((tilePos.x - this.startTileX) * this.mapConfig.tileSize + mapOffset.left);
+// 		yPos = Math.round((tilePos.y - this.startTileY) * this.mapConfig.tileSize + mapOffset.top);
 // 	}
 
 // 	return new uesp.gamemap.Position(xPos, yPos);
@@ -1074,13 +1250,13 @@ export default class Gamemap {
 
 // 	if (this.USE_CANVAS_DRAW)
 // 	{
-// 		tileX = (pixelX - this.mapTransformX) / this.mapOptions.tileSize + this.startTileX;
-// 		tileY = (pixelY - this.mapTransformY) / this.mapOptions.tileSize + this.startTileY;
+// 		tileX = (pixelX - this.mapTransformX) / this.mapConfig.tileSize + this.startTileX;
+// 		tileY = (pixelY - this.mapTransformY) / this.mapConfig.tileSize + this.startTileY;
 // 	}
 // 	else
 // 	{
-// 		tileX = (pixelX - mapOffset.left) / this.mapOptions.tileSize + this.startTileX;
-// 		tileY = (pixelY - mapOffset.top)  / this.mapOptions.tileSize + this.startTileY;
+// 		tileX = (pixelX - mapOffset.left) / this.mapConfig.tileSize + this.startTileX;
+// 		tileY = (pixelY - mapOffset.top)  / this.mapConfig.tileSize + this.startTileY;
 // 	}
 
 // 	return this.convertTileToGamePos(tileX, tileY);
@@ -1093,13 +1269,13 @@ export default class Gamemap {
 
 // 	if (this.USE_CANVAS_DRAW)
 // 	{
-// 		tileX = (pixelX - this.mapTransformX - mapOffset.left) / this.mapOptions.tileSize + this.startTileX;
-// 		tileY = (pixelY - this.mapTransformY - mapOffset.top) / this.mapOptions.tileSize + this.startTileY;
+// 		tileX = (pixelX - this.mapTransformX - mapOffset.left) / this.mapConfig.tileSize + this.startTileX;
+// 		tileY = (pixelY - this.mapTransformY - mapOffset.top) / this.mapConfig.tileSize + this.startTileY;
 // 	}
 // 	else
 // 	{
-// 		tileX = (pixelX - mapOffset.left) / this.mapOptions.tileSize + this.startTileX;
-// 		tileY = (pixelY - mapOffset.top)  / this.mapOptions.tileSize + this.startTileY;
+// 		tileX = (pixelX - mapOffset.left) / this.mapConfig.tileSize + this.startTileX;
+// 		tileY = (pixelY - mapOffset.top)  / this.mapConfig.tileSize + this.startTileY;
 // 	}
 
 // 	return this.convertTileToGamePos(tileX, tileY);
@@ -1111,8 +1287,8 @@ export default class Gamemap {
 // 	this.mapContext.setTransform(1, 0, 0, 1, 0, 0);
 
 // 	let worldName = this.mapWorlds[this.currentWorldID].name;
-// 	let canvasBGColor = this.mapOptions.canvasBGColor;
-// 	if (this.mapOptions.canvasBGColorFunction !== null) canvasBGColor = this.mapOptions.canvasBGColorFunction(worldName, this.displayState);
+// 	let canvasBGColor = this.mapConfig.canvasBGColor;
+// 	if (this.mapConfig.canvasBGColorFunction !== null) canvasBGColor = this.mapConfig.canvasBGColorFunction(worldName, this.displayState);
 
 // 	this.mapContext.fillStyle = canvasBGColor;
 // 	this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
@@ -1171,11 +1347,11 @@ export default class Gamemap {
 
 // uesp.gamemap.Map.prototype.dumpTileIndices = function()
 // {
-// 	for (y = 0; y < this.mapOptions.tileCountY; ++y)
+// 	for (y = 0; y < this.mapConfig.numTilesY; ++y)
 // 	{
 // 		var LineString = "";
 
-// 		for (x = 0; x < this.mapOptions.tileCountX; ++x)
+// 		for (x = 0; x < this.mapConfig.numTilesX; ++x)
 // 		{
 // 			LineString += "(" + this.mapTiles[y][x].deltaTileX + ","+ this.mapTiles[y][x].deltaTileX + ") ";
 // 		}
@@ -1232,26 +1408,7 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.getMapBounds = function()
-// {
-// 	var rootOffset = this.mapRoot.offset();
-// 	var mapOffset  = this.mapContainer.offset();
-// 	var width  =  this.mapContainer.width();
-// 	var height =  this.mapContainer.height();
 
-// 	leftTile = this.startTileX + (mapOffset.left - rootOffset.left - this.mapTransformX)/this.mapOptions.tileSize;
-// 	topTile  = this.startTileY + (mapOffset.top  - rootOffset.top  - this.mapTransformY)/this.mapOptions.tileSize;
-
-// 	rightTile   = this.startTileX + (mapOffset.left - rootOffset.left + width  - this.mapTransformX)/this.mapOptions.tileSize;
-// 	bottomTile  = this.startTileY + (mapOffset.top  - rootOffset.top  + height - this.mapTransformY)/this.mapOptions.tileSize;
-
-// 	//this.startTileX + this.mapOptions.tileCountX, this.startTileY + this.mapOptions.tileCountY
-
-// 	leftTop     = this.convertTileToGamePos(leftTile, topTile);
-// 	rightBottom = this.convertTileToGamePos(rightTile, bottomTile);
-
-// 	return new uesp.gamemap.Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
-// }
 
 
 
@@ -1272,32 +1429,27 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.hasWorld = function(worldID)
-// {
-// 	return worldID in this.mapWorlds;
-// }
-
 
 // uesp.gamemap.Map.prototype.isGamePosInBounds = function(gamePos)
 // {
 // 	if (uesp.gamemap.isNullorUndefined(gamePos.x) || uesp.gamemap.isNullorUndefined(gamePos.y)) return false;
 
-// 	if (this.mapOptions.gamePosX1 < this.mapOptions.gamePosX2)
+// 	if (this.mapConfig.gamePosX1 < this.mapConfig.gamePosX2)
 // 	{
-// 		if (gamePos.x < this.mapOptions.gamePosX1 || gamePos.x > this.mapOptions.gamePosX2) return false;
+// 		if (gamePos.x < this.mapConfig.gamePosX1 || gamePos.x > this.mapConfig.gamePosX2) return false;
 // 	}
 // 	else
 // 	{
-// 		if (gamePos.x > this.mapOptions.gamePosX1 || gamePos.x < this.mapOptions.gamePosX2) return false;
+// 		if (gamePos.x > this.mapConfig.gamePosX1 || gamePos.x < this.mapConfig.gamePosX2) return false;
 // 	}
 
-// 	if (this.mapOptions.gamePosY1 < this.mapOptions.gamePosY2)
+// 	if (this.mapConfig.gamePosY1 < this.mapConfig.gamePosY2)
 // 	{
-// 		if (gamePos.y < this.mapOptions.gamePosY1 || gamePos.y > this.mapOptions.gamePosY2) return false;
+// 		if (gamePos.y < this.mapConfig.gamePosY1 || gamePos.y > this.mapConfig.gamePosY2) return false;
 // 	}
 // 	else
 // 	{
-// 		if (gamePos.y > this.mapOptions.gamePosY1 || gamePos.y < this.mapOptions.gamePosY2) return false;
+// 		if (gamePos.y > this.mapConfig.gamePosY1 || gamePos.y < this.mapConfig.gamePosY2) return false;
 // 	}
 
 // 	return true;
@@ -1373,83 +1525,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.loadMapTiles = function()
-// {
-// 	if (this.USE_CANVAS_DRAW) return this.loadMapTilesCanvas();
-
-// 	if (this.mapOptions.getMapTileFunction == null) return;
-// 	var self = this;
-
-// 	if (!(this.currentWorldID in this.mapWorlds))
-// 	{
-// 		uesp.logError("Unknown worldID " + this.currentWorldID + "!");
-// 		return;
-// 	}
-
-// 	var world = this.mapWorlds[this.currentWorldID];
-// 	var worldName = world.name;
-// 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
-// 	var isFakeMaxZoom = false;
-
-// 	var missingTile = this.mapOptions.missingMapTile;
-// 	if (this.mapOptions.missingMapTileFunction !== null) missingTile = this.mapOptions.missingMapTileFunction(worldName, this.displayState);
-
-// 	if (this.zoomLevel == world.maxZoom && this.mapOptions.useFakeMaxZoom)
-// 	{
-// 		isFakeMaxZoom = true;
-// 	}
-
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "worldID: " + this.currentWorldID + " worldName: " + worldName);
-
-// 	for (var y = 0; y < this.mapOptions.tileCountY; ++y)
-// 	{
-// 		for (var x = 0; x < this.mapOptions.tileCountX; ++x)
-// 		{
-// 			var tileX = this.mapTiles[y][x].deltaTileX + this.startTileX;
-// 			var tileY = this.mapTiles[y][x].deltaTileY + this.startTileY;
-
-// 			//if (tileX < 0 || tileY < 0 || tileX >= maxTiles || tileY >= maxTiles)
-// 			if (tileX < 0 || tileY < 0)
-// 			{
-// 				this.mapTiles[y][x].element.css("background-image", "url(" + missingTile + ")");
-// 				continue;
-// 			}
-
-// 			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
-// 			var element  = this.mapTiles[y][x].element;
-
-// 			if (isFakeMaxZoom)
-// 			{
-// 				var xPos = "left";
-// 				var yPos = "top";
-
-// 				if (tileX % 2 == 1) xPos = "right";
-// 				if (tileY % 2 == 1) yPos = "bottom";
-
-// 				element.css("background-size", "200%");
-// 				element.css("background-position", xPos + " " + yPos);
-
-// 				imageURL = this.mapOptions.getMapTileFunction(Math.floor(tileX/2), Math.floor(tileY/2), this.zoomLevel-1, worldName, this.displayState);
-
-// 				$('<img/>').attr('src', imageURL)
-// 					.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentWorldID))
-// 					.error(uesp.gamemap.onMapTileLoadFunction(element, missingTile));
-// 			}
-// 			else
-// 			{
-// 				element.css("background-size", "");
-// 				element.css("background-position", "");
-
-// 				$('<img/>').attr('src', imageURL)
-// 					.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentWorldID))
-// 					.error(uesp.gamemap.onMapTileLoadFunction(element, missingTile));
-// 			}
-
-// 		}
-// 	}
-// }
-
-
 // uesp.gamemap.Map.prototype.clearOldCanvasTiles = function()
 // {
 // 	for (var i in this.canvasImages)
@@ -1459,104 +1534,9 @@ export default class Gamemap {
 // 	}
 // }
 
-
-// uesp.gamemap.Map.prototype.loadMapTilesCanvas = function()
-// {
-// 	if (this.mapOptions.getMapTileFunction == null) return;
-// 	var self = this;
-
-// 	if (!(this.currentWorldID in this.mapWorlds))
-// 	{
-// 		uesp.logError("Unknown worldID " + this.currentWorldID + "!");
-// 		return;
-// 	}
-
-// 	this.clearOldCanvasTiles();
-
-// 	var worldName = this.mapWorlds[this.currentWorldID].name;
-// 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
-
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "worldID: " + this.currentWorldID + " worldName: " + worldName);
-
-// 	this.canvasImages = [];
-// 	this.canvasImageMap = {};
-// 	this.canvasTileCountX = this.mapOptions.tileCountX;
-// 	this.canvasTileCountY = this.mapOptions.tileCountY;
-
-// 	let canvasBGColor = this.mapOptions.canvasBGColor;
-// 	if (this.mapOptions.canvasBGColorFunction !== null) canvasBGColor = this.mapOptions.canvasBGColorFunction(worldName, this.displayState);
-
-// 	for (var y = 0; y < this.mapOptions.tileCountY; ++y)
-// 	{
-// 		this.canvasImageMap[y] = {};
-
-// 		for (var x = 0; x < this.mapOptions.tileCountX; ++x)
-// 		{
-// 			let tileX = x + this.startTileCanvasX;
-// 			let tileY = y + this.startTileCanvasY;
-
-// 			let imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
-// 			let newImage = new Image();
-// 			let canvasX = tileX * this.mapOptions.tileSize;
-// 			let canvasY = tileY * this.mapOptions.tileSize;
-
-// 			newImage.isError = false;
-// 			newImage.showTile = true;
-// 			newImage.isLoaded = false;
-
-// 			let imageInfo = {
-// 					image: newImage,
-// 					x: x,
-// 					y: y,
-// 					canvasX: canvasX,
-// 					canvasY: canvasY,
-// 					tileX : tileX,
-// 					tileY : tileY,
-// 			};
-
-// 			this.canvasImages.push(imageInfo);
-// 			this.canvasImageMap[y][x] = imageInfo;
-
-// 			newImage.onerror = function() {
-
-// 				if (newImage.showTile)
-// 				{
-// 					self.mapContext.fillStyle = canvasBGColor;
-// 					self.mapContext.fillRect(canvasX, canvasY, self.mapOptions.tileSize, self.mapOptions.tileSize);
-// 					self.triggerCanvasRedraw();
-// 				}
-
-// 				newImage.isError = true;
-// 			}
-
-// 			newImage.onload = function () {
-
-// 				if (newImage.showTile)
-// 				{
-// 					self.mapContext.drawImage(newImage, canvasX, canvasY, self.mapOptions.tileSize, self.mapOptions.tileSize);
-// 					self.triggerCanvasRedraw();
-// 				}
-
-// 				newImage.isLoaded = true;
-// 			};
-
-// 			if (tileX < 0 || tileY < 0)
-// 			{
-// 				newImage.onerror();
-// 			}
-// 			else
-// 			{
-// 				newImage.src = imageURL;
-// 			}
-// 		}
-// 	}
-
-// }
-
-
 // uesp.gamemap.Map.prototype.loadMapTilesCanvasRowCol = function(left, right, top, bottom)
 // {
-// 	if (uesp.gamemap.isNullorUndefined(this.mapOptions.getMapTileFunction)) return;
+// 	if (uesp.gamemap.isNullorUndefined(this.mapConfig.getMapTileFunction)) return;
 
 // 	if (!(this.currentWorldID in this.mapWorlds))
 // 	{
@@ -1600,11 +1580,11 @@ export default class Gamemap {
 // uesp.gamemap.Map.prototype.loadMapTilesCanvasRowColPriv = function(startX, startY, dx, dy)
 // {
 // 	let worldName = this.mapWorlds[this.currentWorldID].name;
-// 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
+// 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
 // 	let self = this;
 
-// 	let canvasBGColor = this.mapOptions.canvasBGColor;
-// 	if (this.mapOptions.canvasBGColorFunction !== null) canvasBGColor = this.mapOptions.canvasBGColorFunction(worldName, this.displayState);
+// 	let canvasBGColor = this.mapConfig.canvasBGColor;
+// 	if (this.mapConfig.canvasBGColorFunction !== null) canvasBGColor = this.mapConfig.canvasBGColorFunction(worldName, this.displayState);
 
 // 	for (y = startY; y < startY + dy; ++y)
 // 	{
@@ -1617,10 +1597,10 @@ export default class Gamemap {
 // 			let tileX = x + this.origStartTileCanvasX;
 // 			let tileY = y + this.origStartTileCanvasY;
 
-// 			let imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
+// 			let imageURL = this.mapConfig.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
 // 			let newImage = new Image();
-// 			let canvasX = tileX * this.mapOptions.tileSize;
-// 			let canvasY = tileY * this.mapOptions.tileSize;
+// 			let canvasX = tileX * this.mapConfig.tileSize;
+// 			let canvasY = tileY * this.mapConfig.tileSize;
 
 // 			newImage.isError = false;
 // 			newImage.showTile = true;
@@ -1644,7 +1624,7 @@ export default class Gamemap {
 // 				if (newImage.showTile)
 // 				{
 // 					self.mapContext.fillStyle = canvasBGColor;
-// 					self.mapContext.fillRect(canvasX, canvasY, self.mapOptions.tileSize, self.mapOptions.tileSize);
+// 					self.mapContext.fillRect(canvasX, canvasY, self.mapConfig.tileSize, self.mapConfig.tileSize);
 // 				}
 
 // 				newImage.isError = true;
@@ -1654,7 +1634,7 @@ export default class Gamemap {
 
 // 				if (newImage.showTile)
 // 				{
-// 					self.mapContext.drawImage(newImage, canvasX, canvasY, self.mapOptions.tileSize, self.mapOptions.tileSize);
+// 					self.mapContext.drawImage(newImage, canvasX, canvasY, self.mapConfig.tileSize, self.mapConfig.tileSize);
 // 				}
 
 // 				newImage.isLoaded = true;
@@ -1677,7 +1657,7 @@ export default class Gamemap {
 
 // uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
 // {
-// 	if (uesp.gamemap.isNullorUndefined(this.mapOptions.getMapTileFunction)) return;
+// 	if (uesp.gamemap.isNullorUndefined(this.mapConfig.getMapTileFunction)) return;
 
 // 	if (!(this.currentWorldID in this.mapWorlds))
 // 	{
@@ -1688,20 +1668,20 @@ export default class Gamemap {
 // 	var world = this.mapWorlds[this.currentWorldID];
 // 	var worldName = world.name;
 // 	var worldName = this.mapWorlds[this.currentWorldID].name;
-// 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
+// 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
 // 	var isFakeMaxZoom = false;
 
-// 	var missingTile = this.mapOptions.missingMapTile;
-// 	if (this.mapOptions.missingMapTileFunction !== null) missingTile = this.mapOptions.missingMapTileFunction(worldName, this.displayState);
+// 	var missingTile = this.mapConfig.missingMapTile;
+// 	if (this.mapConfig.missingMapTileFunction !== null) missingTile = this.mapConfig.missingMapTileFunction(worldName, this.displayState);
 
-// 	if (this.zoomLevel == world.maxZoom && this.mapOptions.useFakeMaxZoom)
+// 	if (this.zoomLevel == world.maxZoom && this.mapConfig.useFakeMaxZoom)
 // 	{
 // 		isFakeMaxZoom = true;
 // 	}
 
-// 	for (y = 0; y < this.mapOptions.tileCountY; ++y)
+// 	for (y = 0; y < this.mapConfig.numTilesY; ++y)
 // 	{
-// 		for (x = 0; x < this.mapOptions.tileCountX; ++x)
+// 		for (x = 0; x < this.mapConfig.numTilesX; ++x)
 // 		{
 // 			if (xIndex >= 0 && this.mapTiles[y][x].deltaTileX != xIndex) continue;
 // 			if (yIndex >= 0 && this.mapTiles[y][x].deltaTileY != yIndex) continue;
@@ -1716,7 +1696,7 @@ export default class Gamemap {
 // 				continue;
 // 			}
 
-// 			var imageURL = this.mapOptions.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
+// 			var imageURL = this.mapConfig.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
 // 			var element  = this.mapTiles[y][x].element;
 
 // 			if (isFakeMaxZoom)
@@ -1730,7 +1710,7 @@ export default class Gamemap {
 // 				element.css("background-size", "200%");
 // 				element.css("background-position", xPos + " " + yPos);
 
-// 				imageURL = this.mapOptions.getMapTileFunction(Math.floor(tileX/2), Math.floor(tileY/2), this.zoomLevel-1, worldName, this.displayState);
+// 				imageURL = this.mapConfig.getMapTileFunction(Math.floor(tileX/2), Math.floor(tileY/2), this.zoomLevel-1, worldName, this.displayState);
 
 // 				$('<img/>').attr('src', imageURL)
 // 					.load( uesp.gamemap.onMapTileLoadFunction(element, imageURL))
@@ -2641,7 +2621,7 @@ export default class Gamemap {
 // 	{
 // 		if (data.worlds == null || data.worlds.length === 0)
 // 		{
-// 			this.changeWorld(this.mapOptions.homeworldID);
+// 			this.changeWorld(this.mapConfig.homeworldID);
 // 			this.centerOnError = true;
 // 		}
 // 		else
@@ -2669,7 +2649,7 @@ export default class Gamemap {
 
 // 	if (this.mapWorlds[worldID] == null)
 // 	{
-// 		this.changeWorld(this.mapOptions.homeworldID);
+// 		this.changeWorld(this.mapConfig.homeworldID);
 // 		this.centerOnError = true;
 // 		return true;
 // 	}
@@ -2715,11 +2695,11 @@ export default class Gamemap {
 // 	var queryParams = {};
 // 	queryParams.action = "get_loc";
 // 	queryParams.locid  = locId;
-// 	queryParams.db = this.mapOptions.dbPrefix;
+// 	queryParams.db = this.mapConfig.dbPrefix;
 
 // 	if (this.isHiddenLocsShown()) queryParams.showhidden = 1;
 
-// 	if (this.mapOptions.isOffline)
+// 	if (this.mapConfig.isOffline)
 // 	{
 // 		setTimeout(	function() { ugmLoadOfflineLocation(self, queryParams, onLoadFunction, eventData); }, 10);
 // 	}
@@ -2744,13 +2724,13 @@ export default class Gamemap {
 // 	queryParams.action = "get_centeron";
 // 	if (world != null) queryParams.world  = world;
 // 	queryParams.centeron = locationName;
-// 	queryParams.db = this.mapOptions.dbPrefix;
+// 	queryParams.db = this.mapConfig.dbPrefix;
 // 	if (this.isHiddenLocsShown()) queryParams.showhidden = 1;
 
 // 	//if (!this.hasWorld(this.worldID)) queryParams.incworld = 1;
 // 	//if (queryParams.world <= 0) return uesp.logError("Unknown worldID " + this.currentWorldID + "!");
 
-// 	if (this.mapOptions.isOffline)
+// 	if (this.mapConfig.isOffline)
 // 	{
 // 		setTimeout(	function() { ugmLoadOfflineCenterOnLocation(self, queryParams); }, 10);
 // 	}
@@ -2762,36 +2742,7 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.retrieveLocations = function()
-// {
-// 	var self = this;
-// 	var mapBounds = this.getMapBounds();
 
-// 	var queryParams = {};
-// 	queryParams.action = "get_locs";
-// 	queryParams.world  = this.currentWorldID;
-// 	queryParams.top    = mapBounds.top;
-// 	queryParams.bottom = mapBounds.bottom;
-// 	queryParams.left   = mapBounds.left;
-// 	queryParams.right  = mapBounds.right;
-// 	queryParams.zoom   = this.zoomLevel;
-// 	if (this.isHiddenLocsShown()) queryParams.showhidden = 1;
-// 	if (!this.hasWorld(this.currentWorldID)) queryParams.incworld = 1;
-// 	queryParams.db = this.mapOptions.dbPrefix;
-
-// 	if (queryParams.world <= 0) return uesp.logError("Unknown worldID for current world " + this.currentWorldID + "!");
-
-// 	if (this.mapOptions.isOffline)
-// 	{
-// 		setTimeout( function() { ugmLoadOfflineLocations(self, queryParams); }, 10);
-// 	}
-// 	else
-// 	{
-// 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) { self.onReceiveLocationData(data); });
-// 	}
-
-// 	return true;
-// }
 
 
 // uesp.gamemap.Map.prototype.panToGamePos = function(x, y)
@@ -2802,14 +2753,14 @@ export default class Gamemap {
 // 	var mapOffset = this.mapContainer.offset();
 
 // 	var tilePos = this.convertGameToTilePos(x, y);
-// 	tilePos.x -= this.mapOptions.tileCountX/2;
-// 	tilePos.y -= this.mapOptions.tileCountY/2;
+// 	tilePos.x -= this.mapConfig.numTilesX/2;
+// 	tilePos.y -= this.mapConfig.numTilesY/2;
 
 // 	var tileX = Math.floor(tilePos.x);
 // 	var tileY = Math.floor(tilePos.y);
 
-// 	var newOffsetX = Math.round(mapOffset.left + this.mapContainer.width()/2  - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - tilePos.x) * this.mapOptions.tileSize);
-// 	var newOffsetY = Math.round(mapOffset.top  + this.mapContainer.height()/2 - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - tilePos.y) * this.mapOptions.tileSize);
+// 	var newOffsetX = Math.round(mapOffset.left + this.mapContainer.width()/2  - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - tilePos.x) * this.mapConfig.tileSize);
+// 	var newOffsetY = Math.round(mapOffset.top  + this.mapContainer.height()/2 - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - tilePos.y) * this.mapConfig.tileSize);
 
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "newOffset = " + newOffsetX + ", " + newOffsetY);
 
@@ -2831,14 +2782,14 @@ export default class Gamemap {
 // 	var pixelPos = this.convertGameToPixelPos(x, y);
 // 	var tilePos = this.convertGameToTilePos(x, y);
 
-// 	tilePos.x -= this.mapOptions.tileCountX/2;
-// 	tilePos.y -= this.mapOptions.tileCountY/2;
+// 	tilePos.x -= this.mapConfig.numTilesX/2;
+// 	tilePos.y -= this.mapConfig.numTilesY/2;
 
 // 	var tileX = Math.floor(tilePos.x);
 // 	var tileY = Math.floor(tilePos.y);
 
-// 	var newOffsetX = Math.round(mapOffset.left + this.mapContainer.width()/2  - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - tilePos.x) * this.mapOptions.tileSize);
-// 	var newOffsetY = Math.round(mapOffset.top  + this.mapContainer.height()/2 - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - tilePos.y) * this.mapOptions.tileSize);
+// 	var newOffsetX = Math.round(mapOffset.left + this.mapContainer.width()/2  - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - tilePos.x) * this.mapConfig.tileSize);
+// 	var newOffsetY = Math.round(mapOffset.top  + this.mapContainer.height()/2 - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - tilePos.y) * this.mapConfig.tileSize);
 
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "newOffset = " + newOffsetX + ", " + newOffsetY);
 
@@ -2854,7 +2805,7 @@ export default class Gamemap {
 
 // 	this.mapWorlds[worldID].mergeMapOptions(mapOptions);
 
-// 	if (this.currentWorldID == worldID) this.mapOptions.mergeOptions(mapOptions);
+// 	if (this.currentWorldID == worldID) this.mapConfig.mergeOptions(mapOptions);
 // }
 
 // uesp.gamemap.Map.prototype.setGameZoom = function(zoom)
@@ -2869,8 +2820,8 @@ export default class Gamemap {
 // 	var mapOffset = this.mapContainer.offset();
 // 	var zoomSize = Math.pow(2, zoom - this.zoomLevel);
 
-// 	newTileX = curTilePos.x * zoomSize - this.mapOptions.tileCountX/2;
-// 	newTileY = curTilePos.y * zoomSize - this.mapOptions.tileCountY/2;
+// 	newTileX = curTilePos.x * zoomSize - this.mapConfig.numTilesX/2;
+// 	newTileY = curTilePos.y * zoomSize - this.mapConfig.numTilesY/2;
 
 // 	this.zoomLevel = zoom;
 
@@ -2882,8 +2833,8 @@ export default class Gamemap {
 // 	this.origStartTileCanvasY = this.startTileY;
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "setGameZoom(): startTile = " + this.startTileX + ", " + this.startTileY);
 
-// 	newOffsetX = Math.round(mapOffset.left + this.mapContainer.width()/2  - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - newTileX) * this.mapOptions.tileSize);
-// 	newOffsetY = Math.round(LOG_LEVEL_INFO.top  + this.mapContainer.height()/2 - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - newTileY) * this.mapOptions.tileSize);
+// 	newOffsetX = Math.round(mapOffset.left + this.mapContainer.width()/2  - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - newTileX) * this.mapConfig.tileSize);
+// 	newOffsetY = Math.round(LOG_LEVEL_INFO.top  + this.mapContainer.height()/2 - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - newTileY) * this.mapConfig.tileSize);
 // 	uesp.logDebug(uesp.LOG_LEVEL_ERROR, "newOffset = " + newOffsetX + ", " + newOffsetY);
 
 // 	if (this.USE_CANVAS_DRAW)
@@ -2891,8 +2842,8 @@ export default class Gamemap {
 // 		this.startTileX = 0;
 // 		this.startTileY = 0;
 
-// 		newOffsetX = -Math.round(this.mapCanvas.width/2  - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - tilePos.x) * this.mapOptions.tileSize);
-// 		newOffsetY = -Math.round(this.mapCanvas.height/2 - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - tilePos.y) * this.mapOptions.tileSize);
+// 		newOffsetX = -Math.round(this.mapCanvas.width/2  - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - tilePos.x) * this.mapConfig.tileSize);
+// 		newOffsetY = -Math.round(this.mapCanvas.height/2 - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - tilePos.y) * this.mapConfig.tileSize);
 // 		uesp.logDebug(uesp.LOG_LEVEL_INFO, "newOffsetCanvas = " + newOffsetX + ", " + newOffsetY);
 
 // 		this.resetTranslateCanvas();
@@ -2920,7 +2871,7 @@ export default class Gamemap {
 // 	}
 // 	else if (deltaX <= -1)
 // 	{
-// 		targetXIndex = this.mapOptions.tileCountX - 1;
+// 		targetXIndex = this.mapConfig.numTilesX - 1;
 // 		deltaX = -1;
 // 	}
 
@@ -2931,36 +2882,36 @@ export default class Gamemap {
 // 	}
 // 	else if (deltaY <= -1)
 // 	{
-// 		targetYIndex = this.mapOptions.tileCountY - 1;
+// 		targetYIndex = this.mapConfig.numTilesY - 1;
 // 		deltaY = -1;
 // 	}
 
-// 	for (var y = 0; y < this.mapOptions.tileCountY; y++)
+// 	for (var y = 0; y < this.mapConfig.numTilesY; y++)
 // 	{
-// 		for(var x = 0; x < this.mapOptions.tileCountX; x++)
+// 		for(var x = 0; x < this.mapConfig.numTilesX; x++)
 // 		{
 // 			var tileOffset = this.mapTiles[y][x].element.offset();
 
 // 			if (this.mapTiles[y][x].deltaTileX == targetXIndex)
 // 			{
-// 				this.mapTiles[y][x].deltaTileX += (this.mapOptions.tileCountX - 1) * deltaX;
-// 				tileLeft = tileOffset.left + this.mapOptions.tileSize * (this.mapOptions.tileCountX - 1) * deltaX;
+// 				this.mapTiles[y][x].deltaTileX += (this.mapConfig.numTilesX - 1) * deltaX;
+// 				tileLeft = tileOffset.left + this.mapConfig.tileSize * (this.mapConfig.numTilesX - 1) * deltaX;
 // 			}
 // 			else
 // 			{
 // 				this.mapTiles[y][x].deltaTileX -= deltaX;
-// 				tileLeft = tileOffset.left - this.mapOptions.tileSize * deltaX;
+// 				tileLeft = tileOffset.left - this.mapConfig.tileSize * deltaX;
 // 			}
 
 // 			if (this.mapTiles[y][x].deltaTileY == targetYIndex)
 // 			{
-// 				this.mapTiles[y][x].deltaTileY += (this.mapOptions.tileCountY - 1) * deltaY;
-// 				tileTop = tileOffset.top + this.mapOptions.tileSize * (this.mapOptions.tileCountY - 1) * deltaY;
+// 				this.mapTiles[y][x].deltaTileY += (this.mapConfig.numTilesY - 1) * deltaY;
+// 				tileTop = tileOffset.top + this.mapConfig.tileSize * (this.mapConfig.numTilesY - 1) * deltaY;
 // 			}
 // 			else
 // 			{
 // 				this.mapTiles[y][x].deltaTileY -= deltaY;
-// 				tileTop = tileOffset.top - this.mapOptions.tileSize * deltaY;
+// 				tileTop = tileOffset.top - this.mapConfig.tileSize * deltaY;
 // 			}
 
 // 			this.mapTiles[y][x].element.offset({
@@ -2971,26 +2922,26 @@ export default class Gamemap {
 // 	}
 
 // 	this.mapRoot.offset({
-// 		left: curOffset.left + this.mapOptions.tileSize * deltaX,
-// 		top : curOffset.top  + this.mapOptions.tileSize * deltaY
+// 		left: curOffset.left + this.mapConfig.tileSize * deltaX,
+// 		top : curOffset.top  + this.mapConfig.tileSize * deltaY
 // 	});
 
 // 	this.shiftLocations(deltaX, deltaY);
 
-// 	this.dragStartLeft -= this.mapOptions.tileSize * deltaX;
-// 	this.dragStartTop  -= this.mapOptions.tileSize * deltaY;
+// 	this.dragStartLeft -= this.mapConfig.tileSize * deltaX;
+// 	this.dragStartTop  -= this.mapConfig.tileSize * deltaY;
 
 // 	this.startTileX += deltaX;
 // 	this.startTileY += deltaY;
 
-// 	this.loadMapTilesRowCol(targetXIndex + (this.mapOptions.tileCountX - 1) * deltaX, targetYIndex + (this.mapOptions.tileCountY - 1) * deltaY);
+// 	this.loadMapTilesRowCol(targetXIndex + (this.mapConfig.numTilesX - 1) * deltaX, targetYIndex + (this.mapConfig.numTilesY - 1) * deltaY);
 // }
 
 
 // uesp.gamemap.Map.prototype.shiftLocations = function (deltaX, deltaY)
 // {
-// 	var shiftX = deltaX * this.mapOptions.tileSize;
-// 	var shiftY = deltaY * this.mapOptions.tileSize;
+// 	var shiftX = deltaX * this.mapConfig.tileSize;
+// 	var shiftY = deltaY * this.mapConfig.tileSize;
 
 // 	for (key in this.locations)
 // 	{
@@ -3007,45 +2958,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.updateLocationDisplayLevels = function()
-// {
-// 	for (key in this.locations)
-// 	{
-// 		if (this.zoomLevel < this.locations[key].displayLevel)
-// 			this.locations[key].hideElements(0);
-// 		else
-// 			this.locations[key].showElements(0);
-// 	}
-// }
-
-
-// uesp.gamemap.Map.prototype.updateLocationOffset = function (location, animate)
-// {
-// 	/*
-// 	tilePos = this.convertGameToTilePos(location.x, location.y);
-
-// 	mapOffset  = this.mapRoot.offset();
-// 	xPos = (tilePos.x - this.startTileX) * this.mapOptions.tileSize + mapOffset.left;
-// 	yPos = (tilePos.y - this.startTileY) * this.mapOptions.tileSize + mapOffset.top;
-
-// 	location.updateOffset(xPos, yPos, animate); */
-
-// 	location.computeOffset();
-// 	location.updateOffset();
-
-// 	return true;
-// }
-
-
-// uesp.gamemap.Map.prototype.updateLocationOffsets = function (animate)
-// {
-// 	for (key in this.locations)
-// 	{
-// 		this.updateLocationOffset(this.locations[key], animate);
-// 	}
-// }
-
-
 // uesp.gamemap.Map.prototype.updateMap = function()
 // {
 // 	this.updateLocations();
@@ -3054,8 +2966,8 @@ export default class Gamemap {
 
 // uesp.gamemap.Map.prototype.updateZoomControlButtons = function(newZoomLevel)
 // {
-// 	var isMaxZoom = newZoomLevel >= this.mapOptions.maxZoomLevel;
-// 	var isMinZoom = newZoomLevel <= this.mapOptions.minZoomLevel;
+// 	var isMaxZoom = newZoomLevel >= this.mapConfig.maxZoomLevel;
+// 	var isMinZoom = newZoomLevel <= this.mapConfig.minZoomLevel;
 
 // 	if (isMaxZoom)
 // 	{
@@ -3103,7 +3015,7 @@ export default class Gamemap {
 // 	if (this.USE_CANVAS_DRAW) return this.zoomInCanvas(x, y);
 
 // 	this.updateZoomControlButtons(this.zoomLevel + 1);
-// 	if (this.zoomLevel >= this.mapOptions.maxZoomLevel) return;
+// 	if (this.zoomLevel >= this.mapConfig.maxZoomLevel) return;
 
 // 	var curPos = this.getGamePositionOfCenter();
 
@@ -3116,19 +3028,19 @@ export default class Gamemap {
 // 	var mapOffset  = this.mapContainer.offset();
 // 	var rootOffset = this.mapRoot.offset();
 
-// 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapOptions.tileSize;
-// 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapOptions.tileSize;
+// 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapConfig.tileSize;
+// 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapConfig.tileSize;
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin tile = " + tileX + ", " + tileY);
 
-// 	newTileX = tileX*2 - this.mapOptions.tileCountX/2;
-// 	newTileY = tileY*2 - this.mapOptions.tileCountY/2;
+// 	newTileX = tileX*2 - this.mapConfig.numTilesX/2;
+// 	newTileY = tileY*2 - this.mapConfig.numTilesY/2;
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin newTile = " + newTileX + ", " + newTileY);
 
 // 	this.startTileX = Math.floor(newTileX);
 // 	this.startTileY = Math.floor(newTileY);
 
-// 	newOffsetX = Math.round(mapOffset.left + x - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - newTileX) * this.mapOptions.tileSize);
-// 	newOffsetY = Math.round(mapOffset.top  + y - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - newTileY) * this.mapOptions.tileSize);
+// 	newOffsetX = Math.round(mapOffset.left + x - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - newTileX) * this.mapConfig.tileSize);
+// 	newOffsetY = Math.round(mapOffset.top  + y - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - newTileY) * this.mapConfig.tileSize);
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin newOffset = " + newOffsetX + ", " + newOffsetY, mapOffset, this.startTileX);
 // 	this.mapRoot.offset({ left: newOffsetX, top: newOffsetY});
 
@@ -3140,7 +3052,7 @@ export default class Gamemap {
 // uesp.gamemap.Map.prototype.zoomInCanvas = function(x, y)
 // {
 // 	this.updateZoomControlButtons(this.zoomLevel + 1);
-// 	if (this.zoomLevel >= this.mapOptions.maxZoomLevel) return;
+// 	if (this.zoomLevel >= this.mapConfig.maxZoomLevel) return;
 
 // 	var curPos = this.getGamePositionOfCenter();
 
@@ -3151,26 +3063,26 @@ export default class Gamemap {
 // 	if (x == null) x = this.mapCanvas.width/2;
 // 	if (y == null) y = this.mapCanvas.height/2;
 
-// 	let tileX = (x - this.mapTransformX) / this.mapOptions.tileSize;
-// 	let tileY = (y - this.mapTransformY) / this.mapOptions.tileSize;
+// 	let tileX = (x - this.mapTransformX) / this.mapConfig.tileSize;
+// 	let tileY = (y - this.mapTransformY) / this.mapConfig.tileSize;
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin tile = " + tileX + ", " + tileY);
 
-// 	let newOffsetX = x - tileX * 2 * this.mapOptions.tileSize;
-// 	let newOffsetY = y - tileY * 2 * this.mapOptions.tileSize;
+// 	let newOffsetX = x - tileX * 2 * this.mapConfig.tileSize;
+// 	let newOffsetY = y - tileY * 2 * this.mapConfig.tileSize;
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin newOffset = " + newOffsetX + ", " + newOffsetY);
 
-// 	let origTileX = tileX*2 - this.mapOptions.tileCountX/2;
-// 	let origTileY = tileY*2 - this.mapOptions.tileCountY/2;
+// 	let origTileX = tileX*2 - this.mapConfig.numTilesX/2;
+// 	let origTileY = tileY*2 - this.mapConfig.numTilesY/2;
 
 // 	var mapOffset  = this.mapContainer.offset();
 // 	var rootOffset = this.mapRoot.offset();
 
-// 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapOptions.tileSize;
-// 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapOptions.tileSize;
+// 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapConfig.tileSize;
+// 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapConfig.tileSize;
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin tile = " + tileX + ", " + tileY);
 
-// 	let newTileX = tileX*2 - this.mapOptions.tileCountX/2;
-// 	let newTileY = tileY*2 - this.mapOptions.tileCountY/2;
+// 	let newTileX = tileX*2 - this.mapConfig.numTilesX/2;
+// 	let newTileY = tileY*2 - this.mapConfig.numTilesY/2;
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin newTile = " + newTileX + ", " + newTileY);
 
 // 	this.startTileX = Math.floor(origTileX);
@@ -3184,15 +3096,15 @@ export default class Gamemap {
 // 	this.startTileX = 0;
 // 	this.startTileY = 0;
 
-// 	let newOffsetX1 = (mapOffset.left + x - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - newTileX) * this.mapOptions.tileSize);
-// 	let newOffsetY1 = (mapOffset.top  + y - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - newTileY) * this.mapOptions.tileSize);
+// 	let newOffsetX1 = (mapOffset.left + x - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - newTileX) * this.mapConfig.tileSize);
+// 	let newOffsetY1 = (mapOffset.top  + y - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - newTileY) * this.mapConfig.tileSize);
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin newOffset1 = " + newOffsetX1 + ", " + newOffsetY1, mapOffset, this.startTileX);
 
 // 		/* Fix for slow drift when zooming in/out multiple times */
 // 	let diffX = newOffsetX - newOffsetX1;
 // 	let diffY = newOffsetY - newOffsetY1;
-// 	let newOffsetX2 = newOffsetX - Math.round(diffX / this.mapOptions.tileSize) * this.mapOptions.tileSize + mapOffset.left;
-// 	let newOffsetY2 = newOffsetY - Math.round(diffY / this.mapOptions.tileSize) * this.mapOptions.tileSize + mapOffset.top;
+// 	let newOffsetX2 = newOffsetX - Math.round(diffX / this.mapConfig.tileSize) * this.mapConfig.tileSize + mapOffset.left;
+// 	let newOffsetY2 = newOffsetY - Math.round(diffY / this.mapConfig.tileSize) * this.mapConfig.tileSize + mapOffset.top;
 
 // 	//this.mapRoot.offset({ left: newOffsetX2, top: newOffsetY2});
 
@@ -3227,7 +3139,7 @@ export default class Gamemap {
 // 	if (this.USE_CANVAS_DRAW) return this.zoomOutCanvas(x, y);
 
 // 	this.updateZoomControlButtons(this.zoomLevel - 1);
-// 	if (this.zoomLevel <= this.mapOptions.minZoomLevel) return;
+// 	if (this.zoomLevel <= this.mapConfig.minZoomLevel) return;
 
 // 	this.zoomLevel--;
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut (" + x + ", " + y + ") = " + this.zoomLevel);
@@ -3238,19 +3150,19 @@ export default class Gamemap {
 // 	var mapOffset  = this.mapContainer.offset();
 // 	var rootOffset = this.mapRoot.offset();
 
-// 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapOptions.tileSize;
-// 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapOptions.tileSize;
+// 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapConfig.tileSize;
+// 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapConfig.tileSize;
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut tile = " + tileX + ", " + tileY);
 
-// 	newTileX = tileX/2 - this.mapOptions.tileCountX/2;
-// 	newTileY = tileY/2 - this.mapOptions.tileCountY/2;
+// 	newTileX = tileX/2 - this.mapConfig.numTilesX/2;
+// 	newTileY = tileY/2 - this.mapConfig.numTilesY/2;
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut newTile = " + newTileX + ", " + newTileY);
 
 // 	this.startTileX = Math.floor(newTileX);
 // 	this.startTileY = Math.floor(newTileY);
 
-// 	newOffsetX = Math.round(mapOffset.left + x - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - newTileX) * this.mapOptions.tileSize);
-// 	newOffsetY = Math.round(mapOffset.top  + y - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - newTileY) * this.mapOptions.tileSize);
+// 	newOffsetX = Math.round(mapOffset.left + x - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - newTileX) * this.mapConfig.tileSize);
+// 	newOffsetY = Math.round(mapOffset.top  + y - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - newTileY) * this.mapConfig.tileSize);
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut newOffset = " + newOffsetX + ", " + newOffsetY);
 
 // 	this.mapRoot.offset({ left: newOffsetX, top: newOffsetY});
@@ -3263,7 +3175,7 @@ export default class Gamemap {
 // uesp.gamemap.Map.prototype.zoomOutCanvas = function(x, y)
 // {
 // 	this.updateZoomControlButtons(this.zoomLevel - 1);
-// 	if (this.zoomLevel <= this.mapOptions.minZoomLevel) return;
+// 	if (this.zoomLevel <= this.mapConfig.minZoomLevel) return;
 
 // 	this.zoomLevel--;
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut (" + x + ", " + y + ") = " + this.zoomLevel);
@@ -3271,23 +3183,23 @@ export default class Gamemap {
 // 	if (x == null) x = this.mapCanvas.width/2;
 // 	if (y == null) y = this.mapCanvas.height/2;
 
-// 	let tileX = (x - this.mapTransformX) / this.mapOptions.tileSize;
-// 	let tileY = (y - this.mapTransformY) / this.mapOptions.tileSize;
+// 	let tileX = (x - this.mapTransformX) / this.mapConfig.tileSize;
+// 	let tileY = (y - this.mapTransformY) / this.mapConfig.tileSize;
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut tile = " + tileX + ", " + tileY);
 
-// 	let newOffsetX = x - tileX / 2 * this.mapOptions.tileSize;
-// 	let newOffsetY = y - tileY / 2 * this.mapOptions.tileSize;
+// 	let newOffsetX = x - tileX / 2 * this.mapConfig.tileSize;
+// 	let newOffsetY = y - tileY / 2 * this.mapConfig.tileSize;
 // 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut newOffset = " + newOffsetX + ", " + newOffsetY);
 
-// 	let origTileX = tileX/2 - this.mapOptions.tileCountX/2;
-// 	let origTileY = tileY/2 - this.mapOptions.tileCountY/2;
+// 	let origTileX = tileX/2 - this.mapConfig.numTilesX/2;
+// 	let origTileY = tileY/2 - this.mapConfig.numTilesY/2;
 
 // 	var mapOffset  = this.mapContainer.offset();
 // 	var rootOffset = this.mapRoot.offset();
-// 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapOptions.tileSize;
-// 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapOptions.tileSize;
-// 	let newTileX = tileX/2 - this.mapOptions.tileCountX/2;
-// 	let newTileY = tileY/2 - this.mapOptions.tileCountY/2;
+// 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapConfig.tileSize;
+// 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapConfig.tileSize;
+// 	let newTileX = tileX/2 - this.mapConfig.numTilesX/2;
+// 	let newTileY = tileY/2 - this.mapConfig.numTilesY/2;
 
 // 	this.startTileX = Math.floor(origTileX);
 // 	this.startTileY = Math.floor(origTileY);
@@ -3300,14 +3212,14 @@ export default class Gamemap {
 // 	this.startTileX = 0;
 // 	this.startTileY = 0;
 
-// 	let newOffsetX1 = (mapOffset.left + x - this.mapOptions.tileCountX /2 * this.mapOptions.tileSize + (this.startTileX - newTileX) * this.mapOptions.tileSize);
-// 	let newOffsetY1 = (mapOffset.top  + y - this.mapOptions.tileCountY /2 * this.mapOptions.tileSize + (this.startTileY - newTileY) * this.mapOptions.tileSize);
+// 	let newOffsetX1 = (mapOffset.left + x - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - newTileX) * this.mapConfig.tileSize);
+// 	let newOffsetY1 = (mapOffset.top  + y - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - newTileY) * this.mapConfig.tileSize);
 
 // 		/* Fix for slow drift when zooming in/out multiple times */
 // 	let diffX = newOffsetX - newOffsetX1;
 // 	let diffY = newOffsetY - newOffsetY1;
-// 	let newOffsetX2 = newOffsetX - Math.round(diffX / this.mapOptions.tileSize) * this.mapOptions.tileSize + mapOffset.left;
-// 	let newOffsetY2 = newOffsetY - Math.round(diffY / this.mapOptions.tileSize) * this.mapOptions.tileSize + mapOffset.top;
+// 	let newOffsetX2 = newOffsetX - Math.round(diffX / this.mapConfig.tileSize) * this.mapConfig.tileSize + mapOffset.left;
+// 	let newOffsetY2 = newOffsetY - Math.round(diffY / this.mapConfig.tileSize) * this.mapConfig.tileSize + mapOffset.top;
 
 // 	//this.mapRoot.offset({ left: newOffsetX2, top: newOffsetY2});
 
@@ -3609,9 +3521,9 @@ export default class Gamemap {
 // 	var self = this;
 
 // 	queryParams = world.createSaveQuery();
-// 	queryParams.db = this.mapOptions.dbPrefix;
+// 	queryParams.db = this.mapConfig.dbPrefix;
 
-// 	if (this.mapOptions.isOffline)
+// 	if (this.mapConfig.isOffline)
 // 	{
 // 		// Do nothing
 // 	}
@@ -3764,11 +3676,11 @@ export default class Gamemap {
 // {
 // 	var checkTypeString = locTypeString.trim().toLowerCase();
 
-// 	if (this.mapOptions == null || this.mapOptions.iconTypeMap == null || checkTypeString == "") return null;
+// 	if (this.mapOptions == null || this.mapConfig.iconTypeMap == null || checkTypeString == "") return null;
 
-// 	for (locType in this.mapOptions.iconTypeMap)
+// 	for (locType in this.mapConfig.iconTypeMap)
 // 	{
-// 		if (checkTypeString === this.mapOptions.iconTypeMap[locType].toLowerCase()) return locType;
+// 		if (checkTypeString === this.mapConfig.iconTypeMap[locType].toLowerCase()) return locType;
 // 	}
 
 // 	return null;
@@ -3838,7 +3750,7 @@ export default class Gamemap {
 // {
 // 	var self = this;
 
-// 	if (this.mapOptions.isOffline)
+// 	if (this.mapConfig.isOffline)
 // 	{
 // 		this.helpBlockElement = $(".gmHelpBlock");
 
@@ -3864,7 +3776,7 @@ export default class Gamemap {
 // 				.html("Loading...")
 // 				.appendTo(this.mapContainer);
 
-// 	$.get( this.mapOptions.helpTemplate, function( data ) {
+// 	$.get( this.mapConfig.helpTemplate, function( data ) {
 // 		self.helpBlockContents = data;
 // 		uesp.logDebug(uesp.LOG_LEVEL_WARNING, 'Received help block contents!', data);
 // 		$('.gmHelpBlock').html(data);
@@ -3969,14 +3881,14 @@ export default class Gamemap {
 
 // uesp.gamemap.Map.prototype.createMapKeyContent = function()
 // {
-// 	if (this.mapOptions.iconTypeMap == null) return 'No Map Icons Available';
+// 	if (this.mapConfig.iconTypeMap == null) return 'No Map Icons Available';
 
 // 	var reverseIconTypeMap = { };
 // 	var sortedIconTypeArray = [ ];
 
-// 	for (key in this.mapOptions.iconTypeMap)
+// 	for (key in this.mapConfig.iconTypeMap)
 // 	{
-// 		var keyValue = this.mapOptions.iconTypeMap[key];
+// 		var keyValue = this.mapConfig.iconTypeMap[key];
 
 // 			// Only permit unique icon names to display
 // 			// TODO: Check for different icon images?
@@ -3998,7 +3910,7 @@ export default class Gamemap {
 // 		iconType = reverseIconTypeMap[iconTypeLabel];
 
 // 		output += "<div class='gmMapKeyItem'>";
-// 		output += "<div class='gmMapKeyImageImage'><img src='" + this.mapOptions.iconPath + iconType + ".png' /></div>";
+// 		output += "<div class='gmMapKeyImageImage'><img src='" + this.mapConfig.iconPath + iconType + ".png' /></div>";
 // 		output += "<div class='gmMapKeyItemLabel'>"+ iconTypeLabel + "</div>";
 // 		output += "</div><br />";
 
@@ -4088,9 +4000,9 @@ export default class Gamemap {
 
 // 	var queryParams = {};
 // 	queryParams.action = "get_rc";
-// 	queryParams.db = this.mapOptions.dbPrefix;
+// 	queryParams.db = this.mapConfig.dbPrefix;
 
-// 	if (this.mapOptions.isOffline)
+// 	if (this.mapConfig.isOffline)
 // 	{
 // 		// Do nothing
 // 	}
@@ -4118,7 +4030,7 @@ export default class Gamemap {
 // 	{
 // 		recentChange = data.recentChanges[key];
 
-// 		let imageURL = this.mapOptions.iconPath + recentChange.iconType + ".png";
+// 		let imageURL = this.mapConfig.iconPath + recentChange.iconType + ".png";
 
 // 		output += "<div class='gmMapRCItem' onclick='g_GameMap.jumpToDestination(" + recentChange.locationId + ", true, true);'>";
 // 		output += "<img src='" + imageURL + "' class='gmMapRCItemIcon' />";
@@ -4149,23 +4061,23 @@ export default class Gamemap {
 
 // uesp.gamemap.Map.prototype.canvasDrawGrid = function()
 // {
-// 	var deltaX = this.mapOptions.gridDeltaX;
-// 	var deltaY = this.mapOptions.gridDeltaY;
-// 	var gridOffsetY = this.mapOptions.gridOffsetY;
-// 	var zoomDiff = this.zoomLevel - this.mapOptions.minZoomLevel
+// 	var deltaX = this.mapConfig.gridDeltaX;
+// 	var deltaY = this.mapConfig.gridDeltaY;
+// 	var gridOffsetY = this.mapConfig.gridOffsetY;
+// 	var zoomDiff = this.zoomLevel - this.mapConfig.minZoomLevel
 
 // 	console.log("canvasDrawGrid");
 // 	this.clearMapGridCanvas();
 
 // 	for (z = 1; z <= zoomDiff; ++z)
 // 	{
-// 		gridOffsetY += Math.pow(2, z + this.mapOptions.gridOffsetPowerY)
+// 		gridOffsetY += Math.pow(2, z + this.mapConfig.gridOffsetPowerY)
 // 	}
 
-// 	for (var y = this.mapOptions.gridStartY; y <= this.mapOptions.gridStopY; y += deltaY)
+// 	for (var y = this.mapConfig.gridStartY; y <= this.mapConfig.gridStopY; y += deltaY)
 // 	{
-// 		var pos1 = this.convertGameToPixelPos(this.mapOptions.gridStartX, y);
-// 		var pos2 = this.convertGameToPixelPos(this.mapOptions.gridStopX, y);
+// 		var pos1 = this.convertGameToPixelPos(this.mapConfig.gridStartX, y);
+// 		var pos2 = this.convertGameToPixelPos(this.mapConfig.gridStopX, y);
 
 // 		pos1.x -= this.mapTransformX;
 // 		pos2.x -= this.mapTransformX;
@@ -4176,14 +4088,14 @@ export default class Gamemap {
 // 		this.mapContextGrid.moveTo(pos1.x, pos1.y);
 // 		this.mapContextGrid.lineTo(pos2.x, pos2.y);
 // 		this.mapContextGrid.lineWidth = 1;
-// 		this.mapContextGrid.strokeStyle = this.mapOptions.gridStyle;
+// 		this.mapContextGrid.strokeStyle = this.mapConfig.gridStyle;
 // 		this.mapContextGrid.stroke();
 // 	}
 
-// 	for (var x = this.mapOptions.gridStartX; x <= this.mapOptions.gridStopX; x += deltaX)
+// 	for (var x = this.mapConfig.gridStartX; x <= this.mapConfig.gridStopX; x += deltaX)
 // 	{
-// 		var pos1 = this.convertGameToPixelPos(x, this.mapOptions.gridStartY);
-// 		var pos2 = this.convertGameToPixelPos(x, this.mapOptions.gridStopY);
+// 		var pos1 = this.convertGameToPixelPos(x, this.mapConfig.gridStartY);
+// 		var pos2 = this.convertGameToPixelPos(x, this.mapConfig.gridStopY);
 
 // 		pos1.x -= this.mapTransformX;
 // 		pos2.x -= this.mapTransformX;
@@ -4194,25 +4106,25 @@ export default class Gamemap {
 // 		this.mapContextGrid.moveTo(pos1.x, pos1.y);
 // 		this.mapContextGrid.lineTo(pos2.x, pos2.y);
 // 		this.mapContextGrid.lineWidth = 1;
-// 		this.mapContextGrid.strokeStyle = this.mapOptions.gridStyle;
+// 		this.mapContextGrid.strokeStyle = this.mapConfig.gridStyle;
 // 		this.mapContextGrid.stroke();
 // 	}
 
-// 	if (!this.mapOptions.gridShowLabels) return;
-// 	if (this.zoomLevel < this.mapOptions.gridStartLabelZoom) return;
+// 	if (!this.mapConfig.gridShowLabels) return;
+// 	if (this.zoomLevel < this.mapConfig.gridStartLabelZoom) return;
 
-// 	var labelStartX = Math.ceil(this.mapOptions.gridStartX / this.mapOptions.gridDeltaX / this.mapOptions.gridLabelDeltaX) * this.mapOptions.gridLabelDeltaX;
-// 	var labelStartY = Math.ceil(this.mapOptions.gridStartY / this.mapOptions.gridDeltaY / this.mapOptions.gridLabelDeltaY) * this.mapOptions.gridLabelDeltaY;
-// 	var labelEndX = Math.floor(this.mapOptions.gridStopX / this.mapOptions.gridDeltaX / this.mapOptions.gridLabelDeltaX) * this.mapOptions.gridLabelDeltaX;
-// 	var labelEndY = Math.floor(this.mapOptions.gridStopY / this.mapOptions.gridDeltaY / this.mapOptions.gridLabelDeltaY) * this.mapOptions.gridLabelDeltaY;
+// 	var labelStartX = Math.ceil(this.mapConfig.gridStartX / this.mapConfig.gridDeltaX / this.mapConfig.gridLabelDeltaX) * this.mapConfig.gridLabelDeltaX;
+// 	var labelStartY = Math.ceil(this.mapConfig.gridStartY / this.mapConfig.gridDeltaY / this.mapConfig.gridLabelDeltaY) * this.mapConfig.gridLabelDeltaY;
+// 	var labelEndX = Math.floor(this.mapConfig.gridStopX / this.mapConfig.gridDeltaX / this.mapConfig.gridLabelDeltaX) * this.mapConfig.gridLabelDeltaX;
+// 	var labelEndY = Math.floor(this.mapConfig.gridStopY / this.mapConfig.gridDeltaY / this.mapConfig.gridLabelDeltaY) * this.mapConfig.gridLabelDeltaY;
 
-// 	for (var cellY = labelStartY; cellY <= labelEndY; cellY += this.mapOptions.gridLabelDeltaY)
+// 	for (var cellY = labelStartY; cellY <= labelEndY; cellY += this.mapConfig.gridLabelDeltaY)
 // 	{
-// 		var y = cellY * this.mapOptions.gridDeltaY + this.mapOptions.gridLabelOffsetY;
+// 		var y = cellY * this.mapConfig.gridDeltaY + this.mapConfig.gridLabelOffsetY;
 
-// 		for (var cellX = labelStartX; cellX <= labelEndX; cellX += this.mapOptions.gridLabelDeltaX)
+// 		for (var cellX = labelStartX; cellX <= labelEndX; cellX += this.mapConfig.gridLabelDeltaX)
 // 		{
-// 			var x = cellX * this.mapOptions.gridDeltaX + this.mapOptions.gridLabelOffsetX;
+// 			var x = cellX * this.mapConfig.gridDeltaX + this.mapConfig.gridLabelOffsetX;
 // 			var pos = this.convertGameToPixelPos(x, y);
 
 // 			pos.x += 1 - this.mapTransformX;
@@ -4224,7 +4136,7 @@ export default class Gamemap {
 
 // 			this.mapContextGrid.font = "8px Arial";
 // 			this.mapContextGrid.textBaseLine = "bottom";
-// 			this.mapContextGrid.fillStyle = this.mapOptions.gridStyle;
+// 			this.mapContextGrid.fillStyle = this.mapConfig.gridStyle;
 // 			this.mapContextGrid.fillText(gridText, pos.x, pos.y);
 // 		}
 
@@ -4316,7 +4228,7 @@ export default class Gamemap {
 
 // 	var queryParams = { };
 // 	queryParams.action = "get_cellresource";
-// 	queryParams.db = this.mapOptions.dbPrefix;
+// 	queryParams.db = this.mapConfig.dbPrefix;
 // 	queryParams.worldID = this.currentWorldID;
 // 	queryParams.editorid = resourceEditorID;
 
@@ -4388,20 +4300,4 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.defaultGetMapTile = function(tileX, tileY, zoom, world)
-// {
-// 	if (world == null)
-// 		return "zoom" + zoom + "/maptile-" + tileX + "-" + tileY + ".jpg";
-// 	else
-// 		return world + "/zoom" + zoom + "/maptile-" + tileX + "-" + tileY + ".jpg";
-// }
-
-// /* For Testing Only */
-// uesp.gamemap.Map.prototype.shiftCanvas = function(dx, dy)
-// {
-// 	this.mapContext.globalCompositeOperation = "copy";
-// 	this.mapContext.drawImage(this.mapContext.canvas, dx, dy);
-
-// 	this.mapContext.globalCompositeOperation = "source-over"
-// }
 

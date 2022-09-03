@@ -218,10 +218,6 @@ function onWorldChanged(newWorld) {
 	$('#current_location_label').text(newWorld.displayName);
 }
 
-function getDefaultMapTile(xPos, yPos, zoom, worldName) {
-	return "//maps.uesp.net/esomap/" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + ".jpg";
-}
-
 /*================================================
 					  Search
 ================================================*/

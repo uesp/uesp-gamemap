@@ -4,6 +4,7 @@
     "wikiNamespace": "",
     "wikiURL": "",  // replace all of these when making new map config
     "mapURL" : "",
+    "tileURL" : "",
     "database" : "",
     "feedbackURL" : "https://github.com/uesp/uesp-gamemap/issues",
     "bgColour" : "#000000",
