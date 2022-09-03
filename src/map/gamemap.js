@@ -160,7 +160,7 @@ export default class Gamemap {
 			queryParams.showhidden = 1;
 		} 
 
-		loading("worlds");
+		loading("world");
 	
 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 			if (data.isError) {
@@ -203,8 +203,6 @@ export default class Gamemap {
 				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
 			}
 		}
-
-		console.log(this.mapWorlds);
 
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.onWorldsLoaded(this.mapWorlds);

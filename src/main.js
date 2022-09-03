@@ -9,6 +9,7 @@
 import * as Utils from "./common/utils.js";
 import * as Constants from "./common/constants.js";
 import Gamemap from "./map/gamemap.js";
+import MapState from "./map/mapState.js";
 
 /*================================================
 				  Initialisation
@@ -22,9 +23,6 @@ var gamemap = null;
 var g_MapState = null;
 
 var noAnalytics = true;
-
-var uesp = uesp || {};
-uesp.gamemap = uesp.gamemap || {};
 
 // searchParams.has("name") === true; // true
 // searchParams.get("age") === "1337"; // true
@@ -67,7 +65,7 @@ $(document).ready(function() {
 
 function initGamemap() {
 
-	loading("map config");
+	loading("config");
 
 	// get params from URL
 	mapParams = Utils.getURLParams();
@@ -131,25 +129,30 @@ function loadGamemap(mapConfig) {
 	// });
 }
 
-function onGamemapLoaded() {
-	$("#loading_spinner").hide();
-	$('#zoom_widget').css('visibility','visible');
-}
-
+// alt name: on gamemap loaded
 function onWorldsLoaded(mapWorlds) {
 
-	console.log(mapWorlds);
-
 	// let worlds = JSON.parse(mapWorlds);
-	// print("Worlds loaded.");
+	
+	print("Worlds loaded!");
+	print(mapWorlds);
 
-	// if (mapWorlds.length > 2) {
-	// 	$("#btn_location_switcher").show();
-	// }
+	// only show the location switcher if there are more than two worlds
+	if (Object.keys(mapWorlds).length > 2) {
+		$("#btn_location_switcher").show();
+
+		// populate location switcher
+	}
+
+	$("#loading_spinner").hide();
+	$('#zoom_widget').css('visibility','visible');
+
 
 	
 
 	// if (this.hasCenterOnParam()) return;
+
+	// jump to default map
 
 	// defaultMapState = new uesp.gamemap.MapState();
 
