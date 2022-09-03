@@ -7,9 +7,10 @@
 import * as Utils from "../common/utils.js";
 import * as Constants from "../common/constants.js";
 import World from "./world.js";
+import MapState from "./mapState.js";
 
 /*================================================
-					Gamemap
+				Gamemap constructor
 ================================================*/
 
 export default class Gamemap {
@@ -109,7 +110,8 @@ export default class Gamemap {
 		// 	this.retrieveCenterOnLocation(this.queryParams.world, this.queryParams.centeron);
 		// }
 
-		// this.createMapRoot();
+		// start building map
+		this.createMapRoot();
 		// this.createMapTiles();
 		// this.createMapControls();
 		// this.createRecentChanges();
@@ -196,17 +198,36 @@ export default class Gamemap {
 			if ((world.name) == null) continue;
 
 			if (world.id in this.mapWorlds) {
-				this.mapWorlds[world.id].mergeFromJson(world);
+				this.mapWorlds[world.id] = Utils.mergeObjects(this.mapWorlds[world.id], world);
 				this.mapWorldNameIndex[world.name] = world.id;
 				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
 			}
 			else {
-				addWorld(world.name, DEFAULT_MAP_CONFIG, world.id, world.displayName);
-				this.mapWorlds[world.id].mergeFromJson(world);
+				this.addWorld(world.name, DEFAULT_MAP_CONFIG, world.id, world.displayName);
+				this.mapWorlds[world.id] = Utils.mergeObjects(this.mapWorlds[world.id], world);
 				this.mapWorldNameIndex[world.name] = world.id;
 				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
 			}
 		}
+
+		console.log(this.mapWorlds);
+	}
+
+	/*================================================
+						Map state
+	================================================*/
+
+	getMapState() {
+		let mapState = new MapState();
+
+		mapState.zoomLevel    = this.zoomLevel;
+		mapState.gamePos      = this.getGamePositionOfCenter();
+		mapState.worldID      = this.currentWorldID;
+		mapState.grid         = this.isDrawGrid;
+		mapState.cellResource = this.cellResource;
+		mapState.displayState = this.displayState;
+
+		return mapState;
 	}
 
 	/*================================================
@@ -242,6 +263,15 @@ export default class Gamemap {
 
 	}
 
+	/*================================================
+					   Gamemap UI
+	================================================*/
+
+	createMapRoot() {
+		this.mapRoot = $('<div />').attr('id', Constants.GAMEMAP_ROOT_NAME).appendTo(this.mapContainer);
+		//if (this.USE_CANVAS_DRAW) this.createMapCanvas();
+	}
+
 
 	/*================================================
 					Utility functions
@@ -269,26 +299,25 @@ export default class Gamemap {
 
 	}
 
+	createMapLink() { 
+
+		let mapLink = this.mapConfig.mapUrl;
+		let mapState = this.getMapState();
+	
+		mapLink += '?world=' + mapState.worldID;
+		mapLink += '&x=' + mapState.gamePos.x;
+		mapLink += '&y=' + mapState.gamePos.y;
+		mapLink += '&zoom=' + mapState.zoomLevel;
+	
+		if (mapState.grid) mapLink += "&grid=true";
+		if (mapState.cellResource != "") mapLink += "&cellResource=" + mapState.cellResource;
+		if (mapState.displayState != "") mapLink += "&displayState=" + mapState.displayState;
+	
+		return mapLink;
+
+	}
+
 }
-
-// uesp.gamemap.Map.prototype.createMapLink = function (mapState)
-// {
-// 	var mapLink = this.mapOptions.mapUrl;
-
-// 	if (mapState == null) mapState = this.getMapState();
-
-// 	mapLink += '?world=' + mapState.worldId;
-// 	mapLink += '&x=' + mapState.gamePos.x;
-// 	mapLink += '&y=' + mapState.gamePos.y;
-// 	mapLink += '&zoom=' + mapState.zoomLevel;
-
-// 	if (mapState.grid) mapLink += "&grid=true";
-// 	if (mapState.cellResource != "") mapLink += "&cellResource=" + mapState.cellResource;
-// 	if (mapState.displayState != "") mapLink += "&displayState=" + mapState.displayState;
-
-// 	return mapLink;
-// }
-
 
 // uesp.gamemap.Map.prototype.changeWorld = function (world, newState)
 // {
@@ -598,15 +627,6 @@ export default class Gamemap {
 
 // 	$('.gmMapTile').dblclick({ self: this }, this.onDoubleClick);
 // }
-
-
-// uesp.gamemap.Map.prototype.createMapRoot = function()
-// {
-// 	this.mapRoot = $('<div />').attr('id', 'gmMapRoot').appendTo(this.mapContainer);
-
-// 	if (this.USE_CANVAS_DRAW) this.createMapCanvas();
-// }
-
 
 // uesp.gamemap.Map.prototype.createMapCanvas = function()
 // {
@@ -939,19 +959,7 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.getMapState = function()
-// {
-// 	var mapState = new uesp.gamemap.MapState();
 
-// 	mapState.zoomLevel    = this.zoomLevel;
-// 	mapState.gamePos      = this.getGamePositionOfCenter();
-// 	mapState.worldId      = this.currentWorldId;
-// 	mapState.grid         = this.isDrawGrid;
-// 	mapState.cellResource = this.cellResource;
-// 	mapState.displayState = this.displayState;
-
-// 	return mapState;
-// }
 
 
 // uesp.gamemap.Map.prototype.getWorldMapState = function(world)

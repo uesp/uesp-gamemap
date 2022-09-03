@@ -153,7 +153,7 @@ function onWorldsLoaded() {
 }
 
 function onPermissionsLoaded(enableEditing) {
-	print("Permissions loaded, editing: " + enableEditing);
+	print("Editing permissions loaded, editing enabled is: " + enableEditing);
 
 	// canEdit = this.canEdit() && !isMobileDevice();
 
@@ -498,7 +498,7 @@ function doSearch(searchQuery, currentMapOnly) {
 // copy link to clipboard button
 window.copyMapLink = function(){
 	if (gamemap != null) {
-		print("copying to clipboard...");
+		print("copying link to clipboard...");
 		let link = gamemap.createMapLink();
 		if (link != null && link != "") {
 
@@ -514,8 +514,7 @@ window.copyMapLink = function(){
 	}
 }
 
-
-
+// zoom widget
 window.zoomIn = function(){
 	M.toast({text: 'Zoom in button clicked!'})
 	print(Constants.ASSETS_DIR);

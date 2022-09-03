@@ -8,7 +8,6 @@
 
  export default class MapState {
     constructor() {
-
         //get default state
         this.zoomLevel = DEFAULT_MAP_CONFIG.zoomLevel;
         this.gamePos = new Position(DEFAULT_MAP_CONFIG.xPos, DEFAULT_MAP_CONFIG.yPos);

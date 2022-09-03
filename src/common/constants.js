@@ -27,3 +27,5 @@
     }
 })
 
+export const GAMEMAP_ROOT_NAME = "gmMapRoot";
+
