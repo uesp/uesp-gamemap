@@ -25,6 +25,7 @@ export function getJSON(url, callback) {
 					// remove comments before parsing
 					callback(null, JSON.parse((data.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m))));	
 				} catch (error) {
+					console.log(error);
 					callback(error, null);
 				}
 			});

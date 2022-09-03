@@ -98,22 +98,22 @@ export default class Gamemap {
 		this.isDragging = false;
 		this.isPinching = false;
 
+		this.checkPermissions();
 		this.getWorldData();
-		this.requestPermissions();
 
 	
-		if (this.queryParams.centeron != null) {
-			this.retrieveCenterOnLocation(this.queryParams.world, this.queryParams.centeron);
-		}
+		// if (Utils.getURLParams().get("centreOn")) {
+		// 	this.retrieveCenterOnLocation(this.queryParams.world, this.queryParams.centeron);
+		// }
+
+		// this.createMapRoot();
+		// this.createMapTiles();
+		// this.createMapControls();
+		// this.createRecentChanges();
+		// this.createEvents();
 	
-		this.createMapRoot();
-		this.createMapTiles();
-		this.createMapControls();
-		this.createRecentChanges();
-		this.createEvents();
-	
-		this.setGamePosNoUpdate(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY, this.mapOptions.initialZoom);
-		this.updateMapStateFromQuery(false);
+		// this.setGamePosNoUpdate(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY, this.mapOptions.initialZoom);
+		// this.updateMapStateFromQuery(false);
 	}
 
 	/*================================================
@@ -127,10 +127,6 @@ export default class Gamemap {
 			return this.defaultShowHidden;
 		}
 		
-	}
-
-	isMapEditingEnabled() {
-		return this.editingEnabled;
 	}
 	
 	hasCentreOnParam(){
@@ -149,7 +145,10 @@ export default class Gamemap {
 		if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldID;
 	}
 
+
 	getWorldData() {
+
+		let self = this;
 		let queryParams = {};
 		queryParams.action = "get_worlds";
 		queryParams.db = this.mapConfig.database;
@@ -168,46 +167,78 @@ export default class Gamemap {
 				}
 			}
 	
-			this.mergeWorldData(data.worlds);
+			//this.mergeWorldData(data.worlds);
 	
-			if (this.callbacks != null) {
-				this.callbacks.gamemapLoaded.call(this); // this is a bit dodgy, figure out a proper way to callback
+			if (self.mapCallbacks != null) {
+				print("hello");
+				self.mapCallbacks.onWorldsLoaded.call();
 			}
 	
 			return true;
 		});
 	}
 
-	mergeWorldData(worlds) {
+	// mergeWorldData(worlds) {
 
-		if (worlds == null) {
-			return;
-		}
+	// 	if (worlds == null) {
+	// 		return;
+	// 	}
 
-		for (var key in worlds)
-		{
-			var world = worlds[key];
+	// 	for (var key in worlds)
+	// 	{
+	// 		var world = worlds[key];
 
-			if (world.id < this.mapOptions.minValidWorldId) continue;
-			if (world.id > this.mapOptions.maxValidWorldId) continue;
+	// 		if (world.id < this.mapOptions.minValidWorldId) continue;
+	// 		if (world.id > this.mapOptions.maxValidWorldId) continue;
 
-			if (uesp.gamemap.isNullorUndefined(world.name)) continue;
+	// 		if (uesp.gamemap.isNullorUndefined(world.name)) continue;
 
-			if (world.id in this.mapWorlds)
-			{
-				this.mapWorlds[world.id].mergeFromJson(world);
-				this.mapWorldNameIndex[world.name] = world.id;
-				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
+	// 		if (world.id in this.mapWorlds)
+	// 		{
+	// 			this.mapWorlds[world.id].mergeFromJson(world);
+	// 			this.mapWorldNameIndex[world.name] = world.id;
+	// 			this.mapWorldDisplayNameIndex[world.displayName] = world.id;
+	// 		}
+	// 		else
+	// 		{
+	// 			addWorld(world.name, this.defaultMapOptions, world.id, world.displayName);
+	// 			this.mapWorlds[world.id].mergeFromJson(world);
+	// 			this.mapWorldNameIndex[world.name] = world.id;
+	// 			this.mapWorldDisplayNameIndex[world.displayName] = world.id;
+	// 		}
+	// 	}
+	// }
+
+	/*================================================
+						Map editing
+	================================================*/
+
+	// get if editing is enabled on this map
+	isMapEditingEnabled() {
+		return this.editingEnabled;
+	}
+
+	// check if user has editing permissions
+	checkPermissions() {
+
+		let queryParams = {};
+		let self = this;
+		queryParams.action = "get_perm";
+		queryParams.db = this.mapConfig.database;
+
+		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
+
+			if (data.canEdit != null) {
+				self.editingEnabled = data.canEdit;
+			} 
+
+			if (self.mapCallbacks != null) {
+				self.mapCallbacks.onPermissionsLoaded.call(self.isMapEditingEnabled());
 			}
-			else
-			{
-				addWorld(world.name, this.defaultMapOptions, world.id, world.displayName);
-				this.mapWorlds[world.id].mergeFromJson(world);
-				this.mapWorldNameIndex[world.name] = world.id;
-				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
-			}
-		}
-	} 	
+			
+		});
+
+	}
 }
 
 // uesp.gamemap.Map.prototype.updateMapLink = function ()
@@ -2574,34 +2605,6 @@ export default class Gamemap {
 // 	}
 
 // }
-
-
-// uesp.gamemap.Map.prototype.onReceivePermissions = function (data)
-// {
-// 	if (data.canEdit != null) this.enableEdit = data.canEdit;
-
-// 	if (this.userEvents.onPermissionsLoaded != null)
-// 	{
-// 		this.userEvents.onPermissionsLoaded.call(this);
-// 	}
-// }
-
-
-// uesp.gamemap.Map.prototype.requestPermissions = function ()
-// {
-// 	var self = this;
-
-// 	var queryParams = {};
-// 	queryParams.action = "get_perm";
-// 	queryParams.db = this.mapOptions.dbPrefix;
-
-// 	$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
-// 		self.onReceivePermissions(data);
-// 		//if ( !(onLoadFunction == null) ) onLoadFunction.call(self, eventData);
-// 	});
-
-// }
-
 
 // uesp.gamemap.Map.prototype.retrieveLocation = function(locId, onLoadFunction, eventData)
 // {

@@ -108,13 +108,14 @@ function loadGamemap(mapConfig) {
 
 	// hide spinner
 	$("#loading_spinner").hide();
-	$("#zoom_widget").show();
-	
+	$('#zoom_widget').css('visibility','visible');
+
+	// set up callbacks
 
 	var mapCallbacks = {
-		onGamemapLoaded   : onWorldLoad,
-		onPermissionsLoaded : onPermLoad,
-		onMapWorldChanged   : onWorldChanged
+		onWorldsLoaded,
+		onPermissionsLoaded,
+		onWorldChanged,
 	};
 
 	var gamemap = new Gamemap('gmMap', mapConfig, mapCallbacks);
@@ -132,13 +133,9 @@ function loadGamemap(mapConfig) {
 	// });
 }
 
-function loadInfobar(mapConfig){
-	$(".infobar").show();
-	$("#mapNameLink").text(mapConfig.mapTitle);
-	$("#mapFeedbackLink").attr("href", mapConfig.feedbackURL);
-}
+function onWorldsLoaded() {
+	print("Worlds loaded.");
 
-function onWorldLoad() {
 	if (this.hasCenterOnParam()) return;
 
 	defaultMapState = new uesp.gamemap.MapState();
@@ -152,7 +149,9 @@ function onWorldLoad() {
 	this.setMapState(g_MapState);
 }
 
-function onPermLoad() {
+function onPermissionsLoaded(enableEditing) {
+	print("Permissions loaded, editing: " + enableEditing);
+
 	canEdit = this.canEdit() && !isMobileDevice();
 
 	if (canEdit) {
@@ -170,8 +169,14 @@ function onPermLoad() {
 		$("#editWorldButton").hide();
 		$("#showRecentChangeButton").hide();
 	}
-
 }
+
+function loadInfobar(mapConfig){
+	$(".infobar").show();
+	$("#mapNameLink").text(mapConfig.mapTitle);
+	$("#mapFeedbackLink").attr("href", mapConfig.feedbackURL);
+}
+
 
 // TODO: Move into Map class
 function onWorldChanged(newWorld) {
