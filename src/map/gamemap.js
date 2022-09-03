@@ -143,7 +143,7 @@ export default class Gamemap {
 	================================================*/
 
 	addWorld(worldName, mapConfig, worldID, displayName) {
-		this.mapWorlds[worldID] = new World(worldName.toLowerCase(), DEFAULT_MAP_CONFIG, worldID);
+		this.mapWorlds[worldID] = new World(worldName.toLowerCase(), this.mapConfig, worldID);
 		this.mapWorlds[worldID].mergeMapConfig(mapConfig);
 	
 		this.mapWorldNameIndex[worldName.toLowerCase()] = worldID;
@@ -174,12 +174,6 @@ export default class Gamemap {
 			}
 	
 			self.mergeWorldData(data.worlds);
-	
-			if (self.mapCallbacks != null) {
-				self.mapCallbacks.onWorldsLoaded.call();
-			}
-	
-			return true;
 		});
 	}
 
@@ -203,7 +197,7 @@ export default class Gamemap {
 				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
 			}
 			else {
-				this.addWorld(world.name, DEFAULT_MAP_CONFIG, world.id, world.displayName);
+				this.addWorld(world.name, this.mapConfig, world.id, world.displayName);
 				this.mapWorlds[world.id] = Utils.mergeObjects(this.mapWorlds[world.id], world);
 				this.mapWorldNameIndex[world.name] = world.id;
 				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
@@ -211,6 +205,10 @@ export default class Gamemap {
 		}
 
 		console.log(this.mapWorlds);
+
+		if (this.mapCallbacks != null) {
+			this.mapCallbacks.onWorldsLoaded(this.mapWorlds);
+		}
 	}
 
 	/*================================================
@@ -256,7 +254,7 @@ export default class Gamemap {
 			} 
 
 			if (self.mapCallbacks != null) {
-				self.mapCallbacks.onPermissionsLoaded.call(self.isMapEditingEnabled());
+				self.mapCallbacks.onPermissionsLoaded(self.isMapEditingEnabled());
 			}
 			
 		});

@@ -136,8 +136,18 @@ function onGamemapLoaded() {
 	$('#zoom_widget').css('visibility','visible');
 }
 
-function onWorldsLoaded() {
-	print("Worlds loaded.");
+function onWorldsLoaded(mapWorlds) {
+
+	console.log(mapWorlds);
+
+	// let worlds = JSON.parse(mapWorlds);
+	// print("Worlds loaded.");
+
+	// if (mapWorlds.length > 2) {
+	// 	$("#btn_location_switcher").show();
+	// }
+
+	
 
 	// if (this.hasCenterOnParam()) return;
 

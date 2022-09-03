@@ -51,6 +51,23 @@
 		<!-- Map container -->
 		<div id="gmMap"></div>
 
+		<div class="icon_bar_responsive">
+			<button id="btn_location_switcher" class='btn_icon_button waves-effect banishdefault' title="Jump to location" onclick="showLocationSwitcher();">
+				<i class="material-icons onlymobile">explore</i>
+				<b class="icon_button_label nomobile" id="current_location_label">Loading...</b>
+				<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>
+			</button>
+
+			<button id="btn_article" class='btn_icon_button waves-effect' title="Goto article for this location" onclick="gotoArticle()">
+				<i class="material-icons">article</i>
+				<b class="icon_button_label nomobile">Goto Article</b>
+			</button>
+
+			<button id="btn_permalink" class='btn_icon_button waves-effect' title="Copy link to this location" onclick="copyMapLink()">
+				<i class="material-icons">link</i><b class="icon_button_label nomobile">Copy Link</b>
+			</button>
+		</div>
+
 		<div class="icon_bar_persistent">
 			<button id="btn_more" class='btn_icon_button waves-effect dropdown-trigger' title="More" data-target='overflow-menu'>
 				<i class="material-icons">more_vert</i>
@@ -71,23 +88,6 @@
 			<button id="addPathButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddPathStart();"  ontouchstart="g_GameMap.onAddPathStart();">Add Path</button>
 			<button id="addAreaButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddAreaStart();"  ontouchstart="g_GameMap.onAddAreaStart();">Add Area</button>
 			<div id="showRecentChangeButton" class="gmToggleButton gmNoMobile" style="display:none;" onclick="g_GameMap.onRecentChanges(this);" ontouchstart="g_GameMap.onRecentChanges(this);">Recent Changes</div> -->
-		</div>
-
-		<div class="icon_bar_responsive">
-			<button id="btn_location_switcher" class='btn_icon_button waves-effect' title="Jump to location" onclick="showLocationSwitcher();">
-				<i class="material-icons onlymobile">explore</i>
-				<b class="icon_button_label nomobile" id="current_location_label">Loading...</b>
-				<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>
-			</button>
-
-			<button id="btn_article" class='btn_icon_button waves-effect' title="Goto article for this location" onclick="gotoArticle()">
-				<i class="material-icons">article</i>
-				<b class="icon_button_label nomobile">Goto Article</b>
-			</button>
-
-			<button id="btn_permalink" class='btn_icon_button waves-effect' title="Copy link to this location" onclick="copyMapLink()">
-				<i class="material-icons">link</i><b class="icon_button_label nomobile">Copy Link</b>
-			</button>
 		</div>
 
 		<!-- Search Container -->

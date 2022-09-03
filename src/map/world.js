@@ -71,7 +71,7 @@ export default class World {
 	} 
 
 	mergeMapConfig(mapConfig) {
-		this.mapConfig = Utils.mergeObjects(mapConfig, this.mapConfig)
+		this.mapConfig = Utils.mergeObjects(this.mapConfig, mapConfig)
 		this.updateWorldState();
 	}
 
