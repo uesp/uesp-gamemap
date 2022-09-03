@@ -8,6 +8,7 @@ import * as Utils from "../common/utils.js";
 import * as Constants from "../common/constants.js";
 import World from "./world.js";
 import MapState from "./mapState.js";
+import MapTile from "./mapTile.js";
 
 /*================================================
 				Gamemap constructor
@@ -103,18 +104,17 @@ export default class Gamemap {
 		this.isDragging = false;
 		this.isPinching = false;
 
+		// check user editing permission
 		this.checkPermissions();
-		this.getWorldData();
-	
+
 		// if (Utils.getURLParams().get("centreOn")) {
 		// 	this.retrieveCenterOnLocation(this.queryParams.world, this.queryParams.centeron);
 		// }
 
 		// start building map
+		this.getWorldData();
 		this.createMapRoot();
-		// this.createMapTiles();
-		// this.createMapControls();
-		// this.createRecentChanges();
+		this.createMapTiles();
 		// this.createEvents();
 	
 		// this.setGamePosNoUpdate(this.mapOptions.initialGamePosX, this.mapOptions.initialGamePosY, this.mapOptions.initialZoom);
@@ -260,7 +260,7 @@ export default class Gamemap {
 	}
 
 	/*================================================
-					   Gamemap UI
+					 Gamemap Interface
 	================================================*/
 
 	createMapRoot() {
@@ -268,6 +268,46 @@ export default class Gamemap {
 		//if (this.USE_CANVAS_DRAW) this.createMapCanvas();
 	}
 
+	createMapTiles() {
+		if (this.USE_LEAFLET) return;
+		if (this.USE_CANVAS_DRAW) return;
+
+		this.mapTiles = [];
+
+		for (let y = 0; y < this.mapConfig.numTilesY; ++y) {
+			this.mapTiles.push([]);
+			this.mapTiles[y].push( new Array(this.mapConfig.numTilesX));
+
+			for (let x = 0; x < this.mapConfig.numTilesX; ++x) {
+				this.mapTiles[y][x] = this.createMapTile(x, y);
+			}
+		}
+
+	}
+
+	createMapTile(x, y) {
+		let newTile = new MapTile(x, y);
+
+		let offsetX = this.mapContainer.offset().left;
+		let offsetY = this.mapContainer.offset().top;
+
+		let xPos = x * this.mapConfig.tileSize + offsetX;
+		let yPos = y * this.mapConfig.tileSize + offsetY;
+		let tileID = "Tile_" + x + "_" + y;
+
+		let newDiv = $('<div />').addClass('gmMapTile').attr('id', tileID)
+						.appendTo(this.mapRoot)
+						.offset({ top: yPos, left: xPos })
+						.attr('unselectable', 'on')
+						.attr('deltax', x)
+						.attr('deltay', y)
+						.css('user-select', 'none')
+						.on('selectstart', false);
+
+		newTile.element = newDiv;
+
+		return newTile;
+	}
 
 	/*================================================
 					Utility functions
@@ -698,55 +738,6 @@ export default class Gamemap {
 // 	this.mapContextGrid.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
 // 	this.mapContextGrid.restore();
 // }
-
-
-// uesp.gamemap.Map.prototype.createMapTiles = function()
-// {
-// 	if (this.USE_LEAFLET) return;
-// 	if (this.USE_CANVAS_DRAW) return;
-
-// 	offsetX = this.mapContainer.offset().left;
-// 	offsetY = this.mapContainer.offset().top;
-
-// 	this.mapTiles = [];
-
-// 	for (y = 0; y < this.mapOptions.tileCountY; ++y)
-// 	{
-// 		this.mapTiles.push([]);
-// 		this.mapTiles[y].push( new Array(this.mapOptions.tileCountX));
-
-// 		for (x = 0; x < this.mapOptions.tileCountX; ++x)
-// 		{
-// 			this.mapTiles[y][x] = this.createMapTile(x, y);
-// 		}
-// 	}
-
-// }
-
-
-// uesp.gamemap.Map.prototype.createMapTile = function(x, y)
-// {
-// 	var newTile = new uesp.gamemap.MapTile(x, y);
-
-// 	xPos = x * this.mapOptions.tileSize + offsetX;
-// 	yPos = y * this.mapOptions.tileSize + offsetY;
-// 	tileID = "Tile_" + x + "_" + y;
-
-// 	newDiv = $('<div />').addClass('gmMapTile').attr('id', tileID)
-// 					.appendTo(this.mapRoot)
-// 					.offset({ top: yPos, left: xPos })
-// 					.attr('unselectable', 'on')
-// 					.attr('deltax', x)
-// 					.attr('deltay', y)
-// 					.css('user-select', 'none')
-// 					.on('selectstart', false);
-
-// 	//if (uesp.debug) newDiv.text(tileID);
-// 	newTile.element = newDiv;
-
-// 	return newTile;
-// }
-
 
 // uesp.gamemap.onLoadIconSuccess = function(event)
 // {
@@ -3866,16 +3857,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.createRecentChanges = function ()
-// {
-// 	if (this.recentChangesRoot != null) return;
-// 	var self = this;
-
-// 	this.recentChangesRoot = $('<div />')
-// 								.addClass('gmMapRCRoot')
-// 								.insertAfter(this.mapContainer);
-// }
-
 // uesp.gamemap.Map.prototype.FindMapLocTypeString = function (locTypeString)
 // {
 // 	var checkTypeString = locTypeString.trim().toLowerCase();
@@ -3888,48 +3869,6 @@ export default class Gamemap {
 // 	}
 
 // 	return null;
-
-// }
-
-// uesp.gamemap.Map.prototype.createMapControls = function ()
-// {
-// 	if (this.mapControlRoot != null) return;
-// 	var self = this;
-
-// 	this.mapControlRoot = $('<div />')
-// 								.addClass('gmMapControlRoot')
-// 								.appendTo(this.mapContainer);
-
-// 	if (this.mapOptions.displayStates.length > 0) {
-// 		this.mapControlDisplayStateRoot = $('<div />')
-// 												.addClass('gmMapControlDisplayStates')
-// 												.appendTo(this.mapControlRoot);
-
-// 		for (var i in this.mapOptions.displayStates) {
-// 			let displayState = this.mapOptions.displayStates[i];
-
-// 			$('<div />')
-// 				.html(displayState)
-// 				.attr("id", "gmMapControlDisplayState_" + displayState)
-// 				.addClass('gmMapControlDisplayState')
-// 				.bind("touchstart click", function(e) { self.onDisplayStateChange(displayState); return false; })
-// 				.appendTo(this.mapControlDisplayStateRoot);
-// 		}
-// 	}
-
-// this.mapControlZoomIn = $('<div />')
-// 	.html('+')
-// 	.addClass('gmMapControlZoom')
-// 	.addClass('gmMapControlZoomHover')
-// 	.bind("touchstart click", function(e) { self.zoomIn(); return false; })
-// 	.appendTo(this.mapControlRoot);
-
-// this.mapControlZoomOut = $('<div />')
-// 	.text('-')
-// 	.addClass('gmMapControlZoom')
-// 	.addClass('gmMapControlZoomHover')
-// 	.bind("touchstart click", function(e) { self.zoomOut(); return false; })
-// 	.appendTo(this.mapControlRoot);
 
 // }
 
@@ -4650,12 +4589,7 @@ export default class Gamemap {
 // 	this.bottom = (typeof bottom === 'undefined' || bottom === null) ? 0 : bottom;
 // }
 
-// uesp.gamemap.MapTile = function(x, y)
-// {
-// 	this.element = null;
-// 	this.deltaTileX = (typeof x !== 'undefined') ? x : 0;
-// 	this.deltaTileY = (typeof y !== 'undefined') ? y : 0;
-// }
+
 
 
 
