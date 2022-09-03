@@ -373,8 +373,8 @@ export default class Gamemap {
 
 			if (location.locType >= uesp.gamemap.LOCTYPE_PATH) continue;
 			if (location.worldID != this.currentWorldID) continue;
-			if (!location.visible && !this.isShowHidden()) continue;
-			if (location.displayLevel > this.zoomLevel || (this.isShowHidden() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
+			if (!location.visible && !this.isHiddenLocsShown()) continue;
+			if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
 
 			const rect = this.mapCanvas.getBoundingClientRect();
 			const x = pageX - rect.left;
@@ -389,8 +389,8 @@ export default class Gamemap {
 
 			if (location.locType < uesp.gamemap.LOCTYPE_PATH) continue;
 			if (location.worldID != this.currentWorldID) continue;
-			if (!location.visible && !this.isShowHidden()) continue;
-			if (location.displayLevel > this.zoomLevel || (this.isShowHidden() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
+			if (!location.visible && !this.isHiddenLocsShown()) continue;
+			if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
 
 			const rect = this.mapCanvas.getBoundingClientRect();
 			const x = pageX - rect.left;
@@ -408,6 +408,48 @@ export default class Gamemap {
 			this.locations[key].removeElements();
 		}
 	}
+
+	redrawLocations() {
+	
+		let displayedLocations = {};
+
+		for (var key in this.locations) {
+			var location = this.locations[key];
+	
+			if (location.worldID != this.currentWorldID) continue;
+			if (!location.visible && !this.isHiddenLocsShown()) continue;
+			if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapOptions.maxZoomLevel)) continue;
+			if (location.locType >= uesp.gamemap.LOCTYPE_PATH) location.updatePathSize(false);
+	
+			displayedLocations[key] = 1;
+			location.computeOffset();
+			location.updatePopupOffset();
+	
+			if (location.locType >= uesp.gamemap.LOCTYPE_PATH) location.updatePath();
+		}
+	
+		for (var key in displayedLocations) {
+			var location = this.locations[key];
+			location.updateIcon();
+		}
+	
+		for (var key in displayedLocations) {
+			var location = this.locations[key];
+			location.updateLabel();
+		}
+
+		for (var key in this.locations) {
+			var location = this.locations[key];
+
+			if (location.worldID != this.currentWorldID) continue;
+			if (!location.visible && !this.isHiddenLocsShown()) continue;
+			if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapOptions.maxZoomLevel)) continue;
+			if (location.locType >= uesp.gamemap.LOCTYPE_PATH) location.updatePathSize(false);
+
+			this.displayLocation(location);
+		}
+	}
+
 
 	drawCellResources() {
 		if (this.cellResource == "") return;
@@ -473,7 +515,6 @@ export default class Gamemap {
 		}
 	
 	}
-
 
 	/*================================================
 						Map editing
@@ -1088,7 +1129,7 @@ export default class Gamemap {
 // uesp.gamemap.Map.prototype.displayLocation = function (location)
 // {
 // 	if (location.worldID != this.currentWorldID) return;
-// 	if (!location.visible && !this.isShowHidden()) return;
+// 	if (!location.visible && !this.isHiddenLocsShown()) return;
 
 // 	location.computeOffset();
 // 	location.update();
@@ -2669,7 +2710,7 @@ export default class Gamemap {
 // 	queryParams.locid  = locId;
 // 	queryParams.db = this.mapOptions.dbPrefix;
 
-// 	if (this.isShowHidden()) queryParams.showhidden = 1;
+// 	if (this.isHiddenLocsShown()) queryParams.showhidden = 1;
 
 // 	if (this.mapOptions.isOffline)
 // 	{
@@ -2697,7 +2738,7 @@ export default class Gamemap {
 // 	if (world != null) queryParams.world  = world;
 // 	queryParams.centeron = locationName;
 // 	queryParams.db = this.mapOptions.dbPrefix;
-// 	if (this.isShowHidden()) queryParams.showhidden = 1;
+// 	if (this.isHiddenLocsShown()) queryParams.showhidden = 1;
 
 // 	//if (!this.hasWorld(this.worldID)) queryParams.incworld = 1;
 // 	//if (queryParams.world <= 0) return uesp.logError("Unknown worldID " + this.currentWorldID + "!");
@@ -2727,7 +2768,7 @@ export default class Gamemap {
 // 	queryParams.left   = mapBounds.left;
 // 	queryParams.right  = mapBounds.right;
 // 	queryParams.zoom   = this.zoomLevel;
-// 	if (this.isShowHidden()) queryParams.showhidden = 1;
+// 	if (this.isHiddenLocsShown()) queryParams.showhidden = 1;
 // 	if (!this.hasWorld(this.currentWorldID)) queryParams.incworld = 1;
 // 	queryParams.db = this.mapOptions.dbPrefix;
 
@@ -2990,60 +3031,6 @@ export default class Gamemap {
 // 	{
 // 		if (this.locations[key].locType >= uesp.gamemap.LOCTYPE_PATH) this.locations[key].updatePathSize();
 // 	}
-// }
-
-
-// uesp.gamemap.Map.prototype.redrawLocations = function()
-// {
-// 	if (this.USE_CANVAS_DRAW) return this.redrawLocationsCanvas();
-
-// 	for (key in this.locations)
-// 	{
-// 		var location = this.locations[key];
-
-// 		if (location.worldID != this.currentWorldID) continue;
-// 		if (!location.visible && !this.isShowHidden()) continue;
-// 		if (location.displayLevel > this.zoomLevel || (this.isShowHidden() && this.zoomLevel == this.mapOptions.maxZoomLevel)) continue;
-// 		if (location.locType >= uesp.gamemap.LOCTYPE_PATH) location.updatePathSize(false);
-
-// 		this.displayLocation(location);
-// 	}
-// }
-
-
-// uesp.gamemap.Map.prototype.redrawLocationsCanvas = function()
-// {
-// 	var displayedLocations = {};
-
-// 	for (key in this.locations)
-// 	{
-// 		var location = this.locations[key];
-
-// 		if (location.worldID != this.currentWorldID) continue;
-// 		if (!location.visible && !this.isShowHidden()) continue;
-// 		if (location.displayLevel > this.zoomLevel || (this.isShowHidden() && this.zoomLevel == this.mapOptions.maxZoomLevel)) continue;
-// 		if (location.locType >= uesp.gamemap.LOCTYPE_PATH) location.updatePathSize(false);
-
-// 		displayedLocations[key] = 1;
-// 		location.computeOffset();
-// 		location.updatePopupOffset();
-
-// 		if (location.locType >= uesp.gamemap.LOCTYPE_PATH) location.updatePath();
-// 	}
-
-// 	for (key in displayedLocations)
-// 	{
-// 		var location = this.locations[key];
-// 		location.updateIcon();
-// 	}
-
-// 	for (key in displayedLocations)
-// 	{
-// 		var location = this.locations[key];
-// 		location.updateLabel();
-// 	}
-
-
 // }
 
 
