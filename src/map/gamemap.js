@@ -771,7 +771,7 @@ export default class Gamemap {
 
 	createMapLink() { 
 
-		let mapLink = this.mapConfig.mapUrl;
+		let mapLink = this.mapConfig.mapURL;
 		let mapState = this.getMapState();
 	
 		mapLink += '?world=' + mapState.worldID;

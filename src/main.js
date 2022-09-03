@@ -562,7 +562,7 @@ window.copyMapLink = function(){
 		let link = gamemap.createMapLink();
 		if (link != null && link != "") {
 
-			navigator.clipboard.writeText(text)
+			navigator.clipboard.writeText(link)
 			.then(() => {
 				// todo: also change the url to reflect the data
 				M.toast({text: "Map link copied to clipboard!"});
