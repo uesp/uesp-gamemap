@@ -265,9 +265,9 @@
     },
 
     // Map world info
-    "homeWorldId" : 668,
-    "minValidWorldId" : 50,
-    "maxValidWorldId" : 20000,
+    "homeWorldID" : 668,
+    "minValidWorldID" : 50,
+    "maxValidWorldID" : 20000,
     "customLocationList" : [
         { "The Aurbis": [
             { "Artaeum": [

@@ -22,7 +22,7 @@
    <body>
 
 		<!-- Error container -->
-		<div id="error_box" class="error_container hidedefault">
+		<div id="error_box" class="error_container hidedefault preload_box">
 			<span class="error_title">
 				<i class="medium material-icons">error</i><br/>
 				<b>Something went wrong.</b>
@@ -32,18 +32,20 @@
 		</div>
 
 		<!-- Loading spinner container -->
-		<div id="loading_spinner" class="spinner_container">
+		<div id="loading_spinner" class="spinner_container preload_box">
 			<div class="preloader-wrapper big active">
 				<div class="spinner-layer">
-				<div class="circle-clipper left">
-					<div class="circle"></div>
-				</div><div class="gap-patch">
-					<div class="circle"></div>
-				</div><div class="circle-clipper right">
-					<div class="circle"></div>
-				</div>
+					<div class="circle-clipper left">
+						<div class="circle"></div>
+					</div><div class="gap-patch">
+						<div class="circle"></div>
+					</div><div class="circle-clipper right">
+						<div class="circle"></div>
+					</div>
 				</div>
 			</div>
+
+			<p id="loading_reason">Loading...</p>
 		</div>
 
 		<!-- Map container -->

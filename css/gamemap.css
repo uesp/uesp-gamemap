@@ -1475,35 +1475,10 @@ div[class^="icon_bar"] {
 
 
 /*================================================
-				   Error Box
+				   Preload boxes
 ================================================*/
 
-.error_container {
-	position: absolute;
-	background-color: var(--surface_dark_variant);
-	color: var(--text_on_secondary);
-	border-radius: var(--padding_medium);
-	padding: var(--padding_medium);
-	width: 400px;
-	text-align: center;
-	vertical-align: middle;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-}
-
-.error_container .horizontal_divider {
-	margin-top: var(--padding_small);
-}
-
-.error_title {
-	color: var(--error_dark);
-	vertical-align: middle;
-	font-size: 1.2em !important;
-	vertical-align: middle;
-}
-
-#loading_spinner {
+[class*='preload_box'] {
 	position: absolute;
 	background-color: var(--surface_dark_variant);
 	color: var(--text_on_secondary);
@@ -1516,3 +1491,19 @@ div[class^="icon_bar"] {
 	left: 50%;
 	transform: translate(-50%, -50%);
 }
+
+/*================================================
+				   Error box
+================================================*/
+
+.error_container .horizontal_divider {
+	margin-top: var(--padding_small);
+}
+
+.error_title {
+	color: var(--error_dark);
+	vertical-align: middle;
+	font-size: 1.2em !important;
+	vertical-align: middle;
+}
+

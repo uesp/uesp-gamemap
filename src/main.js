@@ -18,7 +18,7 @@ var mapParams = null;
 var mapConfig = null;
 var mapType = null;
 
-var g_GameMap = null;
+var gamemap = null;
 var g_MapState = null;
 
 var noAnalytics = true;
@@ -67,6 +67,8 @@ $(document).ready(function() {
 
 function initGamemap() {
 
+	loading("map config");
+
 	// get params from URL
 	mapParams = Utils.getURLParams();
 
@@ -106,10 +108,6 @@ function loadGamemap(mapConfig) {
 	// set up infobar
 	loadInfobar(mapConfig);
 
-	// hide spinner
-	$("#loading_spinner").hide();
-	$('#zoom_widget').css('visibility','visible');
-
 	// set up callbacks
 
 	var mapCallbacks = {
@@ -118,7 +116,7 @@ function loadGamemap(mapConfig) {
 		onWorldChanged,
 	};
 
-	var gamemap = new Gamemap('gmMap', mapConfig, mapCallbacks);
+	gamemap = new Gamemap('gmMap', mapConfig, mapCallbacks);
 
 
 	// // TODO: Change how map list is created
@@ -133,42 +131,47 @@ function loadGamemap(mapConfig) {
 	// });
 }
 
+function onGamemapLoaded() {
+	$("#loading_spinner").hide();
+	$('#zoom_widget').css('visibility','visible');
+}
+
 function onWorldsLoaded() {
 	print("Worlds loaded.");
 
-	if (this.hasCenterOnParam()) return;
+	// if (this.hasCenterOnParam()) return;
 
-	defaultMapState = new uesp.gamemap.MapState();
+	// defaultMapState = new uesp.gamemap.MapState();
 
-	defaultMapState.worldId = 668;
-	defaultMapState.zoomLevel = 9;
-	defaultMapState.gamePos.x = 500000;
-	defaultMapState.gamePos.y = 500000;
+	// defaultMapState.worldId = 668;
+	// defaultMapState.zoomLevel = 9;
+	// defaultMapState.gamePos.x = 500000;
+	// defaultMapState.gamePos.y = 500000;
 
-	g_MapState = this.getMapStateFromQuery(defaultMapState);
-	this.setMapState(g_MapState);
+	// g_MapState = this.getMapStateFromQuery(defaultMapState);
+	// this.setMapState(g_MapState);
 }
 
 function onPermissionsLoaded(enableEditing) {
 	print("Permissions loaded, editing: " + enableEditing);
 
-	canEdit = this.canEdit() && !isMobileDevice();
+	// canEdit = this.canEdit() && !isMobileDevice();
 
-	if (canEdit) {
-		$("#gmMapEditButtons").show();
-		$("#addLocationButton").show();
-		$("#addPathButton").show();
-		$("#addAreaButton").show();
-		$("#editWorldButton").show();
-		$("#showRecentChangeButton").show();
-	}
-	else {
-		$("#addLocationButton").hide();
-		$("#addPathButton").hide();
-		$("#addAreaButton").hide();
-		$("#editWorldButton").hide();
-		$("#showRecentChangeButton").hide();
-	}
+	// if (canEdit) {
+	// 	$("#gmMapEditButtons").show();
+	// 	$("#addLocationButton").show();
+	// 	$("#addPathButton").show();
+	// 	$("#addAreaButton").show();
+	// 	$("#editWorldButton").show();
+	// 	$("#showRecentChangeButton").show();
+	// }
+	// else {
+	// 	$("#addLocationButton").hide();
+	// 	$("#addPathButton").hide();
+	// 	$("#addAreaButton").hide();
+	// 	$("#editWorldButton").hide();
+	// 	$("#showRecentChangeButton").hide();
+	// }
 }
 
 function loadInfobar(mapConfig){
@@ -178,31 +181,30 @@ function loadInfobar(mapConfig){
 }
 
 
-// TODO: Move into Map class
 function onWorldChanged(newWorld) {
-	foundListItems = $('#gmMapList li:contains("' + newWorld.displayName +'")').not('.gmMapListHeader');
+	// foundListItems = $('#gmMapList li:contains("' + newWorld.displayName +'")').not('.gmMapListHeader');
 
-	var foundListItem = null;
-	var minTextLength = 1000;
+	// var foundListItem = null;
+	// var minTextLength = 1000;
 
-	foundListItems.each(function( index ) {
-		textLen = $(this).text().length;
+	// foundListItems.each(function( index ) {
+	// 	textLen = $(this).text().length;
 
-		if (textLen < minTextLength) {
-			minTextLength = textLen;
-			foundListItem = $(this);
-		}
-	});
+	// 	if (textLen < minTextLength) {
+	// 		minTextLength = textLen;
+	// 		foundListItem = $(this);
+	// 	}
+	// });
 
-	if (foundListItem != null) {
-		if (g_GameMap.mapListLastSelectedItem != null) g_GameMap.mapListLastSelectedItem.removeClass('gmMapListSelect');
-		foundListItem.addClass('gmMapListSelect');
-		g_GameMap.mapListLastSelectedItem = foundListItem;
-		$(foundListItem).parents('ul:first').show();
-	}
+	// if (foundListItem != null) {
+	// 	if (g_GameMap.mapListLastSelectedItem != null) g_GameMap.mapListLastSelectedItem.removeClass('gmMapListSelect');
+	// 	foundListItem.addClass('gmMapListSelect');
+	// 	g_GameMap.mapListLastSelectedItem = foundListItem;
+	// 	$(foundListItem).parents('ul:first').show();
+	// }
 
-	$('#gmMapListAlphaSelect').val(newWorld.id);
-	$('#current_location_label').text(newWorld.displayName);
+	// $('#gmMapListAlphaSelect').val(newWorld.id);
+	// $('#current_location_label').text(newWorld.displayName);
 }
 
 function getDefaultMapTile(xPos, yPos, zoom, worldName) {
@@ -430,46 +432,6 @@ function doSearch(searchQuery, currentMapOnly) {
 // }
 
 
-function showError(reason){
-	$("#error_box").show();
-	$('#error_box').css('visibility','visible');
-	$("#error_box_reason").text(reason);
-	print("Error: " + reason);
-	$("#loading_spinner").hide();
-}
-
-/*================================================
-				  	Analytics
-================================================*/
-
-if (!noAnalytics) {
-	var _gaq = _gaq || [];
-	_gaq.push(['_setAccount', 'UA-1386039-6']);
-	_gaq.push(['_trackPageview']);
-
-	(function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	})();
-}
-
-/*================================================
-				   Debug mode
-================================================*/
-
-window.enableDebugging = function(){
-	document.cookie = "debugging=true"; 
-	console.log("Debug mode enabled!");
-}
-
-
-window.zoomIn = function(){
-	M.toast({text: 'Zoom in button clicked!'})
-	print(Constants.ASSETS_DIR);
-}
-
-
 
 
 // uesp.gamemap.Map.prototype.createMapList = function (parentObject)
@@ -527,3 +489,79 @@ window.zoomIn = function(){
 
 // 	return true;
 // }
+
+
+/*================================================
+				Action Buttons
+================================================*/
+
+// copy link to clipboard button
+window.copyMapLink = function(){
+	if (gamemap != null) {
+		print("copying to clipboard...");
+		let link = gamemap.createMapLink();
+		if (link != null && link != "") {
+
+			navigator.clipboard.writeText(text)
+			.then(() => {
+				// todo: also change the url to reflect the data
+				M.toast({text: "Map link copied to clipboard!"});
+			})
+			.catch(err => {
+				print("Error copying link to clipboard.");
+			});
+		}
+	}
+}
+
+
+
+window.zoomIn = function(){
+	M.toast({text: 'Zoom in button clicked!'})
+	print(Constants.ASSETS_DIR);
+}
+
+/*================================================
+				   Error box
+================================================*/
+
+function showError(reason){
+	$("#error_box").show();
+	$('#error_box').css('visibility','visible');
+	$("#error_box_reason").text(reason);
+	print("Error: " + reason);
+	$("#loading_spinner").hide();
+}
+
+/*================================================
+				   Loading box
+================================================*/
+
+window.loading = function(reason){
+	$("#loading_reason").text("Loading "+reason+"...");
+}
+
+/*================================================
+				  	Analytics
+================================================*/
+
+if (!noAnalytics) {
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-1386039-6']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+}
+
+/*================================================
+				   Debug mode
+================================================*/
+
+window.enableDebugging = function(){
+	document.cookie = "debugging=true"; 
+	console.log("Debug mode enabled!");
+}
