@@ -150,6 +150,23 @@ export default class Gamemap {
 	}
 
 	/*================================================
+						Map state
+	================================================*/
+
+	getMapState() {
+		let mapState = new MapState();
+
+		mapState.zoomLevel    = this.zoomLevel;
+		mapState.gamePos      = this.getGamePositionOfCenter();
+		mapState.worldID      = this.currentWorldID;
+		mapState.grid         = this.isDrawGrid;
+		mapState.cellResource = this.cellResource;
+		mapState.displayState = this.displayState;
+
+		return mapState;
+	}
+
+	/*================================================
 						Map worlds
 	================================================*/
 
@@ -160,7 +177,6 @@ export default class Gamemap {
 		this.mapWorldNameIndex[worldName.toLowerCase()] = worldID;
 		if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldID;
 	}
-
 
 	getWorldData() {
 		let self = this;
@@ -197,8 +213,8 @@ export default class Gamemap {
 		for (var key in worlds) {
 			var world = worlds[key];
 
-			if (world.id < this.mapConfig.minValidWorldID) continue;
-			if (world.id > this.mapConfig.maxValidWorldID) continue;
+			if (world.id < this.mapConfig.minValidworldID) continue;
+			if (world.id > this.mapConfig.maxValidworldID) continue;
 
 			if ((world.name) == null) continue;
 
@@ -220,22 +236,86 @@ export default class Gamemap {
 		}
 	}
 
+	changeWorld(world, newState) {
+		let worldID = this.getWorldIDFromWorld(world);
+		if (worldID == this.currentWorldID) {
+			// do nothing
+			return;
+		} 
+
+		if (worldID <= 0) {
+			print("Unknown world #" + worldID + " received!");
+			return ;
+		} 
+
+		if (this.currentWorldID in this.mapWorlds) {
+			this.mapWorlds[this.currentWorldID].mapState   = this.getMapState();
+			this.mapWorlds[this.currentWorldID].mapConfig = this.mapConfig;
+		}
+
+		if (! (worldID in this.mapWorlds)){
+			print("Unknown world ID " + worldID + "!");
+			return;
+		}  
+
+		this.clearLocationElements();
+
+		this.currentWorldID = worldID;
+		this.mapConfig = this.mapWorlds[this.currentWorldID].mapConfig;
+
+		if (newState == null) {
+			this.setMapState(this.mapWorlds[this.currentWorldID].mapState);
+		} else {
+			this.setMapState(newState);
+		}
+
+		//callback to notify world changed
+		if (mapCallbacks != null) {
+			mapCallbacks.onWorldChanged(this.mapWorlds[this.currentWorldID])
+		}
+	
+	}
+
 	/*================================================
-						Map state
+					  Map locations 
 	================================================*/
 
-	getMapState() {
-		let mapState = new MapState();
+	findLocationAt(pageX, pageY) {
+		// Look for icons first
+		for (let key in this.locations) {
+			var location = this.locations[key];
 
-		mapState.zoomLevel    = this.zoomLevel;
-		mapState.gamePos      = this.getGamePositionOfCenter();
-		mapState.worldID      = this.currentWorldID;
-		mapState.grid         = this.isDrawGrid;
-		mapState.cellResource = this.cellResource;
-		mapState.displayState = this.displayState;
+			if (location.locType >= uesp.gamemap.LOCTYPE_PATH) continue;
+			if (location.worldID != this.currentWorldID) continue;
+			if (!location.visible && !this.isShowHidden()) continue;
+			if (location.displayLevel > this.zoomLevel || (this.isShowHidden() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
 
-		return mapState;
+			const rect = this.mapCanvas.getBoundingClientRect();
+			const x = pageX - rect.left;
+			const y = pageY - rect.top;
+
+			if (location.isMouseHoverCanvas(x, y)) return location;
+		}
+
+		// Check paths/areas next
+		for (let key in this.locations) {
+			var location = this.locations[key];
+
+			if (location.locType < uesp.gamemap.LOCTYPE_PATH) continue;
+			if (location.worldID != this.currentWorldID) continue;
+			if (!location.visible && !this.isShowHidden()) continue;
+			if (location.displayLevel > this.zoomLevel || (this.isShowHidden() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
+
+			const rect = this.mapCanvas.getBoundingClientRect();
+			const x = pageX - rect.left;
+			const y = pageY - rect.top;
+
+			if (location.isMouseHoverCanvas(x, y)) return location;
+		}
+
+		return null;
 	}
+
 
 	/*================================================
 						Map editing
@@ -390,15 +470,88 @@ export default class Gamemap {
 
 		self.redrawCanvas(true);
 	}
+	
+	onMouseMove(event) {
+
+		var self = event.data.self;
+
+		if (self.isDragging) {
+			self.onDragMove(event);
+			event.preventDefault();
+		} else if (self.currentEditMode == 'edithandles') {
+			self.currentEditLocation.onPathMouseMoveCanvas(event);
+		} else {
+			self.checkCanvasHover(event);
+		}
+
+	}
 
 
+	checkCanvasHover(event) {
+		let needsUpdate = false;
+
+		let hoverLocation = this.findLocationAt(event.pageX, event.pageY);
+		if (hoverLocation == this.lastCanvasHoverLocation) return;
+
+		if (hoverLocation) {
+			hoverLocation.isHoverCanvas = true;
+			needsUpdate = true;
+		}
+
+		if (this.lastCanvasHoverLocation) {
+			this.lastCanvasHoverLocation.isHoverCanvas = false;
+			this.lastCanvasHoverLocation.hideTooltip();
+			this.lastCanvasHoverLocation = null;
+			needsUpdate = true;
+		}
+
+		if (needsUpdate) {
+			this.lastCanvasHoverLocation = hoverLocation;
+			this.redrawCanvas();
+
+			if (this.lastCanvasHoverLocation) {
+				this.mapCanvasGridElement.css('cursor', 'pointer')
+				if (this.lastCanvasHoverLocation.shouldShowTooltip()) this.lastCanvasHoverLocation.showTooltip();
+			}
+			else {
+				this.mapCanvasGridElement.css('cursor', "grab")
+			}
+		}
+	}
 
 	/*================================================
 					Utility functions
 	================================================*/
 
-	getCurrentWorldID() {
+	getCurrentworldID() {
 		return this.currentWorldID;
+	}
+
+	getWorldIDFromWorld(world) {
+
+		let worldID = 0;
+
+		if (world == null) return 0;
+
+		// check if it's an object
+		if (isNaN(world)) {
+			worldName = decodeURIComponent(world);
+
+			// is it in the named world array?
+			if (worldName in this.mapWorldDisplayNameIndex) {
+				return this.mapWorldDisplayNameIndex[worldName];
+			} 
+
+			worldName = worldName.toLowerCase();
+			if ( !(worldName in this.mapWorldNameIndex) ) return 0;
+			worldID = this.mapWorldNameIndex[worldName];
+		}
+		else {
+			worldID = parseInt(world);
+			if ( !(worldID in this.mapWorlds)) return 0;
+		}
+
+		return worldID;
 	}
 
 	getArticleLink() {
@@ -438,34 +591,6 @@ export default class Gamemap {
 	}
 
 }
-
-// uesp.gamemap.Map.prototype.changeWorld = function (world, newState)
-// {
-// 	worldId = this.getWorldId(world);
-// 	if (worldId == this.currentWorldId) return;
-// 	if (worldId <= 0) return uesp.logError("Unknown world #" + worldId + " received!");
-
-// 	if (this.currentWorldId in this.mapWorlds)
-// 	{
-// 		this.mapWorlds[this.currentWorldId].mapState   = this.getMapState();
-// 		this.mapWorlds[this.currentWorldId].mapOptions = this.mapOptions;
-// 	}
-
-// 	if (! (worldId in this.mapWorlds)) return uesp.logError("Unknown world ID " + worldId + "!");
-
-// 	this.clearLocationElements();
-
-// 	this.currentWorldId = worldId;
-// 	this.mapOptions = this.mapWorlds[this.currentWorldId].mapOptions;
-
-// 	if (newState == null)
-// 		this.setMapState(this.mapWorlds[this.currentWorldId].mapState);
-// 	else
-// 		this.setMapState(newState);
-
-// 	if (this.userEvents.onMapWorldChanged != null) this.userEvents.onMapWorldChanged.call(this, this.mapWorlds[this.currentWorldId]);
-// }
-
 
 // uesp.gamemap.Map.prototype.checkTileEdges = function ()
 // {
@@ -653,7 +778,7 @@ export default class Gamemap {
 // 	this.mapContext.save();
 // 	this.mapContext.setTransform(1, 0, 0, 1, 0, 0);
 
-// 	let worldName = this.mapWorlds[this.currentWorldId].name;
+// 	let worldName = this.mapWorlds[this.currentworldID].name;
 // 	let canvasBGColor = this.mapOptions.canvasBGColor;
 // 	if (this.mapOptions.canvasBGColorFunction !== null) canvasBGColor = this.mapOptions.canvasBGColorFunction(worldName, this.displayState);
 
@@ -704,7 +829,7 @@ export default class Gamemap {
 
 // uesp.gamemap.Map.prototype.displayLocation = function (location)
 // {
-// 	if (location.worldId != this.currentWorldId) return;
+// 	if (location.worldID != this.currentworldID) return;
 // 	if (!location.visible && !this.isShowHidden()) return;
 
 // 	location.computeOffset();
@@ -786,7 +911,7 @@ export default class Gamemap {
 // 	var gameX   = gamePos.x;
 // 	var gameY   = gamePos.y;
 // 	var zoom    = this.zoomLevel;
-// 	var worldId = this.currentWorldId;
+// 	var worldID = this.currentworldID;
 // 	var grid    = this.isDrawGrid;
 // 	var cellResource = this.cellResource;
 // 	var displayState = this.displayState;
@@ -796,7 +921,7 @@ export default class Gamemap {
 // 		gameX   = defaultMapState.gamePos.x;
 // 		gameY   = defaultMapState.gamePos.y;
 // 		zoom    = defaultMapState.zoomLevel;
-// 		worldId = defaultMapState.worldId;
+// 		worldID = defaultMapState.worldID;
 // 		grid    = defaultMapState.grid;
 // 		cellResource = defaultMapState.cellResource;
 // 		displayState = defaultMapState.displayState;
@@ -813,12 +938,12 @@ export default class Gamemap {
 
 // 	if ( ! (this.queryParams.world == null))
 // 	{
-// 		worldId = this.getWorldId(this.queryParams.world);
+// 		worldID = this.getworldID(this.queryParams.world);
 // 	}
 
 // 	if ( ! (this.queryParams.world == null))
 // 	{
-// 		worldId = this.getWorldId(this.queryParams.world);
+// 		worldID = this.getworldID(this.queryParams.world);
 // 	}
 
 // 	if ( ! (this.queryParams.grid == null))
@@ -845,7 +970,7 @@ export default class Gamemap {
 // 	newState.gamePos.x = gameX;
 // 	newState.gamePos.y = gameY;
 // 	newState.zoomLevel = zoom;
-// 	newState.worldId   = worldId;
+// 	newState.worldID   = worldID;
 // 	newState.grid      = grid;
 // 	newState.cellResource = cellResource;
 // 	newState.displayState = displayState;
@@ -899,10 +1024,10 @@ export default class Gamemap {
 
 // uesp.gamemap.Map.prototype.getWorldMapState = function(world)
 // {
-// 	var worldId = this.getWorldId(world);
-// 	if (worldId <= 0) return null;
+// 	var worldID = this.getworldID(world);
+// 	if (worldID <= 0) return null;
 
-// 	return this.mapWorlds[worldId].mapState;
+// 	return this.mapWorlds[worldID].mapState;
 // }
 
 
@@ -912,9 +1037,9 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.hasWorld = function(worldId)
+// uesp.gamemap.Map.prototype.hasWorld = function(worldID)
 // {
-// 	return worldId in this.mapWorlds;
+// 	return worldID in this.mapWorlds;
 // }
 
 
@@ -960,11 +1085,11 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.onMapTileLoadFunctionEx = function (element, imageURL, gameMap, origZoomLevel, origWorldId)
+// uesp.gamemap.onMapTileLoadFunctionEx = function (element, imageURL, gameMap, origZoomLevel, origworldID)
 // {
 // 	return function() {
 // 		$(this).remove();
-// 		if (gameMap.zoomLevel != origZoomLevel || gameMap.currentWorldId != origWorldId) return;
+// 		if (gameMap.zoomLevel != origZoomLevel || gameMap.currentworldID != origworldID) return;
 // 		element.css('background-image', 'url(' + imageURL + ')');
 // 	};
 // }
@@ -978,10 +1103,10 @@ export default class Gamemap {
 
 
 
-// uesp.gamemap.Map.prototype.jumpToWorld = function (worldId)
+// uesp.gamemap.Map.prototype.jumpToWorld = function (worldID)
 // {
-// 	if (worldId == null || worldId <= 0) return;
-// 	this.changeWorld(worldId);
+// 	if (worldID == null || worldID <= 0) return;
+// 	this.changeWorld(worldID);
 // }
 
 
@@ -1004,7 +1129,7 @@ export default class Gamemap {
 // 	var newState = new uesp.gamemap.MapState;
 // 	var destLoc  = this.locations[destId];
 
-// 	newState.worldId = destLoc.worldId;
+// 	newState.worldID = destLoc.worldID;
 // 	newState.gamePos.x = destLoc.x;
 // 	newState.gamePos.y = destLoc.y;
 
@@ -1028,13 +1153,13 @@ export default class Gamemap {
 // 	if (this.mapOptions.getMapTileFunction == null) return;
 // 	var self = this;
 
-// 	if (!(this.currentWorldId in this.mapWorlds))
+// 	if (!(this.currentworldID in this.mapWorlds))
 // 	{
-// 		uesp.logError("Unknown worldID " + this.currentWorldId + "!");
+// 		uesp.logError("Unknown worldID " + this.currentworldID + "!");
 // 		return;
 // 	}
 
-// 	var world = this.mapWorlds[this.currentWorldId];
+// 	var world = this.mapWorlds[this.currentworldID];
 // 	var worldName = world.name;
 // 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
 // 	var isFakeMaxZoom = false;
@@ -1047,7 +1172,7 @@ export default class Gamemap {
 // 		isFakeMaxZoom = true;
 // 	}
 
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "worldID: " + this.currentWorldId + " worldName: " + worldName);
+// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "worldID: " + this.currentworldID + " worldName: " + worldName);
 
 // 	for (var y = 0; y < this.mapOptions.tileCountY; ++y)
 // 	{
@@ -1080,7 +1205,7 @@ export default class Gamemap {
 // 				imageURL = this.mapOptions.getMapTileFunction(Math.floor(tileX/2), Math.floor(tileY/2), this.zoomLevel-1, worldName, this.displayState);
 
 // 				$('<img/>').attr('src', imageURL)
-// 					.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentWorldId))
+// 					.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentworldID))
 // 					.error(uesp.gamemap.onMapTileLoadFunction(element, missingTile));
 // 			}
 // 			else
@@ -1089,7 +1214,7 @@ export default class Gamemap {
 // 				element.css("background-position", "");
 
 // 				$('<img/>').attr('src', imageURL)
-// 					.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentWorldId))
+// 					.load(uesp.gamemap.onMapTileLoadFunctionEx(element, imageURL, this, this.zoomLevel, this.currentworldID))
 // 					.error(uesp.gamemap.onMapTileLoadFunction(element, missingTile));
 // 			}
 
@@ -1113,18 +1238,18 @@ export default class Gamemap {
 // 	if (this.mapOptions.getMapTileFunction == null) return;
 // 	var self = this;
 
-// 	if (!(this.currentWorldId in this.mapWorlds))
+// 	if (!(this.currentworldID in this.mapWorlds))
 // 	{
-// 		uesp.logError("Unknown worldID " + this.currentWorldId + "!");
+// 		uesp.logError("Unknown worldID " + this.currentworldID + "!");
 // 		return;
 // 	}
 
 // 	this.clearOldCanvasTiles();
 
-// 	var worldName = this.mapWorlds[this.currentWorldId].name;
+// 	var worldName = this.mapWorlds[this.currentworldID].name;
 // 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
 
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "worldID: " + this.currentWorldId + " worldName: " + worldName);
+// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "worldID: " + this.currentworldID + " worldName: " + worldName);
 
 // 	this.canvasImages = [];
 // 	this.canvasImageMap = {};
@@ -1206,9 +1331,9 @@ export default class Gamemap {
 // {
 // 	if (uesp.gamemap.isNullorUndefined(this.mapOptions.getMapTileFunction)) return;
 
-// 	if (!(this.currentWorldId in this.mapWorlds))
+// 	if (!(this.currentworldID in this.mapWorlds))
 // 	{
-// 		uesp.logError("Unknown worldID " + this.currentWorldId + "!");
+// 		uesp.logError("Unknown worldID " + this.currentworldID + "!");
 // 		return;
 // 	}
 
@@ -1247,7 +1372,7 @@ export default class Gamemap {
 
 // uesp.gamemap.Map.prototype.loadMapTilesCanvasRowColPriv = function(startX, startY, dx, dy)
 // {
-// 	let worldName = this.mapWorlds[this.currentWorldId].name;
+// 	let worldName = this.mapWorlds[this.currentworldID].name;
 // 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
 // 	let self = this;
 
@@ -1327,15 +1452,15 @@ export default class Gamemap {
 // {
 // 	if (uesp.gamemap.isNullorUndefined(this.mapOptions.getMapTileFunction)) return;
 
-// 	if (!(this.currentWorldId in this.mapWorlds))
+// 	if (!(this.currentworldID in this.mapWorlds))
 // 	{
-// 		uesp.logError("Unknown worldID " + this.currentWorldId + "!");
+// 		uesp.logError("Unknown worldID " + this.currentworldID + "!");
 // 		return;
 // 	}
 
-// 	var world = this.mapWorlds[this.currentWorldId];
+// 	var world = this.mapWorlds[this.currentworldID];
 // 	var worldName = world.name;
-// 	var worldName = this.mapWorlds[this.currentWorldId].name;
+// 	var worldName = this.mapWorlds[this.currentworldID].name;
 // 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
 // 	var isFakeMaxZoom = false;
 
@@ -1577,7 +1702,7 @@ export default class Gamemap {
 // 	this.currentEditLocation = new uesp.gamemap.Location(this);
 // 	this.currentEditLocation.locType = uesp.gamemap.LOCTYPE_PATH;
 // 	this.currentEditLocation.id = this.createNewLocationId();
-// 	this.currentEditLocation.worldId = this.currentWorldId;
+// 	this.currentEditLocation.worldID = this.currentworldID;
 // 	this.currentEditLocation.name = 'New Path';
 // 	this.currentEditLocation.displayLevel = this.zoomLevel - 1;
 // 	this.currentEditLocation.visible = true;
@@ -1627,7 +1752,7 @@ export default class Gamemap {
 // 	var location = new uesp.gamemap.Location(this);
 
 // 	location.id = this.createNewLocationId();
-// 	location.worldId = this.currentWorldId;
+// 	location.worldID = this.currentworldID;
 // 	location.name = 'New Location';
 // 	location.x = Math.round(gamePos.x);
 // 	location.y = Math.round(gamePos.y);
@@ -1815,7 +1940,7 @@ export default class Gamemap {
 
 // uesp.gamemap.Map.prototype.redrawImages = function()
 // {
-// 	let worldName = this.mapWorlds[this.currentWorldId].name;
+// 	let worldName = this.mapWorlds[this.currentworldID].name;
 
 // 	let canvasBGColor = this.mapOptions.canvasBGColor;
 // 	if (this.mapOptions.canvasBGColorFunction !== null) canvasBGColor = this.mapOptions.canvasBGColorFunction(worldName, this.displayState);
@@ -2114,124 +2239,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.onMouseMove = function(event)
-// {
-// 	var self = event.data.self;
-
-// 	if (self.USE_CANVAS_DRAW) return self.onMouseMoveCanvas(event);
-
-// 	if (self.isDragging)
-// 	{
-// 		self.onDragMove(event);
-// 		event.preventDefault();
-// 	}
-// 	else if (self.currentEditMode == 'edithandles')
-// 	{
-// 		self.currentEditLocation.onPathMouseMove(event);
-// 	}
-
-// }
-
-
-// uesp.gamemap.Map.prototype.onMouseMoveCanvas = function(event)
-// {
-// 	var self = event.data.self;
-
-// 	if (self.isDragging)
-// 	{
-// 		self.onDragMove(event);
-// 		event.preventDefault();
-// 	}
-// 	else if (self.currentEditMode == 'edithandles')
-// 	{
-// 		self.currentEditLocation.onPathMouseMoveCanvas(event);
-// 	}
-// 	else
-// 	{
-// 		self.checkCanvasHover(event);
-// 	}
-// }
-
-
-// uesp.gamemap.Map.prototype.findLocationAt = function(pageX, pageY)
-// {
-// 		// Look for icons first
-// 	for (key in this.locations)
-// 	{
-// 		var location = this.locations[key];
-
-// 		if (location.locType >= uesp.gamemap.LOCTYPE_PATH) continue;
-// 		if (location.worldId != this.currentWorldId) continue;
-// 		if (!location.visible && !this.isShowHidden()) continue;
-// 		if (location.displayLevel > this.zoomLevel || (this.isShowHidden() && this.zoomLevel == this.mapOptions.maxZoomLevel)) continue;
-
-// 		const rect = this.mapCanvas.getBoundingClientRect();
-// 		const x = pageX - rect.left;
-// 		const y = pageY - rect.top;
-
-// 		if (location.isMouseHoverCanvas(x, y)) return location;
-// 	}
-
-// 		// Check paths/areas next
-// 	for (key in this.locations)
-// 	{
-// 		var location = this.locations[key];
-
-// 		if (location.locType < uesp.gamemap.LOCTYPE_PATH) continue;
-// 		if (location.worldId != this.currentWorldId) continue;
-// 		if (!location.visible && !this.isShowHidden()) continue;
-// 		if (location.displayLevel > this.zoomLevel || (this.isShowHidden() && this.zoomLevel == this.mapOptions.maxZoomLevel)) continue;
-
-// 		const rect = this.mapCanvas.getBoundingClientRect();
-// 		const x = pageX - rect.left;
-// 		const y = pageY - rect.top;
-
-// 		if (location.isMouseHoverCanvas(x, y)) return location;
-// 	}
-
-// 	return null;
-// }
-
-
-// uesp.gamemap.Map.prototype.checkCanvasHover = function(event)
-// {
-// 	var needsUpdate = false;
-
-// 	var hoverLocation = this.findLocationAt(event.pageX, event.pageY);
-// 	if (hoverLocation == this.lastCanvasHoverLocation) return;
-
-// 	if (hoverLocation)
-// 	{
-// 		hoverLocation.isHoverCanvas = true;
-// 		needsUpdate = true;
-// 	}
-
-// 	if (this.lastCanvasHoverLocation)
-// 	{
-// 		this.lastCanvasHoverLocation.isHoverCanvas = false;
-// 		this.lastCanvasHoverLocation.hideTooltip();
-// 		this.lastCanvasHoverLocation = null;
-// 		needsUpdate = true;
-// 	}
-
-// 	if (needsUpdate)
-// 	{
-// 		this.lastCanvasHoverLocation = hoverLocation;
-// 		this.redrawCanvas();
-
-// 		if (this.lastCanvasHoverLocation)
-// 		{
-// 			this.mapCanvasGridElement.css('cursor', 'pointer')
-// 			if (this.lastCanvasHoverLocation.shouldShowTooltip()) this.lastCanvasHoverLocation.showTooltip();
-// 		}
-// 		else
-// 		{
-// 			this.mapCanvasGridElement.css('cursor', "grab")
-// 		}
-// 	}
-// }
-
-
 // uesp.gamemap.Map.prototype.onTouchMove = function(event)
 // {
 // 	var self = event.data.self;
@@ -2443,7 +2450,7 @@ export default class Gamemap {
 // 	{
 // 		if (data.worlds == null || data.worlds.length === 0)
 // 		{
-// 			this.changeWorld(this.mapOptions.homeWorldId);
+// 			this.changeWorld(this.mapOptions.homeworldID);
 // 			this.centerOnError = true;
 // 		}
 // 		else
@@ -2457,28 +2464,28 @@ export default class Gamemap {
 // 	}
 
 // 	this.mergeLocationData(data.locations, true);
-// 	var worldId = 0;
+// 	var worldID = 0;
 
 // 	if (data.worlds == null || data.worlds.length === 0)
 // 	{
-// 		worldId = data.locations[0].worldId;
+// 		worldID = data.locations[0].worldID;
 // 	}
 // 	else
 // 	{
 // 		this.mergeWorldData(data.worlds);
-// 		worldId = data.worlds[0].id
+// 		worldID = data.worlds[0].id
 // 	}
 
-// 	if (this.mapWorlds[worldId] == null)
+// 	if (this.mapWorlds[worldID] == null)
 // 	{
-// 		this.changeWorld(this.mapOptions.homeWorldId);
+// 		this.changeWorld(this.mapOptions.homeworldID);
 // 		this.centerOnError = true;
 // 		return true;
 // 	}
 
 // 	var mapState = new uesp.gamemap.MapState();
-// 	mapState.worldId = worldId;
-// 	mapState.zoomLevel = this.mapWorlds[worldId].maxZoom;
+// 	mapState.worldID = worldID;
+// 	mapState.zoomLevel = this.mapWorlds[worldID].maxZoom;
 // 	mapState.gamePos.x = data.locations[0].x + data.locations[0].width/2;
 // 	mapState.gamePos.y = data.locations[0].y - data.locations[0].height/2;
 
@@ -2517,7 +2524,7 @@ export default class Gamemap {
 // 		// Remove locations in this world that are out of the current bounds
 // 	for (key in this.locations)
 // 	{
-// 		if (this.locations[key].worldId != this.currentWorldId) continue;
+// 		if (this.locations[key].worldID != this.currentworldID) continue;
 // 		if (this.locations[key].isInBounds(mapBounds)) continue;
 
 // 		this.locations[key].removeElements();
@@ -2566,8 +2573,8 @@ export default class Gamemap {
 // 	queryParams.db = this.mapOptions.dbPrefix;
 // 	if (this.isShowHidden()) queryParams.showhidden = 1;
 
-// 	//if (!this.hasWorld(this.worldId)) queryParams.incworld = 1;
-// 	//if (queryParams.world <= 0) return uesp.logError("Unknown worldId " + this.currentWorldId + "!");
+// 	//if (!this.hasWorld(this.worldID)) queryParams.incworld = 1;
+// 	//if (queryParams.world <= 0) return uesp.logError("Unknown worldID " + this.currentworldID + "!");
 
 // 	if (this.mapOptions.isOffline)
 // 	{
@@ -2588,17 +2595,17 @@ export default class Gamemap {
 
 // 	var queryParams = {};
 // 	queryParams.action = "get_locs";
-// 	queryParams.world  = this.currentWorldId;
+// 	queryParams.world  = this.currentworldID;
 // 	queryParams.top    = mapBounds.top;
 // 	queryParams.bottom = mapBounds.bottom;
 // 	queryParams.left   = mapBounds.left;
 // 	queryParams.right  = mapBounds.right;
 // 	queryParams.zoom   = this.zoomLevel;
 // 	if (this.isShowHidden()) queryParams.showhidden = 1;
-// 	if (!this.hasWorld(this.currentWorldId)) queryParams.incworld = 1;
+// 	if (!this.hasWorld(this.currentworldID)) queryParams.incworld = 1;
 // 	queryParams.db = this.mapOptions.dbPrefix;
 
-// 	if (queryParams.world <= 0) return uesp.logError("Unknown worldId for current world " + this.currentWorldId + "!");
+// 	if (queryParams.world <= 0) return uesp.logError("Unknown worldID for current world " + this.currentworldID + "!");
 
 // 	if (this.mapOptions.isOffline)
 // 	{
@@ -2684,39 +2691,14 @@ export default class Gamemap {
 // 	this.redrawCanvas(true);
 // }
 
-
-// uesp.gamemap.Map.prototype.getWorldId = function (world)
-// {
-// 	if (world == null) return 0;
-
-// 	if (isNaN(world))
-// 	{
-// 		worldName = decodeURIComponent(world);
-
-// 		if (worldName in this.mapWorldDisplayNameIndex) return this.mapWorldDisplayNameIndex[worldName];
-
-// 		worldName = worldName.toLowerCase();
-// 		if ( !(worldName in this.mapWorldNameIndex) ) return 0;
-// 		worldId = this.mapWorldNameIndex[worldName];
-// 	}
-// 	else
-// 	{
-// 		worldId = parseInt(world);
-// 		if ( !(worldId in this.mapWorlds)) return 0;
-// 	}
-
-// 	return worldId;
-// }
-
-
 // uesp.gamemap.Map.prototype.setMapOptions = function (world, mapOptions)
 // {
-// 	var worldId = this.getWorldId(world);
-// 	if ( !(worldId in this.mapWorlds) ) return uesp.logError("Unknown world #" + worldId + " received!");
+// 	var worldID = this.getworldID(world);
+// 	if ( !(worldID in this.mapWorlds) ) return uesp.logError("Unknown world #" + worldID + " received!");
 
-// 	this.mapWorlds[worldId].mergeMapOptions(mapOptions);
+// 	this.mapWorlds[worldID].mergeMapOptions(mapOptions);
 
-// 	if (this.currentWorldId == worldId) this.mapOptions.mergeOptions(mapOptions);
+// 	if (this.currentworldID == worldID) this.mapOptions.mergeOptions(mapOptions);
 // }
 
 
@@ -2827,9 +2809,9 @@ export default class Gamemap {
 // 	this.cellResource = newState.cellResource;
 // 	this.displayState = newState.displayState;
 
-// 	if (this.currentWorldId != newState.worldId)
+// 	if (this.currentworldID != newState.worldID)
 // 	{
-// 		this.changeWorld(newState.worldId, newState, updateMap);
+// 		this.changeWorld(newState.worldID, newState, updateMap);
 // 	}
 // 	else
 // 	{
@@ -2981,7 +2963,7 @@ export default class Gamemap {
 // 	{
 // 		var location = this.locations[key];
 
-// 		if (location.worldId != this.currentWorldId) continue;
+// 		if (location.worldID != this.currentworldID) continue;
 // 		if (!location.visible && !this.isShowHidden()) continue;
 // 		if (location.displayLevel > this.zoomLevel || (this.isShowHidden() && this.zoomLevel == this.mapOptions.maxZoomLevel)) continue;
 // 		if (location.locType >= uesp.gamemap.LOCTYPE_PATH) location.updatePathSize(false);
@@ -2999,7 +2981,7 @@ export default class Gamemap {
 // 	{
 // 		var location = this.locations[key];
 
-// 		if (location.worldId != this.currentWorldId) continue;
+// 		if (location.worldID != this.currentworldID) continue;
 // 		if (!location.visible && !this.isShowHidden()) continue;
 // 		if (location.displayLevel > this.zoomLevel || (this.isShowHidden() && this.zoomLevel == this.mapOptions.maxZoomLevel)) continue;
 // 		if (location.locType >= uesp.gamemap.LOCTYPE_PATH) location.updatePathSize(false);
@@ -3487,7 +3469,7 @@ export default class Gamemap {
 // 	this.setEditClickWallBackground('rgba(0,0,0,0.5)');
 // 	this.currentEditMode = 'editworld';
 
-// 	this.currentEditWorld = this.mapWorlds[this.currentWorldId];
+// 	this.currentEditWorld = this.mapWorlds[this.currentworldID];
 // 	this.showWorldEditForm();
 
 // 	return true;
@@ -3507,7 +3489,7 @@ export default class Gamemap {
 // 						"<div class='gmMapEditPopupLabel'>Enabled</div>" +
 // 							"<input type='checkbox' class='gmMapEditPopupInput' name='enabled' value='1' /> <br />" +
 // 						"<div class='gmMapEditPopupLabel'>Parent World ID</div>" +
-// 							"<input type='text' class='gmMapEditPopupInput' name='parentId' value='{parentId}' size='8'  maxlength='10' /> &nbsp; &nbsp; use a worldId<br />" +
+// 							"<input type='text' class='gmMapEditPopupInput' name='parentId' value='{parentId}' size='8'  maxlength='10' /> &nbsp; &nbsp; use a worldID<br />" +
 // 						"<div class='gmMapEditPopupLabel'>Display Name</div>" +
 // 							"<input type='text' class='gmMapEditPopupInput' name=\"displayName\" value=\"{displayName}\" size='24'  maxlength='100' /> <br />" +
 // 						"<div class='gmMapEditPopupLabel'>Wiki Page</div>" +
@@ -3528,7 +3510,7 @@ export default class Gamemap {
 // 						"<div class='gmMapEditPopupLabel'>Top</div>" +
 // 							"<input type='text' class='gmMapEditPopupInput' name='posTop' value='{posTop}' size='8'  maxlength='10' /> &nbsp; " +
 // 							"Bottom <input type='text' class='gmMapEditPopupInput' name='posBottom' value='{posBottom}' size='8'  maxlength='10' /> <br />" +
-// 						"<div class='gmMapEditPopupLabel'>worldId</div>" +
+// 						"<div class='gmMapEditPopupLabel'>worldID</div>" +
 // 							"<div class='gmMapEditPopupInput'>{id}</div> &nbsp; " +
 // 							" &nbsp;  &nbsp; Revision<div class='gmMapEditPopupInput'>{revisionId}</div> &nbsp; <br />" +
 // 						"<div class='gmMapEditPopupStatus'></div>" +
@@ -3725,9 +3707,9 @@ export default class Gamemap {
 
 // uesp.gamemap.Map.prototype.onZoomOutWorld = function()
 // {
-// 	if ( !(this.currentWorldId in this.mapWorlds)) return false;
+// 	if ( !(this.currentworldID in this.mapWorlds)) return false;
 
-// 	world = this.mapWorlds[this.currentWorldId];
+// 	world = this.mapWorlds[this.currentworldID];
 // 	if (world.parentId <= 0) return false;
 
 // 	this.changeWorld(world.parentId);
@@ -4433,7 +4415,7 @@ export default class Gamemap {
 // 	var queryParams = { };
 // 	queryParams.action = "get_cellresource";
 // 	queryParams.db = this.mapOptions.dbPrefix;
-// 	queryParams.worldid = this.currentWorldId;
+// 	queryParams.worldID = this.currentworldID;
 // 	queryParams.editorid = resourceEditorID;
 
 // 	$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
