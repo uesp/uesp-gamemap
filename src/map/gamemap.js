@@ -8,7 +8,6 @@ import * as Utils from "../common/utils.js";
 import * as Constants from "../common/constants.js";
 import World from "./world.js";
 import MapState from "./mapState.js";
-import MapTile from "./mapTile.js";
 import Position from "./mapPosition.js";
 import Bounds from "./bounds.js";
 
@@ -1006,6 +1005,102 @@ export default class Gamemap {
 		}
 
 	}
+
+	onMouseDown(event) {
+		var self = event.data.self;
+		event.preventDefault();
+	
+		print("onMouseDownCanvas");
+	
+		if (event.which != 1) return false;
+	
+		if (self.currentEditMode == 'edithandles')
+			self.currentEditLocation.onPathEditHandlesMouseDown(event);
+		else if (self.currentEditMode == '')
+			self.onDragStart(event);
+	}
+
+	onMouseUp = function(event) {
+		var self = event.data.self;
+	
+		print("onMouseUpCanvas");
+	
+		if (event.which != 1) return false;
+	
+		if (self.isDragging) {
+			//uesp.logDebug(uesp.LOG_LEVEL_INFO, "onMouseUpCanvas::EndDrag");
+			self.onDragEnd(event);
+			event.preventDefault();
+		}
+		else if (self.currentEditLocation != null && self.currentEditLocation.draggingPathHandle >= 0) {
+			self.currentEditLocation.onPathEditHandlesDragEnd(event);
+		}
+	}
+
+	
+	onClick(event) {
+		var self = event.data.self;
+
+		if (event.which == 3)
+			return self.onRightClick(event);
+		else if (event.which != 1)
+			return false;
+
+		print("onClick");
+
+		if (self.currentEditMode == 'addlocation')
+			self.onAddLocationClick(event);
+		else if (self.currentEditMode == 'addpath')
+			self.onAddPathClick(event);
+		else if (self.currentEditMode == 'addarea')
+			self.onAddAreaClick(event);
+		else if (self.currentEditMode == 'draglocation')
+			self.onDragLocationClick(event);
+		else if (self.currentEditMode != '' )
+			return false;
+		else if (self.USE_CANVAS_DRAW)
+			return self.onCanvasClick(event);
+
+		return true;
+	}
+
+	onCanvasClick(event) {
+		var self = event.data.self;
+
+		if (!self.USE_CANVAS_DRAW) return false;
+
+		print("onCanvasClick", event);
+
+		var foundLoc = self.findLocationAt(event.pageX, event.pageY);
+		if (foundLoc == null) return false;
+
+		foundLoc.onLabelClick(event);
+
+		return true;
+	}
+
+
+	onDragStart(event) {
+		let mapOffset = this.mapRoot.offset();
+
+		this.dragStartLeft = event.pageX - mapOffset.left;
+		this.dragStartTop = event.pageY - mapOffset.top;
+
+		this.dragStartLeftCanvas = event.pageX;
+		this.dragStartTopCanvas = event.pageY;
+
+		this.dragStartEventX = event.pageX;
+		this.dragStartEventY = event.pageY;
+
+		this.canvasLastDragX = 0;
+		this.canvasLastDragY = 0;
+
+		this.draggingObject = $(event.target);
+		this.isDragging = true;
+
+		print("Drag Start Offset: " + this.dragStartLeft + ", " + this.dragStartTop);
+	}
+	
 
 	/*================================================
 					Utility functions
@@ -2220,46 +2315,8 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.onDragStart = function(event)
-// {
-// 	if (this.USE_CANVAS_DRAW) return this.onDragStartCanvas(event);
-
-// 	let mapOffset = this.mapRoot.offset();
-
-// 	this.dragStartLeft = event.pageX - mapOffset.left;
-// 	this.dragStartTop = event.pageY - mapOffset.top;
-
-// 	this.dragStartEventX = event.pageX;
-// 	this.dragStartEventY = event.pageY;
-
-// 	this.draggingObject = $(event.target);
-// 	this.isDragging = true;
-
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Drag Start Offset: " + this.dragStartLeft + ", " + this.dragStartTop);
-// }
 
 
-// uesp.gamemap.Map.prototype.onDragStartCanvas = function(event)
-// {
-// 	let mapOffset = this.mapRoot.offset();
-
-// 	this.dragStartLeft = event.pageX - mapOffset.left;
-// 	this.dragStartTop = event.pageY - mapOffset.top;
-
-// 	this.dragStartLeftCanvas = event.pageX;
-// 	this.dragStartTopCanvas = event.pageY;
-
-// 	this.dragStartEventX = event.pageX;
-// 	this.dragStartEventY = event.pageY;
-
-// 	this.canvasLastDragX = 0;
-// 	this.canvasLastDragY = 0;
-
-// 	this.draggingObject = $(event.target);
-// 	this.isDragging = true;
-
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Drag Start Offset: " + this.dragStartLeft + ", " + this.dragStartTop);
-// }
 
 
 // uesp.gamemap.Map.prototype.onRightClick = function(event)
@@ -2278,33 +2335,6 @@ export default class Gamemap {
 // 	return false;
 // }
 
-
-// uesp.gamemap.Map.prototype.onClick = function(event)
-// {
-// 	var self = event.data.self;
-
-// 	if (event.which == 3)
-// 		return self.onRightClick(event);
-// 	else if (event.which != 1)
-// 		return false;
-
-// 	//uesp.logDebug(uesp.LOG_LEVEL_INFO, "onClick");
-
-// 	if (self.currentEditMode == 'addlocation')
-// 		self.onAddLocationClick(event);
-// 	else if (self.currentEditMode == 'addpath')
-// 		self.onAddPathClick(event);
-// 	else if (self.currentEditMode == 'addarea')
-// 		self.onAddAreaClick(event);
-// 	else if (self.currentEditMode == 'draglocation')
-// 		self.onDragLocationClick(event);
-// 	else if (self.currentEditMode != '' )
-// 		return false;
-// 	else if (self.USE_CANVAS_DRAW)
-// 		return self.onCanvasClick(event);
-
-// 	return true;
-// }
 
 
 // uesp.gamemap.Map.prototype.onDblClickCanvas = function(event)
@@ -2325,42 +2355,6 @@ export default class Gamemap {
 // 	foundLoc.onLabelDblClick(event);
 // }
 
-
-// uesp.gamemap.Map.prototype.onMouseDown = function(event)
-// {
-// 	var self = event.data.self;
-
-// 	if (self.USE_CANVAS_DRAW) return self.onMouseDownCanvas(event);
-
-// 	event.preventDefault();
-
-// 	//uesp.logDebug(uesp.LOG_LEVEL_INFO, "onMouseDown");
-
-// 	if (event.which != 1) return false;
-
-// 	if (self.currentEditMode == 'edithandles')
-// 		self.currentEditLocation.onPathEditHandlesMouseDown(event);
-// 	else if (self.currentEditMode == '')
-// 		self.onDragStart(event);
-
-// }
-
-
-// uesp.gamemap.Map.prototype.onMouseDownCanvas = function(event)
-// {
-// 	var self = event.data.self;
-// 	event.preventDefault();
-
-// 	//uesp.logDebug(uesp.LOG_LEVEL_INFO, "onMouseDownCanvas");
-
-// 	if (event.which != 1) return false;
-
-// 	if (self.currentEditMode == 'edithandles')
-// 		self.currentEditLocation.onPathEditHandlesMouseDown(event);
-// 	else if (self.currentEditMode == '')
-// 		self.onDragStart(event);
-
-// }
 
 
 // uesp.gamemap.Map.prototype.onTouchStart = function(event)
@@ -2601,66 +2595,7 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.onMouseUp = function(event)
-// {
-// 	var self = event.data.self;
 
-// 	if (self.USE_CANVAS_DRAW) return self.onMouseUpCanvas(event);
-
-// 	//uesp.logDebug(uesp.LOG_LEVEL_INFO, "onMouseUp");
-
-// 	if (event.which != 1) return false;
-
-// 	if (self.isDragging)
-// 	{
-// 		//uesp.logDebug(uesp.LOG_LEVEL_INFO, "onMouseUp::EndDrag");
-// 		self.onDragEnd(event);
-// 		event.preventDefault();
-// 	}
-// 	else if (self.currentEditLocation != null && self.currentEditLocation.draggingPathHandle >= 0)
-// 	{
-// 		self.currentEditLocation.onPathEditHandlesDragEnd(event);
-// 	}
-// }
-
-
-// uesp.gamemap.Map.prototype.onMouseUpCanvas = function(event)
-// {
-// 	var self = event.data.self;
-
-// 	//uesp.logDebug(uesp.LOG_LEVEL_INFO, "onMouseUpCanvas");
-
-// 	if (event.which != 1) return false;
-
-// 	if (self.isDragging)
-// 	{
-// 		//uesp.logDebug(uesp.LOG_LEVEL_INFO, "onMouseUpCanvas::EndDrag");
-// 		self.onDragEnd(event);
-// 		event.preventDefault();
-// 	}
-// 	else if (self.currentEditLocation != null && self.currentEditLocation.draggingPathHandle >= 0)
-// 	{
-// 		self.currentEditLocation.onPathEditHandlesDragEnd(event);
-// 	}
-
-// }
-
-
-// uesp.gamemap.Map.prototype.onCanvasClick = function(event)
-// {
-// 	var self = event.data.self;
-
-// 	if (!self.USE_CANVAS_DRAW) return false;
-
-// 	//uesp.logDebug(uesp.LOG_LEVEL_INFO, "onCanvasClick", event);
-
-// 	var foundLoc = self.findLocationAt(event.pageX, event.pageY);
-// 	if (foundLoc == null) return false;
-
-// 	foundLoc.onLabelClick(event);
-
-// 	return true;
-// }
 
 
 
