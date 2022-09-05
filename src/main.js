@@ -22,6 +22,8 @@ var mapType = null;
 var gamemap = null;
 var g_MapState = null;
 
+var hasMultipleWorlds = false;
+
 var noAnalytics = true;
 
 // searchParams.has("name") === true; // true
@@ -136,15 +138,19 @@ function onWorldsLoaded(mapWorlds) {
 	print("Worlds loaded!");
 	print(mapWorlds);
 
-	// only show the location switcher if there are more than two worlds
 	if (Object.keys(mapWorlds).length > 2) {
-		$("#btn_location_switcher").show();
-
-		// populate location switcher
+		hasMultipleWorlds = true;
 	}
 
 	$("#loading_spinner").hide();
 	$('#zoom_widget').css('visibility','visible');
+
+	if (hasMultipleWorlds) {
+		// only show the location switcher if there are more than two worlds
+		$("#btn_location_switcher").show();
+		$("#btn_goto_article").show();
+		// populate location switcher
+	}
 
 	if (!gamemap.hasCentreOnParam()) {
 		//jump to default map
@@ -627,7 +633,13 @@ window.zoomIn = function(){
 ================================================*/
 
 function setWindowTitle(title) {
-    document.title = ("UESP " + mapConfig.mapTitle + " | " + title);
+
+	// default dynamic map title
+	document.title = ("UESP " + mapConfig.mapTitle);
+
+	if (hasMultipleWorlds) { // show map world in title if there is one
+		document.title = document.title + " | " + title;
+	} 
 }
 
 /*================================================
