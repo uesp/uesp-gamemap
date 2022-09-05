@@ -10,9 +10,6 @@
     "bgColour" : "#000000",
 
     // Map options
-    "useCanvasDraw" : true,
-    "useLeaflet" : false,
-    "isOffline" : false,
     "useFakeMaxZoom" : false,
     "zoomLevel" : 10,
     "minZoomLevel" : 9,

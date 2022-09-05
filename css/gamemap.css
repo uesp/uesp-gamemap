@@ -318,9 +318,9 @@ b[class^="icon_button_label"] {
 				   	Infobar
 ================================================*/
 
-.infobar {
+.leaflet-control-attribution {
 	position: fixed;
-	background: var(--primary_dark_variant);
+	background: var(--primary_dark_variant) !important;
 	z-index: 1000;
 	bottom: 0;
 	right: 0;
@@ -340,16 +340,16 @@ b[class^="icon_button_label"] {
 
 }
 
-.infobar:hover {
+.leaflet-control-attribution:hover {
 	opacity: 1.0;
 }
 
-.infobar a {
+.leaflet-control-attribution a {
 	text-decoration: none !important;
 	color: white;
 }
 
-.infobar a:hover {
+.leaflet-control-attribution a:hover {
 	text-decoration: underline;
 	border-bottom: solid white;
 	border-width: medium;

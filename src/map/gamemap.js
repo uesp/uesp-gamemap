@@ -18,7 +18,7 @@ import Bounds from "./bounds.js";
 export default class Gamemap {
 
 	// class constructor
-	constructor(mapContainerID, mapConfig, mapCallbacks) {
+	constructor(mapRootID, mapConfig, mapCallbacks) {
 
 		// load in map config
 		this.mapConfig = mapConfig;
@@ -27,13 +27,12 @@ export default class Gamemap {
 		this.mapCallbacks = mapCallbacks;
 
 		// set up important constants
-		this.USE_CANVAS_DRAW = this.mapConfig.useCanvasDraw;
 		this.PAN_AMOUNT = this.mapConfig.tileSize / 2;
 	
 		// set up the root map element
-		this.mapContainer = $('#' + mapContainerID);
-		if (this.mapContainer == null) {
-			print('The gamemap container \'' + mapContainerID + '\' was not found!');
+		this.mapRoot = $('#' + mapRootID);
+		if (this.mapRoot == null) {
+			print('The gamemap container \'' + mapRootID + '\' was not found!');
 		} 
 
 		// set up map world arrays
@@ -96,14 +95,92 @@ export default class Gamemap {
 
 
 		// leaflet experiment
-		this.map = L.map(mapContainerID).setView([51.505, -0.09], 13);
 
-		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			maxZoom: 19,
-			attribution: '© deez'
+		this.width = 9431;
+		this.height = 7654;
+		
+		this.minZoom = 2;
+		this.maxZoom = 6;
+		this.img = [
+				this.width,  // original width of image
+				this.height   // original height of image
+		];
+
+		this.zoom = this.getZoomLevel(this.width, this.height);
+		
+		// create the map
+		this.map = L.map(mapRootID, {
+			minZoom: this.minZoom,
+			maxZoom: this.maxZoom,
+			crs: L.CRS.Simple,
+		});
+
+
+		this.mapRoot = $('<div />').attr('id', 'gmMapRoot').appendTo(this.mapRoot);
+		
+		
+		//sets the max bounds on map
+		this.maxSouthWest = this.unproject([0, this.height]);
+		this.maxNorthEast = this.unproject([this.width, 0]);
+
+		this.map.setMaxBounds(new L.LatLngBounds(this.maxSouthWest, this.maxNorthEast));
+		
+		this.map.setView(this.unproject([this.img[0] / 2, this.img[1] / 2]), this.maxZoom);
+	
+		this.southWest = this.unproject([0, 0]);
+		this.northEast = this.unproject([this.width, this.height]);
+	
+		L.tileLayer('http://mavvo.altervista.org/dofus/tiles/{z}/{x}/{y}.png', {
+			noWrap: true,
+			bounds:  new L.LatLngBounds(this.southWest, this.northEast),
 		}).addTo(this.map);
 
+		this.map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go UESP home"><b class="wikiTitle">UESP</b></a>');
 
+		this.map.attributionControl.addAttribution('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>');
+		this.map.attributionControl.addAttribution('<a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>');
+
+		// var infoBar = L.control.attribution({prefix: '}).addTo(this.map);
+
+		//this.map.attributionControl.addAttribution('Licensed by &copy; <a href="some_link", class="your_class">Habijabi</a>');
+
+// 		L.control.attribution(<Control.Attribution options> options) 	Creates an attribution control.
+// Options
+// Option 	Type 	Default 	Description
+// prefix 	String|false 	'Leaflet' 	The HTML text shown before the attributions. Pass false to disable.
+// ▶ Options inherited from Control
+// Methods
+// Method 	Returns 	Description
+// setPrefix(<String|false> prefix) 	this 	
+
+// The HTML text shown before the attributions. Pass false to disable.
+// addAttribution(<String> text) 	this 	
+
+// Adds an attribution text (e.g. 'Vector data &copy; Mapbox').
+// removeAttribution(<String> text) 	this 	
+
+// Removes an attribution text.
+
+
+	// 	<div class="infobar banishdefault">
+	// 	
+	// 	<b> | </b>
+	// 	<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">ESO Map</a>
+	// 	<b> | </b>
+	// 	<a id="mapFeedbackLink" href="javascript:void(0);" title="Give feedback about this map">Send Feedback</a>
+	// </div>
+
+
+
+		this.map.on('click', function (event) {
+			// any position in leaflet needs to be projected to obtain the image coordinates
+			var coords = this.unproject(event.latlng)
+			var marker = L.marker(this.unproject(coords))
+			  .addTo(this.map)
+			marker.bindPopup('[' + Math.floor(coords.x) + ',' + Math.floor(coords.y) + ']')
+			  .openPopup()
+		  })
+		
 
 		////////////////////////////////////
 
@@ -126,12 +203,35 @@ export default class Gamemap {
 
 		// // start building map
 		this.getWorldData();
-		this.createMapRoot()
+		// this.createMapRoot()
 		// this.createEvents();
 	
 		// this.setGamePosNoUpdate(this.mapConfig.xPos, this.mapConfig.yPos, this.mapConfig.zoomLevel);
 		// this.updateMapStateFromQuery(false);
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
 
 	/*================================================
 					General functions
@@ -684,16 +784,13 @@ export default class Gamemap {
 	================================================*/
 
 	createMapRoot() {
-		if (this.USE_LEAFLET) return;
-			
-		this.mapRoot = $('<div />').attr('id', 'gmMapRoot').appendTo(this.mapContainer);
 		this.createMapCanvas();
 	}
 
 	createMapCanvas() {
 
-		let canvasWidth = this.mapContainer.width();
-		let canvasHeight = this.mapContainer.height();
+		let canvasWidth = this.mapRoot.width();
+		let canvasHeight = this.mapRoot.height();
 	
 		print("Creating map canvas with width: " + canvasWidth + ", and height: " + canvasHeight);
 	
@@ -704,7 +801,7 @@ export default class Gamemap {
 							css('width', canvasWidth).
 							css('height', canvasHeight).
 							css('cursor', "grab").
-							appendTo(this.mapContainer)[0];
+							appendTo(this.mapRoot)[0];
 	
 		this.mapCanvasGrid = $('<canvas />').
 							attr('id', 'gmMapCanvasGrid').
@@ -713,7 +810,7 @@ export default class Gamemap {
 							css('width', canvasWidth).
 							css('height', canvasHeight).
 							css('cursor', "grab").
-							appendTo(this.mapContainer)[0];
+							appendTo(this.mapRoot)[0];
 	
 		this.mapCanvasElement = $("#gmMapCanvas");
 		this.mapCanvasGridElement = $("#gmMapCanvasGrid");
@@ -1246,7 +1343,7 @@ export default class Gamemap {
 	}
 
 	setGamePosNoUpdate(x, y, zoom) {
-		var mapOffset = this.mapContainer.offset();
+		var mapOffset = this.mapRoot.offset();
 
 		if (this.isValidZoom(zoom)) {
 			this.zoomLevel = zoom;
@@ -1265,8 +1362,8 @@ export default class Gamemap {
 		this.origStartTileCanvasY = this.startTileY;
 		print("setGamePos(): startTile = " + this.startTileX + ", " + this.startTileY);
 
-		let newOffsetX = Math.round(mapOffset.left + this.mapContainer.width()/2  - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - tilePos.x) * this.mapConfig.tileSize);
-		let newOffsetY = Math.round(mapOffset.top  + this.mapContainer.height()/2 - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - tilePos.y) * this.mapConfig.tileSize);
+		let newOffsetX = Math.round(mapOffset.left + this.mapRoot.width()/2  - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - tilePos.x) * this.mapConfig.tileSize);
+		let newOffsetY = Math.round(mapOffset.top  + this.mapRoot.height()/2 - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - tilePos.y) * this.mapConfig.tileSize);
 		print ("newOffset = " + newOffsetX + ", " + newOffsetY);
 
 		if (this.USE_CANVAS_DRAW) {
@@ -1288,10 +1385,10 @@ export default class Gamemap {
 
 	getGamePositionOfCenter() {
 		let rootOffset = this.mapRoot.offset();
-		let mapOffset  = this.mapContainer.offset();
+		let mapOffset  = this.mapRoot.offset();
 
-		let rootCenterX = this.mapContainer.width() /2 + mapOffset.left - rootOffset.left;
-		let rootCenterY = this.mapContainer.height()/2 + mapOffset.top  - rootOffset.top;
+		let rootCenterX = this.mapRoot.width() /2 + mapOffset.left - rootOffset.left;
+		let rootCenterY = this.mapRoot.height()/2 + mapOffset.top  - rootOffset.top;
 
 		let tileX = rootCenterX / this.mapConfig.tileSize + this.startTileX;
 		let tileY = rootCenterY / this.mapConfig.tileSize + this.startTileY;
@@ -1341,9 +1438,9 @@ export default class Gamemap {
 
 	getMapBounds() {
 		var rootOffset = this.mapRoot.offset();
-		var mapOffset  = this.mapContainer.offset();
-		var width  =  this.mapContainer.width();
-		var height =  this.mapContainer.height();
+		var mapOffset  = this.mapRoot.offset();
+		var width  =  this.mapRoot.width();
+		var height =  this.mapRoot.height();
 
 		let leftTile = this.startTileX + (mapOffset.left - rootOffset.left - this.mapTransformX)/this.mapConfig.tileSize;
 		let topTile  = this.startTileY + (mapOffset.top  - rootOffset.top  - this.mapTransformY)/this.mapConfig.tileSize;
@@ -1358,6 +1455,20 @@ export default class Gamemap {
 
 		return new Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
 	}
+
+
+	getZoomLevel(width, height) {
+		return Math.ceil(Math.log(Math.max(width, height) / 256 ) / Math.log(2));
+	};
+
+	project(coords) {
+		return this.map.project(coords, this.zoom);
+	};
+
+	unproject(coords) {
+		return this.map.unproject(coords, this.zoom);
+	};
+
 
 }
 
