@@ -116,24 +116,10 @@ function loadGamemap(mapConfig) {
 	};
 
 	gamemap = new Gamemap('gmMap', mapConfig, mapCallbacks);
-
-
-	// // TODO: Change how map list is created
-	// gamemap.createMapList($("#gmMapListRoot"));
-
-	// // TODO: Temporary call to get the group-world list for ESO
-	// $.get( 'templates/worldgrouplist.txt', function( data ) {
-	// 	gamemap.worldGroupListContents = data;
-	// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, 'Received world group list contents!');
-	// 	$('#gmMapList').html(data);
-	// 	gamemap.setEventsForMapGroupList();
-	// });
 }
 
 // alt name: on gamemap loaded
 function onWorldsLoaded(mapWorlds) {
-
-	// let worlds = JSON.parse(mapWorlds);
 	
 	print("Worlds loaded!");
 	print(mapWorlds);
@@ -150,6 +136,17 @@ function onWorldsLoaded(mapWorlds) {
 		$("#btn_location_switcher").show();
 		$("#btn_goto_article").show();
 		// populate location switcher
+
+		// // TODO: Change how map list is created
+		// gamemap.createMapList($("#gmMapListRoot"));
+
+		// // TODO: Temporary call to get the group-world list for ESO
+		// $.get( 'templates/worldgrouplist.txt', function( data ) {
+		// 	gamemap.worldGroupListContents = data;
+		// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, 'Received world group list contents!');
+		// 	$('#gmMapList').html(data);
+		// 	gamemap.setEventsForMapGroupList();
+		// });
 	}
 
 	if (!gamemap.hasCentreOnParam()) {

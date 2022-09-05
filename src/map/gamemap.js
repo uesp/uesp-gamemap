@@ -824,7 +824,11 @@ export default class Gamemap {
 					newImage.onerror();
 				}
 				else {
-					newImage.src = imageURL;
+					try {
+						newImage.src = imageURL;
+					} catch (e) {
+					}
+					
 				}
 			}
 		}

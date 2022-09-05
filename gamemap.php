@@ -88,7 +88,7 @@ class GameMap
 	public $startedSession = false;
 	
 	public $canEdit = false;
-	public $canEditEso = false;
+	public $canEditESO = false;
 	public $canEditTR = false;
 	public $canEditOther = false;
 	
