@@ -109,7 +109,7 @@ class GameMap
 		
 		if ($userId > 0)
 		{
-			if (UespMemcachedSession::readKey('UESP_AllMap_canEdit') === true)
+			if (UespMemcachedSession::readKey('UESP_AllMap_canEdit') === 1)
 			{
 				$this->canEdit = true;
 				$this->canEditESO = true;
