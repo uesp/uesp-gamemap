@@ -620,8 +620,13 @@ window.gotoArticle = function(){
 
 // zoom widget
 window.zoomIn = function(){
-	M.toast({text: 'Zoom in button clicked!'})
-	print(Constants.ASSETS_DIR);
+	gamemap.zoomIn();
+	// check if we're zoomed in max, then disable button
+}
+
+window.zoomOut = function(){
+	gamemap.zoomOut();
+	// check if we're zoomed out max, then disable button
 }
 
 /*================================================

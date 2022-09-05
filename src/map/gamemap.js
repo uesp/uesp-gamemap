@@ -20,125 +20,51 @@ export default class Gamemap {
 	// class constructor
 	constructor(mapRootID, mapConfig, mapCallbacks) {
 
-		// load in map config
-		this.mapConfig = mapConfig;
-	
-		// set up map callbacks
-		this.mapCallbacks = mapCallbacks;
+		if (mapConfig != null && mapRootID != null && mapCallbacks != null) {
 
-		// set up important constants
-		this.PAN_AMOUNT = this.mapConfig.tileSize / 2;
-	
-		// set up the root map element
-		this.mapRoot = $('#' + mapRootID);
-		if (this.mapRoot == null) {
-			print('The gamemap container \'' + mapRootID + '\' was not found!');
-		} 
-
-		// set up map world arrays
-		this.mapWorlds = {};
-		this.mapWorldNameIndex = {};
-		this.mapWorldDisplayNameIndex = {};
-	
-		// set the default map info 	
-		// TODO: figure out which of these are redundant
-		this.locations = {};
-		this.startTileX = 0;
-		this.startTileY = 0;
-		this.startTileCanvasX = 0;
-		this.startTileCanvasY = 0;
-		this.origStartTileCanvasX = 0;
-		this.origStartTileCanvasY = 0;
-		this.draggingObject = null;
-		this.dragStartLeft = 0;
-		this.dragStartTop  = 0;
-		this.dragStartLeftCanvas = 0;
-		this.dragStartTopCanvas  = 0;
-		this.dragStartEventX = 0;
-		this.dragStartEventY = 0;
-		this.mapRoot = null;
-		this.mapCanvas = null;
-		this.mapCanvasGrid = null;
-		this.mapCanvasElement = null;
-		this.mapCanvasGridElement = null;
-		this.mapContext = null;
-		this.mapContextGrid = null;
-		this.mapListContainer = null;
-		this.mapListLastSelectedItem = null;
-		this.lastCanvasHoverLocation = null;
-
-		this.mapKeyNumColumns = 8;
-		this.showPopupOnLoadLocationId = -1;
-		this.mapTransformX = 0;
-		this.mapTransformY = 0;
-		this.canvasLastDragX = 0;
-		this.canvasLastDragY = 0;
-		this.canvasImages = [];
-		this.canvasImageMap = {};
-		this.canvasTileCountX = 0;
-		this.canvasTileCountY = 0;
-		this.lastCanvasRedrawRequest = 0;
-		this.lastPinchDistance = 0;
-		this.cellResource = "";
-		this.loadedCellResource = "";
-		this.cellResourceData = {};
-		this.worldGroupListContents = '';
-		this.helpBlockContents = '';
-		this.mapTiles = [];
-		this.displayState = "";
-		this.currentWorldID = 0;
-		this.addWorld('__default', this.mapConfig, this.currentWorldID, '');
-		this.zoomLevel = this.mapConfig.initialZoom;
-	
-		// set editing to false by default
-		this.editingEnabled = false;
-
-
-		// leaflet experiment
-
-		this.width = 9431;
-		this.height = 7654;
+			// load in map config
+			this.mapConfig = mapConfig;
 		
-		this.minZoom = 2;
-		this.maxZoom = 6;
-		this.img = [
-				this.width,  // original width of image
-				this.height   // original height of image
-		];
-
-		this.zoom = this.getZoomLevel(this.width, this.height);
+			// set up map callbacks
+			this.mapCallbacks = mapCallbacks;
 		
-		// create the map
-		this.map = L.map(mapRootID, {
-			minZoom: this.minZoom,
-			maxZoom: this.maxZoom,
-			crs: L.CRS.Simple,
-		});
+			// set up the root map element
+			this.mapRoot = $('#' + mapRootID);
+			this.rootMapID = mapRootID;
+			if (this.mapRoot == null) {
+				print('The gamemap container \'' + mapRootID + '\' was not found!');
+			} 
+			this.mapRoot = $('<div />').attr('id', 'gmMapRoot').appendTo(this.mapRoot);
+
+			// set the default map info 	
+			this.mapWorlds = {};
+			this.mapWorldNameIndex = {};
+			this.mapWorldDisplayNameIndex = {};
+			this.locations = {};
+			this.mapTiles = [];
+			this.currentWorldID = 0;
+			this.addWorld('__default', this.mapConfig, this.currentWorldID, '');
+
+			// set up state bools
+			this.defaultShowHidden = false;
+			this.jumpToDestinationOnClick = true;
+			this.openPopupOnJump = false;
+			this.isShowingRecentChanges = false;
+			this.checkTilesOnDrag = true;
+			this.isDrawGrid = false;
+
+			// check user editing permission
+			this.editingEnabled = false;
+			this.checkPermissions();
+			
+			// get worlds
+			this.getWorldData();
+
+		} else {
+			print("Invalid constructor params for gamemap!")
+		}
 
 
-		this.mapRoot = $('<div />').attr('id', 'gmMapRoot').appendTo(this.mapRoot);
-		
-		
-		//sets the max bounds on map
-		this.maxSouthWest = this.unproject([0, this.height]);
-		this.maxNorthEast = this.unproject([this.width, 0]);
-
-		this.map.setMaxBounds(new L.LatLngBounds(this.maxSouthWest, this.maxNorthEast));
-		
-		this.map.setView(this.unproject([this.img[0] / 2, this.img[1] / 2]), this.maxZoom);
-	
-		this.southWest = this.unproject([0, 0]);
-		this.northEast = this.unproject([this.width, this.height]);
-	
-		L.tileLayer('http://mavvo.altervista.org/dofus/tiles/{z}/{x}/{y}.png', {
-			noWrap: true,
-			bounds:  new L.LatLngBounds(this.southWest, this.northEast),
-		}).addTo(this.map);
-
-		this.map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go UESP home"><b class="wikiTitle">UESP</b></a>');
-
-		this.map.attributionControl.addAttribution('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>');
-		this.map.attributionControl.addAttribution('<a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>');
 
 		// var infoBar = L.control.attribution({prefix: '}).addTo(this.map);
 
@@ -172,37 +98,25 @@ export default class Gamemap {
 
 
 
-		this.map.on('click', function (event) {
-			// any position in leaflet needs to be projected to obtain the image coordinates
-			var coords = this.unproject(event.latlng)
-			var marker = L.marker(this.unproject(coords))
-			  .addTo(this.map)
-			marker.bindPopup('[' + Math.floor(coords.x) + ',' + Math.floor(coords.y) + ']')
-			  .openPopup()
-		  })
+		// this.map.on('click', function (event) {
+		// 	// any position in leaflet needs to be projected to obtain the image coordinates
+		// 	var coords = this.unproject(event.latlng)
+		// 	var marker = L.marker(this.unproject(coords))
+		// 	  .addTo(this.map)
+		// 	marker.bindPopup('[' + Math.floor(coords.x) + ',' + Math.floor(coords.y) + ']')
+		// 	  .openPopup()
+		//   })
 		
 
 		////////////////////////////////////
 
-		// set up state bools
-		this.defaultShowHidden = false;
-		this.jumpToDestinationOnClick = true;
-		this.openPopupOnJump = false;
-		this.isShowingRecentChanges = false;
-		this.checkTilesOnDrag = true;
-		this.isDrawGrid = false;
-		this.isDragging = false;
-		this.isPinching = false;
-
-		// check user editing permission
-		this.checkPermissions();
 
 		// if (Utils.getURLParams().get("centeron")) {
 		// 	this.retrieveCenterOnLocation(Utils.getURLParams().get("world"), Utils.getURLParams().get("centeron"));
 		// }
 
 		// // start building map
-		this.getWorldData();
+		
 		// this.createMapRoot()
 		// this.createEvents();
 	
@@ -212,26 +126,165 @@ export default class Gamemap {
 
 
 
+	setupInfobar(mapConfig){
+		this.map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home"><b class="wikiTitle">UESP</b></a>');
+		this.map.attributionControl.addAttribution('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  <a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>' );
+	}
 
 
+	initialiseMap(){
 
+		// calculate full image width & height
 
+		this.width = this.mapConfig.numTilesX * this.mapConfig.tileSize;
+		this.height = this.mapConfig.numTilesY * this.mapConfig.tileSize;
+		
+		this.minZoomLevel = this.mapConfig.minZoomLevel;
+		this.maxZoomLevel = this.mapConfig.maxZoomLevel;
+		this.img = [
+				this.width,  // original width of image
+				this.height   // original height of image
+		];
 
+		//this.zoom = this.getZoomLevel(this.width, this.height);
+		
+		// create the map
+		this.map = L.map(this.rootMapID, {
+			minZoom: this.mapConfig.minZoomLevel,
+			maxZoom: this.mapConfig.maxZoomLevel,
+			zoom: this.getZoomLevel(this.width, this.height),
+			crs: L.CRS.Simple, // coordinate reference system
+		});
+		
+		
+		//sets the max bounds on map
+		this.maxSouthWest = this.unproject([0, this.height]);
+		this.maxNorthEast = this.unproject([this.width, 0]);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+		this.map.setMaxBounds(new L.LatLngBounds(this.maxSouthWest, this.maxNorthEast));
+		
+		this.map.setView(this.unproject([this.img[0] / 2, this.img[1] / 2]), this.minZoomLevel);
 	
+		this.southWest = this.unproject([0, 0]);
+		this.northEast = this.unproject([this.width, this.height]);
+	
+		L.tileLayer(this.getMapTileImageURL(this.mapWorlds[this.currentWorldID], this.mapConfig), {
+			noWrap: true,
+			bounds:  new L.LatLngBounds(this.southWest, this.northEast),
+		}).addTo(this.map);
+
+		
+			// leaflet experiment
+
+
+		this.setupInfobar(this.mapConfig);
+
+
+	}
+
+	zoomIn(){
+		this.map.zoomIn();
+	}
+
+	zoomOut(){
+		this.map.zoomOut();
+	}
+
+
+
+
+	// tileX, tileY, zoom, world
+	getMapTileImageURL(world, mapConfig) {
+
+		// http://mavvo.altervista.org/dofus/tiles/{z}/{x}/{y}.png
+		// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
+
+		if (mapConfig.database == "eso") { // unique stuff for eso
+			return mapConfig.tileURL + world.name + "/zoom10/" + world.name + "-{x}-" + "{y}" + ".jpg";
+		} else {
+			if (world == null) {
+				return "zoom{z}/maptile-{x}-{y}.jpg";
+			} else {
+				return world + "zoom{z}/maptile-{x}-{y}.jpg";
+			}
+		}
+	}
+
+
+
+	getZoomLevel(width, height) {
+		return Math.ceil(Math.log(Math.max(width, height) / this.mapConfig.tileSize ) / Math.log(2));
+	};
+
+	project(coords) {
+		return this.map.project(coords, this.zoom);
+	};
+
+	unproject(coords) {
+		return this.map.unproject(coords, this.zoom);
+	};
+
+
+	getWorldData() {
+		let self = this;
+		let queryParams = {};
+		queryParams.action = "get_worlds";
+		queryParams.db = this.mapConfig.database;
+		if (this.isHiddenLocsShown()) {
+			queryParams.showhidden = 1;
+		} 
+
+		loading("world");
+	
+		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
+			if (data.isError) {
+				print("Error retrieving world data!" + errorMsg);
+				return;
+			} else {
+				if (data.worlds == null) {
+					print ("World data not found in JSON response!" + data);
+					return;
+				}
+			}
+	
+			self.mergeWorldData(data.worlds);
+		});
+	}
+
+	mergeWorldData(worlds) {
+
+		if (worlds == null) {
+			return;
+		}
+
+		for (var key in worlds) {
+			var world = worlds[key];
+
+			if (world.id < this.mapConfig.minValidworldID) continue;
+			if (world.id > this.mapConfig.maxValidworldID) continue;
+
+			if ((world.name) == null) continue;
+
+			if (world.id in this.mapWorlds) {
+				this.mapWorlds[world.id] = Utils.mergeObjects(this.mapWorlds[world.id], world);
+				this.mapWorldNameIndex[world.name] = world.id;
+				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
+			}
+			else {
+				this.addWorld(world.name, this.mapConfig, world.id, world.displayName);
+				this.mapWorlds[world.id] = Utils.mergeObjects(this.mapWorlds[world.id], world);
+				this.mapWorldNameIndex[world.name] = world.id;
+				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
+			}
+		}
+
+		if (this.mapCallbacks != null) {
+			this.mapCallbacks.onWorldsLoaded(this.mapWorlds);
+			this.initialiseMap();
+		}
+	}
+
+
 
 	/*================================================
 					General functions
@@ -381,64 +434,6 @@ export default class Gamemap {
 
 	hasWorld(worldID) {
 		return worldID in this.mapWorlds;
-	}
-
-	getWorldData() {
-		let self = this;
-		let queryParams = {};
-		queryParams.action = "get_worlds";
-		queryParams.db = this.mapConfig.database;
-		if (this.isHiddenLocsShown()) {
-			queryParams.showhidden = 1;
-		} 
-
-		loading("world");
-	
-		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
-			if (data.isError) {
-				print("Error retrieving world data!" + errorMsg);
-				return;
-			} else {
-				if (data.worlds == null) {
-					print ("World data not found in JSON response!" + data);
-					return;
-				}
-			}
-	
-			self.mergeWorldData(data.worlds);
-		});
-	}
-
-	mergeWorldData(worlds) {
-
-		if (worlds == null) {
-			return;
-		}
-
-		for (var key in worlds) {
-			var world = worlds[key];
-
-			if (world.id < this.mapConfig.minValidworldID) continue;
-			if (world.id > this.mapConfig.maxValidworldID) continue;
-
-			if ((world.name) == null) continue;
-
-			if (world.id in this.mapWorlds) {
-				this.mapWorlds[world.id] = Utils.mergeObjects(this.mapWorlds[world.id], world);
-				this.mapWorldNameIndex[world.name] = world.id;
-				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
-			}
-			else {
-				this.addWorld(world.name, this.mapConfig, world.id, world.displayName);
-				this.mapWorlds[world.id] = Utils.mergeObjects(this.mapWorlds[world.id], world);
-				this.mapWorldNameIndex[world.name] = world.id;
-				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
-			}
-		}
-
-		if (this.mapCallbacks != null) {
-			this.mapCallbacks.onWorldsLoaded(this.mapWorlds);
-		}
 	}
 
 	changeWorld(world, newState) {
@@ -944,20 +939,7 @@ export default class Gamemap {
 
 	}
 
-	// tileX, tileY, zoom, world
-	getMapTileImageURL(tileX, tileY, zoom, world, mapConfig) {
 
-		if (mapConfig.database == "eso") { // unique stuff for eso
-			return mapConfig.tileURL + world.name + "/zoom" + zoom + "/" + world.name + "-" + tileX + "-" + tileY + ".jpg";
-		} else {
-
-			if (world == null) {
-				return "zoom" + zoom + "/maptile-" + tilePos.x + "-" + tilePos.y + ".jpg";
-			} else {
-				return world + "/zoom" + zoom + "/maptile-" + tilePos.x + "-" + tilePos.y + ".jpg";
-			}
-		}
-	}
 
 	canvasDrawGrid() {
 		
@@ -1455,19 +1437,6 @@ export default class Gamemap {
 
 		return new Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
 	}
-
-
-	getZoomLevel(width, height) {
-		return Math.ceil(Math.log(Math.max(width, height) / 256 ) / Math.log(2));
-	};
-
-	project(coords) {
-		return this.map.project(coords, this.zoom);
-	};
-
-	unproject(coords) {
-		return this.map.unproject(coords, this.zoom);
-	};
 
 
 }

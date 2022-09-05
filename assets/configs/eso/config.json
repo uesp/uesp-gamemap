@@ -28,8 +28,8 @@
 
     // Map tile info
     "missingMapTile" : "assets/images/missingtile.jpg",
-    "numTilesX" : 11,
-    "numTilesY" : 9,
+    "numTilesX" : 8,
+    "numTilesY" : 8,
     "tileSize" : 256,
     "tileEdgeLoadCount" : 1,
     
