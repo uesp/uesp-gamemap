@@ -155,6 +155,7 @@ export default class Gamemap {
 						Map state
 	================================================*/
 
+	// mapstate getter
 	getMapState() {
 		let mapState = new MapState();
 
@@ -168,6 +169,7 @@ export default class Gamemap {
 		return mapState;
 	}
 
+	// mapstate setter
 	setMapState (newState, updateMap) {
 		if (newState == null) return;
 		if (updateMap == null) updateMap = true;

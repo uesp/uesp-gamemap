@@ -78,16 +78,15 @@ function initGamemap() {
 		mapType = mapParams.get("map");
 
 		// load map config 
-		let configURL = "assets/configs/" + mapType + "/config.json";
+		let configURL = (Constants.CONFIG_DIR + mapType + "/" + Constants.MAP_CONFIG_FILENAME);
 		print("Getting map config at "+configURL+"...");
 
 		Utils.getJSON(configURL, function(error, object) {
 			if (error !== null) {
 				showError("Could not load map: " + error);
 			} else {
-
-				mapConfig = object;
 				print("Imported map config successfully!");
+				mapConfig = object;
 
 				print("Merging with default map config...")
 				let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
@@ -215,6 +214,8 @@ function onWorldChanged(newWorld) {
 
 	// $('#gmMapListAlphaSelect').val(newWorld.id);
 	$('#current_location_label').text(newWorld.displayName);
+
+	setWindowTitle(newWorld.displayName);
 }
 
 /*================================================
@@ -619,6 +620,14 @@ window.gotoArticle = function(){
 window.zoomIn = function(){
 	M.toast({text: 'Zoom in button clicked!'})
 	print(Constants.ASSETS_DIR);
+}
+
+/*================================================
+				Change tab title
+================================================*/
+
+function setWindowTitle(title) {
+    document.title = ("UESP " + mapConfig.mapTitle + " | " + title);
 }
 
 /*================================================
