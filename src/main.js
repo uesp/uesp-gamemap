@@ -20,7 +20,6 @@ var mapConfig = null;
 var mapType = null;
 
 var gamemap = null;
-var g_MapState = null;
 
 var hasMultipleWorlds = false;
 
