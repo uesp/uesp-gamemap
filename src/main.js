@@ -115,7 +115,7 @@ function loadGamemap(mapConfig) {
 		onWorldChanged,
 	};
 
-	gamemap = new Gamemap('gmMap', mapConfig, mapCallbacks);
+	gamemap = new Gamemap('gamemap', mapConfig, mapCallbacks);
 }
 
 // alt name: on gamemap loaded

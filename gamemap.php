@@ -109,7 +109,7 @@ class GameMap
 		
 		if ($userId > 0)
 		{
-			if (UespMemcachedSession::readKey('UESP_AllMap_canEdit') === true)
+			if (UespMemcachedSession::readKey('UESP_AllMap_canEdit') === 1)
 			{
 				$this->canEdit = true;
 				$this->canEditESO = true;
@@ -117,9 +117,9 @@ class GameMap
 				$this->canEditOther = true;
 			}
 			
-			if (UespMemcachedSession::readKey('UESP_EsoMap_canEdit') === true) $this->canEditESO = true;
-			if (UespMemcachedSession::readKey('UESP_TRMap_canEdit') === true) $this->canEditTR = true;
-			if (UespMemcachedSession::readKey('UESP_OtherMap_canEdit') === true) $this->canEditOther = true;
+			if (UespMemcachedSession::readKey('UESP_EsoMap_canEdit') === 1) $this->canEditESO = true;
+			if (UespMemcachedSession::readKey('UESP_TRMap_canEdit') === 1) $this->canEditTR = true;
+			if (UespMemcachedSession::readKey('UESP_OtherMap_canEdit') === 1) $this->canEditOther = true;
 		}
 	}
 	

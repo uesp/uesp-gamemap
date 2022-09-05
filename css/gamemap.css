@@ -368,7 +368,7 @@ b[class^="icon_button_label"] {
 					Gamemap
 ================================================*/
 
-#gmMap {
+#gamemap {
 	position: absolute;
 	overflow: hidden;
 	bottom: 0px;
@@ -377,7 +377,7 @@ b[class^="icon_button_label"] {
 	right: 0px;
 }
 
-#gmMap  * {
+#gamemap  * {
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;

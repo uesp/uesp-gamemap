@@ -94,6 +94,19 @@ export default class Gamemap {
 		// set editing to false by default
 		this.editingEnabled = false;
 
+
+		// leaflet experiment
+		this.map = L.map(mapContainerID).setView([51.505, -0.09], 13);
+
+		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			maxZoom: 19,
+			attribution: '© deez'
+		}).addTo(this.map);
+
+
+
+		////////////////////////////////////
+
 		// set up state bools
 		this.defaultShowHidden = false;
 		this.jumpToDestinationOnClick = true;
@@ -107,17 +120,17 @@ export default class Gamemap {
 		// check user editing permission
 		this.checkPermissions();
 
-		if (Utils.getURLParams().get("centeron")) {
-			this.retrieveCenterOnLocation(Utils.getURLParams().get("world"), Utils.getURLParams().get("centeron"));
-		}
+		// if (Utils.getURLParams().get("centeron")) {
+		// 	this.retrieveCenterOnLocation(Utils.getURLParams().get("world"), Utils.getURLParams().get("centeron"));
+		// }
 
-		// start building map
+		// // start building map
 		this.getWorldData();
 		this.createMapRoot()
-		this.createEvents();
+		// this.createEvents();
 	
-		this.setGamePosNoUpdate(this.mapConfig.xPos, this.mapConfig.yPos, this.mapConfig.zoomLevel);
-		this.updateMapStateFromQuery(false);
+		// this.setGamePosNoUpdate(this.mapConfig.xPos, this.mapConfig.yPos, this.mapConfig.zoomLevel);
+		// this.updateMapStateFromQuery(false);
 	}
 
 	/*================================================
