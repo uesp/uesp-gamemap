@@ -4,7 +4,7 @@
  * @summary Class that defines the boundaries of the gamemap.
  */
 
- export default class Bounds {
+export default class Bounds {
     constructor(left, top, right, bottom) {
 	this.left   = (typeof left   === 'undefined' || left   === null) ? 0 : left;
 	this.right  = (typeof right  === 'undefined' || right  === null) ? 0 : right;

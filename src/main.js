@@ -47,6 +47,15 @@ $(document).ready(function() {
 	searchbox.addEventListener("input", function(){ updateSearch(searchbox.value); });
 	M.AutoInit();
 
+	// listen for long-press events
+
+
+	
+
+	// $("#btn_zoom_out").addEventListener('long-press', function(e) {
+	// 	e.target.setAttribute('data-editing', 'true');
+  	// });
+
 	// TODO: add event listeners to up/down and enter here as well, to control the search list selection
 	// BEHAVIOUR: "Enter" selects the first item in the list, arrow keys move the selection, mouse takes priority
 

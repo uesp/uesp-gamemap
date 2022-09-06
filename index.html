@@ -15,40 +15,12 @@
 		<!-- Import css -->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 		<link rel="stylesheet" href="./css/materialise.css" media="screen,projection"/>
-		<link rel="stylesheet" href="./css/leaflet.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin="" />
 		<link rel="stylesheet" href="./css/gamemap.css"/>
 		
    </head>
 
    <body>
-
-		<!-- Error container -->
-		<div id="error_box" class="error_container hidedefault preload_box">
-			<span class="error_title">
-				<i class="medium material-icons">error</i><br/>
-				<b>Something went wrong.</b>
-			</span>
-			<div class="horizontal_divider"></div>
-			<p id="error_box_reason">A reason should be put here.</p>
-		</div>
-
-		<!-- Loading spinner container -->
-		<div id="loading_spinner" class="spinner_container preload_box">
-			<div class="preloader-wrapper big active">
-				<div class="spinner-layer">
-					<div class="circle-clipper left">
-						<div class="circle"></div>
-					</div><div class="gap-patch">
-						<div class="circle"></div>
-					</div><div class="circle-clipper right">
-						<div class="circle"></div>
-					</div>
-				</div>
-			</div>
-
-			<p id="loading_reason">Loading map...</p>
-		</div>
-
 		<!-- Map container -->
 		<div id="gamemap"></div>
 
@@ -134,6 +106,33 @@
 			<button class="btn_zoom waves-effect" onclick="zoomIn()" id="btn_zoom_in" tabindex="-1" title="Zoom in"><i class="material-icons">add</i></button>
 			<div class="horizontal_divider"></div>
 			<button class="btn_zoom waves-effect" onclick="zoomOut()" id="btn_zoom_out" tabindex="-1" title="Zoom out"><i class="material-icons">remove</i></button>
+		</div>
+
+		<!-- Error container -->
+		<div id="error_box" class="error_container hidedefault preload_box">
+			<span class="error_title">
+				<i class="medium material-icons">error</i><br/>
+				<b>Something went wrong.</b>
+			</span>
+			<div class="horizontal_divider"></div>
+			<p id="error_box_reason">A reason should be put here.</p>
+		</div>
+
+		<!-- Loading spinner container -->
+		<div id="loading_spinner" class="spinner_container preload_box">
+			<div class="preloader-wrapper big active">
+				<div class="spinner-layer">
+					<div class="circle-clipper left">
+						<div class="circle"></div>
+					</div><div class="gap-patch">
+						<div class="circle"></div>
+					</div><div class="circle-clipper right">
+						<div class="circle"></div>
+					</div>
+				</div>
+			</div>
+
+			<p id="loading_reason">Loading map...</p>
 		</div>
 
 		<!-- <div class="progress_bar">

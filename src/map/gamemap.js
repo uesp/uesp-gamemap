@@ -10,10 +10,14 @@ import World from "./world.js";
 import MapState from "./mapState.js";
 import Position from "./mapPosition.js";
 import Bounds from "./bounds.js";
+import RasterCoords from "./rasterCoords.js";
 
 /*================================================
 				Gamemap constructor
 ================================================*/
+
+var map;
+var mapConfig;
 
 export default class Gamemap {
 
@@ -64,48 +68,6 @@ export default class Gamemap {
 			print("Invalid constructor params for gamemap!")
 		}
 
-
-
-		// var infoBar = L.control.attribution({prefix: '}).addTo(this.map);
-
-		//this.map.attributionControl.addAttribution('Licensed by &copy; <a href="some_link", class="your_class">Habijabi</a>');
-
-// 		L.control.attribution(<Control.Attribution options> options) 	Creates an attribution control.
-// Options
-// Option 	Type 	Default 	Description
-// prefix 	String|false 	'Leaflet' 	The HTML text shown before the attributions. Pass false to disable.
-// ▶ Options inherited from Control
-// Methods
-// Method 	Returns 	Description
-// setPrefix(<String|false> prefix) 	this 	
-
-// The HTML text shown before the attributions. Pass false to disable.
-// addAttribution(<String> text) 	this 	
-
-// Adds an attribution text (e.g. 'Vector data &copy; Mapbox').
-// removeAttribution(<String> text) 	this 	
-
-// Removes an attribution text.
-
-
-	// 	<div class="infobar banishdefault">
-	// 	
-	// 	<b> | </b>
-	// 	<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">ESO Map</a>
-	// 	<b> | </b>
-	// 	<a id="mapFeedbackLink" href="javascript:void(0);" title="Give feedback about this map">Send Feedback</a>
-	// </div>
-
-
-
-		// this.map.on('click', function (event) {
-		// 	// any position in leaflet needs to be projected to obtain the image coordinates
-		// 	var coords = this.unproject(event.latlng)
-		// 	var marker = L.marker(this.unproject(coords))
-		// 	  .addTo(this.map)
-		// 	marker.bindPopup('[' + Math.floor(coords.x) + ',' + Math.floor(coords.y) + ']')
-		// 	  .openPopup()
-		//   })
 		
 
 		////////////////////////////////////
@@ -124,14 +86,6 @@ export default class Gamemap {
 		// this.updateMapStateFromQuery(false);
 	}
 
-
-
-	setupInfobar(mapConfig){
-		this.map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home"><b class="wikiTitle">UESP</b></a>');
-		this.map.attributionControl.addAttribution('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  <a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>' );
-	}
-
-
 	initialiseMap(){
 
 		// calculate full image width & height
@@ -139,48 +93,86 @@ export default class Gamemap {
 		this.width = this.mapConfig.numTilesX * this.mapConfig.tileSize;
 		this.height = this.mapConfig.numTilesY * this.mapConfig.tileSize;
 		
-		this.minZoomLevel = this.mapConfig.minZoomLevel;
-		this.maxZoomLevel = this.mapConfig.maxZoomLevel;
 		this.img = [
 				this.width,  // original width of image
 				this.height   // original height of image
 		];
 
 		//this.zoom = this.getZoomLevel(this.width, this.height);
+
+		var mapOptions = {
+			zoomSnap: 0,
+			zoomDelta: 0.75,
+			zoom: this.mapConfig.zoomLevel,
+			crs: L.CRS.Simple, // coordinate reference system
+         }
 		
 		// create the map
-		this.map = L.map(this.rootMapID, {
-			minZoom: this.mapConfig.minZoomLevel,
-			maxZoom: this.mapConfig.maxZoomLevel,
-			zoom: this.getZoomLevel(this.width, this.height),
-			crs: L.CRS.Simple, // coordinate reference system
-		});
-		
-		
-		//sets the max bounds on map
-		this.maxSouthWest = this.unproject([0, this.height]);
-		this.maxNorthEast = this.unproject([this.width, 0]);
+		this.map = L.map(this.rootMapID, mapOptions);
 
-		this.map.setMaxBounds(new L.LatLngBounds(this.maxSouthWest, this.maxNorthEast));
+		var rc = new RasterCoords(this.map, this.img)
+
+		L.marker(rc.unproject([this.width, 0])).addTo(this.map);
+
+		var latlngs = [[37, 60],[41, 30],[41, 50],[37, 30]];
+		var polygon = L.polygon(latlngs, {color: 'red'}).addTo(this.map);
 		
-		this.map.setView(this.unproject([this.img[0] / 2, this.img[1] / 2]), this.minZoomLevel);
+
+		//this.map.setMaxBounds(new L.LatLngBounds(this.maxSouthWest, this.maxNorthEast));
+
+		// set max zoom Level (might be `x` if gdal2tiles was called with `-z 0-x` option)
+		this.map.setMaxZoom(rc.getZoomLevel())
+		// all coordinates need to be unprojected using the `unproject` method
+		// set the view in the lower right edge of the image
+		this.map.setView(rc.unproject([this.img[0], this.img[1]]), 1)
+		
+		// this.map.setView(this.unproject([this.img[0] / 2, this.img[1] / 2]), this.minZoomLevel);
 	
-		this.southWest = this.unproject([0, 0]);
-		this.northEast = this.unproject([this.width, this.height]);
 	
 		L.tileLayer(this.getMapTileImageURL(this.mapWorlds[this.currentWorldID], this.mapConfig), {
 			noWrap: true,
-			bounds:  new L.LatLngBounds(this.southWest, this.northEast),
+			bounds: rc.getMaxBounds(),
+			maxNativeZoom: rc.getZoomLevel(),
+			errorTileUrl: this.mapConfig.missingMapTile,
+			minZoom: this.mapConfig.minZoomLevel,
+			maxZoom: this.mapConfig.maxZoomLevel,
 		}).addTo(this.map);
 
 		
 			// leaflet experiment
+
+			this.map.setMaxBounds(null); //map being the leaflet map.
 
 
 		this.setupInfobar(this.mapConfig);
 
 
 	}
+
+
+
+	setupInfobar(mapConfig) {
+		this.map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home"><b class="wikiTitle">UESP</b></a>');
+		this.map.attributionControl.addAttribution('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  <a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>' );
+	}
+
+
+	updateMapState(mapState) {
+			// if (newState == null) return;
+			// if (updateMap == null) updateMap = true;
+	
+			// this.isDrawGrid = newState.grid;
+			// this.cellResource = newState.cellResource;
+			// this.displayState = newState.displayState;
+	
+			// if (this.currentWorldID != newState.worldID) {
+			// 	this.changeWorld(newState.worldID, newState, updateMap);
+			// } else {
+			// 	this.setGamePos(newState.gamePos.x, newState.gamePos.y, newState.zoomLevel, updateMap);
+			// }
+	}
+
+
 
 	zoomIn(){
 		this.map.zoomIn();
@@ -198,9 +190,10 @@ export default class Gamemap {
 
 		// http://mavvo.altervista.org/dofus/tiles/{z}/{x}/{y}.png
 		// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
+		//L.tileLayer('https://{s}.somedomain.com/{foo}/{z}/{x}/{y}.png', {foo: 'bar'});
 
 		if (mapConfig.database == "eso") { // unique stuff for eso
-			return mapConfig.tileURL + world.name + "/zoom10/" + world.name + "-{x}-" + "{y}" + ".jpg";
+			return mapConfig.tileURL + world.name + "/zoom{z}/" + world.name + "-{x}-" + "{y}" + ".jpg";
 		} else {
 			if (world == null) {
 				return "zoom{z}/maptile-{x}-{y}.jpg";
@@ -212,17 +205,6 @@ export default class Gamemap {
 
 
 
-	getZoomLevel(width, height) {
-		return Math.ceil(Math.log(Math.max(width, height) / this.mapConfig.tileSize ) / Math.log(2));
-	};
-
-	project(coords) {
-		return this.map.project(coords, this.zoom);
-	};
-
-	unproject(coords) {
-		return this.map.unproject(coords, this.zoom);
-	};
 
 
 	getWorldData() {
@@ -849,95 +831,95 @@ export default class Gamemap {
 		this.lastCanvasRedrawRequest = 0;
 	}
 
-	loadMapTiles() {
-		var self = this;
+	// loadMapTiles() {
+	// 	var self = this;
 
-		if (!(this.currentWorldID in this.mapWorlds)) {
-			print("Unknown worldID " + this.currentWorldID + "!");
-			return;
-		}
+	// 	if (!(this.currentWorldID in this.mapWorlds)) {
+	// 		print("Unknown worldID " + this.currentWorldID + "!");
+	// 		return;
+	// 	}
 
-		this.clearOldCanvasTiles();
+	// 	this.clearOldCanvasTiles();
 
-		var worldName = this.mapWorlds[this.currentWorldID].name;
-		var maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
+	// 	var worldName = this.mapWorlds[this.currentWorldID].name;
+	// 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
 
-		print("worldID: " + this.currentWorldID + " worldName: " + worldName);
+	// 	print("worldID: " + this.currentWorldID + " worldName: " + worldName);
 
-		this.canvasImages = [];
-		this.canvasImageMap = {};
-		this.canvasTileCountX = this.mapConfig.numTilesX;
-		this.canvasTileCountY = this.mapConfig.numTilesY;
+	// 	this.canvasImages = [];
+	// 	this.canvasImageMap = {};
+	// 	this.canvasTileCountX = this.mapConfig.numTilesX;
+	// 	this.canvasTileCountY = this.mapConfig.numTilesY;
 
-		let canvasBGColor = this.mapConfig.bgColour;
+	// 	let canvasBGColor = this.mapConfig.bgColour;
 
-		for (let y = 0; y < this.mapConfig.numTilesY; ++y) {
-			this.canvasImageMap[y] = {};
+	// 	for (let y = 0; y < this.mapConfig.numTilesY; ++y) {
+	// 		this.canvasImageMap[y] = {};
 
-			for (let x = 0; x < this.mapConfig.numTilesX; ++x) {
-				let tileX = x; //+ this.startTileCanvasX;
-				let tileY = y; //+ this.startTileCanvasY;
+	// 		for (let x = 0; x < this.mapConfig.numTilesX; ++x) {
+	// 			let tileX = x; //+ this.startTileCanvasX;
+	// 			let tileY = y; //+ this.startTileCanvasY;
 
-				let world = this.mapWorlds[this.currentWorldID];
+	// 			let world = this.mapWorlds[this.currentWorldID];
 
-				//getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
-				let imageURL = this.getMapTileImageURL(tileX, tileY, this.zoomLevel, world, this.mapConfig, this.displayState);
-				let newImage = new Image();
-				let canvasX = tileX * this.mapConfig.tileSize;
-				let canvasY = tileY * this.mapConfig.tileSize;
+	// 			//getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
+	// 			let imageURL = this.getMapTileImageURL(tileX, tileY, this.zoomLevel, world, this.mapConfig, this.displayState);
+	// 			let newImage = new Image();
+	// 			let canvasX = tileX * this.mapConfig.tileSize;
+	// 			let canvasY = tileY * this.mapConfig.tileSize;
 
-				newImage.isError = false;
-				newImage.showTile = true;
-				newImage.isLoaded = false;
+	// 			newImage.isError = false;
+	// 			newImage.showTile = true;
+	// 			newImage.isLoaded = false;
 
-				let imageInfo = {
-						image: newImage,
-						x: x,
-						y: y,
-						canvasX: canvasX,
-						canvasY: canvasY,
-						tileX : tileX,
-						tileY : tileY,
-				};
+	// 			let imageInfo = {
+	// 					image: newImage,
+	// 					x: x,
+	// 					y: y,
+	// 					canvasX: canvasX,
+	// 					canvasY: canvasY,
+	// 					tileX : tileX,
+	// 					tileY : tileY,
+	// 			};
 
-				this.canvasImages.push(imageInfo);
-				this.canvasImageMap[y][x] = imageInfo;
+	// 			this.canvasImages.push(imageInfo);
+	// 			this.canvasImageMap[y][x] = imageInfo;
 
-				newImage.onerror = function() {
+	// 			newImage.onerror = function() {
 
-					if (newImage.showTile) {
-						self.mapContext.fillStyle = canvasBGColor;
-						self.mapContext.fillRect(canvasX, canvasY, self.mapConfig.tileSize, self.mapConfig.tileSize);
-						self.triggerCanvasRedraw();
-					}
+	// 				if (newImage.showTile) {
+	// 					self.mapContext.fillStyle = canvasBGColor;
+	// 					self.mapContext.fillRect(canvasX, canvasY, self.mapConfig.tileSize, self.mapConfig.tileSize);
+	// 					self.triggerCanvasRedraw();
+	// 				}
 
-					newImage.isError = true;
-				}
+	// 				newImage.isError = true;
+	// 			}
 
-				newImage.onload = function () {
+	// 			newImage.onload = function () {
 
-					if (newImage.showTile) {
-						self.mapContext.drawImage(newImage, canvasX, canvasY, self.mapConfig.tileSize, self.mapConfig.tileSize);
-						self.triggerCanvasRedraw();
-					}
+	// 				if (newImage.showTile) {
+	// 					self.mapContext.drawImage(newImage, canvasX, canvasY, self.mapConfig.tileSize, self.mapConfig.tileSize);
+	// 					self.triggerCanvasRedraw();
+	// 				}
 
-					newImage.isLoaded = true;
-				};
+	// 				newImage.isLoaded = true;
+	// 			};
 
-				if (tileX < 0 || tileY < 0) {
-					newImage.onerror();
-				}
-				else {
-					try {
-						newImage.src = imageURL;
-					} catch (e) {
-					}
+	// 			if (tileX < 0 || tileY < 0) {
+	// 				newImage.onerror();
+	// 			}
+	// 			else {
+	// 				try {
+	// 					newImage.src = imageURL;
+	// 				} catch (e) {
+	// 				}
 					
-				}
-			}
-		}
+	// 			}
+	// 		}
+	// 	}
 
-	}
+	// }
 
 
 
@@ -1318,7 +1300,7 @@ export default class Gamemap {
 		if (updateMap == null || updateMap === true) {
 			this.redrawCanvas();
 			this.updateLocations();
-			this.loadMapTiles();
+			// this.loadMapTiles();
 			if (this.isDrawGrid) this.drawGrid();
 			if (this.cellResource != "") this.getCellResourceData(this.cellResource);
 		}
