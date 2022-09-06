@@ -801,14 +801,6 @@ uesp.gamemap.Map.prototype.dumpTileIndices = function()
 }
 
 
-function compareMapWorld (a, b)
-{
-	if (a < b) return -1;
-	if (a > b) return 1;
-	return 0;
-}
-
-
 uesp.gamemap.Map.prototype.fillWorldList = function(ElementID)
 {
 	TargetList = $(ElementID);
@@ -816,22 +808,39 @@ uesp.gamemap.Map.prototype.fillWorldList = function(ElementID)
 	
 	var tmpWorldList = [];
 	
-	for (key in this.mapWorlds)
+	for (var key in this.mapWorlds)
 	{
 		if (this.mapWorlds[key].name[0] != '_' && key > 0) tmpWorldList.push(this.mapWorlds[key].name);
 	}
 	
-	tmpWorldList.sort(compareMapWorld);
 	TargetList.empty();
 	
-	for (i = 0; i < tmpWorldList.length; ++i)
+	var sortedWorldList = {};
+	
+	for (var i = 0; i < tmpWorldList.length; ++i)
 	{
 		world = this.mapWorlds[this.mapWorldNameIndex[tmpWorldList[i]]];
 		if (world == null) continue;
 		
+		sortedWorldList[world.displayName] = world.id;
+	}
+	
+	var keys = Object.keys(sortedWorldList);
+	keys.sort(function (a, b) {
+		return a.toLowerCase().localeCompare(b.toLowerCase());
+	});
+	
+	for (var i in keys)
+	{
+		var worldId = sortedWorldList[keys[i]];
+		if (worldId == null) continue;
+		
+		var world = this.mapWorlds[worldId];
+		if (world == null) continue;
+		
 		TargetList.append($("<option></option>")
 					.attr("value", world.id)
-					.text(world.displayName)); 
+					.text(world.displayName));
 	}
 	
 	return true;
