@@ -26,7 +26,7 @@ export default class Gamemap {
 
 	constructor(mapRootID, mapConfig, mapCallbacks) {
 		
-		if ( mapRootID != null &&  mapConfig != null && mapCallbacks != null) {
+		if (mapRootID != null && mapConfig != null && mapCallbacks != null) {
 
 			// load in map config
 			this.mapConfig = mapConfig;
@@ -70,27 +70,11 @@ export default class Gamemap {
 			throw new Error("Invalid constructor params for gamemap!");
 		}
 
-		
-
-		////////////////////////////////////
-
-
-		// if (Utils.getURLParams().get("centeron")) {
-		// 	this.retrieveCenterOnLocation(Utils.getURLParams().get("world"), Utils.getURLParams().get("centeron"));
-		// }
-
-		// // start building map
-		
-		// this.createMapRoot()
-		// this.createEvents();
-	
-		// this.setGamePosNoUpdate(this.mapConfig.xPos, this.mapConfig.yPos, this.mapConfig.zoomLevel);
-		// this.updateMapStateFromQuery(false);
 	}
 
 	initialiseMap(){
 
-		// calculate full image width & height
+		// set initial image width & height
 		let width = 0;
 		let height = 0;
 
@@ -99,7 +83,7 @@ export default class Gamemap {
 			width = this.mapConfig.fullWidth;
 			height = this.mapConfig.fullHeight;
 		} else if (this.mapConfig.numTilesY == this.mapConfig.numTilesX) { // if the map is a square (1:1)
-			// then set the image dimensions as the size of the whole grid
+			// then calculate the image dimensions as the size of the whole grid
 			width = this.mapConfig.numTilesX * this.mapConfig.tileSize;
 			height = this.mapConfig.numTilesY * this.mapConfig.tileSize;
 		} else {
@@ -125,7 +109,7 @@ export default class Gamemap {
 
 		var rc = new RasterCoords(this.map, this.img)
 
-		L.marker(rc.unproject([this.width/2, this.height/2])).addTo(this.map);
+		L.marker(rc.unproject([width/2, height/2])).addTo(this.map);
 
 		var latlngs = [[37, 60],[41, 30],[41, 50],[37, 30]];
 		var polygon = L.polygon(latlngs, {color: 'red'}).addTo(this.map);
@@ -186,6 +170,23 @@ export default class Gamemap {
 
 
 
+	
+		////////////////////////////////////
+
+
+		// if (Utils.getURLParams().get("centeron")) {
+		// 	this.retrieveCenterOnLocation(Utils.getURLParams().get("world"), Utils.getURLParams().get("centeron"));
+		// }
+
+		// // start building map
+		
+		// this.createMapRoot()
+		// this.createEvents();
+	
+		// this.setGamePosNoUpdate(this.mapConfig.xPos, this.mapConfig.yPos, this.mapConfig.zoomLevel);
+		// this.updateMapStateFromQuery(false);
+
+
 	zoomIn(){
 		this.map.zoomIn();
 	}
@@ -214,8 +215,6 @@ export default class Gamemap {
 			}
 		}
 	}
-
-
 
 
 
