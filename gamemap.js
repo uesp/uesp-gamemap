@@ -5274,8 +5274,8 @@ uesp.gamemap.Map.prototype.createGroupList = function()
 		
 		var world = this.mapWorlds[worldId];
 		var parentId = world.parentId;
-		var worldDisplayName = world['displayName']
-		var worldName = world['name']
+		var worldDisplayName = world['displayName'];
+		var worldName = world['name'];
 		
 		if (parentId < 0) parentId = 0;
 		
