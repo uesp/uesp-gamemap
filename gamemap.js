@@ -5263,7 +5263,6 @@ uesp.gamemap.Map.prototype.createGroupSubList = function(parentGroups, groups, w
 uesp.gamemap.Map.prototype.createGroupList = function()
 {
 	var groups = {};
-	var topLevelWorldID = 667;	// TODO: Not hardcoded for ESO?
 	var allGroups = {};
 	
 	this.GROUP_DEV_ID = -101;
@@ -5295,6 +5294,8 @@ uesp.gamemap.Map.prototype.createGroupList = function()
 	this.groupCreateList = {};
 	this.MAX_GROUP_DEPTH = 3;
 	this.MIN_GROUP_SIZE = 5;
+	
+	var topLevelWorldID = 667;		// TODO: Not hardcoded for ESO?
 	
 	this.topLevelWorldIds = {		// TODO: Not hardcoded for ESO?
 			203 : true,
