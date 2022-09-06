@@ -16,15 +16,17 @@ import RasterCoords from "./rasterCoords.js";
 				Gamemap constructor
 ================================================*/
 
-var map;
-var mapConfig;
-
 export default class Gamemap {
 
-	// class constructor
-	constructor(mapRootID, mapConfig, mapCallbacks) {
+	/**
+	 * @param {String} mapRootID - the root gamemap element in which the map is displayed
+	 * @param {Object} mapConfig - map config/options object, controls the type, state, and view of the map
+	 * @param {Object} mapCallbacks - map callbacks object, to receive events from the gamemap
+	 */
 
-		if (mapConfig != null && mapRootID != null && mapCallbacks != null) {
+	constructor(mapRootID, mapConfig, mapCallbacks) {
+		
+		if ( mapRootID != null &&  mapConfig != null && mapCallbacks != null) {
 
 			// load in map config
 			this.mapConfig = mapConfig;
@@ -36,7 +38,7 @@ export default class Gamemap {
 			this.mapRoot = $('#' + mapRootID);
 			this.rootMapID = mapRootID;
 			if (this.mapRoot == null) {
-				print('The gamemap container \'' + mapRootID + '\' was not found!');
+				throw new Error('The gamemap container \'' + mapRootID + '\' was not found!');
 			} 
 			this.mapRoot = $('<div />').attr('id', 'gmMapRoot').appendTo(this.mapRoot);
 
@@ -65,7 +67,7 @@ export default class Gamemap {
 			this.getWorldData();
 
 		} else {
-			print("Invalid constructor params for gamemap!")
+			throw new Error("Invalid constructor params for gamemap!");
 		}
 
 		
@@ -89,20 +91,31 @@ export default class Gamemap {
 	initialiseMap(){
 
 		// calculate full image width & height
+		let width = 0;
+		let height = 0;
 
-		this.width = this.mapConfig.numTilesX * this.mapConfig.tileSize;
-		this.height = this.mapConfig.numTilesY * this.mapConfig.tileSize;
+		// check if actual map image dimensions (not tile dimensions) are provided
+		if (this.mapConfig.fullWidth != null && this.mapConfig.fullHeight != null) { 
+			width = this.mapConfig.fullWidth;
+			height = this.mapConfig.fullHeight;
+		} else if (this.mapConfig.numTilesY == this.mapConfig.numTilesX) { // if the map is a square (1:1)
+			// then set the image dimensions as the size of the whole grid
+			width = this.mapConfig.numTilesX * this.mapConfig.tileSize;
+			height = this.mapConfig.numTilesY * this.mapConfig.tileSize;
+		} else {
+			throw new Error("No map dimensions were provided!");
+		}
 		
 		this.img = [
-				this.width,  // original width of image
-				this.height   // original height of image
+				width,  // original width of image
+				height   // original height of image
 		];
 
 		//this.zoom = this.getZoomLevel(this.width, this.height);
 
 		var mapOptions = {
 			zoomSnap: 0,
-			zoomDelta: 0.75,
+			zoomDelta: 0.50,
 			zoom: this.mapConfig.zoomLevel,
 			crs: L.CRS.Simple, // coordinate reference system
          }
@@ -112,7 +125,7 @@ export default class Gamemap {
 
 		var rc = new RasterCoords(this.map, this.img)
 
-		L.marker(rc.unproject([this.width, 0])).addTo(this.map);
+		L.marker(rc.unproject([this.width/2, this.height/2])).addTo(this.map);
 
 		var latlngs = [[37, 60],[41, 30],[41, 50],[37, 30]];
 		var polygon = L.polygon(latlngs, {color: 'red'}).addTo(this.map);
@@ -132,16 +145,15 @@ export default class Gamemap {
 		L.tileLayer(this.getMapTileImageURL(this.mapWorlds[this.currentWorldID], this.mapConfig), {
 			noWrap: true,
 			bounds: rc.getMaxBounds(),
-			maxNativeZoom: rc.getZoomLevel(),
+			maxNativeZoom: this.mapConfig.maxZoomLevel,
 			errorTileUrl: this.mapConfig.missingMapTile,
 			minZoom: this.mapConfig.minZoomLevel,
 			maxZoom: this.mapConfig.maxZoomLevel,
 		}).addTo(this.map);
 
-		
-			// leaflet experiment
 
-			this.map.setMaxBounds(null); //map being the leaflet map.
+		// remove map bounds
+		this.map.setMaxBounds(null); //map being the leaflet map.
 
 
 		this.setupInfobar(this.mapConfig);
