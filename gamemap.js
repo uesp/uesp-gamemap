@@ -128,6 +128,7 @@ uesp.gamemap.Map = function(mapContainerId, defaultMapOptions, userEvents)
 	this.loadedCellResource = "";
 	this.cellResourceData = {};
 	
+	this.autoGenerateWorldGroupList = true;
 	this.worldGroupListContents = '';
 	this.helpBlockContents = '';
 	
@@ -237,7 +238,7 @@ uesp.gamemap.Map.prototype.createMapList = function (parentObject)
 		
 		selItem = $('#gmMapList li.gmMapListSelect');
 		if (selItem == null) return false;
-			
+		
 		container = $('#gmMapListGroup');
 		container.scrollTop(selItem.offset().top - container.offset().top + container.scrollTop() - 200);
 		return false;
@@ -2658,6 +2659,13 @@ uesp.gamemap.Map.prototype.onReceiveWorldData = function (data)
 	if (this.queryParams.search != null)
 	{
 		this.doSearch(this.queryParams.search, false);
+	}
+	
+	if (this.autoGenerateWorldGroupList)
+	{
+		var html = this.createGroupListHtml();
+		$("#gmMapList").html(html);
+		this.setEventsForMapGroupList();
 	}
 	
 	return true;
@@ -5172,6 +5180,171 @@ uesp.gamemap.defaultGetMapTile = function(tileX, tileY, zoom, world)
 		return "zoom" + zoom + "/maptile-" + tileX + "-" + tileY + ".jpg";
 	else
 		return world + "/zoom" + zoom + "/maptile-" + tileX + "-" + tileY + ".jpg"; 
+}
+
+
+
+uesp.gamemap.Map.prototype.translateGroupListToName = function(groups, depth)
+{
+	var groupNames = {};
+	
+	if (depth == null) depth = 0;
+	if (depth >= this.MAX_GROUP_DEPTH) groupNames = [];
+	
+	for (var worldId in groups)
+	{
+		var subGroups = groups[worldId];
+		
+		var world = this.mapWorlds[worldId];
+		var worldName = "";
+		
+		if (world == null) 
+		{
+			if (worldId == this.GROUP_DEV_ID)
+				worldName = "Dev";
+			else if (worldId == this.GROUP_BETA_ID)
+				worldName = "Beta";
+		}
+		else
+		{
+			worldName = world['displayName']
+		}
+		
+		if (worldName == "") continue;
+		
+		if (Array.isArray(groupNames))
+		{
+			groupNames.push(worldName);
+		}
+		else
+		{
+			if (subGroups === true)
+				groupNames[worldName] = true;
+			else
+				groupNames[worldName] = this.translateGroupListToName(subGroups, depth+1);
+		}
+	}
+	
+	return groupNames;
+}
+
+
+uesp.gamemap.Map.prototype.createGroupSubList = function(parentGroups, groups, worldId, depth)
+{
+	if (this.groupCreateList[worldId] != null) return;
+	this.groupCreateList[worldId] = true;
+	
+	if (depth == null) depth = 0;
+	
+	parentGroups[worldId] = true;
+	
+	if (groups[worldId] == null)
+	{
+		this.groupCreateList[worldId] = false;
+		return;
+	}
+	
+	if (depth < this.MAX_GROUP_DEPTH) parentGroups[worldId] = {};
+	
+	for (var i in groups[worldId])
+	{
+		var childWorldId = groups[worldId][i];
+		
+		if (depth >= this.MAX_GROUP_DEPTH || this.topLevelWorldIds[childWorldId] === true || groups[worldId].length < this.MIN_GROUP_SIZE)
+			this.createGroupSubList(parentGroups, groups, childWorldId, depth+1);
+		else
+			this.createGroupSubList(parentGroups[worldId], groups, childWorldId, depth+1);
+	}
+	
+	this.groupCreateList[worldId] = false;
+}
+
+
+uesp.gamemap.Map.prototype.createGroupList = function()
+{
+	var groups = {};
+	var topLevelWorldID = 667;	// TODO: Not hardcoded for ESO?
+	var allGroups = {};
+	
+	this.GROUP_DEV_ID = -101;
+	this.GROUP_BETA_ID = -102;
+	
+	for (var worldId in this.mapWorlds)
+	{
+		if (worldId == 0) continue;
+		
+		var world = this.mapWorlds[worldId];
+		var parentId = world.parentId;
+		var worldDisplayName = world['displayName']
+		var worldName = world['name']
+		
+		if (parentId < 0) parentId = 0;
+		
+			// TODO: Other/better ways to do fixed groups? 
+		if (worldDisplayName.endsWith("(Dev)"))
+			parentId = this.GROUP_DEV_ID;
+		else if (worldDisplayName.endsWith("(Beta)"))
+			parentId = this.GROUP_BETA_ID;
+		else if (worldDisplayName.endsWith("(Test)"))
+			continue;
+		
+		if (groups[parentId] == null) groups[parentId] = [];
+		groups[parentId].push(worldId);
+	}
+	
+	this.groupCreateList = {};
+	this.MAX_GROUP_DEPTH = 3;
+	this.MIN_GROUP_SIZE = 5;
+	
+	this.topLevelWorldIds = {		// TODO: Not hardcoded for ESO?
+			203 : true,
+			668 : true,
+			1402 : true,
+			1466 : true,
+			2170 : true,
+			2179 : true,
+			2282 : true,
+	};
+	
+	this.topLevelWorldIds[this.GROUP_DEV_ID] = true;
+	this.topLevelWorldIds[this.GROUP_BETA_ID] = true;
+	
+	this.createGroupSubList(allGroups, groups, topLevelWorldID);
+	this.createGroupSubList(allGroups, groups, this.GROUP_DEV_ID);
+	this.createGroupSubList(allGroups, groups, this.GROUP_BETA_ID);
+	
+	return this.translateGroupListToName(allGroups);
+}
+
+
+uesp.gamemap.Map.prototype.createGroupListHtml = function(groups, parentWorldName)
+{
+	var output = "";
+	
+	if (groups == null) groups = this.createGroupList();
+	
+	var keys = Object.keys(groups);
+	if (parentWorldName != null && parentWorldName != "Beta" && parentWorldName != "Dev") keys.push(parentWorldName);
+	keys.sort();
+	
+	for (var i in keys)
+	{
+		var worldName = keys[i];
+		var subGroups = groups[worldName];
+		
+		if (subGroups == null || subGroups === true || Object.keys(subGroups).length === 0)
+		{
+			output += "<li>" + worldName + "</li>\n";
+		}
+		else
+		{
+			output += "<li class=\"gmMapListHeader\">" + worldName + "</li>\n<ul>\n";
+			output += this.createGroupListHtml(subGroups, worldName);
+			output += "</ul>\n";
+		}
+	}
+	
+	return output;
 }
 
 
