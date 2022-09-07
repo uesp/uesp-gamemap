@@ -81,7 +81,7 @@ $(document).ready(function() {
 
 function initGamemap() {
 
-	loading("config");
+	loading("map");
 
 	// get params from URL
 	mapParams = Utils.getURLParams();
@@ -158,20 +158,6 @@ function onWorldsLoaded(mapWorlds) {
 		// 	gamemap.setEventsForMapGroupList();
 		// });
 	}
-
-	if (!gamemap.hasCentreOnParam()) {
-		//jump to default map
-		let defaultMapState = new MapState();
-
-		defaultMapState.worldID = gamemap.mapConfig.homeWorldID;
-		defaultMapState.zoomLevel = gamemap.mapConfig.zoomLevel;
-		defaultMapState.gamePos.x = gamemap.mapConfig.xPos;
-		defaultMapState.gamePos.y = gamemap.mapConfig.yPos;
-
-		let mapState = gamemap.getMapStateFromQuery(defaultMapState);
-		gamemap.setMapState(mapState);
-	} 
-
 }
 
 function onPermissionsLoaded(enableEditing) {

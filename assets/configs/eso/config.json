@@ -7,25 +7,26 @@
     "tileURL" : "//mapsnc.uesp.net/esomap/",
     "database" : "eso",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design",
+    "bgColour" : "#000000",
 
     // Map options
-    "useCanvasDraw" : false,
-    "useLeaflet" : false,
-    "isOffline" : false,
-    "useFakeMaxZoom" : false,
-    "coordType" : 1,
-    "zoomLevel" : 2,
+    "defaultZoomLevel" : 1,
     "minZoomLevel" : 0,
     "maxZoomLevel" : 5,
     "zoomOffset" : 0,
 
     // Map coordinate system info
+
+    // 0: XY (Default)
+    // 1: Normalised
+    // 2: Worldspace
+    "coordType" : 1,
     "minX": 0,
     "maxX": 1000000,
     "minY": 0,
     "maxY": 1000000,
-    "xPos" : 400000,
-    "yPos" : 600000,
+    "defaultXPos" : 400000,
+    "defaultYPos" : 600000,
 
     // Map tile info
     "missingMapTile" : "assets/images/missingtile.jpg",
@@ -267,7 +268,7 @@
     },
 
     // Map world info
-    "homeWorldID" : 668,
+    "defaultWorldID" : 668,
     "minValidWorldID" : 50,
     "maxValidWorldID" : 20000,
     "customLocationList" : [
