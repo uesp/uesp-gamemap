@@ -17,6 +17,8 @@ import RasterCoords from "./rasterCoords.js";
 ================================================*/
 
 var map;
+var self;
+var RC; 
 
 export default class Gamemap {
 
@@ -43,6 +45,7 @@ export default class Gamemap {
 				throw new Error('The gamemap container \'' + mapRootID + '\' was not found!');
 			} 
 			this.mapRoot = $('<div />').attr('id', 'gmMapRoot').appendTo(this.mapRoot);
+			self = this;
 
 			$("#"+mapRootID).css("background-color", mapConfig.bgColour);
 
@@ -114,9 +117,9 @@ export default class Gamemap {
 		// create the map
 		map = L.map(this.rootMapID, mapOptions);
 
-		var rc = new RasterCoords(map, this.img)
+		RC = new RasterCoords(map, this.img)
 
-		L.marker(rc.unproject([width/2, height/2])).addTo(map);
+		L.marker(RC.unproject([width/2, height/2])).addTo(map);
 
 		var latlngs = [[37, 60],[41, 30],[41, 50],[37, 30]];
 		var polygon = L.polygon(latlngs, {color: 'red'}).addTo(map);
@@ -125,17 +128,17 @@ export default class Gamemap {
 		//this.map.setMaxBounds(new L.LatLngBounds(this.maxSouthWest, this.maxNorthEast));
 
 		// set max zoom Level (might be `x` if gdal2tiles was called with `-z 0-x` option)
-		map.setMaxZoom(rc.getZoomLevel())
+		map.setMaxZoom(RC.getZoomLevel())
 		// all coordinates need to be unprojected using the `unproject` method
 		// set the view in the lower right edge of the image
-		map.setView(rc.unproject([this.img[0], this.img[1]]), 1)
+		map.setView(RC.unproject([this.img[0], this.img[1]]), 1)
 		
 		// this.map.setView(this.unproject([this.img[0] / 2, this.img[1] / 2]), this.minZoomLevel);
 	
 	
 		L.tileLayer(this.getMapTileImageURL(this.mapWorlds[this.currentWorldID], this.mapConfig), {
 			noWrap: true,
-			bounds: rc.getMaxBounds(),
+			bounds: RC.getMaxBounds(),
 			maxNativeZoom: this.mapConfig.maxZoomLevel,
 			errorTileUrl: this.mapConfig.missingMapTile,
 			minZoom: this.mapConfig.minZoomLevel,
@@ -149,13 +152,40 @@ export default class Gamemap {
 
 		map.on("moveend", function(e){
 			print("hello world");
-			print(rc.project(map.getCenter()));
-			//window.location = window.location + rc.project(map.getCenter());
+			print(RC.project(map.getCenter()));
+			self.updateURL(map, self.mapConfig);
 		})
 		 
 
 
 		this.setupInfobar(this.mapConfig);
+
+
+	}
+
+	updateURL(map, mapConfig) {
+
+		let mapLink = "?"
+
+		mapLink += "map=" + mapConfig.database;
+		mapLink += '&world=' + this.currentWorldID;
+		mapLink += '&x=' + RC.project(map.getCenter());
+		// mapLink += '&x=' + mapState.gamePos.x;
+		// mapLink += '&y=' + mapState.gamePos.y;
+		// mapLink += '&zoom=' + mapState.zoomLevel;
+	
+		// if (mapState.grid) mapLink += "&grid=true";
+		// if (mapState.cellResource != "") mapLink += "&cellResource=" + mapState.cellResource;
+		// if (mapState.displayState != "") mapLink += "&displayState=" + mapState.displayState;
+	
+		location.hash = mapLink;
+	}
+
+
+
+	
+	getCoords(LatLng) {
+
 
 
 	}

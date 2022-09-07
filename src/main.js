@@ -35,7 +35,10 @@ print("Page initialising...");
 $(document).ready(function() {
 
 
-	
+
+	if (location.hash.includes("map=")) {
+		location.hash = location.hash.replace("&[a-zA-Z]+=[a-zA-Z]+", '');
+	}
 
 	// load gamemap
 	print("Initialising gamemap...");

@@ -33,3 +33,10 @@ export const LOCTYPE_NONE = 0;
 export const LOCTYPE_POINT = 1;
 export const LOCTYPE_PATH = 2;
 export const LOCTYPE_AREA = 3;
+
+export const COORD_TYPES = {
+    XY : 0,
+    NORMALISED : 1,
+    WORLDSPACE : 2,
+}
+
