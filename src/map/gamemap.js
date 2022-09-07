@@ -147,12 +147,12 @@ export default class Gamemap {
 			errorTileUrl: this.mapConfig.missingMapTile,
 			minZoom: this.mapConfig.minZoomLevel,
 			maxZoom: this.mapConfig.maxZoomLevel,
+			edgeBufferTiles: 1,
 		}).addTo(map);
 
 		// remove map bounds
 		map.setMaxBounds(null); //map being the leaflet map.
 		map.setMaxZoom(this.mapConfig.maxZoomLevel); // force max zoom
-
 
 		map.on("moveend", function(e){
 			self.updateURL(map, self.mapConfig);
