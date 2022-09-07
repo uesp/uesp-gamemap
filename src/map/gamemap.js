@@ -8,8 +8,6 @@ import * as Utils from "../common/utils.js";
 import * as Constants from "../common/constants.js";
 import World from "./world.js";
 import MapState from "./mapState.js";
-import Position from "./mapPosition.js";
-import Bounds from "./bounds.js";
 import RasterCoords from "./rasterCoords.js";
 
 /*================================================
@@ -77,6 +75,10 @@ export default class Gamemap {
 			throw new Error("Invalid constructor params for gamemap!");
 		}
 
+	}
+
+	hasMultipleWorlds() {
+		return Object.keys(this.mapWorlds).length > 2;
 	}
 
 	initialiseMap(){
@@ -153,8 +155,10 @@ export default class Gamemap {
 		map.on("moveend", function(e){
 			self.updateURL(map, self.mapConfig);
 		})
-		 
 
+		map.on("zoomend", function(e){
+			self.updateURL(map, self.mapConfig);
+		})
 
 		this.setupInfobar(this.mapConfig);
 
@@ -167,8 +171,15 @@ export default class Gamemap {
 
 		print(this.toCoords(map.getCenter()));
 		mapLink += "map=" + mapConfig.database;
-		mapLink += '&world=' + this.currentWorldID;
-		mapLink += '&x=' + RC.project(map.getCenter());
+
+		if (this.hasMultipleWorlds()){
+			mapLink += '&world=' + this.currentWorldID;
+		}
+
+		mapLink += '&x=' + this.toCoords(map.getCenter()).x;
+		mapLink += '&y=' + this.toCoords(map.getCenter()).y;
+		mapLink += '&zoom=' + parseFloat(map.getZoom().toFixed(3));
+
 		// mapLink += '&x=' + mapState.gamePos.x;
 		// mapLink += '&y=' + mapState.gamePos.y;
 		// mapLink += '&zoom=' + mapState.zoomLevel;
@@ -183,9 +194,7 @@ export default class Gamemap {
 
 
 	/**
-	 * @param {String} mapRootID - the root gamemap element in which the map is displayed
-	 * @param {Object} mapConfig - map config/options object, controls the type, state, and view of the map
-	 * @param {Object} mapCallbacks - map callbacks object, to receive events from the gamemap
+	 * @param {Object} latLng - the leaflet coordinate object
 	 */
 
 	toCoords(latLng) {
@@ -204,11 +213,10 @@ export default class Gamemap {
 
 		// is the current map using a normalised coordinate scheme?
 		if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
-			print("benis");
-			
+
 			// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
-			coords.x = coords.x / this.mapImage.width;
-			coords.y = coords.y / this.mapImage.height;
+			coords.x = (coords.x / this.mapImage.width).toFixed(3);
+			coords.y = (coords.y / this.mapImage.height).toFixed(3);
 		}
 
 		// if object is a latLng, then we need to convert it to XY coordinates with rasterCoords

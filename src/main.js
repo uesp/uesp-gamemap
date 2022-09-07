@@ -138,14 +138,10 @@ function onWorldsLoaded(mapWorlds) {
 	print("Worlds loaded!");
 	print(mapWorlds);
 
-	if (Object.keys(mapWorlds).length > 2) {
-		hasMultipleWorlds = true;
-	}
-
 	$("#loading_spinner").hide();
 	$('#zoom_widget').css('visibility','visible');
 
-	if (hasMultipleWorlds) {
+	if (gamemap.hasMultipleWorlds) {
 		// only show the location switcher if there are more than two worlds
 		$("#btn_location_switcher").show();
 		$("#btn_goto_article").show();
