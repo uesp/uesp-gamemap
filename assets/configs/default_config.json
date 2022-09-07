@@ -34,7 +34,7 @@
     "numTilesX" : 10,
     "numTilesY" : 7,
     "tileSize" : 256,
-    "tileEdgeLoadCount" : 1,
+    "numEdgeBufferTiles" : 2,
 
     // Map world info
     "defaultWorldID" : 0,

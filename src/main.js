@@ -17,7 +17,7 @@ import MapState from "./map/mapState.js";
 
 var mapParams = null;
 var mapConfig = null;
-var mapType = null;
+var game = null;
 
 var gamemap = null;
 
@@ -36,7 +36,7 @@ $(document).ready(function() {
 
 
 
-	if (location.hash.includes("map=")) {
+	if (location.hash.includes("game=")) {
 		location.hash = location.hash.replace("&[a-zA-Z]+=[a-zA-Z]+", '');
 	}
 
@@ -87,14 +87,14 @@ function initGamemap() {
 	mapParams = Utils.getURLParams();
 
 	// get which map we are supposed to be loading
-	if (!mapParams.has("map")) { 
-		showError("No map was provided.");
+	if (!mapParams.has("game")) { 
+		showError("No game was provided.");
 	} else {
-		print("URL has map param!");
-		mapType = mapParams.get("map");
+		game = mapParams.get("game");
+		print("URL has game param!");
 
 		// load map config 
-		let configURL = (Constants.CONFIG_DIR + mapType + "/" + Constants.MAP_CONFIG_FILENAME);
+		let configURL = (Constants.CONFIG_DIR + game + "/" + Constants.MAP_CONFIG_FILENAME);
 		print("Getting map config at "+configURL+"...");
 
 		Utils.getJSON(configURL, function(error, object) {

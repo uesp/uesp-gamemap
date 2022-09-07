@@ -147,7 +147,7 @@ export default class Gamemap {
 			errorTileUrl: this.mapConfig.missingMapTile,
 			minZoom: this.mapConfig.minZoomLevel,
 			maxZoom: this.mapConfig.maxZoomLevel,
-			edgeBufferTiles: 1,
+			edgeBufferTiles: this.mapConfig.numEdgeBufferTiles,
 		}).addTo(map);
 
 		// remove map bounds
@@ -163,6 +163,33 @@ export default class Gamemap {
 		})
 
 
+	}
+
+	// mapstate getter
+	getMapState() {
+		let mapState = new MapState();
+
+		mapState.game = this.mapConfig.database;
+		mapState.coords       = this.toCoords(map.getCenter());
+		mapState.zoomLevel    = this.zoomLevel;
+		mapState.worldID      = this.currentWorldID;
+		mapState.grid         = this.isDrawGrid;
+		mapState.cellResource = this.cellResource;
+		mapState.displayState = this.displayState;
+
+		let mapLink = "?"
+
+		mapLink += "map=" + mapConfig.database;
+
+		if (this.hasMultipleWorlds()){
+			mapLink += '&world=' + this.currentWorldID;
+		}
+
+		mapLink += '&x=' + this.toCoords(map.getCenter()).x;
+		mapLink += '&y=' + this.toCoords(map.getCenter()).y;
+		mapLink += '&zoom=' + parseFloat(map.getZoom().toFixed(3));
+
+		return mapState;
 	}
 
 
@@ -268,7 +295,7 @@ export default class Gamemap {
 		let mapLink = "?"
 
 		print(this.toCoords(map.getCenter()));
-		mapLink += "map=" + mapConfig.database;
+		mapLink += "game=" + mapConfig.database;
 
 		if (this.hasMultipleWorlds()){
 			mapLink += '&world=' + this.currentWorldID;
@@ -331,7 +358,24 @@ export default class Gamemap {
 
 	}
 
+
+	/** 
+	 * Convert XY coordinates to leaflet's  LatLongs.
+	 * @param {Object} coords - the XY coordinate object
+	 */
 	toLatLng(coords) {
+
+		let latLng;
+
+		// is the current map using a normalised coordinate scheme?
+		if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
+
+			// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
+			coords.x = (coords.x / this.mapImage.width).toFixed(3);
+			coords.y = (coords.y / this.mapImage.height).toFixed(3);
+		}
+
+
 
 
 	}
@@ -443,20 +487,6 @@ export default class Gamemap {
 	/*================================================
 						Map state
 	================================================*/
-
-	// mapstate getter
-	getMapState() {
-		let mapState = new MapState();
-
-		mapState.zoomLevel    = this.zoomLevel;
-		//mapState.gamePos      = this.getGamePositionOfCenter();
-		mapState.worldID      = this.currentWorldID;
-		mapState.grid         = this.isDrawGrid;
-		mapState.cellResource = this.cellResource;
-		mapState.displayState = this.displayState;
-
-		return mapState;
-	}
 
 	// mapstate setter
 	setMapState (newState, updateMap) {

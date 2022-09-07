@@ -40,3 +40,5 @@ export const COORD_TYPES = {
     WORLDSPACE : 2,
 }
 
+export const LEGACY_MAXIMUM_XY = 1000000;
+
