@@ -97,10 +97,10 @@ export default class Gamemap {
 			throw new Error("No map dimensions were provided!");
 		}
 		
-		this.img = [
-				width,  // original width of image
-				height   // original height of image
-		];
+		this.mapImage = { // object representing the whole map image
+			width : width,  // original width of image
+			height: height, // original height of image
+		}
 
 		//this.zoom = this.getZoomLevel(this.width, this.height);
 
@@ -111,13 +111,13 @@ export default class Gamemap {
 			crs: L.CRS.Simple, // coordinate reference system
          }
 		
-		//  zoomend
+		// zoomend
 		// moveend
 		// getCenter()
 		// create the map
 		map = L.map(this.rootMapID, mapOptions);
 
-		RC = new RasterCoords(map, this.img)
+		RC = new RasterCoords(map, this.mapImage)
 
 		L.marker(RC.unproject([width/2, height/2])).addTo(map);
 
@@ -131,7 +131,7 @@ export default class Gamemap {
 		map.setMaxZoom(RC.getZoomLevel())
 		// all coordinates need to be unprojected using the `unproject` method
 		// set the view in the lower right edge of the image
-		map.setView(RC.unproject([this.img[0], this.img[1]]), 1)
+		map.setView(RC.unproject([this.mapImage.width, this.mapImage.height]), 1)
 		
 		// this.map.setView(this.unproject([this.img[0] / 2, this.img[1] / 2]), this.minZoomLevel);
 	
@@ -151,8 +151,6 @@ export default class Gamemap {
 
 
 		map.on("moveend", function(e){
-			print("hello world");
-			print(RC.project(map.getCenter()));
 			self.updateURL(map, self.mapConfig);
 		})
 		 
@@ -167,6 +165,7 @@ export default class Gamemap {
 
 		let mapLink = "?"
 
+		print(this.toCoords(map.getCenter()));
 		mapLink += "map=" + mapConfig.database;
 		mapLink += '&world=' + this.currentWorldID;
 		mapLink += '&x=' + RC.project(map.getCenter());
@@ -183,9 +182,50 @@ export default class Gamemap {
 
 
 
-	
-	getCoords(LatLng) {
+	/**
+	 * @param {String} mapRootID - the root gamemap element in which the map is displayed
+	 * @param {Object} mapConfig - map config/options object, controls the type, state, and view of the map
+	 * @param {Object} mapCallbacks - map callbacks object, to receive events from the gamemap
+	 */
 
+	toCoords(latLng) {
+
+		let coords;
+
+		// are we being given a latLng object from leaflet?
+		if (latLng.lat != null) {
+			coords = RC.project(latLng);
+		}
+
+		// are we being given a point (coord) object instead?
+		if (latLng.x != null) {
+			coords = latLng;
+		}
+
+		// is the current map using a normalised coordinate scheme?
+		if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
+			print("benis");
+			
+			// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
+			coords.x = coords.x / this.mapImage.width;
+			coords.y = coords.y / this.mapImage.height;
+		}
+
+		// if object is a latLng, then we need to convert it to XY coordinates with rasterCoords
+		// check what coord type the map is using to convert it to
+
+
+
+
+
+		// return point object for coords
+		return coords;
+
+
+
+	}
+
+	toLatLng(coords) {
 
 
 	}
@@ -231,11 +271,11 @@ export default class Gamemap {
 
 
 	zoomIn(){
-		this.map.zoomIn();
+		map.zoomIn();
 	}
 
 	zoomOut(){
-		this.map.zoomOut();
+		map.zoomOut();
 	}
 
 

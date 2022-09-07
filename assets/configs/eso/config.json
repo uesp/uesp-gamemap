@@ -13,7 +13,7 @@
     "useLeaflet" : false,
     "isOffline" : false,
     "useFakeMaxZoom" : false,
-    "coordType" : 2,
+    "coordType" : 1,
     "zoomLevel" : 2,
     "minZoomLevel" : 0,
     "maxZoomLevel" : 5,

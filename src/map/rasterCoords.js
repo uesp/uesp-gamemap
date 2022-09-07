@@ -10,20 +10,20 @@
 export default class RasterCoords {
 	/**
 	 * RasterCoords
-	 * @param {L.map} map - the map used
-	 * @param {Array} imgsize - [ width, height ] image dimensions
-	 * @param {Number} [tilesize] - tilesize in pixels. Default=256
+	 * @param {L.map} map - the leaflet map object used
+	 * @param {Object} mapImage - object representing the whole image of the map & dimensions
+	 * @param {Number} [tileSize] - the size of the map tiles in pixels. default is 256.
 	 */
-	constructor(map, imgsize, tilesize) {
+	constructor(map, mapImage, tileSize) {
 	
 		if (typeof window.L === 'undefined') {
 			throw new Error('Leaflet must be loaded first')
 		}
 
 		this.map = map
-		this.width = imgsize[0]
-		this.height = imgsize[1]
-		this.tilesize = tilesize || 256
+		this.width = mapImage.width;
+		this.height = mapImage.height;
+		this.tileSize = tileSize || 256
 		this.zoom = this.getZoomLevel()
 		
 		if (this.width && this.height) {
@@ -35,7 +35,7 @@ export default class RasterCoords {
      * calculate accurate zoom level for the given image size
      */
 	getZoomLevel() {
-		return Math.ceil(Math.log(Math.max(this.width, this.height) / this.tilesize ) / Math.log(2))
+		return Math.ceil(Math.log(Math.max(this.width, this.height) / this.tileSize ) / Math.log(2))
 	}
 
 	/**
