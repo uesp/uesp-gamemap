@@ -11,16 +11,20 @@ import MapState from "./mapState.js";
 import RasterCoords from "./rasterCoords.js";
 
 /*================================================
-				Gamemap constructor
+					Globals
 ================================================*/
 
-var map;
-var self;
-var RC; 
+var map; // Leaflet map instance
+var self; // Global "this" instance of Gamemap
+var RC; // RasterCoords instance, for converting leaflet latlongs to XY coords and back
 
+/*================================================
+				Gamemap constructor
+================================================*/
 export default class Gamemap {
 
 	/**
+	 * Interactive map viewer class.
 	 * @param {String} mapRootID - The root gamemap element in which the map is displayed
 	 * @param {Object} mapConfig - The map config object, controls the type, state, and view of the map
 	 * @param {Object} mapCallbacks - The callbacks object, to optionally receive events back from the gamemap
@@ -40,7 +44,7 @@ export default class Gamemap {
 			this.mapRoot = $('#' + mapRootID);
 			this.rootMapID = mapRootID;
 			if (this.mapRoot == null) {
-				throw new Error('The gamemap container \'' + mapRootID + '\' was not found!');
+				throw new Error('Gamemap error: The gamemap container \'' + mapRootID + '\' could not be found or was invalid.');
 			} 
 			this.mapRoot = $('<div />').attr('id', 'gmMapRoot').appendTo(this.mapRoot);
 			self = this;
@@ -51,7 +55,6 @@ export default class Gamemap {
 			this.locations = {};
 			this.mapTiles = [];
 			this.mapWorlds = {};
-			this.currentWorldID = 0;
 			this.mapWorldNameIndex = {};
 			this.mapWorldDisplayNameIndex = {};
 
@@ -61,16 +64,49 @@ export default class Gamemap {
 			this.openPopupOnJump = false;
 			this.isShowingRecentChanges = false;
 			this.checkTilesOnDrag = true;
-			this.isDrawGrid = false;
-
-			// check user editing permission
 			this.editingEnabled = false;
-			this.checkPermissions();
+			this.isDrawGrid = false;
 			
-			// load map
-			this.initialiseMap();
+			// check user editing permission
+			this.checkPermissions();
 
-			// if (!gamemap.hasCentreOnParam()) {
+			// get world data and load map
+			this.getWorldData();
+
+		} else {
+			throw new Error("Gamemap error: The gamemap constructor was provided invalid/missing params.");
+		}
+
+	}
+
+	/*================================================
+					  Initialise
+	================================================*/
+
+	initialiseMap() {
+
+		this.currentWorldID = this.mapConfig.defaultWorldID || 0;
+
+		// set full image width & height
+		let mapImageDimens = this.getMapImageDimensions();
+		
+		this.mapImage = { // object representing the whole map image
+			width : mapImageDimens.width,  // original width of image
+			height: mapImageDimens.height, // original height of image
+		}
+		
+		var mapOptions = {
+			crs: L.CRS.Simple, // coordinate reference system
+			zoomSnap: 0,
+			zoomDelta: 0.50,
+			zoomControl: false, // hide leaflet zoom control (we have our own)
+         }
+
+		 map = L.map(this.rootMapID, mapOptions);
+		 RC = new RasterCoords(map, this.mapImage)
+		 this.setupInfobar(this.mapConfig);
+		
+					// if (!gamemap.hasCentreOnParam()) {
 			// 	//jump to default map
 			// 	let defaultMapState = new MapState();
 		
@@ -83,56 +119,11 @@ export default class Gamemap {
 			// 	gamemap.setMapState(mapState);
 			// } 
 
-		} else {
-			throw new Error("Invalid constructor params for gamemap!");
-		}
-
-	}
-
-	initialiseMap(){
-
-		//this.addWorld("__default", this.mapConfig, this.currentWorldID, '');
-
-		// download world data
-		this.getWorldData();
-
-		// set initial image width & height
-		let width = 0;
-		let height = 0;
-
-		// check if actual map image dimensions (not tile dimensions) are provided
-		if (this.mapConfig.fullWidth != null && this.mapConfig.fullHeight != null) { 
-			width = this.mapConfig.fullWidth;
-			height = this.mapConfig.fullHeight;
-		} else if (this.mapConfig.numTilesY == this.mapConfig.numTilesX) { // if the map is a square (1:1)
-			// then calculate the image dimensions as the size of the whole grid
-			width = this.mapConfig.numTilesX * this.mapConfig.tileSize;
-			height = this.mapConfig.numTilesY * this.mapConfig.tileSize;
-		} else {
-			throw new Error("No map dimensions were provided!");
-		}
 		
-		this.mapImage = { // object representing the whole map image
-			width : width,  // original width of image
-			height: height, // original height of image
-		}
-		
-		var mapOptions = {
-			zoomSnap: 0,
-			zoomDelta: 0.50,
-			zoom: this.mapConfig.zoomLevel,
-			crs: L.CRS.Simple, // coordinate reference system
-         }
-		
-		// zoomend
-		// moveend
-		// getCenter()
-		// create the map
-		map = L.map(this.rootMapID, mapOptions);
 
-		RC = new RasterCoords(map, this.mapImage)
+		
 
-		L.marker(RC.unproject([width/2, height/2])).addTo(map);
+		L.marker(RC.unproject([this.mapImage.width/2, this.mapImage.height/2])).addTo(map);
 
 		var latlngs = [[37, 60],[41, 30],[41, 50],[37, 30]];
 		var polygon = L.polygon(latlngs, {color: 'red'}).addTo(map);
@@ -144,7 +135,7 @@ export default class Gamemap {
 		map.setMaxZoom(RC.getZoomLevel())
 		// all coordinates need to be unprojected using the `unproject` method
 		// set the view in the lower right edge of the image
-		map.setView(RC.unproject([this.mapImage.width, this.mapImage.height]), 1)
+		map.setView(RC.unproject([this.mapImage.width, this.mapImage.height]), this.mapConfig.defaultZoomLevel)
 		
 		// this.map.setView(this.unproject([this.img[0] / 2, this.img[1] / 2]), this.minZoomLevel);
 	
@@ -158,9 +149,9 @@ export default class Gamemap {
 			maxZoom: this.mapConfig.maxZoomLevel,
 		}).addTo(map);
 
-
 		// remove map bounds
 		map.setMaxBounds(null); //map being the leaflet map.
+		map.setMaxZoom(this.mapConfig.maxZoomLevel); // force max zoom
 
 
 		map.on("moveend", function(e){
@@ -171,8 +162,99 @@ export default class Gamemap {
 			self.updateURL(map, self.mapConfig);
 		})
 
-		this.setupInfobar(this.mapConfig);
 
+	}
+
+
+	/*================================================
+						  Worlds 
+	================================================*/
+
+	addWorld(worldName, mapConfig, worldID, displayName) {
+		this.mapWorlds[worldID] = new World(worldName.toLowerCase(), this.mapConfig, worldID);
+		this.mapWorlds[worldID].mergeMapConfig(mapConfig);
+	
+		this.mapWorldNameIndex[worldName.toLowerCase()] = worldID;
+		if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldID;
+	}
+
+	getWorldData() {
+		let queryParams = {};
+		queryParams.action = "get_worlds";
+		queryParams.db = this.mapConfig.database;
+		loading("world");
+
+		if (this.isHiddenLocsShown()) {
+			queryParams.showhidden = 1;
+		} 
+	
+		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
+			if (data.isError) {
+				throw new Error("Gamemap error: Could not retrieve world data.");
+			} else {
+				if (data.worlds == null) {
+					throw new Error("Gamemap error: World data was null.");
+				}
+			}
+	
+			for (var key in data.worlds) {
+				let world = data.worlds[key];
+				print(world);
+
+				if (world.id > self.mapConfig.minWorldID && world.id < self.mapConfig.maxWorldID && world.name != null) {
+					
+					if (world.id in self.mapWorlds) {
+						self.mapWorlds[world.id] = Utils.mergeObjects(self.mapWorlds[world.id], world);
+						self.mapWorldNameIndex[world.name] = world.id;
+						self.mapWorldDisplayNameIndex[world.displayName] = world.id;
+					} else {
+						self.addWorld(world.name, self.mapConfig, world.id, world.displayName);
+						self.mapWorlds[world.id] = Utils.mergeObjects(self.mapWorlds[world.id], world);
+						self.mapWorldNameIndex[world.name] = world.id;
+						self.mapWorldDisplayNameIndex[world.displayName] = world.id;
+					}
+
+				}
+
+			}
+	
+			if (self.mapCallbacks != null) {
+				self.mapCallbacks.onWorldsLoaded(self.mapWorlds);
+
+				// load map
+				self.initialiseMap();
+			}
+		});
+	}
+
+	/**
+	 * Gets width and height of the full map image.
+	 * @returns mapImageDimens - The width/height of the map image as an object
+	 * @example print(getMapImageDimensions().width);
+	 */
+
+	getMapImageDimensions() {
+
+		let dimens = {};
+		let width = null;
+		let height = null;
+
+		// check if actual map image dimensions (not tile dimensions) are provided
+		if (this.mapConfig.fullWidth != null && this.mapConfig.fullHeight != null) { 
+			width = this.mapConfig.fullWidth;
+			height = this.mapConfig.fullHeight;
+		} else if (this.mapConfig.numTilesY == this.mapConfig.numTilesX) { // if the map is a square (1:1)
+			// then calculate the image dimensions as the size of the whole grid
+			width = this.mapConfig.numTilesX * this.mapConfig.tileSize;
+			height = this.mapConfig.numTilesY * this.mapConfig.tileSize;
+		} else {
+			throw new Error("Gamemap error: No map dimensions were provided!");
+		}
+
+		dimens.width = width;
+		dimens.height = height;
+
+		return dimens;
 
 	}
 
@@ -209,10 +291,10 @@ export default class Gamemap {
 
 
 
-	/**
+	/** 
+	 * Convert leaflet LatLongs to XY / normalised coordinates.
 	 * @param {Object} latLng - the leaflet coordinate object
 	 */
-
 	toCoords(latLng) {
 
 		let coords;
@@ -325,66 +407,6 @@ export default class Gamemap {
 		}
 	}
 
-
-
-	getWorldData() {
-		let self = this;
-		let queryParams = {};
-		queryParams.action = "get_worlds";
-		queryParams.db = this.mapConfig.database;
-		if (this.isHiddenLocsShown()) {
-			queryParams.showhidden = 1;
-		} 
-
-		loading("world");
-	
-		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
-			if (data.isError) {
-				print("Error retrieving world data!" + errorMsg);
-				return;
-			} else {
-				if (data.worlds == null) {
-					print ("World data not found in JSON response!" + data);
-					return;
-				}
-			}
-	
-			self.mergeWorldData(data.worlds);
-		});
-	}
-
-	mergeWorldData(worlds) {
-
-		if (worlds == null) {
-			return;
-		}
-
-		for (var key in worlds) {
-			var world = worlds[key];
-
-			if (world.id < this.mapConfig.minValidworldID) continue;
-			if (world.id > this.mapConfig.maxValidworldID) continue;
-
-			if ((world.name) == null) continue;
-
-			if (world.id in this.mapWorlds) {
-				this.mapWorlds[world.id] = Utils.mergeObjects(this.mapWorlds[world.id], world);
-				this.mapWorldNameIndex[world.name] = world.id;
-				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
-			}
-			else {
-				this.addWorld(world.name, this.mapConfig, world.id, world.displayName);
-				this.mapWorlds[world.id] = Utils.mergeObjects(this.mapWorlds[world.id], world);
-				this.mapWorldNameIndex[world.name] = world.id;
-				this.mapWorldDisplayNameIndex[world.displayName] = world.id;
-			}
-		}
-
-		if (this.mapCallbacks != null) {
-			this.mapCallbacks.onWorldsLoaded(this.mapWorlds);
-			this.initialiseMap();
-		}
-	}
 
 
 
@@ -522,13 +544,7 @@ export default class Gamemap {
 						Map worlds
 	================================================*/
 
-	addWorld(worldName, mapConfig, worldID, displayName) {
-		this.mapWorlds[worldID] = new World(worldName.toLowerCase(), this.mapConfig, worldID);
-		this.mapWorlds[worldID].mergeMapConfig(mapConfig);
-	
-		this.mapWorldNameIndex[worldName.toLowerCase()] = worldID;
-		if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldID;
-	}
+
 
 	hasWorld(worldID) {
 		return worldID in this.mapWorlds;

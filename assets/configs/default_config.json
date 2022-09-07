@@ -38,8 +38,8 @@
 
     // Map world info
     "defaultWorldID" : 0,
-    "minValidWorldID" : 50,
-    "maxValidWorldID" : 20000,
+    "minWorldID" : 50,
+    "maxWorldID" : 20000,
     "customLocationList" : {
         // curated map location list goes here... 
     },
