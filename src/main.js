@@ -584,21 +584,14 @@ function doSearch(searchQuery, currentMapOnly) {
 
 // copy link to clipboard button
 window.copyMapLink = function(){
-	if (gamemap != null) {
-		print("copying link to clipboard...");
-		let link = gamemap.createMapLink();
-		if (link != null && link != "") {
-
-			navigator.clipboard.writeText(link)
-			.then(() => {
-				// todo: also change the url to reflect the data
-				M.toast({text: "Map link copied to clipboard!"});
-			})
-			.catch(err => {
-				print("Error copying link to clipboard.");
-			});
-		}
-	}
+	print("copying link to clipboard...");
+	navigator.clipboard.writeText(window.location)
+	.then(() => {
+		M.toast({text: "Map link copied to clipboard!"});
+	})
+	.catch(err => {
+		print("Error copying link to clipboard.");
+	});
 }
 
 // goto article button

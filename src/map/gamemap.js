@@ -102,19 +102,19 @@ export default class Gamemap {
 			mapState = this.getMapStateFromURL();
 		}
 
+		print(mapState);
+
 		// load map state
 		this.setMapState(mapState);
 
 	}
-
-
 
 	/*================================================
 						  State 
 	================================================*/
 
 	// mapstate setter
-	setMapState(mapState, doUpdateMap) {
+	setMapState(mapState) {
 
 		// set full image width & height
 		let mapImageDimens = this.getMapImageDimensions();
@@ -124,14 +124,8 @@ export default class Gamemap {
 		}
 
 		RC = new RasterCoords(map, this.mapImage)
-			
-		
 
-		L.marker(RC.unproject([this.mapImage.width/2, this.mapImage.height/2])).addTo(map);
-
-
-	
-		L.tileLayer(this.getMapTileImageURL(this.mapWorlds[this.currentWorldID], this.mapConfig), {
+		let tileOptions = {
 			noWrap: true,
 			bounds: RC.getMaxBounds(),
 			maxNativeZoom: this.mapConfig.maxZoomLevel,
@@ -139,53 +133,21 @@ export default class Gamemap {
 			minZoom: this.mapConfig.minZoomLevel,
 			maxZoom: this.mapConfig.maxZoomLevel,
 			edgeBufferTiles: this.mapConfig.numEdgeBufferTiles,
-		}).addTo(map);
+		}
+			
+		L.tileLayer(this.getMapTileImageURL(this.mapWorlds[mapState.worldID], this.mapConfig), tileOptions).addTo(map);
 
-		// all coordinates need to be unprojected using the `unproject` method
 		// set the view in the lower right edge of the image
-		map.setView(RC.unproject([this.mapImage.width, this.mapImage.height]), this.mapConfig.defaultZoomLevel)
+		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel);
 
 
-		this.setWorld(this.currentWorldID);
+		this.setWorld(mapState.worldID);
 
 		// remove map bounds
 		map.setMaxBounds(null); //map being the leaflet map.
 
-		// this.mapConfig.mapState = mapState;
+		this.currentMapState = mapState;
 
-		// if (mapState == null) return;
-		// if (doUpdateMap == null) doUpdateMap = true;
-
-		// this.isDrawGrid = newState.grid;
-		// this.cellResource = newState.cellResource;
-		// this.displayState = newState.displayState;
-
-		// // if (newState == null) {
-		// // 	this.setMapState(this.mapWorlds[this.currentWorldID].mapState);
-		// // } else {
-		// 	this.setMapState(newState);
-		// }
-
-		// if (this.currentWorldID != newState.worldID) {
-		// 	//this.setWorld(newState.worldID);
-		// } else {
-		// 	this.setGamePos(newState.coords.x, newState.coords.y, newState.zoomLevel, updateMap);
-		// }
-
-	}
-
-	// mapstate getter
-	getMapState() {
-		let mapState = new MapState();
-
-		mapState.game 		  = this.mapConfig.database;
-		mapState.coords       = this.toCoords(map.getCenter());
-		mapState.zoomLevel    = parseFloat(map.getZoom().toFixed(3));
-		mapState.worldID      = this.currentWorldID;
-		// mapState.grid         = this.isDrawGrid;
-		// mapState.cellResource = this.cellResource;
-
-		return mapState;
 	}
 
 	getMapStateFromURL() {
@@ -340,6 +302,21 @@ export default class Gamemap {
 		location.hash = mapLink;
 	}
 
+	// mapstate getter
+	getMapState() {
+		let mapState = new MapState();
+
+		mapState.game 		  = this.mapConfig.database;
+		mapState.coords       = this.toCoords(map.getCenter());
+		mapState.zoomLevel    = parseFloat(map.getZoom().toFixed(3));
+		mapState.worldID      = this.currentWorldID;
+		// mapState.grid         = this.isDrawGrid;
+		// mapState.cellResource = this.cellResource;
+
+		return mapState;
+	}
+	
+
 
 
 	/** 
@@ -363,25 +340,19 @@ export default class Gamemap {
 		// is the current map using a normalised coordinate scheme?
 		if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
 
+			// if (coords.x > 10 && coords.y > 10) {
+			// 	coords.x = coords.x / Constants.LEGACY_MAXIMUM_XY;
+			// 	coords.y = coords.y / Constants.LEGACY_MAXIMUM_XY;
+			// }
+
 			// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
 			coords.x = (coords.x / this.mapImage.width).toFixed(3);
 			coords.y = (coords.y / this.mapImage.height).toFixed(3);
 		}
 
-		// if object is a latLng, then we need to convert it to XY coordinates with rasterCoords
-		// check what coord type the map is using to convert it to
-
-
-
-
-
 		// return point object for coords
 		return coords;
-
-
-
 	}
-
 
 	/** 
 	 * Convert XY coordinates to leaflet's  LatLongs.
@@ -391,13 +362,40 @@ export default class Gamemap {
 
 		let latLng;
 
-		// is the current map using a normalised coordinate scheme?
-		if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
+		// are we being given a coord object?
+		if (coords.x != null) {
 
-			// // divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
-			// coords.x = (coords.x / this.mapImage.width).toFixed(3);
-			// coords.y = (coords.y / this.mapImage.height).toFixed(3);
+			// are we using a normalised coordinate scheme?
+			if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
+
+				// multiply the normalised coords by the map image dimensions
+				// to get the XY coordinates
+				coords.x = (coords.x * this.mapImage.width);
+				coords.y = (coords.y * this.mapImage.height);
+			}
+
+			latLng = RC.unproject(coords);
 		}
+
+		// are we being given an array of coords?
+		if (coords[0] != null && coords.length == 2) {
+
+			// are we using a normalised coordinate scheme?
+			if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
+
+				// multiply the normalised coords by the map image dimensions
+				// to get the XY coordinates
+				coords[0] = (coords[0] * this.mapImage.width);
+				coords[1] = (coords[1] * this.mapImage.height);
+			}
+
+			latLng = RC.unproject(coords);
+		}
+
+
+
+
+		return latLng;
 
 
 
@@ -515,6 +513,9 @@ export default class Gamemap {
 			this.mapWorlds[worldID].mapState  = this.getMapState();
 			this.mapWorlds[worldID].mapConfig = this.mapConfig;
 		}
+
+		// load layers and locations
+		L.marker(RC.unproject([this.mapImage.width/2, this.mapImage.height/2])).addTo(map);
 
 		this.clearLocationElements();
 		// load new locations for this map
