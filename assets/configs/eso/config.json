@@ -12,7 +12,7 @@
     // Map options
     "defaultZoomLevel" : 2.5,
     "minZoomLevel" : 0,
-    "maxZoomLevel" : 4.5,
+    "maxZoomLevel" : 5,
     "zoomOffset" : 0,
 
     // Map coordinate system info

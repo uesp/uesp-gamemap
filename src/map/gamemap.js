@@ -53,19 +53,14 @@ export default class Gamemap {
 
 			// set the default map info 	
 			this.locations = {};
-			this.mapTiles = [];
 			this.mapWorlds = {};
 			this.mapWorldNameIndex = {};
 			this.mapWorldDisplayNameIndex = {};
 
 			// set up state bools
 			this.defaultShowHidden = false;
-			this.jumpToDestinationOnClick = true;
 			this.openPopupOnJump = false;
-			this.isShowingRecentChanges = false;
-			this.checkTilesOnDrag = true;
 			this.editingEnabled = false;
-			this.isDrawGrid = false;
 			
 			// check user editing permission
 			this.checkPermissions();
@@ -89,44 +84,41 @@ export default class Gamemap {
 
 		// set full image width & height
 		let mapImageDimens = this.getMapImageDimensions();
-		
-		this.mapImage = { // object representing the whole map image
+		this.mapImage = { 
 			width : mapImageDimens.width,  // original width of image
 			height: mapImageDimens.height, // original height of image
 		}
 		
 		var mapOptions = {
-			crs: L.CRS.Simple, // coordinate reference system
+			crs: L.CRS.Simple, // CRS: coordinate reference system
 			zoomSnap: 0,
 			zoomDelta: 0.50,
 			zoomControl: false, // hide leaflet zoom control (we have our own)
          }
 
 		 map = L.map(this.rootMapID, mapOptions);
-		 RC = new RasterCoords(map, this.mapImage)
 		 this.setupInfobar(this.mapConfig);
+
+		 // create map events
+		 this.createEvents();
+
+		 // from here downwards maybe into setstate
+
+
+		 RC = new RasterCoords(map, this.mapImage)
+		 
 		
 		if (this.hasCentreOnParam()) {
 			// find location and centre on it
+		} else if (false) { // check if has url parms 
+			// load state from URL
 		}
+	
 
 		
 		L.marker(RC.unproject([this.mapImage.width/2, this.mapImage.height/2])).addTo(map);
 
-		var latlngs = [[37, 60],[41, 30],[41, 50],[37, 30]];
-		var polygon = L.polygon(latlngs, {color: 'red'}).addTo(map);
-		
 
-		//this.map.setMaxBounds(new L.LatLngBounds(this.maxSouthWest, this.maxNorthEast));
-
-		// set max zoom Level (might be `x` if gdal2tiles was called with `-z 0-x` option)
-		map.setMaxZoom(RC.getZoomLevel())
-		// all coordinates need to be unprojected using the `unproject` method
-		// set the view in the lower right edge of the image
-		map.setView(RC.unproject([this.mapImage.width, this.mapImage.height]), this.mapConfig.defaultZoomLevel)
-		
-		// this.map.setView(this.unproject([this.img[0] / 2, this.img[1] / 2]), this.minZoomLevel);
-	
 	
 		L.tileLayer(this.getMapTileImageURL(this.mapWorlds[this.currentWorldID], this.mapConfig), {
 			noWrap: true,
@@ -138,18 +130,12 @@ export default class Gamemap {
 			edgeBufferTiles: this.mapConfig.numEdgeBufferTiles,
 		}).addTo(map);
 
+		// all coordinates need to be unprojected using the `unproject` method
+		// set the view in the lower right edge of the image
+		map.setView(RC.unproject([this.mapImage.width, this.mapImage.height]), this.mapConfig.defaultZoomLevel)
+
 		// remove map bounds
 		map.setMaxBounds(null); //map being the leaflet map.
-		map.setMaxZoom(this.mapConfig.maxZoomLevel); // force max zoom
-
-		map.on("moveend", function(e){
-			self.updateURL(map, self.mapConfig);
-		})
-
-		map.on("zoomend", function(e){
-			self.updateURL(map, self.mapConfig);
-		})
-
 
 	}
 
@@ -173,6 +159,8 @@ export default class Gamemap {
 
 	// mapstate setter
 	setMapState(mapState, doUpdateMap) {
+
+		this.mapConfig.mapState = mapState;
 
 		if (mapState == null) return;
 		if (doUpdateMap == null) doUpdateMap = true;
@@ -222,7 +210,6 @@ export default class Gamemap {
 	
 			for (var key in data.worlds) {
 				let world = data.worlds[key];
-				print(world);
 
 				if (world.id > self.mapConfig.minWorldID && world.id < self.mapConfig.maxWorldID && world.name != null) {
 					
@@ -281,7 +268,6 @@ export default class Gamemap {
 
 	}
 
-
 	hasMultipleWorlds() {
 		return Object.keys(this.mapWorlds).length > 2;
 	}
@@ -290,7 +276,7 @@ export default class Gamemap {
 
 		let mapLink = "?"
 
-		print(this.toCoords(map.getCenter()));
+		//print(this.toCoords(map.getCenter()));
 		mapLink += "game=" + mapConfig.database;
 
 		if (this.hasMultipleWorlds()){
@@ -580,6 +566,7 @@ export default class Gamemap {
 		}  
 
 		this.clearLocationElements();
+		// load new locations for this map
 
 		this.currentWorldID = worldID;
 		this.mapConfig = this.mapWorlds[this.currentWorldID].mapConfig;
@@ -620,7 +607,7 @@ export default class Gamemap {
 		// if (queryParams.world <= 0) return print("Unknown worldID for current world " + this.currentWorldID + "!");
 
 		// $.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) { self.onReceiveLocationData(data); });
-	
+		changeWorld
 	}
 
 	onReceiveLocationData(data) {
@@ -880,424 +867,67 @@ export default class Gamemap {
 
 	}
 
-	/*================================================
-					 Gamemap Interface
-	================================================*/
-
-	createMapRoot() {
-		this.createMapCanvas();
-	}
-
-	createMapCanvas() {
-
-		let canvasWidth = this.mapRoot.width();
-		let canvasHeight = this.mapRoot.height();
-	
-		print("Creating map canvas with width: " + canvasWidth + ", and height: " + canvasHeight);
-	
-		this.mapCanvas = $('<canvas />').
-							attr('id', 'gmMapCanvas').
-							attr('width', canvasWidth).
-							attr('height', canvasHeight).
-							css('width', canvasWidth).
-							css('height', canvasHeight).
-							css('cursor', "grab").
-							appendTo(this.mapRoot)[0];
-	
-		this.mapCanvasGrid = $('<canvas />').
-							attr('id', 'gmMapCanvasGrid').
-							attr('width', canvasWidth).
-							attr('height', canvasHeight).
-							css('width', canvasWidth).
-							css('height', canvasHeight).
-							css('cursor', "grab").
-							appendTo(this.mapRoot)[0];
-	
-		this.mapCanvasElement = $("#gmMapCanvas");
-		this.mapCanvasGridElement = $("#gmMapCanvasGrid");
-	
-		this.mapContext = this.mapCanvas.getContext("2d");
-		this.mapContextGrid = this.mapCanvasGrid.getContext("2d");
-
-		print("stuff!");
-	
-		this.mapContext.fillStyle = this.mapConfig.bgColour;
-		this.mapContext.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
-	}
-
-	clearOldCanvasTiles() {
-		for (var i in this.canvasImages) {
-			let image = this.canvasImages[i];
-			image.image.showTile = false;
-		}
-	}
-
-	triggerCanvasRedraw() {
-		var self = this;
-
-		//console.log("triggerCanvasRedraw");
-	
-		setTimeout(function() { self.doCanvasRedraw(); } , 100);
-		this.lastCanvasRedrawRequest = Date.now();
-	}
-
-	doCanvasRedraw() {
-		var diffTime = Date.now() - this.lastCanvasRedrawRequest;
-
-		if (diffTime < 100) {
-			//setTimeout(this.doCanvasRedraw, 100);
-			return;
-		}
-	
-		//console.log("doCanvasRedraw");
-	
-		this.redrawCanvas(true);
-		this.lastCanvasRedrawRequest = 0;
-	}
-
-	// loadMapTiles() {
-	// 	var self = this;
-
-	// 	if (!(this.currentWorldID in this.mapWorlds)) {
-	// 		print("Unknown worldID " + this.currentWorldID + "!");
-	// 		return;
-	// 	}
-
-	// 	this.clearOldCanvasTiles();
-
-	// 	var worldName = this.mapWorlds[this.currentWorldID].name;
-	// 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
-
-	// 	print("worldID: " + this.currentWorldID + " worldName: " + worldName);
-
-	// 	this.canvasImages = [];
-	// 	this.canvasImageMap = {};
-	// 	this.canvasTileCountX = this.mapConfig.numTilesX;
-	// 	this.canvasTileCountY = this.mapConfig.numTilesY;
-
-	// 	let canvasBGColor = this.mapConfig.bgColour;
-
-	// 	for (let y = 0; y < this.mapConfig.numTilesY; ++y) {
-	// 		this.canvasImageMap[y] = {};
-
-	// 		for (let x = 0; x < this.mapConfig.numTilesX; ++x) {
-	// 			let tileX = x; //+ this.startTileCanvasX;
-	// 			let tileY = y; //+ this.startTileCanvasY;
-
-	// 			let world = this.mapWorlds[this.currentWorldID];
-
-	// 			//getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
-	// 			let imageURL = this.getMapTileImageURL(tileX, tileY, this.zoomLevel, world, this.mapConfig, this.displayState);
-	// 			let newImage = new Image();
-	// 			let canvasX = tileX * this.mapConfig.tileSize;
-	// 			let canvasY = tileY * this.mapConfig.tileSize;
-
-	// 			newImage.isError = false;
-	// 			newImage.showTile = true;
-	// 			newImage.isLoaded = false;
-
-	// 			let imageInfo = {
-	// 					image: newImage,
-	// 					x: x,
-	// 					y: y,
-	// 					canvasX: canvasX,
-	// 					canvasY: canvasY,
-	// 					tileX : tileX,
-	// 					tileY : tileY,
-	// 			};
-
-	// 			this.canvasImages.push(imageInfo);
-	// 			this.canvasImageMap[y][x] = imageInfo;
-
-	// 			newImage.onerror = function() {
-
-	// 				if (newImage.showTile) {
-	// 					self.mapContext.fillStyle = canvasBGColor;
-	// 					self.mapContext.fillRect(canvasX, canvasY, self.mapConfig.tileSize, self.mapConfig.tileSize);
-	// 					self.triggerCanvasRedraw();
-	// 				}
-
-	// 				newImage.isError = true;
-	// 			}
-
-	// 			newImage.onload = function () {
-
-	// 				if (newImage.showTile) {
-	// 					self.mapContext.drawImage(newImage, canvasX, canvasY, self.mapConfig.tileSize, self.mapConfig.tileSize);
-	// 					self.triggerCanvasRedraw();
-	// 				}
-
-	// 				newImage.isLoaded = true;
-	// 			};
-
-	// 			if (tileX < 0 || tileY < 0) {
-	// 				newImage.onerror();
-	// 			}
-	// 			else {
-	// 				try {
-	// 					newImage.src = imageURL;
-	// 				} catch (e) {
-	// 				}
-					
-	// 			}
-	// 		}
-	// 	}
-
-	// }
-
-
-
-	canvasDrawGrid() {
-		
-		var deltaX = this.mapConfig.gridDeltaX;
-		var deltaY = this.mapConfig.gridDeltaY;
-		var gridOffsetY = this.mapConfig.gridOffsetY;
-		var zoomDiff = this.zoomLevel - this.mapConfig.minZoomLevel
-
-		print("canvasDrawGrid");
-		this.clearMapGridCanvas();
-
-		for (let z = 1; z <= zoomDiff; ++z) {
-			gridOffsetY += Math.pow(2, z + this.mapConfig.gridOffsetPowerY)
-		}
-
-		for (var y = this.mapConfig.gridStartY; y <= this.mapConfig.gridStopY; y += deltaY) {
-			var pos1 = this.convertGameToPixelPos(this.mapConfig.gridStartX, y);
-			var pos2 = this.convertGameToPixelPos(this.mapConfig.gridStopX, y);
-
-			pos1.x -= this.mapTransformX;
-			pos2.x -= this.mapTransformX;
-			pos1.y -= this.mapTransformY + gridOffsetY;
-			pos2.y -= this.mapTransformY + gridOffsetY;
-
-			this.mapContextGrid.beginPath();
-			this.mapContextGrid.moveTo(pos1.x, pos1.y);
-			this.mapContextGrid.lineTo(pos2.x, pos2.y);
-			this.mapContextGrid.lineWidth = 1;
-			this.mapContextGrid.strokeStyle = this.mapConfig.gridStyle;
-			this.mapContextGrid.stroke();
-		}
-	}
-
-	clearMapGridCanvas = function() {
-		this.mapContextGrid.save();
-		this.mapContextGrid.setTransform(1, 0, 0, 1, 0, 0);
-		this.mapContextGrid.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
-		this.mapContextGrid.restore();
-	}
-
-	redrawCanvas = function(redrawGrid) {
-		this.redrawImages();
-		if (redrawGrid) {
-			this.canvasDrawGrid();
-		} 
-		this.drawCellResources();
-		this.redrawLocations();
-	}
-
-	redrawImages() {
-		let worldName = this.mapWorlds[this.currentWorldID].name;
-
-		let canvasBGColor = this.mapConfig.bgColour;
-
-		for (var i in this.canvasImages) {
-			let image = this.canvasImages[i];
-
-			if (image.image.isLoaded) {
-				this.mapContext.drawImage(image.image, image.canvasX, image.canvasY, this.mapConfig.tileSize, this.mapConfig.tileSize);
-			} else {
-				this.mapContext.fillStyle = canvasBGColor;
-				this.mapContext.fillRect(image.canvasX, image.canvasY, this.mapConfig.tileSize, this.mapConfig.tileSize);
-			}
-		}
-	}
-
-	createEvents = function() {
-		let self = this;
-	
-		$(window).on("mousemove", { self: this }, this.onMouseMove);
-		$(window).on("touchmove", { self: this }, this.onTouchMove);
-	
-		if (this.USE_CANVAS_DRAW) {
-			$('#gmMapCanvas').on("mousedown", { self: this }, this.onMouseDown);
-			$('#gmMapCanvas').on("touchstart", { self: this }, this.onTouchStart);
-			$('#gmMapCanvas').on("click", { self: this }, this.onClick);
-			$('#gmMapCanvas').on("dblclick", { self: this }, this.onDblClickCanvas);
-			$(this.mapCanvas).on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScrollCanvas);
-	
-			$('#gmMapCanvasGrid').on("mousedown", { self: this }, this.onMouseDown);
-			$('#gmMapCanvasGrid').on("touchstart", { self: this }, this.onTouchStart);
-			$('#gmMapCanvasGrid').on("click", { self: this }, this.onClick);
-			$('#gmMapCanvasGrid').on("dblclick", { self: this }, this.onDblClickCanvas);
-			$(this.mapCanvasGrid).on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScrollCanvas);
-		}
-
-		if (!this.USE_LEAFLET) {
-			this.mapRoot.on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
-		}
-	
-		$(window).on("mouseup", { self: this }, this.onMouseUp);
-		$(window).on("touchend touchcancel", { self: this }, this.onTouchEnd);
-
-		this.mapContainer.on("contextmenu", {self: this}, this.onRightClick);
-	
-		$(window).on("keyup", { self: this }, this.onKeyUp);
-		$(window).on("keydown", { self: this }, this.onKeyDown);
-	
-		$(window).on('resize', { self: this }, this.onResize);
-	
-		$(document).ready(function() {
-				self.onDocReady();
-		});
-	
-		$('.gmMapTile').dblclick({ self: this }, this.onDoubleClick);
-	}
 
 	/*================================================
 						  Events 
 	================================================*/
 
-	onResize(event) {
-		let self = event.data.self;
+	createEvents() {
+		
+		map.on("moveend", function(e){
+			self.updateURL(map, self.mapConfig);
+		})
 
-		let canvasWidth = self.mapContainer.width();
-		let canvasHeight = self.mapContainer.height();
+		map.on("dblclick", function(event){
+			alert(self.toCoords(event.latlng));
+			return true;
+		})
 
-		print("OnResize: " + canvasWidth + ", " + canvasHeight);
+		map.on("zoomend", function(e){
+			self.updateURL(map, self.mapConfig);
+		})
 
-		$(self.mapCanvas).attr('width', canvasWidth).
-							attr('height', canvasHeight).
-							css('width', canvasWidth).
-							css('height', canvasHeight);
-
-		$(self.mapCanvasGrid).attr('width', canvasWidth).
-							attr('height', canvasHeight).
-							css('width', canvasWidth).
-							css('height', canvasHeight);
-
-		let worldName = self.mapWorlds[self.currentWorldID].name;
-		let canvasBGColor = DEFAULT_MAP_CONFIG.bgColour;
-
-		if (self.mapContext) {
-			self.mapContext.fillStyle = canvasBGColor;
-			self.mapContext.fillRect(0, 0, self.mapCanvas.width, self.mapCanvas.height);
-
-			self.mapContext.translate(self.mapTransformX, self.mapTransformY);
-			self.mapContextGrid.translate(self.mapTransformX, self.mapTransformY);
-		}
-
-		self.redrawCanvas(true);
-	}
+				// $(window).on("mousemove", { self: this }, this.onMouseMove);
+		// $(window).on("touchmove", { self: this }, this.onTouchMove);
 	
-	onMouseMove(event) {
-
-		var self = event.data.self;
-
-		if (self.isDragging) {
-			self.onDragMove(event);
-			event.preventDefault();
-		} else if (self.currentEditMode == 'edithandles') {
-			self.currentEditLocation.onPathMouseMoveCanvas(event);
-		} else {
-			self.checkCanvasHover(event);
-		}
-
-	}
-
-	onMouseDown(event) {
-		var self = event.data.self;
-		event.preventDefault();
+		// if (this.USE_CANVAS_DRAW) {
+		// 	$('#gmMapCanvas').on("mousedown", { self: this }, this.onMouseDown);
+		// 	$('#gmMapCanvas').on("touchstart", { self: this }, this.onTouchStart);
+		// 	$('#gmMapCanvas').on("click", { self: this }, this.onClick);
+		// 	$('#gmMapCanvas').on("dblclick", { self: this }, this.onDblClickCanvas);
+		// 	$(this.mapCanvas).on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScrollCanvas);
 	
-		print("onMouseDownCanvas");
+		// 	$('#gmMapCanvasGrid').on("mousedown", { self: this }, this.onMouseDown);
+		// 	$('#gmMapCanvasGrid').on("touchstart", { self: this }, this.onTouchStart);
+		// 	$('#gmMapCanvasGrid').on("click", { self: this }, this.onClick);
+		// 	$('#gmMapCanvasGrid').on("dblclick", { self: this }, this.onDblClickCanvas);
+		// 	$(this.mapCanvasGrid).on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScrollCanvas);
+		// }
+
+		// if (!this.USE_LEAFLET) {
+		// 	this.mapRoot.on('DOMMouseScroll mousewheel', { self: this }, this.onMouseScroll);
+		// }
 	
-		if (event.which != 1) return false;
+		// $(window).on("mouseup", { self: this }, this.onMouseUp);
+		// $(window).on("touchend touchcancel", { self: this }, this.onTouchEnd);
+
+		// this.mapContainer.on("contextmenu", {self: this}, this.onRightClick);
 	
-		if (self.currentEditMode == 'edithandles')
-			self.currentEditLocation.onPathEditHandlesMouseDown(event);
-		else if (self.currentEditMode == '')
-			self.onDragStart(event);
-	}
-
-	onMouseUp = function(event) {
-		var self = event.data.self;
+		// $(window).on("keyup", { self: this }, this.onKeyUp);
+		// $(window).on("keydown", { self: this }, this.onKeyDown);
 	
-		print("onMouseUpCanvas");
+		// $(window).on('resize', { self: this }, this.onResize);
 	
-		if (event.which != 1) return false;
+		// $(document).ready(function() {
+		// 		self.onDocReady();
+		// });
 	
-		if (self.isDragging) {
-			//uesp.logDebug(uesp.LOG_LEVEL_INFO, "onMouseUpCanvas::EndDrag");
-			self.onDragEnd(event);
-			event.preventDefault();
-		}
-		else if (self.currentEditLocation != null && self.currentEditLocation.draggingPathHandle >= 0) {
-			self.currentEditLocation.onPathEditHandlesDragEnd(event);
-		}
-	}
+		// $('.gmMapTile').dblclick({ self: this }, this.onDoubleClick);
 
-	
-	onClick(event) {
-		var self = event.data.self;
 
-		if (event.which == 3)
-			return self.onRightClick(event);
-		else if (event.which != 1)
-			return false;
-
-		print("onClick");
-
-		if (self.currentEditMode == 'addlocation')
-			self.onAddLocationClick(event);
-		else if (self.currentEditMode == 'addpath')
-			self.onAddPathClick(event);
-		else if (self.currentEditMode == 'addarea')
-			self.onAddAreaClick(event);
-		else if (self.currentEditMode == 'draglocation')
-			self.onDragLocationClick(event);
-		else if (self.currentEditMode != '' )
-			return false;
-		else if (self.USE_CANVAS_DRAW)
-			return self.onCanvasClick(event);
-
-		return true;
-	}
-
-	onCanvasClick(event) {
-		var self = event.data.self;
-
-		if (!self.USE_CANVAS_DRAW) return false;
-
-		print("onCanvasClick", event);
-
-		var foundLoc = self.findLocationAt(event.pageX, event.pageY);
-		if (foundLoc == null) return false;
-
-		foundLoc.onLabelClick(event);
-
-		return true;
 	}
 
 
-	onDragStart(event) {
-		let mapOffset = this.mapRoot.offset();
-
-		this.dragStartLeft = event.pageX - mapOffset.left;
-		this.dragStartTop = event.pageY - mapOffset.top;
-
-		this.dragStartLeftCanvas = event.pageX;
-		this.dragStartTopCanvas = event.pageY;
-
-		this.dragStartEventX = event.pageX;
-		this.dragStartEventY = event.pageY;
-
-		this.canvasLastDragX = 0;
-		this.canvasLastDragY = 0;
-
-		this.draggingObject = $(event.target);
-		this.isDragging = true;
-
-		print("Drag Start Offset: " + this.dragStartLeft + ", " + this.dragStartTop);
-	}
 	
 
 	/*================================================
@@ -1369,41 +999,7 @@ export default class Gamemap {
 	
 		return mapLink;
 
-	}
-
-	checkCanvasHover(event) {
-		let needsUpdate = false;
-
-		let hoverLocation = this.findLocationAt(event.pageX, event.pageY);
-		if (hoverLocation == this.lastCanvasHoverLocation) return;
-
-		if (hoverLocation) {
-			hoverLocation.isHoverCanvas = true;
-			needsUpdate = true;
-		}
-
-		if (this.lastCanvasHoverLocation) {
-			this.lastCanvasHoverLocation.isHoverCanvas = false;
-			this.lastCanvasHoverLocation.hideTooltip();
-			this.lastCanvasHoverLocation = null;
-			needsUpdate = true;
-		}
-
-		if (needsUpdate) {
-			this.lastCanvasHoverLocation = hoverLocation;
-			this.redrawCanvas();
-
-			if (this.lastCanvasHoverLocation) {
-				this.mapCanvasGridElement.css('cursor', 'pointer')
-				if (this.lastCanvasHoverLocation.shouldShowTooltip()) this.lastCanvasHoverLocation.showTooltip();
-			}
-			else {
-				this.mapCanvasGridElement.css('cursor', "grab")
-			}
-		}
-	}
-
-	
+	}	
 
 	isValidZoom(zoom) {
 		if (zoom == null ) {
@@ -1914,158 +1510,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.loadMapTilesCanvasRowColPriv = function(startX, startY, dx, dy)
-// {
-// 	let worldName = this.mapWorlds[this.currentWorldID].name;
-// 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
-// 	let self = this;
-
-// 	let canvasBGColor = this.mapConfig.canvasBGColor;
-// 	if (this.mapConfig.canvasBGColorFunction !== null) canvasBGColor = this.mapConfig.canvasBGColorFunction(worldName, this.displayState);
-
-// 	for (y = startY; y < startY + dy; ++y)
-// 	{
-// 		if (this.canvasImageMap[y] == null)	this.canvasImageMap[y] = {};
-
-// 		for (x = startX; x < startX + dx; ++x)
-// 		{
-// 			if (this.canvasImageMap[y][x] != null) continue;
-
-// 			let tileX = x + this.origStartTileCanvasX;
-// 			let tileY = y + this.origStartTileCanvasY;
-
-// 			let imageURL = this.mapConfig.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
-// 			let newImage = new Image();
-// 			let canvasX = tileX * this.mapConfig.tileSize;
-// 			let canvasY = tileY * this.mapConfig.tileSize;
-
-// 			newImage.isError = false;
-// 			newImage.showTile = true;
-// 			newImage.isLoaded = false;
-
-// 			let imageInfo = {
-// 					image: newImage,
-// 					x: x,
-// 					y: y,
-// 					canvasX: canvasX,
-// 					canvasY: canvasY,
-// 					tileX : tileX,
-// 					tileY : tileY,
-// 			};
-
-// 			this.canvasImages.push(imageInfo);
-// 			this.canvasImageMap[y][x] = imageInfo;
-
-// 			newImage.onerror = function() {
-
-// 				if (newImage.showTile)
-// 				{
-// 					self.mapContext.fillStyle = canvasBGColor;
-// 					self.mapContext.fillRect(canvasX, canvasY, self.mapConfig.tileSize, self.mapConfig.tileSize);
-// 				}
-
-// 				newImage.isError = true;
-// 			}
-
-// 			newImage.onload = function () {
-
-// 				if (newImage.showTile)
-// 				{
-// 					self.mapContext.drawImage(newImage, canvasX, canvasY, self.mapConfig.tileSize, self.mapConfig.tileSize);
-// 				}
-
-// 				newImage.isLoaded = true;
-// 			};
-
-// 			if (tileX < 0 || tileY < 0)
-// 			{
-// 				newImage.onerror();
-// 			}
-// 			else
-// 			{
-// 				newImage.src = imageURL;
-// 			}
-
-// 		}
-// 	}
-
-// }
-
-
-// uesp.gamemap.Map.prototype.loadMapTilesRowCol = function(xIndex, yIndex)
-// {
-// 	if (uesp.gamemap.isNullorUndefined(this.mapConfig.getMapTileFunction)) return;
-
-// 	if (!(this.currentWorldID in this.mapWorlds))
-// 	{
-// 		uesp.logError("Unknown worldID " + this.currentWorldID + "!");
-// 		return;
-// 	}
-
-// 	var world = this.mapWorlds[this.currentWorldID];
-// 	var worldName = world.name;
-// 	var worldName = this.mapWorlds[this.currentWorldID].name;
-// 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
-// 	var isFakeMaxZoom = false;
-
-// 	var missingTile = this.mapConfig.missingMapTile;
-// 	if (this.mapConfig.missingMapTileFunction !== null) missingTile = this.mapConfig.missingMapTileFunction(worldName, this.displayState);
-
-// 	if (this.zoomLevel == world.maxZoom && this.mapConfig.useFakeMaxZoom)
-// 	{
-// 		isFakeMaxZoom = true;
-// 	}
-
-// 	for (y = 0; y < this.mapConfig.numTilesY; ++y)
-// 	{
-// 		for (x = 0; x < this.mapConfig.numTilesX; ++x)
-// 		{
-// 			if (xIndex >= 0 && this.mapTiles[y][x].deltaTileX != xIndex) continue;
-// 			if (yIndex >= 0 && this.mapTiles[y][x].deltaTileY != yIndex) continue;
-
-// 			var tileX = this.mapTiles[y][x].deltaTileX + this.startTileX;
-// 			var tileY = this.mapTiles[y][x].deltaTileY + this.startTileY;
-
-// 			//if (tileX < 0 || tileY < 0 || tileX >= maxTiles || tileY >= maxTiles)
-// 			if (tileX < 0 || tileY < 0)
-// 			{
-// 				this.mapTiles[y][x].element.css("background-image", "url(" + missingTile + ")");
-// 				continue;
-// 			}
-
-// 			var imageURL = this.mapConfig.getMapTileFunction(tileX, tileY, this.zoomLevel, worldName, this.displayState);
-// 			var element  = this.mapTiles[y][x].element;
-
-// 			if (isFakeMaxZoom)
-// 			{
-// 				var xPos = "left";
-// 				var yPos = "top";
-
-// 				if (tileX % 2 == 1) xPos = "right";
-// 				if (tileY % 2 == 1) yPos = "bottom";
-
-// 				element.css("background-size", "200%");
-// 				element.css("background-position", xPos + " " + yPos);
-
-// 				imageURL = this.mapConfig.getMapTileFunction(Math.floor(tileX/2), Math.floor(tileY/2), this.zoomLevel-1, worldName, this.displayState);
-
-// 				$('<img/>').attr('src', imageURL)
-// 					.load( uesp.gamemap.onMapTileLoadFunction(element, imageURL))
-// 					.error(uesp.gamemap.onMapTileLoadFunction(element, missingTile));
-// 			}
-// 			else
-// 			{
-// 				element.css("background-size", "");
-// 				element.css("background-position", "");
-
-// 				$('<img/>').attr('src', imageURL)
-// 					.load( uesp.gamemap.onMapTileLoadFunction(element, imageURL))
-// 					.error(uesp.gamemap.onMapTileLoadFunction(element, missingTile));
-// 			}
-
-// 		}
-// 	}
-// }
 
 
 // uesp.gamemap.Map.prototype.createEditNoticeDiv = function()
@@ -3131,249 +2575,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.translateCanvas = function(dx, dy, animate)
-// {
-// 	dx = Math.floor(dx);
-// 	dy = Math.floor(dy);
-
-// 	this.mapTransformX += dx;
-// 	this.mapTransformY += dy;
-
-// 		/* TODO: Animate optionally
-// 		 *  	window.requestAnimationFrame()
-// 		 */
-// 	this.mapContext.translate(dx, dy);
-// 	this.mapContextGrid.translate(dx, dy);
-// }
-
-
-// uesp.gamemap.Map.prototype.zoomIn = function(x, y)
-// {
-// 	if (this.USE_CANVAS_DRAW) return this.zoomInCanvas(x, y);
-
-// 	this.updateZoomControlButtons(this.zoomLevel + 1);
-// 	if (this.zoomLevel >= this.mapConfig.maxZoomLevel) return;
-
-// 	var curPos = this.getGamePositionOfCenter();
-
-// 	this.zoomLevel++;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoom In (" + x + ", " + y + ") = " + this.zoomLevel);
-
-// 	if (x == null) x = this.mapContainer.width() /2;
-// 	if (y == null) y = this.mapContainer.height()/2;
-
-// 	var mapOffset  = this.mapContainer.offset();
-// 	var rootOffset = this.mapRoot.offset();
-
-// 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapConfig.tileSize;
-// 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapConfig.tileSize;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin tile = " + tileX + ", " + tileY);
-
-// 	newTileX = tileX*2 - this.mapConfig.numTilesX/2;
-// 	newTileY = tileY*2 - this.mapConfig.numTilesY/2;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin newTile = " + newTileX + ", " + newTileY);
-
-// 	this.startTileX = Math.floor(newTileX);
-// 	this.startTileY = Math.floor(newTileY);
-
-// 	newOffsetX = Math.round(mapOffset.left + x - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - newTileX) * this.mapConfig.tileSize);
-// 	newOffsetY = Math.round(mapOffset.top  + y - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - newTileY) * this.mapConfig.tileSize);
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin newOffset = " + newOffsetX + ", " + newOffsetY, mapOffset, this.startTileX);
-// 	this.mapRoot.offset({ left: newOffsetX, top: newOffsetY});
-
-// 	this.updateLocations(true);
-// 	this.loadMapTiles();
-// }
-
-
-// uesp.gamemap.Map.prototype.zoomInCanvas = function(x, y)
-// {
-// 	this.updateZoomControlButtons(this.zoomLevel + 1);
-// 	if (this.zoomLevel >= this.mapConfig.maxZoomLevel) return;
-
-// 	var curPos = this.getGamePositionOfCenter();
-
-// 	this.zoomLevel++;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoom In (" + x + ", " + y + ") = " + this.zoomLevel);
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin OrigOffset = " + this.mapTransformX + ", " + this.mapTransformY);
-
-// 	if (x == null) x = this.mapCanvas.width/2;
-// 	if (y == null) y = this.mapCanvas.height/2;
-
-// 	let tileX = (x - this.mapTransformX) / this.mapConfig.tileSize;
-// 	let tileY = (y - this.mapTransformY) / this.mapConfig.tileSize;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin tile = " + tileX + ", " + tileY);
-
-// 	let newOffsetX = x - tileX * 2 * this.mapConfig.tileSize;
-// 	let newOffsetY = y - tileY * 2 * this.mapConfig.tileSize;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin newOffset = " + newOffsetX + ", " + newOffsetY);
-
-// 	let origTileX = tileX*2 - this.mapConfig.numTilesX/2;
-// 	let origTileY = tileY*2 - this.mapConfig.numTilesY/2;
-
-// 	var mapOffset  = this.mapContainer.offset();
-// 	var rootOffset = this.mapRoot.offset();
-
-// 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapConfig.tileSize;
-// 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapConfig.tileSize;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin tile = " + tileX + ", " + tileY);
-
-// 	let newTileX = tileX*2 - this.mapConfig.numTilesX/2;
-// 	let newTileY = tileY*2 - this.mapConfig.numTilesY/2;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin newTile = " + newTileX + ", " + newTileY);
-
-// 	this.startTileX = Math.floor(origTileX);
-// 	this.startTileY = Math.floor(origTileY);
-// 	this.startTileCanvasX = this.startTileX;
-// 	this.startTileCanvasY = this.startTileY;
-// 	this.origStartTileCanvasX = this.startTileX;
-// 	this.origStartTileCanvasY = this.startTileY;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin startTile = " + this.startTileX + ", " + this.startTileY);
-
-// 	this.startTileX = 0;
-// 	this.startTileY = 0;
-
-// 	let newOffsetX1 = (mapOffset.left + x - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - newTileX) * this.mapConfig.tileSize);
-// 	let newOffsetY1 = (mapOffset.top  + y - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - newTileY) * this.mapConfig.tileSize);
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Zoomin newOffset1 = " + newOffsetX1 + ", " + newOffsetY1, mapOffset, this.startTileX);
-
-// 		/* Fix for slow drift when zooming in/out multiple times */
-// 	let diffX = newOffsetX - newOffsetX1;
-// 	let diffY = newOffsetY - newOffsetY1;
-// 	let newOffsetX2 = newOffsetX - Math.round(diffX / this.mapConfig.tileSize) * this.mapConfig.tileSize + mapOffset.left;
-// 	let newOffsetY2 = newOffsetY - Math.round(diffY / this.mapConfig.tileSize) * this.mapConfig.tileSize + mapOffset.top;
-
-// 	//this.mapRoot.offset({ left: newOffsetX2, top: newOffsetY2});
-
-// 	this.resetTranslateCanvas();
-// 	this.translateCanvas(newOffsetX, newOffsetY);
-
-// 	this.mapContext.scale(2, 2);
-// 	this.clearMapCanvas();
-// 	this.redrawCanvas(false);
-
-// 	this.resetTranslateCanvas();
-// 	this.translateCanvas(newOffsetX, newOffsetY);
-
-// 	this.updateLocationsCanvas(true);
-// 	this.loadMapTiles();
-
-// 	this.redrawCanvas(false);
-// }
-
-
-// uesp.gamemap.Map.prototype.resetTranslateCanvas = function()
-// {
-// 	this.mapContext.setTransform(1, 0, 0, 1, 0, 0);
-// 	this.mapContextGrid.setTransform(1, 0, 0, 1, 0, 0);
-// 	this.mapTransformX = 0;
-// 	this.mapTransformY = 0;
-// }
-
-
-// uesp.gamemap.Map.prototype.zoomOut = function(x, y)
-// {
-// 	if (this.USE_CANVAS_DRAW) return this.zoomOutCanvas(x, y);
-
-// 	this.updateZoomControlButtons(this.zoomLevel - 1);
-// 	if (this.zoomLevel <= this.mapConfig.minZoomLevel) return;
-
-// 	this.zoomLevel--;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut (" + x + ", " + y + ") = " + this.zoomLevel);
-
-// 	if (x == null) x = this.mapContainer.width() /2;
-// 	if (y == null) y = this.mapContainer.height()/2;
-
-// 	var mapOffset  = this.mapContainer.offset();
-// 	var rootOffset = this.mapRoot.offset();
-
-// 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapConfig.tileSize;
-// 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapConfig.tileSize;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut tile = " + tileX + ", " + tileY);
-
-// 	newTileX = tileX/2 - this.mapConfig.numTilesX/2;
-// 	newTileY = tileY/2 - this.mapConfig.numTilesY/2;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut newTile = " + newTileX + ", " + newTileY);
-
-// 	this.startTileX = Math.floor(newTileX);
-// 	this.startTileY = Math.floor(newTileY);
-
-// 	newOffsetX = Math.round(mapOffset.left + x - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - newTileX) * this.mapConfig.tileSize);
-// 	newOffsetY = Math.round(mapOffset.top  + y - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - newTileY) * this.mapConfig.tileSize);
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut newOffset = " + newOffsetX + ", " + newOffsetY);
-
-// 	this.mapRoot.offset({ left: newOffsetX, top: newOffsetY});
-
-// 	this.updateLocations(true);
-// 	this.loadMapTiles();
-// }
-
-
-// uesp.gamemap.Map.prototype.zoomOutCanvas = function(x, y)
-// {
-// 	this.updateZoomControlButtons(this.zoomLevel - 1);
-// 	if (this.zoomLevel <= this.mapConfig.minZoomLevel) return;
-
-// 	this.zoomLevel--;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut (" + x + ", " + y + ") = " + this.zoomLevel);
-
-// 	if (x == null) x = this.mapCanvas.width/2;
-// 	if (y == null) y = this.mapCanvas.height/2;
-
-// 	let tileX = (x - this.mapTransformX) / this.mapConfig.tileSize;
-// 	let tileY = (y - this.mapTransformY) / this.mapConfig.tileSize;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut tile = " + tileX + ", " + tileY);
-
-// 	let newOffsetX = x - tileX / 2 * this.mapConfig.tileSize;
-// 	let newOffsetY = y - tileY / 2 * this.mapConfig.tileSize;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut newOffset = " + newOffsetX + ", " + newOffsetY);
-
-// 	let origTileX = tileX/2 - this.mapConfig.numTilesX/2;
-// 	let origTileY = tileY/2 - this.mapConfig.numTilesY/2;
-
-// 	var mapOffset  = this.mapContainer.offset();
-// 	var rootOffset = this.mapRoot.offset();
-// 	tileX = this.startTileX + (x + mapOffset.left - rootOffset.left) / this.mapConfig.tileSize;
-// 	tileY = this.startTileY + (y + mapOffset.top  - rootOffset.top)  / this.mapConfig.tileSize;
-// 	let newTileX = tileX/2 - this.mapConfig.numTilesX/2;
-// 	let newTileY = tileY/2 - this.mapConfig.numTilesY/2;
-
-// 	this.startTileX = Math.floor(origTileX);
-// 	this.startTileY = Math.floor(origTileY);
-// 	this.startTileCanvasX = this.startTileX;
-// 	this.startTileCanvasY = this.startTileY;
-// 	this.origStartTileCanvasX = this.startTileX;
-// 	this.origStartTileCanvasY = this.startTileY;
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "ZoomOut startTile = " + this.startTileX + ", " + this.startTileY);
-
-// 	this.startTileX = 0;
-// 	this.startTileY = 0;
-
-// 	let newOffsetX1 = (mapOffset.left + x - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - newTileX) * this.mapConfig.tileSize);
-// 	let newOffsetY1 = (mapOffset.top  + y - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - newTileY) * this.mapConfig.tileSize);
-
-// 		/* Fix for slow drift when zooming in/out multiple times */
-// 	let diffX = newOffsetX - newOffsetX1;
-// 	let diffY = newOffsetY - newOffsetY1;
-// 	let newOffsetX2 = newOffsetX - Math.round(diffX / this.mapConfig.tileSize) * this.mapConfig.tileSize + mapOffset.left;
-// 	let newOffsetY2 = newOffsetY - Math.round(diffY / this.mapConfig.tileSize) * this.mapConfig.tileSize + mapOffset.top;
-
-// 	//this.mapRoot.offset({ left: newOffsetX2, top: newOffsetY2});
-
-// 	this.resetTranslateCanvas();
-// 	this.translateCanvas(newOffsetX, newOffsetY);
-
-// 	this.mapContext.scale(0.5, 0.5);
-// 	this.clearMapCanvas();
-// 	this.redrawCanvas(false);
-
-// 	this.resetTranslateCanvas();
-// 	this.translateCanvas(newOffsetX, newOffsetY);
-
-// 	this.updateLocationsCanvas(true);
-// 	this.loadMapTiles();
-// }
-
 
 // uesp.gamemap.Map.prototype.updateLocationId = function(oldId, newId)
 // {
@@ -3824,63 +3025,6 @@ export default class Gamemap {
 
 // }
 
-
-// uesp.gamemap.Map.prototype.pan = function (deltaX, deltaY)
-// {
-// 	if (this.USE_CANVAS_DRAW) return this.panCanvas(deltaX, deltaY);
-
-// 	var self = this;
-
-// 	this.mapRoot.animate({ left: '+=' + deltaX, top: '+=' + deltaY }, 500);
-
-// 	setTimeout(function() {
-// 		self.checkTileEdges();
-// 		self.updateLocations();
-// 		self.loadMapTiles();
-// 	}, 600);
-
-// }
-
-
-// uesp.gamemap.Map.prototype.panCanvas = function (deltaX, deltaY)
-// {
-// 	let self = this;
-
-// 	this.translateCanvas(deltaX, deltaY);
-// 	this.redrawCanvas(true);
-
-// 	this.mapRoot.animate({ left: '+=' + deltaX, top: '+=' + deltaY }, 0);
-
-// 	setTimeout(function() {
-// 		self.checkTileEdges();
-// 		self.updateLocations();
-// 		self.loadMapTiles();
-// 	}, 1);
-// }
-
-
-// uesp.gamemap.Map.prototype.panLeft = function ()
-// {
-// 	this.pan(this.PAN_AMOUNT, 0);
-// }
-
-
-// uesp.gamemap.Map.prototype.panRight = function ()
-// {
-// 	this.pan(-this.PAN_AMOUNT, 0);
-// }
-
-
-// uesp.gamemap.Map.prototype.panUp = function ()
-// {
-// 	this.pan(0, this.PAN_AMOUNT);
-// }
-
-
-// uesp.gamemap.Map.prototype.panDown = function ()
-// {
-// 	this.pan(0, -this.PAN_AMOUNT);
-// }
 
 
 // uesp.gamemap.Map.prototype.createHelpBlockElement = function()
