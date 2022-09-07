@@ -34,6 +34,9 @@ var noAnalytics = true;
 print("Page initialising...");
 $(document).ready(function() {
 
+
+	
+
 	// load gamemap
 	print("Initialising gamemap...");
 	initGamemap();

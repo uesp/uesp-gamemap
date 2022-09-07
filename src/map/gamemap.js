@@ -16,6 +16,8 @@ import RasterCoords from "./rasterCoords.js";
 				Gamemap constructor
 ================================================*/
 
+var map;
+
 export default class Gamemap {
 
 	/**
@@ -41,6 +43,8 @@ export default class Gamemap {
 				throw new Error('The gamemap container \'' + mapRootID + '\' was not found!');
 			} 
 			this.mapRoot = $('<div />').attr('id', 'gmMapRoot').appendTo(this.mapRoot);
+
+			$("#"+mapRootID).css("background-color", mapConfig.bgColour);
 
 			// set the default map info 	
 			this.mapWorlds = {};
@@ -104,24 +108,27 @@ export default class Gamemap {
 			crs: L.CRS.Simple, // coordinate reference system
          }
 		
+		//  zoomend
+		// moveend
+		// getCenter()
 		// create the map
-		this.map = L.map(this.rootMapID, mapOptions);
+		map = L.map(this.rootMapID, mapOptions);
 
-		var rc = new RasterCoords(this.map, this.img)
+		var rc = new RasterCoords(map, this.img)
 
-		L.marker(rc.unproject([width/2, height/2])).addTo(this.map);
+		L.marker(rc.unproject([width/2, height/2])).addTo(map);
 
 		var latlngs = [[37, 60],[41, 30],[41, 50],[37, 30]];
-		var polygon = L.polygon(latlngs, {color: 'red'}).addTo(this.map);
+		var polygon = L.polygon(latlngs, {color: 'red'}).addTo(map);
 		
 
 		//this.map.setMaxBounds(new L.LatLngBounds(this.maxSouthWest, this.maxNorthEast));
 
 		// set max zoom Level (might be `x` if gdal2tiles was called with `-z 0-x` option)
-		this.map.setMaxZoom(rc.getZoomLevel())
+		map.setMaxZoom(rc.getZoomLevel())
 		// all coordinates need to be unprojected using the `unproject` method
 		// set the view in the lower right edge of the image
-		this.map.setView(rc.unproject([this.img[0], this.img[1]]), 1)
+		map.setView(rc.unproject([this.img[0], this.img[1]]), 1)
 		
 		// this.map.setView(this.unproject([this.img[0] / 2, this.img[1] / 2]), this.minZoomLevel);
 	
@@ -133,11 +140,19 @@ export default class Gamemap {
 			errorTileUrl: this.mapConfig.missingMapTile,
 			minZoom: this.mapConfig.minZoomLevel,
 			maxZoom: this.mapConfig.maxZoomLevel,
-		}).addTo(this.map);
+		}).addTo(map);
 
 
 		// remove map bounds
-		this.map.setMaxBounds(null); //map being the leaflet map.
+		map.setMaxBounds(null); //map being the leaflet map.
+
+
+		map.on("moveend", function(e){
+			print("hello world");
+			print(rc.project(map.getCenter()));
+			//window.location = window.location + rc.project(map.getCenter());
+		})
+		 
 
 
 		this.setupInfobar(this.mapConfig);
@@ -145,11 +160,9 @@ export default class Gamemap {
 
 	}
 
-
-
 	setupInfobar(mapConfig) {
-		this.map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home"><b class="wikiTitle">UESP</b></a>');
-		this.map.attributionControl.addAttribution('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  <a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>' );
+		map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home"><b class="wikiTitle">UESP</b></a>');
+		map.attributionControl.addAttribution('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  <a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>' );
 	}
 
 
@@ -196,7 +209,9 @@ export default class Gamemap {
 	}
 
 
-
+	getMapObject() {
+		return map;
+	}
 
 	// tileX, tileY, zoom, world
 	getMapTileImageURL(world, mapConfig) {

@@ -40,7 +40,7 @@ export function getJSON(url, callback) {
 ================================================*/
 
 export function getURLParams(){
-	let urlParams = window.location.search.replace("?", '');
+	let urlParams = location.hash.replace("#\?", '');
 	urlParams = urlParams.toLowerCase();
 	return new URLSearchParams(urlParams); //create params array
 }
