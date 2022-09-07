@@ -35,8 +35,8 @@ export default class World {
 		
 		this.mapState = new MapState();
 		this.mapState.worldID = this.id;
-		this.mapState.gamePos.x = mapConfig.xPos;
-		this.mapState.gamePos.y = mapConfig.yPos;
+		this.mapState.coords.x = mapConfig.xPos;
+		this.mapState.coords.y = mapConfig.yPos;
 		this.mapState.zoomLevel = mapConfig.zoomLevel;
 		
 		/* Special case for ESO Tamriel Aurbis map */
@@ -58,14 +58,14 @@ export default class World {
 		this.mapConfig.maxY = this.maxY;
 	
 		this.mapState.worldId = this.id;
-		this.mapState.gamePos.x = this.mapConfig.xPos;
-		this.mapState.gamePos.y = this.mapConfig.yPos;
+		this.mapState.coords.x = this.mapConfig.xPos;
+		this.mapState.coords.y = this.mapConfig.yPos;
 		this.mapState.zoomLevel = this.mapConfig.zoomLevel;
 		
 		/* Special case for ESO Tamriel Aurbis map */
 		if (this.id == 667) 
 		{
-			this.mapState.gamePos.y = 500000;
+			this.mapState.coords.y = 500000;
 			this.mapState.zoomLevel = 9;
 		}
 	} 

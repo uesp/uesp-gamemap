@@ -19,7 +19,7 @@ var self; // Global "this" instance of Gamemap
 var RC; // RasterCoords instance, for converting leaflet latlongs to XY coords and back
 
 /*================================================
-				Gamemap constructor
+				  Constructor
 ================================================*/
 export default class Gamemap {
 
@@ -80,7 +80,7 @@ export default class Gamemap {
 	}
 
 	/*================================================
-					  Initialise
+					   Initialise
 	================================================*/
 
 	initialiseMap() {
@@ -106,23 +106,11 @@ export default class Gamemap {
 		 RC = new RasterCoords(map, this.mapImage)
 		 this.setupInfobar(this.mapConfig);
 		
-					// if (!gamemap.hasCentreOnParam()) {
-			// 	//jump to default map
-			// 	let defaultMapState = new MapState();
-		
-			// 	defaultMapState.worldID = gamemap.mapConfig.homeWorldID;
-			// 	defaultMapState.zoomLevel = gamemap.mapConfig.zoomLevel;
-			// 	defaultMapState.gamePos.x = gamemap.mapConfig.xPos;
-			// 	defaultMapState.gamePos.y = gamemap.mapConfig.yPos;
-		
-			// 	let mapState = gamemap.getMapStateFromQuery(defaultMapState);
-			// 	gamemap.setMapState(mapState);
-			// } 
+		if (this.hasCentreOnParam()) {
+			// find location and centre on it
+		}
 
 		
-
-		
-
 		L.marker(RC.unproject([this.mapImage.width/2, this.mapImage.height/2])).addTo(map);
 
 		var latlngs = [[37, 60],[41, 30],[41, 50],[37, 30]];
@@ -165,33 +153,41 @@ export default class Gamemap {
 
 	}
 
+	/*================================================
+						  State 
+	================================================*/
+
 	// mapstate getter
 	getMapState() {
 		let mapState = new MapState();
 
-		mapState.game = this.mapConfig.database;
+		mapState.game 		  = this.mapConfig.database;
 		mapState.coords       = this.toCoords(map.getCenter());
-		mapState.zoomLevel    = this.zoomLevel;
+		mapState.zoomLevel    = parseFloat(map.getZoom().toFixed(3));
 		mapState.worldID      = this.currentWorldID;
-		mapState.grid         = this.isDrawGrid;
-		mapState.cellResource = this.cellResource;
-		mapState.displayState = this.displayState;
-
-		let mapLink = "?"
-
-		mapLink += "map=" + mapConfig.database;
-
-		if (this.hasMultipleWorlds()){
-			mapLink += '&world=' + this.currentWorldID;
-		}
-
-		mapLink += '&x=' + this.toCoords(map.getCenter()).x;
-		mapLink += '&y=' + this.toCoords(map.getCenter()).y;
-		mapLink += '&zoom=' + parseFloat(map.getZoom().toFixed(3));
+		// mapState.grid         = this.isDrawGrid;
+		// mapState.cellResource = this.cellResource;
 
 		return mapState;
 	}
 
+	// mapstate setter
+	setMapState(mapState, doUpdateMap) {
+
+		if (mapState == null) return;
+		if (doUpdateMap == null) doUpdateMap = true;
+
+		this.isDrawGrid = newState.grid;
+		this.cellResource = newState.cellResource;
+		this.displayState = newState.displayState;
+
+		if (this.currentWorldID != newState.worldID) {
+			this.changeWorld(newState.worldID, newState, updateMap);
+		} else {
+			this.setGamePos(newState.coords.x, newState.coords.y, newState.zoomLevel, updateMap);
+		}
+
+	}
 
 	/*================================================
 						  Worlds 
@@ -488,23 +484,6 @@ export default class Gamemap {
 						Map state
 	================================================*/
 
-	// mapstate setter
-	setMapState (newState, updateMap) {
-		if (newState == null) return;
-		if (updateMap == null) updateMap = true;
-
-		this.isDrawGrid = newState.grid;
-		this.cellResource = newState.cellResource;
-		this.displayState = newState.displayState;
-
-		if (this.currentWorldID != newState.worldID) {
-			this.changeWorld(newState.worldID, newState, updateMap);
-		} else {
-			this.setGamePos(newState.gamePos.x, newState.gamePos.y, newState.zoomLevel, updateMap);
-		}
-
-	}
-
 	getMapStateFromQuery(defaultMapState) {
 
 		var zoom    = this.zoomLevel;
@@ -571,10 +550,8 @@ export default class Gamemap {
 	}
 
 	/*================================================
-						Map worlds
+						 Worlds
 	================================================*/
-
-
 
 	hasWorld(worldID) {
 		return worldID in this.mapWorlds;
@@ -1382,8 +1359,8 @@ export default class Gamemap {
 		let mapState = this.getMapState();
 	
 		mapLink += '&world=' + mapState.worldID;
-		mapLink += '&x=' + mapState.gamePos.x;
-		mapLink += '&y=' + mapState.gamePos.y;
+		mapLink += '&x=' + mapState.coords.x;
+		mapLink += '&y=' + mapState.coords.y;
 		mapLink += '&zoom=' + mapState.zoomLevel;
 	
 		if (mapState.grid) mapLink += "&grid=true";
