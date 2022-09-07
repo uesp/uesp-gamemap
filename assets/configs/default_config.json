@@ -14,6 +14,8 @@
     "minZoomLevel" : 9,
     "maxZoomLevel" : 17,
     "zoomOffset" : 0,
+    "enableZoomSnap" : false,
+    "zoomStep" : 0.50,
 
     // Map coordinate system info
 

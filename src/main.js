@@ -635,7 +635,7 @@ function setWindowTitle(title) {
 	// default dynamic map title
 	document.title = ("UESP " + mapConfig.mapTitle);
 
-	if (hasMultipleWorlds) { // show map world in title if there is one
+	if (gamemap.hasMultipleWorlds()) { // show map world in title if there is one
 		document.title = document.title + " | " + title;
 	} 
 }
