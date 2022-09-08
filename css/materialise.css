@@ -4879,23 +4879,22 @@ small {
   will-change: left, right;
 }
 
-@media only screen and (max-width : 992.99px) {
-  .tabs {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-  }
-  .tabs .tab {
-    -webkit-box-flex: 1;
-    -webkit-flex-grow: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
-  }
-  .tabs .tab a {
-    padding: 0 12px;
-  }
+.tabs {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
 }
+.tabs .tab {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+.tabs .tab a {
+  padding: 0 12px;
+}
+
 .material-tooltip {
   padding: 10px 8px;
   font-size: 1rem;

@@ -608,6 +608,23 @@ window.gotoArticle = function(){
 	}
 }
 
+
+
+// zoom widget
+window.zoomIn = function(){
+	gamemap.zoomIn();
+	// check if we're zoomed in max, then disable button
+}
+
+window.zoomOut = function(){
+	gamemap.zoomOut();
+	// check if we're zoomed out max, then disable button
+}
+
+/*================================================
+				Location Switcher
+================================================*/
+
 // goto article button
 window.onLocationSwitcherClicked = function(){
 
@@ -621,16 +638,7 @@ window.onLocationSwitcherClicked = function(){
 
 
 
-// zoom widget
-window.zoomIn = function(){
-	gamemap.zoomIn();
-	// check if we're zoomed in max, then disable button
-}
 
-window.zoomOut = function(){
-	gamemap.zoomOut();
-	// check if we're zoomed out max, then disable button
-}
 
 /*================================================
 				Change tab title

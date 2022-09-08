@@ -240,6 +240,22 @@ b[class^="icon_button_label"] {
 	margin-right: -2px;
 }
 
+#location_switcher_root {
+	position: absolute;
+	width: calc(var(--search_pane_width) * 0.8 );
+	height: 65%;
+	background-color: var(--surface);
+	color: var(--text_on_primary);
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 100000;
+}
+
+#location_switcher_root *.tab-pane { 
+	overflow: scroll;
+}
+
 /*================================================
 					  Search
 ================================================*/
