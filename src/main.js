@@ -608,6 +608,19 @@ window.gotoArticle = function(){
 	}
 }
 
+// goto article button
+window.onLocationSwitcherClicked = function(){
+
+	const button = document.querySelector("#btn_location_switcher");
+	button.classList.toggle("toggled");
+
+}
+
+
+
+
+
+
 // zoom widget
 window.zoomIn = function(){
 	gamemap.zoomIn();

@@ -225,6 +225,15 @@ b[class^="icon_button_label"] {
 #btn_location_switcher{
 	border-radius: var(--padding_minimum);
 	color: var(--highlight_light);
+	
+}
+
+#btn_location_switcher #dropdown_icon{
+	transition: all 0.2s ease-out;
+}
+
+#btn_location_switcher.toggled #dropdown_icon{
+	transform: rotate(180deg);
 }
 
 #btn_location_switcher b{

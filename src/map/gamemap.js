@@ -76,8 +76,6 @@ export default class Gamemap {
 	================================================*/
 
 	initialiseMap(mapConfig) {
-
-		this.currentWorldID = mapConfig.defaultWorldID || 0;
 		
 		// set global map options
 		var mapOptions = {
@@ -94,6 +92,8 @@ export default class Gamemap {
 		this.createEvents();
 
 		let mapState = new MapState();
+		mapState.zoomLevel = mapConfig.defaultZoomLevel;
+		mapState.worldID = mapConfig.defaultWorldID || 0;
 
 		if (this.hasCenterOnURLParam()) { // check if URL has "centeron" param
 			// find location and centre on it
@@ -530,6 +530,21 @@ export default class Gamemap {
 	
 	}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/*================================================
 					  Map locations 
 	================================================*/
@@ -824,14 +839,15 @@ export default class Gamemap {
 			self.updateURL(map, self.mapConfig);
 		})
 
+		map.on("zoomend", function(e){
+			self.updateURL(map, self.mapConfig);
+		})
+
 		map.on("dblclick", function(event){
 			alert(self.toCoords(event.latlng));
 			return true;
 		})
 
-		map.on("zoomend", function(e){
-			self.updateURL(map, self.mapConfig);
-		})
 
 				// $(window).on("mousemove", { self: this }, this.onMouseMove);
 		// $(window).on("touchmove", { self: this }, this.onTouchMove);

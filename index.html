@@ -25,7 +25,7 @@
 		<div id="gamemap"></div>
 
 		<div class="icon_bar_responsive">
-			<button id="btn_location_switcher" class='btn_icon_button waves-effect banishdefault' title="Jump to location" onclick="showLocationSwitcher();">
+			<button id="btn_location_switcher" class='btn_icon_button waves-effect banishdefault' title="Jump to location" onclick="onLocationSwitcherClicked();">
 				<i class="material-icons onlymobile">explore</i>
 				<b class="icon_button_label nomobile" id="current_location_label">Loading...</b>
 				<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>
@@ -36,7 +36,7 @@
 				<b class="icon_button_label nomobile">Goto Article</b>
 			</button>
 
-			<button id="btn_permalink" class='btn_icon_button waves-effect onlymobile' title="Copy link to this location" onclick="copyMapLink()">
+			<button id="btn_permalink" class='btn_icon_button waves-effect' title="Copy link to this location" onclick="copyMapLink()">
 				<i class="material-icons">link</i><b class="icon_button_label nomobile">Copy Link</b>
 			</button>
 		</div>
