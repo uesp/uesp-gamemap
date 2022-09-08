@@ -1210,12 +1210,15 @@ input[type=checkbox].gmMapEditPopupInput {
 	transition: all ease-in-out 50ms;
 }
 
-.btn_zoom:hover, .btn_zoom:active {
-	background: var(--divider);
+.btn_zoom:hover:disabled  {
+	cursor: default;
 }
 
-.gmMapControlRoot {
-	display: none;
+.btn_zoom:hover:enabled, .btn_zoom:active:enabled {
+	background: var(--divider);
+}
+.collection a.collection-item:not(.active):hover {
+	background-color: var(--divider);
 }
 
 .gmMapKey {
@@ -1319,30 +1322,8 @@ body {
 	height: 100%;
 }
 
-.gmToggleButton {
-	display: inline-block;
-	background: #eee;
-	cursor: pointer;
-	border-top: solid 2px #eaeaea;
-	border-left: solid 2px #eaeaea;
-	border-bottom: solid 2px #777;
-	border-right: solid 2px #777;
-	padding: 1px 1px;
-	margin: 2px;
-	height: 17px;
-	font-family: arial, sans-serif;
-	font-size: 13px;
-	color: black;
-	line-height: 16px;
-}
 
-.gmToggleButtonDown {
-	background: #bbb;
-	border-top: solid 2px #777;
-	border-left: solid 2px #777;
-	border-bottom:solid 2px  #eaeaea;
-	border-right: solid 2px #eaeaea;
-}
+
 
 .gmMapRCRoot {
 	position: absolute;
@@ -1427,20 +1408,6 @@ body {
 	z-index: 3;
 }
 
-#gmMapCanvas, #gmMapCanvasGrid {
-	touch-action: none;
-	position: absolute;
-	top: 0px;
-	left: 0px;
-}
-
-#gmMapCanvas {
-	z-index: 1;
-}
-
-#gmMapCanvasGrid {
-	z-index: 2;
-}
 
 .gmMenuForm {
 	display: inline;

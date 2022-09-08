@@ -190,6 +190,10 @@ function loadInfobar(mapConfig){
 
 
 function onWorldChanged(newWorld) {
+
+	// select world in location list
+
+	
 	// foundListItems = $('#gmMapList li:contains("' + newWorld.displayName +'")').not('.gmMapListHeader');
 
 	// var foundListItem = null;
@@ -265,14 +269,12 @@ function doSearch(searchQuery, currentMapOnly) {
 
 		var queryParams = this.createSearchQuery(searchText, searchMapOnly);
 
-		if (this.mapOptions.isOffline) {
-			setTimeout( function() { ugmSearchOfflineLocations(self, queryParams); }, 10);
-		}
-		else {
-			$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
-				self.onReceiveSearchResults(data);
-			});
-		}
+
+
+		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
+			self.onReceiveSearchResults(data);
+		});
+		
 
 	}
 
@@ -437,45 +439,7 @@ function doSearch(searchQuery, currentMapOnly) {
 // 	searchResult.html(resultHtml);
 // }
 
-// uesp.gamemap.Map.prototype.createMapControls = function ()
-// {
-// 	if (this.mapControlRoot != null) return;
-// 	var self = this;
 
-// 	this.mapControlRoot = $('<div />')
-// 								.addClass('gmMapControlRoot')
-// 								.appendTo(this.mapContainer);
-
-// 	if (this.mapOptions.displayStates.length > 0) {
-// 		this.mapControlDisplayStateRoot = $('<div />')
-// 												.addClass('gmMapControlDisplayStates')
-// 												.appendTo(this.mapControlRoot);
-
-// 		for (var i in this.mapOptions.displayStates) {
-// 			let displayState = this.mapOptions.displayStates[i];
-
-// 			$('<div />')
-// 				.html(displayState)
-// 				.attr("id", "gmMapControlDisplayState_" + displayState)
-// 				.addClass('gmMapControlDisplayState')
-// 				.bind("touchstart click", function(e) { self.onDisplayStateChange(displayState); return false; })
-// 				.appendTo(this.mapControlDisplayStateRoot);
-// 		}
-// 	}
-
-// this.mapControlZoomIn = $('<div />')
-// 	.html('+')
-// 	.addClass('gmMapControlZoom')
-// 	.addClass('gmMapControlZoomHover')
-// 	.bind("touchstart click", function(e) { self.zoomIn(); return false; })
-// 	.appendTo(this.mapControlRoot);
-
-// this.mapControlZoomOut = $('<div />')
-// 	.text('-')
-// 	.addClass('gmMapControlZoom')
-// 	.addClass('gmMapControlZoomHover')
-// 	.bind("touchstart click", function(e) { self.zoomOut(); return false; })
-// 	.appendTo(this.mapControlRoot);
 
 // }
 
