@@ -109,6 +109,8 @@ function initGamemap() {
 
 				print(mergedMapConfig);
 
+				mapConfig = mergedMapConfig;
+
 				// load map
 				loadGamemap(mergedMapConfig);
 			}
@@ -193,7 +195,7 @@ function onWorldChanged(newWorld) {
 
 	// select world in location list
 
-	
+
 	// foundListItems = $('#gmMapList li:contains("' + newWorld.displayName +'")').not('.gmMapListHeader');
 
 	// var foundListItem = null;
@@ -577,12 +579,21 @@ window.gotoArticle = function(){
 // zoom widget
 window.zoomIn = function(){
 	gamemap.zoomIn();
+
+	$("#btn_zoom_out").prop("disabled",false);
 	// check if we're zoomed in max, then disable button
+	if (gamemap.getCurrentZoom() + mapConfig.zoomStep >= mapConfig.maxZoomLevel) {
+		$("#btn_zoom_in").prop("disabled",true);
+	}
 }
 
 window.zoomOut = function(){
+	$("#btn_zoom_in").prop("disabled",false);
 	gamemap.zoomOut();
 	// check if we're zoomed out max, then disable button
+	if (gamemap.getCurrentZoom() - mapConfig.zoomStep <= mapConfig.minZoomLevel) {
+		$("#btn_zoom_out").prop("disabled",true);
+	}
 }
 
 /*================================================

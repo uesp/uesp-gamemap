@@ -843,6 +843,21 @@ export default class Gamemap {
 			self.updateURL(map, self.mapConfig);
 		})
 
+		map.on("zoom", function(e){
+			if (map.getZoom() >= self.mapConfig.maxZoomLevel) {
+				$("#btn_zoom_in").prop("disabled",true);
+			}
+
+			if (map.getZoom() <= self.mapConfig.minZoomLevel) {
+				$("#btn_zoom_out").prop("disabled",true);
+			}
+
+			if (map.getZoom() > self.mapConfig.minZoomLevel && map.getZoom() < self.mapConfig.maxZoomLevel) {
+				$("#btn_zoom_out").prop("disabled", false);
+				$("#btn_zoom_in").prop("disabled", false);
+			}
+		})
+
 		map.on("dblclick", function(event){
 			alert(self.toCoords(event.latlng));
 			return true;
@@ -895,6 +910,10 @@ export default class Gamemap {
 
 	zoomOut(){
 		map.zoomOut();
+	}
+
+	getCurrentZoom() {
+		return map.getZoom();
 	}
 
 
