@@ -38,7 +38,8 @@
 	width: 1600px;
 	height: 1600px;
 	-webkit-transform-origin: 0 0;
-	}
+	transform-origin: 0 0;
+}
 .leaflet-marker-icon,
 .leaflet-marker-shadow {
 	display: block;
@@ -97,7 +98,8 @@
 /* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */
 .leaflet-overlay-pane svg {
 	-moz-user-select: none;
-	}
+	user-select: none;
+}
 
 .leaflet-pane         { z-index: 400; }
 
@@ -543,7 +545,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 .leaflet-oldie .leaflet-popup-content-wrapper {
 	-ms-zoom: 1;
-	}
+	zoom: 1;
+}
 .leaflet-oldie .leaflet-popup-tip {
 	width: 24px;
 	margin: 0 auto;
@@ -652,6 +655,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	/* Prevent printers from removing background-images of controls. */
 	.leaflet-control {
 		-webkit-print-color-adjust: exact;
-		color-adjust: exact;
+		print-color-adjust: exact;
 		}
 	}

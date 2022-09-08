@@ -628,8 +628,11 @@ window.zoomOut = function(){
 // goto article button
 window.onLocationSwitcherClicked = function(){
 
-	const button = document.querySelector("#btn_location_switcher");
-	button.classList.toggle("toggled");
+	const btnLocationSwitcher = document.querySelector("#btn_location_switcher");
+	btnLocationSwitcher.classList.toggle("toggled");
+
+	const locationSwitcherRoot = document.querySelector("#location_switcher_root");
+	locationSwitcherRoot.classList.toggle("shown");
 
 }
 
