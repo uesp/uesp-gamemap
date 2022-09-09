@@ -244,20 +244,14 @@ export default class Gamemap {
 				let world = data.worlds[key];
 
 				if (world.id > self.mapConfig.minWorldID && world.id < self.mapConfig.maxWorldID && world.name != null) {
-					
-					if (world.id in self.mapWorlds) {
-						self.mapWorlds[world.id] = Utils.mergeObjects(self.mapWorlds[world.id], world);
-						self.mapWorldNameIndex[world.name] = world.id;
-						self.mapWorldDisplayNameIndex[world.displayName] = world.id;
-					} else {
-						self.mapWorlds[world.id] = new World(world.name.toLowerCase(), self.mapConfig, world.id);
-						self.mapWorlds[world.id].mergeMapConfig(self.mapConfig);
-						self.mapWorldNameIndex[world.name.toLowerCase()] = world.id;
-						if (world.displayName != null) self.mapWorldDisplayNameIndex[world.displayName] = world.id;
-						self.mapWorlds[world.id] = Utils.mergeObjects(self.mapWorlds[world.id], world);
-						self.mapWorldNameIndex[world.name] = world.id;
-						self.mapWorldDisplayNameIndex[world.displayName] = world.id;
-					}
+					self.mapWorlds[world.id] = new World(world.name.toLowerCase(), self.mapConfig, world.id);
+					self.mapWorlds[world.id].mergeMapConfig(self.mapConfig);
+					self.mapWorldNameIndex[world.name.toLowerCase()] = world.id;
+
+					if (world.displayName != null) self.mapWorldDisplayNameIndex[world.displayName] = world.id;
+					self.mapWorlds[world.id] = Utils.mergeObjects(self.mapWorlds[world.id], world);
+					self.mapWorldNameIndex[world.name] = world.id;
+					self.mapWorldDisplayNameIndex[world.displayName] = world.id;
 				}
 			}
 	
@@ -270,7 +264,7 @@ export default class Gamemap {
 		});
 	}
 
-	/** Simple function that does stuff
+	/** Simple function that does stuffblah blah fill this in later
 	 * @returns {Boolean} - A boolean whether or not the current mapConfig contains multiple worlds.
 	 */
 	hasMultipleWorlds() {
@@ -483,12 +477,12 @@ export default class Gamemap {
 	createEvents() {
 		
 		map.on("moveend", function(e){
-			self.updateURL(map, self.mapConfig);
+			self.updateMapLink(map, self.mapConfig);
 			
 		})
 
 		map.on("zoomend", function(e){
-			self.updateURL(map, self.mapConfig);
+			self.updateMapLink(map, self.mapConfig);
 		})
 
 		map.on("zoom", function(e){
