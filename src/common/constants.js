@@ -16,7 +16,7 @@
  export const MAP_CONFIG_FILENAME = "config.json"
  export const DEFAULT_MAP_CONFIG_DIR = CONFIG_DIR + "default_" + MAP_CONFIG_FILENAME;
 
- export const GAME_DATA_SCRIPT = "src/database/gamemap.php";
+ export const GAME_DATA_SCRIPT = "src/db/gamemap.php";
 
 // get default map config
  Utils.getJSON(DEFAULT_MAP_CONFIG_DIR, function(error, mapConfig) {
@@ -33,6 +33,9 @@ export const LOCTYPE_NONE = 0;
 export const LOCTYPE_POINT = 1;
 export const LOCTYPE_PATH = 2;
 export const LOCTYPE_AREA = 3;
+
+export const PARAM_TYPE_QUERY = 0;
+export const PARAM_TYPE_HASH = 1;
 
 export const COORD_TYPES = {
     XY : 0,

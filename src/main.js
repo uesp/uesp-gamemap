@@ -27,10 +27,6 @@ var noAnalytics = true;
 print("Page initialising...");
 $(document).ready(function() {
 
-	if (location.hash.includes("game=")) {
-		location.hash = location.hash.replace("&[a-zA-Z]+=[a-zA-Z]+", '');
-	}
-
 	// load gamemap
 	print("Initialising gamemap...");
 	initGamemap();
@@ -75,7 +71,7 @@ function initGamemap() {
 	loading("map");
 
 	// get params from URL
-	mapParams = Utils.getURLParams();
+	mapParams = Utils.getURLParams(Constants.PARAM_TYPE_QUERY);
 
 	// get which map we are supposed to be loading
 	if (!mapParams.has("game")) { 

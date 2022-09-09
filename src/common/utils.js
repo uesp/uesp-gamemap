@@ -4,6 +4,8 @@
  * @summary Contains general utility functions for the gamemap.
  */
 
+ import * as Constants from "./constants.js";
+
 /*================================================
 			Is mobile device function
 ================================================*/
@@ -39,8 +41,15 @@ export function getJSON(url, callback) {
 			 Get URL parameters function
 ================================================*/
 
-export function getURLParams(){
-	let urlParams = location.hash.replace("#\?", '');
+export function getURLParams(paramType){
+	let urlParams;
+
+	if (paramType == Constants.PARAM_TYPE_QUERY) {
+		urlParams = location.search.replace("#\?", '');
+
+	} else if (paramType == null || paramType == Constants.PARAM_TYPE_HASH) {
+		urlParams = location.hash.replace("#\?", '');
+	}
 	urlParams = urlParams.toLowerCase();
 	return new URLSearchParams(urlParams); //create params array
 }
