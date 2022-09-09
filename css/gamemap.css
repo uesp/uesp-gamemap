@@ -253,7 +253,7 @@ b[class^="icon_button_label"] {
 }
 
 #location_switcher_root {
-	position: absolute;
+	position: fixed;
 	width: calc(var(--search_pane_width) * 0.75 );
 	height: 65%;
 	background-color: var(--primary);
