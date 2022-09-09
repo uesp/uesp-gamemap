@@ -1,7 +1,7 @@
 /**
  * @name main.js
  * @author Thal-J <thal-j@uesp.net> (16th Aug 2022)
- * @summary Contains the main UI code for the gamemap.
+ * @summary Contains the UI code for the gamemap.
  * 	
  * @see gamemap.js for actual map viewer implementation. 
  */
@@ -9,7 +9,6 @@
 import * as Utils from "./common/utils.js";
 import * as Constants from "./common/constants.js";
 import Gamemap from "./map/gamemap.js";
-import MapState from "./map/mapState.js";
 
 /*================================================
 				  Initialisation
@@ -21,20 +20,12 @@ var game = null;
 
 var gamemap = null;
 
-var hasMultipleWorlds = false;
 
 var noAnalytics = true;
-
-// searchParams.has("name") === true; // true
-// searchParams.get("age") === "1337"; // true
-//gamemap.php?action=search&search=morrowind&world=2282&db=eso
-//todo: change tab title to (mapname : location (UESP))
 
 // on page load
 print("Page initialising...");
 $(document).ready(function() {
-
-
 
 	if (location.hash.includes("game=")) {
 		location.hash = location.hash.replace("&[a-zA-Z]+=[a-zA-Z]+", '');
@@ -255,6 +246,7 @@ function updateSearch(query) {
 	// do some search debouncing before submitting
 }
 
+//gamemap.php?action=search&search=morrowind&world=2282&db=eso
 function doSearch(searchQuery, currentMapOnly) {
 
 	searchQuery = searchQuery.trim();
@@ -575,8 +567,11 @@ window.gotoArticle = function(){
 }
 
 
+/*================================================
+				  Zoom Buttons
+================================================*/
 
-// zoom widget
+// zoom in
 window.zoomIn = function(){
 	gamemap.zoomIn();
 
@@ -587,6 +582,7 @@ window.zoomIn = function(){
 	}
 }
 
+// zoom out
 window.zoomOut = function(){
 	$("#btn_zoom_in").prop("disabled",false);
 	gamemap.zoomOut();
@@ -610,13 +606,6 @@ window.onLocationSwitcherClicked = function(){
 	locationSwitcherRoot.classList.toggle("shown");
 
 }
-
-
-
-
-
-
-
 
 /*================================================
 				Change tab title

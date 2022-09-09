@@ -16,7 +16,7 @@
  export const MAP_CONFIG_FILENAME = "config.json"
  export const DEFAULT_MAP_CONFIG_DIR = CONFIG_DIR + "default_" + MAP_CONFIG_FILENAME;
 
- export const GAME_DATA_SCRIPT = "gamemap.php";
+ export const GAME_DATA_SCRIPT = "src/database/gamemap.php";
 
 // get default map config
  Utils.getJSON(DEFAULT_MAP_CONFIG_DIR, function(error, mapConfig) {

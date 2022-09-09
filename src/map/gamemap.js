@@ -475,7 +475,7 @@ export default class Gamemap {
 	================================================*/
 
 	isHiddenLocsShown() {
-		if (Utils.getURLParams().get("showHidden") === "true") {
+		if (Utils.getURLParams().get("showhidden") === "true") {
 			return true;
 		} else {
 			return this.defaultShowHidden;
@@ -515,7 +515,7 @@ export default class Gamemap {
 		}
 
 		// load layers and locations
-		L.marker(RC.unproject([this.mapImage.width/2, this.mapImage.height/2])).addTo(map);
+		L.marker(this.toLatLng([0.5, 0.5])).addTo(map);
 
 		this.clearLocationElements();
 		// load new locations for this map
