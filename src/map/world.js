@@ -4,7 +4,7 @@
  * @summary Contains class definition for gamemap's "world".
  */
 
-import MapState from "./mapState.js";
+import MapState from "./mapstate.js";
 import * as Utils from "../common/utils.js";
 
 export default class World {

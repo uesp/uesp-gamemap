@@ -7,8 +7,8 @@
 import * as Utils from "../common/utils.js";
 import * as Constants from "../common/constants.js";
 import World from "./world.js";
-import MapState from "./mapState.js";
-import RasterCoords from "./rasterCoords.js";
+import MapState from "./mapstate.js";
+import RasterCoords from "../lib/leaflet/rastercoords.js";
 
 /*================================================
 					Globals

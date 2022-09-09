@@ -2,17 +2,13 @@
 <html>
 	<head>
 
-		<!-- Placeholder title (gets replaced by dynamic map name later) -->
+		<!-- Metadata -->
 		<title>UESP Gamemap</title>
-
-		<!-- Favicon -->
 		<link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
-
-		<!-- Let the browser know this site is optimized for mobile -->
 		<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 
-		<!-- Import css -->
+		<!-- CSS -->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 		<link rel="stylesheet" href="./css/materialise.css" media="screen,projection"/>
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin="" />
@@ -21,7 +17,7 @@
    </head>
 
    <body>
-		<!-- Map container -->
+		<!-- Gamemap -->
 		<div id="gamemap"></div>
 
 		<div class="icon_bar_responsive">
@@ -63,11 +59,12 @@
 			<div id="showRecentChangeButton" class="gmToggleButton gmNoMobile" style="display:none;" onclick="g_GameMap.onRecentChanges(this);" ontouchstart="g_GameMap.onRecentChanges(this);">Recent Changes</div> -->
 		</div>
 
-		<!-- Search Container -->
+		<!-- Search -->
 		<div class = 'search_root' id="search_root">
 
 			<div class='search_container'>
-				<!-- Search Bar -->
+
+				<!-- Search bar -->
 				<div class='search_bar' tabindex="0">
 					<div class="search_icon">
 						<i class="material-icons">search</i>
@@ -81,6 +78,7 @@
 						<button id="btn_clear_search" class='btn_bgless_icon_button hidedefault' title="Clear the current search" type='reset'><span class="material-symbols-outlined">close</span></button>
 					</div>
 				</div>
+
 				<!-- Search Results -->
 				<div class='search_results_container banishdefault'>
 
@@ -102,13 +100,14 @@
 			</div>
 		</div>
 
+		<!-- Zoom widget -->
 		<div id="zoom_widget" class="hidedefault">
 			<button class="btn_zoom waves-effect" onclick="zoomIn()" id="btn_zoom_in" tabindex="-1" title="Zoom in"><i class="material-icons">add</i></button>
 			<div class="horizontal_divider"></div>
 			<button class="btn_zoom waves-effect" onclick="zoomOut()" id="btn_zoom_out" tabindex="-1" title="Zoom out"><i class="material-icons">remove</i></button>
 		</div>
 
-		<!-- Error container -->
+		<!-- Errorbox -->
 		<div id="error_box" class="error_container hidedefault preload_box">
 			<span class="error_title">
 				<i class="medium material-icons">error</i><br/>
@@ -118,7 +117,7 @@
 			<p id="error_box_reason">A reason should be put here.</p>
 		</div>
 
-		<!-- Loading spinner container -->
+		<!-- Loading spinner -->
 		<div id="loading_spinner" class="spinner_container preload_box">
 			<div class="preloader-wrapper big active">
 				<div class="spinner-layer">
@@ -135,7 +134,7 @@
 			<p id="loading_reason">Loading config...</p>
 		</div>
 
-		<!-- Location switcher container -->
+		<!-- Location switcher -->
 		<div id="location_switcher_root">
 
 			<ul id="location_switcher_tab_bar" class="tabs">
@@ -182,11 +181,11 @@
 			<div class="progress"><div class="indeterminate"></div></div>
 		</div> -->
 
-		<!-- Load JS at end of body for optimised loading -->
+		<!-- Javascript -->
 		<script src="./src/lib/jquery.js"></script>
 		<script src="./src/lib/materialise.js"></script>
-		<script src="./src/lib/leaflet.js"></script>
-		<script src="./src/lib/leaflet.edgebuffer.js"></script>
+		<script src="./src/lib/leaflet/leaflet.js"></script>
+		<script src="./src/lib/leaflet/edgebuffer.js"></script>
 		<script src="./src/main.js" type="module"></script>
 		
 	</body>
