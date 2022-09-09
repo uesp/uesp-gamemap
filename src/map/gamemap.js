@@ -86,6 +86,7 @@ export default class Gamemap {
 			zoomSnap: mapConfig.enableZoomSnap,
 			zoomDelta: mapConfig.zoomStep,
 			zoomControl: false, // hide leaflet zoom control (we have our own)
+			doubleTouchDragZoom: true,
         }
 
 		map = L.map(this.rootMapID, mapOptions);
@@ -500,10 +501,10 @@ export default class Gamemap {
 			}
 		})
 
-		map.on("dblclick", function(event){
-			alert(self.toCoords(event.latlng));
-			return true;
-		})
+		// map.on("dblclick", function(event){
+		// 	alert(self.toCoords(event.latlng));
+		// 	return true;
+		// })
 
 	}
 
