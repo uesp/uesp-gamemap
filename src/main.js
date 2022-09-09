@@ -14,13 +14,8 @@ import Gamemap from "./map/gamemap.js";
 				  Initialisation
 ================================================*/
 
-var mapParams = null;
 var mapConfig = null;
-var game = null;
-
 var gamemap = null;
-
-
 var noAnalytics = true;
 
 // on page load
@@ -70,39 +65,55 @@ function initGamemap() {
 
 	loading("map");
 
-	// get params from URL
-	mapParams = Utils.getURLParams(Constants.PARAM_TYPE_QUERY);
+	// get gamename from pathname URL
+	let gameParam = window.location.pathname.replace(/\\|\//g,'')
+	print(gameParam);
 
 	// get which map we are supposed to be loading
-	if (!mapParams.has("game")) { 
-		showError("No game was provided.");
-	} else {
-		game = mapParams.get("game");
-		print("URL has game param!");
 
-		// load map config 
-		let configURL = (Constants.CONFIG_DIR + game + "/" + Constants.MAP_CONFIG_FILENAME);
-		print("Getting map config at "+configURL+"...");
+	//|| !
 
-		Utils.getJSON(configURL, function(error, object) {
-			if (error !== null) {
-				showError("Could not load map: " + error);
+
+	if (gameParam != null && gameParam != "") {
+
+		if (gameParam.match(/^([a-z]+)/)) {
+
+			print("URL has game param!");
+
+			// load map config 
+			let configURL = (Constants.CONFIG_DIR + gameParam + "/" + Constants.MAP_CONFIG_FILENAME);
+			print("Getting map config at "+configURL+"...");
+	
+			if (Utils.doesFileExist(configURL)) {
+	
+				Utils.getJSON(configURL, function(error, object) {
+					if (error !== null) {
+						showError("Could not load map: " + error);
+					} else {
+						print("Imported map config successfully!");
+						mapConfig = object;
+		
+						print("Merging with default map config...")
+						let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
+		
+						print(mergedMapConfig);
+		
+						mapConfig = mergedMapConfig;
+		
+						// load map
+						loadGamemap(mergedMapConfig);
+					}
+				})
 			} else {
-				print("Imported map config successfully!");
-				mapConfig = object;
-
-				print("Merging with default map config...")
-				let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
-
-				print(mergedMapConfig);
-
-				mapConfig = mergedMapConfig;
-
-				// load map
-				loadGamemap(mergedMapConfig);
+				showError("Provided game doesn't exist. Please check the URL.");
 			}
-		})
+		} else {
+			showError("Provided game was invalid. Please check the URL.");
+		}
+	} else {
+		showError("No valid game provided.");
 	}
+
 }
 
 function loadGamemap(mapConfig) {

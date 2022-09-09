@@ -44,12 +44,13 @@ export function getJSON(url, callback) {
 export function getURLParams(paramType){
 	let urlParams;
 
-	if (paramType == Constants.PARAM_TYPE_QUERY) {
+	if (paramType == null || paramType == Constants.PARAM_TYPE_QUERY) {
+		
 		urlParams = location.search.replace("#\?", '');
-
-	} else if (paramType == null || paramType == Constants.PARAM_TYPE_HASH) {
+	} else {
 		urlParams = location.hash.replace("#\?", '');
 	}
+
 	urlParams = urlParams.toLowerCase();
 	return new URLSearchParams(urlParams); //create params array
 }
@@ -254,3 +255,13 @@ export function mergeObjects(obj1, obj2) {
 	return obj3;
 }
 
+/*================================================
+		  Check if page exists function
+================================================*/
+
+export function doesFileExist(url) {
+    var http = new XMLHttpRequest();
+    http.open('HEAD', url, false);
+    http.send();
+    return http.status!=404;
+}

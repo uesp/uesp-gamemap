@@ -75,6 +75,9 @@ export default class Gamemap {
 					   Initialise
 	================================================*/
 
+	/** Initialise default map state and variables. (Note: Needs to be called after worlds are loaded)
+	 * @param {Object} mapConfig - Object that controls the default/imported settings of the map.
+	 */
 	initialiseMap(mapConfig) {
 		
 		// set global map options
@@ -88,9 +91,6 @@ export default class Gamemap {
 		map = L.map(this.rootMapID, mapOptions);
 		this.setupInfobar(mapConfig);
 
-		// create map events
-		this.createEvents();
-
 		let mapState = new MapState();
 		mapState.zoomLevel = mapConfig.defaultZoomLevel;
 		mapState.worldID = mapConfig.defaultWorldID || 0;
@@ -99,21 +99,24 @@ export default class Gamemap {
 			// find location and centre on it
 		} else if (this.hasMultipleURLParams()) { // else check if has multiple url params 
 			// load state from URL
+			
 			mapState = this.getMapStateFromURL();
 		}
-
-		print(mapState);
 
 		// load map state
 		this.setMapState(mapState);
 
+		// create map events
+		this.createEvents();
 	}
 
 	/*================================================
 						  State 
 	================================================*/
 
-	// mapstate setter
+	/** Set map to saved map state (use to load from URL or from saved state).
+	 * @param {Object} mapState - Object that controls the state and view of the map.
+	 */
 	setMapState(mapState) {
 
 		// set full image width & height
@@ -137,19 +140,28 @@ export default class Gamemap {
 			
 		L.tileLayer(this.getMapTileImageURL(this.mapWorlds[mapState.worldID], this.mapConfig), tileOptions).addTo(map);
 
-		// set the view in the lower right edge of the image
+		// set map view
 		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel);
-
-
 		this.setWorld(mapState.worldID);
 
-		// remove map bounds
-		map.setMaxBounds(null); //map being the leaflet map.
+		// remove map bounds to fix RC bug
+		map.setMaxBounds(null);
 
+		// finally, update map state
 		this.currentMapState = mapState;
-
+		this.updateURL(map);
 	}
 
+	/** Get current map state object.
+	 * @returns {Object} mapState - Object that controls the state and view of the map.
+	 */
+	getMapState() {
+		return this.currentMapState;
+	}
+
+	/** Gets map state object from URL params (?world=800 etc).
+	 * @returns {Object} mapState - Object that controls the state and view of the map.
+	 */
 	getMapStateFromURL() {
 
 		let mapState = new MapState();
@@ -160,6 +172,9 @@ export default class Gamemap {
 
 		if (Utils.getURLParams().has("world")){
 			mapState.worldID = Utils.getURLParams().get("world");
+			if (mapState.worldID == "undefined") {
+				mapState.worldID = this.mapConfig.defaultWorldID;
+			}
 		}
 
 		if (Utils.getURLParams().has("x") && Utils.getURLParams().has("y")) {
@@ -177,7 +192,6 @@ export default class Gamemap {
 		return mapState;
 	}
 
-
 	/*================================================
 						  Worlds 
 	================================================*/
@@ -185,11 +199,20 @@ export default class Gamemap {
 	addWorld(worldName, mapConfig, worldID, displayName) {
 		this.mapWorlds[worldID] = new World(worldName.toLowerCase(), this.mapConfig, worldID);
 		this.mapWorlds[worldID].mergeMapConfig(mapConfig);
-	
 		this.mapWorldNameIndex[worldName.toLowerCase()] = worldID;
 		if (displayName != null) this.mapWorldDisplayNameIndex[displayName] = worldID;
 	}
 
+	/** Gets the current world ID (0 by default).
+	 * @returns {int} worldID - ID that represents a world in the database.
+	 */
+	getCurrentWorldID() {
+		return this.getMapState().worldID || this.mapConfig.defaultWorldID;
+	}
+
+	/** Download and parse world data for this game's mapConfig. When finished, call gamemap's initialise function.
+	 * @see initialiseMap()
+	 */
 	getWorldData() {
 		let queryParams = {};
 		queryParams.action = "get_worlds";
@@ -276,15 +299,12 @@ export default class Gamemap {
 		return Utils.getURLParams().get("centeron") != null && Utils.getURLParams().get("centeron") !== '';
 	}
 
-	updateURL(map, mapConfig) {
+	updateURL(map, mapState) {
 
 		let mapLink = "?"
 
-		//print(this.toCoords(map.getCenter()));
-		mapLink += "game=" + mapConfig.database;
-
 		if (this.hasMultipleWorlds()){
-			mapLink += '&world=' + this.currentWorldID;
+			mapLink += 'world=' + this.getCurrentWorldID();
 		}
 
 		mapLink += '&x=' + this.toCoords(map.getCenter()).x;
@@ -298,25 +318,12 @@ export default class Gamemap {
 		// if (mapState.grid) mapLink += "&grid=true";
 		// if (mapState.cellResource != "") mapLink += "&cellResource=" + mapState.cellResource;
 		// if (mapState.displayState != "") mapLink += "&displayState=" + mapState.displayState;
-	
-		location.hash = mapLink;
+
+		if (window.history.replaceState) {
+			//prevents browser from storing history with each change:
+			window.history.replaceState(null, document.title, mapLink);
+		}
 	}
-
-	// mapstate getter
-	getMapState() {
-		let mapState = new MapState();
-
-		mapState.game 		  = this.mapConfig.database;
-		mapState.coords       = this.toCoords(map.getCenter());
-		mapState.zoomLevel    = parseFloat(map.getZoom().toFixed(3));
-		mapState.worldID      = this.currentWorldID;
-		// mapState.grid         = this.isDrawGrid;
-		// mapState.cellResource = this.cellResource;
-
-		return mapState;
-	}
-	
-
 
 
 	/** 
@@ -837,6 +844,7 @@ export default class Gamemap {
 		
 		map.on("moveend", function(e){
 			self.updateURL(map, self.mapConfig);
+			
 		})
 
 		map.on("zoomend", function(e){
@@ -917,16 +925,9 @@ export default class Gamemap {
 	}
 
 
-
-	
-
 	/*================================================
 					Utility functions
 	================================================*/
-
-	getCurrentWorldID() {
-		return this.currentWorldID;
-	}
 
 	getArticleLink() {
 
