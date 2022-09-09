@@ -674,6 +674,34 @@ window.enableDebugging = function(){
 }
 
 
+// uesp.gamemap.Map.prototype.fillWorldList = function(ElementID)
+// {
+// 	TargetList = $(ElementID);
+// 	if (TargetList == null) return false;
+
+// 	var tmpWorldList = [];
+
+// 	for (key in this.mapWorlds)
+// 	{
+// 		if (this.mapWorlds[key].name[0] != '_' && key > 0) tmpWorldList.push(this.mapWorlds[key].name);
+// 	}
+
+// 	tmpWorldList.sort(compareMapWorld);
+// 	TargetList.empty();
+
+// 	for (i = 0; i < tmpWorldList.length; ++i)
+// 	{
+// 		world = this.mapWorlds[this.mapWorldNameIndex[tmpWorldList[i]]];
+// 		if (world == null) continue;
+
+// 		TargetList.append($("<option></option>")
+// 					.attr("value", world.id)
+// 					.text(world.displayName));
+// 	}
+
+// 	return true;
+// }
+
 
 // uesp.gamemap.Map.prototype.translateGroupListToName = function(groups, depth)
 // {
