@@ -24,7 +24,50 @@ $(document).ready(function() {
 
 	// load gamemap
 	print("Initialising gamemap...");
-	initGamemap();
+	loading("map");
+
+	// get gamename from pathname URL
+	let gameParam = window.location.pathname.replace(/\\|\//g,'')
+	print(gameParam);
+
+	if (gameParam != null && gameParam != "") {
+
+		if (gameParam.match(/^([a-z]+)/)) {
+
+			print("URL has game param!");
+
+			// get map configs
+			Utils.getJSON(Constants.DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
+				if (error == null) {
+					window.DEFAULT_MAP_CONFIG = defaultMapConfig;
+
+					let configURL = (Constants.CONFIG_DIR + gameParam + "/" + Constants.MAP_CONFIG_FILENAME);
+					print("Getting map config at "+configURL+"...");
+			
+					if (Utils.doesFileExist(configURL)) {
+			
+						Utils.getJSON(configURL, function(error, object) {
+							if (error !== null) {
+								showError("Could not load map: " + error);
+							} else {
+								print("Imported map config successfully!");
+								mapConfig = object;
+				
+								print("Merging with default map config...")
+								let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
+				
+								print(mergedMapConfig);
+				
+								mapConfig = mergedMapConfig;
+				
+								// load map
+								loadGamemap(mergedMapConfig);
+							}
+						})
+					} else { showError("Provided game doesn't exist. Please check the URL.");}
+				} else { showError("There was an error getting the default map config." + error);}})
+		} else { showError("Provided game was invalid. Please check the URL."); }
+	} else { showError("No valid game provided."); }
 
 	// bind views from DOM
 	var searchbox = document.getElementById("searchbox");
@@ -34,18 +77,6 @@ $(document).ready(function() {
 	btn_clear_search.addEventListener("click", clearSearch);
 	searchbox.addEventListener("input", function(){ updateSearch(searchbox.value); });
 	M.AutoInit();
-
-	// listen for long-press events
-
-
-	
-
-	// $("#btn_zoom_out").addEventListener('long-press', function(e) {
-	// 	e.target.setAttribute('data-editing', 'true');
-  	// });
-
-	// TODO: add event listeners to up/down and enter here as well, to control the search list selection
-	// BEHAVIOUR: "Enter" selects the first item in the list, arrow keys move the selection, mouse takes priority
 
 	// hijack ctrl + F to redirect to custom search
 	$(window).keydown(function(event){
@@ -61,68 +92,12 @@ $(document).ready(function() {
 					  Gamemap
 ================================================*/
 
-function initGamemap() {
-
-	loading("map");
-
-	// get gamename from pathname URL
-	let gameParam = window.location.pathname.replace(/\\|\//g,'')
-	print(gameParam);
-
-	// get which map we are supposed to be loading
-
-	//|| !
-
-
-	if (gameParam != null && gameParam != "") {
-
-		if (gameParam.match(/^([a-z]+)/)) {
-
-			print("URL has game param!");
-
-			// load map config 
-			let configURL = (Constants.CONFIG_DIR + gameParam + "/" + Constants.MAP_CONFIG_FILENAME);
-			print("Getting map config at "+configURL+"...");
-	
-			if (Utils.doesFileExist(configURL)) {
-	
-				Utils.getJSON(configURL, function(error, object) {
-					if (error !== null) {
-						showError("Could not load map: " + error);
-					} else {
-						print("Imported map config successfully!");
-						mapConfig = object;
-		
-						print("Merging with default map config...")
-						let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
-		
-						print(mergedMapConfig);
-		
-						mapConfig = mergedMapConfig;
-		
-						// load map
-						loadGamemap(mergedMapConfig);
-					}
-				})
-			} else {
-				showError("Provided game doesn't exist. Please check the URL.");
-			}
-		} else {
-			showError("Provided game was invalid. Please check the URL.");
-		}
-	} else {
-		showError("No valid game provided.");
-	}
-
-}
-
 function loadGamemap(mapConfig) {
 
 	// set up infobar
 	loadInfobar(mapConfig);
 
 	// set up callbacks
-
 	var mapCallbacks = {
 		onWorldsLoaded,
 		onPermissionsLoaded,
@@ -142,21 +117,14 @@ function onWorldsLoaded(mapWorlds) {
 	$('#zoom_widget').css('visibility','visible');
 
 	if (gamemap.hasMultipleWorlds) {
+
 		// only show the location switcher if there are more than two worlds
 		$("#btn_location_switcher").show();
 		$("#btn_goto_article").show();
+
 		// populate location switcher
+		createWorldLists(mapWorlds);
 
-		// // TODO: Change how map list is created
-		// gamemap.createMapList($("#gmMapListRoot"));
-
-		// // TODO: Temporary call to get the group-world list for ESO
-		// $.get( 'templates/worldgrouplist.txt', function( data ) {
-		// 	gamemap.worldGroupListContents = data;
-		// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, 'Received world group list contents!');
-		// 	$('#gmMapList').html(data);
-		// 	gamemap.setEventsForMapGroupList();
-		// });
 	}
 }
 
@@ -454,95 +422,6 @@ function doSearch(searchQuery, currentMapOnly) {
 // 								.insertAfter(this.mapContainer);
 // }
 
-
-// uesp.gamemap.Map.prototype.createMapList = function (parentObject)
-// {
-// 	var self = this;
-// 	var listHtml = 	"<div id='gmMapListTitle'>" +
-// 						"Map List" +
-// 						"<div id='gmMapListButtonAlpha'>Alpha</div>" +
-// 						"<div id='gmMapListButtonGroup' class='gmMapListButtonSelect'>Group</div>" +
-// 					"</div>" +
-// 					"<div id='gmMapListAlpha' style='display: none;'>" +
-// 						"<form><select id='gmMapListAlphaSelect' size='4'></select></form>" +
-// 					"</div>" +
-// 					"<div id='gmMapListGroup'>" +
-// 					"<ul id='gmMapList'>" +
-// 						"<li>Loading world data...</li>" +
-// 					"</ul></div>";
-
-// 	this.mapListContainer = $('<div />')
-// 								.attr('id', 'gmMapListContainer')
-// 								.appendTo(parentObject);
-
-// 	this.mapListContainer.html(listHtml);
-
-// 	$('#gmMapListButtonAlpha').bind("touchstart click", function(e) {
-// 		$('#gmMapListButtonAlpha').addClass('gmMapListButtonSelect');
-// 		$('#gmMapListButtonGroup').removeClass('gmMapListButtonSelect');
-// 		$('#gmMapListAlpha').show();
-// 		$('#gmMapListGroup').hide();
-// 		$('#gmMapListAlphaSelect').focus();
-// 		return false;
-// 	});
-
-// 	$('#gmMapListButtonGroup').bind("touchstart click", function(e) {
-// 		$('#gmMapListButtonGroup').addClass('gmMapListButtonSelect');
-// 		$('#gmMapListButtonAlpha').removeClass('gmMapListButtonSelect');
-// 		$('#gmMapListGroup').show();
-// 		$('#gmMapListAlpha').hide();
-// 		$('#gmMapListGroup').focus();
-
-// 		selItem = $('#gmMapList li.gmMapListSelect');
-// 		if (selItem == null) return false;
-
-// 		container = $('#gmMapListGroup');
-// 		container.scrollTop(selItem.offset().top - container.offset().top + container.scrollTop() - 200);
-// 		return false;
-// 	});
-
-// 	$('#gmMapListAlphaSelect').change(function(e) {
-// 		var result = parseInt(this.options[this.selectedIndex].value);
-// 		self.changeWorld(result);
-
-// 		self.hideMapList();
-// 	});
-
-// 	return true;
-// }
-
-
-
-// uesp.gamemap.Map.prototype.updateCellGridLabel = function()
-// {
-// 		// TODO: No hard coded ID?
-// 	if (this.isDrawGrid)
-// 	{
-// 		$("#gmMapCellGrid").text("Hide Cell Grid");
-// 	}
-// 	else
-// 	{
-// 		$("#gmMapCellGrid").text("Show Cell Grid");
-// 	}
-// }
-
-// uesp.gamemap.Map.prototype.updateCellResourceLabel = function()
-// {
-// 		// TODO: No hard coded ID?
-// 	$("#gmCellResourceList").val(this.cellResource);
-
-// 	this.showCellResourceGuide(this.cellResource != "")
-// }
-
-
-// uesp.gamemap.Map.prototype.showCellResourceGuide = function(display)
-// {
-// 		// TODO: No hard coded ID?
-// 	$("#gmCellResourceGuide").toggle(display);
-// }
-
-
-
 /*================================================
 				Action Buttons
 ================================================*/
@@ -597,21 +476,6 @@ window.zoomOut = function(){
 	if (gamemap.getCurrentZoom() - mapConfig.zoomStep <= mapConfig.minZoomLevel) {
 		$("#btn_zoom_out").prop("disabled",true);
 	}
-}
-
-/*================================================
-				Location Switcher
-================================================*/
-
-// goto article button
-window.onLocationSwitcherClicked = function(){
-
-	const btnLocationSwitcher = document.querySelector("#btn_location_switcher");
-	btnLocationSwitcher.classList.toggle("toggled");
-
-	const locationSwitcherRoot = document.querySelector("#location_switcher_root");
-	locationSwitcherRoot.classList.toggle("shown");
-
 }
 
 /*================================================
@@ -673,7 +537,87 @@ window.enableDebugging = function(){
 	console.log("Debug mode enabled!");
 }
 
+/*================================================
+				Location Switcher
+================================================*/
 
+const btnLocationSwitcher = document.querySelector("#btn_location_switcher");
+const locationSwitcherRoot = document.querySelector("#location_switcher_root");
+
+// goto article button
+window.onLocationSwitcherClicked = function(){
+	toggleLocationSwitcher();
+
+	document.addEventListener('mouseup', function(e) {
+		var container = document.getElementById('location_switcher_root');
+		if (!container.contains(e.target)) {
+			//toggleLocationSwitcher();
+		}
+	});
+}
+
+window.toggleLocationSwitcher = function(){
+	btnLocationSwitcher.classList.toggle("toggled");
+	locationSwitcherRoot.classList.toggle("shown");
+}
+
+function createWorldLists(mapWorlds) {
+
+	const abcLocList = $("#abc_location_list");
+
+	let tempWorldList = [];
+
+	for (let key in mapWorlds) {
+		if (mapWorlds[key].name[0] != '_' && key > 0) tempWorldList.push(mapWorlds[key].name);
+	}
+
+	tempWorldList = tempWorldList.sort();
+	
+	print(tempWorldList);
+
+	for (let i = 0; i < tempWorldList.length; ++i) {
+		
+		//world = mapWorlds[this.mapWorldNameIndex[tempWorldList[i]]];
+
+		let world = mapWorlds[0];
+
+		if (world != null) {
+
+			document.body.appendChild(createWorldRow(world.id));  
+
+			//abcLocList.appendChild();
+			// abcLocList.append($(createWorldRow(world.id))
+			// .attr("value", world.id)
+			// .text(world.displayName));
+		}
+
+	}
+	
+
+
+	// get abc list element
+	// get mapworlds, iterate through it
+	// make a temp list that goes through list and sorts in alphabetical order
+
+}
+
+function createWorldRow(worldID) {
+	let world = gamemap.getWorldFromID(worldID);
+
+	if (world != null) {
+
+		let element = document.createElement("a");  
+		element.innerHTML = "<a id='lc_worldID_" + worldID + "' name='" + world.name + "'onclick='gotoWorld(" + worldID + ")' class='collection-item'> " + world.displayName + " </a>";;  
+
+		return element;
+	}
+}
+
+
+window.gotoWorld = function(worldID, coords){
+	gamemap.gotoWorld(worldID, coords)
+}
+	
 // uesp.gamemap.Map.prototype.fillWorldList = function(ElementID)
 // {
 // 	TargetList = $(ElementID);
@@ -681,10 +625,6 @@ window.enableDebugging = function(){
 
 // 	var tmpWorldList = [];
 
-// 	for (key in this.mapWorlds)
-// 	{
-// 		if (this.mapWorlds[key].name[0] != '_' && key > 0) tmpWorldList.push(this.mapWorlds[key].name);
-// 	}
 
 // 	tmpWorldList.sort(compareMapWorld);
 // 	TargetList.empty();

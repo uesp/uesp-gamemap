@@ -11,11 +11,11 @@ import MapState from "./mapstate.js";
 import RasterCoords from "../lib/leaflet/rastercoords.js";
 
 /*================================================
-					Globals
+					Locals
 ================================================*/
 
 var map; // Leaflet map instance
-var self; // Global "this" instance of Gamemap
+var self; // Local "this" instance of Gamemap
 var RC; // RasterCoords instance, for converting leaflet latlongs to XY coords and back
 var isLoaded = false; // Temp loaded state bool to prevent race conditions
 
@@ -93,7 +93,6 @@ export default class Gamemap {
 			zoomDelta: mapConfig.zoomStep,
 			zoomControl: false, // hide leaflet zoom control (we have our own)
 			doubleTouchDragZoom: Utils.isMobileDevice(), // enable double touch drag zoom on mobile only
-			doubleTouchDragZoomDelay: 300,
 			debounceMoveend: false,
         }
 
@@ -228,6 +227,10 @@ export default class Gamemap {
 		return this.mapWorlds[worldID] || null; 
 	}
 
+	getWorldFromName(worldName){
+		return this.mapWorlds[this.mapWorldNameIndex[tmpWorldList[i]]];
+	}
+
 	/** Download and parse world data for this game's mapConfig.
 	 * @see initialiseMap()
 	 */
@@ -284,6 +287,13 @@ export default class Gamemap {
 
 	hasWorld(worldID) {
 		return worldID in this.mapWorlds;
+	}
+
+
+	gotoWorld(worldID, coords) {
+
+		// TODO: 
+
 	}
 
 
@@ -511,10 +521,11 @@ export default class Gamemap {
 			}
 		})
 
-		// map.on("dblclick", function(event){
-		// 	alert(self.toCoords(event.latlng));
-		// 	return true;
-		// })
+		map.on("dblclick", function(event){
+			if (!Utils.isMobileDevice()){
+				alert(self.toCoords(event.latlng));
+			}
+		})
 
 	}
 

@@ -190,7 +190,7 @@
           this._center = null;
         }
         this._touch = false;
-        this._map.setZoom(this._map.getZoom(), {animate: false}); // fix bug with pan being stuck on mobile
+        this._map.setZoom(this._map.getZoom()); // fix bug with pan being stuck on mobile
       }
     });
   
