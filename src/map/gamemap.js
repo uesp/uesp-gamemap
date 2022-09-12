@@ -17,6 +17,7 @@ import RasterCoords from "../lib/leaflet/rastercoords.js";
 var map; // Leaflet map instance
 var self; // Global "this" instance of Gamemap
 var RC; // RasterCoords instance, for converting leaflet latlongs to XY coords and back
+var isLoaded = false; // Temp loaded state bool to prevent race conditions
 
 /*================================================
 				  Constructor
@@ -63,8 +64,13 @@ export default class Gamemap {
 			// check user editing permission
 			this.checkPermissions();
 
-			// get world data and load map
-			this.getWorldData();
+			// get world data for this mapConfig
+			this.getWorlds(mapConfig);
+
+			// initialise map
+			if (isLoaded) {
+				this.initialiseMap(mapConfig);
+			}
 
 		} else {
 			throw new Error("The gamemap constructor was provided invalid/missing params.");
@@ -75,7 +81,7 @@ export default class Gamemap {
 					   Initialise
 	================================================*/
 
-	/** Initialise default map state and variables. (Note: Needs to be called after worlds are loaded)
+	/** Initialise default map state and variables.
 	 * @param {Object} mapConfig - Object that controls the default/imported settings of the map.
 	 */
 	initialiseMap(mapConfig) {
@@ -86,7 +92,9 @@ export default class Gamemap {
 			zoomSnap: mapConfig.enableZoomSnap,
 			zoomDelta: mapConfig.zoomStep,
 			zoomControl: false, // hide leaflet zoom control (we have our own)
-			doubleTouchDragZoom: true,
+			doubleTouchDragZoom: Utils.isMobileDevice(), // enable double touch drag zoom on mobile only
+			doubleTouchDragZoomDelay: 300,
+			debounceMoveend: false,
         }
 
 		map = L.map(this.rootMapID, mapOptions);
@@ -158,6 +166,7 @@ export default class Gamemap {
 		// finally, update map state
 		this.currentMapState = mapState;
 		this.updateMapLink(map);
+		isLoaded = true;
 	}
 
 	/** Get current map state object.
@@ -219,13 +228,13 @@ export default class Gamemap {
 		return this.mapWorlds[worldID] || null; 
 	}
 
-	/** Download and parse world data for this game's mapConfig. Calls gamemap's initialise function when finished.
+	/** Download and parse world data for this game's mapConfig.
 	 * @see initialiseMap()
 	 */
-	getWorldData() {
+	getWorlds(mapConfig) {
 		let queryParams = {};
 		queryParams.action = "get_worlds";
-		queryParams.db = this.mapConfig.database;
+		queryParams.db = mapConfig.database;
 		loading("world");
 
 		if (this.isHiddenLocsShown()) {
@@ -244,23 +253,23 @@ export default class Gamemap {
 			for (var key in data.worlds) {
 				let world = data.worlds[key];
 
-				if (world.id > self.mapConfig.minWorldID && world.id < self.mapConfig.maxWorldID && world.name != null) {
-					self.mapWorlds[world.id] = new World(world.name.toLowerCase(), self.mapConfig, world.id);
-					self.mapWorlds[world.id].mergeMapConfig(self.mapConfig);
+				if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name != null) {
+					self.mapWorlds[world.id] = new World(world.name.toLowerCase(), mapConfig, world.id);
+					self.mapWorlds[world.id].mergeMapConfig(mapConfig);
 					self.mapWorldNameIndex[world.name.toLowerCase()] = world.id;
-
 					if (world.displayName != null) self.mapWorldDisplayNameIndex[world.displayName] = world.id;
 					self.mapWorlds[world.id] = Utils.mergeObjects(self.mapWorlds[world.id], world);
 					self.mapWorldNameIndex[world.name] = world.id;
 					self.mapWorldDisplayNameIndex[world.displayName] = world.id;
 				}
 			}
-	
 			if (self.mapCallbacks != null) {
 				self.mapCallbacks.onWorldsLoaded(self.mapWorlds);
 
 				// load map
-				self.initialiseMap(self.mapConfig);
+				if (!isLoaded) {
+					self.initialiseMap(mapConfig);
+				}
 			}
 		});
 	}
@@ -301,6 +310,13 @@ export default class Gamemap {
 		// load layers and locations
 		L.marker(this.toLatLng([0.5, 0.5])).addTo(map);
 
+		var myIcon = L.divIcon({className: 'gmMapLoc', html: '<b>Hello! This is a long marker test</b>'});
+		L.marker(this.toLatLng([0.5, 0.7]), {icon: myIcon}).addTo(map);
+
+		var myIcon = L.divIcon({className: 'gmMapLoc', html: '<div class="gmMapLocIconDiv" style="z-index: 12;"><img class="gmMapLocIcon" src="assets/icons/eso/51.png" unselectable="on" style="user-select: none;"><span class="gmMapLocIconHelper"></span></div>'});
+		L.marker(this.toLatLng([0.5, 0.6]), {icon: myIcon}).addTo(map);
+
+
 		//this.clearLocationElements();
 		// load new locations for this map
 
@@ -316,6 +332,8 @@ export default class Gamemap {
 
 	updateMapLink(map, mapState) {
 
+		// TODO: refactor away from using map directly and use mapState
+
 		let mapLink = "?"
 
 		if (this.hasMultipleWorlds()){
@@ -325,14 +343,6 @@ export default class Gamemap {
 		mapLink += '&x=' + this.toCoords(map.getCenter()).x;
 		mapLink += '&y=' + this.toCoords(map.getCenter()).y;
 		mapLink += '&zoom=' + parseFloat(map.getZoom().toFixed(3));
-
-		// mapLink += '&x=' + mapState.gamePos.x;
-		// mapLink += '&y=' + mapState.gamePos.y;
-		// mapLink += '&zoom=' + mapState.zoomLevel;
-	
-		// if (mapState.grid) mapLink += "&grid=true";
-		// if (mapState.cellResource != "") mapLink += "&cellResource=" + mapState.cellResource;
-		// if (mapState.displayState != "") mapLink += "&displayState=" + mapState.displayState;
 
 		if (window.history.replaceState) {
 			//prevents browser from storing history with each change:
