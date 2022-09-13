@@ -170,8 +170,7 @@ export default class Gamemap {
 		tileLayer.addTo(map);
 
 		// set map view
-		map.setZoom(mapState.zoomLevel);
-		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel);
+		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel, {animate: true});
 		this.setWorld(mapState.worldID);
 
 		// remove map bounds to fix RC bug
@@ -490,9 +489,6 @@ export default class Gamemap {
 	 */
 	toLatLng(coords) {
 
-		print("incoming coords:");
-		print(coords);
-
 		let latLng;
 
 		// are we being given a coord object?
@@ -512,8 +508,6 @@ export default class Gamemap {
 
 		// are we being given an array of coords?
 		if (coords[0] != null && coords.length == 2) {
-
-			print("given an array of coords");
 
 			// are we using a normalised coordinate scheme?
 			if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
