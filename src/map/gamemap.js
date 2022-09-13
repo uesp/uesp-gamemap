@@ -144,8 +144,10 @@ export default class Gamemap {
 			tileLayer.remove();
 		}
 
+		;
+
 		// set full image width & height
-		let mapImageDimens = this.getMapImageDimensions();
+		let mapImageDimens = this.getMapImageDimensions(this.mapWorlds[mapState.worldID]);
 		this.mapImage = { 
 			width : mapImageDimens.width,  // original width of image
 			height: mapImageDimens.height, // original height of image
@@ -431,10 +433,11 @@ export default class Gamemap {
 
 	/**
 	 * Gets width and height of the full map image.
+	 * @param world - 
 	 * @returns mapImageDimens - The width/height of the map image as an object
 	 * @example print(getMapImageDimensions().width);
 	 */
-	getMapImageDimensions() {
+	getMapImageDimensions(world) {
 
 		let dimens = {};
 		let width = null;
@@ -446,8 +449,8 @@ export default class Gamemap {
 			height = this.mapConfig.fullHeight;
 		} else if (this.mapConfig.numTilesY == this.mapConfig.numTilesX) { // if the map is a square (1:1)
 			// then calculate the image dimensions as the size of the whole grid
-			width = this.mapConfig.numTilesX * this.mapConfig.tileSize;
-			height = this.mapConfig.numTilesY * this.mapConfig.tileSize;
+			width = world.tilesX * this.mapConfig.tileSize;
+			height = world.tilesY * this.mapConfig.tileSize;
 		} else {
 			throw new Error("No map dimensions were provided!");
 		}

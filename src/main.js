@@ -586,8 +586,10 @@ function createWorldLists(mapWorlds) {
 	}
 
 	tempWorldList = tempWorldList.sort(function(a, b) {
+		// ignore "The" in alphabetical sort
 		a = a.replace("The ", ""); 
 		b = b.replace("The ", ""); 
+		// make alphabetical sort case insensitive
 		if (a.toLowerCase() < b.toLowerCase()) return -1;
 		if (a.toLowerCase() > b.toLowerCase()) return 1;
 		return 0;
