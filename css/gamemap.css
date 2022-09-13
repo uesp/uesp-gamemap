@@ -43,8 +43,15 @@ body {
 
 @media only screen and (max-device-width:900px) {
 
-	#menubar {
-		display: none !important;
+	#location_switcher_root {
+		left: calc(50% - var(--appbar_dimen) + var(--padding_large)) !important;
+		width: 75% !important;
+	}
+
+	#location_switcher_root:before {
+		left: calc(100% - 2px) !important;
+		top: 15px !important;
+		transform: rotate(180deg) !important;
 	}
 
 	.search_root {
@@ -254,6 +261,7 @@ b[class^="icon_button_label"] {
 
 #location_switcher_root {
 	position: fixed;
+	display: none !important;
 	width: calc(var(--search_pane_width) * 0.75 );
 	height: 65%;
 	background-color: var(--surface);
@@ -266,15 +274,31 @@ b[class^="icon_button_label"] {
 	border-radius: var(--padding_medium);
 	box-shadow: 0px 1.5px 4px 4px var(--shadow);
 	opacity: 0;
-	transition: 0.2s all ease-out;
+	visibility: hidden;
 	pointer-events: none;
 }
 
 #location_switcher_root.shown {
 	opacity: 1;
-	top:42%;
+	display: block !important;
+	visibility: visible;
 	pointer-events: auto;
+	animation: fadein 0.2s;
+	top:42%;
 }
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+		top:40%;
+    }
+
+    100% {
+        opacity: 1;
+		top:42%;
+    }
+}
+
 
 .collapsible-header {
 	background-color: var(--surface_variant);
@@ -325,7 +349,7 @@ b[class^="icon_button_label"] {
 }
 
 #location_switcher_content {
-	overflow-y: scroll;
+	overflow-y: auto;
 	height: calc(100% - var(--appbar_dimen));
 	border-radius: 0 0 var(--padding_medium) var(--padding_medium);
 }

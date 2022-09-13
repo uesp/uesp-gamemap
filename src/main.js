@@ -543,6 +543,12 @@ window.onLocationSwitcherClicked = function(){
 }
 
 window.toggleLocationSwitcher = function(toggle){
+	if (toggle || toggle == null){
+		$("#location_switcher_root").show();
+	} else { 
+		$("#location_switcher_root").hide();
+	}
+
 	btnLocationSwitcher.classList.toggle("toggled", toggle);
 	locationSwitcherRoot.classList.toggle("shown", toggle);
 }
