@@ -438,6 +438,9 @@ window.gotoArticle = function(){
 	}
 }
 
+window.resetMap = function() {
+	gamemap.gotoWorld(mapConfig.defaultWorldID);
+}
 
 /*================================================
 				  Zoom Buttons
@@ -560,8 +563,6 @@ function hideMenus() {
 
 function createWorldLists(mapWorlds) {
 
-	const abcLocList = $("#abc_location_list");
-
 	let tempWorldList = [];
 
 	for (let key in mapWorlds) {
@@ -602,37 +603,14 @@ function createCollapsibleHeader(worldDisplayName) {
 
 }
 
+//const abcLocList = $("#abc_location_list");
 
 window.gotoWorld = function(worldID, coords){
 	gamemap.gotoWorld(worldID, coords);
 	toggleLocationSwitcher(false);
-	print(worldID);
+	print("Going to world... " + worldID);
 }
 	
-// uesp.gamemap.Map.prototype.fillWorldList = function(ElementID)
-// {
-// 	TargetList = $(ElementID);
-// 	if (TargetList == null) return false;
-
-// 	var tmpWorldList = [];
-
-
-// 	tmpWorldList.sort(compareMapWorld);
-// 	TargetList.empty();
-
-// 	for (i = 0; i < tmpWorldList.length; ++i)
-// 	{
-// 		world = this.mapWorlds[this.mapWorldNameIndex[tmpWorldList[i]]];
-// 		if (world == null) continue;
-
-// 		TargetList.append($("<option></option>")
-// 					.attr("value", world.id)
-// 					.text(world.displayName));
-// 	}
-
-// 	return true;
-// }
-
 
 // uesp.gamemap.Map.prototype.translateGroupListToName = function(groups, depth)
 // {

@@ -20,6 +20,7 @@ var RC; // RasterCoords instance, for converting leaflet latlongs to XY coords a
 var isLoaded = false; // Temp loaded state bool to prevent race conditions
 var mapWorldNameIndex = {}; // Local list of map world names
 var mapWorldDisplayNameIndex = {}; // Local list of map display names
+var tileLayer; // Local tiles
 
 /*================================================
 				  Constructor
@@ -102,6 +103,7 @@ export default class Gamemap {
 		let mapState = new MapState();
 		mapState.zoomLevel = mapConfig.defaultZoomLevel;
 		mapState.worldID = mapConfig.defaultWorldID || 0;
+		mapState.coords = [mapConfig.defaultXPos, mapConfig.defaultYPos];
 
 		if (this.hasCenterOnURLParam()) { // check if URL has "centeron" param
 			// find location and centre on it
@@ -134,6 +136,11 @@ export default class Gamemap {
 	 */
 	setMapState(mapState) {
 
+		if (tileLayer != null) {
+			tileLayer.remove();
+			//$(".leaflet-map-pane").empty();
+		}
+
 		// set full image width & height
 		let mapImageDimens = this.getMapImageDimensions();
 		this.mapImage = { 
@@ -152,11 +159,13 @@ export default class Gamemap {
 			maxZoom: this.mapConfig.maxZoomLevel,
 			edgeBufferTiles: this.mapConfig.numEdgeBufferTiles,
 		}
-			
-		L.tileLayer(this.getMapTileImageURL(this.mapWorlds[mapState.worldID], this.mapConfig), tileOptions).addTo(map);
+
+		tileLayer = L.tileLayer(this.getMapTileImageURL(this.mapWorlds[mapState.worldID], this.mapConfig), tileOptions);
+		tileLayer.addTo(map);
 
 		// set map view
 		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel);
+		map.setZoom(mapState.zoomLevel);
 		this.setWorld(mapState.worldID);
 
 		// remove map bounds to fix RC bug
@@ -184,6 +193,8 @@ export default class Gamemap {
 
 		if (Utils.getURLParams().has("zoom")){
 			mapState.zoomLevel = Utils.getURLParams().get("zoom");
+		} else {
+			mapState.zoomLevel = this.mapConfig.defaultZoomLevel;
 		}
 
 		if (Utils.getURLParams().has("world")){
@@ -195,6 +206,8 @@ export default class Gamemap {
 
 		if (Utils.getURLParams().has("x") && Utils.getURLParams().has("y")) {
 			mapState.coords = [Utils.getURLParams().get("x"), Utils.getURLParams().get("y")];
+		} else {
+			mapState.coords = [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
 		}
 
 		if (Utils.getURLParams().has("grid")){
@@ -296,8 +309,18 @@ export default class Gamemap {
 
 	gotoWorld(worldID, coords) {
 
-		// TODO: 
+		print(worldID)
+		
+		let mapState = new MapState();
+		mapState.zoomLevel = this.mapConfig.zoomLevel;
 
+		if (coords == null) {
+			mapState.coords = [DEFAULT_MAP_CONFIG.defaultXPos, DEFAULT_MAP_CONFIG.defaultYPos];
+		}
+
+        mapState.worldID = worldID;
+
+		this.setMapState(mapState);
 	}
 
 
@@ -322,13 +345,13 @@ export default class Gamemap {
 		}
 
 		// load layers and locations
-		L.marker(this.toLatLng([0.5, 0.5])).addTo(map);
+		// L.marker(this.toLatLng([0.5, 0.5])).addTo(map);
 
-		var myIcon = L.divIcon({className: 'gmMapLoc', html: '<b>Hello! This is a long marker test</b>'});
-		L.marker(this.toLatLng([0.5, 0.7]), {icon: myIcon}).addTo(map);
+		// var myIcon = L.divIcon({className: 'gmMapLoc', html: '<b>Hello! This is a long marker test</b>'});
+		// L.marker(this.toLatLng([0.5, 0.7]), {icon: myIcon}).addTo(map);
 
-		var myIcon = L.divIcon({className: 'gmMapLoc', html: '<div class="gmMapLocIconDiv" style="z-index: 12;"><img class="gmMapLocIcon" src="assets/icons/eso/51.png" unselectable="on" style="user-select: none;"><span class="gmMapLocIconHelper"></span></div>'});
-		L.marker(this.toLatLng([0.5, 0.6]), {icon: myIcon}).addTo(map);
+		// var myIcon = L.divIcon({className: 'gmMapLoc', html: '<div class="gmMapLocIconDiv" style="z-index: 12;"><img class="gmMapLocIcon" src="assets/icons/eso/51.png" unselectable="on" style="user-select: none;"><span class="gmMapLocIconHelper"></span></div>'});
+		// L.marker(this.toLatLng([0.5, 0.6]), {icon: myIcon}).addTo(map);
 
 
 		//this.clearLocationElements();
@@ -460,6 +483,9 @@ export default class Gamemap {
 	 */
 	toLatLng(coords) {
 
+		print("incoming coords:");
+		print(coords);
+
 		let latLng;
 
 		// are we being given a coord object?
@@ -479,6 +505,8 @@ export default class Gamemap {
 
 		// are we being given an array of coords?
 		if (coords[0] != null && coords.length == 2) {
+
+			print("given an array of coords");
 
 			// are we using a normalised coordinate scheme?
 			if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
