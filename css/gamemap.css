@@ -256,7 +256,7 @@ b[class^="icon_button_label"] {
 	position: fixed;
 	width: calc(var(--search_pane_width) * 0.75 );
 	height: 65%;
-	background-color: var(--primary);
+	background-color: var(--surface);
 	color: var(--text_on_primary);
 	top: 50%;
 	left: calc(var(--search_pane_width) + var(--padding_large));
@@ -267,7 +267,6 @@ b[class^="icon_button_label"] {
 	box-shadow: 0px 1.5px 4px 4px var(--shadow);
 	opacity: 0;
 	transition: 0.2s all ease-out;
-
 	pointer-events: none;
 }
 
@@ -281,16 +280,16 @@ b[class^="icon_button_label"] {
 	background-color: var(--surface_variant);
 }
 
-.collapsible-body {
-	padding: 0px !important;
+.collapsible li div i {
+	transition: all 0.2s ease-out;
+}
+
+.collapsible li.active div i {
+	transform: rotate(180deg);
 }
 
 .collection .collection-item {
 	background-color: var(--surface);
-}
-
-.collection a.collection-item:not(.active):hover {
-	background-color: var(--divider);
 }
 
 .collection a.collection-item:hover {
@@ -306,14 +305,12 @@ b[class^="icon_button_label"] {
 	border-bottom: none;
 }
 
-
-
-
 #location_switcher_tab_bar {
 	border-radius: var(--padding_medium) var(--padding_medium) 0 0;
 	height: var(--appbar_dimen) !important;
 	background-color: var(--primary_variant_dark);
 	box-shadow: 0 2px 2px 0px var(--shadow);
+	z-index: 999;
 }
 
 #location_switcher_tab_bar .tab a {
@@ -326,8 +323,10 @@ b[class^="icon_button_label"] {
 	font-weight: bold;
 }
 
-#location_switcher_root *.tab-pane { 
-	overflow: scroll;
+#location_switcher_content {
+	overflow-y: scroll;
+	height: calc(100% - var(--appbar_dimen));
+	border-radius: 0 0 var(--padding_medium) var(--padding_medium);
 }
 
 .tabs .indicator {

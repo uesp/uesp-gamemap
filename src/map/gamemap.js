@@ -228,7 +228,7 @@ export default class Gamemap {
 	}
 
 	getWorldFromName(worldName){
-		return this.mapWorlds[this.mapWorldNameIndex[tmpWorldList[i]]];
+		return this.mapWorlds[this.mapWorldNameIndex[worldName]];
 	}
 
 	/** Download and parse world data for this game's mapConfig.

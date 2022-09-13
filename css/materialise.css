@@ -3220,7 +3220,7 @@ input[type=range] + .thumb {
 
 .collection {
   margin: 0.5rem 0 1rem 0;
-  border: 1px solid #e0e0e0;
+  border: none;
   border-radius: 2px;
   overflow: hidden;
   position: relative;
@@ -3282,7 +3282,7 @@ input[type=range] + .thumb {
   color: #26a69a;
 }
 .collection a.collection-item:not(.active):hover {
-  background-color: #ddd;
+  background-color: var(--divider);
 }
 .collection.with-header .collection-header {
   background-color: #fff;
@@ -5582,9 +5582,7 @@ body.keyboard-focused .dropdown-content li:focus {
 }
 
 .collapsible {
-  border-top: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-  border-left: 1px solid #ddd;
+  border: none;
   margin: 0.5rem 0 1rem 0;
 }
 
@@ -5620,7 +5618,7 @@ body.keyboard-focused .dropdown-content li:focus {
   border-bottom: 1px solid #ddd;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  padding: 2rem;
+  padding: 0px !important;
 }
 
 .sidenav .collapsible,

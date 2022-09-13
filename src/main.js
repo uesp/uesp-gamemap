@@ -30,43 +30,38 @@ $(document).ready(function() {
 	let gameParam = window.location.pathname.replace(/\\|\//g,'')
 	print(gameParam);
 
-	if (gameParam != null && gameParam != "") {
+	if (gameParam != null && gameParam != "" && gameParam.match(/^([a-z]+)/)) {
+		print("URL has game param!");
 
-		if (gameParam.match(/^([a-z]+)/)) {
+		// get map configs
+		Utils.getJSON(Constants.DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
+			if (error == null) {
+				window.DEFAULT_MAP_CONFIG = defaultMapConfig;
 
-			print("URL has game param!");
-
-			// get map configs
-			Utils.getJSON(Constants.DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
-				if (error == null) {
-					window.DEFAULT_MAP_CONFIG = defaultMapConfig;
-
-					let configURL = (Constants.CONFIG_DIR + gameParam + "/" + Constants.MAP_CONFIG_FILENAME);
-					print("Getting map config at "+configURL+"...");
+				let configURL = (Constants.CONFIG_DIR + gameParam + "/" + Constants.MAP_CONFIG_FILENAME);
+				print("Getting map config at "+configURL+"...");
+		
+				if (Utils.doesFileExist(configURL)) {
+					Utils.getJSON(configURL, function(error, object) {
+						if (error !== null) {
+							showError("Could not load map: " + error);
+						} else {
+							print("Imported map config successfully!");
+							mapConfig = object;
 			
-					if (Utils.doesFileExist(configURL)) {
+							print("Merging with default map config...")
+							let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
 			
-						Utils.getJSON(configURL, function(error, object) {
-							if (error !== null) {
-								showError("Could not load map: " + error);
-							} else {
-								print("Imported map config successfully!");
-								mapConfig = object;
-				
-								print("Merging with default map config...")
-								let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
-				
-								print(mergedMapConfig);
-				
-								mapConfig = mergedMapConfig;
-				
-								// load map
-								loadGamemap(mergedMapConfig);
-							}
-						})
-					} else { showError("Provided game doesn't exist. Please check the URL.");}
-				} else { showError("There was an error getting the default map config." + error);}})
-		} else { showError("Provided game was invalid. Please check the URL."); }
+							print(mergedMapConfig);
+			
+							mapConfig = mergedMapConfig;
+			
+							// load map
+							loadGamemap(mergedMapConfig);
+						}
+					})
+				} else { showError("Provided game doesn't exist. Please check the URL.");}
+			} else { showError("There was an error getting the default map config." + error);}})
 	} else { showError("No valid game provided."); }
 
 	// bind views from DOM
@@ -93,9 +88,6 @@ $(document).ready(function() {
 ================================================*/
 
 function loadGamemap(mapConfig) {
-
-	// set up infobar
-	loadInfobar(mapConfig);
 
 	// set up callbacks
 	var mapCallbacks = {
@@ -149,13 +141,6 @@ function onPermissionsLoaded(enableEditing) {
 	// 	$("#showRecentChangeButton").hide();
 	// }
 }
-
-function loadInfobar(mapConfig){
-	$(".infobar").show();
-	$("#mapNameLink").text(mapConfig.mapTitle);
-	$("#mapFeedbackLink").attr("href", mapConfig.feedbackURL);
-}
-
 
 function onWorldChanged(newWorld) {
 
@@ -548,17 +533,17 @@ const locationSwitcherRoot = document.querySelector("#location_switcher_root");
 window.onLocationSwitcherClicked = function(){
 	toggleLocationSwitcher();
 
-	document.addEventListener('mouseup', function(e) {
-		var container = document.getElementById('location_switcher_root');
-		if (!container.contains(e.target)) {
-			//toggleLocationSwitcher();
+	document.addEventListener('mousedown', function(e) {
+		var root = document.getElementById('location_switcher_root');
+		if (!root.contains(e.target)) {
+			toggleLocationSwitcher(false);
 		}
 	});
 }
 
-window.toggleLocationSwitcher = function(){
-	btnLocationSwitcher.classList.toggle("toggled");
-	locationSwitcherRoot.classList.toggle("shown");
+window.toggleLocationSwitcher = function(toggle){
+	btnLocationSwitcher.classList.toggle("toggled", toggle);
+	locationSwitcherRoot.classList.toggle("shown", toggle);
 }
 
 function createWorldLists(mapWorlds) {
@@ -576,28 +561,13 @@ function createWorldLists(mapWorlds) {
 	print(tempWorldList);
 
 	for (let i = 0; i < tempWorldList.length; ++i) {
-		
-		//world = mapWorlds[this.mapWorldNameIndex[tempWorldList[i]]];
 
-		let world = mapWorlds[0];
+		let world = gamemap.getWorldFromName(tempWorldList[i]);
 
 		if (world != null) {
-
-			document.body.appendChild(createWorldRow(world.id));  
-
-			//abcLocList.appendChild();
-			// abcLocList.append($(createWorldRow(world.id))
-			// .attr("value", world.id)
-			// .text(world.displayName));
+			$("#abc_location_list").append(createWorldRow(world.id));
 		}
-
 	}
-	
-
-
-	// get abc list element
-	// get mapworlds, iterate through it
-	// make a temp list that goes through list and sorts in alphabetical order
 
 }
 
@@ -605,17 +575,26 @@ function createWorldRow(worldID) {
 	let world = gamemap.getWorldFromID(worldID);
 
 	if (world != null) {
-
-		let element = document.createElement("a");  
-		element.innerHTML = "<a id='lc_worldID_" + worldID + "' name='" + world.name + "'onclick='gotoWorld(" + worldID + ")' class='collection-item'> " + world.displayName + " </a>";;  
-
+		let element = $("<a id='lc_worldID_" + worldID + "' name='" + world.name + "' class='collection-item waves-effect'> " + world.displayName + " </a>");
+		element.on('click', function () {
+			gotoWorld(worldID);
+		});
 		return element;
 	}
 }
 
+function createCollapsibleHeader(worldDisplayName) {
+
+	let element = $("<li><div class='collapsible-header waves-effect'>" + worldDisplayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body'><div class='collection'><!-- locations go here --></div></div></li>");
+	return element;
+
+}
+
 
 window.gotoWorld = function(worldID, coords){
-	gamemap.gotoWorld(worldID, coords)
+	gamemap.gotoWorld(worldID, coords);
+	toggleLocationSwitcher(false);
+	print(worldID);
 }
 	
 // uesp.gamemap.Map.prototype.fillWorldList = function(ElementID)

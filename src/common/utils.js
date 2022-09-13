@@ -89,7 +89,7 @@ window.print = (function(console) {
 		if (canLog) {
 			// check if payload is string
 			if (typeof txt === "string" || txt instanceof String) {
-				console.log("debug: " + txt);
+				console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
 			} else {
 				console.log(txt);
 			}
