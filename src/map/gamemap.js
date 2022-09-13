@@ -164,8 +164,7 @@ export default class Gamemap {
 		tileLayer.addTo(map);
 
 		// set map view
-		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel);
-		map.setZoom(mapState.zoomLevel);
+		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel, {animate: false});
 		this.setWorld(mapState.worldID);
 
 		// remove map bounds to fix RC bug
@@ -202,6 +201,8 @@ export default class Gamemap {
 			if (mapState.worldID == "undefined") {
 				mapState.worldID = this.mapConfig.defaultWorldID;
 			}
+		} else { 
+			mapState.worldID = this.mapConfig.defaultWorldID;
 		}
 
 		if (Utils.getURLParams().has("x") && Utils.getURLParams().has("y")) {
@@ -315,11 +316,10 @@ export default class Gamemap {
 		mapState.zoomLevel = this.mapConfig.zoomLevel;
 
 		if (coords == null) {
-			mapState.coords = [DEFAULT_MAP_CONFIG.defaultXPos, DEFAULT_MAP_CONFIG.defaultYPos];
+			mapState.coords = [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
 		}
 
         mapState.worldID = worldID;
-
 		this.setMapState(mapState);
 	}
 
