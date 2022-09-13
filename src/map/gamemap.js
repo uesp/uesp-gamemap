@@ -95,6 +95,9 @@ export default class Gamemap {
 			zoomControl: false, // hide leaflet zoom control (we have our own)
 			doubleTouchDragZoom: Utils.isMobileDevice(), // enable double touch drag zoom on mobile only
 			debounceMoveend: false,
+			boxZoom: false,
+			doubleClickZoom: false, // disable double click to zoom
+			wheelPxPerZoomLevel: 100, // make zooming with mouse wheel slightly slower
         }
 
 		map = L.map(this.rootMapID, mapOptions);
@@ -106,7 +109,7 @@ export default class Gamemap {
 		mapState.coords = [mapConfig.defaultXPos, mapConfig.defaultYPos];
 
 		if (this.hasCenterOnURLParam()) { // check if URL has "centeron" param
-			// find location and centre on it
+			// TODO: find location and centre on it
 		} else if (this.hasMultipleURLParams()) { // else check if has multiple url params 
 			// load state from URL
 			mapState = this.getMapStateFromURL();
@@ -136,9 +139,9 @@ export default class Gamemap {
 	 */
 	setMapState(mapState) {
 
+		// remove previous tiles
 		if (tileLayer != null) {
 			tileLayer.remove();
-			//$(".leaflet-map-pane").empty();
 		}
 
 		// set full image width & height
@@ -148,8 +151,10 @@ export default class Gamemap {
 			height: mapImageDimens.height, // original height of image
 		}
 
+		// calculate raster coords
 		RC = new RasterCoords(map, this.mapImage)
 
+		// default tilelayer options
 		let tileOptions = {
 			noWrap: true,
 			bounds: RC.getMaxBounds(),
@@ -160,11 +165,13 @@ export default class Gamemap {
 			edgeBufferTiles: this.mapConfig.numEdgeBufferTiles,
 		}
 
+		// set map tiles
 		tileLayer = L.tileLayer(this.getMapTileImageURL(this.mapWorlds[mapState.worldID], this.mapConfig), tileOptions);
 		tileLayer.addTo(map);
 
 		// set map view
-		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel, {animate: false});
+		map.setZoom(mapState.zoomLevel);
+		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel);
 		this.setWorld(mapState.worldID);
 
 		// remove map bounds to fix RC bug
@@ -313,7 +320,7 @@ export default class Gamemap {
 		print(worldID)
 		
 		let mapState = new MapState();
-		mapState.zoomLevel = this.mapConfig.zoomLevel;
+		mapState.zoomLevel = this.mapConfig.defaultZoomLevel;
 
 		if (coords == null) {
 			mapState.coords = [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
@@ -340,8 +347,8 @@ export default class Gamemap {
 		}  
 
 		if (worldID in this.mapWorlds) {
-			this.mapWorlds[worldID].mapState  = this.getMapState();
-			this.mapWorlds[worldID].mapConfig = this.mapConfig;
+			// this.mapWorlds[worldID].mapState  = this.getMapState();
+			// this.mapWorlds[worldID].mapConfig = this.mapConfig;
 		}
 
 		// load layers and locations
@@ -358,7 +365,7 @@ export default class Gamemap {
 		// load new locations for this map
 
 		this.currentWorldID = worldID;
-		this.mapConfig = this.mapWorlds[this.currentWorldID].mapConfig;
+		//this.mapConfig = this.mapWorlds[worldID].mapConfig;
 
 		//callback to notify world changed
 		if (this.mapCallbacks != null) {
@@ -562,9 +569,7 @@ export default class Gamemap {
 		})
 
 		map.on("dblclick", function(event){
-			if (!Utils.isMobileDevice()){
-				alert(self.toCoords(event.latlng));
-			}
+			map.panTo(event.latlng, {animate: true});
 		})
 
 	}
