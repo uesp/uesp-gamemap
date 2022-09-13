@@ -278,6 +278,7 @@ b[class^="icon_button_label"] {
 
 .collapsible-header {
 	background-color: var(--surface_variant);
+	font-weight: bold;
 }
 
 .collapsible li div i {

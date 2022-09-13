@@ -94,6 +94,7 @@ function loadGamemap(mapConfig) {
 		onWorldsLoaded,
 		onPermissionsLoaded,
 		onWorldChanged,
+		hideMenus,
 	};
 
 	gamemap = new Gamemap('gamemap', mapConfig, mapCallbacks);
@@ -535,7 +536,7 @@ window.onLocationSwitcherClicked = function(){
 
 	document.addEventListener('mousedown', function(e) {
 		var root = document.getElementById('location_switcher_root');
-		if (!root.contains(e.target)) {
+		if (!root.contains(e.target) && !btnLocationSwitcher.contains(e.target) ) {
 			toggleLocationSwitcher(false);
 		}
 	});
@@ -544,6 +545,11 @@ window.onLocationSwitcherClicked = function(){
 window.toggleLocationSwitcher = function(toggle){
 	btnLocationSwitcher.classList.toggle("toggled", toggle);
 	locationSwitcherRoot.classList.toggle("shown", toggle);
+}
+
+function hideMenus() {
+	toggleLocationSwitcher(false);
+	// one here for search and overflow as well;
 }
 
 function createWorldLists(mapWorlds) {

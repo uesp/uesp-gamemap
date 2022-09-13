@@ -506,6 +506,14 @@ export default class Gamemap {
 			self.updateMapLink(map, self.mapConfig);
 		})
 
+		map.on("zoomstart", function(e){
+			self.hideMenus();
+		})
+
+		map.on("movestart", function(e){
+			self.hideMenus();
+		})
+
 		map.on("zoom", function(e){
 			if (map.getZoom() >= self.mapConfig.maxZoomLevel) {
 				$("#btn_zoom_in").prop("disabled",true);
@@ -541,6 +549,12 @@ export default class Gamemap {
 		return map.getZoom();
 	}
 
+
+	hideMenus(){
+		if (this.mapCallbacks != null) {
+			this.mapCallbacks.hideMenus();
+		}
+	}
 
 
 	/*================================================
