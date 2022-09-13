@@ -119,6 +119,8 @@ function onWorldsLoaded(mapWorlds) {
 		// populate location switcher
 		createWorldLists(mapWorlds);
 
+		$("#tab_categories").addClass( "active" );
+
 	}
 }
 
@@ -175,15 +177,14 @@ function onWorldChanged(newWorld) {
 
 	setWindowTitle(newWorld.displayName);
 
+	// deselect previous location in loc switcher
 	let selectedElements = document.getElementsByClassName("collection-item active");
-
 	for (let i = 0; i < selectedElements.length; i++) {
 		selectedElements[i].classList.toggle("active", false);
 	}
 
-
+	// select new location in loc switcher
 	let elements = document.getElementsByName(newWorld.name); 
-
 	for (let i = 0; i < elements.length; i++) {
 		elements[i].classList.toggle("active", true);
 	}
@@ -584,7 +585,13 @@ function createWorldLists(mapWorlds) {
 		if (mapWorlds[key].displayName[0] != '_' && key > 0) tempWorldList.push(mapWorlds[key].displayName);
 	}
 
-	tempWorldList = tempWorldList.sort();
+	tempWorldList = tempWorldList.sort(function(a, b) {
+		a = a.replace("The ", ""); 
+		b = b.replace("The ", ""); 
+		if (a.toLowerCase() < b.toLowerCase()) return -1;
+		if (a.toLowerCase() > b.toLowerCase()) return 1;
+		return 0;
+	});
 	
 	print(tempWorldList);
 
