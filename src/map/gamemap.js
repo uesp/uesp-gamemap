@@ -18,6 +18,8 @@ var map; // Leaflet map instance
 var self; // Local "this" instance of Gamemap
 var RC; // RasterCoords instance, for converting leaflet latlongs to XY coords and back
 var isLoaded = false; // Temp loaded state bool to prevent race conditions
+var mapWorldNameIndex = {}; // Local list of map world names
+var mapWorldDisplayNameIndex = {}; // Local list of map display names
 
 /*================================================
 				  Constructor
@@ -53,8 +55,6 @@ export default class Gamemap {
 			// set the default map info 	
 			this.locations = {};
 			this.mapWorlds = {};
-			this.mapWorldNameIndex = {};
-			this.mapWorldDisplayNameIndex = {};
 
 			// set up state bools
 			this.defaultShowHidden = false;
@@ -228,7 +228,11 @@ export default class Gamemap {
 	}
 
 	getWorldFromName(worldName){
-		return this.mapWorlds[this.mapWorldNameIndex[worldName]];
+		return this.mapWorlds[mapWorldNameIndex[worldName]];
+	}
+
+	getWorldFromDisplayName(worldDisplayName){
+		return this.mapWorlds[mapWorldDisplayNameIndex[worldDisplayName]];
 	}
 
 	/** Download and parse world data for this game's mapConfig.
@@ -259,11 +263,11 @@ export default class Gamemap {
 				if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name != null) {
 					self.mapWorlds[world.id] = new World(world.name.toLowerCase(), mapConfig, world.id);
 					self.mapWorlds[world.id].mergeMapConfig(mapConfig);
-					self.mapWorldNameIndex[world.name.toLowerCase()] = world.id;
-					if (world.displayName != null) self.mapWorldDisplayNameIndex[world.displayName] = world.id;
+					mapWorldNameIndex[world.name.toLowerCase()] = world.id;
+					if (world.displayName != null) mapWorldDisplayNameIndex[world.displayName] = world.id;
 					self.mapWorlds[world.id] = Utils.mergeObjects(self.mapWorlds[world.id], world);
-					self.mapWorldNameIndex[world.name] = world.id;
-					self.mapWorldDisplayNameIndex[world.displayName] = world.id;
+					mapWorldNameIndex[world.name] = world.id;
+					mapWorldDisplayNameIndex[world.displayName] = world.id;
 				}
 			}
 			if (self.mapCallbacks != null) {

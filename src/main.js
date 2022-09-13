@@ -559,7 +559,7 @@ function createWorldLists(mapWorlds) {
 	let tempWorldList = [];
 
 	for (let key in mapWorlds) {
-		if (mapWorlds[key].name[0] != '_' && key > 0) tempWorldList.push(mapWorlds[key].name);
+		if (mapWorlds[key].displayName[0] != '_' && key > 0) tempWorldList.push(mapWorlds[key].displayName);
 	}
 
 	tempWorldList = tempWorldList.sort();
@@ -568,7 +568,7 @@ function createWorldLists(mapWorlds) {
 
 	for (let i = 0; i < tempWorldList.length; ++i) {
 
-		let world = gamemap.getWorldFromName(tempWorldList[i]);
+		let world = gamemap.getWorldFromDisplayName(tempWorldList[i]);
 
 		if (world != null) {
 			$("#abc_location_list").append(createWorldRow(world.id));
