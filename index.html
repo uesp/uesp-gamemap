@@ -17,6 +17,7 @@
    </head>
 
    <body>
+
 		<!-- Gamemap -->
 		<div id="gamemap"></div>
 
@@ -134,6 +135,10 @@
 			<p id="loading_reason">Loading config...</p>
 		</div>
 
+		<div id="map_loading_bar" class="progress_bar">
+			<div class="progress"><div class="indeterminate"></div></div>
+		</div>
+
 		<!-- Location switcher -->
 		<div id="location_switcher_root">
 
@@ -143,7 +148,6 @@
 			</ul>
 
 			<div id="location_switcher_content">
-				<!-- <a href="#!" class="collection-item active">Queen Elizabeth II</a> -->
 
 				<div id="tab_categories" class="tab-pane">
 					<ul class="collapsible">
@@ -170,9 +174,7 @@
 			</div>
 		</div>
 
-		<!-- <div class="progress_bar">
-			<div class="progress"><div class="indeterminate"></div></div>
-		</div> -->
+
 
 		<!-- Javascript -->
 		<script src="./src/lib/jquery.js"></script>

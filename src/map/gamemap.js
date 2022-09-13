@@ -370,7 +370,12 @@ export default class Gamemap {
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.onWorldChanged(this.mapWorlds[this.currentWorldID])
 		}
-	
+
+		// TODO: only call this when all locations are loaded as well
+		if (this.mapCallbacks != null) {
+			this.mapCallbacks.onMapLoaded(true);
+		}
+
 	}
 
 	updateMapLink(map, mapState) {

@@ -95,6 +95,7 @@ function loadGamemap(mapConfig) {
 		onPermissionsLoaded,
 		onWorldChanged,
 		hideMenus,
+		onMapLoaded,
 	};
 
 	gamemap = new Gamemap('gamemap', mapConfig, mapCallbacks);
@@ -173,7 +174,23 @@ function onWorldChanged(newWorld) {
 	$('#current_location_label').text(newWorld.displayName);
 
 	setWindowTitle(newWorld.displayName);
+
+	let selectedElements = document.getElementsByClassName("collection-item active");
+
+	for (let i = 0; i < selectedElements.length; i++) {
+		selectedElements[i].classList.toggle("active", false);
+	}
+
+
+	let elements = document.getElementsByName(newWorld.name); 
+
+	for (let i = 0; i < elements.length; i++) {
+		elements[i].classList.toggle("active", true);
+	}
+
 }
+
+// <!-- <a href="#!" class="collection-item active">Queen Elizabeth II</a> -->
 
 /*================================================
 					  Search
@@ -223,8 +240,6 @@ function doSearch(searchQuery, currentMapOnly) {
 		//gamemap.php?action=search&search=morrowind&world=2282&db=eso
 
 		var queryParams = this.createSearchQuery(searchText, searchMapOnly);
-
-
 
 		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
 			self.onReceiveSearchResults(data);
@@ -584,11 +599,15 @@ function createWorldLists(mapWorlds) {
 
 }
 
+function onMapLoaded() {
+	$("#map_loading_bar").hide();
+}
+
 function createWorldRow(worldID) {
 	let world = gamemap.getWorldFromID(worldID);
 
 	if (world != null) {
-		let element = $("<a id='lc_worldID_" + worldID + "' name='" + world.name + "' class='collection-item waves-effect'> " + world.displayName + " </a>");
+		let element = $("<a name='" + world.name + "' class='collection-item waves-effect'> " + world.displayName + " </a>");
 		element.on('click', function () {
 			gotoWorld(worldID);
 		});
@@ -606,6 +625,7 @@ function createCollapsibleHeader(worldDisplayName) {
 //const abcLocList = $("#abc_location_list");
 
 window.gotoWorld = function(worldID, coords){
+	$("#map_loading_bar").show();
 	gamemap.gotoWorld(worldID, coords);
 	toggleLocationSwitcher(false);
 	print("Going to world... " + worldID);
