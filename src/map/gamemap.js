@@ -17,7 +17,6 @@ import RasterCoords from "../lib/leaflet/rastercoords.js";
 var map; // Leaflet map instance
 var self; // Local "this" instance of Gamemap
 var RC; // RasterCoords instance, for converting leaflet latlongs to XY coords and back
-var isLoaded = false; // Temp loaded state bool to prevent race conditions
 var mapWorldNameIndex = {}; // Local list of map world names
 var mapWorldDisplayNameIndex = {}; // Local list of map display names
 var tileLayer; // Local tiles
@@ -67,11 +66,6 @@ export default class Gamemap {
 
 			// get world data for this mapConfig
 			this.getWorlds(mapConfig);
-
-			// initialise map
-			if (isLoaded) {
-				this.initialiseMap(mapConfig);
-			}
 
 		} else {
 			throw new Error("The gamemap constructor was provided invalid/missing params.");
@@ -170,14 +164,13 @@ export default class Gamemap {
 
 		// set map view
 		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel, {animate: true});
-		this.setWorld(mapState.world.id);
+		this.setWorld(mapState.world);
 
 		// remove map bounds to fix RC bug
 		map.setMaxBounds(null);
 
 		// finally, update map state
 		this.updateMapState(mapState);
-		isLoaded = true;
 	}
 
 	/** Get current map state object.
@@ -297,9 +290,8 @@ export default class Gamemap {
 				self.mapCallbacks.onWorldsLoaded(self.mapWorlds);
 
 				// load map
-				if (!isLoaded) {
-					self.initialiseMap(mapConfig);
-				}
+				self.initialiseMap(mapConfig);
+				
 			}
 		});
 	}
@@ -336,23 +328,18 @@ export default class Gamemap {
 
 
 	// takes both world and worldID
-	setWorld(worldIdentifier) {
-		let worldID = 0;
+	setWorld(world) {
 
-		if (isNaN(worldIdentifier)){ // is "worldIdentifier" a world object?
-			worldID = this.getWorldFromID(worldIdentifier).worldID;
-		} else {
-			worldID = worldIdentifier;
-		}
 
-		if (worldID < 0 || !(worldID in this.mapWorlds)){
+		let worldID = world.id || 0;
+
+		if (worldID < 0 || !(this.hasWorld(worldID))){
 			throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
 		}  
 
-		if (worldID in this.mapWorlds) {
-			// this.mapWorlds[worldID].mapState  = this.getMapState();
-			// this.mapWorlds[worldID].mapConfig = this.mapConfig;
-		}
+
+
+
 
 		// load layers and locations
 		// L.marker(this.toLatLng([0.5, 0.5])).addTo(map);
@@ -367,7 +354,7 @@ export default class Gamemap {
 		//this.clearLocationElements();
 		// load new locations for this map
 
-		this.currentWorldID = worldID;
+		this.currentWorldID = world.id;
 		//this.mapConfig = this.mapWorlds[worldID].mapConfig;
 
 		//callback to notify world changed
@@ -409,11 +396,8 @@ export default class Gamemap {
 		mapLink += '&y=' + newMapState.coords[1];
 		mapLink += '&zoom=' + newMapState.zoomLevel;
 
-		if (window.history.replaceState) {
-			//prevents browser from storing history with each change:
-			window.history.replaceState(newMapState, document.title, mapLink);
-		}
-
+		// update url with new state
+		window.history.replaceState(newMapState, document.title, mapLink);
 	}
 
 	// tileX, tileY, zoom, world
@@ -561,6 +545,13 @@ export default class Gamemap {
 
 		map.on("zoomend", function(e){
 			self.updateMapState();
+		})
+
+		map.on("contextmenu", function(e){
+			if (self.getMapState().world.parentID != null && self.getMapState().world.parentID != -1 ) {
+				let parentID = self.getMapState().world.parentID;
+				self.gotoWorld(parentID);
+			} 
 		})
 
 		map.on("zoomstart", function(e){

@@ -71,6 +71,7 @@ $(document).ready(function() {
 	// setup event listeners
 	btn_clear_search.addEventListener("click", clearSearch);
 	searchbox.addEventListener("input", function(){ updateSearch(searchbox.value); });
+
 	M.AutoInit();
 
 	// hijack ctrl + F to redirect to custom search
@@ -118,8 +119,6 @@ function onWorldsLoaded(mapWorlds) {
 
 		// populate location switcher
 		createWorldLists(mapWorlds);
-
-		$("#tab_categories").addClass( "active" );
 
 	}
 }
@@ -561,6 +560,10 @@ window.onLocationSwitcherClicked = function(){
 	});
 }
 
+
+
+
+
 window.toggleLocationSwitcher = function(toggle){
 	if (toggle || toggle == null){
 		$("#location_switcher_root").show();
@@ -570,6 +573,9 @@ window.toggleLocationSwitcher = function(toggle){
 
 	btnLocationSwitcher.classList.toggle("toggled", toggle);
 	locationSwitcherRoot.classList.toggle("shown", toggle);
+
+	var tabs = M.Tabs.init(document.querySelector("#location_switcher_tab_bar"));
+	tabs.select('tab_categories');
 }
 
 function hideMenus() {
