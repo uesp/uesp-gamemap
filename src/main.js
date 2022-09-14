@@ -637,7 +637,6 @@ window.gotoWorld = function(worldID, coords){
 	$("#map_loading_bar").show();
 	gamemap.gotoWorld(worldID, coords);
 	toggleLocationSwitcher(false);
-	print("Going to world... " + worldID);
 }
 	
 

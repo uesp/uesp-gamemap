@@ -10,7 +10,7 @@
     "bgColour" : "#000000",
 
     // Map options
-    "defaultZoomLevel" : 2.5,
+    "defaultZoomLevel" : 2.0,
     "minZoomLevel" : 0,
     "maxZoomLevel" : 5,
     "zoomOffset" : 7,

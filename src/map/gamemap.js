@@ -105,7 +105,7 @@ export default class Gamemap {
 
 		let mapState = new MapState();
 		mapState.zoomLevel = mapConfig.defaultZoomLevel;
-		mapState.worldID = mapConfig.defaultWorldID || 0;
+		mapState.world = this.getWorldFromID(mapConfig.defaultWorldID || 0);
 		mapState.coords = [mapConfig.defaultXPos, mapConfig.defaultYPos];
 
 		if (this.hasCenterOnURLParam()) { // check if URL has "centeron" param
@@ -144,10 +144,8 @@ export default class Gamemap {
 			tileLayer.remove();
 		}
 
-		;
-
 		// set full image width & height
-		let mapImageDimens = this.getMapImageDimensions(this.mapWorlds[mapState.worldID]);
+		let mapImageDimens = this.getMapImageDimensions(mapState.world);
 		this.mapImage = { 
 			width : mapImageDimens.width,  // original width of image
 			height: mapImageDimens.height, // original height of image
@@ -160,27 +158,25 @@ export default class Gamemap {
 		let tileOptions = {
 			noWrap: true,
 			bounds: RC.getMaxBounds(),
-			maxNativeZoom: this.mapConfig.maxZoomLevel,
-			errorTileUrl: this.mapConfig.missingMapTile,
-			minZoom: this.mapConfig.minZoomLevel,
-			maxZoom: this.mapConfig.maxZoomLevel,
+			errorTileUrl: mapState.world.missingMapTilePath,
+			minZoom: mapState.world.minZoomLevel,
+			maxZoom: mapState.world.maxZoomLevel,
 			edgeBufferTiles: this.mapConfig.numEdgeBufferTiles,
 		}
 
 		// set map tiles
-		tileLayer = L.tileLayer(this.getMapTileImageURL(this.mapWorlds[mapState.worldID], this.mapConfig), tileOptions);
+		tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, this.mapConfig), tileOptions);
 		tileLayer.addTo(map);
 
 		// set map view
 		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel, {animate: true});
-		this.setWorld(mapState.worldID);
+		this.setWorld(mapState.world.id);
 
 		// remove map bounds to fix RC bug
 		map.setMaxBounds(null);
 
 		// finally, update map state
-		this.currentMapState = mapState;
-		this.updateMapLink(map);
+		this.updateMapState(mapState);
 		isLoaded = true;
 	}
 
@@ -205,12 +201,12 @@ export default class Gamemap {
 		}
 
 		if (Utils.getURLParams().has("world")){
-			mapState.worldID = Utils.getURLParams().get("world");
-			if (mapState.worldID == "undefined") {
-				mapState.worldID = this.mapConfig.defaultWorldID;
+			mapState.world = this.getWorldFromID(Utils.getURLParams().get("world"));
+			if (mapState.world == "undefined") {
+				mapState.world = this.getWorldFromID(this.mapConfig.defaultWorldID);
 			}
 		} else { 
-			mapState.worldID = this.mapConfig.defaultWorldID;
+			mapState.world = this.getWorldFromID(this.mapConfig.defaultWorldID);
 		}
 
 		if (Utils.getURLParams().has("x") && Utils.getURLParams().has("y")) {
@@ -238,7 +234,7 @@ export default class Gamemap {
 	 * @returns {int} worldID - ID that represents a world in the database.
 	 */
 	getCurrentWorldID() {
-		return this.getMapState().worldID || this.mapConfig.defaultWorldID;
+		return this.currentWorldID || this.mapConfig.defaultWorldID;
 	}
 
 	/** Gets the world object associated to a given worldID.
@@ -283,13 +279,18 @@ export default class Gamemap {
 				let world = data.worlds[key];
 
 				if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name != null) {
-					self.mapWorlds[world.id] = new World(world.name.toLowerCase(), mapConfig, world.id);
-					self.mapWorlds[world.id].mergeMapConfig(mapConfig);
-					mapWorldNameIndex[world.name.toLowerCase()] = world.id;
-					if (world.displayName != null) mapWorldDisplayNameIndex[world.displayName] = world.id;
-					self.mapWorlds[world.id] = Utils.mergeObjects(self.mapWorlds[world.id], world);
+					self.mapWorlds[world.id] = new World(world, mapConfig);
+					
 					mapWorldNameIndex[world.name] = world.id;
-					mapWorldDisplayNameIndex[world.displayName] = world.id;
+
+					if (world.displayName != null) {
+						mapWorldDisplayNameIndex[world.displayName] = world.id;
+					} else {
+						mapWorldDisplayNameIndex[world.name] = world.id;
+					}
+					
+					//self.mapWorlds[world.id] = Utils.mergeObjects(self.mapWorlds[world.id], world);
+					
 				}
 			}
 			if (self.mapCallbacks != null) {
@@ -318,7 +319,8 @@ export default class Gamemap {
 
 	gotoWorld(worldID, coords) {
 
-		print(worldID)
+		print("Going to world... " + worldID);
+		print(this.getWorldFromID(worldID));
 		
 		let mapState = new MapState();
 		mapState.zoomLevel = this.mapConfig.defaultZoomLevel;
@@ -327,7 +329,7 @@ export default class Gamemap {
 			mapState.coords = [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
 		}
 
-        mapState.worldID = worldID;
+        mapState.world = this.getWorldFromID(worldID);
 		this.setMapState(mapState);
 	}
 
@@ -380,24 +382,38 @@ export default class Gamemap {
 
 	}
 
-	updateMapLink(map, mapState) {
+	updateMapState(mapState) {
 
-		// TODO: refactor away from using map directly and use mapState
+		let newMapState; 
 
+		if (mapState == null) {
+			newMapState = this.getMapState();
+		} else {
+			newMapState = mapState;
+		}
+
+		// update map state
+		newMapState.coords = [this.toCoords(map.getCenter()).x, this.toCoords(map.getCenter()).y]
+		newMapState.zoomLevel = parseFloat(map.getZoom().toFixed(3));
+		newMapState.world = this.getWorldFromID(this.getCurrentWorldID());
+		this.currentMapState = newMapState;
+
+		// update url
 		let mapLink = "?"
 
 		if (this.hasMultipleWorlds()){
-			mapLink += 'world=' + this.getCurrentWorldID();
+			mapLink += 'world=' + newMapState.world.id;
 		}
 
-		mapLink += '&x=' + this.toCoords(map.getCenter()).x;
-		mapLink += '&y=' + this.toCoords(map.getCenter()).y;
-		mapLink += '&zoom=' + parseFloat(map.getZoom().toFixed(3));
+		mapLink += '&x=' + newMapState.coords[0];  
+		mapLink += '&y=' + newMapState.coords[1];
+		mapLink += '&zoom=' + newMapState.zoomLevel;
 
 		if (window.history.replaceState) {
 			//prevents browser from storing history with each change:
-			window.history.replaceState(null, document.title, mapLink);
+			window.history.replaceState(newMapState, document.title, mapLink);
 		}
+
 	}
 
 	// tileX, tileY, zoom, world
@@ -449,8 +465,8 @@ export default class Gamemap {
 			height = this.mapConfig.fullHeight;
 		} else if (this.mapConfig.numTilesY == this.mapConfig.numTilesX) { // if the map is a square (1:1)
 			// then calculate the image dimensions as the size of the whole grid
-			width = world.tilesX * this.mapConfig.tileSize;
-			height = world.tilesY * this.mapConfig.tileSize;
+			width = world.numTilesX * this.mapConfig.tileSize;
+			height = world.numTilesY * this.mapConfig.tileSize;
 		} else {
 			throw new Error("No map dimensions were provided!");
 		}
@@ -539,12 +555,12 @@ export default class Gamemap {
 	createEvents() {
 		
 		map.on("moveend", function(e){
-			self.updateMapLink(map, self.mapConfig);
+			self.updateMapState();
 			
 		})
 
 		map.on("zoomend", function(e){
-			self.updateMapLink(map, self.mapConfig);
+			self.updateMapState();
 		})
 
 		map.on("zoomstart", function(e){
