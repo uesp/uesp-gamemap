@@ -16,7 +16,7 @@ import Gamemap from "./map/gamemap.js";
 
 var mapConfig = null;
 var gamemap = null;
-var noAnalytics = true;
+var currentTabID = "";
 
 // on page load
 print("Page initialising...");
@@ -68,6 +68,10 @@ $(document).ready(function() {
 	var searchbox = document.getElementById("searchbox");
 	var btn_clear_search = document.getElementById("btn_clear_search");
 
+	// add click listeners on tabs
+	$('#abc_tab').on('click', function(event) { onTabClicked(event.target); });
+	$('#group_tab').on('click', function(event) { onTabClicked(event.target); });
+
 	// setup event listeners
 	btn_clear_search.addEventListener("click", clearSearch);
 	searchbox.addEventListener("input", function(){ updateSearch(searchbox.value); });
@@ -81,7 +85,6 @@ $(document).ready(function() {
 			focusSearch();
 		}
 	});
-
 });
 
 /*================================================
@@ -147,31 +150,6 @@ function onPermissionsLoaded(enableEditing) {
 
 function onWorldChanged(newWorld) {
 
-	// select world in location list
-
-
-	// foundListItems = $('#gmMapList li:contains("' + newWorld.displayName +'")').not('.gmMapListHeader');
-
-	// var foundListItem = null;
-	// var minTextLength = 1000;
-
-	// foundListItems.each(function( index ) {
-	// 	textLen = $(this).text().length;
-
-	// 	if (textLen < minTextLength) {
-	// 		minTextLength = textLen;
-	// 		foundListItem = $(this);
-	// 	}
-	// });
-
-	// if (foundListItem != null) {
-	// 	if (g_GameMap.mapListLastSelectedItem != null) g_GameMap.mapListLastSelectedItem.removeClass('gmMapListSelect');
-	// 	foundListItem.addClass('gmMapListSelect');
-	// 	g_GameMap.mapListLastSelectedItem = foundListItem;
-	// 	$(foundListItem).parents('ul:first').show();
-	// }
-
-	// $('#gmMapListAlphaSelect').val(newWorld.id);
 	$('#current_location_label').text(newWorld.displayName);
 
 	setWindowTitle(newWorld.displayName);
@@ -520,7 +498,7 @@ window.loading = function(reason){
 				  	Analytics
 ================================================*/
 
-if (!noAnalytics) {
+if (!(Utils.getCookie("debugging") == "true")) {
 	var _gaq = _gaq || [];
 	_gaq.push(['_setAccount', 'UA-1386039-6']);
 	_gaq.push(['_trackPageview']);
@@ -548,21 +526,13 @@ window.enableDebugging = function(){
 const btnLocationSwitcher = document.querySelector("#btn_location_switcher");
 const locationSwitcherRoot = document.querySelector("#location_switcher_root");
 
-// goto article button
-window.onLocationSwitcherClicked = function(){
-	toggleLocationSwitcher();
-
-	document.addEventListener('mousedown', function(e) {
-		var root = document.getElementById('location_switcher_root');
-		if (!root.contains(e.target) && !btnLocationSwitcher.contains(e.target) ) {
-			toggleLocationSwitcher(false);
-		}
-	});
-}
-
-
-
-
+// document.addEventListener('mousedown', function(e) {
+// 	var root = document.getElementById('location_switcher_root');
+// 	if (!root.contains(e.target) && !btnLocationSwitcher.contains(e.target) ) {
+// 		toggleLocationSwitcher(false);
+// 	}
+// 	return false;
+// });
 
 window.toggleLocationSwitcher = function(toggle){
 	if (toggle || toggle == null){
@@ -574,8 +544,33 @@ window.toggleLocationSwitcher = function(toggle){
 	btnLocationSwitcher.classList.toggle("toggled", toggle);
 	locationSwitcherRoot.classList.toggle("shown", toggle);
 
+	reselectTabs();
+}
+
+
+function reselectTabs() {
 	var tabs = M.Tabs.init(document.querySelector("#location_switcher_tab_bar"));
-	tabs.select('tab_categories');
+	tabs.select(currentTabID || 'tab_categories');
+}
+
+function onTabClicked(element) {
+	if (locationSwitcherRoot.classList.contains("shown")) {
+		currentTabID = element.href.split("#")[1];
+
+		if (currentTabID == "tab_alphabetical") {
+			let worldName = gamemap.getWorldFromID(gamemap.getCurrentWorldID()).name;
+		
+			let element = document.getElementsByName(worldName)[0]; 
+		
+			setTimeout(function() {
+				element.scrollIntoView({
+					behavior: "auto",
+					block: "center",
+					inline: "center"
+				});
+			}, 10);
+		}
+	}
 }
 
 function hideMenus() {
@@ -585,13 +580,13 @@ function hideMenus() {
 
 function createWorldLists(mapWorlds) {
 
-	let tempWorldList = [];
+	let alphabeticalWorldList = [];
 
 	for (let key in mapWorlds) {
-		if (mapWorlds[key].displayName[0] != '_' && key > 0) tempWorldList.push(mapWorlds[key].displayName);
+		if (mapWorlds[key].displayName[0] != '_' && key > 0) alphabeticalWorldList.push(mapWorlds[key].displayName);
 	}
 
-	tempWorldList = tempWorldList.sort(function(a, b) {
+	alphabeticalWorldList = alphabeticalWorldList.sort(function(a, b) {
 		// ignore "The" in alphabetical sort
 		a = a.replace("The ", ""); 
 		b = b.replace("The ", ""); 
@@ -601,16 +596,18 @@ function createWorldLists(mapWorlds) {
 		return 0;
 	});
 	
-	print(tempWorldList);
+	print(alphabeticalWorldList);
 
-	for (let i = 0; i < tempWorldList.length; ++i) {
+	for (let i = 0; i < alphabeticalWorldList.length; ++i) {
 
-		let world = gamemap.getWorldFromDisplayName(tempWorldList[i]);
+		let world = gamemap.getWorldFromDisplayName(alphabeticalWorldList[i]);
 
 		if (world != null) {
 			$("#abc_location_list").append(createWorldRow(world.id));
 		}
 	}
+
+	
 
 }
 
@@ -637,7 +634,6 @@ function createCollapsibleHeader(worldDisplayName) {
 
 }
 
-//const abcLocList = $("#abc_location_list");
 
 window.gotoWorld = function(worldID, coords){
 	$("#map_loading_bar").show();

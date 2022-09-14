@@ -272,8 +272,8 @@ export default class Gamemap {
 				let world = data.worlds[key];
 
 				if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name != null) {
+
 					self.mapWorlds[world.id] = new World(world, mapConfig);
-					
 					mapWorldNameIndex[world.name] = world.id;
 
 					if (world.displayName != null) {
@@ -281,8 +281,6 @@ export default class Gamemap {
 					} else {
 						mapWorldDisplayNameIndex[world.name] = world.id;
 					}
-					
-					//self.mapWorlds[world.id] = Utils.mergeObjects(self.mapWorlds[world.id], world);
 					
 				}
 			}
@@ -541,6 +539,10 @@ export default class Gamemap {
 		map.on("moveend", function(e){
 			self.updateMapState();
 			
+		})
+
+		map.on("mousedown", function(e){
+			self.hideMenus();
 		})
 
 		map.on("zoomend", function(e){
