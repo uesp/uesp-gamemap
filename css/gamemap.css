@@ -303,6 +303,7 @@ b[class^="icon_button_label"] {
 	background-color: var(--surface_variant_dark);
 	font-weight: bold;
 	justify-content: space-between;
+	padding-left: 1.4em;
 }
 
 li div.collapsible-header i {

@@ -239,11 +239,23 @@ export default class Gamemap {
 	}
 
 	getWorldNameFromID(worldID) {
-		return this.getWorldFromID(worldID).name || "null";
+
+		if (this.getWorldFromID(worldID) == null) {
+			return "null";
+		} else {
+			return this.getWorldFromID(worldID).name || "null";
+		}
+		
 	}
 
 	getWorldDisplayNameFromID(worldID) {
-		return this.getWorldFromID(worldID).displayName || "null";
+
+		if (this.getWorldFromID(worldID) == null) {
+			return "null";
+		} else {
+			return this.getWorldFromID(worldID).displayName || "null";
+		}
+
 	}
 
 	getWorldFromName(worldName){

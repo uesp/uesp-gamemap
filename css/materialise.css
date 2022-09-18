@@ -5615,9 +5615,9 @@ body.keyboard-focused .dropdown-content li:focus {
 
 .collapsible-body {
   display: none;
+  height: inherit;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  padding-bottom: 1m;
   border-bottom: 2px solid var(--divider);
   box-shadow:
     inset 0px 11px 8px -10px var(--shadow),
