@@ -393,8 +393,6 @@ function createWorldLists(mapWorlds) {
 
 	$("#tab_alphabetical").html(abcHTML);
 
-	
-
 	for (let i = 0; i < abcWorldList.length; i++) {
 		let displayName = abcWorldList[i];
 		let world = gamemap.getWorldFromDisplayName(displayName);
@@ -429,12 +427,11 @@ function createWorldLists(mapWorlds) {
 
 	let html = "";
 
+	let finalGroups = [];
 
 	for (let i in topLevelWorldIDs){
 
 		pairings = [];
-
-		//print(topLevelWorldIDs[i]);
 
 		// parse location list
 		parseGroupList(groups, groups, '', topLevelWorldIDs[i]);
@@ -464,15 +461,12 @@ function createWorldLists(mapWorlds) {
 			parentWorld.children = [...(parentWorld.children || []), world];
 		});
 
-		print(output);
+		finalGroups.push(output);
 
-		html += createGroupListHTML(output);
-		
 	}
 
-
 	// get HTML for group list pane
-	$("#tab_categories").html(html);
+	$("#tab_categories").html(createGroupListHTML(finalGroups));
 
 	// init collapsers
 	$('.collapsible').collapsible({
@@ -534,15 +528,11 @@ function parseGroupList(root, obj, stack, rootWorldID) {
 	}
 }
 
-function createGroupListHTML(groups, depth) {
+function createGroupListHTML(groups) {
 	let output = "";
 	let name;
 	let displayName;
 	let worldID;
-
-	if (depth == null) {
-		depth = 1;
-	}
 
 	// if the passed grouplist is an array of objects
 	// instead of just one object
@@ -557,43 +547,18 @@ function createGroupListHTML(groups, depth) {
 				displayName = gamemap.getWorldDisplayNameFromID(worldID);
 			}
 	
-			
 			if (world["children"]) {
-
-				depth = depth + 1;
 
 				output += "<ul class='collapsible'><li><div class='collapsible-header waves-effect'>" + displayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body''>"
 				if (worldID >= 0) output += createLocationRowHTML(worldID);
-				output += createGroupListHTML(world["children"], depth);
+				output += createGroupListHTML(world["children"]);
 				output += "</div></li></ul>";
 			} else {
 				output += createLocationRowHTML(worldID);
 			}
 
 		});
-	} else {
-
-
-		worldID = groups.id;
-
-		if (worldID < 0) {
-			if (worldID == -1) displayName = "Unsorted";
-			if (worldID == -1337) displayName = "Dev";
-		} else {
-			name = gamemap.getWorldNameFromID(worldID);
-			displayName = gamemap.getWorldDisplayNameFromID(worldID);
-		}
-
-	
-		if (groups["children"]) {
-			output += "<ul class='collapsible'><li class='active'><div class='collapsible-header waves-effect'>" + displayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body'>"
-			if (worldID >= 0) output += createLocationRowHTML(worldID);
-			output += createGroupListHTML(groups["children"]);
-			output += "</div></li></ul>";
-		} else {
-			output += createLocationRowHTML(worldID);
-		}
-	}
+	} 
 	return output;
 }
 
@@ -605,8 +570,6 @@ function createLocationRowHTML(worldID) {
 		return ("<div class='collection'><a name='" + world.name + "' onclick='gotoWorld("+worldID+")' class='collection-item waves-effect'> " + world.displayName + " </a></div>");
 	}
 }
-
-
 
 /*================================================
 					  Search
