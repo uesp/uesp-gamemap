@@ -299,26 +299,18 @@ b[class^="icon_button_label"] {
     }
 }
 
-
 .collapsible-header {
-	background-color: var(--surface_variant);
+	background-color: var(--surface_variant_dark);
 	font-weight: bold;
+	justify-content: space-between;
 }
 
-.collapsible li div i {
+li div.collapsible-header i {
 	transition: all 0.2s ease-out;
-}
-
-.collapsible li.active div i {
-	transform: rotate(180deg);
 }
 
 .collection {
 	margin: 0px !important;
-}
-
-.collection .collection-item {
-	background-color: var(--surface);
 }
 
 .collection a.collection-item:hover {

@@ -2632,7 +2632,7 @@ a {
 }
 
 /* 2dp elevation modified*/
-.z-depth-1, .sidenav, .collapsible, .dropdown-content, .btn-floating, .btn, .btn-small, .btn-large, .toast, .card, .card-panel, nav {
+.z-depth-1, .sidenav, .dropdown-content, .btn-floating, .btn, .btn-small, .btn-large, .toast, .card, .card-panel, nav {
   -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
           box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
 }
@@ -3226,7 +3226,7 @@ input[type=range] + .thumb {
   position: relative;
 }
 .collection .collection-item {
-  background-color: #fff;
+  background-color: transparent;
   line-height: 1.5rem;
   padding: 10px 20px;
   margin: 0;
@@ -5583,7 +5583,7 @@ body.keyboard-focused .dropdown-content li:focus {
 
 .collapsible {
   border: none;
-  margin: 0.5rem 0 1rem 0;
+  margin: 0rem 0 0.2rem 0;
 }
 
 .collapsible-header {
@@ -5594,9 +5594,9 @@ body.keyboard-focused .dropdown-content li:focus {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   line-height: 1.5;
-  padding: 1rem;
+  padding: 0.8rem;
   background-color: #fff;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 2px solid var(--divider);
 }
 .collapsible-header:focus {
   outline: 0;
@@ -5606,7 +5606,7 @@ body.keyboard-focused .dropdown-content li:focus {
   font-size: 1.6rem;
   display: inline-block;
   text-align: center;
-  margin-right: 1rem;
+  margin-right: 0rem;
 }
 
 .keyboard-focused .collapsible-header:focus {
@@ -5615,10 +5615,13 @@ body.keyboard-focused .dropdown-content li:focus {
 
 .collapsible-body {
   display: none;
-  border-bottom: 1px solid #ddd;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  padding: 0px !important;
+  padding-bottom: 1m;
+  border-bottom: 2px solid var(--divider);
+  box-shadow:
+    inset 0px 11px 8px -10px var(--shadow),
+    inset 0px -11px 8px -10px var(--shadow); 
 }
 
 .sidenav .collapsible,

@@ -679,17 +679,36 @@ function createWorldLists(mapWorlds) {
 
 	// init collapsers
 	$('.collapsible').collapsible({
-		accordion: true
+		accordion: true,
+
+		onOpenStart: function(element) {
+			print(element.outerHTML);
+
+			// darken collapsible
+			$(element).find(".collapsible-header:first").css("background-color", "var(--surface_variant)");
+			$(element).find("i:first").css("transform", "rotate(180deg)");
+		},
+
+		onCloseStart: function(element){
+
+			$(element).find(".collapsible-header:first").css("background-color", "var(--surface_variant_dark)");
+			$(element).find("i:first").css("transform", "rotate(360deg)");
+
+		}
 	});
 	
 
 }
 
-function createGroupListHTML(groups) {
+function createGroupListHTML(groups, depth) {
 	let output = "";
 	let name;
 	let displayName;
 	let worldID;
+
+	if (depth == null) {
+		depth = 1;
+	}
 
 	// if the passed grouplist is an array of objects
 	// instead of just one object
@@ -703,9 +722,12 @@ function createGroupListHTML(groups) {
 			print(displayName);
 			
 			if (world["children"]) {
-				output += "<ul class='collapsible'><li><div class='collapsible-header waves-effect'>" + displayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body''>"
+
+				depth = depth + 1;
+
+				output += "<ul class='collapsible'><li><div class='collapsible-header waves-effect' style='padding-left: 1.5em'>" + displayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body''>"
 				output += createLocationRowHTML(worldID);
-				output += createGroupListHTML(world["children"]);
+				output += createGroupListHTML(world["children"], depth);
 				output += "</div></li></ul>";
 			} else {
 				output += createLocationRowHTML(worldID);
