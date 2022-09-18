@@ -166,17 +166,8 @@ function onWorldChanged(newWorld) {
 
 	setWindowTitle(newWorld.displayName);
 
-	// deselect previous location in loc switcher
-	let selectedElements = document.getElementsByClassName("collection-item active");
-	for (let i = 0; i < selectedElements.length; i++) {
-		selectedElements[i].classList.toggle("active", false);
-	}
 
-	// select new location in loc switcher
-	let elements = document.getElementsByName(newWorld.name); 
-	for (let i = 0; i < elements.length; i++) {
-		elements[i].classList.toggle("active", true);
-	}
+	updateWorldList(newWorld.name);
 
 }
 
@@ -316,6 +307,7 @@ document.addEventListener("click", function (event) {
 window.toggleLocationSwitcher = function(toggle){
 	if (toggle || toggle == null){
 		$("#location_switcher_root").show();
+		updateWorldList(gamemap.getWorldFromID(gamemap.getCurrentWorldID()).name);
 	} else { 
 		$("#location_switcher_root").hide();
 	}
@@ -345,29 +337,24 @@ function onTabClicked(element) {
 		setTimeout(function() {
 			let worldName = gamemap.getWorldFromID(gamemap.getCurrentWorldID()).name;
 			let elements = document.getElementsByName(worldName);
-			let location = document.getElementsByName(worldName)[0]; 
 	
 			for (let i = 0; elements[i]; i++) {
 				let element = elements[i];
 	
 				if($(element).is(":visible")){
-					console.log("Element is visible.");
 					setTimeout(function() {
+						updateWorldList(worldName);
 						element.scrollIntoView({
 							behavior: "auto",
 							block: "center",
 							inline: "center"
 						});
 					}, 10);
-				} else{
-					console.log("Element is hidden.");
-				}
-				 
+				}  
 			}
 		}, 10);
 	}
 }
-
 
 function createWorldLists(mapWorlds) {
 
@@ -499,6 +486,28 @@ function createWorldLists(mapWorlds) {
 		}
 	});
 
+}
+
+function updateWorldList(worldName) {
+	// deselect previous location in loc switcher
+	let selectedElements = document.getElementsByClassName("collection-item active");
+
+	if (selectedElements != null) {
+		for (let i = 0; i < selectedElements.length; i++) {
+
+			if (selectedElements[i] != null) {
+				selectedElements[i].classList.remove("active");
+			}
+	
+		}
+	}
+
+
+	// select new location in loc switcher
+	let elements = document.getElementsByName(worldName); 
+	for (let i = 0; i < elements.length; i++) {
+		elements[i].classList.toggle("active", true);
+	}
 }
 
 function parseGroupList(root, obj, stack, rootWorldID) {

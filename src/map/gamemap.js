@@ -46,8 +46,7 @@ export default class Gamemap {
 			this.rootMapID = mapRootID;
 			if (this.mapRoot == null) {
 				throw new Error('The gamemap container \'' + mapRootID + '\' could not be found or was invalid.');
-			} 
-			this.mapRoot = $('<div />').attr('id', 'gmMapRoot').appendTo(this.mapRoot);
+			}
 			self = this;
 
 			$("#"+mapRootID).css("background-color", mapConfig.bgColour);
@@ -91,7 +90,9 @@ export default class Gamemap {
 			debounceMoveend: false,
 			boxZoom: false,
 			doubleClickZoom: false, // disable double click to zoom
-			wheelPxPerZoomLevel: 100, // make zooming with mouse wheel slightly slower
+			scrollWheelZoom: false, // disable original zoom function
+			smoothWheelZoom: true,  // enable smooth zoom 
+  			smoothSensitivity: 0.8,   // zoom speed. default is 1
         }
 
 		map = L.map(this.rootMapID, mapOptions);
@@ -239,13 +240,7 @@ export default class Gamemap {
 	}
 
 	getWorldNameFromID(worldID) {
-
-		if (this.getWorldFromID(worldID) == null) {
-			return "null";
-		} else {
-			return this.getWorldFromID(worldID).name || "null";
-		}
-		
+		if (this.getWorldFromID(worldID) != null) return this.getWorldFromID(worldID).name; else return "null";
 	}
 
 	getWorldDisplayNameFromID(worldID) {
