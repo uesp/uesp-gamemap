@@ -269,15 +269,6 @@
     // Map world info
     "defaultWorldID" : 668,
     "rootWorldID" : 667, // Determines what the root map ID is (default is defaultWorldID)
-    "topLevelWorldIDs" : [ // Used to determine what worlds to show in the location category dropdown
-        203, // Coldharbour
-        668, // Tamriel
-        1402, // Clockwork City
-        1466, // Artaeum
-        2170, // Fargrave
-        2179, // The Deadlands
-        2282 // AWM Tamriel
-    ],
     "minWorldID" : 50,
     "maxWorldID" : 20000
 }

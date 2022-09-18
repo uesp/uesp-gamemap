@@ -282,3 +282,11 @@ export function fireClick(node){
         node.onclick(); 
     }
 }
+
+/*================================================
+	  Clean duplicate entries in array function
+================================================*/
+
+export function getUniqueListFrom(arr, key) {
+    return [...new Map(arr.map(item => [item[key], item])).values()]
+}

@@ -313,6 +313,10 @@ b[class^="icon_button_label"] {
 	transform: rotate(180deg);
 }
 
+.collection {
+	margin: 0px !important;
+}
+
 .collection .collection-item {
 	background-color: var(--surface);
 }

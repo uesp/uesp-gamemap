@@ -17,6 +17,7 @@ import Gamemap from "./map/gamemap.js";
 var mapConfig = null;
 var gamemap = null;
 var currentTabID = "";
+var pairings = [];
 
 // on page load
 print("Page initialising...");
@@ -167,8 +168,6 @@ function onWorldChanged(newWorld) {
 	}
 
 }
-
-// <!-- <a href="#!" class="collection-item active">Queen Elizabeth II</a> -->
 
 /*================================================
 					  Search
@@ -526,13 +525,13 @@ window.enableDebugging = function(){
 const btnLocationSwitcher = document.querySelector("#btn_location_switcher");
 const locationSwitcherRoot = document.querySelector("#location_switcher_root");
 
-// document.addEventListener('mousedown', function(e) {
-// 	var root = document.getElementById('location_switcher_root');
-// 	if (!root.contains(e.target) && !btnLocationSwitcher.contains(e.target) ) {
-// 		toggleLocationSwitcher(false);
-// 	}
-// 	return false;
-// });
+// disappear location switcher when clicking outside of it
+document.addEventListener("click", function (event) {
+	var root = document.getElementById('location_switcher_root');
+	if (!root.contains(event.target) && !btnLocationSwitcher.contains(event.target) ) {
+		toggleLocationSwitcher(false);
+	}
+}, true);
 
 window.toggleLocationSwitcher = function(toggle){
 	if (toggle || toggle == null){
@@ -547,11 +546,17 @@ window.toggleLocationSwitcher = function(toggle){
 	reselectTabs();
 }
 
-
 function reselectTabs() {
 	var tabs = M.Tabs.init(document.querySelector("#location_switcher_tab_bar"));
 	tabs.select(currentTabID || 'tab_categories');
 }
+
+function hideMenus() {
+	toggleLocationSwitcher(false);
+	// one here for search and overflow as well;
+}
+
+
 
 function onTabClicked(element) {
 	if (locationSwitcherRoot.classList.contains("shown")) {
@@ -573,20 +578,20 @@ function onTabClicked(element) {
 	}
 }
 
-function hideMenus() {
-	toggleLocationSwitcher(false);
-	// one here for search and overflow as well;
-}
 
 function createWorldLists(mapWorlds) {
 
-	let alphabeticalWorldList = [];
+	let abcWorldList = [];
+	let groups = {};
+	const GROUP_DEV_ID = -1337;
+	const GROUP_UNSORTED_ID = -1;
+	let rootID = mapConfig.rootWorldID || mapConfig.defaultWorldID;
 
 	for (let key in mapWorlds) {
-		if (mapWorlds[key].displayName[0] != '_' && key > 0) alphabeticalWorldList.push(mapWorlds[key].displayName);
+		if (mapWorlds[key].displayName[0] != '_' && key > 0) abcWorldList.push(mapWorlds[key].displayName);
 	}
 
-	alphabeticalWorldList = alphabeticalWorldList.sort(function(a, b) {
+	abcWorldList = abcWorldList.sort(function(a, b) {
 		// ignore "The" in alphabetical sort
 		a = a.replace("The ", ""); 
 		b = b.replace("The ", ""); 
@@ -596,42 +601,193 @@ function createWorldLists(mapWorlds) {
 		return 0;
 	});
 	
-	print(alphabeticalWorldList);
+	print(abcWorldList);
 
-	for (let i = 0; i < alphabeticalWorldList.length; ++i) {
+	let abcHTML = "";
 
-		let world = gamemap.getWorldFromDisplayName(alphabeticalWorldList[i]);
+	for (let i = 0; i < abcWorldList.length; i++) {
+
+		let world = gamemap.getWorldFromDisplayName(abcWorldList[i]);
 
 		if (world != null) {
-			$("#abc_location_list").append(createWorldRow(world.id));
+			abcHTML += createLocationRowHTML(world.id);
 		}
 	}
 
+	$("#tab_alphabetical").html(abcHTML);
+
+	
+
+	for (let i = 0; i < abcWorldList.length; i++) {
+		let displayName = abcWorldList[i];
+		let world = gamemap.getWorldFromDisplayName(displayName);
+
+		if (world != null && world.id != 0 && !displayName.endsWith("(Test)")) {
+			let worldID = world.id;
+			let parentID = world.parentID;
+			
+			if (parentID <= 0) {
+				parentID = 0;
+
+				if (worldID != rootID) {
+					parentID = GROUP_UNSORTED_ID;
+				}
+
+			} 
+
+			if (displayName.endsWith("(Dev)") || displayName.endsWith("(Beta)")) {
+				parentID = GROUP_DEV_ID;
+			}
+
+			if (groups[parentID] != null) {
+				groups[parentID].push(worldID);
+			} else { 
+				groups[parentID] = [worldID];
+			}
+		}
+	}
+
+	// parse location list
+	parseGroupList(groups, groups, '');
+
+	//remove duplicates from location list
+	pairings = Utils.getUniqueListFrom(pairings, 'id');
+
+	// map each location to a position in the array
+	const pairMappings = pairings.reduce((obj, world, i) => {
+		obj[world.id] = i;
+		return obj;
+	}, {});
+
+	// create the hierarchy of locations
+	pairings.forEach((world) => {
+		// Handle the root element
+		if (world.parentID === null) {
+			groups = world;
+			return;
+		}
+		// Use our mapping to locate the parent element in our data array
+		const parentWorld = pairings[pairMappings[world.parentID]];
+		// Add our current world to its parent's `children` array
+		parentWorld.children = [...(parentWorld.children || []), world];
+	});
+
+	print(groups, true);
+
+	// get HTML for group list pane
+	let html = createGroupListHTML(groups);
+
+	print("printing final html output");
+	print(html);
+	$("#tab_categories").html(html);
+
+	// init collapsers
+	$('.collapsible').collapsible({
+		// specify options here
+	});
 	
 
 }
 
-function onMapLoaded() {
-	$("#map_loading_bar").hide();
+function createGroupListHTML(groups) {
+	let output = "";
+	let name;
+	let displayName;
+	let worldID;
+
+	// if the passed grouplist is an array of objects
+	// instead of just one object
+	if (Array.isArray(groups)) {
+		groups.forEach(world => {
+			worldID = world.id;
+			name = gamemap.getWorldNameFromID(worldID);
+			displayName = gamemap.getWorldDisplayNameFromID(worldID);
+
+			print(name);
+			print(displayName);
+			
+			if (world["children"]) {
+				output += "<ul class='collapsible expandable'><li><div class='collapsible-header waves-effect'>" + displayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body' style='display: block;'>"
+				output += createGroupListHTML(world["children"]);
+				output += "</div></li></ul>";
+			} else {
+				output += createLocationRowHTML(worldID);
+			}
+
+		});
+	} else {
+
+		worldID = groups.id;
+		name = gamemap.getWorldNameFromID(worldID);
+		displayName = gamemap.getWorldDisplayNameFromID(worldID);
+	
+		print(name);
+		print(displayName);
+	
+		if (groups["children"]) {
+			output += "<ul class='collapsible expandable'><li><div class='collapsible-header waves-effect'>" + displayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body'>"
+			output += createGroupListHTML(groups["children"]);
+			output += "</div></li></ul>";
+		} else {
+			output += createLocationRowHTML(worldID);
+		}
+	}
+	return output;
 }
 
-function createWorldRow(worldID) {
+
+function createLocationRowHTML(worldID) {
 	let world = gamemap.getWorldFromID(worldID);
 
 	if (world != null) {
-		let element = $("<a name='" + world.name + "' class='collection-item waves-effect'> " + world.displayName + " </a>");
-		element.on('click', function () {
-			gotoWorld(worldID);
-		});
-		return element;
+		return ("<div class='collection'><a name='" + world.name + "' onclick='gotoWorld("+worldID+")' class='collection-item waves-effect'> " + world.displayName + " </a></div>");
 	}
 }
 
-function createCollapsibleHeader(worldDisplayName) {
+function parseGroupList(root, obj, stack) {
+	for (var property in obj) {
+		if (obj.hasOwnProperty(property)) {
+			if (typeof obj[property] == "object") {
+				parseGroupList(root, obj[property], stack + '.' + property);
+			} else {
 
-	let element = $("<li><div class='collapsible-header waves-effect'>" + worldDisplayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body'><div class='collection'><!-- locations go here --></div></div></li>");
-	return element;
+				//console.log("i: " + property + "   " + obj[property]);
+				if (root[obj[property]] != null) {
+					parseGroupList(root, root[obj[property]], stack + '.' + obj[property]);
+				} else {
 
+					// reached the end of the location tree
+					let path = stack + '.' + obj[property];
+					let rootWorldID = mapConfig.rootWorldID || mapConfig.defaultWorldID;
+					let pathArray = path.split('.');
+					pathArray.shift();
+				
+					if (pathArray[0] == rootWorldID ){
+						//print(path);
+				
+						for (let i = 0; i < pathArray.length; i++) {
+							let obj;
+							 
+							if (i == 0) {
+								obj = { id: pathArray[i], parentID: null }
+							} else { 
+								obj = { id: pathArray[i], parentID: pathArray[i-1] }
+							}
+				
+							pairings.push(obj);
+				
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+function onMapLoaded() {
+	$("#map_loading_bar").hide();
 }
 
 
@@ -641,169 +797,3 @@ window.gotoWorld = function(worldID, coords){
 	toggleLocationSwitcher(false);
 }
 	
-
-// uesp.gamemap.Map.prototype.translateGroupListToName = function(groups, depth)
-// {
-// 	var groupNames = {};
-	
-// 	if (depth == null) depth = 0;
-// 	if (depth >= this.MAX_GROUP_DEPTH) groupNames = [];
-	
-// 	for (var worldId in groups)
-// 	{
-// 		var subGroups = groups[worldId];
-		
-// 		var world = this.mapWorlds[worldId];
-// 		var worldName = "";
-		
-// 		if (world == null) 
-// 		{
-// 			if (worldId == this.GROUP_DEV_ID)
-// 				worldName = "Dev";
-// 			else if (worldId == this.GROUP_BETA_ID)
-// 				worldName = "Beta";
-// 		}
-// 		else
-// 		{
-// 			worldName = world['displayName']
-// 		}
-		
-// 		if (worldName == "") continue;
-		
-// 		if (Array.isArray(groupNames))
-// 		{
-// 			groupNames.push(worldName);
-// 		}
-// 		else
-// 		{
-// 			if (subGroups === true)
-// 				groupNames[worldName] = true;
-// 			else
-// 				groupNames[worldName] = this.translateGroupListToName(subGroups, depth+1);
-// 		}
-// 	}
-	
-// 	return groupNames;
-// }
-
-
-// uesp.gamemap.Map.prototype.createGroupSubList = function(parentGroups, groups, worldId, depth)
-// {
-// 	if (this.groupCreateList[worldId] != null) return;
-// 	this.groupCreateList[worldId] = true;
-	
-// 	if (depth == null) depth = 0;
-	
-// 	parentGroups[worldId] = true;
-	
-// 	if (groups[worldId] == null)
-// 	{
-// 		this.groupCreateList[worldId] = false;
-// 		return;
-// 	}
-	
-// 	if (depth < this.MAX_GROUP_DEPTH) parentGroups[worldId] = {};
-	
-// 	for (var i in groups[worldId])
-// 	{
-// 		var childWorldId = groups[worldId][i];
-		
-// 		if (depth >= this.MAX_GROUP_DEPTH || this.topLevelWorldIds[childWorldId] === true || groups[worldId].length < this.MIN_GROUP_SIZE)
-// 			this.createGroupSubList(parentGroups, groups, childWorldId, depth+1);
-// 		else
-// 			this.createGroupSubList(parentGroups[worldId], groups, childWorldId, depth+1);
-// 	}
-	
-// 	this.groupCreateList[worldId] = false;
-// }
-
-
-// uesp.gamemap.Map.prototype.createGroupList = function()
-// {
-// 	var groups = {};
-// 	var allGroups = {};
-	
-// 	this.GROUP_DEV_ID = -101;
-// 	this.GROUP_BETA_ID = -102;
-	
-// 	for (var worldId in this.mapWorlds)
-// 	{
-// 		if (worldId == 0) continue;
-		
-// 		var world = this.mapWorlds[worldId];
-// 		var parentId = world.parentId;
-// 		var worldDisplayName = world['displayName'];
-// 		var worldName = world['name'];
-		
-// 		if (parentId < 0) parentId = 0;
-		
-// 			// TODO: Other/better ways to do fixed groups? 
-// 		if (worldDisplayName.endsWith("(Dev)"))
-// 			parentId = this.GROUP_DEV_ID;
-// 		else if (worldDisplayName.endsWith("(Beta)"))
-// 			parentId = this.GROUP_BETA_ID;
-// 		else if (worldDisplayName.endsWith("(Test)"))
-// 			continue;
-		
-// 		if (groups[parentId] == null) groups[parentId] = [];
-// 		groups[parentId].push(worldId);
-// 	}
-	
-// 	this.groupCreateList = {};
-// 	this.MAX_GROUP_DEPTH = 3;
-// 	this.MIN_GROUP_SIZE = 5;
-	
-// 	var topLevelWorldID = 667;		// TODO: Not hardcoded for ESO?
-	
-// 	this.topLevelWorldIds = {		// TODO: Not hardcoded for ESO?
-// 			203 : true,
-// 			668 : true,
-// 			1402 : true,
-// 			1466 : true,
-// 			2170 : true,
-// 			2179 : true,
-// 			2282 : true,
-// 	};
-	
-// 	this.topLevelWorldIds[this.GROUP_DEV_ID] = true;
-// 	this.topLevelWorldIds[this.GROUP_BETA_ID] = true;
-	
-// 	this.createGroupSubList(allGroups, groups, topLevelWorldID);
-// 	this.createGroupSubList(allGroups, groups, this.GROUP_DEV_ID);
-// 	this.createGroupSubList(allGroups, groups, this.GROUP_BETA_ID);
-	
-// 	return this.translateGroupListToName(allGroups);
-// }
-
-
-// uesp.gamemap.Map.prototype.createGroupListHtml = function(groups, parentWorldName)
-// {
-// 	var output = "";
-	
-// 	if (groups == null) groups = this.createGroupList();
-	
-// 	var keys = Object.keys(groups);
-// 	if (parentWorldName != null && parentWorldName != "Beta" && parentWorldName != "Dev") keys.push(parentWorldName);
-// 	keys.sort();
-	
-// 	for (var i in keys)
-// 	{
-// 		var worldName = keys[i];
-// 		var subGroups = groups[worldName];
-		
-// 		if (subGroups == null || subGroups === true || Object.keys(subGroups).length === 0)
-// 		{
-// 			output += "<li>" + worldName + "</li>\n";
-// 		}
-// 		else
-// 		{
-// 			output += "<li class=\"gmMapListHeader\">" + worldName + "</li>\n<ul>\n";
-// 			output += this.createGroupListHtml(subGroups, worldName);
-// 			output += "</ul>\n";
-// 		}
-// 	}
-	
-// 	return output;
-// }
-
-

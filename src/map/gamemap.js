@@ -14,12 +14,12 @@ import RasterCoords from "../lib/leaflet/rastercoords.js";
 					Locals
 ================================================*/
 
-var map; // Leaflet map instance
-var self; // Local "this" instance of Gamemap
-var RC; // RasterCoords instance, for converting leaflet latlongs to XY coords and back
-var mapWorldNameIndex = {}; // Local list of map world names
-var mapWorldDisplayNameIndex = {}; // Local list of map display names
-var tileLayer; // Local tiles
+let map; // Leaflet map instance
+let self; // Local "this" instance of Gamemap
+let RC; // RasterCoords instance, for converting leaflet latlongs to XY coords and back
+let mapWorldNameIndex = {}; // Local list of map world names
+let mapWorldDisplayNameIndex = {}; // Local list of map display names
+let tileLayer; // Local tiles
 
 /*================================================
 				  Constructor
@@ -236,6 +236,14 @@ export default class Gamemap {
 	 */
 	getWorldFromID(worldID) {		
 		return this.mapWorlds[worldID] || null; 
+	}
+
+	getWorldNameFromID(worldID) {
+		return this.getWorldFromID(worldID).name || "null";
+	}
+
+	getWorldDisplayNameFromID(worldID) {
+		return this.getWorldFromID(worldID).displayName || "null";
 	}
 
 	getWorldFromName(worldName){
