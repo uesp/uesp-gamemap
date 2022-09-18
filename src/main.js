@@ -675,15 +675,11 @@ function createWorldLists(mapWorlds) {
 	print(groups, true);
 
 	// get HTML for group list pane
-	let html = createGroupListHTML(groups);
-
-	print("printing final html output");
-	print(html);
-	$("#tab_categories").html(html);
+	$("#tab_categories").html(createGroupListHTML(groups));
 
 	// init collapsers
 	$('.collapsible').collapsible({
-		// specify options here
+		accordion: true
 	});
 	
 
@@ -707,7 +703,8 @@ function createGroupListHTML(groups) {
 			print(displayName);
 			
 			if (world["children"]) {
-				output += "<ul class='collapsible expandable'><li><div class='collapsible-header waves-effect'>" + displayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body' style='display: block;'>"
+				output += "<ul class='collapsible'><li><div class='collapsible-header waves-effect'>" + displayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body''>"
+				output += createLocationRowHTML(worldID);
 				output += createGroupListHTML(world["children"]);
 				output += "</div></li></ul>";
 			} else {
@@ -725,7 +722,8 @@ function createGroupListHTML(groups) {
 		print(displayName);
 	
 		if (groups["children"]) {
-			output += "<ul class='collapsible expandable'><li><div class='collapsible-header waves-effect'>" + displayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body'>"
+			output += "<ul class='collapsible'><li class='active'><div class='collapsible-header waves-effect'>" + displayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body'>"
+			output += createLocationRowHTML(worldID);
 			output += createGroupListHTML(groups["children"]);
 			output += "</div></li></ul>";
 		} else {
