@@ -338,17 +338,32 @@ function hideMenus() {
 
 function onTabClicked(element) {
 	if (locationSwitcherRoot.classList.contains("shown")) {
+
+		print("tab clicked!");
 		currentTabID = element.href.split("#")[1];
 
-		let worldName = gamemap.getWorldFromID(gamemap.getCurrentWorldID()).name;
-		let element = document.getElementsByName(worldName)[0]; 
-	
 		setTimeout(function() {
-			element.scrollIntoView({
-				behavior: "auto",
-				block: "center",
-				inline: "center"
-			});
+			let worldName = gamemap.getWorldFromID(gamemap.getCurrentWorldID()).name;
+			let elements = document.getElementsByName(worldName);
+			let location = document.getElementsByName(worldName)[0]; 
+	
+			for (let i = 0; elements[i]; i++) {
+				let element = elements[i];
+	
+				if($(element).is(":visible")){
+					console.log("Element is visible.");
+					setTimeout(function() {
+						element.scrollIntoView({
+							behavior: "auto",
+							block: "center",
+							inline: "center"
+						});
+					}, 10);
+				} else{
+					console.log("Element is hidden.");
+				}
+				 
+			}
 		}, 10);
 	}
 }
@@ -425,8 +440,6 @@ function createWorldLists(mapWorlds) {
 	print("initial groups");
 	print(groups);
 
-	let html = "";
-
 	let finalGroups = [];
 
 	for (let i in topLevelWorldIDs){
@@ -473,8 +486,6 @@ function createWorldLists(mapWorlds) {
 		accordion: true,
 
 		onOpenStart: function(element) {
-			print(element.outerHTML);
-
 			// darken collapsible
 			$(element).find(".collapsible-header:first").css("background-color", "var(--surface_variant)");
 			$(element).find("i:first").css("transform", "rotate(180deg)");
