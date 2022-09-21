@@ -20,13 +20,13 @@
     createSaveQuery() {
 		let query = 'action=set_world';
 		
-		query += '&worldid=' + this.id;
-		query += '&parentid=' + this.parentID;
-		query += '&revisionid=' + this.revisionID;
-		query += '&name=' + encodeURIComponent(this.name);
-		query += '&displayname=' + encodeURIComponent(this.displayName);
-		query += '&description=' + encodeURIComponent(this.description);
-		query += '&wikipage=' + encodeURIComponent(this.wikiPage);
+		query += '&worldid=' + this.world.id;
+		query += '&parentid=' + this.world.parentID;
+		query += '&revisionid=' + this.world.revisionID;
+		query += '&name=' + encodeURIComponent(this.world.name);
+		query += '&displayname=' + encodeURIComponent(this.world.displayName);
+		query += '&description=' + encodeURIComponent(this.world.description);
+		query += '&wikipage=' + encodeURIComponent(this.world.wikiPage);
 		query += '&missingtile=' + encodeURIComponent(this.missingMapTile);
 		query += '&minzoom=' + this.minZoomLevel;
 		query += '&maxzoom=' + this.maxZoomLevel;

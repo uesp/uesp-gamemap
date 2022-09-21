@@ -83,12 +83,10 @@ export default class Gamemap {
 		// set global map options
 		var mapOptions = {
 			crs: L.CRS.Simple, // CRS: coordinate reference system
-			zoomSnap: mapConfig.enableZoomSnap,
 			zoomDelta: mapConfig.zoomStep,
 			zoomControl: false, // hide leaflet zoom control (we have our own)
 			doubleTouchDragZoom: Utils.isMobileDevice(), // enable double touch drag zoom on mobile only
-			debounceMoveend: false,
-			boxZoom: false,
+			boxZoom: false, // disable box zoom
 			doubleClickZoom: false, // disable double click to zoom
 			scrollWheelZoom: false, // disable original zoom function
 			smoothWheelZoom: true,  // enable smooth zoom 
