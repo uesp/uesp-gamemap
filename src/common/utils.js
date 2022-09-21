@@ -4,7 +4,7 @@
  * @summary Contains general utility functions for the gamemap.
  */
 
- import * as Constants from "./constants.js";
+import * as Constants from "./constants.js";
 
 /*================================================
 			Is mobile device function
@@ -79,23 +79,21 @@ export function getCookie(cname) {
 				Debug print function
 ================================================*/
 
-window.print = (function(console) {
+window.print = function(txt) {
     
 	// only print if debugging is enabled
 	var canLog = (getCookie("debugging") == "true")
     
-	return function(txt) {
-
-		if (canLog) {
-			// check if payload is string
-			if (typeof txt === "string" || txt instanceof String) {
-				console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
-			} else {
-				console.log(txt);
-			}
+	if (canLog) {
+		// check if payload is string
+		if (typeof txt === "string" || txt instanceof String) {
+			console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
+		} else {
+			console.log(txt);
 		}
-    };
-})(window.console);
+	}
+
+}
 
 /*================================================
 			  Is variable null function

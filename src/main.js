@@ -29,7 +29,7 @@ $(document).ready(function() {
 
 	// get gamename from pathname URL
 	let gameParam = window.location.pathname.replace(/\\|\//g,'')
-	print(gameParam);
+	print("game: " +gameParam);
 
 	if (gameParam != null && gameParam != "" && gameParam.match(/^([a-z]+)/)) {
 		print("URL has game param!");
@@ -380,8 +380,6 @@ function createWorldLists(mapWorlds) {
 		return 0;
 	});
 	
-	print(abcWorldList);
-
 	let abcHTML = "";
 
 	for (let i = 0; i < abcWorldList.length; i++) {
@@ -424,9 +422,6 @@ function createWorldLists(mapWorlds) {
 		}
 	}
 
-	print("initial groups");
-	print(groups);
-
 	let finalGroups = [];
 
 	for (let i in topLevelWorldIDs){
@@ -438,8 +433,6 @@ function createWorldLists(mapWorlds) {
 
 		//remove duplicates from location list
 		pairings = Utils.getUniqueListFrom(pairings, 'id');
-
-		print(pairings);
 
 		// map each location to a position in the array
 		const pairMappings = pairings.reduce((obj, world, i) => {

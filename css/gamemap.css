@@ -517,6 +517,10 @@ li div.collapsible-header i {
 	user-select: none;
 }
 
+.leaflet-tile-container img {
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
 .gmMapLoc {
 	border-radius: var(--padding_large);
 	position: absolute;
