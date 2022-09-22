@@ -124,6 +124,8 @@ function onWorldsLoaded(mapWorlds) {
 		createWorldLists(mapWorlds);
 
 	}
+
+	$("#error_box").hide();
 }
 
 function onMapLoaded() {

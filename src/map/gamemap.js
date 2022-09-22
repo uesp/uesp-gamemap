@@ -83,6 +83,9 @@ export default class Gamemap {
 		// set global map options
 		var mapOptions = {
 			crs: L.CRS.Simple, // CRS: coordinate reference system
+
+			// zoom options:
+			zoomSnap: mapConfig.enableZoomSnap,
 			zoomDelta: mapConfig.zoomStep,
 			zoomControl: false, // hide leaflet zoom control (we have our own)
 			doubleTouchDragZoom: Utils.isMobileDevice(), // enable double touch drag zoom on mobile only
@@ -218,6 +221,37 @@ export default class Gamemap {
 		return mapState;
 	}
 
+	updateMapState(mapState) {
+
+		let newMapState; 
+
+		if (mapState == null) {
+			newMapState = this.getMapState();
+		} else {
+			newMapState = mapState;
+		}
+
+		// update map state
+		newMapState.coords = [this.toCoords(map.getCenter()).x, this.toCoords(map.getCenter()).y]
+		newMapState.zoomLevel = parseFloat(map.getZoom().toFixed(3));
+		newMapState.world = this.getWorldFromID(this.getCurrentWorldID());
+		this.currentMapState = newMapState;
+
+		// update url
+		let mapLink = "?"
+
+		if (this.hasMultipleWorlds()){
+			mapLink += 'world=' + newMapState.world.id;
+		}
+
+		mapLink += '&x=' + newMapState.coords[0];  
+		mapLink += '&y=' + newMapState.coords[1];
+		mapLink += '&zoom=' + newMapState.zoomLevel;
+
+		// update url with new state
+		window.history.replaceState(newMapState, document.title, mapLink);
+	}
+
 	/*================================================
 						  Worlds 
 	================================================*/
@@ -319,6 +353,16 @@ export default class Gamemap {
 		return worldID in this.mapWorlds;
 	}
 
+	isWorldValid(worldID) {
+
+		if (worldID)
+
+		if (worldID >= 0) {
+
+		}
+
+	}
+
 
 	gotoWorld(worldID, coords) {
 
@@ -335,6 +379,13 @@ export default class Gamemap {
         mapState.world = this.getWorldFromID(worldID);
 		this.setMapState(mapState);
 	}
+
+	// uesp.gamemap.Map.prototype.jumpToWorld = function (worldID)
+// {
+// 	if (worldID == null || worldID <= 0) return;
+// 	this.changeWorld(worldID);
+// }
+
 
 
 
@@ -379,63 +430,6 @@ export default class Gamemap {
 		}
 
 	}
-
-	updateMapState(mapState) {
-
-		let newMapState; 
-
-		if (mapState == null) {
-			newMapState = this.getMapState();
-		} else {
-			newMapState = mapState;
-		}
-
-		// update map state
-		newMapState.coords = [this.toCoords(map.getCenter()).x, this.toCoords(map.getCenter()).y]
-		newMapState.zoomLevel = parseFloat(map.getZoom().toFixed(3));
-		newMapState.world = this.getWorldFromID(this.getCurrentWorldID());
-		this.currentMapState = newMapState;
-
-		// update url
-		let mapLink = "?"
-
-		if (this.hasMultipleWorlds()){
-			mapLink += 'world=' + newMapState.world.id;
-		}
-
-		mapLink += '&x=' + newMapState.coords[0];  
-		mapLink += '&y=' + newMapState.coords[1];
-		mapLink += '&zoom=' + newMapState.zoomLevel;
-
-		// update url with new state
-		window.history.replaceState(newMapState, document.title, mapLink);
-	}
-
-	// tileX, tileY, zoom, world
-	getMapTileImageURL(world, mapConfig) {
-
-		// http://mavvo.altervista.org/dofus/tiles/{z}/{x}/{y}.png
-		// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
-		//L.tileLayer('https://{s}.somedomain.com/{foo}/{z}/{x}/{y}.png', {foo: 'bar'});
-
-		if (mapConfig.database == "eso") { // unique stuff for eso
-			return mapConfig.tileURL + world.name + "/zoom{z}/" + world.name + "-{x}-" + "{y}" + ".jpg";
-		} else {
-			if (world == null) {
-				return "zoom{z}/maptile-{x}-{y}.jpg";
-			} else {
-				return world + "zoom{z}/maptile-{x}-{y}.jpg";
-			}
-		}
-	}
-
-
-
-
-
-
-
-
 
 
 	/*================================================
@@ -694,6 +688,22 @@ export default class Gamemap {
 
 	}
 
+	// tileX, tileY, zoom, world
+	getMapTileImageURL(world, mapConfig) {
+
+		// http://mavvo.altervista.org/dofus/tiles/{z}/{x}/{y}.png
+		// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
+
+		if (mapConfig.database == "eso") { // unique stuff for eso
+			return mapConfig.tileURL + world.name + "/zoom{z}/" + world.name + "-{x}-" + "{y}" + ".jpg";
+		} else {
+			if (world == null) {
+				return "zoom{z}/maptile-{x}-{y}.jpg";
+			} else {
+				return world + "zoom{z}/maptile-{x}-{y}.jpg";
+			}
+		}
+	}
 
 
 
@@ -733,44 +743,41 @@ export default class Gamemap {
 
 
 
-// retrieveLocations() {
-	// 	var self = this;
-	// 	// var mapBounds = this.getMapBounds();
 
-	// 	// var queryParams = {};
-	// 	// queryParams.action = "get_locs";
-	// 	// queryParams.world  = this.currentWorldID;
-	// 	// queryParams.top    = mapBounds.top;
-	// 	// queryParams.bottom = mapBounds.bottom;
-	// 	// queryParams.left   = mapBounds.left;
-	// 	// queryParams.right  = mapBounds.right;
-	// 	// queryParams.zoom   = this.zoomLevel;
-	// 	// if (this.isHiddenLocsShown()) queryParams.showhidden = 1;
-	// 	// if (!this.hasWorld(this.currentWorldID)) queryParams.incworld = 1;
-	// 	// queryParams.db = this.mapConfig.database;
+	getLocations() {
+		var mapBounds = this.getMapBounds();
 
-	// 	// if (queryParams.world <= 0) return print("Unknown worldID for current world " + this.currentWorldID + "!");
+		var queryParams = {};
+		queryParams.action = "get_locs";
+		queryParams.world  = this.currentWorldID;
+		queryParams.top    = mapBounds.top;
+		queryParams.bottom = mapBounds.bottom;
+		queryParams.left   = mapBounds.left;
+		queryParams.right  = mapBounds.right;
+		queryParams.zoom   = this.zoomLevel;
+		if (this.isHiddenLocsShown()) queryParams.showhidden = 1;
+		if (!this.hasWorld(this.currentWorldID)) queryParams.incworld = 1;
+		queryParams.db = this.mapConfig.database;
 
-	// 	// $.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) { self.onReceiveLocationData(data); });
-	// 	//changeWorld
-	// }
+		if (queryParams.world <= 0) return print("Unknown worldID for current world " + this.currentWorldID + "!");
 
-	// onReceiveLocationData(data) {
-	// 	print("Received location data");
-	// 	print(data);
-
-	// 	if (data.isError != null)  return print("Error retrieving location data!", data.errorMsg);
-	// 	if (data.locations == null) return print("Location data not found in JSON response!", data);
-
-	// 	this.mergeLocationData(data.locations, true);
-
-	// 	if (this.showPopupOnLoadLocationId > 0 && this.locations[this.showPopupOnLoadLocationId] != null) {
-	// 		this.locations[this.showPopupOnLoadLocationId].showPopup();
-	// 		this.showPopupOnLoadLocationId = -1;
-	// 	}
-
-	// 	return true;
- 	// }
+		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
+			print("Received location data");
+			print(data);
+	
+			if (data.isError != null)  return print("Error retrieving location data!", data.errorMsg);
+			if (data.locations == null) return print("Location data not found in JSON response!", data);
+	
+			this.mergeLocationData(data.locations, true);
+	
+			if (this.showPopupOnLoadLocationId > 0 && this.locations[this.showPopupOnLoadLocationId] != null) {
+				this.locations[this.showPopupOnLoadLocationId].showPopup();
+				this.showPopupOnLoadLocationId = -1;
+			}
+	
+			return true;
+		});
+	}
 
 	// mergeLocationData(locations, displayLocation) {
 	// 	if (locations == null) return;
@@ -1076,12 +1083,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.clearMapGrid = function()
-// {
-// 	if (!this.USE_CANVAS_DRAW) return;
-// 	return this.clearMapGridCanvas();
-// }
-
 // uesp.gamemap.Map.prototype.displayLocation = function (location)
 // {
 // 	if (location.worldID != this.currentWorldID) return;
@@ -1093,13 +1094,6 @@ export default class Gamemap {
 
 
 
-// uesp.gamemap.Map.prototype.getTilePositionOfCenter = function()
-// {
-// 	var gamePos = this.getGamePositionOfCenter();
-// 	var tilePos = this.convertGameToTilePos(gamePos.x, gamePos.y);
-
-// 	return tilePos;
-// }
 
 // uesp.gamemap.Map.prototype.getWorldMapState = function(world)
 // {
@@ -1150,13 +1144,6 @@ export default class Gamemap {
 // 	this.jumpToDestination(eventData.destId, eventData.openPopup, eventData.useEditPopup);
 // }
 
-
-
-// uesp.gamemap.Map.prototype.jumpToWorld = function (worldID)
-// {
-// 	if (worldID == null || worldID <= 0) return;
-// 	this.changeWorld(worldID);
-// }
 
 
 // uesp.gamemap.Map.prototype.jumpToDestination = function (destId, openPopup, useEditPopup)

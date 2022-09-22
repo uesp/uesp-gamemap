@@ -1586,3 +1586,35 @@ div[class^="icon_bar"] {
 	vertical-align: middle;
 }
 
+
+/*================================================
+				Location label
+================================================*/
+
+#location_label_root {
+	position: absolute;
+	color: var(--text_on_secondary);
+	width: auto;
+	text-align: center;
+	vertical-align: middle;
+	top: calc( 5% + var(--appbar_dimen) + var(--padding_large));
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 999999;
+	pointer-events: none;
+	font-weight: bolder;
+	
+	text-shadow: 0px 0px 10px var(--background);
+}
+
+#location_label_title {
+	font-size: xx-large;
+	margin: 0 !important;
+	margin-bottom: 0.1em !important;
+}
+
+#location_label_description {
+	margin: 0 !important;
+	font-size: medium;
+}
+
