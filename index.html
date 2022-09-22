@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 	<head>
-
 		<!-- Metadata -->
 		<title>UESP Gamemap</title>
 		<link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
@@ -13,13 +12,11 @@
 		<link rel="stylesheet" href="./css/materialise.css" media="screen,projection"/>
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin="" />
 		<link rel="stylesheet" href="./css/gamemap.css"/>
-		
    </head>
 
    <body>
-
 		<!-- Location label -->
-		<div id="location_label_root">
+		<div id="location_label_root" class="banishdefault">
 			<p id="location_label_title">Hello, world!</p>
 			<p id="location_label_description">Description here!</p>
 		</div>
@@ -160,7 +157,7 @@
 				</div>
 				
 				<div id="tab_alphabetical" class="tab-pane">
-					<!-- alphabetical location list goes here -->
+					<!-- alphabetical locations goes here -->
 				</div>
 			</div>
 		</div>
@@ -173,6 +170,5 @@
 		<script src="./src/lib/leaflet/doubletapdragzoom.js"></script>
 		<script src="./src/lib/leaflet/smoothwheelzoom.js"></script>
 		<script src="./src/main.js" type="module"></script>
-		
 	</body>
 </html>

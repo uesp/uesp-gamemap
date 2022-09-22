@@ -723,27 +723,6 @@ export default class Gamemap {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	getLocations() {
 		var mapBounds = this.getMapBounds();
 
