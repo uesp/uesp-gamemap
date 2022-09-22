@@ -80,7 +80,7 @@ export function getCookie(cname) {
 ================================================*/
 
 let isSafari = window.safari !== undefined;
-if (!isSafari) {
+if (!isSafari) { // disallow print log function on apple devices due to it invoking page print dialog
 	window.print = function(txt) {
     
 		// only print if debugging is enabled
@@ -97,8 +97,6 @@ if (!isSafari) {
 	
 	}
 }
-
-
 
 /*================================================
 			  Is variable null function

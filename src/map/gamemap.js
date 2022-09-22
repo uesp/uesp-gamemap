@@ -157,7 +157,6 @@ export default class Gamemap {
 			errorTileUrl: mapState.world.missingMapTilePath,
 			minZoom: mapState.world.minZoomLevel,
 			maxZoom: mapState.world.maxZoomLevel,
-			zoomOffset: this.mapConfig.zoomOffset,
 			edgeBufferTiles: this.mapConfig.numEdgeBufferTiles,
 		}
 
@@ -368,6 +367,7 @@ export default class Gamemap {
 	}
 
 	gotoWorld(worldID, coords) {
+		$("#map_loading_bar").show();
 		if (this.isWorldValid(worldID)) {
 			print("Going to world... " + worldID);
 			print(this.getWorldFromID(worldID));

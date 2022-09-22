@@ -156,7 +156,6 @@ function onPermissionsLoaded(enableEditing) {
 
 
 window.gotoWorld = function(worldID, coords){
-	$("#map_loading_bar").show();
 	gamemap.gotoWorld(worldID, coords);
 	toggleLocationSwitcher(false);
 }
