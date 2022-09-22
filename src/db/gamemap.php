@@ -70,6 +70,8 @@ class GameMap
 	public $limitTop    = 1000;
 	public $limitLeft   = 0;
 	public $limitRight  = 1000;
+	public $hasLimits = false;
+	public $hasDisplayLevel = false;
 	public $limitDisplayLevel = 100;
 	public $includeWorld = 0;
 	
@@ -814,13 +816,20 @@ class GameMap
 		else
 			return $this->reportError("No world specified to retrieve locations for!");
 		
-		$query .= "AND (";
-		$query .= "(x >= " . $this->limitLeft ." AND x <= ". $this->limitRight ." AND y >= ". $this->limitBottom ." AND y <= ". $this->limitTop .") ";
-		$query .= " OR ";
-		$query .= "(x + width >= " . $this->limitLeft ." AND x + width <= ". $this->limitRight ." AND y - height >= ". $this->limitBottom ." AND y - height <= ". $this->limitTop .") ";
-		$query .= ") ";
+		if ($this->hasLimits)
+		{
+			$query .= "AND (";
+			$query .= "(x >= " . $this->limitLeft ." AND x <= ". $this->limitRight ." AND y >= ". $this->limitBottom ." AND y <= ". $this->limitTop .") ";
+			$query .= " OR ";
+			$query .= "(x + width >= " . $this->limitLeft ." AND x + width <= ". $this->limitRight ." AND y - height >= ". $this->limitBottom ." AND y - height <= ". $this->limitTop .") ";
+			$query .= ") ";
+		}
 		
-		$query .= " AND displayLevel <= ". $this->limitDisplayLevel ." ";
+		if ($this->hasDisplayLevel)
+		{
+			$query .= " AND displayLevel <= ". $this->limitDisplayLevel ." ";
+		}
+		
 		$query .= " LIMIT ".$this->limitCount.";";
 		
 		$result = $this->db->query($query);
@@ -1338,11 +1347,41 @@ class GameMap
 		
 			//TODO: Better parameter handling
 		if (array_key_exists('action', $this->inputParams)) $this->action = $this->db->real_escape_string(strtolower($this->inputParams['action']));
-		if (array_key_exists('top',    $this->inputParams)) $this->limitTop    = intval($this->inputParams['top']);
-		if (array_key_exists('left',   $this->inputParams)) $this->limitLeft   = intval($this->inputParams['left']);
-		if (array_key_exists('bottom', $this->inputParams)) $this->limitBottom = intval($this->inputParams['bottom']);
-		if (array_key_exists('right',  $this->inputParams)) $this->limitRight  = intval($this->inputParams['right']);
-		if (array_key_exists('zoom',   $this->inputParams)) $this->limitDisplayLevel = intval($this->inputParams['zoom']);
+		
+		$limitCount = 0;
+		
+		if (array_key_exists('top', $this->inputParams))
+		{
+			$this->limitTop = intval($this->inputParams['top']);
+			if (!is_nan($this->limitTop)) ++$limitCount;
+		}
+		
+		if (array_key_exists('left',$this->inputParams))
+		{
+			$this->limitLeft = intval($this->inputParams['left']);
+			if (!is_nan($this->limitLeft)) ++$limitCount;
+		}
+		
+		if (array_key_exists('bottom', $this->inputParams))
+		{
+			$this->limitBottom = intval($this->inputParams['bottom']);
+			if (!is_nan($this->limitBottom)) ++$limitCount;
+		}
+		
+		if (array_key_exists('right',$this->inputParams))
+		{
+			$this->limitRight = intval($this->inputParams['right']);
+			if (!is_nan($this->limitRight)) ++$limitCount;
+		}
+		
+		if ($limitCount == 4) $this->hasLimits = true;
+		
+		if (array_key_exists('zoom', $this->inputParams))
+		{
+			$this->limitDisplayLevel = intval($this->inputParams['zoom']);
+			$this->hasDisplayLevel = $this->limitDisplayLevel > 0 && !is_nan($this->limitDisplayLevel);
+		}
+		
 		if (array_key_exists('locid',  $this->inputParams)) $this->locationId = intval($this->inputParams['locid']);
 		if (array_key_exists('incworld',  $this->inputParams)) $this->includeWorld = intval($this->inputParams['incworld']);
 		if (array_key_exists('worldid',  $this->inputParams)) $this->worldId = intval($this->inputParams['worldid']);
