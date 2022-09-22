@@ -22,10 +22,10 @@ export default class World {
 			this.wikiPage = world.wikiPage || "";
 			this.cellSize = world.cellSize || -1;
 	
-			this.zoomOffset = world.zoomOffset || mapConfig.zoomOffset;
+			this.zoomOffset = mapConfig.zoomOffset;
 
-			this.maxZoomLevel = (world.maxZoom - world.zoomOffset) || mapConfig.maxZoomLevel;
-			this.minZoomLevel = (world.minZoom - world.zoomOffset) || mapConfig.minZoomLevel;
+			this.maxZoomLevel = (world.maxZoom - this.zoomOffset) || mapConfig.maxZoomLevel;
+			this.minZoomLevel = (world.minZoom - this.zoomOffset) || mapConfig.minZoomLevel;
 	
 			this.missingMapTilePath = mapConfig.missingMapTilePath;
 

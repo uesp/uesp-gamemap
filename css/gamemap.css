@@ -27,7 +27,28 @@
 
 body {
 	background-color: var(--surface_dark_variant_dark);
+	margin: 0;
+	width: 100%;
+	height: 100%;
 }
+
+html {
+	width: 100%;
+	height: 100%;
+}
+
+.horizontal_divider {
+	background: var(--divider);
+	height: 1.8px;
+	margin: 0 auto;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	width: 75%;
+}
+
+/*================================================
+					Accessibility
+================================================*/
 
 /* disable animations for browsers requesting reduced motion */
 @media (prefers-reduced-motion) {
@@ -488,15 +509,6 @@ li div.collapsible-header i {
 	border-width: medium;
 }
 
-.horizontal_divider {
-	background: var(--divider);
-	height: 1.8px;
-	margin: 0 auto;
-	margin-top: 2px;
-	margin-bottom: 2px;
-	width: 75%;
-}
-
 /*================================================
 					Gamemap
 ================================================*/
@@ -515,10 +527,6 @@ li div.collapsible-header i {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-}
-
-.leaflet-tile-container img {
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.05);
 }
 
 .gmMapLoc {
@@ -690,184 +698,6 @@ li div.collapsible-header i {
 	-ms-user-select: none;
 	user-select: none;
 	cursor: pointer;
-}
-
-#gmMapListContainer {
-	position: absolute;
-	left: 2px;
-	top: 2px;
-	width: 300px;
-	bottom: 2px;
-	box-shadow: 0px 0px 4px 4px var(--shadow);
-	list-style-type: none;
-	z-index: 50;
-	background-color: var(--surface);
-}
-
-#gmMapListGroup {
-	overflow-x: hidden;
-	overflow-y: auto;
-	position: absolute;
-	top: 22px;
-	bottom: 0px;
-	width: 100%;
-	border: none;
-	margin: 0;
-	padding: 0;
-}
-
-#gmMapList {
-	border: none;
-	margin: 0;
-	padding: 0;
-	width: 298px;
-	height: 100%;
-	font: 13px sans-serif;
-	cursor: default;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
-#gmMapListTitle {
-	background-color: var(--primary_variant);
-	font-family: sans-serif;
-	font-size: 12px;
-	font-weight: bold;
-	width: auto;
-	height: 20px;
-	line-height: 20px;
-	vertical-align: middle;
-	text-align: center;
-	box-shadow: 0 2px 2px 0px var(--shadow);
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
-#gmMapListAlpha form {
-	height: 100%;
-}
-
-#gmMapListAlphaSelect {
-	width: 100%;
-	height: 100%;
-}
-
-#gmMapListButtonGroup, #gmMapListButtonAlpha {
-	cursor: pointer;
-	width: 50px;
-	height: 12px;
-	line-height: 12px;
-	font-size: 10px;
-	background-color: var(--primary_variant_light);
-	border: 1px solid var(--divider);
-	display: inline-block;
-	padding: 1px;
-	margin-right: 2px;
-	margin-left: 5px;
-	margin-top: 2px;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
-.gmMapListButtonSelect
-{
-	background-color: var(--secondary_variant) !important;
-}
-
-#gmMapListButtonGroup:hover, #gmMapListButtonAlpha:hover {
-	background-color: var(--surface_variant_dark);
-}
-
-#gmMapListAlpha {
-	position: absolute;
-	top: 21px;
-	bottom: 0px;
-	width: 100%;
-	border: none;
-	margin: 0;
-	padding: 0;
-	font: 13px sans-serif;
-	cursor: default;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
-.gmMapListHeader {
-	font-weight: bold;
-	background-color: var(--surface_variant);
-	color: var(--text_on_primary);
-	background-image: url(images/uparrow.gif);
-}
-
-ul ul .gmMapListHeader {
-	color: var(--text_low_emphasis);
-	background-image: url(images/downarrow.gif);
-}
-
-#gmMapList ul {
-	list-style-type: none;
-	padding: 0;
-	white-space: nowrap;
-}
-
-.gmMapListSelect {
-	background-color: var(--secondary);
-	color: lightgray;
-}
-
-#gmMapList li {
-	list-style-type: none;
-	padding-left: 0px;
-	background-repeat: no-repeat;
-	background-position: right 20px top 3px;
-}
-
-#gmMapList li:hover {
-	background-color: var(--surface_variant_dark);
-}
-
-#gmMapList li.gmMapListSelect:hover {
-	background-color: var(--secondary_variant);
-}
-
-#gmMapList .gmMapListHeader:hover {
-	background-color: var(--surface_variant_dark);
-}
-
-#gmMapList ul li {
-	padding-left: 15px;
-}
-
-#gmMapList ul ul {
-	display: none;
-}
-
-#gmMapList ul ul li {
-	padding-left: 30px;
-}
-
-#gmMapList ul ul ul li {
-	padding-left: 45px;
-}
-
-#gmMapList ul ul ul ul li {
-	padding-left: 60px;
 }
 
 #gmMapEditNotice {
@@ -1282,46 +1112,10 @@ input[type=checkbox].gmMapEditPopupInput {
 	margin-left: 5px;
 }
 
-#gmMapNameLabel {
-	overflow: hidden;
-	white-space: nowrap;
-	font-weight: bold;
-	font-size: 14px;
-	color: #ffff99;
-	width: 320px;
-	background-repeat: no-repeat;
-	background-position: right 4px top 8px;
-	background-image: url(images/downarrow.gif)
-}
-
-.gmMapNameLabelUpArrow {
-	background-image: url(images/uparrow.gif) !important;
-}
-
-#gmMapListRoot {
-	position: absolute;
-	left: 325px;
-	height: 600px;
-	width: 252px;
-}
-
 #gmMapEditButtons {
 	display: inline-block;
 	text-align: center;
 }
-
-html {
-	width: 100%;
-	height: 100%;
-}
-
-body {
-	margin: 0;
-	width: 100%;
-	height: 100%;
-}
-
-
 
 
 .gmMapRCRoot {
@@ -1399,109 +1193,6 @@ body {
 	font-size: 0.9em;
 }
 
-#gmMapRoot, #gmMapCanvas {
-	touch-action: none;
-}
-
-#gmMapRoot {
-	z-index: 3;
-}
-
-
-.gmMenuForm {
-	display: inline;
-}
-
-#gmCellResourceGuide {
-	display: block;
-	position: absolute;
-	z-index: 4;
-}
-
-.gmCRGuideBox1 {
-	display: inline-block;
-	background-color: #ff00ff;
-	text-align: center;
-	text-shadow: 1px 1px black;
-	width: 36px;
-}
-
-.gmCRGuideBox2 {
-	display: inline-block;
-	background-color: #0000ff;
-	text-align: center;
-	text-shadow: 1px 1px black;
-	width: 36px;
-}
-
-.gmCRGuideBox3 {
-	display: inline-block;
-	background-color: #00ff00;
-	text-align: center;
-	text-shadow: 1px 1px black;
-	width: 36px;
-}
-
-.gmCRGuideBox4 {
-	display: inline-block;
-	background-color: #ffff00;
-	text-align: center;
-	text-shadow: 1px 1px black;
-	width: 36px;
-}
-
-.gmCRGuideBox5 {
-	display: inline-block;
-	background-color: #ff6633;
-	text-align: center;
-	text-shadow: 1px 1px black;
-	width: 36px;
-}
-
-.gmCRGuideBox6 {
-	display: inline-block;
-	background-color: #ff0000;
-	text-align: center;
-	text-shadow: 1px 1px black;
-	width: 36px;
-}
-
-.gmMapControlDisplayStates {
-	margin: 4px;
-}
-
-.gmMapControlDisplayState {
-	direction: ltr;
-	overflow: hidden;
-	text-align: center;
-	height: 30px;
-	display: block;
-	color: rgb(0, 0, 0);
-	font-family: Arial, sans-serif;
-	user-select: none;
-	font-size: 16px;
-	background-color: rgb(255, 255, 255);
-	padding: 0px 23px;
-	border-bottom-left-radius: 2px;
-	border-top-left-radius: 2px;
-	background-clip: padding-box;
-	box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
-	min-width: 25px;
-	font-weight: normal;
-	cursor: pointer;
-	line-height: 30px;
-	margin: 2px;
-}
-
-.gmMapControlDisplayState:hover {
-	background-color: rgb(200, 200, 200);
-}
-
-.gmMapControlDisplayStateSelected {
-	font-weight: bold;
-	background-color: rgb(255, 255, 128);
-}
-
 /*================================================
 				   	Icon Bars
 ================================================*/
@@ -1544,19 +1235,19 @@ div[class^="icon_bar"] {
 }
 
 .progress {
-	background-color: var(--secondary_variant) !important;
+	background-color: var(--secondary) !important;
+	box-shadow: 0 2px 2px 0px var(--shadow);
 }
 
 .progress .indeterminate {
-	background-color: var(--secondary) !important;
+	background-color: var(--secondary_variant) !important;
 }
-
 
 /*================================================
 				   Preload boxes
 ================================================*/
 
-[class*='preload_box'] {
+.preload_box {
 	position: absolute;
 	background-color: var(--surface_dark_variant);
 	color: var(--text_on_secondary);

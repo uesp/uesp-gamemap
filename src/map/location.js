@@ -1468,43 +1468,6 @@ uesp.gamemap.Location.prototype.updateLabelOffset = function ()
 }
 
 
-uesp.gamemap.Location.prototype.updateIconOffset = function ()
-{
-	if (this.iconElement == null) return;
-	
-	var width  = this.iconElement.width();
-	var height = this.iconElement.height();
-	if (width  == 0 || height == 0) height = this.parentMap.mapOptions.defaultIconHeight;
-	if (width  == 0) width = this.parentMap.mapOptions.defaultIconWidth;
-		
-	this.iconElement.offset( { left: this.offsetLeft - width/2, top: this.offsetTop - height/2 });
-}
-
-
-uesp.gamemap.Location.prototype.updatePopupOffset = function ()
-{
-	if (this.popupElement == null) return;
-	
-	if (this.parentMap.USE_CANVAS_DRAW)
-	{
-		var offset = this.parentMap.mapContainer.offset();
-		$(this.popupElement).offset( { left: this.offsetLeft - $(this.popupElement).width()/2 + this.parentMap.mapTransformX + offset.left, top: this.offsetTop - $(this.popupElement).height() - 8 + this.parentMap.mapTransformY + offset.top});
-	}
-	else
-	{
-		$(this.popupElement).offset( { left: this.offsetLeft - $(this.popupElement).width()/2, top: this.offsetTop - $(this.popupElement).height() - 8 });
-	}
-}
-
-
-uesp.gamemap.Location.prototype.updatePathOffset = function ()
-{
-	if (this.pathElement == null) return;
-	
-	pixelPos = this.parentMap.convertGameToPixelPos(this.x, this.y);
-	
-	$(this.pathElement).offset( { left: pixelPos.x, top: pixelPos.y });
-}
 
 
 uesp.gamemap.Location.prototype.updatePathSize = function (redraw)

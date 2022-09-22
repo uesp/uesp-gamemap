@@ -79,21 +79,26 @@ export function getCookie(cname) {
 				Debug print function
 ================================================*/
 
-window.print = function(txt) {
+let isSafari = window.safari !== undefined;
+if (!isSafari) {
+	window.print = function(txt) {
     
-	// only print if debugging is enabled
-	var canLog = (getCookie("debugging") == "true")
-    
-	if (canLog) {
-		// check if payload is string
-		if (typeof txt === "string" || txt instanceof String) {
-			console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
-		} else {
-			console.log(txt);
+		// only print if debugging is enabled
+		var canLog = (getCookie("debugging") == "true")
+		
+		if (canLog) {
+			// check if payload is string
+			if (typeof txt === "string" || txt instanceof String) {
+				console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
+			} else {
+				console.log(txt);
+			}
 		}
+	
 	}
-
 }
+
+
 
 /*================================================
 			  Is variable null function

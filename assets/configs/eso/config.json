@@ -4,7 +4,7 @@
     "wikiNamespace": "Online",
     "wikiURL": "//en.uesp.net/wiki/",
     "mapURL" : "//esomap.uesp.net/esomap.html",
-    "tileURL" : "//mapsnc.uesp.net/esomap/",
+    "tileURL" : "//maps.uesp.net/esomap/",
     "database" : "eso",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design",
     "bgColour" : "#000000",
