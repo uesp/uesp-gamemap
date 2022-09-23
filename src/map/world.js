@@ -4,9 +4,6 @@
  * @summary Contains class definition for gamemap's "world".
  */
 
-import MapState from "./mapstate.js";
-import * as Utils from "../common/utils.js";
-
 export default class World {
 	constructor(world, mapConfig) {
 
@@ -22,7 +19,7 @@ export default class World {
 			this.wikiPage = world.wikiPage || "";
 			this.cellSize = world.cellSize || -1;
 	
-			this.zoomOffset = mapConfig.zoomOffset;
+			this.zoomOffset = world.zoomOffset || mapConfig.zoomOffset;
 
 			this.maxZoomLevel = (world.maxZoom - this.zoomOffset) || mapConfig.maxZoomLevel;
 			this.minZoomLevel = (world.minZoom - this.zoomOffset) || mapConfig.minZoomLevel;

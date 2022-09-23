@@ -4,8 +4,6 @@
  * @summary Contains general constants to be re-used throughout the gamemap.
  */
 
-import * as Utils from "./utils.js";
-
 export const ASSETS_DIR = "assets/";
 export const CONFIG_DIR = ASSETS_DIR + "configs/";
 export const TEMPLATES_DIR = ASSETS_DIR + "templates/";
@@ -17,8 +15,6 @@ export const MAP_CONFIG_FILENAME = "config.json"
 export const DEFAULT_MAP_CONFIG_DIR = CONFIG_DIR + "default_" + MAP_CONFIG_FILENAME;
 
 export const GAME_DATA_SCRIPT = "src/db/gamemap.php";
-
-export const GAMEMAP_ROOT_NAME = "gmMapRoot";
 
 export const LOCTYPE_NONE = 0;
 export const LOCTYPE_POINT = 1;

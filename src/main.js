@@ -20,19 +20,19 @@ var currentTabID = "";
 var pairings = [];
 
 // on page load
-print("Page initialising...");
+log("Page initialising...");
 $(document).ready(function() {
 
 	// load gamemap
-	print("Initialising gamemap...");
+	log("Initialising gamemap...");
 	loading("map");
 
 	// get gamename from pathname URL
 	let gameParam = window.location.pathname.replace(/\\|\//g,'')
-	print("game: " +gameParam);
+	log("game: " +gameParam);
 
 	if (gameParam != null && gameParam != "" && gameParam.match(/^([a-z]+)/)) {
-		print("URL has game param!");
+		log("URL has game param!");
 
 		// get map configs
 		Utils.getJSON(Constants.DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
@@ -40,20 +40,20 @@ $(document).ready(function() {
 				window.DEFAULT_MAP_CONFIG = defaultMapConfig;
 
 				let configURL = (Constants.CONFIG_DIR + gameParam + "/" + Constants.MAP_CONFIG_FILENAME);
-				print("Getting map config at "+configURL+"...");
+				log("Getting map config at "+configURL+"...");
 		
 				if (Utils.doesFileExist(configURL)) {
 					Utils.getJSON(configURL, function(error, object) {
 						if (error !== null) {
 							showError("Could not load map: " + error);
 						} else {
-							print("Imported map config successfully!");
+							log("Imported map config successfully!");
 							mapConfig = object;
 			
-							print("Merging with default map config...")
+							log("Merging with default map config...")
 							let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
 			
-							print(mergedMapConfig);
+							log(mergedMapConfig);
 			
 							mapConfig = mergedMapConfig;
 			
@@ -108,8 +108,8 @@ function loadGamemap(mapConfig) {
 
 function onWorldsLoaded(mapWorlds) {
 	
-	print("Worlds loaded!");
-	print(mapWorlds);
+	log("Worlds loaded!");
+	log(mapWorlds);
 
 	$("#loading_spinner").hide();
 	$('#zoom_widget').css('visibility','visible');
@@ -133,7 +133,7 @@ function onMapLoaded() {
 }
 
 function onPermissionsLoaded(enableEditing) {
-	print("Editing permissions loaded, editing enabled is: " + enableEditing);
+	log("Editing permissions loaded, editing enabled is: " + enableEditing);
 
 	// canEdit = this.canEdit() && !isMobileDevice();
 
@@ -178,20 +178,20 @@ function onWorldChanged(newWorld) {
 
 // copy link to clipboard button
 window.copyMapLink = function(){
-	print("copying link to clipboard...");
+	log("copying link to clipboard...");
 	navigator.clipboard.writeText(window.location)
 	.then(() => {
 		M.toast({text: "Map link copied to clipboard!"});
 	})
 	.catch(err => {
-		print("Error copying link to clipboard.");
+		log("Error copying link to clipboard.");
 	});
 }
 
 // goto article button
 window.gotoArticle = function(){
 	if (gamemap != null) {
-		print("getting article link...");
+		log("getting article link...");
 
 		let link = gamemap.getArticleLink();
 
@@ -253,7 +253,7 @@ function showError(reason){
 	$("#error_box").show();
 	$('#error_box').css('visibility','visible');
 	$("#error_box_reason").text(reason);
-	print("Error: " + reason);
+	log("Error: " + reason);
 	$("#loading_spinner").hide();
 }
 
@@ -332,7 +332,7 @@ function hideMenus() {
 function onTabClicked(element) {
 	if (locationSwitcherRoot.classList.contains("shown")) {
 
-		print("tab clicked!");
+		log("tab clicked!");
 		currentTabID = element.href.split("#")[1];
 
 		setTimeout(function() {
@@ -549,12 +549,11 @@ function createGroupListHTML(groups) {
 	let worldID;
 
 	// if the passed grouplist is an array of objects
-	// instead of just one object
 	if (Array.isArray(groups)) {
 		groups.forEach(world => {
 			worldID = world.id;
 			if (worldID < 0) {
-				if (worldID == -1) displayName = "Unsorted";
+				if (worldID == -1) displayName = "Orphaned";
 				if (worldID == -1337) displayName = "Dev";
 			} else {
 				name = gamemap.getWorldNameFromID(worldID);
@@ -599,12 +598,12 @@ function focusSearch() {
 
 function clearSearch() {
 	searchbox.value = "";
-	print("cleared search.");
+	log("cleared search.");
 	btn_clear_search.style.visibility = 'hidden';
 }
 
 function updateSearch(query) {
-	print("search query: " + query);
+	log("search query: " + query);
 
 	// toggle clear button visibility
 	if (query.length > 0) {

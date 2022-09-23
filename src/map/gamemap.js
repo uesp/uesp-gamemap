@@ -338,6 +338,8 @@ export default class Gamemap {
 					} else {
 						mapWorldDisplayNameIndex[world.name] = world.id;
 					}
+
+					//self.worlds[world.id].mergeFromJson(world);
 					
 				}
 			}
@@ -369,8 +371,8 @@ export default class Gamemap {
 	gotoWorld(worldID, coords) {
 		$("#map_loading_bar").show();
 		if (this.isWorldValid(worldID)) {
-			print("Going to world... " + worldID);
-			print(this.getWorldFromID(worldID));
+			log("Going to world... " + worldID);
+			log(this.getWorldFromID(worldID));
 			
 			let mapState = new MapState();
 			mapState.zoomLevel = this.mapConfig.defaultZoomLevel;
@@ -394,7 +396,7 @@ export default class Gamemap {
 	 * Gets width and height of the full map image.
 	 * @param world - 
 	 * @returns mapImageDimens - The width/height of the map image as an object
-	 * @example print(getMapImageDimensions().width);
+	 * @example log(getMapImageDimensions().width);
 	 */
 	getMapImageDimensions(world) {
 
@@ -690,7 +692,7 @@ export default class Gamemap {
 
 		// make sure we're being given a valid world state
 		if (world == null || world.id == null || world.id < 0 ) { 
-			print(world)
+			log(world)
 			return; 
 		}
 
@@ -701,7 +703,6 @@ export default class Gamemap {
 		var queryParams = {};
 		queryParams.action = "get_locs";
 		queryParams.world  = world.id;
-		queryParams.zoom   = ( Number(zoomLevel) + Number(world.zoomOffset));
 		queryParams.db = this.mapConfig.database;
 		if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
 		
@@ -709,21 +710,22 @@ export default class Gamemap {
 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 
 			if (data.isError == null && data.locations != null) {
-				print("Got " + data.locationCount + " locations!");
+				log("Got " + data.locationCount + " locations!");
 				let locations = data.locations
-				print(locations);
+				log(locations);
 
 				for (let key in locations) {
 					var location = locations[key];
 
-					// if (location.id != null) {
-					// 	if (!(location.id in this.locations)) {
-					// 		this.locations[location.id] = uesp.gamemap.createLocationFromJson(location, this);
-					// 	}
-					// 	else {
-					// 		this.locations[location.id].mergeFromJson(location);
-					// 	}
-					// }
+					if (location.id != null) {
+						if ((location.id in self.locations)) {
+							// Utils.mergeObjects()
+							//self.locations[location.id].mergeFromJson(location);
+						}
+						else {
+							//self.locations[location.id] = uesp.gamemap.createLocationFromJson(location, this);
+						}
+					}
 				}
 
 				// callback to show map fully loaded
@@ -731,7 +733,7 @@ export default class Gamemap {
 					self.mapCallbacks.onMapLoaded(true);
 				}
 			} else {
-				print("There was an error getting locations for this world.")
+				log("There was an error getting locations for this world.")
 			}
 		});
 	}

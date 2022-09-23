@@ -76,26 +76,23 @@ export function getCookie(cname) {
 }
 
 /*================================================
-				Debug print function
+				Debug log function
 ================================================*/
 
-let isSafari = window.safari !== undefined;
-if (!isSafari) { // disallow print log function on apple devices due to it invoking page print dialog
-	window.print = function(txt) {
-    
-		// only print if debugging is enabled
-		var canLog = (getCookie("debugging") == "true")
-		
-		if (canLog) {
-			// check if payload is string
-			if (typeof txt === "string" || txt instanceof String) {
-				console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
-			} else {
-				console.log(txt);
-			}
-		}
+window.log = function(txt) {
+
+	// only print if debugging is enabled
+	var canLog = (getCookie("debugging") == "true")
 	
+	if (canLog) {
+		// check if payload is string
+		if (typeof txt === "string" || txt instanceof String) {
+			console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
+		} else {
+			console.log(txt);
+		}
 	}
+
 }
 
 /*================================================
@@ -181,7 +178,7 @@ export function getFormData(form) {
 			formValues[fields[0]][fields[1]][fields[2]] = field.value;
 		}
 		else {
-			print("Too many nested levels in form name'" + field.name + "'!");
+			log("Too many nested levels in form name'" + field.name + "'!");
 		}
 	});
 	
