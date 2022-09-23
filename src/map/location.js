@@ -4,7 +4,7 @@
  * @summary Contains class definition for the gamemap's locations.
  */
 
- import * as Constants from "../common/constants.js";
+import * as Constants from "../common/constants.js";
 import * as Utils from "../common/utils.js";
 import Point from "./point.js";
 
@@ -55,7 +55,7 @@ export default class Location {
 			}
 
 			// push joined coords into coord array
-			for (let i = 0; i < x.length; i++ ) {
+			for (let i = 0; i < y.length; i++ ) {
 				let coord = [x[i], y[i]];
 				this.coords.push(this.getPoint(coord));
 			}
@@ -74,6 +74,7 @@ export default class Location {
 
 		if (config.coordType == Constants.COORD_TYPES.NORMALISED && config.database == "eso") {
 			// convert coords to normalised ones
+			y = Constants.LEGACY_MAXIMUM_XY - y;
 			x = Utils.toNormalised(x);
 			y = Utils.toNormalised(y);
 		}

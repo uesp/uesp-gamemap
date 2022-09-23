@@ -9,6 +9,7 @@ import * as Constants from "../common/constants.js";
 import World from "./world.js";
 import MapState from "./mapstate.js";
 import Location from "./location.js";
+import Point from "./point.js";
 import RasterCoords from "../lib/leaflet/rastercoords.js";
 
 /*================================================
@@ -167,11 +168,11 @@ export default class Gamemap {
 		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel, {animate: true});
 
 		if (mapState.world.locations == null) {
-
 			// get locations for this map
 			this.getLocations(mapState.world.id, mapState.zoomLevel);
 		} else {
-			//redraw locations
+			//redraw locations from cache
+			this.drawLocations(mapState.world.locations);
 		}
 		
 		this.currentWorldID = mapState.world.id;
@@ -393,6 +394,115 @@ export default class Gamemap {
 	}
 
 	/*================================================
+						Locations 
+	================================================*/
+
+	getLocations(world, zoomLevel) {
+
+		// check if we've been sent a world ID
+		if (world != null && !isNaN(world)){
+			if (this.isWorldValid(world)) {
+				world = this.getWorldFromID(world);
+			}
+		}
+
+		// make sure we're being given a valid world state
+		if (world == null || world.id == null || world.id < 0 ) { 
+			log(world)
+			return; 
+		}
+
+		// if we aren't given a zoom level, assume default mapconfig zoom level
+		if (zoomLevel == null) { zoomLevel = this.mapConfig.defaultZoomLevel; }
+
+		// generate api query
+		var queryParams = {};
+		queryParams.action = "get_locs";
+		queryParams.world  = world.id;
+		queryParams.db = this.mapConfig.database;
+		if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
+		
+		// make api query
+		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
+
+			if (data.isError == null && data.locations != null) {
+				log("Got " + data.locationCount + " locations!");
+				let locations = data.locations
+				//log(locations); // server side locations
+				let parsedLocations = {};
+
+				for (let key in locations) {
+					let location = locations[key];
+
+					if (location.id != null) {
+						parsedLocations[location.id] = new Location(self.mapConfig, location, world.zoomOffset);
+					}
+				}
+				
+				if (Object.keys(parsedLocations).length > 0) {
+					log("Parsed locations:");
+					log(parsedLocations);
+				}
+
+				// update world
+				self.drawLocations(parsedLocations);
+				self.mapWorlds[world.id].locations = parsedLocations;
+				self.updateMapState();
+			} else {
+				log("There was an error getting locations for this world.")
+			}
+		});
+	}
+
+	drawLocations(locations) {
+
+		if (Object.keys(locations).length > 0) {
+
+			log("Loading locations...");
+			log(locations);
+
+			let location = locations[Object.keys(locations)[4]];
+
+			log(location);
+
+			if (location.locType == Constants.LOCTYPES.AREA) {
+
+				
+
+				let latlngs = [];
+				var coords = location.coords;
+
+				log(location.coords);
+				log(coords);
+
+				log(this.toLatLng(coords[0]));
+				
+
+				for (let i = 0; i < coords.length; i++) {
+					latlngs.push(this.toLatLng(coords[i]));
+				}
+
+				
+				//create a red polygon from an array of LatLng points
+				log(latlngs);
+				var polygon = L.polygon(latlngs, {color: 'red'}).addTo(map);
+
+			}
+		}
+
+
+
+		let locationLayers = [];
+
+		// callback to show map fully loaded
+		if (this.mapCallbacks != null) {
+			this.mapCallbacks.onMapLoaded(true);
+		}
+
+	}
+
+
+	/*================================================
 						  Utility 
 	================================================*/
 
@@ -432,7 +542,7 @@ export default class Gamemap {
 	 */
 	toCoords(latLng) {
 
-		let coords;
+		var coords;
 
 		// are we being given a latLng object from leaflet?
 		if (latLng.lat != null) {
@@ -464,6 +574,7 @@ export default class Gamemap {
 
 		let latLng;
 
+
 		// are we being given a coord object?
 		if (coords.x != null) {
 
@@ -472,26 +583,34 @@ export default class Gamemap {
 
 				// multiply the normalised coords by the map image dimensions
 				// to get the XY coordinates
-				coords.x = (coords.x * this.mapImage.width);
-				coords.y = (coords.y * this.mapImage.height);
-			}
 
-			latLng = RC.unproject(coords);
+				let x = (coords.x * this.mapImage.width);
+				let y = (coords.y * this.mapImage.height);
+				let point = new Point(x, y);
+
+				latLng = RC.unproject(point);
+			} else {
+				latLng = RC.unproject(coords);
+			}
 		}
 
 		// are we being given an array of coords?
 		if (coords[0] != null && coords.length == 2) {
+
+			let tempCoords = coords;
+
+			log("going array");
 
 			// are we using a normalised coordinate scheme?
 			if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
 
 				// multiply the normalised coords by the map image dimensions
 				// to get the XY coordinates
-				coords[0] = (coords[0] * this.mapImage.width);
-				coords[1] = (coords[1] * this.mapImage.height);
+				tempCoords[0] = (tempCoords[0] * this.mapImage.width);
+				tempCoords[1] = (tempCoords[1] * this.mapImage.height);
 			}
 
-			latLng = RC.unproject(coords);
+			latLng = RC.unproject(tempCoords);
 		}
 		return latLng;
 	}
@@ -683,70 +802,24 @@ export default class Gamemap {
 
 
 
-	getLocations(world, zoomLevel) {
 
-		// check if we've been sent a world ID
-		if (world != null && !isNaN(world)){
-			if (this.isWorldValid(world)) {
-				world = this.getWorldFromID(world);
-			}
-		}
 
-		// make sure we're being given a valid world state
-		if (world == null || world.id == null || world.id < 0 ) { 
-			log(world)
-			return; 
-		}
 
-		// if we aren't given a zoom level, assume default mapconfig zoom level
-		if (zoomLevel == null) { zoomLevel = this.mapConfig.defaultZoomLevel; }
 
-		// generate api query
-		var queryParams = {};
-		queryParams.action = "get_locs";
-		queryParams.world  = world.id;
-		queryParams.db = this.mapConfig.database;
-		if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
-		
-		// make api query
-		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 
-			if (data.isError == null && data.locations != null) {
-				log("Got " + data.locationCount + " locations!");
-				let locations = data.locations
-				//log(locations); // server side locations
-				let parsedLocations = {};
 
-				for (let key in locations) {
-					let location = locations[key];
 
-					if (location.id != null) {
-						parsedLocations[location.id] = new Location(self.mapConfig, location, world.zoomOffset);
-					}
-				}
-				
-				if (Object.keys(parsedLocations).length > 0) {
-					log("Parsed locations:");
-					log(parsedLocations);
-				}
 
-				// update world
-				self.mapWorlds[world.id].locations = parsedLocations;
-				self.updateMapState();
 
-				// callback to show map fully loaded
-				if (self.mapCallbacks != null) {
-					self.mapCallbacks.onMapLoaded(true);
-				}
-			} else {
-				log("There was an error getting locations for this world.")
-			}
-		});
-	}
 
-	redrawLocations() {
 
-	}
+
+
+
+
+
+
+
 
 
 
