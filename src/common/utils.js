@@ -288,3 +288,11 @@ export function fireClick(node){
 export function getUniqueListFrom(arr, key) {
     return [...new Map(arr.map(item => [item[key], item])).values()]
 }
+
+/*================================================
+	  	  To normalised coords function
+================================================*/
+
+export function toNormalised(coord) {
+    return (coord / Constants.LEGACY_MAXIMUM_XY).toFixed(3);
+}

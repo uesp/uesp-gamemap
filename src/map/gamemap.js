@@ -8,6 +8,7 @@ import * as Utils from "../common/utils.js";
 import * as Constants from "../common/constants.js";
 import World from "./world.js";
 import MapState from "./mapstate.js";
+import Location from "./location.js";
 import RasterCoords from "../lib/leaflet/rastercoords.js";
 
 /*================================================
@@ -42,9 +43,8 @@ export default class Gamemap {
 			this.mapCallbacks = mapCallbacks;
 		
 			// set up the root map element
-			this.mapRoot = $('#' + mapRootID);
 			this.rootMapID = mapRootID;
-			if (this.mapRoot == null) {
+			if ($('#'+mapRootID) == null) {
 				throw new Error('The gamemap container \'' + mapRootID + '\' could not be found or was invalid.');
 			}
 			self = this;
@@ -52,7 +52,6 @@ export default class Gamemap {
 			$("#"+mapRootID).css("background-color", mapConfig.bgColour);
 
 			// set the default map info 	
-			this.locations = {};
 			this.mapWorlds = {};
 
 			// set up state bools
@@ -93,7 +92,7 @@ export default class Gamemap {
 			doubleClickZoom: false, // disable double click to zoom
 			scrollWheelZoom: false, // disable original zoom function
 			smoothWheelZoom: true,  // enable smooth zoom 
-  			smoothSensitivity: 0.5,   // zoom speed. default is 1
+  			smoothSensitivity: 0.5, // zoom speed. default is 1
         }
 
 		map = L.map(this.rootMapID, mapOptions);
@@ -167,8 +166,13 @@ export default class Gamemap {
 		// set map view
 		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel, {animate: true});
 
-		// load new locations for this map
-		this.getLocations(mapState.world.id, mapState.zoomLevel);
+		if (mapState.world.locations == null) {
+
+			// get locations for this map
+			this.getLocations(mapState.world.id, mapState.zoomLevel);
+		} else {
+			//redraw locations
+		}
 		
 		this.currentWorldID = mapState.world.id;
 		//this.mapConfig = this.mapWorlds[worldID].mapConfig;
@@ -651,7 +655,7 @@ export default class Gamemap {
 		// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
 
 		if (mapConfig.database == "eso") { // unique stuff for eso
-			return mapConfig.tileURL + world.name + "/zoom{z}/" + world.name + "-{x}-" + "{y}" + ".jpg";
+			return mapConfig.tileURL + world.name + "/leaflet/zoom{z}/" + world.name + "-{x}-" + "{y}" + ".jpg";
 		} else {
 			if (world == null) {
 				return "zoom{z}/maptile-{x}-{y}.jpg";
@@ -681,14 +685,12 @@ export default class Gamemap {
 
 	getLocations(world, zoomLevel) {
 
-		// check if we've been send a world ID
+		// check if we've been sent a world ID
 		if (world != null && !isNaN(world)){
 			if (this.isWorldValid(world)) {
 				world = this.getWorldFromID(world);
 			}
 		}
-
-		loading("locations");
 
 		// make sure we're being given a valid world state
 		if (world == null || world.id == null || world.id < 0 ) { 
@@ -712,21 +714,25 @@ export default class Gamemap {
 			if (data.isError == null && data.locations != null) {
 				log("Got " + data.locationCount + " locations!");
 				let locations = data.locations
-				log(locations);
+				//log(locations); // server side locations
+				let parsedLocations = {};
 
 				for (let key in locations) {
-					var location = locations[key];
+					let location = locations[key];
 
 					if (location.id != null) {
-						if ((location.id in self.locations)) {
-							// Utils.mergeObjects()
-							//self.locations[location.id].mergeFromJson(location);
-						}
-						else {
-							//self.locations[location.id] = uesp.gamemap.createLocationFromJson(location, this);
-						}
+						parsedLocations[location.id] = new Location(self.mapConfig, location, world.zoomOffset);
 					}
 				}
+				
+				if (Object.keys(parsedLocations).length > 0) {
+					log("Parsed locations:");
+					log(parsedLocations);
+				}
+
+				// update world
+				self.mapWorlds[world.id].locations = parsedLocations;
+				self.updateMapState();
 
 				// callback to show map fully loaded
 				if (self.mapCallbacks != null) {

@@ -166,10 +166,7 @@ function onWorldChanged(newWorld) {
 	$('#current_location_label').text(newWorld.displayName);
 
 	setWindowTitle(newWorld.displayName);
-
-
 	updateWorldList(newWorld.name);
-
 }
 
 /*================================================

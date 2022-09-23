@@ -16,10 +16,12 @@ export const DEFAULT_MAP_CONFIG_DIR = CONFIG_DIR + "default_" + MAP_CONFIG_FILEN
 
 export const GAME_DATA_SCRIPT = "src/db/gamemap.php";
 
-export const LOCTYPE_NONE = 0;
-export const LOCTYPE_POINT = 1;
-export const LOCTYPE_PATH = 2;
-export const LOCTYPE_AREA = 3;
+export const LOCTYPES = {
+    NONE : 0,
+    POINT : 1,
+    PATH : 2,
+    AREA : 3,
+}
 
 export const PARAM_TYPE_QUERY = 0;
 export const PARAM_TYPE_HASH = 1;

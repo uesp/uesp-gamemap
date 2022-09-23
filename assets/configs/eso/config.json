@@ -3,7 +3,6 @@
     "mapTitle": "ESO Map",
     "wikiNamespace": "Online",
     "wikiURL": "//en.uesp.net/wiki/",
-    "mapURL" : "//esomap.uesp.net/esomap.html",
     "tileURL" : "//maps.uesp.net/esomap/",
     "database" : "eso",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design",
