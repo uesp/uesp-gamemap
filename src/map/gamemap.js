@@ -93,7 +93,7 @@ export default class Gamemap {
 			doubleClickZoom: false, // disable double click to zoom
 			scrollWheelZoom: false, // disable original zoom function
 			smoothWheelZoom: true,  // enable smooth zoom 
-  			smoothSensitivity: 0.5, // zoom speed. default is 1
+  			smoothSensitivity: 0.7, // zoom speed. default is 1
         }
 
 		map = L.map(this.rootMapID, mapOptions);
@@ -390,7 +390,7 @@ export default class Gamemap {
 			}
 	
 			mapState.world = this.getWorldFromID(worldID);
-			
+
 			this.clearLocations();
 			this.setMapState(mapState);
 		} else {

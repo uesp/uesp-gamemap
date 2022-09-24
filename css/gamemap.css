@@ -544,6 +544,7 @@ li div.collapsible-header i {
 	border: none;
 	box-shadow: 0px 0px 10px 6px var(--shadow);
 	cursor: pointer;
+	padding: 0px !important;
 }
 
 .gmMapLocDisabled {
