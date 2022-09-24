@@ -464,11 +464,11 @@ export default class Gamemap {
 	redrawLocations(locations) {
 		// delete any existing location layers
 		this.clearLocations();
+		this.locationLayers = {};
 
 		// get total number of zoom levels
 		let totalZoomLevels = this.getCurrentWorld().maxZoomLevel;
-		this.locationLayers = {};
-
+		
 		// set up location layer for each zoom level
 		log("Setting up location layers...")
 		for (let i = 0; i <= totalZoomLevels; i++) {
@@ -492,12 +492,7 @@ export default class Gamemap {
 				log(location);
 
 				// get marker/polygon/icon for this location
-				let marker = this.getMarker(location);
-
-				// add tooltip to marker if applicable
-				if (location.name != ""){
-					//marker.bindTooltip(location.name, {permanent: true, direction:"center"}).openTooltip()
-				}
+				let marker = this.createMarker(location);
 
 				// add marker to relevant map layer
 				//this.locationLayers[location.displayLevel].addLayer(marker);
@@ -516,7 +511,8 @@ export default class Gamemap {
 	}
 
 
-	getMarker(location){
+	// marker factory method
+	createMarker(location){
 
 		let marker;
 
@@ -546,10 +542,15 @@ export default class Gamemap {
 		} else { // location must be a generic marker
 
 		}
-		
 
 
 
+		// add tooltip to marker if applicable
+		if (location.name != ""){
+			//marker.bindTooltip(location.name, {permanent: true, direction:"center"}).openTooltip()
+		}
+
+		// add event listeners to marker
 
 		return marker;
 	}
@@ -575,7 +576,7 @@ export default class Gamemap {
 		if (this.mapConfig.fullWidth != null && this.mapConfig.fullHeight != null) { 
 			width = this.mapConfig.fullWidth;
 			height = this.mapConfig.fullHeight;
-		} else if (this.mapConfig.numTilesY == this.mapConfig.numTilesX) { // if the map is a square (1:1)
+		} else if (world.numTilesX == world.numTilesY) { // if the map is a square (1:1)
 			// then calculate the image dimensions as the size of the whole grid
 			width = world.numTilesX * this.mapConfig.tileSize;
 			height = world.numTilesY * this.mapConfig.tileSize;
