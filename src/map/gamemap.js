@@ -491,42 +491,17 @@ export default class Gamemap {
 			Object.values(locations).forEach(location => {
 				log(location);
 
+				// get marker/polygon/icon for this location
+				let marker = this.getMarker(location);
 
-				if (location.locType == Constants.LOCTYPES.AREA) {
-
-				
-
-					let latlngs = [];
-					var coords = location.coords;
-	
-					log(this.toLatLng(coords[0]));
-					
-	
-					for (let i = 0; i < coords.length; i++) {
-						latlngs.push(this.toLatLng(coords[i]));
-					}
-	
-					
-					//create a red polygon from an array of LatLng points
-					log(latlngs);
-	
-					let polygonOptions = {
-						noClip: false,
-						color: "green",
-						smoothFactor: 5,
-					}
-					var polygon = L.polygon(latlngs, polygonOptions).addTo(map);
-	
-					polygon.bindTooltip(location.name, {permanent: true, direction:"center"}).openTooltip()
-	
+				// add tooltip to marker if applicable
+				if (location.name != ""){
+					//marker.bindTooltip(location.name, {permanent: true, direction:"center"}).openTooltip()
 				}
 
-
-
+				// add marker to relevant map layer
 				//this.locationLayers[location.displayLevel].addLayer(marker);
 			});
-
-			let location = locations[Object.keys(locations)[1]];
 
 		}
 
@@ -538,6 +513,45 @@ export default class Gamemap {
 
 		log("Adding location layers to map...")
 		Object.values(this.locationLayers).forEach(layer => layer.addTo(map));
+	}
+
+
+	getMarker(location){
+
+		let marker;
+
+		// is location a polygon?
+		if (location.locType == Constants.LOCTYPES.AREA) {
+		
+				let latlngs = [];
+				var coords = location.coords;
+
+				log(this.toLatLng(coords[0]));
+				
+				for (let i = 0; i < coords.length; i++) {
+					latlngs.push(this.toLatLng(coords[i]));
+				}
+
+				let polygonOptions = {
+					noClip: false,
+					color: "green",
+					smoothFactor: 5,
+				}
+				var polygon = L.polygon(latlngs, polygonOptions).addTo(map);
+
+		} else if (true) { // is location a polyline?
+
+		} else if (true) { // is location an icon?
+		
+		} else { // location must be a generic marker
+
+		}
+		
+
+
+
+
+		return marker;
 	}
 
 
