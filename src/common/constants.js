@@ -21,6 +21,7 @@ export const LOCTYPES = {
     POINT : 1,
     PATH : 2,
     AREA : 3,
+    LABEL : 4,
 }
 
 export const PARAM_TYPE_QUERY = 0;

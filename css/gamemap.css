@@ -529,18 +529,19 @@ li div.collapsible-header i {
 	user-select: none;
 }
 
-.gmMapLoc {
+.leaflet-tooltip {
 	border-radius: var(--padding_large);
 	position: absolute;
 	white-space: nowrap;
 	z-index: 20;
 	color: var(--text_loc_name);
-	font-weight: 400;
+	font-weight: bolder;
 	font-family: "Arial", sans-serif;
 	font-size: 11px;
 	text-shadow: 0px 0px 5px var(--background);
 	background-color: var(--shadow);
 	display: inline-block;
+	border: none;
 	box-shadow: 0px 0px 10px 6px var(--shadow);
 	cursor: pointer;
 }

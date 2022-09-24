@@ -63,6 +63,10 @@ export default class Location {
 		} else {
 			this.coords.push(this.getPoint([location.x, location.y]));
 		}
+
+		// if (this.name != "" && this.icon == 0 && this.displayData.labelPos != null) {
+		// 	this.locType = Constants.LOCTYPES.LABEL;
+		// }
 				
 		// this.labelElement = null;
 		// this.parentMap = location.parentMap || null;

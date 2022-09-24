@@ -167,20 +167,19 @@ export default class Gamemap {
 		// set map view
 		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel, {animate: true});
 
+		// update world
+		this.currentWorldID = mapState.world.id;
+		if (this.mapCallbacks != null) {
+			this.mapCallbacks.onWorldChanged(this.mapWorlds[this.currentWorldID])
+		}
+
+		// get/set locations
 		if (mapState.world.locations == null) {
 			// get locations for this map
 			this.getLocations(mapState.world.id, mapState.zoomLevel);
 		} else {
 			//redraw locations from cache
-			this.drawLocations(mapState.world.locations);
-		}
-		
-		this.currentWorldID = mapState.world.id;
-		//this.mapConfig = this.mapWorlds[worldID].mapConfig;
-
-		//callback to notify world changed
-		if (this.mapCallbacks != null) {
-			this.mapCallbacks.onWorldChanged(this.mapWorlds[this.currentWorldID])
+			this.redrawLocations(mapState.world.locations);
 		}
 
 		// remove map bounds to fix RC bug
@@ -276,6 +275,10 @@ export default class Gamemap {
 	 */
 	getCurrentWorldID() {
 		return this.currentWorldID || this.mapConfig.defaultWorldID;
+	}
+
+	getCurrentWorld(){
+		return this.getWorldFromID(this.getCurrentWorldID());
 	}
 
 	/** Gets the world object associated to a given worldID.
@@ -387,6 +390,8 @@ export default class Gamemap {
 			}
 	
 			mapState.world = this.getWorldFromID(worldID);
+			
+			this.clearLocations();
 			this.setMapState(mapState);
 		} else {
 			throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
@@ -438,67 +443,101 @@ export default class Gamemap {
 						parsedLocations[location.id] = new Location(self.mapConfig, location, world.zoomOffset);
 					}
 				}
-				
-				if (Object.keys(parsedLocations).length > 0) {
-					log("Parsed locations:");
-					log(parsedLocations);
-				}
 
 				// update world
-				self.drawLocations(parsedLocations);
 				self.mapWorlds[world.id].locations = parsedLocations;
 				self.updateMapState();
+				self.redrawLocations(parsedLocations);
 			} else {
 				log("There was an error getting locations for this world.")
 			}
 		});
 	}
 
-	drawLocations(locations) {
+	clearLocations(){
+		if (this.locationLayers != null){
+			log("Clearing existing location layers...");
+			Object.values(this.locationLayers).forEach(layer => layer.remove());
+		}
+	}
 
+	redrawLocations(locations) {
+		// delete any existing location layers
+		this.clearLocations();
+
+		// get total number of zoom levels
+		let totalZoomLevels = this.getCurrentWorld().maxZoomLevel;
+		this.locationLayers = {};
+
+		// set up location layer for each zoom level
+		log("Setting up location layers...")
+		for (let i = 0; i <= totalZoomLevels; i++) {
+
+			let featureGroup =  L.featureGroup()
+				.bindPopup('Hello world!')
+				.on('click', function() { alert('Clicked on a member of the group!'); })
+				//[featuregroup].addTo(map);
+			this.locationLayers[i] = featureGroup;
+		}
+		log(this.locationLayers);
+
+		// check if current map has any locations
 		if (Object.keys(locations).length > 0) {
 
 			log("Loading locations...");
 			log(locations);
 
-			let location = locations[Object.keys(locations)[4]];
+			// iterate through each location in the list
+			Object.values(locations).forEach(location => {
+				log(location);
 
-			log(location);
 
-			if (location.locType == Constants.LOCTYPES.AREA) {
+				if (location.locType == Constants.LOCTYPES.AREA) {
 
 				
 
-				let latlngs = [];
-				var coords = location.coords;
-
-				log(location.coords);
-				log(coords);
-
-				log(this.toLatLng(coords[0]));
-				
-
-				for (let i = 0; i < coords.length; i++) {
-					latlngs.push(this.toLatLng(coords[i]));
+					let latlngs = [];
+					var coords = location.coords;
+	
+					log(this.toLatLng(coords[0]));
+					
+	
+					for (let i = 0; i < coords.length; i++) {
+						latlngs.push(this.toLatLng(coords[i]));
+					}
+	
+					
+					//create a red polygon from an array of LatLng points
+					log(latlngs);
+	
+					let polygonOptions = {
+						noClip: false,
+						color: "green",
+						smoothFactor: 5,
+					}
+					var polygon = L.polygon(latlngs, polygonOptions).addTo(map);
+	
+					polygon.bindTooltip(location.name, {permanent: true, direction:"center"}).openTooltip()
+	
 				}
 
-				
-				//create a red polygon from an array of LatLng points
-				log(latlngs);
-				var polygon = L.polygon(latlngs, {color: 'red'}).addTo(map);
 
-			}
+
+				//this.locationLayers[location.displayLevel].addLayer(marker);
+			});
+
+			let location = locations[Object.keys(locations)[1]];
+
 		}
 
-
-
-		let locationLayers = [];
 
 		// callback to show map fully loaded
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.onMapLoaded(true);
 		}
 
+		log("Adding location layers to map...")
+		Object.values(this.locationLayers).forEach(layer => layer.addTo(map));
 	}
 
 
@@ -599,8 +638,6 @@ export default class Gamemap {
 
 			let tempCoords = coords;
 
-			log("going array");
-
 			// are we using a normalised coordinate scheme?
 			if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
 
@@ -633,6 +670,10 @@ export default class Gamemap {
 
 		map.on("zoomend", function(e){
 			self.updateMapState();
+
+			// iterate through layer list
+			// if map.zoom < layer list key (zoom), then remove it from map
+			// else add it to the map if map doesnt already have that layer.
 		})
 
 		map.on("contextmenu", function(e){
@@ -860,74 +901,6 @@ export default class Gamemap {
 	// 	return null;
 	// }
 
-
-	// clearLocationElements()	{
-	// 	for (let key in this.locations) {
-	// 		this.locations[key].removeElements();
-	// 	}
-	// }
-
-	// redrawLocations() {
-	
-	// 	let displayedLocations = {};
-
-	// 	for (var key in this.locations) {
-	// 		var location = this.locations[key];
-	
-	// 		if (location.worldID != this.currentWorldID) continue;
-	// 		if (!location.visible && !this.isHiddenLocsShown()) continue;
-	// 		if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
-	// 		if (location.locType >= Constants.LOCTYPE_PATH) location.updatePathSize(false);
-	
-	// 		displayedLocations[key] = 1;
-	// 		location.computeOffset();
-	// 		location.updatePopupOffset();
-	
-	// 		if (location.locType >= Constants.LOCTYPE_PATH) location.updatePath();
-	// 	}
-	
-	// 	for (var key in displayedLocations) {
-	// 		var location = this.locations[key];
-	// 		location.updateIcon();
-	// 	}
-	
-	// 	for (var key in displayedLocations) {
-	// 		var location = this.locations[key];
-	// 		location.updateLabel();
-	// 	}
-
-	// 	for (var key in this.locations) {
-	// 		var location = this.locations[key];
-
-	// 		if (location.worldID != this.currentWorldID) continue;
-	// 		if (!location.visible && !this.isHiddenLocsShown()) continue;
-	// 		if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
-	// 		if (location.locType >= Constants.LOCTYPE_PATH) location.updatePathSize(false);
-
-	// 		this.displayLocation(location);
-	// 	}
-	// }
-
-	// updateLocations(animate) {
-
-	// 	this.updateLocationDisplayLevels();
-	// 	this.updateLocationOffsets(animate);
-	
-	// 	this.redrawCanvas();
-	// 	//this.redrawLocations();
-	
-	// 	this.retrieveLocations();
-	// }
-
-	// updateLocationDisplayLevels() {
-	// 	for (let key in this.locations) {
-	// 		if (this.zoomLevel < this.locations[key].displayLevel)
-	// 			this.locations[key].hideElements(0);
-	// 		else
-	// 			this.locations[key].showElements(0);
-	// 	}
-	// }
-
 	// convertTileToGamePos(tileX, tileY) {
 
 	// 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
@@ -968,12 +941,6 @@ export default class Gamemap {
 	// 	return new Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
 	// }
 }
-
-// uesp.gamemap.Map.prototype.clearLocations = function()
-// {
-// 	this.clearLocationElements();
-// 	this.locations = {};
-// }
 
 // uesp.gamemap.Map.prototype.convertGameToPixelSize = function(width, height)
 // {
