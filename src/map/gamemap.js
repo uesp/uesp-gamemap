@@ -568,20 +568,17 @@ export default class Gamemap {
 					iconAnchor: anchor,
 				});
 
-				marker = L.marker(this.toLatLng(location.coords[0]), {icon: locationIcon}).addTo(map);
+				marker = L.marker(coords[0], {icon: locationIcon});
 			} 
 			
 		}
 
-
 		// add tooltip to marker if applicable
-		if (location.isLabel){
-			//marker = new L.tooltip(coords[0], {content: 'Hello world!<br />This is a nice tooltip.', permanent: true, direction:"center"});
-		} else if (location.hasLabel) {
+		if (location.hasLabel) {
 			marker.bindTooltip(location.name, {permanent: true, direction:"center"}).openTooltip();
 		}
 
-		// // add event listeners to marker
+		// add event listeners to marker
 
 		return marker;
 	}
