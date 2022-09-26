@@ -33,8 +33,6 @@ export default class World {
 
 			this.numTilesX = world.tilesX || mapConfig.numTilesX;
 			this.numTilesY = world.tilesY || mapConfig.numTilesY;
-			
-			this.enabled = true;
 
 			this.locations = null; // locations are loaded async after the world is created
 		} else {
