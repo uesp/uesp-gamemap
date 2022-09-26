@@ -377,6 +377,7 @@ export default class Gamemap {
 	}
 
 	gotoWorld(worldID, coords) {
+		this.clearLocations();
 		$("#map_loading_bar").show();
 		if (this.isWorldValid(worldID)) {
 			log("Going to world... " + worldID);
@@ -391,7 +392,6 @@ export default class Gamemap {
 	
 			mapState.world = this.getWorldFromID(worldID);
 
-			this.clearLocations();
 			this.setMapState(mapState);
 		} else {
 			throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
@@ -563,12 +563,12 @@ export default class Gamemap {
 				log(location.icon);
 				log(this.mapConfig.iconPath);
 
-				
+				let anchor = [location.iconSize/2, location.iconSize/2]
 
 				if (location.icon != null) {
 					let myIcon = L.icon({
 						iconUrl: this.mapConfig.iconPath + "/" + location.icon + ".png",
-						iconSize: [location.iconSize, location.iconSize],
+						iconAnchor: anchor,
 					});
 
 					marker = L.marker(this.toLatLng(location.coords[0]), {icon: myIcon}).addTo(map);
@@ -589,7 +589,7 @@ export default class Gamemap {
 
 
 		// add tooltip to marker if applicable
-		if (location.name != ""){
+		if (location.hasLabel){
 			marker.bindTooltip(location.name, {permanent: true, direction:"center"}).openTooltip()
 		}
 

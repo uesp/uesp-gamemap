@@ -37,6 +37,7 @@ export default class Location {
 		// set location icon info
 		this.icon = location.iconType || 0;
 		this.iconSize = mapConfig.iconWidth;
+		this.hasLabel = (this.displayData.labelPos != null && this.displayData.labelPos >= 1 && this.name != "");
 
 		// set coords
 		this.coords = [];
