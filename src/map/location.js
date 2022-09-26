@@ -35,9 +35,8 @@ export default class Location {
 		this.legacy = location || null;
 		
 		// set location icon info
-		this.icon = location.iconType || 0;
+		this.icon = location.iconType || null;
 		this.iconSize = mapConfig.iconWidth;
-		this.hasLabel = (this.displayData.labelPos != null && this.displayData.labelPos >= 1 && this.name != "");
 
 		// set coords
 		this.coords = [];
@@ -65,6 +64,12 @@ export default class Location {
 		} else {
 			this.coords.push(this.getPoint([location.x, location.y]));
 		}
+
+		// convenience state variables
+		this.isPolygonal = this.coords.length > 1;
+		this.hasIcon = (this.icon != null);
+		this.hasLabel = (this.displayData.labelPos != null && this.displayData.labelPos >= 1 && this.name != "");
+		this.isLabel = (!this.hasIcon && !this.isPolygonal && this.hasLabel);
 
 		// if (this.name != "" && this.icon == 0 && this.displayData.labelPos != null) {
 		// 	this.locType = Constants.LOCTYPES.LABEL;

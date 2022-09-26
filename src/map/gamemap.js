@@ -532,68 +532,56 @@ export default class Gamemap {
 	// marker factory method
 	createMarker(location){
 
-		let marker = new L.marker([0, 0]);
+		// get coordinates of location
+		let coords = [];
+		for (let i = 0; i < location.coords.length; i++) {
+			coords.push(this.toLatLng(location.coords[i]));
+		}
 
-		switch(location.locType) {
-			case Constants.LOCTYPES.AREA: // location is a polygon
-				let latlngs = [];
-				var coords = location.coords;
+		// make a generic fallback marker
+		let marker = new L.marker(coords[0]);
 
-				log(this.toLatLng(coords[0]));
-				
-				for (let i = 0; i < coords.length; i++) {
-					latlngs.push(this.toLatLng(coords[i]));
-				}
+		// create specific marker type
+		if (location.isPolygonal) { // is location polygonal? (polyline or polygon)
 
-				let lineWidth = location.displayData.lineWidth || 0;
+			let options = {
+				noClip: true,
+				color: Utils.RGBAtoHex(location.displayData.fillStyle),
+				smoothFactor: 2,
+				weight: (location.displayData.lineWidth || 0),
+			}
 
-				let polygonOptions = {
-					noClip: false,
-					color: Utils.RGBAtoHex(location.displayData.fillStyle),
-					smoothFactor: 2,
-					weight: lineWidth,
-				}
-				marker = L.polygon(latlngs, polygonOptions);
-			  	break;
-			case Constants.LOCTYPES.PATH: // location is a line path
-			  // code block
-			  break;
-			case Constants.LOCTYPES.POINT: // location is a single point or icon
+			if (location.locType == Constants.LOCTYPES.AREA) {
+				marker = new L.polygon(coords, options);
+			}
 
-				log(location.icon);
-				log(this.mapConfig.iconPath);
+			if (location.locType == Constants.LOCTYPES.PATH) {
+				marker = new L.polyline(coords, options);
+			}
 
-				let anchor = [location.iconSize/2, location.iconSize/2]
+		} else { // if no, then it must be a single point (icon, label)
+		
+			if (location.hasIcon) {
+				let anchor = [location.iconSize/2, location.iconSize/2];
+				let locationIcon = L.icon({
+					iconUrl: this.mapConfig.iconPath + "/" + location.icon + ".png",
+					iconAnchor: anchor,
+				});
 
-				if (location.icon != null) {
-					let myIcon = L.icon({
-						iconUrl: this.mapConfig.iconPath + "/" + location.icon + ".png",
-						iconAnchor: anchor,
-					});
-
-					marker = L.marker(this.toLatLng(location.coords[0]), {icon: myIcon}).addTo(map);
-				}
-
-
-				
-
-
-			  	// code block
-
-			  	break;
-
-			  default:
-				//code
-		  } 
-
+				marker = L.marker(this.toLatLng(location.coords[0]), {icon: locationIcon}).addTo(map);
+			} 
+			
+		}
 
 
 		// add tooltip to marker if applicable
-		if (location.hasLabel){
-			marker.bindTooltip(location.name, {permanent: true, direction:"center"}).openTooltip()
+		if (location.isLabel){
+			//marker = new L.tooltip(coords[0], {content: 'Hello world!<br />This is a nice tooltip.', permanent: true, direction:"center"});
+		} else if (location.hasLabel) {
+			marker.bindTooltip(location.name, {permanent: true, direction:"center"}).openTooltip();
 		}
 
-		// add event listeners to marker
+		// // add event listeners to marker
 
 		return marker;
 	}
