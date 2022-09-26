@@ -34,7 +34,7 @@
     "tileSize" : 256,
     
     // Map icon info
-    "iconPath": "assets/icons/eso",
+    "iconPath": "assets/icons/eso/",
     "missingIconPath" : "assets/icons/missing.png",
     "iconWidth" : 32,
     "iconHeight" : 32,

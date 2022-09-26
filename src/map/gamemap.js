@@ -475,8 +475,8 @@ export default class Gamemap {
 
 			let featureGroup =  L.featureGroup()
 				.bindPopup('Hello world!')
-				.on('click', function() { alert('Clicked on a member of the group!'); })
-				//[featuregroup].addTo(map);
+				.on('click', function() { })
+
 			this.locationLayers[i] = featureGroup;
 		}
 		log(this.locationLayers);
@@ -495,7 +495,7 @@ export default class Gamemap {
 				let marker = this.createMarker(location);
 
 				// add marker to relevant map layer
-				//this.locationLayers[location.displayLevel].addLayer(marker);
+				this.locationLayers[location.displayLevel].addLayer(marker);
 			});
 
 		}
@@ -507,18 +507,35 @@ export default class Gamemap {
 		}
 
 		log("Adding location layers to map...")
+
 		Object.values(this.locationLayers).forEach(layer => layer.addTo(map));
+		this.redrawDisplayLevels();
+	}
+
+	redrawDisplayLevels(){
+		if (self.locationLayers != null) {
+			Object.keys(self.locationLayers).forEach(displayLevel => {
+
+				if (displayLevel > map.getZoom()) {
+					self.locationLayers[displayLevel].remove();
+
+				} else if (displayLevel <= map.getZoom()) {
+					if (!map.hasLayer(self.locationLayers[displayLevel])){
+						self.locationLayers[displayLevel].addTo(map);
+					}
+				}
+			});	
+		}
 	}
 
 
 	// marker factory method
 	createMarker(location){
 
-		let marker;
+		let marker = new L.marker([0, 0]);
 
-		// is location a polygon?
-		if (location.locType == Constants.LOCTYPES.AREA) {
-		
+		switch(location.locType) {
+			case Constants.LOCTYPES.AREA: // location is a polygon
 				let latlngs = [];
 				var coords = location.coords;
 
@@ -528,26 +545,52 @@ export default class Gamemap {
 					latlngs.push(this.toLatLng(coords[i]));
 				}
 
+				let lineWidth = location.displayData.lineWidth || 0;
+
 				let polygonOptions = {
 					noClip: false,
-					color: "green",
-					smoothFactor: 5,
+					color: Utils.RGBAtoHex(location.displayData.fillStyle),
+					smoothFactor: 2,
+					weight: lineWidth,
 				}
-				var polygon = L.polygon(latlngs, polygonOptions).addTo(map);
+				marker = L.polygon(latlngs, polygonOptions);
+			  	break;
+			case Constants.LOCTYPES.PATH: // location is a line path
+			  // code block
+			  break;
+			case Constants.LOCTYPES.POINT: // location is a single point or icon
 
-		} else if (true) { // is location a polyline?
+				log(location.icon);
+				log(this.mapConfig.iconPath);
 
-		} else if (true) { // is location an icon?
-		
-		} else { // location must be a generic marker
+				
 
-		}
+				if (location.icon != null) {
+					let myIcon = L.icon({
+						iconUrl: this.mapConfig.iconPath + "/" + location.icon + ".png",
+						iconSize: [location.iconSize, location.iconSize],
+					});
+
+					marker = L.marker(this.toLatLng(location.coords[0]), {icon: myIcon}).addTo(map);
+				}
+
+
+				
+
+
+			  	// code block
+
+			  	break;
+
+			  default:
+				//code
+		  } 
 
 
 
 		// add tooltip to marker if applicable
 		if (location.name != ""){
-			//marker.bindTooltip(location.name, {permanent: true, direction:"center"}).openTooltip()
+			marker.bindTooltip(location.name, {permanent: true, direction:"center"}).openTooltip()
 		}
 
 		// add event listeners to marker
@@ -685,10 +728,6 @@ export default class Gamemap {
 
 		map.on("zoomend", function(e){
 			self.updateMapState();
-
-			// iterate through layer list
-			// if map.zoom < layer list key (zoom), then remove it from map
-			// else add it to the map if map doesnt already have that layer.
 		})
 
 		map.on("contextmenu", function(e){
@@ -719,6 +758,8 @@ export default class Gamemap {
 				$("#btn_zoom_out").prop("disabled", false);
 				$("#btn_zoom_in").prop("disabled", false);
 			}
+
+			self.redrawDisplayLevels();
 		})
 
 		map.on("dblclick", function(event){

@@ -32,6 +32,7 @@ export default class Location {
 		this.destinationID = location.destinationId || null;
 		this.revisionID = location.revisionId || 0;
 		this.displayLevel = location.displayLevel - zoomOffset || 0;
+		this.legacy = location || null;
 		
 		// set location icon info
 		this.icon = location.iconType || 0;
@@ -77,8 +78,8 @@ export default class Location {
 		let y = coords[1];
 
 		if (config.coordType == Constants.COORD_TYPES.NORMALISED && config.database == "eso") {
+			y = Constants.LEGACY_MAXIMUM_XY - y; //hardcode y flip for eso as server coords are upside down
 			// convert coords to normalised ones
-			y = Constants.LEGACY_MAXIMUM_XY - y;
 			x = Utils.toNormalised(x);
 			y = Utils.toNormalised(y);
 		}
@@ -106,35 +107,6 @@ export default class Location {
 // 	}
 
 // }
-
-
-// uesp.gamemap.Location.prototype.updateLabel = function ()
-// {
-// 	if (this.parentMap.USE_CANVAS_DRAW) return this.updateLabelCanvas();
-	
-// 	var labelPos = 0;
-// 	var isDisabled = false;
-	
-// 	if ( !(this.displayData.labelPos == null) ) labelPos = this.displayData.labelPos;
-	
-// 	if (this.iconType === 0 && labelPos === 0 && this.parentMap.isShowHidden())
-// 	{
-// 		labelPos = 6;
-// 		if (this.name === "") this.name = "[noname]";
-// 		isDisabled = true;
-// 	}
-	
-// 	if (labelPos === 0)
-// 	{
-// 		if (! (this.labelElement == null))
-// 		{
-// 			$(this.labelElement).remove();
-// 			delete this.labelElement;
-// 			this.labelElement = null;
-// 		}
-		
-// 		return true;
-// 	}
 	
 // 	if (this.labelElement == null)
 // 	{
@@ -269,19 +241,6 @@ export default class Location {
 // 	}
 // }
 
-
-// uesp.gamemap.onCloseLocationPopup = function(element)
-// {
-// 	$(element.parentNode.parentNode.parentNode).hide();
-// 	return true;
-// }
-
-
-// uesp.gamemap.onCloseLocationEditPopup = function(element)
-// {
-// 	$(element.parentNode.parentNode.parentNode).hide();
-// 	return true;
-// }
 
 
 // uesp.gamemap.Location.prototype.onClickLocationEditPopup = function(event)
@@ -475,11 +434,6 @@ export default class Location {
 // 	query += '&locwidth=' + this.width;
 // 	query += '&locheight=' + this.height;
 // 	query += '&db=' + this.parentMap.mapOptions.dbPrefix;
-	
-// 	if (this.locType > 1)
-// 	{
-		
-// 	}
 	
 // 	return query;
 // }
