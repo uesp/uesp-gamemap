@@ -459,16 +459,18 @@ export default class Gamemap {
 	}
 
 	clearLocations(){
-		if (this.locationLayers != null){
-			log("Clearing existing location layers...");
-			Object.values(this.locationLayers).forEach(layer => layer.remove());
-		}
+		map.eachLayer((layer) => {
+			if (layer._tiles == null) { //remove anything that is not a tile
+				layer.remove();
+			}
+		});
+		this.locationLayers = {};
 	}
 
 	redrawLocations(locations) {
+
 		// delete any existing location layers
 		this.clearLocations();
-		this.locationLayers = {};
 
 		// get total number of zoom levels
 		let totalZoomLevels = this.getCurrentWorld().maxZoomLevel;
@@ -478,10 +480,8 @@ export default class Gamemap {
 		for (let i = 0; i <= totalZoomLevels; i++) {
 
 			let featureGroup =  L.featureGroup();
-
 			this.locationLayers[i] = featureGroup;
 		}
-		log(this.locationLayers);
 
 		// check if current map has any locations
 		if (Object.keys(locations).length > 0) {
@@ -492,7 +492,7 @@ export default class Gamemap {
 			Object.values(locations).forEach(location => {
 
 				// get marker/polygon/icon for this location
-				let marker = this.createMarker(location);
+				let marker = this.getMarker(location);
 
 				// add marker to relevant map layer
 				if (marker != null) {
@@ -502,7 +502,6 @@ export default class Gamemap {
 			});
 
 		}
-
 
 		// callback to show map fully loaded
 		if (this.mapCallbacks != null) {
@@ -515,25 +514,8 @@ export default class Gamemap {
 		this.redrawDisplayLevels();
 	}
 
-	redrawDisplayLevels(){
-		if (self.locationLayers != null) {
-			Object.keys(self.locationLayers).forEach(displayLevel => {
-
-				if (displayLevel > map.getZoom()) {
-					self.locationLayers[displayLevel].remove();
-
-				} else if (displayLevel <= map.getZoom()) {
-					if (!map.hasLayer(self.locationLayers[displayLevel])){
-						self.locationLayers[displayLevel].addTo(map);
-					}
-				}
-			});	
-		}
-	}
-
-
 	// marker factory method
-	createMarker(location){
+	getMarker(location){
 
 		// get coordinates of location
 		let coords = [];
@@ -549,8 +531,7 @@ export default class Gamemap {
 		});
 
 		function bindOnClick(marker, location) {
-			marker.on('click', function (e) {
-				log(location);
+			marker.on('click', function () {
 				self.onLocationClicked(location);
 			});
 		}
@@ -574,7 +555,6 @@ export default class Gamemap {
 
 			if (location.locType == Constants.LOCTYPES.PATH) {
 				marker = new L.polyline(coords, options);
-				log(location);
 			}
 
 			marker.on('mouseover', function () {
@@ -624,6 +604,21 @@ export default class Gamemap {
 		return marker;
 	}
 
+	redrawDisplayLevels(){
+		if (self.locationLayers != null) {
+			Object.keys(self.locationLayers).forEach(displayLevel => {
+
+				if (displayLevel > map.getZoom()) {
+					self.locationLayers[displayLevel].remove();
+
+				} else if (displayLevel <= map.getZoom()) {
+					if (!map.hasLayer(self.locationLayers[displayLevel])){
+						self.locationLayers[displayLevel].addTo(map);
+					}
+				}
+			});	
+		}
+	}
 
 	/*================================================
 						  Utility 
