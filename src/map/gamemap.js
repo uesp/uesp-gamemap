@@ -95,6 +95,7 @@ export default class Gamemap {
 			scrollWheelZoom: false, // disable original zoom function
 			smoothWheelZoom: true,  // enable smooth zoom 
   			smoothSensitivity: 0.7, // zoom speed. default is 1
+			renderer: L.svg({ padding: 100 }),
         }
 
 		map = L.map(this.rootMapID, mapOptions);
@@ -740,6 +741,7 @@ export default class Gamemap {
 		})
 
 		map.on("zoom", function(e){
+
 			if (map.getZoom() >= self.mapConfig.maxZoomLevel) {
 				$("#btn_zoom_in").prop("disabled",true);
 			}
@@ -1583,41 +1585,6 @@ export default class Gamemap {
 
 // }
 
-
-
-
-
-// uesp.gamemap.Map.prototype.panToGamePos = function(x, y)
-// {
-// 		// TODO: Needs Canvas version
-// 	if (this.USE_CANVAS_DRAW) return this.panToGamePosCanvas(x, y);
-
-// 	var mapOffset = this.mapContainer.offset();
-
-// 	var tilePos = this.convertGameToTilePos(x, y);
-// 	tilePos.x -= this.mapConfig.numTilesX/2;
-// 	tilePos.y -= this.mapConfig.numTilesY/2;
-
-// 	var tileX = Math.floor(tilePos.x);
-// 	var tileY = Math.floor(tilePos.y);
-
-// 	var newOffsetX = Math.round(mapOffset.left + this.mapContainer.width()/2  - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - tilePos.x) * this.mapConfig.tileSize);
-// 	var newOffsetY = Math.round(mapOffset.top  + this.mapContainer.height()/2 - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - tilePos.y) * this.mapConfig.tileSize);
-
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "newOffset = " + newOffsetX + ", " + newOffsetY);
-
-// 	var self = this;
-
-// 	this.mapRoot.animate({ left: newOffsetX, top: newOffsetY}, {
-// 				complete: function() {
-// 					self.checkTileEdges();
-// 					self.loadMapTiles();
-// 					self.updateLocations();
-// 				}
-// 			});
-// }
-
-
 // uesp.gamemap.Map.prototype.panToGamePosCanvas = function(x, y)
 // {
 // 	var mapOffset = this.mapContainer.offset();
@@ -2021,20 +1988,6 @@ export default class Gamemap {
 // {
 // 	this.editClickWall.css('background', background);
 // }
-
-
-
-// uesp.gamemap.Map.prototype.onZoomOutWorld = function()
-// {
-// 	if ( !(this.currentWorldID in this.mapWorlds)) return false;
-
-// 	world = this.mapWorlds[this.currentWorldID];
-// 	if (world.parentId <= 0) return false;
-
-// 	this.changeWorld(world.parentId);
-// 	return true;
-// }
-
 
 // uesp.gamemap.Map.prototype.FindMapLocTypeString = function (locTypeString)
 // {
