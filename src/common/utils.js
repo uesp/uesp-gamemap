@@ -322,3 +322,7 @@ export function RGBAtoHex(color) {
 	  }
 	  return color;
 }
+
+export function isFirefox() {
+	return (navigator.userAgent.indexOf('Firefox') !== -1);
+}

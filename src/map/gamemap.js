@@ -10,7 +10,7 @@ import World from "./world.js";
 import MapState from "./mapstate.js";
 import Location from "./location.js";
 import Point from "./point.js";
-import RasterCoords from "../lib/leaflet/rastercoords.js";
+import RasterCoords from "../lib/rastercoords.js";
 
 /*================================================
 					Locals
@@ -83,6 +83,7 @@ export default class Gamemap {
 		// set global map options
 		var mapOptions = {
 			crs: L.CRS.Simple, // CRS: coordinate reference system
+			// renderer: L.canvas(), // use canvas for rendering
 
 			// zoom options:
 			zoomSnap: mapConfig.enableZoomSnap,
@@ -160,8 +161,12 @@ export default class Gamemap {
 			edgeBufferTiles: this.mapConfig.numEdgeBufferTiles,
 		}
 
-		// set map tiles
-		tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, this.mapConfig), tileOptions);
+		// set map tile layer
+		if (Utils.isFirefox()){ // use HTML-based rendering on firefox
+			tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, this.mapConfig), tileOptions);
+		} else { // use canvas based tile rendering on everything else
+			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, this.mapConfig), tileOptions);
+		}
 		tileLayer.addTo(map);
 
 		// set map view
@@ -485,11 +490,9 @@ export default class Gamemap {
 		if (Object.keys(locations).length > 0) {
 
 			log("Loading locations...");
-			log(locations);
 
 			// iterate through each location in the list
 			Object.values(locations).forEach(location => {
-				log(location);
 
 				// get marker/polygon/icon for this location
 				let marker = this.createMarker(location);
@@ -540,6 +543,10 @@ export default class Gamemap {
 
 		// make a generic fallback marker
 		let marker = new L.marker(coords[0]);
+		L.Marker.prototype.options.icon = L.icon({
+			iconUrl: "assets/icons/transparent.png",
+			shadowUrl: "assets/icons/transparent.png"
+		});
 
 		// create specific marker type
 		if (location.isPolygonal) { // is location polygonal? (polyline or polygon)
@@ -548,11 +555,13 @@ export default class Gamemap {
 				noClip: true,
 				color: Utils.RGBAtoHex(location.displayData.fillStyle),
 				smoothFactor: 2,
+				preferCanvas: true,
 				weight: (location.displayData.lineWidth || 0),
 			}
 
 			if (location.locType == Constants.LOCTYPES.AREA) {
 				marker = new L.polygon(coords, options);
+				log(location);
 			}
 
 			if (location.locType == Constants.LOCTYPES.PATH) {
@@ -575,7 +584,7 @@ export default class Gamemap {
 
 		// add tooltip to marker if applicable
 		if (location.hasLabel) {
-			marker.bindTooltip(location.name, {permanent: true, direction:"center"}).openTooltip();
+			marker.bindTooltip(location.name, {permanent: true, direction:"center"});
 		}
 
 		// add event listeners to marker
