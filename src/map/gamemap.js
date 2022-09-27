@@ -561,6 +561,15 @@ export default class Gamemap {
 			if (location.locType == Constants.LOCTYPES.AREA) {
 				marker = new L.polygon(coords, options);
 				log(location);
+
+				marker.on('mouseover', function () {
+					this.setStyle({
+						'fillColor': '#015270',
+						'color': '#015270',
+						'opacity': 0.8,
+						'weight': 2,
+					});
+				})
 			}
 
 			if (location.locType == Constants.LOCTYPES.PATH) {
@@ -586,8 +595,16 @@ export default class Gamemap {
 
 			if (!location.isPolygonal){
 				marker.bindTooltip(location.name, {permanent: true, direction:"center"});
-			} else {
+			} else { //workaround to get location labels on canvas-rendered polygons
 
+				marker.addTo(map);
+				let label = new L.tooltip(marker.getCenter(), {content: location.name, permanent: true, direction:"center"});
+				let grouped = new L.layerGroup([marker, label]);
+
+				marker.remove();
+
+
+				marker = grouped;
 			}
 			
 		}
