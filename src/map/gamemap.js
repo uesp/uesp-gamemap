@@ -83,7 +83,6 @@ export default class Gamemap {
 		// set global map options
 		var mapOptions = {
 			crs: L.CRS.Simple, // CRS: coordinate reference system
-			renderer: L.canvas({ padding: 1.6 }), // use canvas for rendering
 			// zoom options:
 			zoomSnap: mapConfig.enableZoomSnap,
 			zoomDelta: mapConfig.zoomStep,
@@ -546,6 +545,7 @@ export default class Gamemap {
 				smoothFactor: 2,
 				preferCanvas: true,
 				opacity: 0.5,
+				renderer : L.svg({ padding: 1.5 }),
 				weight: (location.displayData.lineWidth || 0),
 			}
 
@@ -584,18 +584,7 @@ export default class Gamemap {
 
 		// add tooltip to marker if applicable
 		if (location.hasLabel) {
-
-			if (!location.isPolygonal){
-				marker.bindTooltip(location.name, {permanent: true, direction:"center"});
-			} else { //workaround to get location labels working on canvas-rendered polygons
-
-				marker.addTo(map);
-				let label = new L.tooltip(marker.getCenter(), {content: location.name, permanent: true, direction:"center"});
-				let grouped = new L.layerGroup([marker, label]);
-				marker.remove();
-				marker = grouped;
-			}
-			
+			marker.bindTooltip(location.name, {permanent: true, direction:"center"});			
 		}
 
 		// add event listeners to marker

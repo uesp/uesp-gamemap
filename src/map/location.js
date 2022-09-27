@@ -32,7 +32,6 @@ export default class Location {
 		this.destinationID = location.destinationId || null;
 		this.revisionID = location.revisionId || 0;
 		this.displayLevel = location.displayLevel - zoomOffset || 0;
-		this.legacy = location || null;
 		
 		// set location icon info
 		this.icon = location.iconType || null;
