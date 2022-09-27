@@ -71,12 +71,6 @@ export default class Location {
 		this.hasLabel = (this.displayData.labelPos != null && this.displayData.labelPos >= 1 && this.name != "");
 		this.isLabel = (!this.hasIcon && !this.isPolygonal && this.hasLabel);
 
-		// if (this.name != "" && this.icon == 0 && this.displayData.labelPos != null) {
-		// 	this.locType = Constants.LOCTYPES.LABEL;
-		// }
-				
-		// this.labelElement = null;
-		// this.parentMap = location.parentMap || null;
 	}
 
 	getPoint(coords) {

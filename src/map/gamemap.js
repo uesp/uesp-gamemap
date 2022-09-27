@@ -477,9 +477,7 @@ export default class Gamemap {
 		log("Setting up location layers...")
 		for (let i = 0; i <= totalZoomLevels; i++) {
 
-			let featureGroup =  L.featureGroup()
-				.bindPopup('Hello world!')
-				.on('click', function() { })
+			let featureGroup =  L.featureGroup();
 
 			this.locationLayers[i] = featureGroup;
 		}
@@ -497,7 +495,10 @@ export default class Gamemap {
 				let marker = this.createMarker(location);
 
 				// add marker to relevant map layer
-				this.locationLayers[location.displayLevel].addLayer(marker);
+				if (marker != null) {
+					this.locationLayers[location.displayLevel].addLayer(marker);
+				}
+				
 			});
 
 		}
@@ -547,34 +548,45 @@ export default class Gamemap {
 			shadowUrl: "assets/icons/transparent.png"
 		});
 
+		function bindOnClick(marker, location) {
+			marker.on('click', function (e) {
+				log(location);
+				self.onLocationClicked(location);
+			});
+		}
+
 		// create specific marker type
 		if (location.isPolygonal) { // is location polygonal? (polyline or polygon)
 
 			let options = {
 				noClip: true,
-				color: Utils.RGBAtoHex(location.displayData.fillStyle),
+				color: Utils.RGBAtoHex(location.displayData.strokeStyle),
+				fillColor: Utils.RGBAtoHex(location.displayData.fillStyle),
 				smoothFactor: 2,
 				preferCanvas: true,
+				opacity: 0.5,
 				weight: (location.displayData.lineWidth || 0),
 			}
 
 			if (location.locType == Constants.LOCTYPES.AREA) {
 				marker = new L.polygon(coords, options);
-				log(location);
-
-				marker.on('mouseover', function () {
-					this.setStyle({
-						'fillColor': '#015270',
-						'color': '#015270',
-						'opacity': 0.8,
-						'weight': 2,
-					});
-				})
 			}
 
 			if (location.locType == Constants.LOCTYPES.PATH) {
 				marker = new L.polyline(coords, options);
+				log(location);
 			}
+
+			marker.on('mouseover', function () {
+				this.setStyle({
+					'fillColor': Utils.RGBAtoHex(location.displayData.hover.fillStyle),
+					'color': '#015270',
+					'opacity': 1,
+					'weight': 2,
+				});
+			})
+
+			bindOnClick(marker, location);
 
 		} else { // if no, then it must be a single point (icon, label)
 		
@@ -595,21 +607,19 @@ export default class Gamemap {
 
 			if (!location.isPolygonal){
 				marker.bindTooltip(location.name, {permanent: true, direction:"center"});
-			} else { //workaround to get location labels on canvas-rendered polygons
+			} else { //workaround to get location labels working on canvas-rendered polygons
 
 				marker.addTo(map);
 				let label = new L.tooltip(marker.getCenter(), {content: location.name, permanent: true, direction:"center"});
 				let grouped = new L.layerGroup([marker, label]);
-
 				marker.remove();
-
-
 				marker = grouped;
 			}
 			
 		}
 
 		// add event listeners to marker
+		bindOnClick(marker, location);
 
 		return marker;
 	}
@@ -730,6 +740,16 @@ export default class Gamemap {
 	/*================================================
 						  Events 
 	================================================*/
+
+	onLocationClicked(location){
+		if (location != null){
+			if (location.destinationID < 0) { // is location destination a worldID
+				this.gotoWorld((location.destinationID+"").slice(1));
+			} else { // it is a location ID
+				// TODO: alter getLocations to return worldID as well and goto there
+			}
+		}
+	}
 
 	createEvents() {
 		

@@ -13,6 +13,7 @@
     "minZoomLevel" : 0,
     "maxZoomLevel" : 5,
     "zoomOffset" : 7,
+    "overheadZoneSelection" : true, // TODO: find a better name for this
 
     // Map coordinate system info
 
