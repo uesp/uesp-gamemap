@@ -23,6 +23,44 @@ let mapWorldNameIndex = {}; // Local list of map world names
 let mapWorldDisplayNameIndex = {}; // Local list of map display names
 let tileLayer; // Local tiles
 
+L.Marker.addInitHook(function() {
+	if (this.options.virtual) {
+	  // setup virtualization after marker was added
+	  this.on('add', function() {
+  
+		this._updateIconVisibility = function() {
+			isVisible = map.getBounds().contains(this.getLatLng()),
+			wasVisible = this._wasVisible,
+			icon = this._icon,
+			iconParent = this._iconParent;
+  
+		  // remember parent of icon 
+		  if (!iconParent) {
+			iconParent = this._iconParent = icon.parentNode;
+		  }
+  
+		  // add/remove from DOM on change
+		  if (isVisible != wasVisible) {
+			if (isVisible) {
+			  iconParent.appendChild(icon);
+			} else {
+			  iconParent.removeChild(icon);
+			}
+  
+			this._wasVisible = isVisible;
+  
+		  }
+		};
+  
+		// on map size change, remove/add icon from/to DOM
+		this._map.on('resize moveend zoomend', this._updateIconVisibility, this);
+		this._updateIconVisibility();
+  
+	  }, this);
+	}
+});
+
+
 /*================================================
 				  Constructor
 ================================================*/
@@ -523,7 +561,7 @@ export default class Gamemap {
 		}
 
 		// make a generic fallback marker
-		let marker = new L.marker(coords[0]);
+		let marker = new L.marker(coords[0], {virtual: true});
 		L.Marker.prototype.options.icon = L.icon({
 			iconUrl: "assets/icons/transparent.png",
 			shadowUrl: "assets/icons/transparent.png"
@@ -577,14 +615,14 @@ export default class Gamemap {
 					iconAnchor: anchor,
 				});
 
-				marker = L.marker(coords[0], {icon: locationIcon});
+				marker = L.marker(coords[0], {icon: locationIcon, virtual: true});
 			} 
 			
 		}
 
 		// add tooltip to marker if applicable
 		if (location.hasLabel) {
-			marker.bindTooltip(location.name, {permanent: true, direction:"center"});			
+			marker.bindTooltip(location.name, {className : "location-label", permanent: true, direction:"center"});			
 		}
 
 		// add event listeners to marker
@@ -736,18 +774,13 @@ export default class Gamemap {
 	}
 
 	createEvents() {
-		
-		map.on("moveend", function(e){
+
+		map.on('resize moveend zoomend', function() {
 			self.updateMapState();
-			
-		})
+		});
 
 		map.on("mousedown", function(e){
 			self.hideMenus();
-		})
-
-		map.on("zoomend", function(e){
-			self.updateMapState();
 		})
 
 		map.on("contextmenu", function(e){

@@ -11,13 +11,13 @@
 }
 
 /* hide these elements by default */
-[class*='onlymobile'] {
+.onlymobile {
 	display: none !important;
 }
-[class*='hidedefault'] {
+.hidedefault {
 	visibility: hidden;
 }
-[class*='banishdefault'] {
+.banishdefault {
 	display: none;
 }
 
@@ -529,7 +529,7 @@ li div.collapsible-header i {
 	user-select: none;
 }
 
-.leaflet-tooltip {
+.location-label {
 	border-radius: var(--padding_large);
 	position: absolute;
 	white-space: nowrap;
