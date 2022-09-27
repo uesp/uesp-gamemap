@@ -83,8 +83,7 @@ export default class Gamemap {
 		// set global map options
 		var mapOptions = {
 			crs: L.CRS.Simple, // CRS: coordinate reference system
-			// renderer: L.canvas(), // use canvas for rendering
-
+			renderer: L.canvas({ padding: 1.6 }), // use canvas for rendering
 			// zoom options:
 			zoomSnap: mapConfig.enableZoomSnap,
 			zoomDelta: mapConfig.zoomStep,
@@ -95,7 +94,6 @@ export default class Gamemap {
 			scrollWheelZoom: false, // disable original zoom function
 			smoothWheelZoom: true,  // enable smooth zoom 
   			smoothSensitivity: 0.7, // zoom speed. default is 1
-			renderer: L.svg({ padding: 100 }),
         }
 
 		map = L.map(this.rootMapID, mapOptions);
@@ -585,7 +583,13 @@ export default class Gamemap {
 
 		// add tooltip to marker if applicable
 		if (location.hasLabel) {
-			marker.bindTooltip(location.name, {permanent: true, direction:"center"});
+
+			if (!location.isPolygonal){
+				marker.bindTooltip(location.name, {permanent: true, direction:"center"});
+			} else {
+
+			}
+			
 		}
 
 		// add event listeners to marker
