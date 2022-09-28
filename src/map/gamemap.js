@@ -23,44 +23,6 @@ let mapWorldNameIndex = {}; // Local list of map world names
 let mapWorldDisplayNameIndex = {}; // Local list of map display names
 let tileLayer; // Local tiles
 
-L.Marker.addInitHook(function() {
-	if (this.options.virtual) {
-	  // setup virtualization after marker was added
-	  this.on('add', function() {
-  
-		this._updateIconVisibility = function() {
-			isVisible = map.getBounds().contains(this.getLatLng()),
-			wasVisible = this._wasVisible,
-			icon = this._icon,
-			iconParent = this._iconParent;
-  
-		  // remember parent of icon 
-		  if (!iconParent) {
-			iconParent = this._iconParent = icon.parentNode;
-		  }
-  
-		  // add/remove from DOM on change
-		  if (isVisible != wasVisible) {
-			if (isVisible) {
-			  iconParent.appendChild(icon);
-			} else {
-			  iconParent.removeChild(icon);
-			}
-  
-			this._wasVisible = isVisible;
-  
-		  }
-		};
-  
-		// on map size change, remove/add icon from/to DOM
-		this._map.on('resize moveend zoomend', this._updateIconVisibility, this);
-		this._updateIconVisibility();
-  
-	  }, this);
-	}
-});
-
-
 /*================================================
 				  Constructor
 ================================================*/
@@ -481,7 +443,7 @@ export default class Gamemap {
 					let location = locations[key];
 
 					if (location.id != null) {
-						parsedLocations[location.id] = new Location(self.mapConfig, location, world.zoomOffset);
+						parsedLocations[location.id] = new Location(self.mapConfig, location, world.zoomOffset, world.numTilesX);
 					}
 				}
 
@@ -496,29 +458,62 @@ export default class Gamemap {
 	}
 
 	clearLocations(){
-		map.eachLayer((layer) => {
-			if (layer._tiles == null) { //remove anything that is not a tile
-				layer.remove();
+		if (this.markerLayer != null) {
+			this.markerLayer.clearLayers();
+		}
+	}
+
+	redrawMarkers(marker){
+
+		this.clearLocations();
+
+		//log(marker);
+		if (marker instanceof L.Marker && map.getBounds().contains(marker.getLatLng())) {
+			
+			let isVisible = map.getBounds().contains(marker.getLatLng());
+			let wasVisible = marker._wasVisible;
+
+			log(isVisible);
+
+			// add/remove from DOM on change
+			if (isVisible) {
+				// do Something
+				marker.addTo(map);
+				log("should be geting removed");
+			} else {
+				
 			}
-		});
-		this.locationLayers = {};
+
+			//marker._wasVisible = isVisible
+
+		}
+
+		// // get total number of zoom levels
+		// let totalZoomLevels = this.getCurrentWorld().maxZoomLevel;
+
+		// if (self.locationLayers != null) {
+		// 	Object.keys(self.locationLayers).forEach(displayLevel => {
+
+		// 		if (displayLevel > map.getZoom()) {
+		// 			self.locationLayers[displayLevel].remove();
+
+		// 		} else if (displayLevel <= map.getZoom()) {
+		// 			if (!map.hasLayer(self.locationLayers[displayLevel])){
+		// 				self.locationLayers[displayLevel].addTo(map);
+		// 			}
+		// 		}
+		// 	});	
+		// }
 	}
 
 	redrawLocations(locations) {
 
 		// delete any existing location layers
 		this.clearLocations();
-
-		// get total number of zoom levels
-		let totalZoomLevels = this.getCurrentWorld().maxZoomLevel;
 		
 		// set up location layer for each zoom level
-		log("Setting up location layers...")
-		for (let i = 0; i <= totalZoomLevels; i++) {
-
-			let featureGroup =  L.featureGroup();
-			this.locationLayers[i] = featureGroup;
-		}
+		log("Setting up location markers...")
+		let locationMarkers = [];
 
 		// check if current map has any locations
 		if (Object.keys(locations).length > 0) {
@@ -533,22 +528,22 @@ export default class Gamemap {
 
 				// add marker to relevant map layer
 				if (marker != null) {
-					this.locationLayers[location.displayLevel].addLayer(marker);
+					locationMarkers.push(marker);
 				}
 				
 			});
 
 		}
 
+		this.markerLayer = L.featureGroup(locationMarkers);
+
 		// callback to show map fully loaded
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.onMapLoaded(true);
 		}
 
-		log("Adding location layers to map...")
-
-		Object.values(this.locationLayers).forEach(layer => layer.addTo(map));
-		this.redrawDisplayLevels();
+		log("Adding location markers to map...")
+		this.markerLayer.addTo(map);
 	}
 
 	// marker factory method
@@ -561,14 +556,14 @@ export default class Gamemap {
 		}
 
 		// make a generic fallback marker
-		let marker = new L.marker(coords[0], {virtual: true});
+		let marker = new L.marker(coords[0]);
 		L.Marker.prototype.options.icon = L.icon({
 			iconUrl: "assets/icons/transparent.png",
-			shadowUrl: "assets/icons/transparent.png"
 		});
 
 		function bindOnClick(marker, location) {
 			marker.on('click', function () {
+				log(this);
 				self.onLocationClicked(location);
 			});
 		}
@@ -615,7 +610,7 @@ export default class Gamemap {
 					iconAnchor: anchor,
 				});
 
-				marker = L.marker(coords[0], {icon: locationIcon, virtual: true});
+				marker = L.marker(coords[0], {icon: locationIcon});
 			} 
 			
 		}
@@ -628,24 +623,22 @@ export default class Gamemap {
 		// add event listeners to marker
 		bindOnClick(marker, location);
 
+
+		function bindEvents(marker, location) {
+			marker.on('add', function () {
+				this.displayLevel = location.displayLevel;
+				map.on('resize moveend zoomend', function(){
+					self.redrawMarkers(marker);
+				});
+			});
+		}
+
+		bindEvents(marker, location);
+
 		return marker;
 	}
 
-	redrawDisplayLevels(){
-		if (self.locationLayers != null) {
-			Object.keys(self.locationLayers).forEach(displayLevel => {
 
-				if (displayLevel > map.getZoom()) {
-					self.locationLayers[displayLevel].remove();
-
-				} else if (displayLevel <= map.getZoom()) {
-					if (!map.hasLayer(self.locationLayers[displayLevel])){
-						self.locationLayers[displayLevel].addTo(map);
-					}
-				}
-			});	
-		}
-	}
 
 	/*================================================
 						  Utility 
@@ -813,7 +806,6 @@ export default class Gamemap {
 				$("#btn_zoom_in").prop("disabled", false);
 			}
 
-			self.redrawDisplayLevels();
 		})
 
 		map.on("dblclick", function(event){
@@ -934,123 +926,121 @@ export default class Gamemap {
 			}
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// findLocationAt(pageX, pageY) {
-	// 	// Look for icons first
-	// 	for (let key in this.locations) {
-	// 		var location = this.locations[key];
-
-	// 		if (location.locType >= Constants.LOCTYPE_PATH) continue;
-	// 		if (location.worldID != this.currentWorldID) continue;
-	// 		if (!location.visible && !this.isHiddenLocsShown()) continue;
-	// 		if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
-
-	// 		const rect = this.mapCanvas.getBoundingClientRect();
-	// 		const x = pageX - rect.left;
-	// 		const y = pageY - rect.top;
-
-	// 		if (location.isMouseHoverCanvas(x, y)) return location;
-	// 	}
-
-	// 	// Check paths/areas next
-	// 	for (let key in this.locations) {
-	// 		var location = this.locations[key];
-
-	// 		if (location.locType < Constants.LOCTYPE_PATH) continue;
-	// 		if (location.worldID != this.currentWorldID) continue;
-	// 		if (!location.visible && !this.isHiddenLocsShown()) continue;
-	// 		if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
-
-	// 		const rect = this.mapCanvas.getBoundingClientRect();
-	// 		const x = pageX - rect.left;
-	// 		const y = pageY - rect.top;
-
-	// 		if (location.isMouseHoverCanvas(x, y)) return location;
-	// 	}
-
-	// 	return null;
-	// }
-
-	// convertTileToGamePos(tileX, tileY) {
-
-	// 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
-	// 	let gameX = 0;
-	// 	let gameY = 0;
-
-	// 	gameX = Math.round(tileX / maxTiles * (this.mapConfig.maxX - this.mapConfig.minX) + this.mapConfig.minX);
-	// 	gameY = Math.round(tileY / maxTiles * (this.mapConfig.maxY - this.mapConfig.minY) + this.mapConfig.minY);
-
-	// 	return new Position(gameX, gameY);
-	// }
-
-	// convertGameToTilePos(gameX, gameY) {
-	// 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
-	// 	let tileX = 0;
-	// 	let tileY = 0;
-
-	// 	tileX = (gameX - this.mapConfig.minX) * maxTiles / (this.mapConfig.maxX - this.mapConfig.minX);
-	// 	tileY = (gameY - this.mapConfig.minY) * maxTiles / (this.mapConfig.maxY - this.mapConfig.minY);
-
-	// 	return new Position(tileX, tileY);
-	// }
-
-	// convertGameToPixelPos(gameX, gameY) {
-	// 	let mapOffset = this.mapRoot.offset();
-	// 	let tilePos = this.convertGameToTilePos(gameX, gameY);
-	
-	// 	let xPos = Math.round((tilePos.x - this.startTileX) * this.mapConfig.tileSize);
-	// 	let yPos = Math.round((tilePos.y - this.startTileY) * this.mapConfig.tileSize);
-	
-	// 	return new Position(xPos, yPos);
-	// }
-
-	// getMapRootBounds() {
-	// 	let leftTop     = this.convertTileToGamePos(this.startTileX, this.startTileY);
-	// 	let rightBottom = this.convertTileToGamePos(this.startTileX + this.mapConfig.numTilesX, this.startTileY + this.mapConfig.numTilesY);
-
-	// 	return new Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
-	// }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// findLocationAt(pageX, pageY) {
+// 	// Look for icons first
+// 	for (let key in this.locations) {
+// 		var location = this.locations[key];
+
+// 		if (location.locType >= Constants.LOCTYPE_PATH) continue;
+// 		if (location.worldID != this.currentWorldID) continue;
+// 		if (!location.visible && !this.isHiddenLocsShown()) continue;
+// 		if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
+
+// 		const rect = this.mapCanvas.getBoundingClientRect();
+// 		const x = pageX - rect.left;
+// 		const y = pageY - rect.top;
+
+// 		if (location.isMouseHoverCanvas(x, y)) return location;
+// 	}
+
+// 	// Check paths/areas next
+// 	for (let key in this.locations) {
+// 		var location = this.locations[key];
+
+// 		if (location.locType < Constants.LOCTYPE_PATH) continue;
+// 		if (location.worldID != this.currentWorldID) continue;
+// 		if (!location.visible && !this.isHiddenLocsShown()) continue;
+// 		if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
+
+// 		const rect = this.mapCanvas.getBoundingClientRect();
+// 		const x = pageX - rect.left;
+// 		const y = pageY - rect.top;
+
+// 		if (location.isMouseHoverCanvas(x, y)) return location;
+// 	}
+
+// 	return null;
+// }
+
+// convertTileToGamePos(tileX, tileY) {
+
+// 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
+// 	let gameX = 0;
+// 	let gameY = 0;
+
+// 	gameX = Math.round(tileX / maxTiles * (this.mapConfig.maxX - this.mapConfig.minX) + this.mapConfig.minX);
+// 	gameY = Math.round(tileY / maxTiles * (this.mapConfig.maxY - this.mapConfig.minY) + this.mapConfig.minY);
+
+// 	return new Position(gameX, gameY);
+// }
+
+// convertGameToTilePos(gameX, gameY) {
+// 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
+// 	let tileX = 0;
+// 	let tileY = 0;
+
+// 	tileX = (gameX - this.mapConfig.minX) * maxTiles / (this.mapConfig.maxX - this.mapConfig.minX);
+// 	tileY = (gameY - this.mapConfig.minY) * maxTiles / (this.mapConfig.maxY - this.mapConfig.minY);
+
+// 	return new Position(tileX, tileY);
+// }
+
+// convertGameToPixelPos(gameX, gameY) {
+// 	let mapOffset = this.mapRoot.offset();
+// 	let tilePos = this.convertGameToTilePos(gameX, gameY);
+
+// 	let xPos = Math.round((tilePos.x - this.startTileX) * this.mapConfig.tileSize);
+// 	let yPos = Math.round((tilePos.y - this.startTileY) * this.mapConfig.tileSize);
+
+// 	return new Position(xPos, yPos);
+// }
+
+// getMapRootBounds() {
+// 	let leftTop     = this.convertTileToGamePos(this.startTileX, this.startTileY);
+// 	let rightBottom = this.convertTileToGamePos(this.startTileX + this.mapConfig.numTilesX, this.startTileY + this.mapConfig.numTilesY);
+
+// 	return new Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
+// }
+
 
 // uesp.gamemap.Map.prototype.convertGameToPixelSize = function(width, height)
 // {

@@ -323,6 +323,30 @@ export function RGBAtoHex(color) {
 	  return color;
 }
 
+/*================================================
+	  		Is browser firefox function
+================================================*/
+
 export function isFirefox() {
 	return (navigator.userAgent.indexOf('Firefox') !== -1);
+}
+
+/*================================================
+	  		Find next power of two function
+================================================*/
+
+export function nextPowerOfTwo(n) {
+	// decrement `n` (to handle cases when `n` itself
+	// is a power of 2)
+	n = n - 1;
+
+	// do till only one bit is left
+	while ((n & n - 1) != 0) {
+		n = n & n - 1;        // unset rightmost bit
+	}
+
+	// `n` is now a power of two (less than `n`)
+
+	// return next power of 2
+	return n << 1;
 }

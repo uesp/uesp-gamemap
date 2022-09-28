@@ -9,15 +9,18 @@ import * as Utils from "../common/utils.js";
 import Point from "./point.js";
 
 let config;
+let numTiles;
 
 export default class Location {
-	constructor(mapConfig, location, zoomOffset) {
+	constructor(mapConfig, location, zoomOffset, tilesX) {
 
 		// make sure we have a map config
 		if (mapConfig == null) { 
 			mapConfig = DEFAULT_MAP_CONFIG;
 		}
 		config = mapConfig;
+
+		numTiles = tilesX;
 
 		// set location type
 		this.locType = location.locType || Constants.LOCTYPES.NONE;
@@ -77,7 +80,13 @@ export default class Location {
 		let y = coords[1];
 
 		if (config.coordType == Constants.COORD_TYPES.NORMALISED && config.database == "eso") {
-			y = Constants.LEGACY_MAXIMUM_XY - y; //hardcode y flip for eso as server coords are upside down
+			
+			//hardcode y flip for eso as server coords are upside down
+			y = Constants.LEGACY_MAXIMUM_XY - y; 
+
+			x = x * Utils.nextPowerOfTwo(numTiles) / numTiles;
+			y = y * Utils.nextPowerOfTwo(numTiles) / numTiles;
+
 			// convert coords to normalised ones
 			x = Utils.toNormalised(x);
 			y = Utils.toNormalised(y);
