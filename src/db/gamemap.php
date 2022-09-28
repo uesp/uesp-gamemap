@@ -103,6 +103,7 @@ class GameMap
 		$this->parseInputParams();
 		
 		session_name('uesp_net_wiki5_session');
+		session_set_cookie_params(3600*24*10, '/', '.uesp.net', false);
 		$this->startedSession = session_start();
 		
 		if (!$this->startedSession) error_log("Failed to start session!");
