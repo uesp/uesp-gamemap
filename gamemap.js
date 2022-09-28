@@ -3755,7 +3755,7 @@ uesp.gamemap.Map.prototype.showWorldEditForm = function()
 							"Bottom <input type='text' class='gmMapEditPopupInput' name='posBottom' value='{posBottom}' size='8'  maxlength='10' /> <br />" +
 						"<div class='gmMapEditPopupLabel'>worldId</div>" +
 							"<div class='gmMapEditPopupInput'>{id}</div> &nbsp; " +
-							" &nbsp;  &nbsp; Revision<div class='gmMapEditPopupInput'>{revisionId}</div> &nbsp; <br />" +
+							" &nbsp;  &nbsp; Revision<div class='gmMapEditPopupInput'>{revisionId}</div> &nbsp; Tiles<div class='gmMapEditPopupInput'>{tilesX}x{tilesY}</div><br />" +
 						"<div class='gmMapEditPopupStatus'></div>" +
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonSave' value='Save' />" +
 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonClose' value='Cancel' />" +
