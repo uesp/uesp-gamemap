@@ -342,7 +342,7 @@ export function nextPowerOfTwo(n) {
 
 	// do till only one bit is left
 	while ((n & n - 1) != 0) {
-		n = n & n - 1;        // unset rightmost bit
+		n = n & n - 1;  // unset rightmost bit
 	}
 
 	// `n` is now a power of two (less than `n`)

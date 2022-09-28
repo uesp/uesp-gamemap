@@ -443,7 +443,7 @@ export default class Gamemap {
 					let location = locations[key];
 
 					if (location.id != null) {
-						parsedLocations[location.id] = new Location(self.mapConfig, location, world.zoomOffset, world.numTilesX);
+						parsedLocations[location.id] = new Location(self.mapConfig, location, world);
 					}
 				}
 

@@ -12,7 +12,7 @@ let config;
 let numTiles;
 
 export default class Location {
-	constructor(mapConfig, location, zoomOffset, tilesX) {
+	constructor(mapConfig, location, world) {
 
 		// make sure we have a map config
 		if (mapConfig == null) { 
@@ -20,7 +20,7 @@ export default class Location {
 		}
 		config = mapConfig;
 
-		numTiles = tilesX;
+		numTiles = world.numTilesX;
 
 		// set location type
 		this.locType = location.locType || Constants.LOCTYPES.NONE;
@@ -34,7 +34,7 @@ export default class Location {
 		this.worldID = location.worldId || 0;
 		this.destinationID = location.destinationId || null;
 		this.revisionID = location.revisionId || 0;
-		this.displayLevel = location.displayLevel - zoomOffset || 0;
+		this.displayLevel = location.displayLevel - world.zoomOffset || 0;
 		
 		// set location icon info
 		this.icon = location.iconType || null;
