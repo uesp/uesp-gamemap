@@ -527,6 +527,11 @@ export default class Gamemap {
 
 	}
 
+
+	canContinuousScroll(){
+		return (!Utils.isFirefox && !Utils.isMobileDevice);
+	}
+
 	redrawLocations(locations) {
 
 		// delete any existing location layers
@@ -646,9 +651,16 @@ export default class Gamemap {
 		function bindEvents(marker, location) {
 			marker.on('add', function () {
 				this.displayLevel = location.displayLevel;
-				map.on('resize move zoom', function(){
-					self.redrawMarkers(marker);
-				});
+
+				if (self.canContinuousScroll()){
+					map.on('resize move zoom', function(){
+						self.redrawMarkers(marker);
+					});
+				} else {
+					map.on('resize moveend zoomend', function(){
+						self.redrawMarkers(marker);
+					});
+				}
 			});
 		}
 
