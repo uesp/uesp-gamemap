@@ -75,6 +75,7 @@ class UespMemcachedSession
 	static function readKey($key) 
 	{
 		$data = UespMemcachedSession::read(session_id());
+		if (!array_key_exists($key, $data)) return null;
 		return $data[$key];
 	}
 	
