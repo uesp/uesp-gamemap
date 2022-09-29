@@ -84,6 +84,7 @@ export default class Location {
 			//hardcode y flip for eso as server coords are upside down
 			y = Constants.LEGACY_MAXIMUM_XY - y; 
 
+			// transform coords to better fit power of two numbers of tiles
 			x = x * Utils.nextPowerOfTwo(numTiles) / numTiles;
 			y = y * Utils.nextPowerOfTwo(numTiles) / numTiles;
 

@@ -560,8 +560,8 @@ function createGroupListHTML(groups) {
 		groups.forEach(world => {
 			worldID = world.id;
 			if (worldID < 0) {
-				if (worldID == -1) displayName = "Orphaned";
-				if (worldID == -1337) displayName = "Dev";
+				if (worldID == -1) displayName = "Orphaned Maps";
+				if (worldID == -1337) displayName = "Beta Maps";
 			} else {
 				name = gamemap.getWorldNameFromID(worldID);
 				displayName = gamemap.getWorldDisplayNameFromID(worldID);
