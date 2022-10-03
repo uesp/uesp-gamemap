@@ -458,72 +458,50 @@ export default class Gamemap {
 	}
 
 	clearLocations(){
-		if (this.markerLayer != null) {
-			this.markerLayer.clearLayers();
-		}
+		map.eachLayer((layer) => {
+			if (layer._tiles == null) { //remove anything that is not a tile
+				layer.remove();
+			}
+		});
 	}
 
 	redrawMarkers(marker){
 
-		// isVisible = map.getBounds().contains(this.getLatLng()),
-		// wasVisible = this._wasVisible,
-		// icon = this._icon,
-		// iconParent = this._iconParent,
-		// shadow = this._shadow,
-		// shadowParent = this._shadowParent;
+		let latlngs = [];
 
-		// // remember parent of icon 
-		// if (!iconParent) {
-		// iconParent = this._iconParent = icon.parentNode;
-		// }
-		// if (shadow && !shadowParent) {
-		// shadowParent = this._shadowParent = shadow.parentNode;
-		// }
-
-		// // add/remove from DOM on change
-		// if (isVisible != wasVisible) {
-		// 	if (isVisible) {
-		// 		iconParent.appendChild(icon);
-		// 	} else {
-		// 		iconParent.removeChild(icon);
-		// 	}
-
-		// 	this._wasVisible = isVisible;
-
-		// }
-
-		//log(marker);
 		if (marker instanceof L.Marker) {
+			latlngs = [marker.getLatLng()];
+		} else {
+			latlngs = marker.getLatLngs()[0];
+		}
+
+		let isInsideViewport;
+
+		for (let i = 0; i < latlngs.length; i++ ) {
 			
-			let isVisible = (map.getBounds().contains(marker.getLatLng()) && marker.displayLevel <= map.getZoom());
-			let wasVisible = marker._wasVisible;
+			if (isInsideViewport != true) {
+				isInsideViewport = (map.getBounds().contains(latlngs[i]));
+			}
+		}
 
-			// log(isVisible);
+		let isVisible = isInsideViewport && marker.displayLevel <= map.getZoom();
+		let wasVisible = marker._wasVisible;
 
-			// // add/remove from DOM on change
-			// if (isVisible) {
-			// 	// do Something
-			// 	marker.addTo(map);
-			// 	log("should be geting removed");
-			// } else {
-				
-			// }
-
-			// add/remove from DOM on change
-			if (isVisible != wasVisible) {
-				if (isVisible) {
-					//log("should be visible");
-					marker.addTo(map);
-				} else {
-					//log("should be getting removed");
-					marker.remove();
-				}
-
-				marker._wasVisible = isVisible;
-
+		// add/remove from DOM on change
+		if (isVisible != wasVisible) {
+			if (isVisible) {
+				//log("should be visible");
+				marker.addTo(map);
+			} else {
+				//log("should be getting removed");
+				marker.remove();
 			}
 
+			marker._wasVisible = isVisible;
+
 		}
+
+		
 
 	}
 
@@ -651,16 +629,10 @@ export default class Gamemap {
 		function bindEvents(marker, location) {
 			marker.on('add', function () {
 				this.displayLevel = location.displayLevel;
+				map.on('resize move zoom', function(){
+					self.redrawMarkers(marker);
+				});
 
-				if (self.canContinuousScroll()){
-					map.on('resize move zoom', function(){
-						self.redrawMarkers(marker);
-					});
-				} else {
-					map.on('resize moveend zoomend', function(){
-						self.redrawMarkers(marker);
-					});
-				}
 			});
 		}
 
@@ -814,11 +786,7 @@ export default class Gamemap {
 			} 
 		})
 
-		map.on("zoomstart", function(e){
-			self.hideMenus();
-		})
-
-		map.on("movestart", function(e){
+		map.on("zoomstart movestart", function(e){
 			self.hideMenus();
 		})
 
@@ -958,54 +926,6 @@ export default class Gamemap {
 		}
 	}
 }
-
-
-// L.Marker.addInitHook(function() {
-// 	// setup virtualization after marker was added
-// 	this.on('add', function() {
-
-// 	this._updateIconVisibility = function() {
-// 		let map = this._map;
-// 		let isVisible = map.getBounds().contains(this.getLatLng());
-// 		let wasVisible = this._wasVisible;
-// 		let icon = this._icon;
-// 		let iconParent = this._iconParent;
-
-// 		log(this);
-
-// 		log(this.displayLevel);
-
-// 		// remember parent of icon 
-// 		if (!iconParent) {
-// 			iconParent = this._iconParent = icon.parentNode;
-// 		}
-
-
-// 		log (iconParent);
-// 		// add/remove from DOM on change
-// 		if (isVisible != wasVisible) {
-// 			if (isVisible) {
-				
-// 				iconParent.appendChild(icon);
-// 			} else {
-// 				iconParent.removeChild(icon);
-// 			}
-
-// 			this._wasVisible = isVisible;
-
-// 		}
-// 	};
-
-// 	// on map size change, remove/add icon from/to DOM
-// 	this._map.on('resize moveend zoomend', this._updateIconVisibility, this);
-// 	this._updateIconVisibility();
-
-// 	}, this);
-
-// });
-
-
-
 
 
 
