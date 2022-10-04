@@ -137,6 +137,7 @@ export default class Gamemap {
 		// remove previous tiles
 		if (tileLayer != null) {
 			tileLayer.remove();
+			this.clearLocations();
 		}
 
 		// set full image width & height
@@ -495,8 +496,12 @@ export default class Gamemap {
 		// add/remove from DOM on change
 		if (isVisible != wasVisible) {
 			if (isVisible) {
-				//log("should be visible");
-				marker.addTo(map);
+
+
+				if (this.markerLayer.hasLayer(marker)) {
+					marker.addTo(map);
+				}
+
 			} else {
 				//log("should be getting removed");
 				marker.remove();
@@ -546,7 +551,7 @@ export default class Gamemap {
 		}
 
 		this.clearLocations();
-		this.markerLayer = new L.featureGroup(locationMarkers);
+		this.markerLayer = new L.layerGroup(locationMarkers);
 
 		log(this.markerLayer.getLayers());
 
@@ -636,16 +641,21 @@ export default class Gamemap {
 
 
 		function bindEvents(marker, location) {
-			marker.on('add', function () {
-				this.displayLevel = location.displayLevel;
-				map.on('resize move zoom', function(){
-					if (location.worldID == self.getCurrentWorldID()){
+			marker.once('add', function () {
+
+				if (location.worldID == self.getCurrentWorldID()){
+					this.displayLevel = location.displayLevel;
+					map.on('resize move zoom', function(){
 						self.redrawMarkers(marker);
-					} else {
-						marker.remove();
-						marker.off('resize move zoom');
-					}
-				});
+					});
+				} else {
+					marker.remove();
+					marker.off('resize move zoom');
+				}
+
+				if (location.displayLevel > map.getZoom()) {
+					marker.remove();
+				}
 
 			});
 		}
