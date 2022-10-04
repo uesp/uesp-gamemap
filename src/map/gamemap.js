@@ -633,7 +633,12 @@ export default class Gamemap {
 
 		// add tooltip to marker if applicable
 		if (location.hasLabel) {
-			marker.bindTooltip(location.name, {className : "location-label", permanent: true, direction:"center"});			
+			marker.bindTooltip(location.name, {
+				className : "location-label",
+				permanent: true,
+				direction: location.labelDirection,
+				//offset: location.labelOffset,
+			});			
 		}
 
 		// add event listeners to marker

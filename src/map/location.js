@@ -35,7 +35,8 @@ export default class Location {
 		this.destinationID = location.destinationId || null;
 		this.revisionID = location.revisionId || 0;
 		this.displayLevel = location.displayLevel - world.zoomOffset || 0;
-		
+		this.legacy = location;
+
 		// set location icon info
 		this.icon = location.iconType || null;
 		this.iconSize = mapConfig.iconWidth;
@@ -67,6 +68,11 @@ export default class Location {
 			this.coords.push(this.getPoint([location.x, location.y]));
 		}
 
+		// set label info
+		if (this.displayData.labelPos != null){
+			this.getLabelOffsets(this.displayData.labelPos);
+		}
+
 		// convenience state variables
 		this.isPolygonal = this.coords.length > 1;
 		this.hasIcon = (this.icon != null);
@@ -95,15 +101,65 @@ export default class Location {
 
 		return new Point(x, y);
 	}
+
+	getLabelOffsets(labelPos) {
+
+		let iconSize = this.iconSize
+		let labelWidth = this.name.length * 6 + 2;
+	
+		switch (labelPos) {
+			case 1:
+				// bottom right
+				this.labelDirection = null;
+				this.labelOffset = new Point(labelWidth + iconSize / 2, iconSize);
+				break;
+			case 2:
+				// top
+				this.labelDirection = "top";
+				this.labelOffset = null;
+				break;
+			case 3:
+				// bottom right
+				this.labelDirection = null;
+				this.labelOffset = new Point(-iconSize/2, iconSize);
+				break;
+			case 4:
+				// right
+				this.labelDirection = "right";
+				this.labelOffset = null;
+				break;
+			case 5:
+				// centre
+				this.labelDirection = "center";
+				this.labelOffset = null;
+				break;
+			case 6:
+			default:
+				// left
+				this.labelDirection = "left";
+				this.labelOffset = null;
+				break;
+			case 7:
+				// bottom right
+				this.labelDirection = null;
+				this.labelOffset = new Point(labelWidth + iconSize / 2, 0);
+				break;
+			case 8:
+				// top
+				this.labelDirection = "top";
+				this.labelOffset = null;
+				break;
+			case 9:
+				// top left
+				this.labelDirection = null;
+				this.labelOffset = new Point(-iconSize/2, 0);
+				break;
+		}
+	}
 }
 
+	
 
-// uesp.gamemap.Location.PATH_EDITHANDLE_SIZE = 8;
-// uesp.gamemap.Location.PATH_EDITHANDLE_COLOR = '#ffffff';
-// uesp.gamemap.Location.PATH_EDITHANDLE_COLOR_HOVER = '#990000';
-// uesp.gamemap.Location.PATH_EDITHANDLE_COLOR_SELECTED = '#ff0000';
-// uesp.gamemap.Location.PATH_EDITHANDLE_COLOR_DRAGGING = '#ff0000';
-// uesp.gamemap.Location.nextPopupId = 100;
 
 
 // uesp.gamemap.Location.prototype.mergeFromJson = function(data)
@@ -117,93 +173,6 @@ export default class Location {
 
 // }
 	
-// 	if (this.labelElement == null)
-// 	{
-// 		this.labelElement = $('<div />').addClass('gmMapLoc')
-// 			.appendTo(this.parentMap.mapRoot)
-// 			.click(this.onLabelClickFunction())
-// 			.dblclick(this.onLabelDblClickFunction())
-// 			.attr('unselectable', 'on')
-// 			.css('user-select', 'none')
-// 			.text(this.name)
-// 			.on('selectstart', false);
-		
-// 		if (!this.visible || this.displayLevel >= 20 || isDisabled) this.labelElement.addClass('gmMapLocDisabled');
-// 	}
-// 	else
-// 	{
-// 		this.labelElement.text(this.name);
-// 	}
-	
-// 	var iconSizeX = this.parentMap.mapOptions.defaultIconWidth;
-// 	var iconSizeY = this.parentMap.mapOptions.defaultIconHeight;
-		
-// 	//var labelWidth = this.name.length*6 + 2;
-// 	var labelWidth  = this.labelElement.width();
-// 	var labelHeight = this.labelElement.height();
-	
-// 	switch (labelPos) {
-// 		case 1:
-// 			anchorPoint = 'bottomRight';
-// 			labelTextAlign = 'right';
-// 			this.labelOffsetLeft = labelWidth + iconSizeX/2;
-// 			this.labelOffsetTop  = iconSizeY;
-// 			break;
-// 		case 2:
-// 			anchorPoint = 'bottomCenter';
-// 			labelTextAlign = 'center';
-// 			this.labelOffsetLeft = labelWidth/2;
-// 			this.labelOffsetTop  = iconSizeY;
-// 			break;
-// 		case 3:
-// 			anchorPoint = 'bottomLeft';
-// 			labelTextAlign = 'left';
-// 			this.labelOffsetLeft = -iconSizeX/2;
-// 			this.labelOffsetTop  = iconSizeY;
-// 			break;
-// 		case 4:
-// 			anchorPoint = 'midRight';
-// 			labelTextAlign = 'right';
-// 			this.labelOffsetLeft = labelWidth + iconSizeX/2;
-// 			this.labelOffsetTop  = iconSizeY/2 + labelHeight/2 - 4;
-// 			break;
-// 		case 5:
-// 			anchorPoint = 'center';
-// 			labelTextAlign = 'center';
-// 			this.labelOffsetLeft = labelWidth/2;
-// 			this.labelOffsetTop  = iconSizeY/2 + labelHeight/2 - 4;
-// 			break;
-// 		case 6:
-// 		default:
-// 			anchorPoint = 'midLeft';
-// 			labelTextAlign = 'left';
-// 			this.labelOffsetLeft = -iconSizeX/2;
-// 			this.labelOffsetTop  = iconSizeY/2 + labelHeight/2 - 4;
-// 			break;
-// 		case 7:
-// 			anchorPoint = 'topRight';
-// 			labelTextAlign = 'right';
-// 			this.labelOffsetLeft = labelWidth + iconSizeX/2;
-// 			this.labelOffsetTop  = 0;
-// 			break;
-// 		case 8:
-// 			anchorPoint = 'topCenter';
-// 			labelTextAlign = 'center';
-// 			this.labelOffsetLeft = labelWidth/2;
-// 			this.labelOffsetTop  = 0;
-// 			break;
-// 		case 9:
-// 			anchorPoint = 'topLeft';
-// 			labelTextAlign = 'left';
-// 			this.labelOffsetLeft = -iconSizeX/2;
-// 			this.labelOffsetTop  = 0;
-// 			break;
-// 	}
-	
-// 	this.labelElement.css({ textAlign: labelTextAlign });
-// 	this.updateLabelOffset();
-// }
-
 
 
 

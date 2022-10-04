@@ -547,6 +547,10 @@ li div.collapsible-header i {
 	padding: 0px !important;
 }
 
+.location-label::before {
+	display:none;
+}
+
 .gmMapLocDisabled {
 	color: var(--text_loc_disabled) !important;
 }
