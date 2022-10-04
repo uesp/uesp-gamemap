@@ -459,10 +459,15 @@ export default class Gamemap {
 
 	clearLocations(){
 		map.eachLayer((layer) => {
+			log(layer);
 			if (layer._tiles == null) { //remove anything that is not a tile
 				layer.remove();
 			}
 		});
+		if (this.markerLayer != null) {
+			this.markerLayer.clearLayers();
+			this.markerLayer.remove();
+		}
 	}
 
 	redrawMarkers(marker){
@@ -512,6 +517,7 @@ export default class Gamemap {
 
 	redrawLocations(locations) {
 
+		log(locations);
 		// delete any existing location layers
 		this.clearLocations();
 		
@@ -539,7 +545,10 @@ export default class Gamemap {
 
 		}
 
-		this.markerLayer = L.featureGroup(locationMarkers);
+		this.clearLocations();
+		this.markerLayer = new L.featureGroup(locationMarkers);
+
+		log(this.markerLayer.getLayers());
 
 		// callback to show map fully loaded
 		if (this.mapCallbacks != null) {
@@ -630,7 +639,12 @@ export default class Gamemap {
 			marker.on('add', function () {
 				this.displayLevel = location.displayLevel;
 				map.on('resize move zoom', function(){
-					self.redrawMarkers(marker);
+					if (location.worldID == self.getCurrentWorldID()){
+						self.redrawMarkers(marker);
+					} else {
+						marker.remove();
+						marker.off('resize move zoom');
+					}
 				});
 
 			});
