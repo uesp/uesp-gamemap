@@ -28,6 +28,7 @@ export default class Location {
 		// set basic location info
 		this.id = location.id || 0;
 		this.name = location.name || "";
+		this.wikiPage = location.wikiPage || "";
 		this.description = location.description || "";
 		this.isVisible = (location.visible != null && location.visible == 1) ? true : false;
 		this.displayData = JSON.parse(location.displayData) || {};
@@ -103,60 +104,62 @@ export default class Location {
 	}
 
 	getLabelOffsets(labelPos) {
-
-		let iconSize = this.iconSize
-		let labelWidth = this.name.length * 6 + 2;
-	
+			
 		switch (labelPos) {
 			case 1:
-				// bottom right
-				this.labelDirection = null;
-				this.labelOffset = new Point(labelWidth + iconSize / 2, iconSize);
+				// top right
+				this.labelDirection = "right";
 				break;
 			case 2:
 				// top
 				this.labelDirection = "top";
-				this.labelOffset = null;
 				break;
 			case 3:
-				// bottom right
-				this.labelDirection = null;
-				this.labelOffset = new Point(-iconSize/2, iconSize);
-				break;
+				// top left
+				this.labelDirection = "left";
 			case 4:
-				// right
-				this.labelDirection = "right";
-				this.labelOffset = null;
+				// left
+				this.labelDirection = "left";
 				break;
 			case 5:
 				// centre
 				this.labelDirection = "center";
-				this.labelOffset = null;
 				break;
 			case 6:
-			default:
-				// left
-				this.labelDirection = "left";
-				this.labelOffset = null;
+				// right
+				this.labelDirection = "right";
 				break;
 			case 7:
-				// bottom right
-				this.labelDirection = null;
-				this.labelOffset = new Point(labelWidth + iconSize / 2, 0);
+				// bottom left
+				this.labelDirection = "left";
 				break;
 			case 8:
-				// top
-				this.labelDirection = "top";
-				this.labelOffset = null;
+				// bottom
+				this.labelDirection = "bottom";
 				break;
 			case 9:
-				// top left
-				this.labelDirection = null;
-				this.labelOffset = new Point(-iconSize/2, 0);
+				// bottom right
+				this.labelDirection = "right";
 				break;
 		}
 	}
+
+
+	getTooltipContent() {
+		let content = "";
+	
+		
+		if (this.wikiPage != "" && this.name != this.wikiPage) {
+			content = this.name + "<div class='tooltip-desc'>" + this.description + "<br/>" + this.wikiPage + "</div>";
+		} else {
+			content = this.name + "<div class='tooltip-desc'>" + this.description + "</div>";
+		}	
+
+		return content;
+	}
+	
 }
+
 
 	
 

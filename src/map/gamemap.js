@@ -606,15 +606,6 @@ export default class Gamemap {
 				marker = new L.polyline(coords, options);
 			}
 
-			marker.on('mouseover', function () {
-				this.setStyle({
-					'fillColor': Utils.RGBAtoHex(location.displayData.hover.fillStyle),
-					'color': '#015270',
-					'opacity': 1,
-					'weight': 2,
-				});
-			})
-
 			bindOnClick(marker, location);
 
 		} else { // if no, then it must be a single point (icon, label)
@@ -631,19 +622,31 @@ export default class Gamemap {
 			
 		}
 
+		marker.on('mouseover', function () {
+
+			let latLngs = (location.isPolygonal ) ? marker.getCenter() : marker.getLatLng();
+
+			var tooltip = L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true}).addTo(map);
+
+			// this.setStyle({
+			// 	'fillColor': Utils.RGBAtoHex(location.displayData.hover.fillStyle),
+			// 	'color': '#015270',
+			// 	'opacity': 1,
+			// 	'weight': 2,
+			// });
+		})
+
 		// add tooltip to marker if applicable
 		if (location.hasLabel) {
 			marker.bindTooltip(location.name, {
 				className : "location-label",
 				permanent: true,
 				direction: location.labelDirection,
-				//offset: location.labelOffset,
 			});			
 		}
 
 		// add event listeners to marker
 		bindOnClick(marker, location);
-
 
 		function bindEvents(marker, location) {
 			marker.once('add', function () {
