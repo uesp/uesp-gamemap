@@ -517,11 +517,6 @@ export default class Gamemap {
 
 	}
 
-
-	canContinuousScroll(){
-		return (!Utils.isFirefox && !Utils.isMobileDevice);
-	}
-
 	redrawLocations(locations) {
 
 		log(locations);
@@ -596,7 +591,6 @@ export default class Gamemap {
 				color: Utils.RGBAtoHex(location.displayData.strokeStyle),
 				fillColor: Utils.RGBAtoHex(location.displayData.fillStyle),
 				smoothFactor: 2,
-				// renderer : L.svg({ padding: 1.5 }), // override polygon culling outside of viewport
 				weight: (location.displayData.lineWidth || 0),
 			}
 
@@ -642,7 +636,6 @@ export default class Gamemap {
 		})
 
 		marker.on("mouseout", function () { 
-
 			map.closeTooltip(tooltip);
 		})
 
@@ -661,9 +654,11 @@ export default class Gamemap {
 
 				if (location.worldID == self.getCurrentWorldID()){
 					this.displayLevel = location.displayLevel;
-					map.on('resize move zoom', function(){
+
+					map.on('resize moveend zoomend', function(){
 						self.redrawMarkers(marker);
 					});
+
 				} else {
 					marker.remove();
 					marker.off('resize move zoom');

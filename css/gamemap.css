@@ -547,48 +547,28 @@ li div.collapsible-header i {
 	padding: 0px !important;
 }
 
-.location-label::before {
-	display:none;
-}
-
-.gmMapLocDisabled {
-	color: var(--text_loc_disabled) !important;
-}
-
-.gmMapLocIconDiv {
+.location-tooltip {
+	z-index: 45;
 	position: absolute;
-	z-index: 19;
+	border: 2px solid #606030;
+	background-color: rgba(0,0,0,0.85);
+	padding: 3px;
 	display: inline-block;
-	background-position: center;
-	background-repeat: no-repeat;
-	border: none;
-	text-align: center;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	/* background-color: rgba(0,0,0,0.3);
-	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.3); */
+	color: #ffffff;
+	font-size: 11px;
+	font-weight: bold;
+	font-family: sans-serif;
+	white-space: nowrap;
+	border-image: url(../assets/images/tooltip-border.png) 2 2 2 2 stretch;
 }
 
-.gmMapLocIconHelper {
-	display: inline-block;
-	height: 100%;
-	vertical-align: middle;
+.leaflet-tooltip::before {
+	display: none;
 }
 
-.gmMapLocIcon {
-	display: inline-block;
-	border: none;
-	cursor: pointer;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+.tooltip-desc {
+	font-weight: normal;
+	font-size: 0.9em;
 }
 
 /*================================================
@@ -914,29 +894,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
 }
 
-.location-tooltip {
-	z-index: 45;
-	position: absolute;
-	border: 2px solid #606030;
-	background-color: rgba(0,0,0,0.85);
-	padding: 3px;
-	display: inline-block;
-	color: #ffffff;
-	font-size: 11px;
-	font-weight: bold;
-	font-family: sans-serif;
-	white-space: nowrap;
-	border-image: url(../assets/images/tooltip-border.png) 2 2 2 2 stretch;
-}
 
-.leaflet-tooltip::before {
-	display: none;
-}
-
-.tooltip-desc {
-	font-weight: normal;
-	font-size: 0.9em;
-}
 
 
 /*================================================
