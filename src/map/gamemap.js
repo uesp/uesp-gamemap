@@ -500,6 +500,9 @@ export default class Gamemap {
 
 				if (this.markerLayer.hasLayer(marker)) {
 					marker.addTo(map);
+					if (marker.location.hasLabel) {
+						marker.bindTooltip(marker.location.name, this.getLocationLabel(marker.location));
+					}	
 				}
 
 			} else {
@@ -622,11 +625,14 @@ export default class Gamemap {
 			
 		}
 
+
+		let tooltip;
+
 		marker.on('mouseover', function () {
 
 			let latLngs = (location.isPolygonal ) ? marker.getCenter() : marker.getLatLng();
 
-			var tooltip = L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true}).addTo(map);
+			tooltip = L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true}).addTo(map);
 
 			// this.setStyle({
 			// 	'fillColor': Utils.RGBAtoHex(location.displayData.hover.fillStyle),
@@ -636,13 +642,14 @@ export default class Gamemap {
 			// });
 		})
 
+		marker.on("mouseout", function () { 
+
+			map.closeTooltip(tooltip);
+		})
+
 		// add tooltip to marker if applicable
 		if (location.hasLabel) {
-			marker.bindTooltip(location.name, {
-				className : "location-label",
-				permanent: true,
-				direction: location.labelDirection,
-			});			
+			marker.bindTooltip(location.name, this.getLocationLabel(location));
 		}
 
 		// add event listeners to marker
@@ -650,6 +657,8 @@ export default class Gamemap {
 
 		function bindEvents(marker, location) {
 			marker.once('add', function () {
+
+				marker.location = location;
 
 				if (location.worldID == self.getCurrentWorldID()){
 					this.displayLevel = location.displayLevel;
@@ -671,6 +680,15 @@ export default class Gamemap {
 		bindEvents(marker, location);
 
 		return marker;
+	}
+
+
+	getLocationLabel(location){
+		return {
+			className : "location-label",
+			permanent: true,
+			direction: location.labelDirection,
+		}
 	}
 
 
