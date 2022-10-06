@@ -497,7 +497,6 @@ export default class Gamemap {
 		if (isVisible != wasVisible) {
 			if (isVisible) {
 
-
 				if (this.markerLayer.hasLayer(marker)) {
 					marker.addTo(map);
 					if (marker.location.hasLabel) {
@@ -597,7 +596,7 @@ export default class Gamemap {
 				color: Utils.RGBAtoHex(location.displayData.strokeStyle),
 				fillColor: Utils.RGBAtoHex(location.displayData.fillStyle),
 				smoothFactor: 2,
-				renderer : L.svg({ padding: 1.5 }), // override polygon culling outside of viewport
+				// renderer : L.svg({ padding: 1.5 }), // override polygon culling outside of viewport
 				weight: (location.displayData.lineWidth || 0),
 			}
 
@@ -632,7 +631,7 @@ export default class Gamemap {
 
 			let latLngs = (location.isPolygonal ) ? marker.getCenter() : marker.getLatLng();
 
-			tooltip = L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true}).addTo(map);
+			tooltip = L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
 
 			// this.setStyle({
 			// 	'fillColor': Utils.RGBAtoHex(location.displayData.hover.fillStyle),

@@ -914,7 +914,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
 }
 
-.gmLocToolTip {
+.location-tooltip {
 	z-index: 45;
 	position: absolute;
 	border: 2px solid #606030;
@@ -926,94 +926,18 @@ input[type=checkbox].gmMapEditPopupInput {
 	font-weight: bold;
 	font-family: sans-serif;
 	white-space: nowrap;
-	border-image: url(images/tooltip-border.png) 2 2 2 2 stretch;
+	border-image: url(../assets/images/tooltip-border.png) 2 2 2 2 stretch;
 }
 
-
-.gmMapIconTypeListContainer {
-	display: inline-block;
-	margin-left: 5px;
-	margin-top: 2px;
-}
-
-.gmMapIconTypeListHeader {
-	height: 16px;
-	line-height: 16px;
-	width: 154px;
-	border: 1px solid gray;
-	padding: 2px;
-	background-image: url(images/downarrow.gif);
-	background-repeat: no-repeat;
-	background-position: right 2px top 3px;
-	display: block;
-	padding-left: 4px;
-}
-
-.gmMapIconTypeListHeader:hover {
-	background-color: #cccccc;
-}
-
-.gmMapIconTypeListHeaderOpen {
-	background-image: url(images/uparrow.gif);
-}
-
-.gmMapIconTypeList {
-	display: block;
-	position: absolute;
-	background-color: white;
-	border: 1px solid gray;
-	height: 250px;
-	width: 185px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	margin: 0;
-	padding: 2px;
-	z-index: 2000;
-}
-
-.gmMapIconTypeList li {
-	list-style-type: none;
-	padding: 0;
-	margin: 0;
-	border: 0;
-	width: 100%;
-}
-
-.gmMapIconTypeList li img {
-	float: right;
-	max-height: 20px;
-}
-
-.gmMapIconTypeValue {
+.leaflet-tooltip::before {
 	display: none;
 }
 
-.gmMapIconTypeLabel {
-	display: inline-block;
-	width: 100%;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	cursor: default;
-	line-height: 20px;
-	vertical-align: middle;
+.tooltip-desc {
+	font-weight: normal;
+	font-size: 0.9em;
 }
 
-.gmMapIconTypeLabelSelected {
-	background-color: #0000ff;
-	color: #ffffff;
-}
-
-.gmMapIconTypeLabelSelected:hover {
-	background-color: #0000cc;
-}
-
-.gmMapIconTypeLabel:hover {
-	background-color: #999999;
-}
 
 /*================================================
 				  Zoom Widget
@@ -1194,10 +1118,6 @@ input[type=checkbox].gmMapEditPopupInput {
 	text-align: center;
 }
 
-.gmLocTooltipDesc {
-	font-weight: normal;
-	font-size: 0.9em;
-}
 
 /*================================================
 				   	Icon Bars
