@@ -80,6 +80,21 @@ export default class Location {
 		this.hasLabel = (this.displayData.labelPos != null && this.displayData.labelPos >= 1 && this.name != "");
 		this.isLabel = (!this.hasIcon && !this.isPolygonal && this.hasLabel);
 
+
+		this.LABEL_POSITIONS = {
+			0 : 'None',
+			1 : 'Top Left',
+			2 : 'Top Center',
+			3 : 'Top Right',
+			4 : 'Middle Left',
+			5 : 'Center',
+			6 : 'Middle Right',
+			7 : 'Bottom Left',
+			8 : 'Bottom Center',
+			9 : 'Bottom Right'
+		};
+
+
 	}
 
 	getPoint(coords) {
@@ -1065,20 +1080,6 @@ export default class Location {
 // }
 
 
-// uesp.gamemap.Location.LABEL_POSITIONS = {
-// 	0 : 'None',
-// 	1 : 'Top Left',
-// 	2 : 'Top Center',
-// 	3 : 'Top Right',
-// 	4 : 'Middle Left',
-// 	5 : 'Center',
-// 	6 : 'Middle Right',
-// 	7 : 'Bottom Left',
-// 	8 : 'Bottom Center',
-// 	9 : 'Bottom Right'
-// };
-
-
 // uesp.gamemap.Location.prototype.getLabelPosSelectOptions = function (selectedValue)
 // {
 // 	var options = '';
@@ -1394,18 +1395,6 @@ export default class Location {
 // 	if (iconType in this.parentMap.mapOptions.iconTypeMap) return this.parentMap.mapOptions.iconTypeMap[iconType];
 // 	return iconType.toString();
 // }
-
-
-// uesp.gamemap.Location.prototype.isPopupOpen = function ()
-// {
-// 	if (this.popupElement == null) return false;
-// 	return this.popupElement.is(":visible");
-// }
-
-
-
-
-
 
 
 // uesp.gamemap.createLocationFromJson = function(data, parentMap)

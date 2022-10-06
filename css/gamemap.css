@@ -571,6 +571,13 @@ li div.collapsible-header i {
 	font-size: 0.9em;
 }
 
+.leaflet-marker-icon{ 
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
 /*================================================
 				  Pop-up Windows
 ================================================*/
@@ -658,32 +665,6 @@ li div.collapsible-header i {
 .gmMapPopupWikiPage {
 	font-size: 11px;
 	padding-left: 10px;
-}
-
-.gmMapPathCanvas {
-	position: absolute;
-	z-index: 5;
-	border: none;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	cursor: grab;
-}
-
-.gmMapAreaCanvas {
-	position: absolute;
-	z-index: 5;
-	border: none;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	cursor: pointer;
 }
 
 #gmMapEditNotice {
@@ -894,9 +875,6 @@ input[type=checkbox].gmMapEditPopupInput {
 	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
 }
 
-
-
-
 /*================================================
 				  Zoom Widget
 ================================================*/
@@ -1019,31 +997,6 @@ input[type=checkbox].gmMapEditPopupInput {
 	padding: 2px;
 }
 
-.gmMapRCItemIcon {
-	max-height: 20px;
-	vertical-align: middle;
-}
-
-.gmMapRCItem {
-	display: block;
-	white-space: nowrap;
-	padding: 1px;
-}
-
-.gmMapRCItem:hover {
-	background-color: #3333ff;
-	color: #ffffff;
-}
-
-.gmMapRCItemName {
-	display: inline-block;
-}
-
-.gmMapRCItemSmall {
-	display: inline-block;
-	font-size: 11px;
-}
-
 .gmHelpBlock {
 	background-color: #EBDDB4;
 	border: 1px solid gray;
@@ -1062,10 +1015,6 @@ input[type=checkbox].gmMapEditPopupInput {
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	padding: 5px;
-}
-
-.gmHelpCloseButton {
-	float: right;
 }
 
 .gmHelpBlockTitle {

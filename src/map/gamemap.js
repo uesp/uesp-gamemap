@@ -460,7 +460,6 @@ export default class Gamemap {
 
 	clearLocations(){
 		map.eachLayer((layer) => {
-			log(layer);
 			if (layer._tiles == null) { //remove anything that is not a tile
 				layer.remove();
 			}
@@ -517,6 +516,7 @@ export default class Gamemap {
 
 	}
 
+
 	redrawLocations(locations) {
 
 		log(locations);
@@ -550,8 +550,6 @@ export default class Gamemap {
 		this.clearLocations();
 		this.markerLayer = new L.layerGroup(locationMarkers);
 
-		log(this.markerLayer.getLayers());
-
 		// callback to show map fully loaded
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.onMapLoaded(true);
@@ -578,7 +576,6 @@ export default class Gamemap {
 
 		function bindOnClick(marker, location) {
 			marker.on('click', function () {
-				log(this);
 				self.onLocationClicked(location);
 			});
 		}
