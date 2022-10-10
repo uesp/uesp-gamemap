@@ -24,6 +24,19 @@ export const LOCTYPES = {
     LABEL : 4,
 }
 
+export const LABEL_POSITIONS = {
+    0 : 'None',
+    1 : 'Top Left',
+    2 : 'Top Center',
+    3 : 'Top Right',
+    4 : 'Middle Left',
+    5 : 'Center',
+    6 : 'Middle Right',
+    7 : 'Bottom Left',
+    8 : 'Bottom Center',
+    9 : 'Bottom Right'
+};
+
 export const PARAM_TYPE_QUERY = 0;
 export const PARAM_TYPE_HASH = 1;
 

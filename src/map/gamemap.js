@@ -459,15 +459,17 @@ export default class Gamemap {
 	}
 
 	clearLocations(){
+		if (this.markerLayer != null) {
+			this.markerLayer.clearLayers();
+			this.markerLayer.remove();
+		}
+
+		// TODO: this is wiping alliance base icons off the map
 		map.eachLayer((layer) => {
 			if (layer._tiles == null) { //remove anything that is not a tile
 				layer.remove();
 			}
 		});
-		if (this.markerLayer != null) {
-			this.markerLayer.clearLayers();
-			this.markerLayer.remove();
-		}
 	}
 
 	redrawMarkers(marker){
@@ -498,7 +500,7 @@ export default class Gamemap {
 
 				if (this.markerLayer.hasLayer(marker)) {
 					marker.addTo(map);
-					if (marker.location.hasLabel) {
+					if (marker.location.hasLabel()) {
 						marker.bindTooltip(marker.location.name, this.getLocationLabel(marker.location));
 					}	
 				}
@@ -547,16 +549,35 @@ export default class Gamemap {
 
 		}
 
+
 		this.clearLocations();
 		this.markerLayer = new L.layerGroup(locationMarkers);
+
+		// add markers to map
+		log("Adding location markers to map...")
+		this.markerLayer.addTo(map);
 
 		// callback to show map fully loaded
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.onMapLoaded(true);
 		}
 
-		log("Adding location markers to map...")
-		this.markerLayer.addTo(map);
+	}
+
+
+	makeMarker(location, coords) {
+		let anchor = [location.iconSize/2, location.iconSize/2];
+		let iconURL = this.mapConfig.iconPath + "/" + location.icon + ".png";
+		iconURL = iconURL.replace("//", "/"); // bypass bug doubling forward slashes for some reason
+
+		let locationIcon = L.icon({
+			iconUrl: iconURL,
+			iconAnchor: anchor,
+		});
+
+		let marker = L.marker(coords, {icon: locationIcon});
+
+		return marker;
 	}
 
 	// marker factory method
@@ -581,36 +602,42 @@ export default class Gamemap {
 		}
 
 		// create specific marker type
-		if (location.isPolygonal) { // is location polygonal? (polyline or polygon)
+		if (location.isPolygon()) { // is location polygonal? (polyline or polygon)
 
 			let options = {
 				noClip: true,
-				color: Utils.RGBAtoHex(location.displayData.strokeStyle),
-				fillColor: Utils.RGBAtoHex(location.displayData.fillStyle),
+				color: location.style.strokeColour,
+				fillColor: location.style.fillColour,
+				opacity: location.style.opacity,
+				fillOpacity: location.style.opacity,
 				smoothFactor: 2,
 				weight: (location.displayData.lineWidth || 0),
 			}
 
 			if (location.locType == Constants.LOCTYPES.AREA) {
 				marker = new L.polygon(coords, options);
+
+				if (location.hasIcon()){
+					marker.addTo(map);
+					let polygonIcon = this.makeMarker(location, marker.getCenter());
+					marker.remove();
+					log(polygonIcon);
+					polygonIcon.addTo(map);
+				}
 			}
 
 			if (location.locType == Constants.LOCTYPES.PATH) {
 				marker = new L.polyline(coords, options);
 			}
 
+
 			bindOnClick(marker, location);
 
 		} else { // if no, then it must be a single point (icon, label)
 		
-			if (location.hasIcon) {
-				let anchor = [location.iconSize/2, location.iconSize/2];
-				let locationIcon = L.icon({
-					iconUrl: this.mapConfig.iconPath + "/" + location.icon + ".png",
-					iconAnchor: anchor,
-				});
-
-				marker = L.marker(coords[0], {icon: locationIcon});
+			if (location.hasIcon()) {
+				marker = this.makeMarker(location, coords[0]);
+				//log(marker);
 			} 
 			
 		}
@@ -620,24 +647,35 @@ export default class Gamemap {
 
 		marker.on('mouseover', function () {
 
-			let latLngs = (location.isPolygonal ) ? marker.getCenter() : marker.getLatLng();
+			let latLngs = (location.isPolygon() ) ? marker.getCenter() : marker.getLatLng();
 
 			tooltip = L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
 
-			// this.setStyle({
-			// 	'fillColor': Utils.RGBAtoHex(location.displayData.hover.fillStyle),
-			// 	'color': '#015270',
-			// 	'opacity': 1,
-			// 	'weight': 2,
-			// });
+			if (location.isPolygon()){
+				this.setStyle({
+					fillColor: location.style.hover.fillColour,
+					opacity: location.style.hover.opacity,
+					fillOpacity: location.style.hover.opacity,
+				});
+			}
+
+
 		})
 
 		marker.on("mouseout", function () { 
 			map.closeTooltip(tooltip);
+
+			if (location.isPolygon()){
+				this.setStyle({
+					fillColor: location.style.fillColour,
+					opacity: location.style.opacity,
+					fillOpacity: location.style.opacity,
+				});
+			}
 		})
 
 		// add tooltip to marker if applicable
-		if (location.hasLabel) {
+		if (location.hasLabel()) {
 			marker.bindTooltip(location.name, this.getLocationLabel(location));
 		}
 
@@ -681,8 +719,6 @@ export default class Gamemap {
 			direction: location.labelDirection,
 		}
 	}
-
-
 
 	/*================================================
 						  Utility 
@@ -814,6 +850,7 @@ export default class Gamemap {
 
 		map.on('resize moveend zoomend', function() {
 			self.updateMapState();
+			self.hideMenus();
 		});
 
 		map.on("mousedown", function(e){
@@ -825,10 +862,6 @@ export default class Gamemap {
 				let parentID = self.getMapState().world.parentID;
 				self.gotoWorld(parentID);
 			} 
-		})
-
-		map.on("zoomstart movestart", function(e){
-			self.hideMenus();
 		})
 
 		map.on("zoom", function(e){
@@ -865,7 +898,6 @@ export default class Gamemap {
 	getCurrentZoom() {
 		return map.getZoom();
 	}
-
 
 	hideMenus(){
 		if (this.mapCallbacks != null) {

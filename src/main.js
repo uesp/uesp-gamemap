@@ -101,8 +101,6 @@ function loadGamemap(mapConfig) {
 		onWorldChanged,
 		hideMenus,
 		onMapLoaded,
-		onZoneSelected,
-		onZoneDeselected,
 	};
 
 	gamemap = new Gamemap('gamemap', mapConfig, mapCallbacks);
@@ -166,17 +164,8 @@ window.gotoWorld = function(worldID, coords){
 function onWorldChanged(newWorld) {
 
 	$('#current_location_label').text(newWorld.displayName);
-
 	setWindowTitle(newWorld.displayName);
 	updateWorldList(newWorld.name);
-}
-
-function onZoneSelected(location) {
-	// show overhead zone selection
-}
-
-function onZoneDeselected() {
-	// hide overhead zone selection
 }
 
 /*================================================

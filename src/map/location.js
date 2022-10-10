@@ -69,31 +69,38 @@ export default class Location {
 			this.coords.push(this.getPoint([location.x, location.y]));
 		}
 
-		// set label info
+		// set up label info
 		if (this.displayData.labelPos != null){
 			this.getLabelOffsets(this.displayData.labelPos);
 		}
 
-		// convenience state variables
-		this.isPolygonal = this.coords.length > 1;
-		this.hasIcon = (this.icon != null);
-		this.hasLabel = (this.displayData.labelPos != null && this.displayData.labelPos >= 1 && this.name != "");
-		this.isLabel = (!this.hasIcon && !this.isPolygonal && this.hasLabel);
+		// set up display info for polygons
+		if (this.isPolygon()){ 
+			
+			this.style = {};
+			this.style.hover = {};
 
+			if (this.displayData.lineWidth == null){
+				this.displayData.lineWidth = 0;
+			}
 
-		this.LABEL_POSITIONS = {
-			0 : 'None',
-			1 : 'Top Left',
-			2 : 'Top Center',
-			3 : 'Top Right',
-			4 : 'Middle Left',
-			5 : 'Center',
-			6 : 'Middle Right',
-			7 : 'Bottom Left',
-			8 : 'Bottom Center',
-			9 : 'Bottom Right'
-		};
+			if (this.displayData.hover == null){
+				this.displayData.hover = this.displayData;
+			}
 
+			this.style.opacity = this.displayData.fillStyle.replace(/^.*,(.+)\)/,'$1');
+			this.style.hover.opacity = this.displayData.hover.fillStyle.replace(/^.*,(.+)\)/,'$1');
+
+			this.style.fillColour = Utils.RGBAtoHex(this.displayData.fillStyle);
+			this.style.hover.fillColour = Utils.RGBAtoHex(this.displayData.hover.fillStyle);
+
+			this.style.strokeColour = Utils.RGBAtoHex(this.displayData.strokeStyle);
+			this.style.hover.strokeColour = Utils.RGBAtoHex(this.displayData.hover.strokeStyle);
+
+			this.style.strokeWidth = this.displayData.lineWidth;
+			this.style.hover.strokeWidth = this.displayData.hover.lineWidth;
+
+		}
 
 	}
 
@@ -171,6 +178,22 @@ export default class Location {
 		}	
 
 		return content;
+	}
+
+	isPolygon(){
+		return this.coords.length > 1;
+	}
+
+	hasIcon(){
+		return (this.icon != null)
+	}
+
+	hasLabel(){
+		return (this.displayData.labelPos != null && this.displayData.labelPos >= 1 && this.name != "");
+	}
+
+	isLabel(){
+		return (!this.hasIcon && !this.isPolygonal && this.hasLabel);
 	}
 	
 }
