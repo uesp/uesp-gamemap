@@ -10,6 +10,7 @@ import Point from "./point.js";
 
 let config;
 let numTiles;
+let currentWorld;
 
 export default class Location {
 	constructor(mapConfig, location, world) {
@@ -18,8 +19,9 @@ export default class Location {
 		if (mapConfig == null) { 
 			mapConfig = DEFAULT_MAP_CONFIG;
 		}
-		config = mapConfig;
 
+		config = mapConfig;
+		currentWorld = world;
 		numTiles = world.numTilesX;
 
 		// set location type
@@ -108,18 +110,37 @@ export default class Location {
 		let x = coords[0];
 		let y = coords[1];
 
-		if (config.coordType == Constants.COORD_TYPES.NORMALISED && config.database == "eso") {
-			
-			//hardcode y flip for eso as server coords are upside down
-			y = Constants.LEGACY_MAXIMUM_XY - y; 
+		if (config.coordType == Constants.COORD_TYPES.NORMALISED) {
+
+			let maxRangeX = currentWorld.maxX - currentWorld.minX;
+			let maxRangeY = currentWorld.maxY - currentWorld.minY;
+
+			let xN = x / currentWorld.maxX;
+			let yN = y / currentWorld.maxY;
+
+			x = xN * maxRangeX;
+			y = yN * maxRangeY;
+
+						// if eso, flip y as the server coords are upside down
+						if (config.database == "eso"){
+							y = maxRangeY - y; 
+						}
 
 			// transform coords to better fit power of two numbers of tiles
 			x = x * Utils.nextPowerOfTwo(numTiles) / numTiles;
 			y = y * Utils.nextPowerOfTwo(numTiles) / numTiles;
 
+			log("x before after");
+			log(x);
+			log(xN * maxRangeX);
+
+			log("y before after");
+			log(y);
+			log(yN * maxRangeY);
+
 			// convert coords to normalised ones
-			x = Utils.toNormalised(x);
-			y = Utils.toNormalised(y);
+			x = (x / maxRangeX).toFixed(3);
+			y = (y / maxRangeY).toFixed(3);
 		}
 
 		return new Point(x, y);
@@ -169,7 +190,6 @@ export default class Location {
 
 	getTooltipContent() {
 		let content = "";
-	
 		
 		if (this.wikiPage != "" && this.name != this.wikiPage) {
 			content = this.name + "<div class='tooltip-desc'>" + this.description + "<br/>" + this.wikiPage + "</div>";

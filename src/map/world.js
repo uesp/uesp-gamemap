@@ -26,10 +26,12 @@ export default class World {
 	
 			this.missingMapTilePath = mapConfig.missingMapTilePath;
 
-			this.minX = mapConfig.minX;
-			this.maxX = mapConfig.maxX;
-			this.minY = mapConfig.minY;
-			this.maxY = mapConfig.maxY;
+			this.legacy = world;
+
+			this.minX = world.posLeft || mapConfig.minX;
+			this.maxX = world.posRight || mapConfig.maxX;
+			this.minY = world.posBottom || mapConfig.minY;
+			this.maxY = world.posTop || mapConfig.maxY;
 
 			this.numTilesX = world.tilesX || mapConfig.numTilesX;
 			this.numTilesY = world.tilesY || mapConfig.numTilesY;

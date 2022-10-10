@@ -447,7 +447,6 @@ li div.collapsible-header i {
 	border: none;
 	align-self: stretch;
 	outline: none;
-	-webkit-appearance: none;
 	background-color: transparent;
 	font-size: 1.5em;
 }

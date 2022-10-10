@@ -596,8 +596,10 @@ export default class Gamemap {
 		});
 
 		function bindOnClick(marker, location) {
-			marker.on('click', function () {
-				self.onLocationClicked(location);
+			marker.on('click', function (event) {
+				let shift = event.originalEvent.shiftKey; // edit
+				let ctrl = event.originalEvent.ctrlKey; // popup
+				self.onMarkerClicked(this, shift, ctrl);
 			});
 		}
 
@@ -707,6 +709,8 @@ export default class Gamemap {
 		}
 
 		bindEvents(marker, location);
+
+		marker.bindPopup("popupContent", {keepInView : true});
 
 		return marker;
 	}
@@ -836,12 +840,26 @@ export default class Gamemap {
 						  Events 
 	================================================*/
 
-	onLocationClicked(location){
-		if (location != null){
-			if (location.destinationID < 0) { // is location destination a worldID
-				this.gotoWorld((location.destinationID+"").slice(1));
-			} else { // it is a location ID
-				// TODO: alter getLocations to return worldID as well and goto there
+	onMarkerClicked(marker, shift, ctrl){
+
+		if (ctrl) { // if ctrl pressed, always open popup for this location
+			marker.getPopup().togglePopup();
+		} else {
+			if (shift && self.isMapEditingEnabled()) { // if shift pressed, and can edit, show edit menu
+
+				marker.getPopup().closePopup();
+
+				// TODO: show edit menu for this marker.location
+		
+			} else { 
+				let location = marker.location;
+				if (location != null){
+					if (location.destinationID < 0) { // is location destination a worldID
+						this.gotoWorld((location.destinationID+"").slice(1));
+					} else { // it is a location ID
+						// TODO: alter getLocations to return worldID as well and goto there
+					}
+				}
 			}
 		}
 	}
