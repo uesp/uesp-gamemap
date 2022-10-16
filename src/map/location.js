@@ -112,35 +112,30 @@ export default class Location {
 
 		if (config.coordType == Constants.COORD_TYPES.NORMALISED) {
 
+			// get max range of x and y
 			let maxRangeX = currentWorld.maxX - currentWorld.minX;
 			let maxRangeY = currentWorld.maxY - currentWorld.minY;
 
+			// get normalised value of x and y in range
 			let xN = x / currentWorld.maxX;
 			let yN = y / currentWorld.maxY;
 
+			// renormalise existing x and y to decimal in max range
 			x = xN * maxRangeX;
 			y = yN * maxRangeY;
-
-						// if eso, flip y as the server coords are upside down
-						if (config.database == "eso"){
-							y = maxRangeY - y; 
-						}
+			
+			// if eso, flip y as the server coords are upside down
+			if (config.database == "eso") {
+				y = currentWorld.maxY - y; 
+			}
 
 			// transform coords to better fit power of two numbers of tiles
 			x = x * Utils.nextPowerOfTwo(numTiles) / numTiles;
 			y = y * Utils.nextPowerOfTwo(numTiles) / numTiles;
 
-			log("x before after");
-			log(x);
-			log(xN * maxRangeX);
-
-			log("y before after");
-			log(y);
-			log(yN * maxRangeY);
-
 			// convert coords to normalised ones
-			x = (x / maxRangeX).toFixed(3);
-			y = (y / maxRangeY).toFixed(3);
+			x = (x / maxRangeX);
+			y = (y / maxRangeY);
 		}
 
 		return new Point(x, y);
@@ -233,54 +228,6 @@ export default class Location {
 // 	}
 
 // }
-	
-
-
-
-// uesp.gamemap.Location.prototype.showPopup = function ()
-// {
-// 	if (this.popupElement == null) this.updatePopup();
-	
-// 	this.hideTooltip();
-// 	this.popupElement.show();
-// }
-
-
-// uesp.gamemap.Location.prototype.hidePopup = function ()
-// {
-// 	if (this.popupElement == null) return;
-// 	this.popupElement.hide();
-// }
-
-
-// uesp.gamemap.Location.prototype.togglePopup = function ()
-// {
-// 	if (this.popupElement == null) return this.updatePopup();
-	
-// 	if ($(this.popupElement).is(":visible") )
-// 	{
-// 		$(this.popupElement).hide();
-// 	}
-// 	else if (this.useEditPopup)
-// 	{
-// 		if (this.popupElement.find('.gmMapEditPopup').length == 0)
-// 		{
-// 			this.popupElement.remove();
-// 			this.popupElement = null;
-// 			return this.updatePopup();
-// 		}
-		
-// 		$(this.popupElement).show();
-// 		this.updatePopupOffset();
-// 	}
-// 	else
-// 	{
-// 		$(this.popupElement).show();
-// 		this.updatePopupOffset();
-// 	}
-// }
-
-
 
 // uesp.gamemap.Location.prototype.onClickLocationEditPopup = function(event)
 // {
@@ -296,11 +243,6 @@ export default class Location {
 // 	return true;
 // }
 
-
-// uesp.gamemap.Location.prototype.onClosePopup = function (event)
-// {
-// 	this.hidePopup();
-// }
 
 
 // uesp.gamemap.Location.prototype.onCloseEditPopup = function (event)

@@ -114,7 +114,7 @@ export default class Gamemap {
 		this.setMapState(mapState);
 
 		// create map events
-		this.createEvents();
+		this.createMapEvents();
 	}
 
 	/** Simple function to create the infobar at the bottom right of the gamemap screen.
@@ -514,8 +514,6 @@ export default class Gamemap {
 
 		}
 
-		
-
 	}
 
 
@@ -538,11 +536,27 @@ export default class Gamemap {
 			Object.values(locations).forEach(location => {
 
 				// get marker/polygon/icon for this location
-				let marker = this.getMarker(location);
+				let markers = this.getMarkers(location);
 
 				// add marker to relevant map layer
-				if (marker != null) {
-					locationMarkers.push(marker);
+				if (markers != null) {
+
+					// loop through marker array.
+					// for each one set up createMarkerEvents()
+
+
+					markers.forEach(marker => {
+
+						log("adding marker");
+						locationMarkers.push(marker);
+
+						// bind event listeners to marker
+						this.bindMarkerEvents(marker, location)
+						
+					});
+
+					
+
 				}
 				
 			});
@@ -564,24 +578,10 @@ export default class Gamemap {
 
 	}
 
+	// create marker(s) for location
+	getMarkers(location){
 
-	makeMarker(location, coords) {
-		let anchor = [location.iconSize/2, location.iconSize/2];
-		let iconURL = this.mapConfig.iconPath + "/" + location.icon + ".png";
-		iconURL = iconURL.replace("//", "/"); // bypass bug doubling forward slashes for some reason
-
-		let locationIcon = L.icon({
-			iconUrl: iconURL,
-			iconAnchor: anchor,
-		});
-
-		let marker = L.marker(coords, {icon: locationIcon});
-
-		return marker;
-	}
-
-	// marker factory method
-	getMarker(location){
+		let markers = [];
 
 		// get coordinates of location
 		let coords = [];
@@ -594,14 +594,6 @@ export default class Gamemap {
 		L.Marker.prototype.options.icon = L.icon({
 			iconUrl: "assets/icons/transparent.png",
 		});
-
-		function bindOnClick(marker, location) {
-			marker.on('click', function (event) {
-				let shift = event.originalEvent.shiftKey; // edit
-				let ctrl = event.originalEvent.ctrlKey; // popup
-				self.onMarkerClicked(this, shift, ctrl);
-			});
-		}
 
 		// create specific marker type
 		if (location.isPolygon()) { // is location polygonal? (polyline or polygon)
@@ -633,84 +625,38 @@ export default class Gamemap {
 			}
 
 
-			bindOnClick(marker, location);
 
 		} else { // if no, then it must be a single point (icon, label)
 		
 			if (location.hasIcon()) {
 				marker = this.makeMarker(location, coords[0]);
-				//log(marker);
 			} 
 			
 		}
-
-
-		let tooltip;
-
-		marker.on('mouseover', function () {
-
-			let latLngs = (location.isPolygon() ) ? marker.getCenter() : marker.getLatLng();
-
-			tooltip = L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
-
-			if (location.isPolygon()){
-				this.setStyle({
-					fillColor: location.style.hover.fillColour,
-					opacity: location.style.hover.opacity,
-					fillOpacity: location.style.hover.opacity,
-				});
-			}
-
-
-		})
-
-		marker.on("mouseout", function () { 
-			map.closeTooltip(tooltip);
-
-			if (location.isPolygon()){
-				this.setStyle({
-					fillColor: location.style.fillColour,
-					opacity: location.style.opacity,
-					fillOpacity: location.style.opacity,
-				});
-			}
-		})
 
 		// add tooltip to marker if applicable
 		if (location.hasLabel()) {
 			marker.bindTooltip(location.name, this.getLocationLabel(location));
 		}
 
-		// add event listeners to marker
-		bindOnClick(marker, location);
-
-		function bindEvents(marker, location) {
-			marker.once('add', function () {
-
-				marker.location = location;
-
-				if (location.worldID == self.getCurrentWorldID()){
-					this.displayLevel = location.displayLevel;
-
-					map.on('resize moveend zoomend', function(){
-						self.redrawMarkers(marker);
-					});
-
-				} else {
-					marker.remove();
-					marker.off('resize move zoom');
-				}
-
-				if (location.displayLevel > map.getZoom()) {
-					marker.remove();
-				}
-
-			});
-		}
-
-		bindEvents(marker, location);
-
 		marker.bindPopup("popupContent", {keepInView : true});
+
+		markers = [marker];
+
+		return markers;
+	}
+
+	makeMarker(location, coords) {
+		let anchor = [location.iconSize/2, location.iconSize/2];
+		let iconURL = this.mapConfig.iconPath + "/" + location.icon + ".png";
+		iconURL = iconURL.replace("//", "/"); // bypass bug doubling forward slashes for some reason
+
+		let locationIcon = L.icon({
+			iconUrl: iconURL,
+			iconAnchor: anchor,
+		});
+
+		let marker = L.marker(coords, {icon: locationIcon});
 
 		return marker;
 	}
@@ -840,35 +786,12 @@ export default class Gamemap {
 						  Events 
 	================================================*/
 
-	onMarkerClicked(marker, shift, ctrl){
-
-		if (ctrl) { // if ctrl pressed, always open popup for this location
-			marker.getPopup().togglePopup();
-		} else {
-			if (shift && self.isMapEditingEnabled()) { // if shift pressed, and can edit, show edit menu
-
-				marker.getPopup().closePopup();
-
-				// TODO: show edit menu for this marker.location
-		
-			} else { 
-				let location = marker.location;
-				if (location != null){
-					if (location.destinationID < 0) { // is location destination a worldID
-						this.gotoWorld((location.destinationID+"").slice(1));
-					} else { // it is a location ID
-						// TODO: alter getLocations to return worldID as well and goto there
-					}
-				}
-			}
-		}
-	}
-
-	createEvents() {
+	createMapEvents() {
 
 		map.on('resize moveend zoomend', function() {
 			self.updateMapState();
 			self.hideMenus();
+			self.clearTooltips();
 		});
 
 		map.on("mousedown", function(e){
@@ -905,6 +828,96 @@ export default class Gamemap {
 
 	}
 
+	onMarkerClicked(marker, shift, ctrl){
+
+		if (ctrl) { // if ctrl pressed, always open popup for this location
+			marker.getPopup().togglePopup();
+		} else {
+			if (shift && self.isMapEditingEnabled()) { // if shift pressed, and can edit, show edit menu
+
+				marker.getPopup().closePopup();
+
+				// TODO: show edit menu for this marker.location
+		
+			} else { 
+				let location = marker.location;
+				if (location != null){
+					if (location.destinationID < 0) { // is location destination a worldID
+						this.gotoWorld((location.destinationID+"").slice(1));
+					} else { // it is a location ID
+						// TODO: alter getLocations to return worldID as well and goto there
+					}
+				}
+			}
+		}
+	}
+
+	bindMarkerEvents(marker, location) {
+
+		// on add to map
+		marker.once('add', function () {
+
+			marker.location = location;
+
+			if (location.worldID == self.getCurrentWorldID()){
+				this.displayLevel = location.displayLevel;
+
+				map.on('resize moveend zoomend', function(){
+					self.redrawMarkers(marker);
+				});
+
+			} else {
+				marker.remove();
+				marker.off('resize move zoom');
+			}
+
+			if (location.displayLevel > map.getZoom()) {
+				marker.remove();
+			}
+
+		});
+
+		// on marker deselected
+		marker.on("mouseout", function () { 
+			self.clearTooltips();
+
+			if (location.isPolygon()){
+				this.setStyle({
+					fillColor: location.style.fillColour,
+					opacity: location.style.opacity,
+					fillOpacity: location.style.opacity,
+				});
+			}
+		});
+
+
+		// on marker hovered over
+		marker.on('mouseover', function () {
+
+			let latLngs = (location.isPolygon() ) ? marker.getCenter() : marker.getLatLng();
+
+			let tooltip = L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
+
+			if (location.isPolygon()){
+				this.setStyle({
+					fillColor: location.style.hover.fillColour,
+					opacity: location.style.hover.opacity,
+					fillOpacity: location.style.hover.opacity,
+				});
+			}
+		});
+
+		// on marker clicked
+		marker.on('click', function (event) {
+			let shift = event.originalEvent.shiftKey; // edit
+			let ctrl = event.originalEvent.ctrlKey; // popup
+			self.onMarkerClicked(this, shift, ctrl);
+		});
+
+
+
+	}
+
 	zoomIn(){
 		map.zoomIn();
 	}
@@ -913,14 +926,20 @@ export default class Gamemap {
 		map.zoomOut();
 	}
 
-	getCurrentZoom() {
-		return map.getZoom();
-	}
-
 	hideMenus(){
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.hideMenus();
 		}
+	}
+
+	// clear tooltips
+	clearTooltips(){
+		map.eachLayer((layer) => {
+			if (layer.options.className == "location-tooltip") { // clear any tooltip
+				layer.remove();
+			}
+		});
+
 	}
 
 
@@ -1016,25 +1035,13 @@ export default class Gamemap {
 			}
 		}
 	}
+
+
+
+	getCurrentZoom() {
+		return map.getZoom();
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
