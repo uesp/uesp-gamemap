@@ -39,10 +39,10 @@ export default class Gamemap {
 
 			// load in map config
 			this.mapConfig = mapConfig;
-		
+
 			// set up map callbacks
 			this.mapCallbacks = mapCallbacks;
-		
+
 			// set up the root map element
 			this.rootMapID = mapRootID;
 			if ($('#'+mapRootID) == null) {
@@ -52,14 +52,14 @@ export default class Gamemap {
 
 			$("#"+mapRootID).css("background-color", mapConfig.bgColour);
 
-			// set the default map info 	
+			// set the default map info
 			this.mapWorlds = {};
 
 			// set up state bools
 			this.defaultShowHidden = false;
 			this.openPopupOnJump = false;
 			this.editingEnabled = false;
-			
+
 			// check user editing permission
 			this.checkPermissions();
 
@@ -79,7 +79,7 @@ export default class Gamemap {
 	 * @param {Object} mapConfig - Object that controls the default/imported settings of the map.
 	 */
 	initialiseMap(mapConfig) {
-		
+
 		// set global map options
 		var mapOptions = {
 			crs: L.CRS.Simple, // CRS: coordinate reference system
@@ -91,7 +91,7 @@ export default class Gamemap {
 			boxZoom: false, // disable box zoom
 			doubleClickZoom: false, // disable double click to zoom
 			scrollWheelZoom: false, // disable original zoom function
-			smoothWheelZoom: true,  // enable smooth zoom 
+			smoothWheelZoom: true,  // enable smooth zoom
   			smoothSensitivity: 0.7, // zoom speed. default is 1
         }
 
@@ -105,7 +105,7 @@ export default class Gamemap {
 
 		if (this.hasCenterOnURLParam()) { // check if URL has "centeron" param
 			// TODO: find location and centre on it
-		} else if (this.hasMultipleURLParams()) { // else check if has multiple url params 
+		} else if (this.hasMultipleURLParams()) { // else check if has multiple url params
 			// load state from URL
 			mapState = this.getMapStateFromURL();
 		}
@@ -113,8 +113,8 @@ export default class Gamemap {
 		// load map state
 		this.setMapState(mapState);
 
-		// create map events
-		this.createMapEvents();
+		// bind map events
+		this.bindMapEvents();
 	}
 
 	/** Simple function to create the infobar at the bottom right of the gamemap screen.
@@ -126,7 +126,7 @@ export default class Gamemap {
 	}
 
 	/*================================================
-						  State 
+						  State
 	================================================*/
 
 	/** Set map to saved map state (use to load from URL or from saved state).
@@ -142,7 +142,7 @@ export default class Gamemap {
 
 		// set full image width & height
 		let mapImageDimens = this.getMapImageDimensions(mapState.world);
-		this.mapImage = { 
+		this.mapImage = {
 			width : mapImageDimens.width,  // original width of image
 			height: mapImageDimens.height, // original height of image
 		}
@@ -218,7 +218,7 @@ export default class Gamemap {
 			if (mapState.world == "undefined") {
 				mapState.world = this.getWorldFromID(this.mapConfig.defaultWorldID);
 			}
-		} else { 
+		} else {
 			mapState.world = this.getWorldFromID(this.mapConfig.defaultWorldID);
 		}
 
@@ -228,11 +228,11 @@ export default class Gamemap {
 			mapState.coords = [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
 		}
 
-		if (Utils.getURLParams().has("grid")){
+		if (Utils.getURLParams().has("grid")) {
 			mapState.showGrid = Utils.getURLParams().get("grid");
 		}
 
-		if (Utils.getURLParams().has("cellresource")){
+		if (Utils.getURLParams().has("cellresource")) {
 			mapState.cellResource = Utils.getURLParams().get("cellresource");
 		}
 
@@ -241,7 +241,7 @@ export default class Gamemap {
 
 	updateMapState(mapState) {
 
-		let newMapState; 
+		let newMapState;
 
 		if (mapState == null) {
 			newMapState = this.getMapState();
@@ -262,7 +262,7 @@ export default class Gamemap {
 			mapLink += 'world=' + newMapState.world.id;
 		}
 
-		mapLink += '&x=' + newMapState.coords[0];  
+		mapLink += '&x=' + newMapState.coords[0];
 		mapLink += '&y=' + newMapState.coords[1];
 		mapLink += '&zoom=' + newMapState.zoomLevel;
 
@@ -271,7 +271,7 @@ export default class Gamemap {
 	}
 
 	/*================================================
-						  Worlds 
+						  Worlds
 	================================================*/
 
 	/** Gets the current world ID (0 by default).
@@ -289,8 +289,8 @@ export default class Gamemap {
 	 * @param {int} worldID - ID that represents a world in the database.
 	 * @returns {Object} world - A world object that contains map info for the gamemap.
 	 */
-	getWorldFromID(worldID) {		
-		return this.mapWorlds[worldID] || null; 
+	getWorldFromID(worldID) {
+		return this.mapWorlds[worldID] || null;
 	}
 
 	getWorldNameFromID(worldID) {
@@ -326,8 +326,8 @@ export default class Gamemap {
 
 		if (this.isHiddenLocsShown()) {
 			queryParams.showhidden = 1;
-		} 
-	
+		}
+
 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 			if (data.isError) {
 				throw new Error("Could not retrieve world data.");
@@ -336,7 +336,7 @@ export default class Gamemap {
 					throw new Error("World data was null.");
 				}
 			}
-	
+
 			for (var key in data.worlds) {
 				let world = data.worlds[key];
 
@@ -352,7 +352,7 @@ export default class Gamemap {
 					}
 
 					//self.worlds[world.id].mergeFromJson(world);
-					
+
 				}
 			}
 			if (self.mapCallbacks != null) {
@@ -360,7 +360,7 @@ export default class Gamemap {
 
 				// load map
 				self.initialiseMap(mapConfig);
-				
+
 			}
 		});
 	}
@@ -386,14 +386,14 @@ export default class Gamemap {
 		if (this.isWorldValid(worldID)) {
 			log("Going to world... " + worldID);
 			log(this.getWorldFromID(worldID));
-			
+
 			let mapState = new MapState();
 			mapState.zoomLevel = this.mapConfig.defaultZoomLevel;
-	
+
 			if (coords == null) {
 				mapState.coords = [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
 			}
-	
+
 			mapState.world = this.getWorldFromID(worldID);
 
 			this.setMapState(mapState);
@@ -403,7 +403,7 @@ export default class Gamemap {
 	}
 
 	/*================================================
-						Locations 
+						Locations
 	================================================*/
 
 	getLocations(world, zoomLevel) {
@@ -416,9 +416,9 @@ export default class Gamemap {
 		}
 
 		// make sure we're being given a valid world state
-		if (world == null || world.id == null || world.id < 0 ) { 
+		if (world == null || world.id == null || world.id < 0 ) {
 			log(world)
-			return; 
+			return;
 		}
 
 		// if we aren't given a zoom level, assume default mapconfig zoom level
@@ -430,7 +430,7 @@ export default class Gamemap {
 		queryParams.world  = world.id;
 		queryParams.db = this.mapConfig.database;
 		if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
-		
+
 		// make api query
 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 
@@ -485,7 +485,7 @@ export default class Gamemap {
 		let isInsideViewport;
 
 		for (let i = 0; i < latlngs.length; i++ ) {
-			
+
 			if (isInsideViewport != true) {
 				isInsideViewport = (map.getBounds().contains(latlngs[i]));
 			}
@@ -502,7 +502,7 @@ export default class Gamemap {
 					marker.addTo(map);
 					if (marker.location.hasLabel()) {
 						marker.bindTooltip(marker.location.name, this.getLocationLabel(marker.location));
-					}	
+					}
 				}
 
 			} else {
@@ -522,7 +522,7 @@ export default class Gamemap {
 		log(locations);
 		// delete any existing location layers
 		this.clearLocations();
-		
+
 		// set up location layer for each zoom level
 		log("Setting up location markers...")
 		let locationMarkers = [];
@@ -541,28 +541,14 @@ export default class Gamemap {
 				// add marker to relevant map layer
 				if (markers != null) {
 
-					// loop through marker array.
-					// for each one set up createMarkerEvents()
-
-
 					markers.forEach(marker => {
-
-						log("adding marker");
-						locationMarkers.push(marker);
-
 						// bind event listeners to marker
+						locationMarkers.push(marker);
 						this.bindMarkerEvents(marker, location)
-						
 					});
-
-					
-
 				}
-				
 			});
-
 		}
-
 
 		this.clearLocations();
 		this.markerLayer = new L.layerGroup(locationMarkers);
@@ -582,6 +568,7 @@ export default class Gamemap {
 	getMarkers(location){
 
 		let markers = [];
+		let polygonIcon = null;
 
 		// get coordinates of location
 		let coords = [];
@@ -613,10 +600,10 @@ export default class Gamemap {
 
 				if (location.hasIcon()){
 					marker.addTo(map);
-					let polygonIcon = this.makeMarker(location, marker.getCenter());
+					log(marker.getCenter());
+					//location.coords = [marker.getCenter()];
+					polygonIcon = this.makeMarker(location, marker.getCenter());
 					marker.remove();
-					log(polygonIcon);
-					polygonIcon.addTo(map);
 				}
 			}
 
@@ -627,21 +614,18 @@ export default class Gamemap {
 
 
 		} else { // if no, then it must be a single point (icon, label)
-		
+
 			if (location.hasIcon()) {
 				marker = this.makeMarker(location, coords[0]);
-			} 
-			
+			}
+
 		}
 
-		// add tooltip to marker if applicable
-		if (location.hasLabel()) {
-			marker.bindTooltip(location.name, this.getLocationLabel(location));
+		if (polygonIcon != null){
+			markers = [marker, polygonIcon];
+		} else {
+			markers = [marker];
 		}
-
-		marker.bindPopup("popupContent", {keepInView : true});
-
-		markers = [marker];
 
 		return markers;
 	}
@@ -658,6 +642,13 @@ export default class Gamemap {
 
 		let marker = L.marker(coords, {icon: locationIcon});
 
+		// add tooltip to marker if applicable
+		if (location.hasLabel()) {
+			marker.bindTooltip(location.name, this.getLocationLabel(location));
+		}
+
+		marker.bindPopup("popupContent", {keepInView : true});
+
 		return marker;
 	}
 
@@ -671,12 +662,12 @@ export default class Gamemap {
 	}
 
 	/*================================================
-						  Utility 
+						  Utility
 	================================================*/
 
 	/**
 	 * Gets width and height of the full map image.
-	 * @param world - 
+	 * @param world -
 	 * @returns mapImageDimens - The width/height of the map image as an object
 	 * @example log(getMapImageDimensions().width);
 	 */
@@ -687,7 +678,7 @@ export default class Gamemap {
 		let height = null;
 
 		// check if actual map image dimensions (not tile dimensions) are provided
-		if (this.mapConfig.fullWidth != null && this.mapConfig.fullHeight != null) { 
+		if (this.mapConfig.fullWidth != null && this.mapConfig.fullHeight != null) {
 			width = this.mapConfig.fullWidth;
 			height = this.mapConfig.fullHeight;
 		} else if (world.numTilesX == world.numTilesY) { // if the map is a square (1:1)
@@ -704,7 +695,7 @@ export default class Gamemap {
 		return dimens;
 	}
 
-	/** 
+	/**
 	 * Convert leaflet LatLongs to XY / normalised coordinates.
 	 * @param {Object} latLng - the leaflet coordinate object
 	 */
@@ -733,15 +724,14 @@ export default class Gamemap {
 		// return point object for coords
 		return coords;
 	}
-	
-	/** 
+
+	/**
 	 * Convert XY coordinates to leaflet's  LatLongs.
 	 * @param {Object} coords - the XY coordinate object
 	 */
 	toLatLng(coords) {
 
 		let latLng;
-
 
 		// are we being given a coord object?
 		if (coords.x != null) {
@@ -783,10 +773,10 @@ export default class Gamemap {
 
 
 	/*================================================
-						  Events 
+						  Events
 	================================================*/
 
-	createMapEvents() {
+	bindMapEvents() {
 
 		map.on('resize moveend zoomend', function() {
 			self.updateMapState();
@@ -802,7 +792,7 @@ export default class Gamemap {
 			if (self.getMapState().world.parentID != null && self.getMapState().world.parentID != -1 ) {
 				let parentID = self.getMapState().world.parentID;
 				self.gotoWorld(parentID);
-			} 
+			}
 		})
 
 		map.on("zoom", function(e){
@@ -838,8 +828,8 @@ export default class Gamemap {
 				marker.getPopup().closePopup();
 
 				// TODO: show edit menu for this marker.location
-		
-			} else { 
+
+			} else {
 				let location = marker.location;
 				if (location != null){
 					if (location.destinationID < 0) { // is location destination a worldID
@@ -878,7 +868,7 @@ export default class Gamemap {
 		});
 
 		// on marker deselected
-		marker.on("mouseout", function () { 
+		marker.on("mouseout", function () {
 			self.clearTooltips();
 
 			if (location.isPolygon()){
@@ -896,7 +886,7 @@ export default class Gamemap {
 
 			let latLngs = (location.isPolygon() ) ? marker.getCenter() : marker.getLatLng();
 
-			let tooltip = L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
+			L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
 
 			if (location.isPolygon()){
 				this.setStyle({
@@ -913,8 +903,6 @@ export default class Gamemap {
 			let ctrl = event.originalEvent.ctrlKey; // popup
 			self.onMarkerClicked(this, shift, ctrl);
 		});
-
-
 
 	}
 
@@ -944,7 +932,7 @@ export default class Gamemap {
 
 
 	/*================================================
-						  General 
+						  General
 	================================================*/
 
 	isHiddenLocsShown() {
@@ -953,7 +941,7 @@ export default class Gamemap {
 		} else {
 			return this.defaultShowHidden;
 		}
-		
+
 	}
 
 	hasCenterOnURLParam(){
@@ -964,16 +952,16 @@ export default class Gamemap {
 
 		if (!(this.currentWorldID in this.mapWorlds)) {
 			return "";
-		} 
+		}
 
 		let wikiPage = this.mapWorlds[this.currentWorldID].wikiPage;
 		if (wikiPage == null || wikiPage == '') wikiPage = this.mapWorlds[this.currentWorldID].displayName;
-	
+
 		let namespace = '';
 		if (this.mapConfig.wikiNamespace != null && this.mapConfig.wikiNamespace != '') namespace = this.mapConfig.wikiNamespace + ':';
-	
-		wikiPage = encodeURIComponent (wikiPage);
-	
+
+		wikiPage = encodeURIComponent(wikiPage);
+
 		return this.mapConfig.wikiURL + namespace + wikiPage;
 
 	}
@@ -1009,12 +997,12 @@ export default class Gamemap {
 
 			if (data.canEdit != null) {
 				self.editingEnabled = data.canEdit;
-			} 
+			}
 
 			if (self.mapCallbacks != null) {
 				self.mapCallbacks.onPermissionsLoaded(self.isMapEditingEnabled());
 			}
-			
+
 		});
 
 	}
