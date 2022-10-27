@@ -87,7 +87,6 @@ export default class Gamemap {
 			zoomSnap: mapConfig.enableZoomSnap,
 			zoomDelta: mapConfig.zoomStep,
 			zoomControl: false, // hide leaflet zoom control (we have our own)
-			doubleTouchDragZoom: Utils.isMobileDevice(), // enable double touch drag zoom on mobile only
 			boxZoom: false, // disable box zoom
 			doubleClickZoom: false, // disable double click to zoom
 			scrollWheelZoom: false, // disable original zoom function
