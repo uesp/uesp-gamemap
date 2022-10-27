@@ -463,7 +463,6 @@ export default class Gamemap {
 			this.markerLayer.remove();
 		}
 
-		// TODO: this is wiping alliance base icons off the map
 		map.eachLayer((layer) => {
 			if (layer._tiles == null) { //remove anything that is not a tile
 				layer.remove();
@@ -544,6 +543,11 @@ export default class Gamemap {
 						// bind event listeners to marker
 						locationMarkers.push(marker);
 						this.bindMarkerEvents(marker, location)
+
+						// add label to marker if applicable
+						if (location.hasLabel()) {
+							marker.bindTooltip(location.name, this.getLocationLabel(location));
+						}
 					});
 				}
 			});
@@ -636,12 +640,6 @@ export default class Gamemap {
 		});
 
 		let marker = L.marker(coords, {icon: locationIcon});
-
-		// add label to marker if applicable
-		if (location.hasLabel() && location.coords.length == coords.length) {
-			marker.bindTooltip(location.name, this.getLocationLabel(location));
-		}
-
 		marker.bindPopup("popupContent", {keepInView : true});
 
 		return marker;
