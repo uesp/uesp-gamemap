@@ -90,8 +90,14 @@ export default class Location {
 				this.displayData.hover = this.displayData;
 			}
 
-			this.style.opacity = this.displayData.fillStyle.replace(/^.*,(.+)\)/,'$1');
-			this.style.hover.opacity = this.displayData.hover.fillStyle.replace(/^.*,(.+)\)/,'$1');
+			this.style.lineWidth = this.displayData.lineWidth;
+			this.style.hover.lineWidth = this.displayData.hover.lineWidth;
+
+			this.style.fillOpacity = this.displayData.fillStyle.replace(/^.*,(.+)\)/,'$1');
+			this.style.hover.fillOpacity = this.displayData.hover.fillStyle.replace(/^.*,(.+)\)/,'$1');
+
+			this.style.strokeOpacity = this.displayData.strokeStyle.replace(/^.*,(.+)\)/,'$1');
+			this.style.hover.strokeOpacity = this.displayData.hover.strokeStyle.replace(/^.*,(.+)\)/,'$1');
 
 			this.style.fillColour = Utils.RGBAtoHex(this.displayData.fillStyle);
 			this.style.hover.fillColour = Utils.RGBAtoHex(this.displayData.hover.fillStyle);

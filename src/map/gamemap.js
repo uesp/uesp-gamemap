@@ -589,12 +589,12 @@ export default class Gamemap {
 
 			let options = {
 				noClip: true,
-				color: location.style.strokeColour,
-				fillColor: location.style.fillColour,
-				opacity: location.style.opacity,
-				fillOpacity: location.style.opacity,
 				smoothFactor: 2,
-				weight: (location.displayData.lineWidth || 0),
+				fillColor: location.style.fillColour,
+				color: location.style.strokeColour,
+				opacity: location.style.strokeOpacity,
+				fillOpacity: location.style.fillOpacity,
+				weight: location.style.lineWidth,
 			}
 
 			if (location.locType == Constants.LOCTYPES.AREA) {
@@ -608,7 +608,9 @@ export default class Gamemap {
 			}
 
 			if (location.locType == Constants.LOCTYPES.PATH) {
+				log(location);
 				marker = new L.polyline(coords, options);
+				log(marker);
 			}
 
 
@@ -863,12 +865,15 @@ export default class Gamemap {
 		// on marker deselected
 		marker.on("mouseout", function () {
 			self.clearTooltips();
+			let isPolygon = marker.location.isPolygon() && !(marker.location.hasIcon() && marker._path != null);
 
-			if (location.isPolygon()){
+			if (isPolygon){
 				this.setStyle({
 					fillColor: location.style.fillColour,
-					opacity: location.style.opacity,
-					fillOpacity: location.style.opacity,
+					color: location.style.strokeColour,
+					opacity: location.style.strokeOpacity,
+					fillOpacity: location.style.fillOpacity,
+					weight: location.style.lineWidth,
 				});
 			}
 		});
@@ -876,15 +881,19 @@ export default class Gamemap {
 		// on marker hovered over
 		marker.on('mouseover', function () {
 
-			let latLngs = (location.isPolygon() ) ? marker.getCenter() : marker.getLatLng();
+			let isPolygon = location.isPolygon() && !(location.hasIcon() && marker._path != null);
+			let latLngs = (isPolygon ) ? marker.getCenter() : marker.getLatLng();
+
 
 			L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
 
-			if (location.isPolygon()){
+			if (isPolygon){
 				this.setStyle({
 					fillColor: location.style.hover.fillColour,
-					opacity: location.style.hover.opacity,
-					fillOpacity: location.style.hover.opacity,
+					color: location.style.hover.strokeColour,
+					opacity: location.style.hover.strokeOpacity,
+					fillOpacity: location.style.hover.fillOpacity,
+					weight: location.style.hover.lineWidth,
 				});
 			}
 		});
