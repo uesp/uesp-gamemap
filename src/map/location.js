@@ -128,6 +128,38 @@ export default class Location {
 		return new Point(x, y);
 	}
 
+	getTooltipContent() {
+		let content = "";
+
+		if (this.wikiPage != "" && this.name != this.wikiPage) {
+			content = this.name + "<div class='tooltip-desc'>" + this.description + "<br/>" + this.wikiPage + "</div>";
+		} else {
+			content = this.name + "<div class='tooltip-desc'>" + this.description + "</div>";
+		}
+
+		return content;
+	}
+
+	isPolygon(){
+		return this.coords.length > 1 && !this.hasIcon();
+	}
+
+	removePolygon() {
+		this.coords = this.coords[0];
+	}
+
+	hasIcon(){
+		return (this.icon != null)
+	}
+
+	hasLabel(){
+		return (this.displayData.labelPos != null && this.displayData.labelPos >= 1 && this.name != "");
+	}
+
+	isLabel(){
+		return (!this.hasIcon && !this.isPolygonal && this.hasLabel);
+	}
+
 	getLabelOffsets(labelPos) {
 
 		switch (labelPos) {
@@ -167,35 +199,6 @@ export default class Location {
 				this.labelDirection = "right";
 				break;
 		}
-	}
-
-
-	getTooltipContent() {
-		let content = "";
-
-		if (this.wikiPage != "" && this.name != this.wikiPage) {
-			content = this.name + "<div class='tooltip-desc'>" + this.description + "<br/>" + this.wikiPage + "</div>";
-		} else {
-			content = this.name + "<div class='tooltip-desc'>" + this.description + "</div>";
-		}
-
-		return content;
-	}
-
-	isPolygon(){
-		return this.coords.length > 1;
-	}
-
-	hasIcon(){
-		return (this.icon != null)
-	}
-
-	hasLabel(){
-		return (this.displayData.labelPos != null && this.displayData.labelPos >= 1 && this.name != "");
-	}
-
-	isLabel(){
-		return (!this.hasIcon && !this.isPolygonal && this.hasLabel);
 	}
 
 }

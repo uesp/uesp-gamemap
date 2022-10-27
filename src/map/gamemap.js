@@ -549,7 +549,6 @@ export default class Gamemap {
 			});
 		}
 
-		this.clearLocations();
 		this.markerLayer = new L.layerGroup(locationMarkers);
 
 		// add markers to map
@@ -599,8 +598,6 @@ export default class Gamemap {
 
 				if (location.hasIcon()){
 					marker.addTo(map);
-					log(marker.getCenter());
-					//location.coords = [marker.getCenter()];
 					polygonIcon = this.makeMarker(location, marker.getCenter());
 					marker.remove();
 				}
@@ -609,7 +606,6 @@ export default class Gamemap {
 			if (location.locType == Constants.LOCTYPES.PATH) {
 				marker = new L.polyline(coords, options);
 			}
-
 
 
 		} else { // if no, then it must be a single point (icon, label)
@@ -641,8 +637,8 @@ export default class Gamemap {
 
 		let marker = L.marker(coords, {icon: locationIcon});
 
-		// add tooltip to marker if applicable
-		if (location.hasLabel()) {
+		// add label to marker if applicable
+		if (location.hasLabel() && location.coords.length == coords.length) {
 			marker.bindTooltip(location.name, this.getLocationLabel(location));
 		}
 
@@ -879,7 +875,6 @@ export default class Gamemap {
 			}
 		});
 
-
 		// on marker hovered over
 		marker.on('mouseover', function () {
 
@@ -1023,8 +1018,6 @@ export default class Gamemap {
 		}
 	}
 
-
-
 	getCurrentZoom() {
 		return map.getZoom();
 	}
@@ -1111,14 +1104,6 @@ export default class Gamemap {
 
 // 	return new Position(xPos, yPos);
 // }
-
-// getMapRootBounds() {
-// 	let leftTop     = this.convertTileToGamePos(this.startTileX, this.startTileY);
-// 	let rightBottom = this.convertTileToGamePos(this.startTileX + this.mapConfig.numTilesX, this.startTileY + this.mapConfig.numTilesY);
-
-// 	return new Bounds(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y);
-// }
-
 
 // uesp.gamemap.Map.prototype.convertGameToPixelSize = function(width, height)
 // {
@@ -1739,13 +1724,6 @@ export default class Gamemap {
 // 	{
 // 		if (this.locations[key].locType >= Constants.LOCTYPE_PATH) this.locations[key].updatePathSize();
 // 	}
-// }
-
-
-// uesp.gamemap.Map.prototype.updateMap = function()
-// {
-// 	this.updateLocations();
-// 	this.loadMapTiles();
 // }
 
 // uesp.gamemap.Map.prototype.updateLocationId = function(oldId, newId)
