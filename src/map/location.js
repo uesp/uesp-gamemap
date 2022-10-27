@@ -141,7 +141,7 @@ export default class Location {
 	}
 
 	isPolygon(){
-		return this.coords.length > 1 && !this.hasIcon();
+		return this.coords.length > 1;
 	}
 
 	removePolygon() {

@@ -498,7 +498,7 @@ export default class Gamemap {
 
 				if (this.markerLayer.hasLayer(marker)) {
 					marker.addTo(map);
-					if (marker.location.hasLabel()) {
+					if (marker.location.hasLabel() && !(marker.location.hasIcon() && marker._path != null)) {
 						marker.bindTooltip(marker.location.name, this.getLocationLabel(marker.location));
 					}
 				}
@@ -545,7 +545,7 @@ export default class Gamemap {
 						this.bindMarkerEvents(marker, location)
 
 						// add label to marker if applicable
-						if (location.hasLabel()) {
+						if (location.hasLabel() && !(location.hasIcon() && marker._path != null)) {
 							marker.bindTooltip(location.name, this.getLocationLabel(location));
 						}
 					});
