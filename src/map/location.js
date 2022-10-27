@@ -138,7 +138,7 @@ export default class Location {
 		let content = "";
 
 		if (this.wikiPage != "" && this.name != this.wikiPage) {
-			content = this.name + "<div class='tooltip-desc'>" + this.description + "<br/>" + this.wikiPage + "</div>";
+			content = this.name + "<div class='tooltip-desc'>" + this.description + this.wikiPage + "</div>";
 		} else {
 			content = this.name + "<div class='tooltip-desc'>" + this.description + "</div>";
 		}
