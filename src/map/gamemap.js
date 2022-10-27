@@ -865,7 +865,7 @@ export default class Gamemap {
 		// on marker deselected
 		marker.on("mouseout", function () {
 			self.clearTooltips();
-			let isPolygon = marker.location.isPolygon() && !(marker.location.hasIcon() && marker._path != null);
+			let isPolygon = marker.location.isPolygon() && marker._path != null;
 
 			if (isPolygon){
 				this.setStyle({
@@ -881,7 +881,7 @@ export default class Gamemap {
 		// on marker hovered over
 		marker.on('mouseover', function () {
 
-			let isPolygon = location.isPolygon() && !(location.hasIcon() && marker._path != null);
+			let isPolygon = marker.location.isPolygon() && marker._path != null;
 			let latLngs = (isPolygon ) ? marker.getCenter() : marker.getLatLng();
 
 
