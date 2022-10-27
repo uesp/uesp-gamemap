@@ -146,6 +146,44 @@ export default class Location {
 		return content;
 	}
 
+	getPopupContent() {
+
+		let popupContent = "<div class='gmMapPopupTitle'><a {wikiLink}>" + this.name + "</a></div>" +
+							"<div class='gmMapPopupPos'>Coords: {this.x}, {y}</div>" +
+							"<div class='gmMapPopupPos'>Internal ID: {id}</div>" +
+							"<div class='gmMapPopupDesc'>" + this.description + "</div>";
+
+		if (this.destinationID != 0) {
+			popupContent += "<div class='gmMapPopupPos'>Destination ID: " + this.destinationID + "</div>";
+		}
+
+
+		//if (this.useEditPopup) return this.updateEditPopup();
+
+		// if (this.parentMap.canEdit()) {
+		// 	popupContent += "<div class='gmMapPopupEditLabel'>Edit...</div>";
+		// }
+
+		// if (this.parentMap.canEdit())
+		// {
+		// 	$('#' + this.popupId + ' .gmMapPopupEditLabel').click(function(event) {
+		// 		return self.onClickLocationEditPopup(event);
+		// 	});
+		// }
+
+		// $('#' + this.popupId + ' .gmMapPopupClose').click(function(event) {
+		// 	self.onClosePopup(event);
+		// });
+
+		return popupContent;
+
+	}
+
+	getEditPopupContent() {
+
+	}
+
+
 	isPolygon(){
 		return this.coords.length > 1;
 	}
@@ -209,21 +247,6 @@ export default class Location {
 
 }
 
-
-
-
-
-
-// uesp.gamemap.Location.prototype.mergeFromJson = function(data)
-// {
-// 	uesp.gamemap.mergeObjects(this, data);
-
-// 	if (!uesp.gamemap.isNullorUndefined(data.displayData))
-// 	{
-// 		this.displayData = jQuery.parseJSON( this.displayData );
-// 	}
-
-// }
 
 // uesp.gamemap.Location.prototype.onClickLocationEditPopup = function(event)
 // {
@@ -905,91 +928,6 @@ export default class Location {
 // }
 
 
-// uesp.gamemap.Location.prototype.updatePopup = function ()
-// {
-
-// 	if (this.useEditPopup) return this.updateEditPopup();
-
-// 	var popupDiv;
-// 	var popupContent =  "<div class='gmMapPopupClose'><img src='images/cancelicon.png' width='12' height='12' /></div>" +
-// 						"<div class='gmMapPopupTitle'><a {wikiLink}>{name}</a></div>" +
-// 						"<div class='gmMapPopupPos'>Location: {x}, {y}</div>" +
-// 						"<div class='gmMapPopupPos'>Internal ID: {id}</div>" +
-// 						"<div class='gmMapPopupDesc'>{description}</div>";
-
-// 	this.wikiLink = this.createWikiLinkHref();
-
-// 	if (this.popupElement == null)
-// 	{
-// 		this.popupId = "locPopup" + this.getNextPopupId();
-
-// 		this.popupElement = $('<div />').addClass('gmMapPopupRoot')
-// 				.attr('id', this.popupId)
-// 				.appendTo(this.parentMap.mapRoot);
-
-// 		popupDiv = $('<div />').addClass('gmMapPopup')
-// 				.appendTo(this.popupElement);
-
-// 		$('<div />').addClass('gmMapPopupDownArrow')
-// 				.appendTo(this.popupElement);
-// 	}
-// 	else
-// 	{
-// 		popupDiv = this.popupElement.children()[0];
-// 	}
-
-// 	if (this.destinationId != 0) popupContent += "<div class='gmMapPopupPos'>Destination ID: {destinationId}</div>";
-
-// 	if (this.parentMap.canEdit())
-// 	{
-// 		popupContent += "<div class='gmMapPopupEditLabel'>Edit...</div>";
-// 	}
-
-// 	popupHtml = uesp.template(popupContent, this);
-// 	$(popupDiv).html(popupHtml);
-
-// 	var self = this;
-
-// 	if (this.parentMap.canEdit())
-// 	{
-// 		$('#' + this.popupId + ' .gmMapPopupEditLabel').click(function(event) {
-// 			return self.onClickLocationEditPopup(event);
-// 		});
-// 	}
-
-// 	$('#' + this.popupId + ' .gmMapPopupClose').click(function(event) {
-// 		self.onClosePopup(event);
-// 	});
-
-// 	if (this.destinationId != 0)
-// 	{
-// 		if (this.destinationId < 0)
-// 		{
-// 		}
-// 		else
-// 		{
-// 			if (!this.parentMap.hasLocation(this.destinationId)) this.parentMap.retrieveLocation(this.destinationId);
-// 		}
-
-// 		var self = this;
-
-// 		newDiv = $('<div />').addClass('gmMapPopupDesc')
-// 				.appendTo(popupDiv);
-
-// 		$('<a></a>').attr('href', '#')
-// 				.html('Jump To Destination')
-// 				.click(function(event) {
-// 					self.onJumpToDestination();
-// 					event.preventDefault();
-// 					return false;
-// 				})
-// 				.appendTo(newDiv);
-
-// 	}
-
-// 	this.updatePopupOffset();
-// }
-
 
 // uesp.gamemap.Location.prototype.updateLabelOffset = function ()
 // {
@@ -1376,14 +1314,3 @@ export default class Location {
 // 	if (iconType in this.parentMap.mapOptions.iconTypeMap) return this.parentMap.mapOptions.iconTypeMap[iconType];
 // 	return iconType.toString();
 // }
-
-
-// uesp.gamemap.createLocationFromJson = function(data, parentMap)
-// {
-// 	var newLocation = new uesp.gamemap.Location(parentMap);
-// 	newLocation.mergeFromJson(data);
-// 	return newLocation;
-// }
-
-
-

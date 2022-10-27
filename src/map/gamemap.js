@@ -642,7 +642,7 @@ export default class Gamemap {
 		});
 
 		let marker = L.marker(coords, {icon: locationIcon});
-		marker.bindPopup("popupContent", {keepInView : true});
+		marker.bindPopup(location.getPopupContent(), {keepInView : true});
 
 		return marker;
 	}

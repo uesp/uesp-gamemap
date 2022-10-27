@@ -3,7 +3,7 @@
 ================================================*/
 
 /* prevent icons being selectable */
-.material-icons { 
+.material-icons {
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -92,7 +92,7 @@ html {
 	[class*='onlymobile'] {
 		display: inline-block !important;
 	}
-	
+
 	.icon_bar_responsive {
 		flex-direction: column !important;
 		top: calc(var(--padding_minimum) + var(--appbar_dimen) + var(--padding_small) + +8px) !important;
@@ -213,13 +213,13 @@ button[class*="icon_button"] {
 	min-width: var(--appbar_dimen);
 	text-align: center;
 	vertical-align: middle;
-	line-height: 100%;	
+	line-height: 100%;
 }
 
 button[class*="icon_button"] i {
 	margin: 5px;
 }
-  
+
 button[class*="icon_button"]:hover {
 	background: var(--bubble_selection);
 }
@@ -227,12 +227,12 @@ button[class*="icon_button"]:hover {
 button[class*="icon_button"]:active {
 	transform: scale(0.94);
 }
-  
+
 button[class*="bgless"]:hover {
 	background: var(--divider);
 	color: black;
 }
-  
+
 button[class*="bgless"] {
 	background: 0;
 	color: black;
@@ -254,7 +254,7 @@ b[class^="icon_button_label"] {
 #btn_location_switcher{
 	border-radius: var(--padding_minimum);
 	color: var(--highlight_light);
-	
+
 }
 
 #btn_location_switcher #dropdown_icon{
@@ -570,7 +570,7 @@ li div.collapsible-header i {
 	font-size: 0.9em;
 }
 
-.leaflet-marker-icon{ 
+.leaflet-marker-icon{
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -581,13 +581,7 @@ li div.collapsible-header i {
 				  Pop-up Windows
 ================================================*/
 
-.gmMapPopupRoot {
-	display: block;
-	position: absolute;
-	z-index: 30;
-}
-
-.gmMapPopup {
+.popup {
 	display: block;
 	width: 210px;
 	height: 100px;
@@ -613,23 +607,6 @@ li div.collapsible-header i {
 	z-index: 30;
 	padding: 4px;
 	border-radius: 5px;
-	box-shadow: 0px 0px 2px 2px var(--shadow);
-}
-
-.gmMapPopupClose {
-	position: absolute;
-	top: 6px;
-	right: 7px;
-	cursor: pointer;
-	background-color: rgb(184, 22, 22);
-}
-
-.gmMapEditPopup .gmMapPopupClose {
-	border: 1px solid var(--selection);
-}
-
-.gmMapPopupClose:hover {
-	background-color: rgb(184, 22, 22);
 	box-shadow: 0px 0px 2px 2px var(--shadow);
 }
 
@@ -1030,7 +1007,7 @@ input[type=checkbox].gmMapEditPopupInput {
 ================================================*/
 
 /* get all divs beginning with "icon_bar" */
-div[class^="icon_bar"] { 
+div[class^="icon_bar"] {
 	position: absolute;
 	z-index: var(--zindex_floating);
 	display: flex;
@@ -1109,34 +1086,4 @@ div[class^="icon_bar"] {
 	vertical-align: middle;
 }
 
-
-/*================================================
-				Location label
-================================================*/
-
-#location_label_root {
-	position: absolute;
-	color: var(--text_on_secondary);
-	width: auto;
-	text-align: center;
-	vertical-align: middle;
-	top: calc( 5% + var(--appbar_dimen) + var(--padding_large));
-	left: 50%;
-	transform: translate(-50%, -50%);
-	z-index: 999999;
-	pointer-events: none;
-	font-weight: bolder;
-	text-shadow: 0px 0px 10px var(--background);
-}
-
-#location_label_title {
-	font-size: xx-large;
-	margin: 0 !important;
-	margin-bottom: 0.1em !important;
-}
-
-#location_label_description {
-	margin: 0 !important;
-	font-size: medium;
-}
 
