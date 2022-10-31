@@ -57,6 +57,8 @@ $(document).ready(function() {
 
 							mapConfig = mergedMapConfig;
 
+							// TODO: check if current directory has a css file, if so make customcss= true in the map config
+
 							// load map
 							loadGamemap(mergedMapConfig);
 						}

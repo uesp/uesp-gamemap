@@ -853,7 +853,7 @@ export default class Gamemap {
 
 		}
 
-		let isJumpTo = location != null && location.destinationID != 0;
+		let isJumpTo = marker.location != null && marker.location.destinationID != 0 && ((marker.location.destinationID < 0 || marker.location.destinationID > 0));
 
 		if (isJumpTo && !shift && !ctrl) { // is location a link to a worldspace/location
 
@@ -886,9 +886,10 @@ export default class Gamemap {
 		// if normally clicked or pressing ctrl, show popup
 		if (!shift || ctrl ) {
 
-			if (isJumpTo && ctrl) {
-				openPopup(marker);
-			} else if (!isJumpTo) {
+
+			if (isJumpTo && !ctrl){
+				// do nothing
+			} else {
 				openPopup(marker);
 			}
 

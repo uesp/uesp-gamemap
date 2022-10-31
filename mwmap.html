@@ -89,10 +89,10 @@
 				111: "Propylon",
 				112: "Ruins",
 		};
-		
+
 		var g_GameMap = null;
 		var g_MapState = null;
-		
+
 		var g_DefaultMapOptions = {
 				getMapTileFunction : getDefaultMapTile,
 				wikiUrl: "//en.uesp.net/wiki/",
@@ -120,7 +120,7 @@
 				defaultIconWidth: 16,
 				defaultIconHeight: 30,
 				canvasBGColor: "#7076AA",
-				
+
 				gridStartX: -278528,
 				gridStartY: -221184,
 				gridStopX: 245760,
@@ -134,54 +134,54 @@
 				gridLabelOffsetY: -8192,
 				gridOffsetPowerY: 2,
 				gridOffsetY: 37,
-				
+
 				// TODO: Permissions?
 				// <!--OFFLINE_OPTIONS-->
 		};
-		
-		
+
+
 		function getDefaultMapTile(xPos, yPos, zoom, worldName, displayState)
 		{
 			return "//maps.uesp.net/mwmap/zoom" + zoom + "/vvardenfell-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
 		}
-				
-				
+
+
 		function getDefaultMapTile_Offline(xPos, yPos, zoom, worldName)
 		{
 				//TODO
 			return "/zoom" + zoom + "/vvardenfell-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
 		}
 
-		
+
 		function onWorldLoad()
 		{
 			if (this.hasCenterOnParam()) return;
-			
+
 			defaultMapState = new uesp.gamemap.MapState();
-			
+
 			defaultMapState.worldId = 1;
 			defaultMapState.zoomLevel = 12;
 			defaultMapState.gamePos.x = 110000;
 			defaultMapState.gamePos.y = -20000;
 			defaultMapState.grid = false;
 			defaultMapState.cellResource = "";
-			
+
 			mapState = this.getMapStateFromQuery(defaultMapState);
 			this.setMapState(mapState);
 		}
-		
-		
+
+
 		if (g_DefaultMapOptions.isOffline)
 		{
 			g_DefaultMapOptions.getMapTileFunction = getDefaultMapTile_Offline;
 			g_DefaultMapOptions.missingMapTile = "blacknulltile.jpg";
 		}
-		
-		
+
+
 		function onPermLoad()
 		{
 			canEdit = this.canEdit() && !uesp.isMobileDevice();
-			
+
 			if (canEdit)
 			{
 				$("#gmMapEditButtons").show();
@@ -199,58 +199,58 @@
 				$("#editWorldButton").hide();
 				$("#showRecentChangeButton").hide();
 			}
-			
+
 			updateMenuBarHeight();
 		}
-		
-		
+
+
 		$(window).resize( function(e) {
 			updateMenuBarHeight();
 		});
-		
-		
+
+
 		function updateMenuBarHeight()
 		{
 			var menuBar = $("#gmMenuBar");
 			var map = $('#gmMap');
-			
+
 			var height = menuBar.height();
 			map.css('top', '' + height + 'px');
 		}
-		
+
 		$( document ).ready( function()
 		{
 			userEvents = {
 				onMapWorldsLoaded   : onWorldLoad,
 				onPermissionsLoaded : onPermLoad,
 			};
-			
+
 			g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
-			
+
 			$("#gmMapCellGrid").bind("touchstart click", { self: g_GameMap }, g_GameMap.onCellGridClick);
-			
+
 			updateMenuBarHeight();
 		});
-		
-		
+
+
 	</script>
 </head>
 <body>
 
 <div id="gmMenuBar">
 		<div id="gmTitle">UESP:Morrowind Map</div>
-		
+
 		<ol class="gmMenuLinks">
 			<li class="gmMenuItem gmNoMobile"><a title="The permanent and complete link for the current map view" href="" id="gmMapLink">Link</a></li>
 			<li class="gmMenuItem gmNoMobile"><a title="Reset the map state" href="" id="gmMapReset">Reset</a></li>
-			<!-- 
+			<!--
 			<li class="gmMenuItem gmNoMobile"><div title="Show the cell grid line boundaries and coordinates" id="gmMapCellGrid">Show Cell Grid</div></li>
 			 -->
 		</ol>
 		<div id="gmMapListRoot" tabindex="0" style="display:none;">
 			<!--OFFLINE_GROUPLIST-->
 		</div>
-		
+
 		<div id="gmMenuLinksRight">
 			<ol class="gmMenuLinks">
 				<li class="gmMenuItem gmNoMobile" onclick="g_GameMap.showMapKey();" ontouchstart="g_GameMap.showMapKey();" id="gmMapShowKey">Map Key</li>
@@ -259,7 +259,7 @@
 				<li class="gmMenuItem gmNoMobile"><a href="//www.uesp.net/wiki/Main_Page" id="gmMapHome">UESP Home</a></li>
 			</ol>
 		</div>
-		
+
 		<div id="gmMapEditButtons" style="display:none;">
 			<button id="editWorldButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onEditWorld();" ontouchstart="g_GameMap.onEditWorld();">Edit World</button>
 			<button id="addLocationButton" class="gmNoMobile" style="display:none;" onclick="g_GameMap.onAddLocationStart();"  ontouchstart="g_GameMap.onAddLocationStart();">Add Location</button>
@@ -280,7 +280,7 @@ if (!g_DefaultMapOptions.isOffline)
 	var _gaq = _gaq || [];
 	_gaq.push(['_setAccount', 'UA-1386039-6']);
 	_gaq.push(['_trackPageview']);
-	
+
 	(function() {
 		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
