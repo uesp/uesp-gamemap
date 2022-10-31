@@ -137,15 +137,14 @@ export default class Location {
 	getTooltipContent() {
 		let content = this.name;
 
-		if (this.isClickable()){
-			log("is clickable");
-			content += "<i class='tiny material-icons'>open_in_browser</i>";
-		}
+		if (this.isClickable()){ content += "  <i class='tiny material-icons'>open_in_browser</i>"; }
+
+		content += "<div class='tooltip-desc'>";
 
 		if (this.wikiPage != "" && this.name != this.wikiPage) {
-			content += "<div class='tooltip-desc'>" + this.description + this.wikiPage + "</div>";
+			content += this.description + this.wikiPage + "</div>";
 		} else {
-			content += "<div class='tooltip-desc'>" + this.description + "</div>";
+			content += this.description + "</div>";
 		}
 
 		return content;
