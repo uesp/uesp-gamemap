@@ -148,13 +148,17 @@ export default class Location {
 
 	getPopupContent() {
 
-		let popupContent = "<div class='gmMapPopupTitle'><a {wikiLink}>" + this.name + "</a></div>" +
-							"<div class='gmMapPopupPos'>Coords: {this.x}, {y}</div>" +
-							"<div class='gmMapPopupPos'>Internal ID: {id}</div>" +
-							"<div class='gmMapPopupDesc'>" + this.description + "</div>";
+		let popupContent = "<div class='popupTitle'><a {wikiLink}>" + this.name + "</a></div>" +
+							"<div class='popupDesc'>" + this.description + "</div>" +
+							"<hr/>" +
+							"<div class='popupInfo'>Internal ID: " + this.id + "</div>";
 
-		if (this.destinationID != 0) {
-			popupContent += "<div class='gmMapPopupPos'>Destination ID: " + this.destinationID + "</div>";
+		if (this.coords.length == 1 ) {
+			popupContent += "<div class='popupInfo'>Coords: " + this.coords[0].x; + ", Y: " + this.coords[0].y + "</div>";
+		}
+
+		if (this.destinationID != null) {
+			popupContent += "<div class='popupInfo'>Destination ID: " + this.destinationID + "</div>";
 		}
 
 

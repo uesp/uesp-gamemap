@@ -56,7 +56,6 @@ export default class Gamemap {
 			this.mapWorlds = {};
 
 			// set up state bools
-			this.defaultShowHidden = false;
 			this.openPopupOnJump = false;
 			this.editingEnabled = false;
 
@@ -179,7 +178,7 @@ export default class Gamemap {
 		// get/set locations
 		if (mapState.world.locations == null) {
 			// get locations for this map
-			this.getLocations(mapState.world.id, mapState.zoomLevel);
+			this.getLocations(mapState.world.id);
 		} else {
 			//redraw locations from cache
 			this.redrawLocations(mapState.world.locations);
@@ -380,8 +379,8 @@ export default class Gamemap {
 	}
 
 	gotoWorld(worldID, coords) {
-		this.clearLocations();
 		$("#map_loading_bar").show();
+		this.clearLocations();
 		if (this.isWorldValid(worldID)) {
 			log("Going to world... " + worldID);
 			log(this.getWorldFromID(worldID));
@@ -405,7 +404,7 @@ export default class Gamemap {
 						Locations
 	================================================*/
 
-	getLocations(world, zoomLevel) {
+	getLocations(world) {
 
 		// check if we've been sent a world ID
 		if (world != null && !isNaN(world)){
@@ -419,9 +418,6 @@ export default class Gamemap {
 			log(world)
 			return;
 		}
-
-		// if we aren't given a zoom level, assume default mapconfig zoom level
-		if (zoomLevel == null) { zoomLevel = this.mapConfig.defaultZoomLevel; }
 
 		// generate api query
 		var queryParams = {};
@@ -457,7 +453,34 @@ export default class Gamemap {
 		});
 	}
 
-	clearLocations(){
+	getLocation(locationID, onLoadFunction) {
+		if (locationID > 0) {
+			let queryParams = {};
+			queryParams.action = "get_loc";
+			queryParams.locid  = locationID;
+			queryParams.db = this.mapConfig.dbPrefix;
+			if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
+
+
+			$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
+
+				log("Getting info for locationID: "+ locationID);
+				if (!data.isError && data != null && data.locations[0] != null) {
+					log("Got location info!");
+					log(data);
+					if (!(onLoadFunction == null) ) {
+						onLoadFunction.call(location, data);
+					}
+					} else {
+						log("LocationID " + locationID + " was invalid.");
+					}
+
+			});
+
+		}
+	}
+
+	clearLocations() {
 		if (this.markerLayer != null) {
 			this.markerLayer.clearLayers();
 			this.markerLayer.remove();
@@ -642,7 +665,6 @@ export default class Gamemap {
 		});
 
 		let marker = L.marker(coords, {icon: locationIcon});
-		marker.bindPopup(location.getPopupContent(), {keepInView : true});
 
 		return marker;
 	}
@@ -813,28 +835,54 @@ export default class Gamemap {
 
 	}
 
-	onMarkerClicked(marker, shift, ctrl){
+	onMarkerClicked(marker, shift, ctrl) {
 
-		if (ctrl) { // if ctrl pressed, always open popup for this location
-			marker.getPopup().togglePopup();
-		} else {
-			if (shift && self.isMapEditingEnabled()) { // if shift pressed, and can edit, show edit menu
+		function openPopup(marker) {
 
-				marker.getPopup().closePopup();
-
-				// TODO: show edit menu for this marker.location
-
+			// if marker doesn't have a popup yet, make one
+			if (marker.getPopup() == null) {
+				log("making popup");
+				marker.bindPopup(marker.location.getPopupContent(), {keepInView : true}).openPopup();
 			} else {
-				let location = marker.location;
-				if (location != null){
-					if (location.destinationID < 0) { // is location destination a worldID
-						this.gotoWorld((location.destinationID+"").slice(1));
-					} else { // it is a location ID
-						// TODO: alter getLocations to return worldID as well and goto there
-					}
-				}
+				marker.getPopup().openPopup();
 			}
 		}
+
+		let isJumpTo = location != null && location.destinationID != 0;
+
+		if (isJumpTo && !shift && !ctrl) { // is location a link to a worldspace/location
+
+			let location = marker.location;
+			if (location != null){
+				if (location.destinationID < 0) { // is location destination a worldID
+					this.gotoWorld((location.destinationID+"").slice(1));
+				} else { // it is a location ID
+					function onGetLocation(data) {
+						self.gotoWorld(data.locations[0].worldId);
+					}
+					this.getLocation(location.destinationID, onGetLocation);
+				}
+			}
+		} else {
+
+			if (shift) { // if shift pressed, and can edit, show edit menu
+
+				if (self.isMapEditingEnabled()){
+					M.toast({text: "TODO: Location edit popup"});
+					// TODO: show edit menu for this marker.location
+				} else {
+					M.toast({text: "Map editing not enabled!"});
+				}
+
+				if (marker.getPopup() != null) {
+					marker.getPopup().closePopup();
+				}
+
+			} else {
+				openPopup(marker);
+			}
+		}
+
 	}
 
 	bindMarkerEvents(marker, location) {
@@ -940,7 +988,7 @@ export default class Gamemap {
 		if (Utils.getURLParams().get("showhidden") === "true") {
 			return true;
 		} else {
-			return this.defaultShowHidden;
+			return false;
 		}
 
 	}
@@ -1646,36 +1694,6 @@ export default class Gamemap {
 // 	return true;
 // }
 
-
-
-
-// uesp.gamemap.Map.prototype.retrieveLocation = function(locId, onLoadFunction, eventData)
-// {
-// 	if (locId <= 0) return;
-
-// 	var self = this;
-// 	var queryParams = {};
-// 	queryParams.action = "get_loc";
-// 	queryParams.locid  = locId;
-// 	queryParams.db = this.mapConfig.dbPrefix;
-
-// 	if (this.isHiddenLocsShown()) queryParams.showhidden = 1;
-
-// 	if (this.mapConfig.isOffline)
-// 	{
-// 		setTimeout(	function() { ugmLoadOfflineLocation(self, queryParams, onLoadFunction, eventData); }, 10);
-// 	}
-// 	else
-// 	{
-// 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
-// 				self.onReceiveLocationData(data);
-// 				if ( !(onLoadFunction == null) ) onLoadFunction.call(self, eventData, data);
-// 			});
-// 	}
-
-// 	return true;
-
-// }
 
 
 // uesp.gamemap.Map.prototype.retrieveCenterOnLocation = function(world, locationName)

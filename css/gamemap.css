@@ -46,6 +46,11 @@ html {
 	width: 75%;
 }
 
+hr {
+	border: 0;
+	border-top: 2px solid var(--divider);
+}
+
 /*================================================
 					Accessibility
 ================================================*/
@@ -133,7 +138,6 @@ html {
 
 	/* text colours */
 	--text_loc_name: #33ff33;
-	--text_loc_disabled: #ff3333;
 	--text_link: rgba(138,90,68,1);
 	--text_on_primary: black;
 	--text_on_secondary: white;
@@ -578,21 +582,22 @@ li div.collapsible-header i {
 }
 
 /*================================================
-				  Pop-up Windows
+				 	 Pop-ups
 ================================================*/
 
-.popup {
+.leaflet-popup-content-wrapper {
 	display: block;
-	width: 210px;
-	height: 100px;
 	background-color: var(--surface);
 	border: none;
 	z-index: 30;
 	font-family: "Arial", sans-serif;
 	font-size: 13px;
 	padding: 4px;
-	border-radius: 5px;
 	box-shadow: 0px 0px 2px 2px var(--shadow);
+}
+
+.leaflet-popup-content {
+	margin: 13px var(--padding_minimum) 13px var(--padding_minimum);
 }
 
 
@@ -610,15 +615,22 @@ li div.collapsible-header i {
 	box-shadow: 0px 0px 2px 2px var(--shadow);
 }
 
-.gmMapPopupTitle {
-	font-weight: bold;
+.popupTitle {
+	font-weight: bolder;
 	font-size: 14px;
 }
 
-.gmMapPopupPos {
-	font-size: 9px;
-	padding-left: 10px;
+.popupDesc {
+	color: var(--text_on_primary);
+	font-size: 10px;
 }
+
+.popupInfo {
+	font-size: 9px;
+	color: var(--text_low_emphasis);
+}
+
+
 
 .gmMapPopupEditLabel {
 	margin-top: 10px;
@@ -633,10 +645,7 @@ li div.collapsible-header i {
 	background: var(--selection);
 }
 
-.gmMapPopupDesc {
-	font-size: 10px;
-	padding-left: 10px;
-}
+
 
 .gmMapPopupWikiPage {
 	font-size: 11px;
