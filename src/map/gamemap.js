@@ -853,7 +853,7 @@ export default class Gamemap {
 
 		}
 
-		let isJumpTo = marker.location != null && marker.location.destinationID != 0 && ((marker.location.destinationID < 0 || marker.location.destinationID > 0));
+		let isJumpTo = marker.location != null && marker.location.isClickable();
 
 		if (isJumpTo && !shift && !ctrl) { // is location a link to a worldspace/location
 

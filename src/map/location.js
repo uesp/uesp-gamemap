@@ -135,15 +135,18 @@ export default class Location {
 	}
 
 	getTooltipContent() {
-		let content = "";
+		let content = this.name;
 
-		if (this.wikiPage != "" && this.name != this.wikiPage) {
-			content = this.name + "<div class='tooltip-desc'>" + this.description + this.wikiPage + "</div>";
-		} else {
-			content = this.name + "<div class='tooltip-desc'>" + this.description + "</div>";
+		if (this.isClickable()){
+			log("is clickable");
+			content += "<i class='tiny material-icons'>open_in_browser</i>";
 		}
 
-		content += "<i class='tiny material-icons'>open_in_browser</i>";
+		if (this.wikiPage != "" && this.name != this.wikiPage) {
+			content += "<div class='tooltip-desc'>" + this.description + this.wikiPage + "</div>";
+		} else {
+			content += "<div class='tooltip-desc'>" + this.description + "</div>";
+		}
 
 		return content;
 	}
@@ -211,7 +214,7 @@ export default class Location {
 	}
 
 	isClickable() {
-		this.destinationID != 0 && ((this.destinationID < 0 || this.destinationID > 0));
+		return this.destinationID != 0 && ((this.destinationID < 0 || this.destinationID > 0));
 	}
 
 	getLabelOffsets(labelPos) {
