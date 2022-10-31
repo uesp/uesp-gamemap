@@ -1,12 +1,13 @@
 {
     // General map info
-    "mapTitle": "UESP Gamemap", 
+    "mapTitle": "UESP Gamemap",
     "wikiNamespace": "",
     "wikiURL": "",  // replace all of these when making new map config
     "tileURL" : "",
     "database" : "",
     "feedbackURL" : "https://github.com/uesp/uesp-gamemap/issues",
     "bgColour" : "#000000",
+    "customCSS" : false,
 
     // Map options
     "defaultZoomLevel" : 0,
@@ -17,12 +18,11 @@
     "zoomStep" : 0.50,
 
     // Map coordinate system info
-
     // 0: XY (Default)
     // 1: Normalised
     // 2: Worldspace
     "coordType" : 0,
-    
+
     "minX": 0,
     "maxX": 10000,
     "minY": 0,
@@ -42,9 +42,9 @@
     "minWorldID" : 50,
     "maxWorldID" : 20000,
     "customLocationList" : {
-        // curated map location list goes here... 
+        // curated map location list goes here...
     },
-    
+
     // Map icon info
     "iconPath": "",
     "missingIconPath" : "assets/icons/missing.png",
@@ -54,7 +54,7 @@
         // icon list goes here...
     },
 
-    // Map cell resource info    
+    // Map cell resource info
     "cellResourceStartX" : 0,
     "cellResourceStartY" : 0,
     "cellResourceStopX" : 0,
@@ -74,7 +74,7 @@
     "gridStartLabelZoom" : 10,
     "gridShowLabels" : true,
     "gridLabelOffsetX" : 0,
-    "gridLabelOffsetY" : 0,	
+    "gridLabelOffsetY" : 0,
     "gridStyle" : "yellow",
     "gridOffsetX" : 0,
     "gridOffsetY" : 0,

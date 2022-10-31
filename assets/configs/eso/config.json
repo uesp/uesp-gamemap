@@ -13,10 +13,8 @@
     "minZoomLevel" : 0,
     "maxZoomLevel" : 5,
     "zoomOffset" : 7,
-    "overheadZoneSelection" : true, // TODO: find a better name for this
 
     // Map coordinate system info
-
     // 0: XY (Default)
     // 1: Normalised
     // 2: Worldspace
@@ -33,7 +31,7 @@
     "numTilesX" : 8,
     "numTilesY" : 8,
     "tileSize" : 256,
-    
+
     // Map icon info
     "iconPath": "assets/icons/eso/",
     "missingIconPath" : "assets/icons/missing.png",
