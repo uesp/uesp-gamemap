@@ -869,18 +869,19 @@ export default class Gamemap {
 
 				if (self.isMapEditingEnabled()){
 					M.toast({text: "TODO: Location edit popup"});
-					// TODO: show edit menu for this marker.location
+
+					// TODO: alter the popup contents to be the edit one
 				} else {
 					M.toast({text: "Map editing not enabled!"});
 				}
 
-				if (marker.getPopup() != null) {
-					marker.getPopup().closePopup();
-				}
 
-			} else {
-				openPopup(marker);
 			}
+		}
+
+		// if normally clicked or pressing ctrl, show popup
+		if (!shift || ctrl) {
+			openPopup(marker);
 		}
 
 	}
