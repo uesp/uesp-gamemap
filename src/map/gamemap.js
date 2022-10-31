@@ -849,7 +849,7 @@ export default class Gamemap {
 
 			log("making popup");
 
-			L.popup(latlng, {content: marker.location.getPopupContent(), keepInView : true }).openOn(map);
+			L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
 
 		}
 
@@ -885,7 +885,6 @@ export default class Gamemap {
 
 		// if normally clicked or pressing ctrl, show popup
 		if (!shift || ctrl ) {
-
 
 			if (isJumpTo && !ctrl){
 				// do nothing

@@ -127,8 +127,8 @@ export default class Location {
 			y = (config.database == "eso") ? Math.abs((y - currentWorld.maxY) / maxRangeY) : (y - currentWorld.minY) / maxRangeY;
 
 			// transform coords to better fit power of two numbers of tiles
-			x = x * Utils.nextPowerOfTwo(numTiles) / numTiles;
-			y = y * Utils.nextPowerOfTwo(numTiles) / numTiles;
+			x = (x * Utils.nextPowerOfTwo(numTiles) / numTiles).toFixed(3);
+			y = (y * Utils.nextPowerOfTwo(numTiles) / numTiles).toFixed(3);
 		}
 
 		return new Point(x, y);
@@ -142,6 +142,8 @@ export default class Location {
 		} else {
 			content = this.name + "<div class='tooltip-desc'>" + this.description + "</div>";
 		}
+
+		content += "<i class='tiny material-icons'>open_in_browser</i>";
 
 		return content;
 	}
@@ -196,16 +198,20 @@ export default class Location {
 		this.coords = this.coords[0];
 	}
 
-	hasIcon(){
+	hasIcon() {
 		return (this.icon != null)
 	}
 
-	hasLabel(){
+	hasLabel() {
 		return (this.displayData.labelPos != null && this.displayData.labelPos >= 1 && this.name != "");
 	}
 
-	isLabel(){
+	isLabel() {
 		return (!this.hasIcon && !this.isPolygonal && this.hasLabel);
+	}
+
+	isClickable() {
+		this.destinationID != 0 && ((this.destinationID < 0 || this.destinationID > 0));
 	}
 
 	getLabelOffsets(labelPos) {
