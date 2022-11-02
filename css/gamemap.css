@@ -605,9 +605,18 @@ li div.collapsible-header i {
 	background-color: var(--surface);
 }
 
-.popupTitle {
+.popupTitle a {
 	font-weight: bolder;
 	font-size: 14px;
+	color: var(--text_low_emphasis);
+}
+
+.popupTitle a[href] {
+	color: #0078A8;
+}
+
+.popupTitle a[href]:hover {
+	text-decoration: underline !important;
 }
 
 .popupDesc, .popupDesc * {

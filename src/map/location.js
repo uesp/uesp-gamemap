@@ -166,14 +166,9 @@ export default class Location {
 			popupContent += "<div class='popupInfo'><b>Destination ID:</b> " + this.destinationID + "</div>";
 		}
 
-
 		if (config.editingEnabled) {
 			popupContent += "<hr/><div class='popupEditButton'>Edit this location</div>";
 		}
-
-		// if (this.parentMap.canEdit()) {
-		//
-		// }
 
 		// if (this.parentMap.canEdit())
 		// {
@@ -181,10 +176,6 @@ export default class Location {
 		// 		return self.onClickLocationEditPopup(event);
 		// 	});
 		// }
-
-		// $('#' + this.popupId + ' .gmMapPopupClose').click(function(event) {
-		// 	self.onClosePopup(event);
-		// });
 
 		return popupContent;
 
@@ -217,6 +208,31 @@ export default class Location {
 
 	isClickable() {
 		return this.destinationID != 0 && ((this.destinationID < 0 || this.destinationID > 0));
+	}
+
+	createWikiLink() {
+
+		let wikiLink = "";
+
+		if (config.wikiNamespace != null && config.wikiNamespace.length > 0) {
+
+			if (this.wikiPage != "") {
+				if (this.wikiPage.indexOf(":") >= 0) {
+					wikiLink = config.wikiURL + encodeURIComponent(this.wikiPage).replace("%3A", ":").replace("%2F", "/");;
+				} else {
+					wikiLink = config.wikiURL + config.wikiNamespace + ':' + encodeURIComponent(this.wikiPage);
+				}
+			}
+		} else {
+			wikiLink = config.wikiURL + encodeURIComponent(this.wikiPage);
+		}
+
+		if (wikiLink != "") {
+			wikiLink = 'href="' + wikiLink + '"';
+		}
+
+		return wikiLink;
+
 	}
 
 	getLabelOffsets(labelPos) {
@@ -260,31 +276,6 @@ export default class Location {
 		}
 	}
 
-
-	createWikiLink() {
-
-		let wikiLink = "";
-
-		if (config.wikiNamespace != null && config.wikiNamespace.length > 0) {
-
-			if (this.wikiPage != "") {
-				if (this.wikiPage.indexOf(":") >= 0) {
-					wikiLink = config.wikiURL + encodeURIComponent(this.wikiPage).replace("%3A", ":").replace("%2F", "/");;
-				} else {
-					wikiLink = config.wikiURL + config.wikiNamespace + ':' + encodeURIComponent(this.wikiPage);
-				}
-			}
-		} else {
-			wikiLink = config.wikiURL + encodeURIComponent(this.wikiPage);
-		}
-
-		if (wikiLink != "") {
-			wikiLink = 'href="' + wikiLink + '"';
-		}
-
-		return wikiLink;
-
-	}
 
 }
 
@@ -563,13 +554,6 @@ export default class Location {
 
 // 	return true;
 // }
-
-
-// uesp.gamemap.Location.prototype.onUpdateCurrentZoomEditPopup = function (event)
-// {
-// 	$('#' + this.popupId + ' .gmMapEditPopupCurrentZoom').text('Current Zoom = ' + this.parentMap.zoomLevel);
-// }
-
 
 // uesp.gamemap.Location.prototype.updateEditPopup = function ()
 // {
@@ -976,47 +960,6 @@ export default class Location {
 
 // 	$(this.labelElement).offset( { left: this.offsetLeft - this.labelOffsetLeft, top: this.offsetTop - this.labelOffsetTop + 8 });
 // }
-
-
-
-
-
-
-
-
-
-
-
-
-// uesp.gamemap.Location.prototype.createWikiLinkHref = function()
-// {
-// 	wikiLink = this.createWikiLink();
-// 	if (wikiLink == "") return ""
-// 	return 'href="' + wikiLink + '"';
-// }
-
-
-// uesp.gamemap.Location.prototype.createWikiLink = function()
-// {
-// 	if (this.parentMap.mapOptions.wikiNamespace != null && this.parentMap.mapOptions.wikiNamespace.length > 0)
-// 	{
-// 		if (this.wikiPage == "") return "";
-
-// 		if (this.wikiPage.indexOf(":") >= 0)
-// 		{
-// 			var safeWikiPage = encodeURIComponent(this.wikiPage).replace("%3A", ":").replace("%2F", "/");
-// 			return this.parentMap.mapOptions.wikiUrl + safeWikiPage;
-// 		}
-// 		else
-// 		{
-// 			return this.parentMap.mapOptions.wikiUrl + this.parentMap.mapOptions.wikiNamespace + ':' + encodeURIComponent(this.wikiPage);
-// 		}
-// 	}
-
-// 	if (this.wikiPage == "") return "";
-// 	return this.parentMap.mapOptions.wikiUrl + encodeURIComponent(this.wikiPage);
-// }
-
 
 // uesp.gamemap.Location.prototype.update = function ()
 // {
