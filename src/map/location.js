@@ -137,6 +137,7 @@ export default class Location {
 	getTooltipContent() {
 		let content = this.name;
 
+		// put icon by the tooltip to indicate that clicking will go to a different map
 		if (this.isClickable()){ content += "  <i class='tiny material-icons'>open_in_browser</i>"; }
 
 		content += "<div class='tooltip-desc'>";

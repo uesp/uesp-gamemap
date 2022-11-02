@@ -1036,7 +1036,6 @@ div[class^="icon_bar"] {
 	top: var(--padding_minimum);
 	left: calc(var(--search_pane_width) + 4px);
 	flex: none;
-	width: calc(100% - (var(--search_pane_width) + var(--appbar_dimen) + var(--padding_large)));
 }
 
 /*================================================
