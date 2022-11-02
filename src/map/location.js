@@ -20,6 +20,8 @@ export default class Location {
 			mapConfig = DEFAULT_MAP_CONFIG;
 		}
 
+		log(location);
+
 		config = mapConfig;
 		currentWorld = world;
 		numTiles = world.numTilesX;
@@ -32,7 +34,7 @@ export default class Location {
 		this.name = location.name || "";
 		this.wikiPage = location.wikiPage || "";
 		this.description = location.description || "";
-		this.isVisible = (location.visible != null && location.visible == 1) ? true : false;
+		this.isVisible = (location.visible != null && location.visible == 1 && !location.description.includes("teleport dest")) ? true : false;
 		this.displayData = JSON.parse(location.displayData) || {};
 		this.worldID = location.worldId || 0;
 		this.destinationID = location.destinationId || null;

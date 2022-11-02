@@ -556,22 +556,24 @@ export default class Gamemap {
 			// iterate through each location in the list
 			Object.values(locations).forEach(location => {
 
-				// get marker/polygon/icon for this location
-				let markers = this.getMarkers(location);
+				if (location.isVisible) {
+					// get marker/polygon/icon for this location
+					let markers = this.getMarkers(location);
 
-				// add marker to relevant map layer
-				if (markers != null) {
+					// add marker to relevant map layer
+					if (markers != null) {
 
-					markers.forEach(marker => {
-						// bind event listeners to marker
-						locationMarkers.push(marker);
-						this.bindMarkerEvents(marker, location)
+						markers.forEach(marker => {
+							// bind event listeners to marker
+							locationMarkers.push(marker);
+							this.bindMarkerEvents(marker, location)
 
-						// add label to marker if applicable
-						if (location.hasLabel() && !(location.hasIcon() && marker._path != null)) {
-							marker.bindTooltip(location.name, this.getLocationLabel(location));
-						}
-					});
+							// add label to marker if applicable
+							if (location.hasLabel() && !(location.hasIcon() && marker._path != null)) {
+								marker.bindTooltip(location.name, this.getLocationLabel(location));
+							}
+						});
+					}
 				}
 			});
 		}
