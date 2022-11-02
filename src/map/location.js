@@ -20,8 +20,6 @@ export default class Location {
 			mapConfig = DEFAULT_MAP_CONFIG;
 		}
 
-		log(location);
-
 		config = mapConfig;
 		currentWorld = world;
 		numTiles = world.numTilesX;
@@ -161,7 +159,7 @@ export default class Location {
 							"<div class='popupInfo'>Internal ID: " + this.id + "</div>";
 
 		if (this.coords.length == 1 ) {
-			popupContent += "<div class='popupInfo'>Coords: " + this.coords[0].x; + ", Y: " + this.coords[0].y + "</div>";
+			popupContent += "<div class='popupInfo'>Coords: " + "X: " + this.coords[0].x + ", Y: " + this.coords[0].y + "</div>";
 		}
 
 		if (this.destinationID != null) {

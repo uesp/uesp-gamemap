@@ -600,19 +600,9 @@ li div.collapsible-header i {
 	margin: 13px var(--padding_minimum) 13px var(--padding_minimum);
 }
 
-
-.gmMapEditPopup {
-	font-size: 11px;
-	font-family: sans-serif;
-	display: block;
-	width: 302px;
-	height: 330px;
-	background-color: var(--surface);
-	border: none;
-	z-index: 30;
-	padding: 4px;
-	border-radius: 5px;
+.leaflet-popup-tip {
 	box-shadow: 0px 0px 2px 2px var(--shadow);
+	background-color: var(--surface);
 }
 
 .popupTitle {
