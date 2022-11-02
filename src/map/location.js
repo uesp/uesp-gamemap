@@ -153,7 +153,7 @@ export default class Location {
 
 	getPopupContent() {
 
-		let popupContent = "<div class='popupTitle'><a {wikiLink}>" + this.name + "</a></div>" +
+		let popupContent = "<div class='popupTitle'><a "+ this.createWikiLink() +"'>" + this.name + "</a></div>" +
 							"<div class='popupDesc'>" + this.description + "</div>" +
 							"<hr/>" +
 							"<div class='popupInfo'><b>Internal ID:</b> " + this.id + "</div>";
@@ -258,6 +258,32 @@ export default class Location {
 				this.labelDirection = "right";
 				break;
 		}
+	}
+
+
+	createWikiLink() {
+
+		let wikiLink = "";
+
+		if (config.wikiNamespace != null && config.wikiNamespace.length > 0) {
+
+			if (this.wikiPage != "") {
+				if (this.wikiPage.indexOf(":") >= 0) {
+					wikiLink = config.wikiURL + encodeURIComponent(this.wikiPage).replace("%3A", ":").replace("%2F", "/");;
+				} else {
+					wikiLink = config.wikiURL + config.wikiNamespace + ':' + encodeURIComponent(this.wikiPage);
+				}
+			}
+		} else {
+			wikiLink = config.wikiURL + encodeURIComponent(this.wikiPage);
+		}
+
+		if (wikiLink != "") {
+			wikiLink = 'href="' + wikiLink + '"';
+		}
+
+		return wikiLink;
+
 	}
 
 }
