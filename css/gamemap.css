@@ -622,17 +622,21 @@ li div.collapsible-header i {
 
 
 
-.gmMapPopupEditLabel {
+.popupEditButton {
 	margin-top: 10px;
 	text-align: center;
-	font-weight: bold;
+	font-weight: normal;
 	width: 100%;
 	color: var(--text_link);
 	cursor: pointer;
 }
 
-.gmMapPopupEditLabel:hover {
+.popupEditButton:hover {
 	background: var(--selection);
+}
+
+.popupEditButton:active {
+	background: var(--bubble_selection);
 }
 
 

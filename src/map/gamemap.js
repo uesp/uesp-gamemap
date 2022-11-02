@@ -55,10 +55,6 @@ export default class Gamemap {
 			// set the default map info
 			this.mapWorlds = {};
 
-			// set up state bools
-			this.openPopupOnJump = false;
-			this.editingEnabled = false;
-
 			// check user editing permission
 			this.checkPermissions();
 
@@ -1042,7 +1038,7 @@ export default class Gamemap {
 
 	// get if editing is enabled on this map
 	isMapEditingEnabled() {
-		return this.editingEnabled;
+		return this.mapConfig.editingEnabled;
 	}
 
 	// check if user has editing permissions
@@ -1058,7 +1054,7 @@ export default class Gamemap {
 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 
 			if (data.canEdit != null) {
-				self.editingEnabled = data.canEdit;
+				self.mapConfig.editingEnabled = data.canEdit;
 			}
 
 			if (self.mapCallbacks != null) {

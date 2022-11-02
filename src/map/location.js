@@ -167,10 +167,12 @@ export default class Location {
 		}
 
 
-		//if (this.useEditPopup) return this.updateEditPopup();
+		if (config.editingEnabled) {
+			popupContent += "<hr/><div class='popupEditButton'>Edit this location</div>";
+		}
 
 		// if (this.parentMap.canEdit()) {
-		// 	popupContent += "<div class='gmMapPopupEditLabel'>Edit...</div>";
+		//
 		// }
 
 		// if (this.parentMap.canEdit())
