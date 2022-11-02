@@ -835,7 +835,7 @@ export default class Gamemap {
 
 	onMarkerClicked(marker, shift, ctrl) {
 
-		function openPopup(marker) {
+		function openPopup(marker, isEdit) {
 
 			let latlng;
 
@@ -845,9 +845,12 @@ export default class Gamemap {
 				latlng = marker.getLatLng();
 			}
 
-			log("making popup");
-
-			L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
+			if (!isEdit){
+				log("making popup");
+				L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
+			} else {
+				M.toast({text: "TODO: Location editing not done yet."});
+			}
 
 		}
 
@@ -867,17 +870,8 @@ export default class Gamemap {
 				}
 			}
 		} else {
-
 			if (shift) { // if shift pressed, and can edit, show edit menu
-
-				if (self.isMapEditingEnabled()){
-					M.toast({text: "TODO: Location edit popup"});
-
-					// TODO: alter the popup contents to be the edit one
-				} else {
-					M.toast({text: "Map editing not enabled!"});
-				}
-
+				openPopup(marker, self.isMapEditingEnabled());
 			}
 		}
 

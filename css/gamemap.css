@@ -610,17 +610,17 @@ li div.collapsible-header i {
 	font-size: 14px;
 }
 
-.popupDesc {
+.popupDesc, .popupDesc * {
 	color: var(--text_on_primary);
 	font-size: 10px;
+	user-select: text !important;
 }
 
-.popupInfo {
+.popupInfo, .popupInfo * {
 	font-size: 9px;
 	color: var(--text_low_emphasis);
+	user-select: text !important;
 }
-
-
 
 .popupEditButton {
 	margin-top: 10px;
@@ -638,8 +638,6 @@ li div.collapsible-header i {
 .popupEditButton:active {
 	background: var(--bubble_selection);
 }
-
-
 
 .gmMapPopupWikiPage {
 	font-size: 11px;
