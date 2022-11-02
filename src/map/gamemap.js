@@ -478,12 +478,14 @@ export default class Gamemap {
 
 	clearLocations() {
 		if (this.markerLayer != null) {
+			this.markerLayer.off('resize move zoom');
 			this.markerLayer.clearLayers();
 			this.markerLayer.remove();
 		}
 
 		map.eachLayer((layer) => {
 			if (layer._tiles == null) { //remove anything that is not a tile
+				layer.off('resize move zoom');
 				layer.remove();
 			}
 		});
@@ -629,9 +631,7 @@ export default class Gamemap {
 			}
 
 			if (location.locType == Constants.LOCTYPES.PATH) {
-				log(location);
 				marker = new L.polyline(coords, options);
-				log(marker);
 			}
 
 
@@ -835,25 +835,6 @@ export default class Gamemap {
 
 	onMarkerClicked(marker, shift, ctrl) {
 
-		function openPopup(marker, isEdit) {
-
-			let latlng;
-
-			try {
-				latlng = marker.getCenter();
-			} catch (e) {
-				latlng = marker.getLatLng();
-			}
-
-			if (!isEdit){
-				log("making popup");
-				L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
-			} else {
-				M.toast({text: "TODO: Location editing not done yet."});
-			}
-
-		}
-
 		let isJumpTo = marker.location != null && marker.location.isClickable();
 
 		if (isJumpTo && !shift && !ctrl) { // is location a link to a worldspace/location
@@ -871,7 +852,7 @@ export default class Gamemap {
 			}
 		} else {
 			if (shift) { // if shift pressed, and can edit, show edit menu
-				openPopup(marker, self.isMapEditingEnabled());
+				this.openPopup(marker, this.isMapEditingEnabled());
 			}
 		}
 
@@ -881,11 +862,29 @@ export default class Gamemap {
 			if (isJumpTo && !ctrl){
 				// do nothing
 			} else {
-				openPopup(marker);
+				this.openPopup(marker);
 			}
 
 		}
 
+	}
+
+
+	openPopup(marker, isEdit) {
+		let latlng;
+
+		try {
+			latlng = marker.getCenter();
+		} catch (e) {
+			latlng = marker.getLatLng();
+		}
+
+		if (!isEdit){
+			log("making popup");
+			L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
+		} else {
+			M.toast({text: "TODO: Location editing not done yet."});
+		}
 	}
 
 	bindMarkerEvents(marker, location) {
@@ -902,13 +901,15 @@ export default class Gamemap {
 					self.redrawMarkers(marker);
 				});
 
-			} else {
-				marker.remove();
-				marker.off('resize move zoom');
 			}
 
 			if (location.displayLevel > map.getZoom()) {
-				marker.remove();
+				if (location.locType != Constants.LOCTYPES.PATH) {
+					marker.remove();
+				} else {
+					log(location.displayLevel);
+				}
+
 			}
 
 		});

@@ -276,7 +276,6 @@ export default class Location {
 		}
 	}
 
-
 }
 
 
