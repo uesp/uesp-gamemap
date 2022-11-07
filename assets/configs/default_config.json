@@ -35,7 +35,10 @@
     "numTilesX" : 10,
     "numTilesY" : 7,
     "tileSize" : 256,
-    "numEdgeBufferTiles" : 2,
+    "tileLayers" : [
+        "default"
+    ],
+
 
     // Map world info
     "defaultWorldID" : 0,

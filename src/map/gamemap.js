@@ -151,7 +151,7 @@ export default class Gamemap {
 			errorTileUrl: mapState.world.missingMapTilePath,
 			minZoom: mapState.world.minZoomLevel,
 			maxZoom: mapState.world.maxZoomLevel,
-			edgeBufferTiles: this.mapConfig.numEdgeBufferTiles,
+			edgeBufferTiles: 2,
 		}
 
 		// set map tile layer
