@@ -8,7 +8,7 @@ require '/home/uesp/secrets/gamemap.secrets';
 class CMakeMapZoomLinks 
 {
 	
-	public $LINKS_PATH = "leaflet";
+	public $LINKS_PATH = "leaflet/default";
 	
 	public $deleteOldLinks = false;
 	public $dryRun = false;
@@ -111,7 +111,7 @@ class CMakeMapZoomLinks
 		for ($i = 0; $i <= $zoomLevels; ++$i)
 		{
 			$zoom = $i + $minZoom;
-			$target = "../zoom$zoom";
+			$target = "../../zoom$zoom";
 			$link = "$linksPath/zoom$i";
 			
 			print("\tCreating symbolic link '$link' to '$target'...\n");
@@ -140,7 +140,7 @@ class CMakeMapZoomLinks
 		for ($i = 0; $i <= $zoomLevels; ++$i)
 		{
 			$zoom = $i + $minZoom;
-			$target = "../zoom$zoom";
+			$target = "../../zoom$zoom";
 			$link = "$linksPath/zoom$i";
 			
 			if (file_exists($link))
