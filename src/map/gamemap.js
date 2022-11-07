@@ -906,10 +906,7 @@ export default class Gamemap {
 			if (location.displayLevel > map.getZoom()) {
 				if (location.locType != Constants.LOCTYPES.PATH) {
 					marker.remove();
-				} else {
-					log(location.displayLevel);
 				}
-
 			}
 
 		});
