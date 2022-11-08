@@ -156,9 +156,9 @@ export default class Gamemap {
 
 		// set map tile layer
 		if (Utils.isFirefox()){ // use HTML-based rendering on firefox
-			tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, this.mapConfig), tileOptions);
+			tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, this.mapConfig, this.mapConfig.tileLayers[0]), tileOptions);
 		} else { // use canvas based tile rendering on everything else
-			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, this.mapConfig), tileOptions);
+			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, this.mapConfig, this.mapConfig.tileLayers[0]), tileOptions);
 		}
 		tileLayer.addTo(map);
 
@@ -1058,20 +1058,9 @@ export default class Gamemap {
 	}
 
 	// tileX, tileY, zoom, world
-	getMapTileImageURL(world, mapConfig) {
-
-		// http://mavvo.altervista.org/dofus/tiles/{z}/{x}/{y}.png
+	getMapTileImageURL(world, mapConfig, layerName) {
 		// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
-
-		if (mapConfig.database == "eso") { // unique stuff for eso
-			return mapConfig.tileURL + world.name + "/leaflet/zoom{z}/" + world.name + "-{x}-" + "{y}" + ".jpg";
-		} else {
-			if (world == null) {
-				return "zoom{z}/maptile-{x}-{y}.jpg";
-			} else {
-				return world + "zoom{z}/maptile-{x}-{y}.jpg";
-			}
-		}
+		return mapConfig.tileURL + world.name + "/leaflet/" + layerName + "/zoom{z}/" + world.name + "-{x}-" + "{y}" + ".jpg";
 	}
 
 	getCurrentZoom() {
