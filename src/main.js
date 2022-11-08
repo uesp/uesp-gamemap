@@ -606,6 +606,7 @@ function updateSearch(query) {
 	// toggle clear button visibility
 	if (query.length > 0) {
 		btn_clear_search.style.visibility = 'visible';
+		doSearch(query);
 	} else {
 		btn_clear_search.style.visibility = 'hidden';
 	}
@@ -613,6 +614,9 @@ function updateSearch(query) {
 	// submit search
 	// do some search debouncing before submitting
 }
+
+
+
 
 //gamemap.php?action=search&search=morrowind&world=2282&db=eso
 function doSearch(searchQuery, currentMapOnly) {
@@ -629,16 +633,38 @@ function doSearch(searchQuery, currentMapOnly) {
 		//gamemap.php?action=search&search=dagoth%2520ur&db=mw
 		//gamemap.php?action=search&search=morrowind&world=2282&db=eso
 
-		var queryParams = this.createSearchQuery(searchText, searchMapOnly);
+		let queryParams = {};
 
-		$.getJSON(this.mapOptions.gameDataScript, queryParams, function(data) {
-			self.onReceiveSearchResults(data);
+		queryParams.action = 'search';
+		queryParams.search = encodeURIComponent(searchText);
+		if (gamemap.isHiddenLocsShown()) {
+			queryParams.showhidden = 1;
+		} 
+
+		if (currentMapOnly == true) {
+			queryParams.world = gamemap.getCurrentWorldID();
+		}
+
+		queryParams.db = mapConfig.database;
+	
+		if (searchText.substring(0, 5) === "type:") {
+			let locType = this.FindMapLocTypeString(searchText.substring(5));
+			if (locType != null){
+				queryParams.searchtype = locType;
+			} 
+		}
+	
+		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
+			log(data);
+			//self.onReceiveSearchResults(data);
 		});
 
 
 	}
 
 }
+
+
 
 // uesp.gamemap.Map.prototype.onReceiveSearchResults = function (data)
 // {
@@ -688,24 +714,7 @@ function doSearch(searchQuery, currentMapOnly) {
 // }
 
 
-// uesp.gamemap.Map.prototype.createSearchQuery = function (searchText, searchMapOnly)
-// {
-// 	var queryParams = { };
 
-// 	queryParams.action = 'search';
-// 	queryParams.search = encodeURIComponent(searchText);
-// 	if (this.isShowHidden()) queryParams.showhidden = 1;
-// 	if (searchMapOnly === true) queryParams.world = this.currentWorldId;
-// 	queryParams.db = this.mapOptions.dbPrefix;
-
-// 	if (searchText.substring(0, 5) === "type:")
-// 	{
-// 		var locType = this.FindMapLocTypeString(searchText.substring(5));
-// 		if (locType != null) queryParams.searchtype = locType;
-// 	}
-
-// 	return queryParams;
-// }
 
 // uesp.gamemap.Map.prototype.addSearchResultLocation = function (locationId)
 // {
@@ -800,15 +809,3 @@ function doSearch(searchQuery, currentMapOnly) {
 // }
 
 
-
-// }
-
-// uesp.gamemap.Map.prototype.createRecentChanges = function ()
-// {
-// 	if (this.recentChangesRoot != null) return;
-// 	var self = this;
-
-// 	this.recentChangesRoot = $('<div />')
-// 								.addClass('gmMapRCRoot')
-// 								.insertAfter(this.mapContainer);
-// }
