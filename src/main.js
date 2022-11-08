@@ -636,7 +636,7 @@ function doSearch(searchQuery, currentMapOnly) {
 		let queryParams = {};
 
 		queryParams.action = 'search';
-		queryParams.search = encodeURIComponent(searchText);
+		queryParams.search = encodeURIComponent(searchQuery);
 		if (gamemap.isHiddenLocsShown()) {
 			queryParams.showhidden = 1;
 		} 
