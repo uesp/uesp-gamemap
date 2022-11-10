@@ -647,9 +647,9 @@ function doSearch(searchQuery, currentMapOnly) {
 
 		queryParams.db = mapConfig.database;
 	
-		if (searchText.substring(0, 5) === "type:") {
-			let locType = this.FindMapLocTypeString(searchText.substring(5));
-			if (locType != null){
+		if (searchQuery.substring(0, 5) === "type:") {
+			let locType = gamemap.getLocTypeByName(searchQuery.substring(5));
+			if (locType != null) {
 				queryParams.searchtype = locType;
 			} 
 		}

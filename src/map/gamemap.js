@@ -539,6 +539,22 @@ export default class Gamemap {
 	}
 
 
+	getLocTypeByName(locTypeName) {
+
+		locTypeName = locTypeName.trim().toLowerCase() + "";
+
+		if (this.mapConfig != null && this.mapConfig.icons != null && locTypeName != "") {
+			for (locType in this.mapConfig.icons) {
+				if (locTypeName === this.mapConfig.icons[locType].toLowerCase()) {
+					return locType;
+				} 
+			}
+		} else {
+			return null;
+		}
+	}
+
+
 	redrawLocations(locations) {
 
 		log(locations);
@@ -1069,6 +1085,9 @@ export default class Gamemap {
 	getCurrentZoom() {
 		return map.getZoom();
 	}
+
+	
+
 }
 
 
@@ -2098,35 +2117,6 @@ export default class Gamemap {
 // 	this.currentEditWorld.updateOptions();
 // 	return true;
 // }
-
-
-// uesp.gamemap.Map.prototype.hideWorldEditForm = function()
-// {
-// 	if (this.worldEditPopup != null) this.worldEditPopup.hide();
-// }
-
-
-// uesp.gamemap.Map.prototype.setEditClickWallBackground = function(background)
-// {
-// 	this.editClickWall.css('background', background);
-// }
-
-// uesp.gamemap.Map.prototype.FindMapLocTypeString = function (locTypeString)
-// {
-// 	var checkTypeString = locTypeString.trim().toLowerCase();
-
-// 	if (this.mapOptions == null || this.mapConfig.iconTypeMap == null || checkTypeString == "") return null;
-
-// 	for (locType in this.mapConfig.iconTypeMap)
-// 	{
-// 		if (checkTypeString === this.mapConfig.iconTypeMap[locType].toLowerCase()) return locType;
-// 	}
-
-// 	return null;
-
-// }
-
-
 
 // uesp.gamemap.Map.prototype.createHelpBlockElement = function()
 // {
