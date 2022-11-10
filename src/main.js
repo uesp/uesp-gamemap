@@ -653,6 +653,16 @@ function doSearch(searchQuery, currentMapOnly) {
 				queryParams.searchtype = locType;
 			} 
 		}
+
+		let SearchResult = class {
+			constructor(name, icon, location) {
+		  		this.name = name;
+		  		this.icon = icon || null;
+				this.location = location;
+				this.locType = locType;
+				this.destinationID = destinationID;
+			}
+	  	};
 	
 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 			log(data);
@@ -668,6 +678,8 @@ function doSearch(searchQuery, currentMapOnly) {
 
 // uesp.gamemap.Map.prototype.onReceiveSearchResults = function (data)
 // {
+
+
 // 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Received search data");
 // 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, data);
 
