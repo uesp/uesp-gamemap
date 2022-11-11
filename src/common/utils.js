@@ -350,3 +350,12 @@ export function nextPowerOfTwo(n) {
 	// return next power of 2
 	return n << 1;
 }
+
+/*================================================
+	  	    Sanitise string function
+================================================*/
+
+export function sanitiseString(str){
+    str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim,"");
+    return str.trim();
+}

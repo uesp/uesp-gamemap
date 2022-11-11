@@ -621,9 +621,9 @@ function updateSearch(query) {
 //gamemap.php?action=search&search=morrowind&world=2282&db=eso
 function doSearch(searchQuery, currentMapOnly) {
 
-	searchQuery = searchQuery.trim();
-
-	// TODO: do some html sanitisation here
+	searchQuery = Utils.sanitiseString(searchQuery);
+	
+	// TODO: debounce search
 
 	if (searchQuery != null && searchQuery.length > 1) {
 
@@ -637,6 +637,7 @@ function doSearch(searchQuery, currentMapOnly) {
 
 		queryParams.action = 'search';
 		queryParams.search = encodeURIComponent(searchQuery);
+		log(queryParams.search);
 		if (gamemap.isHiddenLocsShown()) {
 			queryParams.showhidden = 1;
 		} 
