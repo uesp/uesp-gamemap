@@ -14,6 +14,7 @@ class CMakeTileSymLinks
 	static $BASE_PATH = '/mnt/uesp/maps';
 	
 	static $GAME_DATA = [
+			/*
 			'srmap/color' => [	// This doesn't move them to the correct folder currently (move by hand)
 					'basePath' => 'srmap',
 					'extraPath' => 'color',
@@ -26,15 +27,15 @@ class CMakeTileSymLinks
 					'basePath' => 'srmap',
 					'prefix' => 'skyrim',
 					'newPrefix' => 'skyrim',
-			], /*
+			],
 			'mwmap' => [
 					'prefix' => 'vvardenfell',
 					'newPrefix' => 'morrowind',
-			],
+			],*/
 			'dbmap' => [
-					'prefix' => 'solstheim',
+					'prefix' => 'db',
 					'newPrefix' => 'db',
-			],
+			],/*
 			'simap' => [
 					'prefix' => 'seworld',
 					'newPrefix' => 'shiveringisles',
