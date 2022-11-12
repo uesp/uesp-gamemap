@@ -11,7 +11,7 @@ import * as Constants from "./common/constants.js";
 import Gamemap from "./map/gamemap.js";
 
 /*================================================
-				  Initialisation
+				 Initialisation
 ================================================*/
 
 var mapConfig = null;
@@ -600,19 +600,41 @@ function clearSearch() {
 	btn_clear_search.style.visibility = 'hidden';
 }
 
+// debounce function
+const debounce = (func, delay) => {
+    let debounceTimer
+    return function() {
+        const context = this
+        const args = arguments
+            clearTimeout(debounceTimer)
+                debounceTimer
+            = setTimeout(() => func.apply(context, args), delay)
+    }
+} 
+
+
+let timer;
+const DELAY = 500;
 function updateSearch(query) {
 	log("search query: " + query);
 
 	// toggle clear button visibility
 	if (query.length > 0) {
 		btn_clear_search.style.visibility = 'visible';
-		doSearch(query);
+
+
+		if (timer != null){
+			clearTimeout(timer);
+		}
+
+		timer = setTimeout(() => {
+			doSearch(query, false);
+		}, DELAY)
+
 	} else {
 		btn_clear_search.style.visibility = 'hidden';
 	}
 
-	// submit search
-	// do some search debouncing before submitting
 }
 
 
@@ -622,7 +644,7 @@ function updateSearch(query) {
 function doSearch(searchQuery, currentMapOnly) {
 
 	searchQuery = Utils.sanitiseString(searchQuery);
-	
+
 	// TODO: debounce search
 
 	if (searchQuery != null && searchQuery.length > 1) {
