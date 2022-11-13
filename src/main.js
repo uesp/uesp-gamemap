@@ -157,9 +157,9 @@ function onPermissionsLoaded(enableEditing) {
 }
 
 
-window.gotoWorld = function(worldID, coords){
+window.gotoWorld = function(worldID, coords) {
+	hideMenus();
 	gamemap.gotoWorld(worldID, coords);
-	toggleLocationSwitcher(false);
 }
 
 
@@ -586,6 +586,7 @@ function clearSearch() {
 	searchbox.value = "";
 	log("cleared search.");
 	btn_clear_search.style.visibility = 'hidden';
+	$("#search_loading_bar").hide();
 }
 
 let timer;
@@ -596,6 +597,7 @@ function updateSearch(query) {
 	// toggle clear button visibility
 	if (query.length > 0) {
 		btn_clear_search.style.visibility = 'visible';
+		$("#search_loading_bar").show();
 
 		// search debouncing
 		if (timer != null){
@@ -657,6 +659,8 @@ function doSearch(searchQuery, currentMapOnly) {
 			};
 
 			if (!data.isError) {
+
+				$("#search_loading_bar").hide();
 				let searchResults = []; // SearchResults go in here
 
 				// merge both locations and worlds into a single array
@@ -749,7 +753,7 @@ function createLocationRowHTML(data) {
 		} 
 		log(data);
 	
-		return ("<div class='collection'>"+imgHTML+"<a onclick='gotoWorld("+data.destinationID+")' class='collection-item waves-effect'> " + nameHTML + " </a></div>");
+		return ("<div class='collection'><a onclick='gotoWorld("+data.destinationID+")' class='collection-item waves-effect'> " + imgHTML + nameHTML + "</a></div>");
 	
 	}
 		
