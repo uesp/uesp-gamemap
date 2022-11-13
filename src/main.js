@@ -159,6 +159,7 @@ function onPermissionsLoaded(enableEditing) {
 
 window.gotoWorld = function(worldID, coords) {
 	hideMenus();
+	clearSearch();
 	gamemap.gotoWorld(worldID, coords);
 }
 
@@ -584,9 +585,9 @@ function focusSearch() {
 
 function clearSearch() {
 	searchbox.value = "";
-	log("cleared search.");
 	btn_clear_search.style.visibility = 'hidden';
 	$("#search_loading_bar").hide();
+	$("#search_results_container").hide();
 }
 
 let timer;
@@ -608,9 +609,8 @@ function updateSearch(query) {
 		}, DELAY_AMOUNT)
 
 	} else {
-		btn_clear_search.style.visibility = 'hidden';
+		clearSearch();
 	}
-
 }
 
 //gamemap.php?action=search&search=morrowind&world=2282&db=eso
@@ -696,13 +696,20 @@ function doSearch(searchQuery, currentMapOnly) {
 function updateSearchResults(results){
 	if (results == null) {
 		//hide results menu
+		clearSearch();
 	} else {
 		// get searchHTML
 
 		let html;
-		for (let i in results) {
-			html += createLocationRowHTML(results[i]);
+
+		if (results.length >= 1) {
+			for (let i in results) {
+				html += createLocationRowHTML(results[i]);
+			}
+		} else {
+			html = "no results here chap";
 		}
+
 
 		$("#search_results").html(html);
 
@@ -756,120 +763,4 @@ function createLocationRowHTML(data) {
 		return ("<div class='collection'><a onclick='gotoWorld("+data.destinationID+")' class='collection-item waves-effect'> " + imgHTML + nameHTML + "</a></div>");
 	
 	}
-		
-
-
 }
-
-
-
-// uesp.gamemap.Map.prototype.updateSearchResults = function ()
-// {
-// 	this.clearSearchResults();
-
-// 	for (i in this.searchResults)
-// 	{
-// 		var searchResult = this.searchResults[i];
-
-// 		this.addSearchResultLocation(searchResult.locationId);
-// 		this.addSearchResultWorld(searchResult.worldId);
-// 	}
-
-// }
-
-
-
-
-// uesp.gamemap.Map.prototype.addSearchResultLocation = function (locationId)
-// {
-// 	var self = this;
-
-// 	if (locationId == null) return;
-
-// 	var location = this.locations[locationId];
-// 	if (location == null) return uesp.logError('Failed to find location #' + locationId + ' data!');
-
-// 	var world = this.mapWorlds[location.worldId];
-// 	if (world == null) return uesp.logError('Failed to find world #' + location.worldId + ' data!');
-
-// 	var locState = new uesp.gamemap.MapState;
-// 	locState.zoomLevel = world.maxZoom;
-// 	//if (locState.zoomLevel < this.zoomLevel) locState.zoomLevel = this.zoomLevel;
-// 	locState.gamePos.x = location.x;
-// 	locState.gamePos.y = location.y;
-// 	locState.worldId = world.id;
-
-// 	var searchResult = $('<div />')
-// 							.addClass('gmMapSearchResultLocation')
-// 							.bind("touchstart click", function (e) { self.onClickSearchResultId(locationId, locState); return false; })
-// 							.appendTo(this.mapSearchResults);
-
-// 	var iconURL   = this.mapOptions.iconPath + location.iconType + ".png";
-// 	var imageContent = "<img class='gmMapSearchResultIcon' src='" + iconURL + "' />";
-
-// 	if (location.iconType == 0) imageContent = "<div class='gmMapSearchResultIcon' />";
-
-// 	var resultContent = imageContent +
-// 						"<div class='gmMapSearchResultTitle'>{location.name}</div> " +
-// 						"<div class='gmMapSearchResultLocWorld'>(in {world.displayName})</div>";
-// 	var data = { world: world, location: location };
-// 	var resultHtml = uesp.template(resultContent, data);
-
-// 	searchResult.html(resultHtml);
-// }
-
-
-// uesp.gamemap.Map.prototype.onClickSearchResult = function(location, locState)
-// {
-// 	this.setMapState(locState, true);
-// 	location.showPopup();
-// }
-
-
-// uesp.gamemap.Map.prototype.onClickSearchResultId = function(locationId, locState)
-// {
-// 	this.setMapState(locState, true);
-
-// 	var location = this.locations[locationId];
-
-// 	if (location != null)
-// 	{
-// 		location.showPopup();
-// 		return;
-// 	}
-
-// 	this.showPopupOnLoadLocationId = locationId;
-// 	//setTimeout(function() { location.showPopup(); }, 500);
-// 	//location.showPopup();
-// 	//this.setMapState(locState, true);
-// }
-
-
-
-// uesp.gamemap.Map.prototype.addSearchResultWorld = function (worldId)
-// {
-// 	var self = this;
-
-// 	if (worldId == null) return;
-
-// 	var world = this.mapWorlds[worldId];
-// 	if (world == null) return uesp.logError('Failed to find world #' + worldId + ' data!');
-
-// 	var worldState = new uesp.gamemap.MapState;
-// 	worldState.zoomLevel = this.zoomLevel;
-// 	worldState.gamePos.x = (world.posLeft - world.posRight)/2 + world.posRight;
-// 	worldState.gamePos.y = (world.posTop - world.posBottom)/2 + world.posBottom;
-// 	worldState.worldId = world.id;
-
-// 	var searchResult = $('<div />')
-// 							.addClass('gmMapSearchResultWorld')
-// 							.bind("touchstart click", function (e) { self.setMapState(worldState, true); return false; })
-// 							.appendTo(this.mapSearchResults);
-
-// 	var resultContent = "<div class='gmMapSearchResultTitle'>{displayName}</div>";
-// 	var resultHtml = uesp.template(resultContent, world);
-
-// 	searchResult.html(resultHtml);
-// }
-
-
