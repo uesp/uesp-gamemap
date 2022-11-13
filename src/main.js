@@ -721,22 +721,35 @@ function createLocationRowHTML(data) {
 
 	if (data.name != null) {
 
-
+		
 		let imgHTML;
+		let isWorld;
 		if (data.icon != null) {
 			let iconURL = mapConfig.iconPath + "/" + data.icon + ".png";
 			iconURL = iconURL.replace("//", "/"); // bypass bug doubling forward slashes for some reason
-			imgHTML = "<img src="+iconURL+" width='32' height='32'></img>";
+			imgHTML = "<img src="+iconURL+" width='30' height='30'></img>";
 		} else {
 			if (data.icon == null && data.description == null) {
 				imgHTML = "<i class='small material-icons'>public</i>";
+				isWorld = true;
 			} else {
 				imgHTML = "<i class='small material-icons'>location_on</i>";
 			}
 		}
+
+
+		let nameHTML = "";
+
+		if (isWorld) { nameHTML += "<b>" }
+		nameHTML += data.name;
+		if (isWorld) { nameHTML += "</b>" }
+
+		if (data.description != null) {
+			nameHTML += "   <small>(In "+ data.description + ")</small>";
+		} 
 		log(data);
 	
-		return ("<div class='collection'>"+imgHTML+"<a onclick='gotoWorld("+data.destinationID+")' class='collection-item waves-effect'> " + data.name + " </a>"+ data.description +"</div>");
+		return ("<div class='collection'>"+imgHTML+"<a onclick='gotoWorld("+data.destinationID+")' class='collection-item waves-effect'> " + nameHTML + " </a></div>");
 	
 	}
 		

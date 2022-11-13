@@ -403,6 +403,8 @@ export default class Gamemap {
 			}
 		} else { // this must be a location, centre on that location
 			let locationID = destID;
+
+			log("going to location");
 			//
 		}
 	}
