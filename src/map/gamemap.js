@@ -405,8 +405,11 @@ export default class Gamemap {
 			let locationID = destID;
 			//
 		}
+	}
 
-
+	// convenience method to jump to destination
+	gotoDestination(destID) {
+		this.gotoWorld(destID);
 	}
 
 	/*================================================

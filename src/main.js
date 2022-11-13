@@ -657,7 +657,6 @@ function doSearch(searchQuery, currentMapOnly) {
 			};
 
 			if (!data.isError) {
-				log(data);
 				let searchResults = []; // SearchResults go in here
 
 				// merge both locations and worlds into a single array
@@ -680,6 +679,7 @@ function doSearch(searchQuery, currentMapOnly) {
 					searchResults.push(searchResult);
 				}
 
+				updateSearchResults(searchResults);
 				console.log(searchResults);
 				
 			} else {
@@ -694,17 +694,54 @@ function updateSearchResults(results){
 		//hide results menu
 	} else {
 		// get searchHTML
+
+		let html;
+		for (let i in results) {
+			html += createLocationRowHTML(results[i]);
+		}
+
+		$("#search_results").html(html);
+
+
 	}
 }
 
 
 
-function createLocationRowHTML(worldID) {
-	let world = gamemap.getWorldFromID(worldID);
+function createLocationRowHTML(data) {
 
-	if (world != null) {
-		return ("<div class='collection'><a name='" + world.name + "' onclick='gotoWorld("+worldID+")' class='collection-item waves-effect'> " + world.displayName + " </a></div>");
+	if (!Number.isNaN(data)) {
+		let worldID = data;
+		let world = gamemap.getWorldFromID(worldID);
+
+		if (world != null) {
+			return ("<div class='collection'><a name='" + world.name + "' onclick='gotoWorld("+worldID+")' class='collection-item waves-effect'> " + world.displayName + " </a></div>");
+		}
+	} 
+
+	if (data.name != null) {
+
+
+		let imgHTML;
+		if (data.icon != null) {
+			let iconURL = mapConfig.iconPath + "/" + data.icon + ".png";
+			iconURL = iconURL.replace("//", "/"); // bypass bug doubling forward slashes for some reason
+			imgHTML = "<img src="+iconURL+" width='32' height='32'></img>";
+		} else {
+			if (data.icon == null && data.description == null) {
+				imgHTML = "<i class='small material-icons'>public</i>";
+			} else {
+				imgHTML = "<i class='small material-icons'>location_on</i>";
+			}
+		}
+		log(data);
+	
+		return ("<div class='collection'>"+imgHTML+"<a onclick='gotoWorld("+data.destinationID+")' class='collection-item waves-effect'> " + data.name + " </a>"+ data.description +"</div>");
+	
 	}
+		
+
+
 }
 
 
