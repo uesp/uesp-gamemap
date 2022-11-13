@@ -165,10 +165,10 @@ window.gotoWorld = function(worldID, coords) {
 
 
 function onWorldChanged(newWorld) {
-
 	$('#current_location_label').text(newWorld.displayName);
 	setWindowTitle(newWorld.displayName);
 	updateWorldList(newWorld.name);
+	clearSearch();
 }
 
 /*================================================
@@ -325,7 +325,12 @@ function reselectTabs() {
 
 function hideMenus() {
 	toggleLocationSwitcher(false);
-	// one here for search and overflow as well;
+
+	if (Utils.isMobileDevice()) { 
+		clearSearch();
+	}
+
+	// one here for overflow as well;
 }
 
 function onTabClicked(element) {
@@ -587,7 +592,7 @@ function clearSearch() {
 	searchbox.value = "";
 	btn_clear_search.style.visibility = 'hidden';
 	$("#search_loading_bar").hide();
-	$("#search_results_container").hide();
+	$(".search_results_container").hide();
 }
 
 let timer;
@@ -661,6 +666,7 @@ function doSearch(searchQuery, currentMapOnly) {
 			if (!data.isError) {
 
 				$("#search_loading_bar").hide();
+				$(".search_results_container").show();
 				let searchResults = []; // SearchResults go in here
 
 				// merge both locations and worlds into a single array
@@ -712,8 +718,6 @@ function updateSearchResults(results){
 
 
 		$("#search_results").html(html);
-
-
 	}
 }
 
@@ -758,7 +762,6 @@ function createLocationRowHTML(data) {
 		if (data.description != null) {
 			nameHTML += "   <small>(In "+ data.description + ")</small>";
 		} 
-		log(data);
 	
 		return ("<div class='collection'><a onclick='gotoWorld("+data.destinationID+")' class='collection-item waves-effect'> " + imgHTML + nameHTML + "</a></div>");
 	
