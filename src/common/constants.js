@@ -24,6 +24,11 @@ export const LOCTYPES = {
     LABEL : 4,
 }
 
+export const PLACETYPES = {
+    WORLD : 0,
+    LOCATION : 1,
+}
+
 export const LABEL_POSITIONS = {
     0 : 'None',
     1 : 'Top Left',

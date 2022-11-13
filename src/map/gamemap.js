@@ -377,26 +377,36 @@ export default class Gamemap {
 		return (worldID != null && worldID >= 0 && this.hasWorld(worldID));
 	}
 
-	gotoWorld(worldID, coords) {
+	gotoWorld(destID, coords) {
+
 		$("#map_loading_bar").show();
-		this.clearLocations();
-		if (this.isWorldValid(worldID)) {
-			log("Going to world... " + worldID);
-			log(this.getWorldFromID(worldID));
 
-			let mapState = new MapState();
-			mapState.zoomLevel = this.mapConfig.defaultZoomLevel;
-
-			if (coords == null) {
-				mapState.coords = [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
+		if (destID > 0) { // is this destination a world?
+			let worldID = destID;
+			if (this.isWorldValid(worldID)) {
+				this.clearLocations();
+				log("Going to world... " + worldID);
+				log(this.getWorldFromID(worldID));
+	
+				let mapState = new MapState();
+				mapState.zoomLevel = this.mapConfig.defaultZoomLevel;
+	
+				if (coords == null) {
+					mapState.coords = [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
+				}
+	
+				mapState.world = this.getWorldFromID(worldID);
+	
+				this.setMapState(mapState);
+			} else {
+				throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
 			}
-
-			mapState.world = this.getWorldFromID(worldID);
-
-			this.setMapState(mapState);
-		} else {
-			throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
+		} else { // this must be a location, centre on that location
+			let locationID = destID;
+			//
 		}
+
+
 	}
 
 	/*================================================

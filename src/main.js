@@ -573,21 +573,9 @@ function createGroupListHTML(groups) {
 	return output;
 }
 
-
-function createLocationRowHTML(worldID) {
-	let world = gamemap.getWorldFromID(worldID);
-
-	if (world != null) {
-		return ("<div class='collection'><a name='" + world.name + "' onclick='gotoWorld("+worldID+")' class='collection-item waves-effect'> " + world.displayName + " </a></div>");
-	}
-}
-
 /*================================================
 					  Search
 ================================================*/
-
-var searchText = '';
-var searchResults = [ ];
 
 function focusSearch() {
 	searchbox.focus();
@@ -600,45 +588,28 @@ function clearSearch() {
 	btn_clear_search.style.visibility = 'hidden';
 }
 
-// debounce function
-const debounce = (func, delay) => {
-    let debounceTimer
-    return function() {
-        const context = this
-        const args = arguments
-            clearTimeout(debounceTimer)
-                debounceTimer
-            = setTimeout(() => func.apply(context, args), delay)
-    }
-} 
-
-
 let timer;
-const DELAY = 500;
+const DELAY_AMOUNT = 500;
 function updateSearch(query) {
-	log("search query: " + query);
+	log(query);
 
 	// toggle clear button visibility
 	if (query.length > 0) {
 		btn_clear_search.style.visibility = 'visible';
 
-
+		// search debouncing
 		if (timer != null){
 			clearTimeout(timer);
 		}
-
 		timer = setTimeout(() => {
 			doSearch(query, false);
-		}, DELAY)
+		}, DELAY_AMOUNT)
 
 	} else {
 		btn_clear_search.style.visibility = 'hidden';
 	}
 
 }
-
-
-
 
 //gamemap.php?action=search&search=morrowind&world=2282&db=eso
 function doSearch(searchQuery, currentMapOnly) {
@@ -650,16 +621,11 @@ function doSearch(searchQuery, currentMapOnly) {
 	if (searchQuery != null && searchQuery.length > 1) {
 
 		// do search stuff
-
-		//gamemap.php?action=search&search=morrowind&db=eso
-		//gamemap.php?action=search&search=dagoth%2520ur&db=mw
-		//gamemap.php?action=search&search=morrowind&world=2282&db=eso
-
 		let queryParams = {};
 
 		queryParams.action = 'search';
 		queryParams.search = encodeURIComponent(searchQuery);
-		log(queryParams.search);
+		log("search query: " + queryParams.search);
 		if (gamemap.isHiddenLocsShown()) {
 			queryParams.showhidden = 1;
 		} 
@@ -676,62 +642,71 @@ function doSearch(searchQuery, currentMapOnly) {
 				queryParams.searchtype = locType;
 			} 
 		}
-
-		let SearchResult = class {
-			constructor(name, icon, location) {
-		  		this.name = name;
-		  		this.icon = icon || null;
-				this.location = location;
-				this.locType = locType;
-				this.destinationID = destinationID;
-			}
-	  	};
 	
 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
-			log(data);
-			//self.onReceiveSearchResults(data);
+
+			// inline search result object
+			let SearchResult = class {
+				constructor(name, description, icon, destinationID) {
+					this.name = name;
+					this.description = description;
+					this.icon = icon || null;
+					this.destinationID = destinationID;
+					this.type = (this.destinationID < 0 && this.icon == null) ? Constants.PLACETYPES.WORLD : Constants.PLACETYPES.LOCATION;
+				}
+			};
+
+			if (!data.isError) {
+				log(data);
+				let searchResults = []; // SearchResults go in here
+
+				// merge both locations and worlds into a single array
+				let tempResults = [].concat(data.worlds, data.locations);
+
+				for (let i in tempResults) {
+
+					let result = tempResults[i];
+					let searchResult;
+
+					if (result.tilesX != null) { // check if this is a world or a location
+						// if true, then we are a world
+						searchResult = new SearchResult(result.displayName, null,  null, result.id);
+					} else {
+						// if not, this is a location
+						let world = gamemap.getWorldFromID(result.worldId);
+						searchResult = new SearchResult(result.name, world.displayName, result.iconType, -result.id);
+					}
+
+					searchResults.push(searchResult);
+				}
+
+				console.log(searchResults);
+				
+			} else {
+				log("there was an error getting search results");
+			}
 		});
-
-
 	}
+}
 
+function updateSearchResults(results){
+	if (results == null) {
+		//hide results menu
+	} else {
+		// get searchHTML
+	}
 }
 
 
 
-// uesp.gamemap.Map.prototype.onReceiveSearchResults = function (data)
-// {
+function createLocationRowHTML(worldID) {
+	let world = gamemap.getWorldFromID(worldID);
 
+	if (world != null) {
+		return ("<div class='collection'><a name='" + world.name + "' onclick='gotoWorld("+worldID+")' class='collection-item waves-effect'> " + world.displayName + " </a></div>");
+	}
+}
 
-// 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Received search data");
-// 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, data);
-
-// 	if (data.isError === true)  return uesp.logError("Error retrieving location data!", data.errorMsg);
-
-// 	this.searchResults = [ ];
-
-// 	this.mergeLocationData(data.locations, false);
-
-// 	for (key in data.worlds)
-// 	{
-// 		var world = data.worlds[key];
-// 		if (world.id == null) continue;
-
-// 		this.searchResults.push( { worldId : world.id });
-// 	}
-
-// 	for (key in data.locations)
-// 	{
-// 		var location = data.locations[key];
-// 		if (location.id == null) continue;
-
-// 		this.searchResults.push( { locationId : location.id });
-// 	}
-
-// 	this.showSearchResults();
-// 	this.updateSearchResults();
-// 	return true;
-// }
 
 
 // uesp.gamemap.Map.prototype.updateSearchResults = function ()
