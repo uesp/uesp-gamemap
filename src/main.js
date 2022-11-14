@@ -592,7 +592,9 @@ function clearSearch() {
 	searchbox.value = "";
 	btn_clear_search.style.visibility = 'hidden';
 	$("#search_loading_bar").hide();
+	$("#search_results").html("");
 	$(".search_results_container").hide();
+
 }
 
 let timer;
