@@ -287,7 +287,7 @@ export default class Gamemap {
 	 * @returns {Object} world - A world object that contains map info for the gamemap.
 	 */
 	getWorldFromID(worldID) {
-		return this.mapWorlds[worldID] || null;
+		return this.mapWorlds[worldID];
 	}
 
 	getWorldNameFromID(worldID) {

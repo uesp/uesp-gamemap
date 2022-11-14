@@ -623,10 +623,6 @@ function updateSearch(query) {
 //gamemap.php?action=search&search=morrowind&world=2282&db=eso
 function doSearch(searchQuery, currentMapOnly) {
 
-	searchQuery = Utils.sanitiseString(searchQuery);
-
-	// TODO: debounce search
-
 	if (searchQuery != null && searchQuery.length > 1) {
 
 		// do search stuff
@@ -685,10 +681,16 @@ function doSearch(searchQuery, currentMapOnly) {
 					} else {
 						// if not, this is a location
 						let world = gamemap.getWorldFromID(result.worldId);
-						searchResult = new SearchResult(result.name, world.displayName, result.iconType, -result.id);
+
+						if (world != null) {
+							searchResult = new SearchResult(result.name, world.displayName, result.iconType, -result.id);
+						}
 					}
 
-					searchResults.push(searchResult);
+					if (searchResult != null) {
+						searchResults.push(searchResult);
+					}
+
 				}
 
 				updateSearchResults(searchResults);
@@ -715,7 +717,7 @@ function updateSearchResults(results){
 				html += createLocationRowHTML(results[i]);
 			}
 		} else {
-			html = "no results here chap";
+			html = "no results here chap"; //todo
 		}
 
 
