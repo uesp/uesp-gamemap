@@ -657,7 +657,6 @@ function doSearch(searchQuery, currentMapOnly) {
 					this.description = description;
 					this.icon = icon || null;
 					this.destinationID = destinationID;
-					this.type = (this.destinationID < 0 && this.icon == null) ? Constants.PLACETYPES.WORLD : Constants.PLACETYPES.LOCATION;
 				}
 			};
 
@@ -681,7 +680,6 @@ function doSearch(searchQuery, currentMapOnly) {
 					} else {
 						// if not, this is a location
 						let world = gamemap.getWorldFromID(result.worldId);
-
 						if (world != null) {
 							searchResult = new SearchResult(result.name, world.displayName, result.iconType, -result.id);
 						}

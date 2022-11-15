@@ -453,6 +453,7 @@ li div.collapsible-header i {
 	outline: none;
 	background-color: transparent;
 	font-size: 1.5em;
+	border-bottom: none !important;
 }
 
 .searchbox_container {
