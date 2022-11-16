@@ -825,7 +825,7 @@ function createLocationRowHTML(data) {
 		if (isWorld) { nameHTML += "</b>" }
 
 		if (data.description != null) {
-			nameHTML += "   <small>(In "+ data.description + ")</small>";
+			nameHTML += "<br><small>"+ data.description + "</small>";
 		} 
 	
 		return ("<div class='collection'><a onclick='gotoWorld("+data.destinationID+")' class='collection-item avatar waves-effect'> " + imgHTML + nameHTML + "</a></div>");
