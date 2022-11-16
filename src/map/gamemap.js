@@ -829,10 +829,13 @@ export default class Gamemap {
 
 		map.on('resize moveend zoomend', function() {
 			self.updateMapState();
-			self.hideMenus();
+			if (!Utils.isMobileDevice()) {
+				self.hideMenus();
+			}
+			
 			self.clearTooltips();
 		});
-
+		
 		map.on("mousedown", function(e){
 			self.hideMenus();
 		})

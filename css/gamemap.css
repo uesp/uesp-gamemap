@@ -468,7 +468,7 @@ li div.collapsible-header i {
 	border-radius: var(--padding_small);
 	border-top-left-radius: 0px;
 	border-top-right-radius: 0px;
-	padding-top: var(--padding_medium);
+	padding-top: 19px;
 	height: 100%;
 }
 
