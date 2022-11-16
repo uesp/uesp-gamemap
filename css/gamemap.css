@@ -425,7 +425,7 @@ li div.collapsible-header i {
 	z-index: var(--zindex_floating);
 	border-radius: var(--padding_large);
 	pointer-events: auto;
-  	transition: all ease-in-out 150ms;
+  	transition: all ease 150ms;
 	height: var(--appbar_dimen);
   	box-shadow: 0px 1.5px 4px 4px var(--shadow);
 }
@@ -469,7 +469,9 @@ li div.collapsible-header i {
 	border-top-left-radius: 0px;
 	border-top-right-radius: 0px;
 	padding-top: 19px;
-	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+	max-height: 80vh;
 }
 
 #search_progress_bar {
