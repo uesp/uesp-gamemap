@@ -318,6 +318,7 @@ document.addEventListener("click", function (event) {
 window.toggleLocationSwitcher = function(toggle){
 	if (toggle || toggle == null){
 		$("#location_switcher_root").show();
+		hideSearch();
 		updateWorldList(gamemap.getWorldFromID(gamemap.getCurrentWorldID()).name);
 	} else {
 		$("#location_switcher_root").hide();
@@ -639,12 +640,8 @@ function toggleSearchPane(toggle) {
 }
 
 window.hideSearch = function() {
-	log("hiding search");
-
 	toggleSearchPane(false);
-
 	$("#search_results_container").hide();
-	searchMenuOpen = false;
 	// hide the search pane without clearing search query
 }
 
