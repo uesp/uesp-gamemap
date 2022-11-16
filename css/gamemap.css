@@ -472,6 +472,10 @@ li div.collapsible-header i {
 	height: 100%;
 }
 
+#search_progress_bar {
+	top: -2px;
+}
+
 #search_options_container {
 	padding: var(--padding_small);
 	border-radius: var(--padding_small);

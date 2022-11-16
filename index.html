@@ -77,17 +77,17 @@
 					<div class='clear_search_container waves-effect waves-circle' >
 						<button id="btn_clear_search" class='btn_bgless_icon_button hidedefault' title="Clear the current search" type='reset'><i class="material-icons">close</i></button>
 					</div>
-					<div id="search_loading_bar" class="progress_bar banishdefault">
-						<div class="progress"><div class="indeterminate"></div></div>
-					</div>
 				</div>
 
 				<!-- Search Results -->
 				<div id='search_results_container' class="banishdefault">
+					<div id="search_progress_bar" class="progress_bar">
+						<div class="progress"><div class="indeterminate"></div></div>
+					</div>
 
 					<div id="search_options_container">
 						<b style="font-size: 1.0rem;">Search options</b><br>
-						<label class="waves-effect" style="width: 100%; margin-top: 8px;">
+						<label class="waves-effect" style="width: 100%; padding-top: 8px;">
 							<input type="checkbox" class="filled-in" checked="checked" />
 							<span>Only show results from this map</span>
 						</label>
