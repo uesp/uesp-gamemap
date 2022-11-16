@@ -464,7 +464,7 @@ li div.collapsible-header i {
 #search_results_container {
 	pointer-events: visible;
 	position: relative;
-	top: -2px;
+	top: 2px;
 	border-radius: var(--padding_small);
 	border-top-left-radius: 0px;
 	border-top-right-radius: 0px;
@@ -472,6 +472,7 @@ li div.collapsible-header i {
 	overflow-x: hidden;
 	overflow-y: auto;
 	max-height: 80vh;
+	padding-bottom: var(--padding_minimum);
 }
 
 #search_progress_bar {

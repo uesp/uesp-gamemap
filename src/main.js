@@ -611,7 +611,8 @@ window.focusSearch = function() {
 	if (searchQuery != null && searchQuery.length == 0) {
 		// show options div
 		$("#search_options_container").css("box-shadow", "0px 1.5px 4px 4px var(--shadow)");
-	} else if (searchQuery.length >= 1) {
+		$("#search_results").html(""); // blank current search results
+	} else if (searchQuery.length > 0) {
 		toggleSearchPane(true);		
 	}
 
@@ -664,7 +665,9 @@ function updateSearch(query) {
 	// toggle clear button visibility
 	if (query.length > 0) {
 		btn_clear_search.style.visibility = 'visible';
+		toggleSearchPane(true);	
 		$("#search_progress_bar").show();
+		$("#search_results").html("<b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small) '>Searching...<b>");
 
 		// search debouncing
 		if (timer != null){
@@ -683,9 +686,7 @@ function updateSearch(query) {
 //gamemap.php?action=search&search=morrowind&world=2282&db=eso
 function doSearch(searchQuery, currentMapOnly) {
 
-	if (searchQuery != null && searchQuery.length > 1) {
-
-		toggleSearchPane(true);	
+	if (searchQuery != null && searchQuery.length > 0) {
 
 		// do search stuff
 		let queryParams = {};
@@ -723,7 +724,6 @@ function doSearch(searchQuery, currentMapOnly) {
 			};
 
 			if (!data.isError) {
-
 				$("#search_progress_bar").hide();
 				$(".search_results_container").show();
 				let searchResults = []; // SearchResults go in here
@@ -777,7 +777,7 @@ function updateSearchResults(results){
 				html += createLocationRowHTML(results[i]);
 			}
 		} else {
-			html = "no results here chap"; //todo
+			html = "<b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small) '>No results found.<b>";
 		}
 
 
