@@ -89,7 +89,7 @@
 					<div id="search_options_container">
 						<b style="font-size: 1.0rem;">Search options</b><br>
 						<label class="waves-effect" style="width: 100%; padding-top: 8px;">
-							<input type="checkbox" class="filled-in" checked="checked" />
+							<input id="search_current_map_checkbox" type="checkbox" class="filled-in" onchange="updateSearch($('#searchbox').val(), this.checked);" />
 							<span>Only show results from this map</span>
 						</label>
 					</div>

@@ -78,7 +78,7 @@ $(document).ready(function() {
 
 	// setup event listeners
 	btn_clear_search.addEventListener("click", clearSearch);
-	searchbox.addEventListener("input", function(){ updateSearch(searchbox.value); });
+	searchbox.addEventListener("input", function(){updateSearch(searchbox.value, document.querySelector('#search_current_map_checkbox').checked); });
 
 	M.AutoInit();
 
@@ -648,7 +648,13 @@ function clearSearch() {
 
 let timer;
 const DELAY_AMOUNT = 500;
-function updateSearch(query) {
+
+window.updateSearch = function(query, currentMapOnly) {
+
+	if (currentMapOnly == null) {
+		currentMapOnly = false;
+	}
+
 	log(query);
 
 	// toggle clear button visibility
@@ -663,12 +669,12 @@ function updateSearch(query) {
 			clearTimeout(timer);
 		}
 		timer = setTimeout(() => {
-			doSearch(query, false);
+			doSearch(query, currentMapOnly);
 		}, DELAY_AMOUNT)
 
 	} else {
 		clearSearch();
-		toggleSearchPane(false);	
+		toggleSearchPane(false);
 	}
 }
 
@@ -682,7 +688,7 @@ function doSearch(searchQuery, currentMapOnly) {
 
 		queryParams.action = 'search';
 		queryParams.search = encodeURIComponent(searchQuery);
-		log("search query: " + queryParams.search);
+		log("search query: " + queryParams.search + ", search in map: " + currentMapOnly);
 		if (gamemap.isHiddenLocsShown()) {
 			queryParams.showhidden = 1;
 		} 
@@ -723,21 +729,24 @@ function doSearch(searchQuery, currentMapOnly) {
 				for (let i in tempResults) {
 
 					let result = tempResults[i];
-					let searchResult;
 
-					if (result.tilesX != null) { // check if this is a world or a location
-						// if true, then we are a world
-						searchResult = new SearchResult(result.displayName, null,  null, result.id);
-					} else {
-						// if not, this is a location
-						let world = gamemap.getWorldFromID(result.worldId);
-						if (world != null) {
-							searchResult = new SearchResult(result.name, world.displayName, result.iconType, -result.id);
+					if (result != null) {
+						let searchResult;
+
+						if (result.tilesX != null) { // check if this is a world or a location
+							// if true, then we are a world
+							searchResult = new SearchResult(result.displayName, null,  null, result.id);
+						} else {
+							// if not, this is a location
+							let world = gamemap.getWorldFromID(result.worldId);
+							if (world != null) {
+								searchResult = new SearchResult(result.name, world.displayName, result.iconType, -result.id);
+							}
 						}
-					}
-
-					if (searchResult != null) {
-						searchResults.push(searchResult);
+	
+						if (searchResult != null) {
+							searchResults.push(searchResult);
+						}
 					}
 
 				}
