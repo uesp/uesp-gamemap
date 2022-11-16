@@ -768,11 +768,13 @@ function updateSearchResults(results){
 	} else {
 		// get searchHTML
 
-		let html;
+		let html = "";
 
 		if (results.length >= 1) {
 			for (let i in results) {
-				html += createLocationRowHTML(results[i]);
+				if (results[i] != null) {
+					html += createLocationRowHTML(results[i]).replace("undefined", "");
+				}
 			}
 		} else {
 			html = "<b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small) '>No results found.<b>";
