@@ -303,16 +303,6 @@ document.addEventListener("click", function (event) {
 	if (!root.contains(event.target) && !btnLocationSwitcher.contains(event.target) ) {
 		toggleLocationSwitcher(false);
 	}
-
-	// if (searchMenuOpen) { 
-	// 	let searchRoot = document.getElementById('search_root');
-	// 	const searchContainer = document.querySelector("#search_container");
-	// 	if (!searchRoot.contains(event.target) && !searchContainer.contains(event.target)) {
-	// 		hideSearch();
-	// 	}
-		
-	// }
-
 }, true);
 
 window.toggleLocationSwitcher = function(toggle){
@@ -631,11 +621,13 @@ function toggleSearchPane(toggle) {
 			BorderBottomLeftRadius: '0px',
 			BorderBottomRightRadius: '0px',
 		});
+		$("#search_divider").show();
 		$("#search_results_container").css("box-shadow", "0px 1.5px 4px 4px var(--shadow)");
 	} else {
 		$("#searchbar").css({'border-radius': 'var(--padding_large)'});
 		$("#search_results_container").css("background-color", "transparent");
 		$("#search_results_container").css("box-shadow", "");
+		$("#search_divider").hide();
 	}
 }
 
