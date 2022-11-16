@@ -828,7 +828,7 @@ function createLocationRowHTML(data) {
 			nameHTML += "<br><small>"+ data.description + "</small>";
 		} 
 	
-		return ("<div class='collection'><a onclick='gotoWorld("+data.destinationID+")' class='collection-item avatar waves-effect'> " + imgHTML + nameHTML + "</a></div>");
+		return ("<div class='collection'><a onclick='gotoWorld("+data.destinationID+")' class='collection-item search-item avatar waves-effect'> " + imgHTML + nameHTML + "</a></div>");
 
 
 	// 	<li class="collection-item avatar">

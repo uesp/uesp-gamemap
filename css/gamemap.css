@@ -475,6 +475,10 @@ li div.collapsible-header i {
 	padding-bottom: var(--padding_minimum);
 }
 
+.search-item {
+	font-size: 14px;
+}
+
 #search_progress_bar {
 	top: -2px;
 }

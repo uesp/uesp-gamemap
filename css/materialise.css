@@ -3233,7 +3233,7 @@ input[type=range] + .thumb {
   border-bottom: 1px solid #e0e0e0;
 }
 .collection .collection-item.avatar {
-  min-height: 84px;
+  min-height: 60px;
   padding-left: 72px;
   position: relative;
 }
