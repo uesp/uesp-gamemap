@@ -605,8 +605,6 @@ window.focusSearch = function() {
 	$("#search_results_container").show();
 
 	log("focusing search");
-	searchMenuOpen = true;
-
 	let searchQuery = searchbox.value;
 
 
@@ -614,29 +612,36 @@ window.focusSearch = function() {
 		// show options div
 		$("#search_options_container").css("box-shadow", "0px 1.5px 4px 4px var(--shadow)");
 	} else if (searchQuery.length >= 1) {
-		// show full search panel
+		toggleSearchPane(true);		
+	}
 
+	// is there a search query, if so do stuff with
+}
+
+function toggleSearchPane(toggle) {
+	if (toggle) {
+		$("#search_results_container").show();
 		$("#search_results_container").css("background-color", "var(--surface)");
-		$("#search_options_container").css("box-shadow", "");
-		// square off bottom corners
+		$("#search_options_container").css("box-shadow", "none");
 		$("#searchbar").css({
 			BorderTopLeftRadius: 'var(--padding_small)',
 			BorderTopRightRadius: 'var(--padding_small)',
 			BorderBottomLeftRadius: '0px',
 			BorderBottomRightRadius: '0px',
 		});
-
 		$("#search_results_container").css("box-shadow", "0px 1.5px 4px 4px var(--shadow)");
+	} else {
+		$("#searchbar").css({'border-radius': 'var(--padding_large)'});
+		$("#search_results_container").css("background-color", "transparent");
+		$("#search_results_container").css("box-shadow", "");
 	}
-
-	// is there a search query, if so do stuff with
 }
 
 window.hideSearch = function() {
 	log("hiding search");
-	$("#searchbar").css({'border-radius': 'var(--padding_large)'});
-	$("#search_results_container").css("background-color", "transparent");
-	$("#search_results_container").css("box-shadow", "");
+
+	toggleSearchPane(false);
+
 	$("#search_results_container").hide();
 	searchMenuOpen = false;
 	// hide the search pane without clearing search query
@@ -718,6 +723,7 @@ function doSearch(searchQuery, currentMapOnly) {
 
 				$("#search_loading_bar").hide();
 				$(".search_results_container").show();
+				toggleSearchPane(true);	
 				let searchResults = []; // SearchResults go in here
 
 				// merge both locations and worlds into a single array

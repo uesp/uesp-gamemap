@@ -468,11 +468,12 @@ li div.collapsible-header i {
 	border-radius: var(--padding_small);
 	border-top-left-radius: 0px;
 	border-top-right-radius: 0px;
-	padding-top: 10px;
+	padding-top: var(--padding_medium);
 	height: 100%;
 }
 
 #search_options_container {
+	padding: var(--padding_small);
 	border-radius: var(--padding_small);
 	background-color: var(--surface);
 	box-shadow: 0px 1.5px 4px 4px var(--shadow);
