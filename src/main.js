@@ -664,7 +664,7 @@ function updateSearch(query) {
 	// toggle clear button visibility
 	if (query.length > 0) {
 		btn_clear_search.style.visibility = 'visible';
-		$("#search_loading_bar").show();
+		$("#search_progress_bar").show();
 
 		// search debouncing
 		if (timer != null){
@@ -676,6 +676,7 @@ function updateSearch(query) {
 
 	} else {
 		clearSearch();
+		toggleSearchPane(false);	
 	}
 }
 
@@ -683,6 +684,8 @@ function updateSearch(query) {
 function doSearch(searchQuery, currentMapOnly) {
 
 	if (searchQuery != null && searchQuery.length > 1) {
+
+		toggleSearchPane(true);	
 
 		// do search stuff
 		let queryParams = {};
@@ -721,9 +724,8 @@ function doSearch(searchQuery, currentMapOnly) {
 
 			if (!data.isError) {
 
-				$("#search_loading_bar").hide();
+				$("#search_progress_bar").hide();
 				$(".search_results_container").show();
-				toggleSearchPane(true);	
 				let searchResults = []; // SearchResults go in here
 
 				// merge both locations and worlds into a single array
