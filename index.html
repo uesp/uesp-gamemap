@@ -65,13 +65,13 @@
 			<div class='search_container'>
 
 				<!-- Search bar -->
-				<div class='search_bar' tabindex="0">
+				<div id='searchbar' tabindex="0">
 					<div class="search_icon">
 						<i class="material-icons">search</i>
 					</div>
 
 					<div class='searchbox_container'>
-						<input class='search_box' type='search' id='searchbox' placeholder="Where would you like to go?" size='25' maxlength='100' autocomplete='off' />
+						<input class='search_box' type='search' id='searchbox' placeholder="Where would you like to go?" size='25' maxlength='100' autocomplete='off' onfocus="focusSearch()" onblur="hideSearch()" />
 					</div>
 
 					<div class='clear_search_container waves-effect waves-circle' >

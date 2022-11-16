@@ -583,9 +583,29 @@ function createGroupListHTML(groups) {
 					  Search
 ================================================*/
 
-function focusSearch() {
-	searchbox.focus();
-	M.toast({text: 'CTRL + F Pressed!'})
+window.focusSearch = function() {
+	
+	// focus search if it's not already
+	if (document.activeElement.id != searchbox.id) {
+		searchbox.focus();
+	}
+
+	log("focusing search");
+
+
+	if (searchQuery != null && searchQuery.length == 0) {
+		// show options div
+	} else if (searchQuery.length >= 1) {
+		// show full search panel
+		// square off bottom corners
+	}
+
+	// is there a search query, if so do stuff with
+}
+
+window.hideSearch = function() {
+	log("hiding search");
+	// hide the search pane without clearing search query
 }
 
 function clearSearch() {
