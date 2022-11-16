@@ -3246,11 +3246,10 @@ input[type=range] + .thumb {
   left: 15px;
   display: inline-block;
   vertical-align: middle;
+  background: var(--divider);
 }
 .collection .collection-item.avatar i.circle {
-  font-size: 18px;
   line-height: 42px;
-  color: #fff;
   background-color: #999;
   text-align: center;
 }

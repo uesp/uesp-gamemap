@@ -773,7 +773,7 @@ function updateSearchResults(results){
 		if (results.length >= 1) {
 			for (let i in results) {
 				if (results[i] != null) {
-					html += createLocationRowHTML(results[i]).replace("undefined", "");
+					html += createLocationRowHTML(results[i]);
 				}
 			}
 		} else {
@@ -803,16 +803,17 @@ function createLocationRowHTML(data) {
 		
 		let imgHTML;
 		let isWorld;
+		let iconSize = 30;
 		if (data.icon != null) {
 			let iconURL = mapConfig.iconPath + "/" + data.icon + ".png";
 			iconURL = iconURL.replace("//", "/"); // bypass bug doubling forward slashes for some reason
-			imgHTML = "<img src="+iconURL+" width='30' height='30'></img>";
+			imgHTML = "<img class='circle' src="+iconURL+" width='"+iconSize+"' height='"+iconSize+"'></img>";
 		} else {
 			if (data.icon == null && data.description == null) {
-				imgHTML = "<i class='small material-icons'>public</i>";
+				imgHTML = "<i class='small material-icons circle'>public</i>";
 				isWorld = true;
 			} else {
-				imgHTML = "<i class='small material-icons'>location_on</i>";
+				imgHTML = "<i class='small material-icons circle'>location_on</i>";
 			}
 		}
 
@@ -827,7 +828,17 @@ function createLocationRowHTML(data) {
 			nameHTML += "   <small>(In "+ data.description + ")</small>";
 		} 
 	
-		return ("<div class='collection'><a onclick='gotoWorld("+data.destinationID+")' class='collection-item waves-effect'> " + imgHTML + nameHTML + "</a></div>");
+		return ("<div class='collection'><a onclick='gotoWorld("+data.destinationID+")' class='collection-item avatar waves-effect'> " + imgHTML + nameHTML + "</a></div>");
+
+
+	// 	<li class="collection-item avatar">
+	// 	<img src="images/yuna.jpg" alt="" class="circle">
+	// 	<span class="title">Title</span>
+	// 	<p>First Line <br>
+	// 	   Second Line
+	// 	</p>
+	// 	<a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
+	//   </li>
 	
 	}
 }
