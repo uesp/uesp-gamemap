@@ -461,14 +461,20 @@ li div.collapsible-header i {
 	width: 100%;
 }
 
-.search_results_container {
-	background-color: var(--surface);
+#search_results_container {
 	pointer-events: visible;
 	position: relative;
-	top: -16px;
-	padding-top: var(--padding_large);
+	top: -2px;
 	border-radius: var(--padding_small);
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	padding-top: 10px;
 	height: 100%;
+}
+
+#search_options_container {
+	border-radius: var(--padding_small);
+	background-color: var(--surface);
 	box-shadow: 0px 1.5px 4px 4px var(--shadow);
 }
 

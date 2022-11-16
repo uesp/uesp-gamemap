@@ -590,6 +590,8 @@ window.focusSearch = function() {
 		searchbox.focus();
 	}
 
+	$("#search_results_container").show();
+
 	log("focusing search");
 
 	let searchQuery = searchbox.value;
@@ -597,16 +599,21 @@ window.focusSearch = function() {
 
 	if (searchQuery != null && searchQuery.length == 0) {
 		// show options div
+		$("#search_options_container").css("box-shadow", "0px 1.5px 4px 4px var(--shadow)");
 	} else if (searchQuery.length >= 1) {
 		// show full search panel
+
+		$("#search_results_container").css("background-color", "var(--surface)");
+		$("#search_options_container").css("box-shadow", "");
 		// square off bottom corners
-		log("setting css");
 		$("#searchbar").css({
 			BorderTopLeftRadius: 'var(--padding_small)',
 			BorderTopRightRadius: 'var(--padding_small)',
 			BorderBottomLeftRadius: '0px',
-			BorderBottomRightRadius: '0px'
+			BorderBottomRightRadius: '0px',
 		});
+
+		$("#search_results_container").css("box-shadow", "0px 1.5px 4px 4px var(--shadow)");
 	}
 
 	// is there a search query, if so do stuff with
@@ -615,6 +622,9 @@ window.focusSearch = function() {
 window.hideSearch = function() {
 	log("hiding search");
 	$("#searchbar").css({'border-radius': 'var(--padding_large)'});
+	$("#search_results_container").css("background-color", "transparent");
+	$("#search_results_container").css("box-shadow", "");
+	$("#search_results_container").hide();
 	// hide the search pane without clearing search query
 }
 
