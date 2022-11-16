@@ -18,6 +18,7 @@ var mapConfig = null;
 var gamemap = null;
 var currentTabID = "";
 var pairings = [];
+var searchMenuOpen = false;
 
 // on page load
 log("Page initialising...");
@@ -302,6 +303,16 @@ document.addEventListener("click", function (event) {
 	if (!root.contains(event.target) && !btnLocationSwitcher.contains(event.target) ) {
 		toggleLocationSwitcher(false);
 	}
+
+	// if (searchMenuOpen) { 
+	// 	let searchRoot = document.getElementById('search_root');
+	// 	const searchContainer = document.querySelector("#search_container");
+	// 	if (!searchRoot.contains(event.target) && !searchContainer.contains(event.target)) {
+	// 		hideSearch();
+	// 	}
+		
+	// }
+
 }, true);
 
 window.toggleLocationSwitcher = function(toggle){
@@ -325,6 +336,7 @@ function reselectTabs() {
 
 function hideMenus() {
 	toggleLocationSwitcher(false);
+	hideSearch();
 
 	if (Utils.isMobileDevice()) { 
 		clearSearch();
@@ -593,6 +605,7 @@ window.focusSearch = function() {
 	$("#search_results_container").show();
 
 	log("focusing search");
+	searchMenuOpen = true;
 
 	let searchQuery = searchbox.value;
 
@@ -625,6 +638,7 @@ window.hideSearch = function() {
 	$("#search_results_container").css("background-color", "transparent");
 	$("#search_results_container").css("box-shadow", "");
 	$("#search_results_container").hide();
+	searchMenuOpen = false;
 	// hide the search pane without clearing search query
 }
 
