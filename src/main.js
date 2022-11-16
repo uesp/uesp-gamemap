@@ -592,12 +592,21 @@ window.focusSearch = function() {
 
 	log("focusing search");
 
+	let searchQuery = searchbox.value;
+
 
 	if (searchQuery != null && searchQuery.length == 0) {
 		// show options div
 	} else if (searchQuery.length >= 1) {
 		// show full search panel
 		// square off bottom corners
+		log("setting css");
+		$("#searchbar").css({
+			BorderTopLeftRadius: 'var(--padding_small)',
+			BorderTopRightRadius: 'var(--padding_small)',
+			BorderBottomLeftRadius: '0px',
+			BorderBottomRightRadius: '0px'
+		});
 	}
 
 	// is there a search query, if so do stuff with
@@ -605,6 +614,7 @@ window.focusSearch = function() {
 
 window.hideSearch = function() {
 	log("hiding search");
+	$("#searchbar").css({'border-radius': 'var(--padding_large)'});
 	// hide the search pane without clearing search query
 }
 
@@ -614,7 +624,7 @@ function clearSearch() {
 	$("#search_loading_bar").hide();
 	$("#search_results").html("");
 	$(".search_results_container").hide();
-
+	hideSearch();
 }
 
 let timer;
