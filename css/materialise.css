@@ -2704,7 +2704,7 @@ i.tiny {
   font-size: 1rem;
 }
 i.small {
-  font-size: 2rem;
+  font-size: 1.8rem;
 }
 i.medium {
   font-size: 4rem;
@@ -3247,6 +3247,7 @@ input[type=range] + .thumb {
   display: inline-block;
   vertical-align: middle;
   background: var(--divider);
+  object-fit: scale-down;
 }
 .collection .collection-item.avatar i.circle {
   line-height: 42px;
