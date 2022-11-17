@@ -377,9 +377,15 @@ export default class Gamemap {
 		return (worldID != null && worldID >= 0 && this.hasWorld(worldID));
 	}
 
-	gotoWorld(destID, coords) {
+	gotoWorld(destID, coords, zoom) {
 
 		$("#map_loading_bar").show();
+
+		if (zoom == null) {
+			zoom = this.mapConfig.defaultZoomLevel;
+		}
+
+		
 
 		if (destID > 0) { // is this destination a world?
 			let worldID = destID;
@@ -389,14 +395,14 @@ export default class Gamemap {
 				log(this.getWorldFromID(worldID));
 	
 				let mapState = new MapState();
-				mapState.zoomLevel = this.mapConfig.defaultZoomLevel;
+				mapState.zoomLevel = zoom;
 	
 				if (coords == null) {
 					mapState.coords = [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
 				} else {
 					mapState.coords = coords;
 				}
-	
+				
 				mapState.world = this.getWorldFromID(worldID);
 	
 				this.setMapState(mapState);
@@ -408,8 +414,8 @@ export default class Gamemap {
 			let locationID = Math.abs(destID); // get positive locationID from input
 
 			function onGetLocation(location) {
-				self.gotoWorld(location.worldID, location.coords)
 				log(location);
+				self.gotoWorld(location.worldID, location.coords, 5)
 			}
 			this.getLocation(locationID, onGetLocation);
 
@@ -818,20 +824,32 @@ export default class Gamemap {
 		}
 
 		// are we being given an array of coords?
-		if (coords[0] != null && coords.length == 2) {
+		if (coords[0] != null) {
+			
+			if (coords[0].x != null) { // are we given an array of coord objects?
 
-			let tempCoords = coords;
+				if (coords.length == 1) { // are we given a single coord object? (marker, point)
+					return this.toLatLng(coords[0]);
+				} else { // else we are given a polygon, choose the middle coordinate
+					return this.toLatLng(coords[Math.floor(coords.length / 2)]);
+				}
 
-			// are we using a normalised coordinate scheme?
-			if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
+			} else if (coords.length > 1) { // else we are just given an array of coords
 
-				// multiply the normalised coords by the map image dimensions
-				// to get the XY coordinates
-				tempCoords[0] = (tempCoords[0] * this.mapImage.width);
-				tempCoords[1] = (tempCoords[1] * this.mapImage.height);
+				// are we using a normalised coordinate scheme?
+				if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
+
+					let tempCoords = coords;
+	
+					// multiply the normalised coords by the map image dimensions
+					// to get the XY coordinates
+					tempCoords[0] = (tempCoords[0] * this.mapImage.width);
+					tempCoords[1] = (tempCoords[1] * this.mapImage.height);
+
+					latLng = RC.unproject(tempCoords);
+				}
 			}
 
-			latLng = RC.unproject(tempCoords);
 		}
 		return latLng;
 	}
