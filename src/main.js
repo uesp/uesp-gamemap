@@ -785,8 +785,6 @@ function updateSearchResults(results){
 	}
 }
 
-
-
 function createLocationRowHTML(data) {
 
 	if (!Number.isNaN(data)) {
@@ -800,7 +798,6 @@ function createLocationRowHTML(data) {
 
 	if (data.name != null) {
 
-		
 		let imgHTML;
 		let isWorld;
 		let iconSize = 30;
@@ -817,7 +814,6 @@ function createLocationRowHTML(data) {
 			}
 		}
 
-
 		let nameHTML = "";
 
 		if (isWorld) { nameHTML += "<b>" }
@@ -830,15 +826,5 @@ function createLocationRowHTML(data) {
 	
 		return ("<div class='collection'><a onclick='gotoWorld("+data.destinationID+")' class='collection-item search-item avatar waves-effect'> " + imgHTML + nameHTML + "</a></div>");
 
-
-	// 	<li class="collection-item avatar">
-	// 	<img src="images/yuna.jpg" alt="" class="circle">
-	// 	<span class="title">Title</span>
-	// 	<p>First Line <br>
-	// 	   Second Line
-	// 	</p>
-	// 	<a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-	//   </li>
-	
 	}
 }

@@ -404,8 +404,8 @@ li div.collapsible-header i {
 	pointer-events: none;
 }
 
-.clear_search_container {
-	margin-left: auto;
+#btn_clear_search i {
+	text-shadow: none;
 }
 
 .search_container {
