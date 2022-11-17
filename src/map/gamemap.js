@@ -393,6 +393,8 @@ export default class Gamemap {
 	
 				if (coords == null) {
 					mapState.coords = [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
+				} else {
+					mapState.coords = coords;
 				}
 	
 				mapState.world = this.getWorldFromID(worldID);
@@ -402,7 +404,20 @@ export default class Gamemap {
 				throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
 			}
 		} else { // this must be a location, centre on that location
-			let locationID = destID;
+
+			let locationID = Math.abs(destID); // get positive locationID from input
+
+			function onGetLocation(location) {
+				self.gotoWorld(location.worldID, location.coords)
+				log(location);
+			}
+			this.getLocation(locationID, onGetLocation);
+
+			//find location
+			//find world
+			// find location of location in world
+			// return worldID and coords
+			// show popup of that location
 
 			log("going to location");
 			//
@@ -475,7 +490,6 @@ export default class Gamemap {
 			queryParams.db = this.mapConfig.dbPrefix;
 			if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
 
-
 			$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 
 				log("Getting info for locationID: "+ locationID);
@@ -483,7 +497,9 @@ export default class Gamemap {
 					log("Got location info!");
 					log(data);
 					if (!(onLoadFunction == null) ) {
-						onLoadFunction.call(location, data);
+						let world = self.getWorldFromID(data.locations[0].worldId);
+						let location = new Location(self.mapConfig, data.locations[0], world)
+						onLoadFunction.call(null, location);
 					}
 					} else {
 						log("LocationID " + locationID + " was invalid.");
@@ -879,10 +895,10 @@ export default class Gamemap {
 			let location = marker.location;
 			if (location != null){
 				if (location.destinationID < 0) { // is location destination a worldID
-					this.gotoWorld((location.destinationID+"").slice(1));
+					this.gotoWorld(Math.abs(location.destinationID));
 				} else { // it is a location ID
-					function onGetLocation(data) {
-						self.gotoWorld(data.locations[0].worldId);
+					function onGetLocation(location) {
+						self.gotoWorld(location.worldID);
 					}
 					this.getLocation(location.destinationID, onGetLocation);
 				}
