@@ -379,21 +379,16 @@ export default class Gamemap {
 
 	gotoWorld(destID, coords, zoom) {
 
-		$("#map_loading_bar").show();
-
 		if (zoom == null) {
 			zoom = this.mapConfig.defaultZoomLevel;
 		}
 
-		
-
 		if (destID > 0) { // is this destination a world?
 			let worldID = destID;
 			if (this.isWorldValid(worldID)) {
-				this.clearLocations();
+
 				log("Going to world... " + worldID);
-				log(this.getWorldFromID(worldID));
-	
+
 				let mapState = new MapState();
 				mapState.zoomLevel = zoom;
 	
@@ -402,10 +397,21 @@ export default class Gamemap {
 				} else {
 					mapState.coords = coords;
 				}
-				
-				mapState.world = this.getWorldFromID(worldID);
-	
-				this.setMapState(mapState);
+
+
+				// if world is the same as the current one, just pan to it
+				if (worldID == this.getCurrentWorldID()) {
+					if (coords != null) {
+						map.flyTo(this.toLatLng(coords), zoom);
+					}
+				} else { // else load up the new world
+					this.clearLocations();
+					$("#map_loading_bar").show();
+					log(this.getWorldFromID(worldID));
+					mapState.world = this.getWorldFromID(worldID);
+					this.setMapState(mapState);
+				}
+
 			} else {
 				throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
 			}
@@ -415,24 +421,23 @@ export default class Gamemap {
 
 			function onGetLocation(location) {
 				log(location);
-				self.gotoWorld(location.worldID, location.coords, 5)
+				self.gotoWorld(location.worldID, location.coords, self.getWorldFromID(location.worldID).maxZoomLevel)
 			}
+
 			this.getLocation(locationID, onGetLocation);
 
-			//find location
-			//find world
-			// find location of location in world
-			// return worldID and coords
-			// show popup of that location
-
 			log("going to location");
-			//
 		}
 	}
 
 	// convenience method to jump to destination
-	gotoDestination(destID) {
+	gotoDest(destID) {
 		this.gotoWorld(destID);
+	}
+
+	centreOn(locationID, openPopup) {
+
+
 	}
 
 	/*================================================
@@ -956,7 +961,6 @@ export default class Gamemap {
 		}
 
 	}
-
 
 	openPopup(marker, isEdit) {
 		let latlng;
