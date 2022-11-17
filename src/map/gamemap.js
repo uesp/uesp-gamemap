@@ -830,8 +830,25 @@ export default class Gamemap {
 
 				if (coords.length == 1) { // are we given a single coord object? (marker, point)
 					return this.toLatLng(coords[0]);
-				} else { // else we are given a polygon, choose the middle coordinate
-					return this.toLatLng(coords[Math.floor(coords.length / 2)]);
+				} else { // else we are given a polygon, calculate the middle coordinate
+
+					let xs = [];
+					let ys = [];
+
+					for (let i in coords) {
+						xs.push(coords[i].x);
+						ys.push(coords[i].y);
+					}
+
+					let finalX = 0;
+					let finalY = 0;
+
+					for (let i in xs) {
+						finalX = finalX + parseFloat(xs[i]);
+						finalY = finalY + parseFloat(ys[i]);
+					}
+
+					return this.toLatLng(new Point(finalX / xs.length, finalY / ys.length));
 				}
 
 			} else if (coords.length > 1) { // else we are just given an array of coords
