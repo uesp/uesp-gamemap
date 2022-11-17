@@ -559,7 +559,7 @@ export default class Gamemap {
 		locTypeName = locTypeName.trim().toLowerCase() + "";
 
 		if (this.mapConfig != null && this.mapConfig.icons != null && locTypeName != "") {
-			for (locType in this.mapConfig.icons) {
+			for (let locType in this.mapConfig.icons) {
 				if (locTypeName === this.mapConfig.icons[locType].toLowerCase()) {
 					return locType;
 				} 
