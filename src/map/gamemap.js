@@ -379,35 +379,24 @@ export default class Gamemap {
 
 	gotoWorld(destID, coords, zoom) {
 
-		if (zoom == null) {
-			zoom = this.mapConfig.defaultZoomLevel;
-		}
-
 		if (destID > 0) { // is this destination a world?
 			let worldID = destID;
 			if (this.isWorldValid(worldID)) {
 
-				log("Going to world... " + worldID);
-
 				let mapState = new MapState();
-				mapState.zoomLevel = zoom;
+				mapState.zoomLevel = (zoom != null) ? zoom : this.mapConfig.defaultZoomLevel;
+				mapState.coords = (coords != null) ? coords : [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
 	
-				if (coords == null) {
-					mapState.coords = [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
-				} else {
-					mapState.coords = coords;
-				}
-
-
-				// if world is the same as the current one, just pan to it
+				// if we are in the same world, just pan to the provided location (or do nothing)
 				if (worldID == this.getCurrentWorldID()) {
 					if (coords != null) {
 						map.flyTo(this.toLatLng(coords), zoom);
 					}
 				} else { // else load up the new world
-					this.clearLocations();
-					$("#map_loading_bar").show();
+					log("Going to world... " + worldID);
 					log(this.getWorldFromID(worldID));
+					$("#map_loading_bar").show();
+					this.clearLocations();
 					mapState.world = this.getWorldFromID(worldID);
 					this.setMapState(mapState);
 				}

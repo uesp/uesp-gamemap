@@ -480,7 +480,6 @@ function createWorldLists(mapWorlds) {
 		},
 
 		onCloseStart: function(element){
-
 			$(element).find(".collapsible-header:first").css("background-color", "var(--surface_variant_dark)");
 			$(element).find("i:first").css("transform", "rotate(360deg)");
 
@@ -779,7 +778,6 @@ function updateSearchResults(results){
 		} else {
 			html = "<b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small) '>No results found.<b>";
 		}
-
 
 		$("#search_results").html(html);
 	}
