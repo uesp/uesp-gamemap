@@ -1,8 +1,8 @@
 {
     // General map info
-    "mapTitle": "UESP Gamemap",
+    "mapTitle": "UESP Gamemap", // replace all of these when making new map config
     "wikiNamespace": "",
-    "wikiURL": "",  // replace all of these when making new map config
+    "wikiURL": "//en.uesp.net/wiki/",
     "tileURL" : "",
     "database" : "",
     "feedbackURL" : "https://github.com/uesp/uesp-gamemap/issues",
@@ -44,9 +44,6 @@
     "defaultWorldID" : 0,
     "minWorldID" : 50,
     "maxWorldID" : 20000,
-    "customLocationList" : {
-        // curated map location list goes here...
-    },
 
     // Map icon info
     "iconPath": "",

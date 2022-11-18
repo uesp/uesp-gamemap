@@ -794,7 +794,7 @@ function createLocationRowHTML(data) {
 		}
 	} 
 
-	if (data.name != null) {
+	if (data != null && data.name != null) {
 
 		let imgHTML;
 		let isWorld;

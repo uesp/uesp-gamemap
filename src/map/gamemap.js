@@ -1149,12 +1149,7 @@ export default class Gamemap {
 	}
 
 	
-
 }
-
-
-
-
 
 
 
