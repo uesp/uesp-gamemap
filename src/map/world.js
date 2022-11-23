@@ -1,7 +1,7 @@
 /**
  * @name world.js
  * @author Dave Humphrey <dave@uesp.net> (22nd Jan 2014)
- * @summary Contains class definition for gamemap's "world".
+ * @summary Contains class definition for a gamemap world.
  */
 
 export default class World {

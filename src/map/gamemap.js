@@ -128,10 +128,16 @@ export default class Gamemap {
 	 */
 	setMapState(mapState) {
 
+		log("Setting map state!");
+
 		// remove previous tiles
 		if (tileLayer != null) {
 			tileLayer.remove();
 			this.clearLocations();
+		}
+
+		if (mapState.world == null) {
+			throw new Error("Map was provided an invalid/null world!");
 		}
 
 		// set full image width & height
@@ -488,7 +494,8 @@ export default class Gamemap {
 			let queryParams = {};
 			queryParams.action = "get_loc";
 			queryParams.locid  = locationID;
-			queryParams.db = this.mapConfig.dbPrefix;
+			queryParams.db = this.mapConfig.database;
+			log(this.mapConfig.database)
 			if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
 
 			$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
@@ -499,6 +506,7 @@ export default class Gamemap {
 					log(data);
 					if (!(onLoadFunction == null) ) {
 						let world = self.getWorldFromID(data.locations[0].worldId);
+						log(data.locations[0]);
 						let location = new Location(self.mapConfig, data.locations[0], world)
 						onLoadFunction.call(null, location);
 					}

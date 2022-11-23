@@ -20,6 +20,14 @@ export default class Location {
 			mapConfig = DEFAULT_MAP_CONFIG;
 		}
 
+		if (location == null) {
+			throw new Error("Location cannot be null!")
+		}
+
+		if (world == null) {
+			throw new Error("World cannot be null!")
+		}
+
 		config = mapConfig;
 		currentWorld = world;
 		numTiles = world.numTilesX;

@@ -10,9 +10,10 @@
     "customCSS" : false,
 
     // Map options
-    "defaultZoomLevel" : 11,
-    "minZoomLevel" : 9,
-    "maxZoomLevel" : 17,
+    "defaultZoomLevel" : 4,
+    "minZoomLevel" : 0,
+    "maxZoomLevel" : 7,
+    "zoomOffset" : 10,
 
     // Map coordinate system info
     // 0: XY (Default)
@@ -27,13 +28,10 @@
     "defaultYPos" : 100000,
 
     // Map tile info
-    "missingMapTilePath" : "assets/images/missingtile.jpg",
+    "missingMapTilePath" : "assets/images/tooltip-border.jpg",
     "numTilesX" : 11,
     "numTilesY" : 9,
     "tileSize" : 256,
-    "tileLayers" : [
-        "default"
-    ],
 
     // Map world info
     "defaultWorldID" : 1,
