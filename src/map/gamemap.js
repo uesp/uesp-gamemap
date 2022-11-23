@@ -742,16 +742,15 @@ export default class Gamemap {
 		let width = null;
 		let height = null;
 
-		// check if actual map image dimensions (not tile dimensions) are provided
-		if (this.mapConfig.fullWidth != null && this.mapConfig.fullHeight != null) {
-			width = this.mapConfig.fullWidth;
-			height = this.mapConfig.fullHeight;
-		} else if (world.numTilesX == world.numTilesY) { // if the map is a square (1:1)
-			// then calculate the image dimensions as the size of the whole grid
-			width = world.numTilesX * this.mapConfig.tileSize;
-			height = world.numTilesY * this.mapConfig.tileSize;
+		// check if this world has a number of tiles set 
+		if (world.numTilesX != null && world.numTilesY != null) {
+			width = (world.numTilesX * this.mapConfig.tileSize) * Math.pow(2, 0);
+			height = (world.numTilesY * this.mapConfig.tileSize) * Math.pow(2, 0);
+
+			log(width);
+			log(height);
 		} else {
-			throw new Error("No map dimensions were provided!");
+			throw new Error("No map tile dimensions were provided!");
 		}
 
 		dimens.width = width;
