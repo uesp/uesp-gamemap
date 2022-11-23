@@ -255,6 +255,7 @@ function showError(reason){
 	$("#error_box_reason").text(reason);
 	log("Error: " + reason);
 	$("#loading_spinner").hide();
+	$("#search_progress_bar").hide();
 }
 
 /*================================================
@@ -818,9 +819,13 @@ function createLocationRowHTML(data) {
 		nameHTML += data.name;
 		if (isWorld) { nameHTML += "</b>" }
 
-		if (data.description != null) {
+		if (data.description != null && gamemap.hasMultipleWorlds()) {
 			nameHTML += "<br><small style='color: var(--text_low_emphasis);'>"+ data.description + "</small>";
 		} 
+
+		if (isWorld && !gamemap.hasMultipleWorlds()) {
+			return "";
+		}
 	
 		return ("<div class='collection'><a onclick='gotoWorld("+data.destinationID+")' class='collection-item search-item avatar waves-effect'> " + imgHTML + nameHTML + "</a></div>");
 
