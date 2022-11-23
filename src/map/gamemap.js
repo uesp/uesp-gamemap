@@ -391,6 +391,8 @@ export default class Gamemap {
 				if (worldID == this.getCurrentWorldID()) {
 					if (coords != null) {
 						map.flyTo(this.toLatLng(coords), zoom);
+					} else {
+						map.flyTo(this.toLatLng([this.mapConfig.defaultXPos, this.mapConfig.defaultYPos]), mapState.zoomLevel)
 					}
 				} else { // else load up the new world
 					log("Going to world... " + worldID);
