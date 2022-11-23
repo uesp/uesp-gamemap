@@ -1,31 +1,9 @@
-.gmMapLocIconDiv {
-	background-color: rgba(0,0,0,0.3);
-    box-shadow: 0px 0px 4px 4px rgba(0,0,0,0.4);
-    border-radius: 6px;
+
+:root {
+	/* text colours */
+	--text_loc_name: #ffff00;
 }
 
-.gmMapSearchInputDiv {
-	height: 21px;
-}
-
-.gmMapSearchResultsWrapper {
-	top: 21px;
-}
-
-.gmMapSearchResultIcon {
-    width: auto;
-    margin: 4px;
-}
-
-.gmMapSearchResultLocWorld {
-	display: none;
-}
-
-.gmMapLoc {
+.location-label {
 	color: #ffff00;
-}
-
-.gmMapSearchInput {
-    position: relative;
-    top: -3px;
 }

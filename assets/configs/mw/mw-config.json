@@ -6,8 +6,8 @@
     "tileURL" : "//maps.uesp.net/mwmap/",
     "database" : "mw",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Morrowind_Map_Design",
-    "bgColour" : "#000000",
-    "customCSS" : false,
+    "bgColour" : "#7076AA",
+    "customCSS" : true,
 
     // Map options
     "defaultZoomLevel" : 2,
