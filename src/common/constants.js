@@ -10,9 +10,9 @@ export const TEMPLATES_DIR = ASSETS_DIR + "templates/";
 export const ICONS_DIR = ASSETS_DIR + "icons/";
 export const IMAGES_DIR = ASSETS_DIR + "images/";
 
-export const CSS_OVERRIDE_FILENAME = "override.css"
+export const CSS_OVERRIDE_FILENAME = "custom.css"
 export const MAP_CONFIG_FILENAME = "config.json"
-export const DEFAULT_MAP_CONFIG_DIR = CONFIG_DIR + "default_" + MAP_CONFIG_FILENAME;
+export const DEFAULT_MAP_CONFIG_DIR = CONFIG_DIR + "default-" + MAP_CONFIG_FILENAME;
 
 export const GAME_DATA_SCRIPT = "src/db/gamemap.php";
 

@@ -50,6 +50,7 @@ export default class Gamemap {
 			}
 			self = this;
 
+			// set up css
 			$("#"+mapRootID).css("background-color", mapConfig.bgColour);
 
 			// set the default map info

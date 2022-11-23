@@ -40,7 +40,7 @@ $(document).ready(function() {
 			if (error == null) {
 				window.DEFAULT_MAP_CONFIG = defaultMapConfig;
 
-				let configURL = (Constants.CONFIG_DIR + gameParam + "/" + Constants.MAP_CONFIG_FILENAME);
+				let configURL = (Constants.CONFIG_DIR + gameParam + "/" + gameParam + "-" + Constants.MAP_CONFIG_FILENAME);
 				log("Getting map config at "+configURL+"...");
 
 				if (Utils.doesFileExist(configURL)) {
