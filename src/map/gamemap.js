@@ -398,7 +398,7 @@ export default class Gamemap {
 	
 				// if we are in the same world, just pan to the provided location (or pan to default)
 				if (worldID == this.getCurrentWorldID()) {
-					map.flyTo(this.toLatLng(coords), zoom);
+					map.setView(this.toLatLng(coords), zoom);
 				} else { // else load up the new world
 					log("Going to world... " + worldID);
 					log(this.getWorldFromID(worldID));
