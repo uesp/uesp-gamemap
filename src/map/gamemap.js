@@ -254,7 +254,7 @@ export default class Gamemap {
 		}
 
 		// update map state
-		newMapState.coords = [this.toCoords(map.getCenter()).x.toFixed(3), this.toCoords(map.getCenter()).y.toFixed(3)]
+		newMapState.coords = [Number(this.toCoords(map.getCenter()).x).toFixed(3), Number(this.toCoords(map.getCenter()).y).toFixed(3)];
 		newMapState.zoomLevel = parseFloat(map.getZoom().toFixed(3));
 		newMapState.world = this.getWorldFromID(this.getCurrentWorldID());
 		this.currentMapState = newMapState;
@@ -265,6 +265,9 @@ export default class Gamemap {
 		if (this.hasMultipleWorlds()){
 			mapLink += 'world=' + newMapState.world.id;
 		}
+
+
+		
 
 		mapLink += '&x=' + newMapState.coords[0];
 		mapLink += '&y=' + newMapState.coords[1];
