@@ -254,7 +254,7 @@ export default class Gamemap {
 		}
 
 		// update map state
-		newMapState.coords = [this.toCoords(map.getCenter()).x, this.toCoords(map.getCenter()).y]
+		newMapState.coords = [this.toCoords(map.getCenter()).x.toFixed(3), this.toCoords(map.getCenter()).y.toFixed(3)]
 		newMapState.zoomLevel = parseFloat(map.getZoom().toFixed(3));
 		newMapState.world = this.getWorldFromID(this.getCurrentWorldID());
 		this.currentMapState = newMapState;
