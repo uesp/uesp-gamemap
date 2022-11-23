@@ -117,7 +117,7 @@ function onWorldsLoaded(mapWorlds) {
 	$("#loading_spinner").hide();
 	$('#zoom_widget').css('visibility','visible');
 
-	if (gamemap.hasMultipleWorlds) {
+	if (gamemap.hasMultipleWorlds()) {
 
 		// only show the location switcher if there are more than two worlds
 		$("#btn_location_switcher").show();
