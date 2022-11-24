@@ -1,0 +1,79 @@
+{
+    // General map info
+    "mapTitle": "UESP Gamemap", // replace all of these when making new map config
+    "wikiNamespace": "",
+    "wikiURL": "//en.uesp.net/wiki/",
+    "tileURL" : "",
+    "database" : "",
+    "feedbackURL" : "https://github.com/uesp/uesp-gamemap/issues",
+    "bgColour" : "#000000",
+    "customCSS" : false,
+
+    // Map options
+    "defaultZoomLevel" : 0,
+    "minZoomLevel" : 9,
+    "maxZoomLevel" : 17,
+    "zoomOffset" : 0,
+
+    // Map coordinate system info
+    // 0: XY (Default)
+    // 1: Normalised
+    // 2: Worldspace
+    "coordType" : 0,
+    "minX": 0,
+    "maxX": 10000,
+    "minY": 0,
+    "maxY": 10000,
+    "defaultXPos" : 0,
+    "defaultYPos" : 0,
+
+    // Map tile info
+    "missingMapTilePath" : "assets/images/missingtile.jpg",
+    "numTilesX" : 10,
+    "numTilesY" : 7,
+    "tileSize" : 256,
+    "tileLayers" : [
+        "default"
+    ],
+
+    // Map world info
+    "defaultWorldID" : 0,
+    "minWorldID" : 50,
+    "maxWorldID" : 20000,
+
+    // Map icon info
+    "iconPath": "",
+    "missingIconPath" : "assets/icons/missing.png",
+    "iconWidth" : 32,
+    "iconHeight" : 32,
+    "icons": {
+        // icon list goes here...
+    },
+
+    // Map cell resource info
+    "cellResourceStartX" : 0,
+    "cellResourceStartY" : 0,
+    "cellResourceStopX" : 0,
+    "cellResourceStopY" : 0,
+    "cellResourceDeltaX" : 256,
+    "cellResourceDeltaY" : 256,
+
+    // Map grid info
+    "gridStartX" : 0,
+    "gridStartY" : 0,
+    "gridStopX" : 0,
+    "gridStopY" : 0,
+    "gridDeltaX" : 256,
+    "gridDeltaY" : 256,
+    "gridLabelDeltaX" : 5,
+    "gridLabelDeltaY" : 5,
+    "gridStartLabelZoom" : 10,
+    "gridShowLabels" : true,
+    "gridLabelOffsetX" : 0,
+    "gridLabelOffsetY" : 0,
+    "gridStyle" : "yellow",
+    "gridOffsetX" : 0,
+    "gridOffsetY" : 0,
+    "gridOffsetPowerY" : 0
+}
+
