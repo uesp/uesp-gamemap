@@ -9,7 +9,7 @@
     "customCSS" : false,
 
     // Map options
-    "defaultZoomLevel" : 0,
+    "defaultZoomLevel" : 2,
     "maxZoomLevel" : 7,
     "zoomOffset" : 0,
 

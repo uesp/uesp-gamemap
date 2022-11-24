@@ -68,10 +68,15 @@ $(document).ready(function() {
 							mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
 							mapConfig.missingMapTilePath = mapConfig.assetsPath + "images/outofrange.jpg";
 							mapConfig.iconPath = mapConfig.assetsPath + "icons/";
-							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/";
+							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/"; // note: sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this.
 
-							log("Completed merged mapConfig:")
+							log("Completed merged map config:")
 							log(mapConfig);
+
+
+							// check if this map has a css file associated with it
+
+						
 
 
 							// TODO: check if current directory has a css file, if so make customcss= true in the map config

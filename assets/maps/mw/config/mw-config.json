@@ -21,8 +21,8 @@
     "maxX": 245760,
     "minY": -221184,
     "maxY": 303104,
-    "defaultXPos" : 100000,
-    "defaultYPos" : 100000,
+    "defaultXPos" : 5000,
+    "defaultYPos" : 5000,
 
     // Map tile info
     "numTilesX" : 11,
