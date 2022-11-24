@@ -16,7 +16,7 @@ export const PARAM_TYPE_HASH = 1;
 
 export const CSS_OVERRIDE_FILENAME = "override.css"
 export const MAP_CONFIG_FILENAME = "config.json"
-export const DEFAULT_MAP_CONFIG_DIR = ASSETS_DIR + "default-" + MAP_CONFIG_FILENAME;
+export const DEFAULT_MAP_CONFIG_DIR = MAP_ASSETS_DIR + "default-" + MAP_CONFIG_FILENAME;
 
 export const GAME_DATA_SCRIPT = "src/db/gamemap.php";
 

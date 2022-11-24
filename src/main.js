@@ -74,6 +74,8 @@ $(document).ready(function() {
 								mapConfig.tileURL = mapConfig.baseTileURL + mapConfig.tileURLName + "/";
 							}
 
+							log(mapConfig);
+
 							// set up map assets assets directory
 							mapConfig.assetsDirectory = mapConfig.assetsDirectory + mapConfig.database + "/";
 
