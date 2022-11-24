@@ -5,6 +5,7 @@
  */
 
 export const ASSETS_DIR = "assets/";
+export const MAP_ASSETS_DIR = "assets/maps/";
 export const CONFIG_DIR = ASSETS_DIR + "configs/";
 export const TEMPLATES_DIR = ASSETS_DIR + "templates/";
 export const ICONS_DIR = ASSETS_DIR + "icons/";
@@ -13,7 +14,7 @@ export const IMAGES_DIR = ASSETS_DIR + "images/";
 export const PARAM_TYPE_QUERY = 0;
 export const PARAM_TYPE_HASH = 1;
 
-export const CSS_OVERRIDE_FILENAME = "custom.css"
+export const CSS_OVERRIDE_FILENAME = "override.css"
 export const MAP_CONFIG_FILENAME = "config.json"
 export const DEFAULT_MAP_CONFIG_DIR = ASSETS_DIR + "default-" + MAP_CONFIG_FILENAME;
 

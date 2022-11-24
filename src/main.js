@@ -18,7 +18,6 @@ var mapConfig = null;
 var gamemap = null;
 var currentTabID = "";
 var pairings = [];
-var searchMenuOpen = false;
 
 // on page load
 log("Page initialising...");
@@ -28,22 +27,32 @@ $(document).ready(function() {
 	log("Initialising gamemap...");
 	loading("map");
 
-	// get gamename from pathname URL
+	// get game name from URL
 	let gameParam = window.location.pathname.replace(/\\|\//g,'')
 	log("game: " +gameParam);
 
-	if (gameParam != null && gameParam != "" && gameParam.match(/^([a-z]+)/)) {
+	if (gameParam != null && gameParam != "" && gameParam.match(/^([a-z]+)/)) { // check if game name is valid
+
+		// we've got a valid game, now to check whether it has a valid config file, and merge with the client's default
 		log("URL has game param!");
 
-		// get map configs
+		
+
+		// get default map config
 		Utils.getJSON(Constants.DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
 			if (error == null) {
+
+				// set up default map config
 				window.DEFAULT_MAP_CONFIG = defaultMapConfig;
 
-				let configURL = (Constants.CONFIG_DIR + gameParam + "/" + gameParam + "-" + Constants.MAP_CONFIG_FILENAME);
-				log("Getting map config at "+configURL+"...");
+				// format: /assets/maps/{gameParam}/config/{gameParam}-config.json
+				// example: /assets/maps/eso/config/eso-config.json
+				let configURL = (Constants.MAP_ASSETS_DIR + gameParam + "/config/" + gameParam + "-" + Constants.MAP_CONFIG_FILENAME);
+				log("Getting map config at " + configURL + "...");
 
+				// check if provided map's map config exists before continuing
 				if (Utils.doesFileExist(configURL)) {
+
 					Utils.getJSON(configURL, function(error, object) {
 						if (error !== null) {
 							showError("Could not load map: " + error);
@@ -64,6 +73,11 @@ $(document).ready(function() {
 							} else {
 								mapConfig.tileURL = mapConfig.baseTileURL + mapConfig.tileURLName + "/";
 							}
+
+							// set up map assets assets directory
+							mapConfig.assetsDirectory = mapConfig.assetsDirectory + mapConfig.database + "/";
+
+
 
 							// TODO: check if current directory has a css file, if so make customcss= true in the map config
 

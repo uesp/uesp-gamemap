@@ -32,7 +32,6 @@
 
     // Map icon info
     "iconPath": "assets/icons/eso/",
-    "missingIconPath" : "assets/icons/missing.png",
     "iconSize" : 32,
     "icons": {
         "1"  : "Artifact Gate",

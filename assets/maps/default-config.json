@@ -8,6 +8,7 @@
     "feedbackURL" : "https://github.com/uesp/uesp-gamemap/issues",
     "bgColour" : "#000000",
     "customCSS" : false,
+    "assetsDirectory" : "assets/maps/",
 
     // Map options
     "defaultZoomLevel" : 0,
@@ -43,7 +44,6 @@
 
     // Map icon info
     "iconPath": "",
-    "missingIconPath" : "assets/icons/missing.png",
     "iconWidth" : 32,
     "iconHeight" : 32,
     "icons": {
