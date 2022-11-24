@@ -62,23 +62,16 @@ $(document).ready(function() {
 
 							log("Merging with default map config...")
 							let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
-
-							log(mergedMapConfig);
-
 							mapConfig = mergedMapConfig;
 
-							// set up tile URLs
-							if (mapConfig.tileURLName != null) {
-								mapConfig.tileURL = mapConfig.baseTileURL + mapConfig.database + "map/";
-							} else {
-								mapConfig.tileURL = mapConfig.baseTileURL + mapConfig.tileURLName + "/";
-							}
-
-							log(mapConfig);
-
-							// set up map assets assets directory
+							// set up map config assets
 							mapConfig.assetsDirectory = mapConfig.assetsDirectory + mapConfig.database + "/";
+							mapConfig.missingMapTilePath = mapConfig.assetsDirectory + "images/outofrange.jpg";
+							mapConfig.iconPath = mapConfig.assetsDirectory + "icons/";
+							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/";
 
+							log("Completed merged mapConfig:")
+							log(mapConfig);
 
 
 							// TODO: check if current directory has a css file, if so make customcss= true in the map config

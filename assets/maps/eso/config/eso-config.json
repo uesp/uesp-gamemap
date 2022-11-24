@@ -4,11 +4,9 @@
     "wikiNamespace": "Online",
     "database" : "eso",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design",
-    "bgColour" : "#000000",
 
     // Map options
     "defaultZoomLevel" : 2,
-    "minZoomLevel" : 0,
     "maxZoomLevel" : 5,
     "zoomOffset" : 7,
 
@@ -25,13 +23,16 @@
     "defaultYPos" : 0.5,
 
     // Map tile info
-    "missingMapTilePath" : "assets/images/missingtile.jpg",
     "numTilesX" : 8,
     "numTilesY" : 8,
-    "tileSize" : 256,
+
+    // Map world info
+    "defaultWorldID" : 668,
+    "rootWorldID" : 667, // Determines what the root map ID is (default is defaultWorldID)
+    "minWorldID" : 50,
+    "maxWorldID" : 20000,
 
     // Map icon info
-    "iconPath": "assets/icons/eso/",
     "iconSize" : 32,
     "icons": {
         "1"  : "Artifact Gate",
@@ -258,11 +259,5 @@
         "227": "Antiquity",
         "228": "Furnisher",
         "229": "Quest (Story)"
-    },
-
-    // Map world info
-    "defaultWorldID" : 668,
-    "rootWorldID" : 667, // Determines what the root map ID is (default is defaultWorldID)
-    "minWorldID" : 50,
-    "maxWorldID" : 20000
+    }
 }
