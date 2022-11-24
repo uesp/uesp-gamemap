@@ -80,8 +80,8 @@ export default class Gamemap {
 		var mapOptions = {
 			crs: L.CRS.Simple, // CRS: coordinate reference system
 			// zoom options:
-			zoomSnap: false,
-			zoomDelta: 0.50,
+			zoomSnap: false, // enable snapping to zoom levels
+			zoomDelta: 0.50, // control how much the map zooms in by per scroll
 			zoomControl: false, // hide leaflet zoom control (we have our own)
 			boxZoom: false, // disable box zoom
 			doubleClickZoom: false, // disable double click to zoom
