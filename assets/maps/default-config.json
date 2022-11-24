@@ -3,16 +3,13 @@
     "mapTitle": "UESP Gamemap", // replace all of these when making new map config
     "wikiNamespace": "",
     "wikiURL": "//en.uesp.net/wiki/",
-    "baseTileURL" : "//maps.uesp.net/",
     "database" : "",
     "feedbackURL" : "https://github.com/uesp/uesp-gamemap/issues",
     "bgColour" : "#000000",
     "customCSS" : false,
-    "assetsDirectory" : "assets/maps/",
 
     // Map options
     "defaultZoomLevel" : 0,
-    "minZoomLevel" : 0,
     "maxZoomLevel" : 7,
     "zoomOffset" : 0,
 
@@ -72,6 +69,11 @@
     "gridStyle" : "yellow",
     "gridOffsetX" : 0,
     "gridOffsetY" : 0,
-    "gridOffsetPowerY" : 0
+    "gridOffsetPowerY" : 0,
+
+    // core (do not copy or alter):
+    "baseTileURL" : "//maps.uesp.net/",
+    "assetsPath" : "assets/maps/",
+    "minZoomLevel" : 0
 }
 

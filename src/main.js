@@ -65,9 +65,9 @@ $(document).ready(function() {
 							mapConfig = mergedMapConfig;
 
 							// set up map config assets
-							mapConfig.assetsDirectory = mapConfig.assetsDirectory + mapConfig.database + "/";
-							mapConfig.missingMapTilePath = mapConfig.assetsDirectory + "images/outofrange.jpg";
-							mapConfig.iconPath = mapConfig.assetsDirectory + "icons/";
+							mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
+							mapConfig.missingMapTilePath = mapConfig.assetsPath + "images/outofrange.jpg";
+							mapConfig.iconPath = mapConfig.assetsPath + "icons/";
 							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/";
 
 							log("Completed merged mapConfig:")
