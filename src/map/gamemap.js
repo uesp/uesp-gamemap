@@ -148,6 +148,9 @@ export default class Gamemap {
 			height: mapImageDimens.height, // original height of image
 		}
 
+		mapState.world.totalWidth = this.mapImage.width;
+		mapState.world.totalHeight = this.mapImage.height;
+
 		// calculate raster coords
 		RC = new RasterCoords(map, this.mapImage)
 

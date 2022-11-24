@@ -124,7 +124,7 @@ export default class Location {
 		let x = coords[0];
 		let y = coords[1];
 
-		if (config.coordType == Constants.COORD_TYPES.NORMALISED) {
+		if (config.coordType != Constants.COORD_TYPES.XY) {
 
 			// get max range of x and y, assure it is a positive number
 			let maxRangeX = Math.abs(currentWorld.maxX - currentWorld.minX);
@@ -132,12 +132,21 @@ export default class Location {
 
 			// get normalised value of x and y in range
             x = (x - currentWorld.minX) / maxRangeX;
-			y = (config.database == "eso") ? Math.abs((y - currentWorld.maxY) / maxRangeY) : (y - currentWorld.minY) / maxRangeY;
+			y = Math.abs((y - currentWorld.maxY) / maxRangeY); // flip y around
 
-			// transform coords to better fit power of two numbers of tiles
-			x = (x * Utils.nextPowerOfTwo(numTiles) / numTiles).toFixed(3);
-			y = (y * Utils.nextPowerOfTwo(numTiles) / numTiles).toFixed(3);
+			if (config.coordType == Constants.COORD_TYPES.NORMALISED) {
+				// transform coords to better fit power of two numbers of tiles
+				x = (x * Utils.nextPowerOfTwo(numTiles) / numTiles).toFixed(3);
+				y = (y * Utils.nextPowerOfTwo(numTiles) / numTiles).toFixed(3);
+			} else if (config.coordType == Constants.COORD_TYPES.WORLDSPACE) {
+				//log(currentWorld);
+				x = x * currentWorld.totalWidth;
+				y = y * currentWorld.totalHeight;
+			}
+
 		}
+
+
 
 		return new Point(x, y);
 	}

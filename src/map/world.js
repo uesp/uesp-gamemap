@@ -26,7 +26,7 @@ export default class World {
 	
 			this.missingMapTilePath = mapConfig.missingMapTilePath;
 
-			this.legacy = world;
+			this.legacy = world; // legacy attributes from server
 
 			this.minX = world.posLeft || mapConfig.minX;
 			this.maxX = world.posRight || mapConfig.maxX;
