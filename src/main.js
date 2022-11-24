@@ -58,10 +58,17 @@ $(document).ready(function() {
 
 							mapConfig = mergedMapConfig;
 
+							// set up tile URLs
+							if (mapConfig.tileURLName != null) {
+								mapConfig.tileURL = mapConfig.baseTileURL + mapConfig.database + "map/";
+							} else {
+								mapConfig.tileURL = mapConfig.baseTileURL + mapConfig.tileURLName + "/";
+							}
+
 							// TODO: check if current directory has a css file, if so make customcss= true in the map config
 
 							// load map
-							loadGamemap(mergedMapConfig);
+							loadGamemap(mapConfig);
 						}
 					})
 				} else { showError("Provided game doesn't exist. Please check the URL.");}

@@ -2,7 +2,6 @@
     // General map info
     "mapTitle": "Morrowind Map",
     "wikiNamespace": "Morrowind",
-    "tileURL" : "//maps.uesp.net/mwmap/",
     "database" : "mw",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Morrowind_Map_Design",
     "bgColour" : "#7076AA",
