@@ -601,6 +601,9 @@ window.focusSearch = function() {
 
 	if (searchQuery != null && searchQuery.length == 0) {
 		// show options div
+		if (!gamemap.hasMultipleWorlds()) {
+			$("#search_options_container").hide();
+		}
 		$("#search_options_container").css("box-shadow", "0px 1.5px 4px 4px var(--shadow)");
 		$("#search_results").html(""); // blank current search results
 	} else if (searchQuery.length > 0) {

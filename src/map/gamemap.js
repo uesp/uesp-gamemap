@@ -266,9 +266,6 @@ export default class Gamemap {
 			mapLink += 'world=' + newMapState.world.id;
 		}
 
-
-		
-
 		mapLink += '&x=' + newMapState.coords[0];
 		mapLink += '&y=' + newMapState.coords[1];
 		mapLink += '&zoom=' + newMapState.zoomLevel;
