@@ -77,7 +77,7 @@ class GameMap
 	
 	public $outputItems = array();
 	
-	public $limitCount = 1000;
+	public $limitCount = 2500;
 	public $searchLimitCount = 100;
 	
 	public $cellResourceEditorId = "";

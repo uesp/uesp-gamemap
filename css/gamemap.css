@@ -593,11 +593,11 @@ li div.collapsible-header i {
 	font-size: 0.9em;
 }
 
-.leaflet-marker-icon{
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+.leaflet-marker-icon {
+	-webkit-user-select: none !important;
+	-moz-user-select: none !important;
+	-ms-user-select: none !important;
+	user-select: none !important;
 }
 
 /*================================================
