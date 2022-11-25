@@ -223,8 +223,20 @@ window.gotoArticle = function(){
 	}
 }
 
+// reset map button
 window.resetMap = function() {
 	gamemap.gotoWorld(mapConfig.defaultWorldID);
+}
+
+// fullscreen toggle
+window.toggleFullscreen = function() {
+	if (!document.fullscreenElement) {
+		document.documentElement.requestFullscreen();
+		$("#fullscreen-toggle").text("Exit fullscreen");
+	} else if (document.exitFullscreen) {
+	  	document.exitFullscreen();
+		$("#fullscreen-toggle").text("Fullscreen");
+	}
 }
 
 /*================================================
@@ -606,14 +618,6 @@ function createGroupListHTML(groups) {
 /*================================================
 					  Search
 ================================================*/
-
-window.toggleFullscreen = function() {
-	if (!document.fullscreenElement) {
-	  document.documentElement.requestFullscreen();
-	} else if (document.exitFullscreen) {
-	  document.exitFullscreen();
-	}
-}
 
 window.focusSearch = function() {
 	
