@@ -235,7 +235,7 @@ class GameMap
 					iconType TINYINT NOT NULL,
 					displayData TEXT NOT NULL,
 					wikiPage TEXT NOT NULL,
-					displayLevel INTEGER NOT NULL,
+					displayLevel FLOAT NOT NULL,
 					visible TINYINT NOT NULL,
 					PRIMARY KEY ( id ),
 					FULLTEXT(name, description, wikiPage)
@@ -260,7 +260,7 @@ class GameMap
 					iconType TINYINT NOT NULL,
 					displayData TEXT NOT NULL,
 					wikiPage TEXT NOT NULL,
-					displayLevel INTEGER NOT NULL,
+					displayLevel FLOAT NOT NULL,
 					visible TINYINT NOT NULL,
 					PRIMARY KEY ( id ),
 				) ENGINE=MYISAM;";
