@@ -473,7 +473,7 @@ class GameMap
 			settype($row['y'], "integer");
 			settype($row['width'], "integer");
 			settype($row['height'], "integer");
-			settype($row['displayLevel'], "integer");
+			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 		
 			$locations[] = $row;
@@ -656,7 +656,7 @@ class GameMap
 			settype($row['y'], "integer");
 			settype($row['width'], "integer");
 			settype($row['height'], "integer");
-			settype($row['displayLevel'], "integer");
+			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 			
 			$locations[] = $row;
@@ -720,7 +720,7 @@ class GameMap
 			settype($row['y'], "integer");
 			settype($row['width'], "integer");
 			settype($row['height'], "integer");
-			settype($row['displayLevel'], "integer");
+			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 	
 			$locations[] = $row;
@@ -854,7 +854,7 @@ class GameMap
 			settype($row['y'], "integer");
 			settype($row['width'], "integer");
 			settype($row['height'], "integer");
-			settype($row['displayLevel'], "integer");
+			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 			
 			$locations[] = $row;
@@ -1120,7 +1120,7 @@ class GameMap
 			settype($row['y'], "integer");
 			settype($row['width'], "integer");
 			settype($row['height'], "integer");
-			settype($row['displayLevel'], "integer");
+			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 				
 			$locations[] = $row;
@@ -1389,7 +1389,7 @@ class GameMap
 		
 		if (array_key_exists('displaylevel',  $this->inputParams)) 
 		{
-			$this->locDisplayLevel = intval($this->inputParams['displaylevel']);
+			$this->locDisplayLevel = floatval($this->inputParams['displaylevel']);
 			if ($this->locDisplayLevel <  0) $this->locDisplayLevel = 0;
 			if ($this->locDisplayLevel > 17) $this->locDisplayLevel = 17;
 		}
