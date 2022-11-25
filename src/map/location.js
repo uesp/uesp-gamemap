@@ -50,7 +50,7 @@ export default class Location {
 
 		// set location icon info
 		this.icon = location.iconType || null;
-		this.iconSize = mapConfig.iconWidth;
+		this.iconSize = mapConfig.iconSize;
 
 		// set coords
 		this.coords = [];

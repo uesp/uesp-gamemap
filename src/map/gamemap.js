@@ -52,6 +52,9 @@ export default class Gamemap {
 
 			// set up css
 			$("#"+mapRootID).css("background-color", mapConfig.bgColour);
+			// document.getElementsByTagName("head")[0].insertAdjacentHTML(
+			// 	"beforeend",
+			// 	"<link rel=\"stylesheet\" href=\"path/to/style.css\" />");
 
 			// set the default map info
 			this.mapWorlds = {};

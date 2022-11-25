@@ -34,8 +34,7 @@
     "maxWorldID" : 20000,
 
     // Map icon info
-    "iconWidth" : 30,
-    "iconHeight" : 30,
+    "iconSize" : 16,
     "icons": {
         "0": "None",
         "1": "City",
