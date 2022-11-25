@@ -607,6 +607,14 @@ function createGroupListHTML(groups) {
 					  Search
 ================================================*/
 
+window.toggleFullscreen = function() {
+	if (!document.fullscreenElement) {
+	  document.documentElement.requestFullscreen();
+	} else if (document.exitFullscreen) {
+	  document.exitFullscreen();
+	}
+}
+
 window.focusSearch = function() {
 	
 	// focus search if it's not already
