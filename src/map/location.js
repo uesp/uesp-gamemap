@@ -45,7 +45,7 @@ export default class Location {
 		this.worldID = location.worldId || 0;
 		this.destinationID = location.destinationId || null;
 		this.revisionID = location.revisionId || 0;
-		this.displayLevel = location.displayLevel - world.zoomOffset || 0;
+		this.displayLevel = parseFloat(location.displayLevel - world.zoomOffset || 0);
 		this.legacy = location;
 
 		// set location icon info

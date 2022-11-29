@@ -271,11 +271,13 @@ window.zoomOut = function(){
 function setWindowTitle(title) {
 
 	// default dynamic map title
-	document.title = ("UESP " + mapConfig.mapTitle);
+	document.title = mapConfig.mapTitle;
 
 	if (gamemap.hasMultipleWorlds()) { // show map world in title if there is one
 		document.title = document.title + " | " + title;
 	}
+
+	document.title = document.title + (" (UESP)");
 }
 
 /*================================================
