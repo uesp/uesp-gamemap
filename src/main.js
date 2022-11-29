@@ -291,7 +291,7 @@ function showError(reason){
 	$("#error_box_reason").text(reason);
 	log("Error: " + reason);
 	$("#loading_spinner").hide();
-	$("#search_progress_bar").hide();
+	$("#map_loading_bar").hide();
 }
 
 /*================================================
