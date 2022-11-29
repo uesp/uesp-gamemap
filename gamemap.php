@@ -77,7 +77,7 @@ class GameMap
 	
 	public $outputItems = array();
 	
-	public $limitCount = 1000;
+	public $limitCount = 10000;
 	public $searchLimitCount = 100;
 	
 	public $cellResourceEditorId = "";
@@ -802,16 +802,16 @@ class GameMap
 	
 	public function doGetLocations ()
 	{
-		if (!$this->initDatabase()) return false;
+		if (!$this->initDatabase()) return $this->reportError("Failed to initialize database!");
 		
 		$query  = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND ";
 		
 		if ($this->worldName != '')
 		{
 			$this->worldId = $this->getWorldId($this->worldName);
-			if ($this->worldId == 0) return false;
+			if ($this->worldId == 0) return $this->reportError("Failed to find world matching '{$this->worldName}!");
 		}
-
+		
 		if ($this->worldId > 0)
 			$query .= "worldId=" . $this->worldId . " ";
 		else
@@ -1269,6 +1269,8 @@ class GameMap
 		$this->dbReadInitialized = true;
 		$this->dbWriteInitialized = false;
 		
+		$this->db->set_charset("utf8");
+		
 		if ($this->skipCheckTables) return true;
 		return $this->checkTables();
 	}
@@ -1298,6 +1300,8 @@ class GameMap
 		
 		$this->dbReadInitialized = true;
 		$this->dbWriteInitialized = true;
+		
+		$this->db->set_charset("utf8");
 		
 		if ($this->skipCheckTables) return true;
 		return $this->checkTables();
@@ -1481,7 +1485,6 @@ class GameMap
 		
 		if ($this->action == 'default' && $this->search != '') $this->action = 'search';
 		
-
 	}
 	
 	
