@@ -5,6 +5,7 @@
     "database" : "mw",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Morrowind_Map_Design",
     "bgColour" : "#7076AA",
+    "customFavIcon" : true,
     "customCSS" : true,
 
     // Map options

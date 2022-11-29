@@ -359,3 +359,17 @@ export function sanitiseString(str){
     str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim,"");
     return str.trim();
 }
+
+/*================================================
+	  	    Change FavIcon function
+================================================*/
+
+export function changeFavIcon(favIconURL) {
+	let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+	link.type = 'image/x-icon';
+	link.rel = 'shortcut icon';
+	link.href = favIconURL;
+	document.getElementsByTagName('head')[0].appendChild(link);
+}
+
+

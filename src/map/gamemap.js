@@ -51,6 +51,10 @@ export default class Gamemap {
 			self = this;
 
 			// set up css
+			if (this.mapConfig.customFavIcon) {
+				Utils.changeFavIcon(mapConfig.imagesPath + "favicon.ico")
+			}
+
 			$("#"+mapRootID).css("background-color", mapConfig.bgColour);
 			// document.getElementsByTagName("head")[0].insertAdjacentHTML(
 			// 	"beforeend",

@@ -68,6 +68,7 @@ $(document).ready(function() {
 							mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
 							mapConfig.missingMapTilePath = mapConfig.assetsPath + "images/outofrange.jpg";
 							mapConfig.iconPath = mapConfig.assetsPath + "icons/";
+							mapConfig.imagesPath = mapConfig.assetsPath + "images/";
 							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/"; // note: sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this.
 
 							log("Completed merged map config:")
