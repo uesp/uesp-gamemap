@@ -33,8 +33,8 @@ export default class World {
 			this.minY = world.posBottom || mapConfig.minY;
 			this.maxY = world.posTop || mapConfig.maxY;
 
-			this.numTilesX = world.tilesX || mapConfig.numTilesX;
-			this.numTilesY = world.tilesY || mapConfig.numTilesY;
+			this.numTilesX = world.tilesX;
+			this.numTilesY = world.tilesY;
 
 			this.locations = null; // locations are loaded async after the world is created
 		} else {

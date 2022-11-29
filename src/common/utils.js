@@ -373,7 +373,7 @@ export function changeFavIcon(favIconURL) {
 }
 
 export function injectCSS(cssPath) {
-	cssPath = cssPath + "?" + Math.random(); // ensure that the css is always downloaded
+	cssPath = cssPath + "?" + Math.random(); // ensure that the custom css is not cached and is redownloaded
 	document.getElementsByTagName("head")[0].insertAdjacentHTML("beforeend","<link rel=\"stylesheet\" href=\"" + cssPath + "\" />");
 }
 

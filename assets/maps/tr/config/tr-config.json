@@ -25,10 +25,6 @@
     "defaultXPos" : 60000,
     "defaultYPos" : -125000,
 
-    // Map tile info
-    "numTilesX" : 48,
-    "numTilesY" : 48,
-
     // Map world info
     "defaultWorldID" : 1,
     "minWorldID" : 0,

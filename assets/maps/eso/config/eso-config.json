@@ -23,10 +23,6 @@
     "defaultXPos" : 0.5,
     "defaultYPos" : 0.5,
 
-    // Map tile info
-    "numTilesX" : 8,
-    "numTilesY" : 8,
-
     // Map world info
     "defaultWorldID" : 668,
     "rootWorldID" : 667, // Determines what the root map ID is (default is defaultWorldID)
