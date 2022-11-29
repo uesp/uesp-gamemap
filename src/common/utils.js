@@ -372,4 +372,7 @@ export function changeFavIcon(favIconURL) {
 	document.getElementsByTagName('head')[0].appendChild(link);
 }
 
+export function injectCSS(cssPath) {
+	document.getElementsByTagName("head")[0].insertAdjacentHTML("beforeend","<link rel=\"stylesheet\" href=\"" + cssPath + "\" />");
+}
 
