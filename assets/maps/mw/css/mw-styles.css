@@ -1,12 +1,11 @@
 
 :root {
 	/* text colours */
-	--text_loc_name: #ffff00;
+	--text_loc_name: #fffc37;
 }
 
 .location-label {
-	color: #ffff00;
-	/* #fffc37; */
+	color: #fffc37;
 }
 
 .leaflet-marker-icon {

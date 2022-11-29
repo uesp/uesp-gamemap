@@ -51,14 +51,18 @@ export default class Gamemap {
 			self = this;
 
 			// set up css
-			if (this.mapConfig.customFavIcon) {
-				Utils.changeFavIcon(mapConfig.imagesPath + "favicon.ico")
-			}
+			if (this.mapConfig.customFavIcon) { Utils.changeFavIcon(mapConfig.imagesPath + "favicon.ico"); }
+			if (this.mapConfig.bgColour) { $("#"+mapRootID).css("background-color", mapConfig.bgColour); }
 
-			$("#"+mapRootID).css("background-color", mapConfig.bgColour);
-			// document.getElementsByTagName("head")[0].insertAdjacentHTML(
-			// 	"beforeend",
-			// 	"<link rel=\"stylesheet\" href=\"path/to/style.css\" />");
+			if (this.mapConfig.customCSS) {
+
+				
+				let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css";
+				log ("Loading custom map css: ")
+				log (cssPath);
+
+				document.getElementsByTagName("head")[0].insertAdjacentHTML("beforeend","<link rel=\"stylesheet\" href=\"" + cssPath + "\" />");
+			}
 
 			// set the default map info
 			this.mapWorlds = {};
