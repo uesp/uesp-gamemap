@@ -265,13 +265,14 @@ export default class Gamemap {
 		this.currentMapState = newMapState;
 
 		// update url
-		let mapLink = "?"
+		let mapLink = "?";
 
 		if (this.hasMultipleWorlds()){
 			mapLink += 'world=' + newMapState.world.id;
+			mapLink += '&';
 		}
-
-		mapLink += '&x=' + newMapState.coords[0];
+		
+		mapLink += 'x=' + newMapState.coords[0];
 		mapLink += '&y=' + newMapState.coords[1];
 		mapLink += '&zoom=' + newMapState.zoomLevel;
 
