@@ -31,11 +31,11 @@ class CMakeTileSymLinks
 			'mwmap' => [
 					'prefix' => 'vvardenfell',
 					'newPrefix' => 'morrowind',
-			],*/
+			],
 			'dbmap' => [
 					'prefix' => 'db',
 					'newPrefix' => 'db',
-			],/*
+			],
 			'simap' => [
 					'prefix' => 'seworld',
 					'newPrefix' => 'shiveringisles',
@@ -52,6 +52,10 @@ class CMakeTileSymLinks
 					'prefix' => 'bs',
 					'newPrefix' => 'skyrim',
 			], */
+			'trmap' => [
+					'prefix' => 'TR',
+					'newPrefix' => 'tamrielrebuilt',
+			], 
 	];
 	
 	
