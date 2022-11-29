@@ -271,7 +271,7 @@ export default class Gamemap {
 			mapLink += 'world=' + newMapState.world.id;
 			mapLink += '&';
 		}
-		
+
 		mapLink += 'x=' + newMapState.coords[0];
 		mapLink += '&y=' + newMapState.coords[1];
 		mapLink += '&zoom=' + newMapState.zoomLevel;
@@ -448,6 +448,8 @@ export default class Gamemap {
 	================================================*/
 
 	getLocations(world) {
+
+		log("Getting locations...");
 
 		// check if we've been sent a world ID
 		if (world != null && !isNaN(world)){
