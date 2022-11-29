@@ -1,7 +1,7 @@
 
 :root {
 	/* text colours */
-	--text_loc_name: #fffc37;
+	--text_loc_name: #fffc37 !important;
 }
 
 .leaflet-marker-icon {
