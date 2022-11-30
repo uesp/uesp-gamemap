@@ -1,14 +1,14 @@
 {
     // General map info
-    "mapTitle": "TR Gamemap",
+    "mapTitle": "Tamriel Rebuilt Map",
     "wikiNamespace": "Morrowind",
     "database" : "tr",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Morrowind_Map_Design",
     "bgColour" : "#282520",
-    "customFavIcon" : true,
-    "customCSS" : true,
 
     // Map options
+    "customFavIcon" : true,
+    "customCSS" : true,
     "defaultZoomLevel" : 2,
     "defaultXPos" : 60000,
     "defaultYPos" : -125000,
