@@ -801,7 +801,7 @@ export default class Gamemap {
 
 	gameToTilePos(gameX, gameY) {
 		let zoom = (map.getZoom() != null) ? map.getZoom() : this.mapConfig.maxZoomLevel;
-		let maxTiles = Math.pow(2, zoom - this.mapConfig.zoomOffset);
+		let maxTiles = Math.pow(2, zoom - this.getCurrentWorld().zoomOffset);
 
 		let tileX = (gameX - this.mapConfig.minX) * maxTiles / (this.mapConfig.maxX - this.mapConfig.minX);
 		let tileY = (gameY - this.mapConfig.minY) * maxTiles / (this.mapConfig.maxY - this.mapConfig.minY);

@@ -19,7 +19,7 @@ export default class World {
 			this.wikiPage = world.wikiPage || "";
 			this.cellSize = world.cellSize || -1;
 	
-			this.zoomOffset = world.zoomOffset || mapConfig.zoomOffset;
+			this.zoomOffset = world.zoomOffset;
 
 			this.maxZoomLevel = ((world.maxZoom - this.zoomOffset) || mapConfig.maxZoomLevel) + 0.03; // add 0.03 to fix leaflet bug of only going up to x.97 zoom
 			this.minZoomLevel = (world.minZoom - this.zoomOffset) || 0;

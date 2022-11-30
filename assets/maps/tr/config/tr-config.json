@@ -11,7 +11,6 @@
     // Map options
     "defaultZoomLevel" : 2,
     "maxZoomLevel" : 9,
-    "zoomOffset" : 9,
 
     // Map coordinate system info
     // 0: XY (Default)
