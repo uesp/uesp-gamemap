@@ -216,6 +216,14 @@ window.gotoArticle = function(){
 	}
 }
 
+window.showHelp = function() {
+	M.toast({text: "TODO: not implemented yet"});
+}
+
+window.showMapKey = function() {
+	M.toast({text: "TODO: not implemented yet"});
+}
+
 // reset map button
 window.resetMap = function() {
 	gamemap.gotoWorld(mapConfig.defaultWorldID);
