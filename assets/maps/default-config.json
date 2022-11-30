@@ -10,14 +10,14 @@
 
     // Map options
     "defaultZoomLevel" : 2,
+    "defaultXPos" : 0,
+    "defaultYPos" : 0,
 
     // Map coordinate system info
     // 0: XY (Default)
     // 1: Normalised
     // 2: Worldspace
     "coordType" : 0,
-    "defaultXPos" : 0,
-    "defaultYPos" : 0,
 
     // Map tile info
     "tileSize" : 256,

@@ -670,7 +670,7 @@ window.hideSearch = function() {
 
 function clearSearch() {
 	searchbox.value = "";
-	btn_clear_search.style.visibility = 'hidden';
+	$("#btn_clear_search").hide();
 	$("#search_loading_bar").hide();
 	$("#search_results").html("");
 	$(".search_results_container").hide();
@@ -690,7 +690,7 @@ window.updateSearch = function(query, currentMapOnly) {
 
 	// toggle clear button visibility
 	if (query.length > 0) {
-		btn_clear_search.style.visibility = 'visible';
+		$("#btn_clear_search").show();
 		toggleSearchPane(true);	
 		$("#search_progress_bar").show();
 		$("#search_results").html("<b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small) '>Searching...<b>");

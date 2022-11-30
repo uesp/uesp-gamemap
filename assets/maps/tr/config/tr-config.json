@@ -10,14 +10,14 @@
 
     // Map options
     "defaultZoomLevel" : 2,
+    "defaultXPos" : 60000,
+    "defaultYPos" : -125000,
 
     // Map coordinate system info
     // 0: XY (Default)
     // 1: Normalised
     // 2: Worldspace
     "coordType" : 2,
-    "defaultXPos" : 60000,
-    "defaultYPos" : -125000,
 
     // Map world info
     "defaultWorldID" : 1,
