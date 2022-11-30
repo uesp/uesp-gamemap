@@ -800,7 +800,7 @@ export default class Gamemap {
 	}
 
 	gameToTilePos(gameX, gameY) {
-		let zoom = (map.getZoom() != null) ? map.getZoom() : this.mapConfig.maxZoomLevel;
+		let zoom = (map.getZoom() != null) ? map.getZoom() : this.getCurrentWorld().maxZoomLevel;
 		let maxTiles = Math.pow(2, zoom - this.getCurrentWorld().zoomOffset);
 
 		let tileX = (gameX - this.mapConfig.minX) * maxTiles / (this.mapConfig.maxX - this.mapConfig.minX);
@@ -944,9 +944,8 @@ export default class Gamemap {
 			}
 		})
 
-		map.on("zoom", function(e){
-
-			if (map.getZoom() >= self.getCurrentWorld().maxZoomLevel) {
+		map.on("zoom", function(e) {
+			if (map.getZoom() >= (self.getCurrentWorld().maxZoomLevel - 0.03)) {
 				$("#btn_zoom_in").prop("disabled",true);
 			}
 
