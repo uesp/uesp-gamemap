@@ -304,15 +304,15 @@ export default class Gamemap {
 	}
 
 	getWorldNameFromID(worldID) {
-		if (this.getWorldFromID(worldID) != null) return this.getWorldFromID(worldID).name; else return "null";
+		if (this.getWorldFromID(worldID) != null) return this.getWorldFromID(worldID).name; else return null;
 	}
 
 	getWorldDisplayNameFromID(worldID) {
 
 		if (this.getWorldFromID(worldID) == null) {
-			return "null";
+			return null;
 		} else {
-			return this.getWorldFromID(worldID).displayName || "null";
+			return this.getWorldFromID(worldID).displayName || null;
 		}
 
 	}
@@ -803,8 +803,8 @@ export default class Gamemap {
 		let zoom = (map.getZoom() != null) ? map.getZoom() : this.getCurrentWorld().maxZoomLevel;
 		let maxTiles = Math.pow(2, zoom - this.getCurrentWorld().zoomOffset);
 
-		let tileX = (gameX - this.mapConfig.minX) * maxTiles / (this.mapConfig.maxX - this.mapConfig.minX);
-		let tileY = (gameY - this.mapConfig.minY) * maxTiles / (this.mapConfig.maxY - this.mapConfig.minY);
+		let tileX = (gameX - this.getCurrentWorld().minX) * maxTiles / (this.getCurrentWorld().maxX - this.getCurrentWorld().minX);
+		let tileY = (gameY - this.getCurrentWorld().minY) * maxTiles / (this.getCurrentWorld().maxY - this.getCurrentWorld().minY);
 
 		return new Point(tileX, tileY);
 	}

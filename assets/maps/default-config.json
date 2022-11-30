@@ -16,10 +16,6 @@
     // 1: Normalised
     // 2: Worldspace
     "coordType" : 0,
-    "minX": 0,
-    "maxX": 10000,
-    "minY": 0,
-    "maxY": 10000,
     "defaultXPos" : 0,
     "defaultYPos" : 0,
 

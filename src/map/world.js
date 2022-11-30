@@ -21,17 +21,17 @@ export default class World {
 	
 			this.zoomOffset = world.zoomOffset;
 
-			this.maxZoomLevel = ((world.maxZoom - this.zoomOffset) || mapConfig.maxZoomLevel) + 0.03; // add 0.03 to fix leaflet bug of only going up to x.97 zoom
+			this.maxZoomLevel = (world.maxZoom - this.zoomOffset) + 0.03; // add 0.03 to fix leaflet bug of only going up to x.97 zoom
 			this.minZoomLevel = (world.minZoom - this.zoomOffset) || 0;
 	
 			this.missingMapTilePath = mapConfig.missingMapTilePath;
 
 			this.legacy = world; // legacy attributes from server
 
-			this.minX = world.posLeft || mapConfig.minX;
-			this.maxX = world.posRight || mapConfig.maxX;
-			this.minY = world.posBottom || mapConfig.minY;
-			this.maxY = world.posTop || mapConfig.maxY;
+			this.minX = world.posLeft;
+			this.maxX = world.posRight;
+			this.minY = world.posBottom;
+			this.maxY = world.posTop;
 
 			this.numTilesX = world.tilesX;
 			this.numTilesY = world.tilesY;
@@ -40,7 +40,6 @@ export default class World {
 		} else {
 			throw new Error("World cannot be null!");
 		}
-
 	}
 
 }
