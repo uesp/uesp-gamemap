@@ -261,7 +261,7 @@ export default class Gamemap {
 		// update map state
 		newMapState.coords = [Number(this.toCoords(map.getCenter()).x).toFixed(3), Number(this.toCoords(map.getCenter()).y).toFixed(3)];
 		newMapState.zoomLevel = parseFloat(map.getZoom().toFixed(3));
-		newMapState.world = this.getWorldFromID(this.getCurrentWorldID());
+		newMapState.world = this.getWorldFromID(this.currentWorldID);
 		this.currentMapState = newMapState;
 
 		// update url
@@ -288,11 +288,11 @@ export default class Gamemap {
 	 * @returns {int} worldID - ID that represents a world in the database.
 	 */
 	getCurrentWorldID() {
-		return this.currentWorldID || this.mapConfig.defaultWorldID;
+		return (this.currentWorldID != null) ? this.currentWorldID : getCurrentWorld().id;
 	}
 
-	getCurrentWorld(){
-		return this.getWorldFromID(this.getCurrentWorldID());
+	getCurrentWorld() {
+		return ( !Utils.isNull(this.getMapState()) && !Utils.isNull(this.getMapState().world) != null) ? self.getMapState().world : this.getWorldFromID( (this.currentWorldID != null) ? this.currentWorldID : this.mapConfig.defaultWorldID);
 	}
 
 	/** Gets the world object associated to a given worldID.
@@ -397,6 +397,7 @@ export default class Gamemap {
 
 		if (destID > 0) { // is this destination a world?
 			let worldID = destID;
+			log(worldID);
 			if (this.isWorldValid(worldID)) {
 
 				let mapState = new MapState();
@@ -945,15 +946,15 @@ export default class Gamemap {
 
 		map.on("zoom", function(e){
 
-			if (map.getZoom() >= self.mapConfig.maxZoomLevel) {
+			if (map.getZoom() >= self.getCurrentWorld().maxZoomLevel) {
 				$("#btn_zoom_in").prop("disabled",true);
 			}
 
-			if (map.getZoom() <= self.mapConfig.minZoomLevel) {
+			if (map.getZoom() <= self.getCurrentWorld().minZoomLevel) {
 				$("#btn_zoom_out").prop("disabled",true);
 			}
 
-			if (map.getZoom() > self.mapConfig.minZoomLevel && map.getZoom() < self.mapConfig.maxZoomLevel) {
+			if (map.getZoom() > self.getCurrentWorld().minZoomLevel && map.getZoom() < self.getCurrentWorld().maxZoomLevel) {
 				$("#btn_zoom_out").prop("disabled", false);
 				$("#btn_zoom_in").prop("disabled", false);
 			}
