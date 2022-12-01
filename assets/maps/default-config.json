@@ -36,31 +36,11 @@
         // icon list goes here...
     },
 
-    // Map cell resource info
-    "cellResourceStartX" : 0,
-    "cellResourceStartY" : 0,
-    "cellResourceStopX" : 0,
-    "cellResourceStopY" : 0,
-    "cellResourceDeltaX" : 256,
-    "cellResourceDeltaY" : 256,
-
     // Map grid info
-    "gridStartX" : 0,
-    "gridStartY" : 0,
-    "gridStopX" : 0,
-    "gridStopY" : 0,
-    "gridDeltaX" : 256,
-    "gridDeltaY" : 256,
-    "gridLabelDeltaX" : 5,
-    "gridLabelDeltaY" : 5,
-    "gridStartLabelZoom" : 10,
+    "gridWidth" : "2px",
+    "gridColour" : "yellow",
     "gridShowLabels" : true,
-    "gridLabelOffsetX" : 0,
-    "gridLabelOffsetY" : 0,
-    "gridStyle" : "yellow",
-    "gridOffsetX" : 0,
-    "gridOffsetY" : 0,
-    "gridOffsetPowerY" : 0,
+    "gridStartLabelZoom" : 2,
 
     // core (do not copy or alter):
     "baseTileURL" : "//maps.uesp.net/",
