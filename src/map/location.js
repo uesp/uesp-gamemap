@@ -146,8 +146,6 @@ export default class Location {
 
 		}
 
-
-
 		return new Point(x, y);
 	}
 

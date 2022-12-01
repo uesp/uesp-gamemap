@@ -780,6 +780,8 @@ export default class Gamemap {
 
 	gameToPixelPos(coords) {
 
+		log("test");
+
 		let gameX = coords[0];
 		let gameY = coords[1];
 

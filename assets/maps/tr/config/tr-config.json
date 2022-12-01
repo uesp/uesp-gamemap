@@ -9,9 +9,11 @@
     // Map options
     "hasCustomFavIcon" : true,
     "hasCustomCSS" : true,
+    "hasCellGrid" : true,
     "defaultZoomLevel" : 2,
     "defaultXPos" : 60000,
     "defaultYPos" : -125000,
+    "zoomOffset" : 9,
 
     // Map coordinate system info
     // 0: XY (Default)

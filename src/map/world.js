@@ -18,20 +18,20 @@ export default class World {
 
 			this.wikiPage = world.wikiPage || "";
 			this.cellSize = world.cellSize || -1;
-	
-			this.zoomOffset = world.zoomOffset;
+
+			this.zoomOffset = (mapConfig.zoomOffset != null) ? mapConfig.zoomOffset : world.zoomOffset;
 
 			this.maxZoomLevel = (world.maxZoom - this.zoomOffset) + 0.03; // add 0.03 to fix leaflet bug of only going up to x.97 zoom
 			this.minZoomLevel = (world.minZoom - this.zoomOffset) || 0;
-	
+
 			this.missingMapTilePath = mapConfig.missingMapTilePath;
 
 			this.legacy = world; // legacy attributes from server
 
-			this.minX = world.posLeft;
-			this.maxX = world.posRight;
-			this.minY = world.posBottom;
-			this.maxY = world.posTop;
+			this.minX = (mapConfig.minX != null) ? mapConfig.minX : world.posLeft;
+			this.maxX = (mapConfig.maxX != null) ? mapConfig.maxX : world.posRight;
+			this.minY = (mapConfig.minY != null) ? mapConfig.minY : world.posBottom;
+			this.maxY = (mapConfig.maxY != null) ? mapConfig.maxY : world.posTop;
 
 			this.numTilesX = world.tilesX;
 			this.numTilesY = world.tilesY;
