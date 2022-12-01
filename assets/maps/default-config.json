@@ -39,6 +39,7 @@
     // Map grid info
     "gridWidth" : "1px",
     "gridColour" : "orange",
+    "gridLabelColour" : "cyan",
     "gridShowLabels" : true,
     "gridStartLabelZoom" : 2,
 

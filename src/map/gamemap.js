@@ -1131,9 +1131,8 @@ export default class Gamemap {
 					}
 
 					if (coords.x % 5 == 0 && coords.y % 5 == 0){
-						tile.innerHTML = [coords.x, coords.y].join(', ');
+						tile.innerHTML = "<b class='grid_text' style='color:"+ self.mapConfig.gridLabelColour + "; padding-left: 3px;'>" + [coords.x, coords.y].join(', ') + "</b>";
 					}
-
 
 					let maxZoomLevel = self.getMapState().world.maxZoomLevel;
 					let currentZoom = self.getCurrentZoom() + 0.03;
@@ -1144,12 +1143,13 @@ export default class Gamemap {
 
 					let gridSize = self.mapConfig.tileSize * nZoom;
 
-					tile.width = 30;
+					tile.width = 60;
 					tile.height = 30;
 
 					this._tileSize = new Point(gridSize, gridSize);
 
 					this.className = "cellGrid";
+					tile.className = "cellGrid";
 
 					//log(tile);
 
