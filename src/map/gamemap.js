@@ -195,8 +195,8 @@ export default class Gamemap {
 			this.redrawLocations(mapState.world.locations);
 		}
 
-		// remove map bounds to fix RC bug
-		//map.setMaxBounds(null);
+		// add padding around max bounds
+		map.setMaxBounds(RC.getMaxBoundsWithPadding());
 
 		// finally, update map state
 		this.updateMapState(mapState);
@@ -1151,6 +1151,8 @@ export default class Gamemap {
 					this.className = "cellGrid";
 					tile.className = "cellGrid";
 
+					//set bounds - 145
+
 					//log(tile);
 
 					//{tileSize : 50}
@@ -1164,7 +1166,13 @@ export default class Gamemap {
 			});
 
 			L.gridLayer.cellGrid = function(opts) {
-				return new L.GridLayer.CellGrid(opts);
+
+
+				// // get bounds of map
+				// let bounds = map.getBounds();
+
+				// log(bounds)
+				return new L.GridLayer.CellGrid();
 			};
 
 			map.addLayer( L.gridLayer.cellGrid({tileSize : 50}));

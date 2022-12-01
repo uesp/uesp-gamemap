@@ -60,6 +60,17 @@ export default class RasterCoords {
 	getMaxBounds() {
 		let southWest = this.unproject([0, this.height]);
 		let northEast = this.unproject([this.width, 0]);
+		return new L.LatLngBounds(southWest, northEast);
+	}
+
+	/**
+     * get the max bounds of the image with some additional padding
+    */
+	getMaxBoundsWithPadding(){
+
+		let bounds = this.getMaxBounds();
+		let southWest = bounds._southWest;
+		let northEast = bounds._northEast;
 
 		const PADDING = 145;
 
