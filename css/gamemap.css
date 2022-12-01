@@ -1078,7 +1078,7 @@ div[class^="icon_bar"] {
 	display: flex;
 	flex-direction: row-reverse;
 	justify-content: flex-end;
-	gap: var(--padding_small);
+	gap: var(--padding_medium);
 }
 
 .icon_bar_responsive {

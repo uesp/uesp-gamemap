@@ -37,18 +37,20 @@
 			</div>
 
 			<!-- Uncommon actions (Just icon buttons) -->
-			<div id="btn_toggle_grid" class='btn_icon_button_toggle waves-effect' title="Toggle the cell grid">
+			<div id="btn_toggle_grid" class='btn_icon_button_toggle waves-effect banishdefault' title="Toggle the cell grid">
 				<i class="material-icons">grid_on</i>
-				<input type="checkbox">
+				<input type="checkbox" onchange="toggleCellGrid(this.checked)">
 			</div>
 
-			<button id="btn_toggle_edit" class='btn_icon_button waves-effect banishdefault nomobile' title="Toggle the edit menu" onclick="toggleEdit()">
+			<div id="btn_toggle_edit" class='btn_icon_button_toggle waves-effect banishdefault nomobile' title="Toggle the edit menu">
 				<i class="material-icons">edit</i>
-			</button>
+				<input type="checkbox" onchange="toggleEdit(this.checked)">
+			</div>
 
-			<button id="btn_toggle_recent_changes" class='btn_icon_button waves-effect banishdefault nomobile' title="Show recent changes to this map" onclick="toggleRecentChanges()">
+			<div id="btn_toggle_recent_changes" class='btn_icon_button_toggle waves-effect banishdefault nomobile' title="Show recent changes to this map">
 				<i class="material-icons">history</i>
-			</button>
+				<input type="checkbox" onchange="toggleRecentChanges(this.checked)">
+			</div>
 
 			<div class="icon_bar_responsive">
 
