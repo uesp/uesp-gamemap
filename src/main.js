@@ -157,7 +157,7 @@ function onPermissionsLoaded(enableEditing) {
 
 	if (enableEditing) {
 		$("btn_toggle_edit").show();
-		$("btn_recent_changes").show();
+		$("btn_toggle_recent_changes").show();
 	}
 
 	// canEdit = this.canEdit() && !isMobileDevice();

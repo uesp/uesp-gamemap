@@ -206,7 +206,7 @@ button {
 				  Icon Buttons
 ================================================*/
 
-button[class*="icon_button"] {
+[class*="icon_button"] {
 	text-shadow: 0px 0px 6px var(--background);
 	background: var(--shadow);
 	border: none;
@@ -221,15 +221,37 @@ button[class*="icon_button"] {
 	line-height: 100%;
 }
 
-button[class*="icon_button"] i {
+.btn_icon_button_toggle input {
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	position: absolute !important;
+	opacity: 0 !important;
+	pointer-events: auto !important;
+}
+
+.btn_icon_button_toggle i {
+	padding-top: 7px;
+}
+
+.btn_icon_button_toggle:has(input:checked) {
+	background-color: var(--secondary_variant);
+	box-shadow: 0px 1.5px 4px 4px var(--shadow);
+}
+
+.btn_icon_button_toggle:has(input:checked) i {
+	color: white;
+}
+
+[class*="icon_button"] i {
 	margin: 5px;
 }
 
-button[class*="icon_button"]:hover {
+[class*="icon_button"]:hover {
 	background: var(--bubble_selection);
 }
 
-button[class*="icon_button"]:active {
+[class*="icon_button"]:active {
 	transform: scale(0.94);
 }
 
@@ -243,7 +265,7 @@ button[class*="bgless"] {
 	color: black;
 }
 
-b[class^="icon_button_label"] {
+b[class^="icon_btn_label"] {
 	margin-left: 4px;
 	margin-right: 12px;
 	font-size: medium;
@@ -251,6 +273,7 @@ b[class^="icon_button_label"] {
 	position: relative;
 	top: -6.5px;
 }
+
 
 /*===============================================
 				Location Switcher
@@ -1039,8 +1062,10 @@ input[type=checkbox].gmMapEditPopupInput {
 /* get all divs beginning with "icon_bar" */
 
 .icon_bar {
-	top: var(--padding_minimum);
-	right: var(--padding_minimum);
+	padding-top: var(--padding_minimum);
+	padding-bottom: var(--padding_minimum);
+	padding-right: var(--padding_minimum);
+	right:  var(--padding_minimum);
 	position: absolute;
 	display: flex;
 	flex-wrap: nowrap;
