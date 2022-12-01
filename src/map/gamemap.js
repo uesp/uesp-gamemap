@@ -1119,6 +1119,60 @@ export default class Gamemap {
 						  General
 	================================================*/
 
+	toggleCellGrid(toggle) {
+
+		if (toggle) {
+			L.GridLayer.CellGrid = L.GridLayer.extend({
+				createTile: function (coords) {
+					var tile = document.createElement('div');
+
+					if (coords.x < 0 || coords.y < 0 ) {
+						return tile;
+					}
+
+					if (coords.x % 5 == 0 && coords.y % 5 == 0){
+						tile.innerHTML = [coords.x, coords.y].join(', ');
+					}
+
+
+					let maxZoomLevel = self.getMapState().world.maxZoomLevel;
+					let currentZoom = self.getCurrentZoom() + 0.03;
+
+					let nZoom = currentZoom / maxZoomLevel;
+
+					log(self.mapConfig.tileSize * nZoom)
+
+					let gridSize = self.mapConfig.tileSize * nZoom;
+
+					tile.width = 30;
+					tile.height = 30;
+
+					this._tileSize = new Point(gridSize, gridSize);
+
+					this.className = "cellGrid";
+
+					//log(tile);
+
+					//{tileSize : 50}
+
+
+					// assume max zoom = 100%
+
+					tile.style.outline = self.mapConfig.gridWidth + " solid " + self.mapConfig.gridColour;
+					return tile;
+				}
+			});
+
+			L.gridLayer.cellGrid = function(opts) {
+				return new L.GridLayer.CellGrid(opts);
+			};
+
+			map.addLayer( L.gridLayer.cellGrid({tileSize : 50}));
+		} else {
+			map.eachLayer((layer) => { if (layer.className === "cellGrid") { layer.remove();}});
+		}
+	}
+
 	isHiddenLocsShown() {
 		if (Utils.getURLParams().get("showhidden") === "true") {
 			return true;

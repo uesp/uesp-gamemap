@@ -224,6 +224,11 @@ window.gotoArticle = function(){
 	}
 }
 
+// toggle cell grid
+window.toggleCellGrid = function(toggle) {
+	gamemap.toggleCellGrid(toggle);
+}
+
 window.showHelp = function() {
 	M.toast({text: "TODO: not implemented yet"});
 }

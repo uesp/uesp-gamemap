@@ -37,8 +37,8 @@
     },
 
     // Map grid info
-    "gridWidth" : "2px",
-    "gridColour" : "yellow",
+    "gridWidth" : "1px",
+    "gridColour" : "orange",
     "gridShowLabels" : true,
     "gridStartLabelZoom" : 2,
 
