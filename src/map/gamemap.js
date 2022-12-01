@@ -1139,7 +1139,7 @@ export default class Gamemap {
 					}
 
 
-					log(self.mapConfig.tileSize * nZoom)
+					//log(self.mapConfig.tileSize * nZoom)
 
 					let gridSize = self.mapConfig.tileSize * nZoom;
 
@@ -1165,17 +1165,11 @@ export default class Gamemap {
 				}
 			});
 
-			L.gridLayer.cellGrid = function(opts) {
-
-
-				// // get bounds of map
-				// let bounds = map.getBounds();
-
-				// log(bounds)
-				return new L.GridLayer.CellGrid();
+			L.gridLayer.cellGrid = function(options) {
+				return new L.GridLayer.CellGrid(options);
 			};
 
-			map.addLayer( L.gridLayer.cellGrid({tileSize : 50}));
+			map.addLayer( L.gridLayer.cellGrid({bounds : RC.getMaxBounds()}));
 		} else {
 			map.eachLayer((layer) => { if (layer.className === "cellGrid") { layer.remove();}});
 		}
