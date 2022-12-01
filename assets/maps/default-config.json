@@ -41,7 +41,7 @@
     "gridColour" : "orange",
     "gridLabelColour" : "cyan",
     "gridShowLabels" : true,
-    "gridStartLabelZoom" : 2,
+    "gridShowLabelZoom" : 2,
 
     // core (do not copy or alter):
     "baseTileURL" : "//maps.uesp.net/",

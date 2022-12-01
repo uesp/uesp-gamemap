@@ -13,7 +13,7 @@ export default class RasterCoords {
 	 * @param {Number} [tileSize] - the size of the map tiles in pixels. default is 256.
 	 */
 	constructor(map, mapImage, tileSize) {
-	
+
 		if (typeof window.L === 'undefined') {
 			throw new Error('Leaflet must be loaded first');
 		}
@@ -23,7 +23,7 @@ export default class RasterCoords {
 		this.height = mapImage.height;
 		this.tileSize = tileSize || 256;
 		this.zoom = this.getZoomLevel();
-		
+
 		if (this.width && this.height) {
 			this.setMaxBounds();
 		}
@@ -60,6 +60,16 @@ export default class RasterCoords {
 	getMaxBounds() {
 		let southWest = this.unproject([0, this.height]);
 		let northEast = this.unproject([this.width, 0]);
+
+		const PADDING = 145;
+
+		log(northEast);
+
+		southWest.lng = southWest.lng - PADDING;
+		southWest.lat = southWest.lat - PADDING;
+		northEast.lng = northEast.lng + PADDING;
+		northEast.lat = northEast.lat + PADDING;
+
 		return new L.LatLngBounds(southWest, northEast);
 	}
 

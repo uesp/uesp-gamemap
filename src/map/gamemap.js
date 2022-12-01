@@ -196,7 +196,7 @@ export default class Gamemap {
 		}
 
 		// remove map bounds to fix RC bug
-		map.setMaxBounds(null);
+		//map.setMaxBounds(null);
 
 		// finally, update map state
 		this.updateMapState(mapState);
@@ -1134,18 +1134,18 @@ export default class Gamemap {
 					let currentZoom = self.getCurrentZoom() + 0.03;
 					let nZoom = currentZoom / maxZoomLevel;
 
-					if (coords.x % 5 == 0 && coords.y % 5 == 0 && currentZoom > self.mapConfig.gridStartLabelZoom){
+					if (coords.x % 5 == 0 && coords.y % 5 == 0 && currentZoom > self.mapConfig.gridShowLabelZoom){
 						tile.innerHTML = "<b class='grid_text' style='color:"+ self.mapConfig.gridLabelColour + "; padding-left: 3px;'>" + [coords.x, coords.y].join(', ') + "</b>";
 					}
-
 
 
 					log(self.mapConfig.tileSize * nZoom)
 
 					let gridSize = self.mapConfig.tileSize * nZoom;
 
-					tile.width = 60;
-					tile.height = 30;
+					tile.width = gridSize;
+					tile.height = gridSize;
+					tile.tileSize = gridSize;
 
 					this._tileSize = new Point(gridSize, gridSize);
 					this.className = "cellGrid";
