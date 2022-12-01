@@ -4,12 +4,12 @@
     "wikiNamespace": "Online",
     "database" : "eso",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design",
-    "customFavIcon" : true,
 
     // Map options
     "defaultZoomLevel" : 2,
     "defaultXPos" : 0.5,
     "defaultYPos" : 0.5,
+    "hasCustomFavIcon" : true,
 
     // Map coordinate system info
     // 0: XY (Default)

@@ -7,8 +7,8 @@
     "bgColour" : "#282520",
 
     // Map options
-    "customFavIcon" : true,
-    "customCSS" : true,
+    "hasCustomFavIcon" : true,
+    "hasCustomCSS" : true,
     "defaultZoomLevel" : 2,
     "defaultXPos" : 60000,
     "defaultYPos" : -125000,

@@ -36,7 +36,7 @@ $(document).ready(function() {
 		// we've got a valid game, now to check whether it has a valid config file, and merge with the client's default
 		log("URL has game param!");
 
-		
+
 
 		// get default map config
 		Utils.getJSON(Constants.DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
@@ -130,6 +130,7 @@ function onWorldsLoaded(mapWorlds) {
 
 	$("#loading_spinner").hide();
 	$('#zoom_widget').css('visibility','visible');
+	$("#error_box").hide();
 
 	if (gamemap.hasMultipleWorlds()) {
 
@@ -142,7 +143,9 @@ function onWorldsLoaded(mapWorlds) {
 
 	}
 
-	$("#error_box").hide();
+	if (mapConfig.hasCellGrid) {
+		$("#btn_toggle_grid").show();
+	}
 }
 
 function onMapLoaded() {
@@ -151,6 +154,11 @@ function onMapLoaded() {
 
 function onPermissionsLoaded(enableEditing) {
 	log("Editing permissions loaded, editing enabled is: " + enableEditing);
+
+	if (enableEditing) {
+		$("btn_toggle_edit").show();
+		$("btn_recent_changes").show();
+	}
 
 	// canEdit = this.canEdit() && !isMobileDevice();
 
@@ -366,7 +374,7 @@ function hideMenus() {
 	toggleLocationSwitcher(false);
 	hideSearch();
 
-	if (Utils.isMobileDevice()) { 
+	if (Utils.isMobileDevice()) {
 		clearSearch();
 	}
 
@@ -623,7 +631,7 @@ function createGroupListHTML(groups) {
 ================================================*/
 
 window.focusSearch = function() {
-	
+
 	// focus search if it's not already
 	if (document.activeElement.id != searchbox.id) {
 		searchbox.focus();
@@ -643,7 +651,7 @@ window.focusSearch = function() {
 		$("#search_options_container").css("box-shadow", "0px 1.5px 4px 4px var(--shadow)");
 		$("#search_results").html(""); // blank current search results
 	} else if (searchQuery.length > 0) {
-		toggleSearchPane(true);		
+		toggleSearchPane(true);
 	}
 
 	// is there a search query, if so do stuff with
@@ -699,7 +707,7 @@ window.updateSearch = function(query, currentMapOnly) {
 	// toggle clear button visibility
 	if (query.length > 0) {
 		$("#btn_clear_search").show();
-		toggleSearchPane(true);	
+		toggleSearchPane(true);
 		$("#search_progress_bar").show();
 		$("#search_results").html("<b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small) '>Searching...<b>");
 
@@ -730,21 +738,21 @@ function doSearch(searchQuery, currentMapOnly) {
 		log("search query: " + queryParams.search + ", search in map: " + currentMapOnly);
 		if (gamemap.isHiddenLocsShown()) {
 			queryParams.showhidden = 1;
-		} 
+		}
 
 		if (currentMapOnly == true) {
 			queryParams.world = gamemap.getCurrentWorldID();
 		}
 
 		queryParams.db = mapConfig.database;
-	
+
 		if (searchQuery.substring(0, 5) === "type:") {
 			let locType = gamemap.getLocTypeByName(searchQuery.substring(5));
 			if (locType != null) {
 				queryParams.searchtype = locType;
-			} 
+			}
 		}
-	
+
 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 
 			// inline search result object
@@ -782,7 +790,7 @@ function doSearch(searchQuery, currentMapOnly) {
 								searchResult = new SearchResult(result.name, world.displayName, result.iconType, -result.id);
 							}
 						}
-	
+
 						if (searchResult != null) {
 							searchResults.push(searchResult);
 						}
@@ -792,7 +800,7 @@ function doSearch(searchQuery, currentMapOnly) {
 
 				updateSearchResults(searchResults);
 				console.log(searchResults);
-				
+
 			} else {
 				log("there was an error getting search results");
 			}
@@ -832,7 +840,7 @@ function createLocationRowHTML(data) {
 		if (world != null) {
 			return ("<div class='collection'><a name='" + world.name + "' onclick='gotoWorld("+worldID+")' class='collection-item waves-effect'> " + world.displayName + " </a></div>");
 		}
-	} 
+	}
 
 	if (data != null && data.name != null) {
 
@@ -860,12 +868,12 @@ function createLocationRowHTML(data) {
 
 		if (data.description != null && gamemap.hasMultipleWorlds()) {
 			nameHTML += "<br><small style='color: var(--text_low_emphasis);'>"+ data.description + "</small>";
-		} 
+		}
 
 		if (isWorld && !gamemap.hasMultipleWorlds()) {
 			return "";
 		}
-	
+
 		return ("<div class='collection'><a onclick='gotoWorld("+data.destinationID+")' class='collection-item search-item avatar waves-effect'> " + imgHTML + nameHTML + "</a></div>");
 
 	}

@@ -98,12 +98,13 @@ hr {
 		display: inline-block !important;
 	}
 
+	div[class^="icon_bar"] {
+		flex-direction: column !important;
+		width: var(--appbar_dimen) !important;
+	}
+
 	.icon_bar_responsive {
 		flex-direction: column !important;
-		top: calc(var(--padding_minimum) + var(--appbar_dimen) + var(--padding_small) + +8px) !important;
-		right: var(--padding_minimum) !important;
-		left: auto !important;
-		width: var(--appbar_dimen) !important;
 	}
 
 }
@@ -1036,26 +1037,30 @@ input[type=checkbox].gmMapEditPopupInput {
 ================================================*/
 
 /* get all divs beginning with "icon_bar" */
-div[class^="icon_bar"] {
+
+.icon_bar {
+	top: var(--padding_minimum);
+	right: var(--padding_minimum);
 	position: absolute;
-	z-index: var(--zindex_floating);
 	display: flex;
 	flex-wrap: nowrap;
-	flex-direction: row;
+	width: calc(100% - (var(--search_pane_width) + var(--padding_minimum))) !important;
+	overflow: hidden;
+}
+
+div[class^="icon_bar"] {
+	z-index: var(--zindex_floating);
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-end;
 	gap: var(--padding_small);
 }
 
 .icon_bar_responsive {
-	top: var(--padding_minimum);
-	left: calc(var(--search_pane_width) + 4px);
 	flex: none;
-	width: -moz-available;
-	width: -webkit-fill-available;
-}
-
-#btn_more {
-	margin-left: auto;
-	margin-right: var(--padding_minimum);
+	flex-direction: row !important;
+	overflow: hidden;
+	margin-right: auto;
 }
 
 /*================================================

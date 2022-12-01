@@ -51,9 +51,9 @@ export default class Gamemap {
 			self = this;
 
 			// set up css
-			if (this.mapConfig.customFavIcon) { Utils.changeFavIcon(mapConfig.imagesPath + "favicon.ico"); }
+			if (this.mapConfig.hasCustomFavIcon) { Utils.changeFavIcon(mapConfig.imagesPath + "favicon.ico"); }
 			if (this.mapConfig.bgColour) { $("#"+mapRootID).css("background-color", mapConfig.bgColour); }
-			if (this.mapConfig.customCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; log ("Loading custom map css: " + cssPath); Utils.injectCSS(cssPath);}
+			if (this.mapConfig.hasCustomCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; log ("Loading custom map css: " + cssPath); Utils.injectCSS(cssPath);}
 
 			// set the default map info
 			this.mapWorlds = {};
@@ -403,7 +403,7 @@ export default class Gamemap {
 				let mapState = new MapState();
 				mapState.zoomLevel = zoom;
 				mapState.coords = coords;
-	
+
 				// if we are in the same world, just pan to the provided location (or pan to default)
 				if (worldID == this.getCurrentWorldID()) {
 					map.setView(this.toLatLng(coords), zoom);
@@ -597,7 +597,7 @@ export default class Gamemap {
 			for (let locType in this.mapConfig.icons) {
 				if (locTypeName === this.mapConfig.icons[locType].toLowerCase()) {
 					return locType;
-				} 
+				}
 			}
 		} else {
 			return null;
@@ -761,7 +761,7 @@ export default class Gamemap {
 		let width = null;
 		let height = null;
 
-		// check if this world has a number of tiles set 
+		// check if this world has a number of tiles set
 		if (world.numTilesX != null && world.numTilesY != null) {
 			width = (world.numTilesX * this.mapConfig.tileSize) * Math.pow(2, 0);
 			height = (world.numTilesY * this.mapConfig.tileSize) * Math.pow(2, 0);
@@ -787,10 +787,10 @@ export default class Gamemap {
 			let tilePos = this.gameToTilePos(gameX, gameY);
 
 			log(tilePos);
-		
+
 			let xPos = Math.round(tilePos.x * this.mapConfig.tileSize);
 			let yPos = Math.round(tilePos.y * this.mapConfig.tileSize);
-		
+
 			return [xPos, yPos];
 
 		} else {
@@ -808,7 +808,7 @@ export default class Gamemap {
 
 		return new Point(tileX, tileY);
 	}
-	
+
 
 	/**
 	 * Convert leaflet LatLongs to XY / normalised coordinates.
@@ -869,7 +869,7 @@ export default class Gamemap {
 
 		// are we being given an array of coords?
 		if (coords[0] != null) {
-			
+
 			if (coords[0].x != null) { // are we given an array of coord objects?
 
 				if (coords.length == 1) { // are we given a single coord object? (marker, point)
@@ -929,10 +929,10 @@ export default class Gamemap {
 			if (!Utils.isMobileDevice()) {
 				self.hideMenus();
 			}
-			
+
 			self.clearTooltips();
 		});
-		
+
 		map.on("mousedown", function(e){
 			self.hideMenus();
 		})
@@ -1199,7 +1199,7 @@ export default class Gamemap {
 		return map.getZoom();
 	}
 
-	
+
 }
 
 

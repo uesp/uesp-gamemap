@@ -20,47 +20,54 @@
 		<!-- Gamemap -->
 		<div id="gamemap"></div>
 
-		<div class="icon_bar_responsive">
+		<div class="icon_bar">
+			<div class="icon_bar_persistent">
+				<!-- Persistent icon bar actions (overflow menu) -->
+				<button id="btn_more" class='btn_icon_button waves-effect dropdown-trigger' title="More" data-target='overflow-menu'>
+					<i class="material-icons">more_vert</i>
 
-			<button id="btn_location_switcher" class='btn_icon_button waves-effect banishdefault' title="Jump to location" onclick="toggleLocationSwitcher();">
-				<i class="material-icons onlymobile">explore</i>
-				<b class="icon_button_label nomobile" id="current_location_label">Loading...</b>
-				<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>
-			</button>
+					<!-- Overflow Menu Items -->
+					<ul id='overflow-menu' class='dropdown-content'>
+						<li><a onclick="showHelp()" href="javascript:void(0);">Help</a></li>
+						<li><a onclick="showMapKey()" href="javascript:void(0);">Map Key</a></li>
+						<li><a onclick="resetMap()" href="javascript:void(0);">Reset Map</a></li>
+						<li><a onclick="toggleFullscreen();" href="javascript:void(0);" id="fullscreen-toggle"><i class="material-icons small">fullscreen</i>Fullscreen</a></li>
+					</ul>
+				</button>
+			</div>
 
-			<button id="btn_goto_article" class='btn_icon_button waves-effect banishdefault' title="Goto article for this location" onclick="gotoArticle()">
-				<i class="material-icons">article</i>
-				<b class="icon_button_label nomobile">Goto Article</b>
-			</button>
-
-			<button id="btn_permalink" class='btn_icon_button waves-effect' title="Copy link to this location" onclick="copyMapLink()">
-				<i class="material-icons">link</i><b class="icon_button_label nomobile">Copy Link</b>
-			</button>
-
-			<button id="btn_toggle_grid" class='btn_icon_button waves-effect' title="Show the cell grid line boundaries and coordinates" onclick="toggleMapGrid()">
+			<!-- Uncommon actions (Just icon buttons) -->
+			<button id="btn_toggle_grid" class='btn_icon_button waves-effect banishdefault' title="Toggle the cell grid" onclick="toggleMapGrid()">
 				<i class="material-icons">grid_on</i>
 			</button>
 
-			<button id="btn_toggle_edit" class='btn_icon_button waves-effect' title="Toggle the edit menu" onclick="toggleMapGrid()">
+			<button id="btn_toggle_edit" class='btn_icon_button waves-effect banishdefault nomobile' title="Toggle the edit menu" onclick="toggleEdit()">
 				<i class="material-icons">edit</i>
 			</button>
 
-			<button id="btn_recent_changes" class='btn_icon_button waves-effect' title="Show recent changes to this map" onclick="toggleRecentChanges()">
+			<button id="btn_recent_changes" class='btn_icon_button waves-effect banishdefault nomobile' title="Show recent changes to this map" onclick="toggleRecentChanges()">
 				<i class="material-icons">history</i>
 			</button>
 
-			<button id="btn_more" class='btn_icon_button waves-effect dropdown-trigger' title="More" data-target='overflow-menu'>
-				<i class="material-icons">more_vert</i>
+			<div class="icon_bar_responsive">
 
-				<!-- Overflow Menu Items -->
-				<ul id='overflow-menu' class='dropdown-content'>
-					<li><a onclick="showHelp()" href="javascript:void(0);">Help</a></li>
-					<li><a onclick="showMapKey()" href="javascript:void(0);">Map Key</a></li>
-					<li><a onclick="resetMap()" href="javascript:void(0);">Reset Map</a></li>
-					<li><a onclick="toggleFullscreen();" href="javascript:void(0);" id="fullscreen-toggle"><i class="material-icons small">fullscreen</i>Fullscreen</a></li>
-				</ul>
-			</button>
+				<!-- Common actions (Icon buttons with label) -->
+				<button id="btn_location_switcher" class='btn_icon_button waves-effect banishdefault' title="Jump to location" onclick="toggleLocationSwitcher();">
+					<i class="material-icons onlymobile">explore</i>
+					<b class="icon_button_label nomobile" id="current_location_label">Loading...</b>
+					<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>
+				</button>
 
+				<button id="btn_goto_article" class='btn_icon_button waves-effect banishdefault' title="Goto article for this location" onclick="gotoArticle()">
+					<i class="material-icons">article</i>
+					<b class="icon_button_label nomobile">Goto Article</b>
+				</button>
+
+				<button id="btn_permalink" class='btn_icon_button waves-effect' title="Copy link to this location" onclick="copyMapLink()">
+					<i class="material-icons">link</i><b class="icon_button_label nomobile">Copy Link</b>
+				</button>
+
+			</div>
 		</div>
 
 
