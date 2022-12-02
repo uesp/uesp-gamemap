@@ -1124,32 +1124,28 @@ export default class Gamemap {
 		if (toggle) {
 			L.GridLayer.CellGrid = L.GridLayer.extend({
 				createTile: function (coords) {
-					var tile = document.createElement('div');
-
-					if (coords.x < 0 || coords.y < 0 ) {
-						return tile;
-					}
+					this.tile = document.createElement('div');
 
 					let maxZoomLevel = self.getMapState().world.maxZoomLevel;
 					let currentZoom = self.getCurrentZoom() + 0.03;
 					let nZoom = currentZoom / maxZoomLevel;
 
 					if (coords.x % 5 == 0 && coords.y % 5 == 0 && currentZoom > self.mapConfig.gridShowLabelZoom){
-						tile.innerHTML = "<b class='grid_text' style='color:"+ self.mapConfig.gridLabelColour + "; padding-left: 3px;'>" + [coords.x, coords.y].join(', ') + "</b>";
+						this.tile.innerHTML = "<b class='grid_text' style='color:"+ self.mapConfig.gridLabelColour + "; padding-left: 3px;'>" + [coords.x, coords.y].join(', ') + "</b>";
 					}
-
 
 					//log(self.mapConfig.tileSize * nZoom)
 
 					let gridSize = self.mapConfig.tileSize * nZoom;
 
-					tile.width = gridSize;
-					tile.height = gridSize;
-					tile.tileSize = gridSize;
+					this.tile.width = gridSize;
+					this.tile.height = gridSize;
+					this.tile.tileSize = gridSize;
+					this.tileSize = gridSize;
 
 					this._tileSize = new Point(gridSize, gridSize);
 					this.className = "cellGrid";
-					tile.className = "cellGrid";
+					this.tile.className = "cellGrid";
 
 					//set bounds - 145
 
@@ -1160,19 +1156,13 @@ export default class Gamemap {
 
 					// assume max zoom = 100%
 
-					tile.style.outline = self.mapConfig.gridWidth + " solid " + self.mapConfig.gridColour;
-					return tile;
+					this.tile.style.outline = self.mapConfig.gridWidth + " solid " + self.mapConfig.gridColour;
+					return this.tile;
 				}
 			});
-
-			L.gridLayer.cellGrid = function(options) {
-				return new L.GridLayer.CellGrid(options);
-			};
-
+			L.gridLayer.cellGrid = function(options) { return new L.GridLayer.CellGrid(options);};
 			map.addLayer( L.gridLayer.cellGrid({bounds : RC.getMaxBounds()}));
-		} else {
-			map.eachLayer((layer) => { if (layer.className === "cellGrid") { layer.remove();}});
-		}
+		} else { map.eachLayer((layer) => { if (layer.className === "cellGrid") { layer.remove();}});}
 	}
 
 	isHiddenLocsShown() {

@@ -272,6 +272,10 @@ b[class^="icon_btn_label"] {
 	white-space: nowrap;
 	position: relative;
 	top: -6.5px;
+	max-width: 150px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 
