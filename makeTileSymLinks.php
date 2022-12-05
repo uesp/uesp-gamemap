@@ -7,9 +7,10 @@ require '/home/uesp/secrets/gamemap.secrets';
 
 class CMakeTileSymLinks 
 {
-	public $deleteLinks = false;
+	public $deleteLinks = false;	// Only delete links if true
 	
 	public $REMOVE_ZOOM_LEVEL = true;
+	public $ADD_EMPTY_TILES = true;
 	
 	static $BASE_PATH = '/mnt/uesp/maps';
 	
@@ -55,6 +56,7 @@ class CMakeTileSymLinks
 			'trmap' => [
 					'prefix' => 'TR',
 					'newPrefix' => 'tamrielrebuilt',
+					'emptyTile' => 'images/troutofrange.jpg',
 			], 
 	];
 	
@@ -64,10 +66,49 @@ class CMakeTileSymLinks
 	}
 	
 	
+	private function MakeLinksForEmptyTiles($basePath, $outputBasePath, $zoomPath, $zoomLevel, $newZoomPath, $gameData)
+	{
+		$tileSize = pow(2, intval($zoomLevel));
+		$numTiles = $tileSize * $tileSize;
+		$numMissingTiles = 0;
+		
+		print("\t\tZoom $zoomLevel: Checking $numTiles tiles for missing tiles...\n");
+		
+		$blankTile = $gameData['emptyTile'];
+		
+		if ($blankTile == null || $blankTile == '') 
+		{
+			print("\tError: Missing empty tile filename in game data!\n");
+			return false;
+		}
+		
+		$blankFilename = "../../../../$blankTile";
+		
+		for ($y = 0; $y < $tileSize; ++$y)
+		{
+			for ($x = 0; $x < $tileSize; ++$x)
+			{
+				$layer = 'default';
+				if ($gameData['layer']) $layer = $gameData['layer'];
+				
+				$link = "$outputBasePath/{$gameData['newPrefix']}/leaflet/$layer/$newZoomPath/{$gameData['newPrefix']}-$x-$y.jpg";
+				if (file_exists($link)) continue;
+				
+				//print("\t\t$link => $blankFilename\n");
+				
+				if (!symlink($blankFilename, $link)) print("\tError: Failed to create symbolic link '$link' to '$target'!\n");
+				++$numMissingTiles;
+			}
+		}
+		
+		print("\t\tZoom $zoomLevel: Found $numMissingTiles missing tiles!\n");
+	}
+	
+	
 	// {tileURL}/{world}/leaflet/{layer}/{zoomLevel}/{world}-{tileX}-{tileY}.jpg
 	// Existing File: /mnt/uesp/maps/srmap/zoom10/skyrim-1-0-10.jpg
 	// New File:      /mnt/uesp/maps/srmap/skyrim/leaflet/default/zoom0/skyrim-1-0.jpg
-	private function MakeLinksForPath($basePath, $outputBasePath, $zoomPath, $newZoomPath, $gameData)
+	private function MakeLinksForPath($basePath, $outputBasePath, $zoomPath, $zoomLevel, $newZoomPath, $gameData)
 	{
 		$path = $basePath . '/' . $zoomPath;
 		$fileSpec = $path . '/' . $gameData['prefix'] . '-*';
@@ -163,6 +204,8 @@ class CMakeTileSymLinks
 			if ($zoomLevel > 0 && $zoomLevel < $minZoomLevel) $minZoomLevel = $zoomLevel;
 		}
 		
+		print("\tFound min zoom level of $minZoomLevel!\n");
+		
 		foreach ($files as $filename)
 		{
 			if (!preg_match("/zoom([0-9]+)/", $filename, $matches)) continue;
@@ -185,7 +228,12 @@ class CMakeTileSymLinks
 				return false;
 			}
 			
-			$this->MakeLinksForPath($basePath, $outputBasePath, $filename, $newZoomPath, $gameData);
+			$this->MakeLinksForPath($basePath, $outputBasePath, $filename, $newZoomLevel, $newZoomPath, $gameData);
+			
+			if ($this->ADD_EMPTY_TILES)
+			{
+				$this->MakeLinksForEmptyTiles($basePath, $outputBasePath, $filename, $newZoomLevel, $newZoomPath, $gameData);
+			}
 		}
 		
 		return true;
