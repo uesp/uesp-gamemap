@@ -765,9 +765,6 @@ export default class Gamemap {
 		if (world.numTilesX != null && world.numTilesY != null) {
 			width = (world.numTilesX * this.mapConfig.tileSize) * Math.pow(2, 0);
 			height = (world.numTilesY * this.mapConfig.tileSize) * Math.pow(2, 0);
-
-			log(width);
-			log(height);
 		} else {
 			throw new Error("No map tile dimensions were provided!");
 		}
@@ -1122,47 +1119,39 @@ export default class Gamemap {
 	toggleCellGrid(toggle) {
 
 		if (toggle) {
-			L.GridLayer.CellGrid = L.GridLayer.extend({
-				createTile: function (coords) {
-					this.tile = document.createElement('div');
-
-					let maxZoomLevel = self.getMapState().world.maxZoomLevel;
-					let currentZoom = self.getCurrentZoom() + 0.03;
-					let nZoom = currentZoom / maxZoomLevel;
-
-					if (coords.x % 5 == 0 && coords.y % 5 == 0 && currentZoom > self.mapConfig.gridShowLabelZoom){
-						this.tile.innerHTML = "<b class='grid_text' style='color:"+ self.mapConfig.gridLabelColour + "; padding-left: 3px;'>" + [coords.x, coords.y].join(', ') + "</b>";
-					}
-
-					//log(self.mapConfig.tileSize * nZoom)
-
-					let gridSize = self.mapConfig.tileSize * nZoom;
-
-					this.tile.width = gridSize;
-					this.tile.height = gridSize;
-					this.tile.tileSize = gridSize;
-					this.tileSize = gridSize;
-
-					this._tileSize = new Point(gridSize, gridSize);
-					this.className = "cellGrid";
-					this.tile.className = "cellGrid";
-
-					//set bounds - 145
-
-					//log(tile);
-
-					//{tileSize : 50}
 
 
-					// assume max zoom = 100%
+			var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+			svgElement.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+			svgElement.setAttribute('viewBox', "0 0 256 256");
+			svgElement.innerHTML = '<rect x="0" y="200" width="50" height="2" style="fill:red"/><rect x="75" y="123" width="50" height="50" style="fill:#0013ff"/><text x="0" y="15" fill="red">I love SVG!</text>';
+			var svgElementBounds = RC.getMaxBounds();
+			L.svgOverlay(svgElement, svgElementBounds, {
+				opacity: 0.7,
+    			interactive: false,
+				className : "cellGrid",
+			}).addTo(map);
 
-					this.tile.style.outline = self.mapConfig.gridWidth + " solid " + self.mapConfig.gridColour;
-					return this.tile;
+			log(RC.getMaxBounds());
+
+
+
+			// let maxZoomLevel = self.getMapState().world.maxZoomLevel;
+			// let currentZoom = self.getCurrentZoom() + 0.03;
+			// let nZoom = currentZoom / maxZoomLevel;
+
+
+								// if (coords.x % 5 == 0 && coords.y % 5 == 0 && currentZoom > self.mapConfig.gridShowLabelZoom){
+					// 	this.tile.innerHTML = "<b class='grid_text' style='color:"+ self.mapConfig.gridLabelColour + "; padding-left: 3px;'>" + [coords.x, coords.y].join(', ') + "</b>";
+					// }
+
+		} else {
+			map.eachLayer((layer) => {
+				 if (layer.className === "cellGrid") {
+					 layer.remove();}
 				}
-			});
-			L.gridLayer.cellGrid = function(options) { return new L.GridLayer.CellGrid(options);};
-			map.addLayer( L.gridLayer.cellGrid({bounds : RC.getMaxBounds()}));
-		} else { map.eachLayer((layer) => { if (layer.className === "cellGrid") { layer.remove();}});}
+			);
+		}
 	}
 
 	isHiddenLocsShown() {
