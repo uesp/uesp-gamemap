@@ -110,7 +110,6 @@
 
     _redraw: function () {
       var size = this._map.getSize();
-      log(this.options.bounds);
       var bounds = this.options.bounds || this._map.getBounds();
       var zoomScale = (size.x * 180) / (20037508.34 * (bounds.getEast()
         - bounds.getWest())); // resolution = 1/zoomScale

@@ -1120,88 +1120,55 @@ export default class Gamemap {
 
 		if (toggle) {
 
-		L.canvasOverlay()
-			.params({bounds: RC.getMaxBounds(), className : "cellGrid"})
-            .drawing(drawingOnCanvas)
-            .addTo(map);
+			L.canvasOverlay()
+				.params({bounds: RC.getMaxBounds(), className : "cellGrid"})
+				.drawing(drawingOnCanvas)
+				.addTo(map);
 
-        function drawingOnCanvas(canvasOverlay, params) {
-            var ctx = params.canvas.getContext('2d');
-            ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
-            ctx.fillStyle = "rgba(255,116,0, 0.2)";
+			function drawingOnCanvas(layer, params) {
 
-			ctx.strokeStyle = "red";
-			ctx.fillStyle = "red";
+				// set up canvas layer
+				let map = layer._map;
+				let ctx = params.canvas.getContext('2d');
+				let minX = map.layerPointToContainerPoint(map.latLngToLayerPoint(RC.getMaxBounds().getNorthWest())).x;
+				let maxX = map.layerPointToContainerPoint(map.latLngToLayerPoint(RC.getMaxBounds().getNorthEast())).x;
+				let minY = map.layerPointToContainerPoint(map.latLngToLayerPoint(RC.getMaxBounds().getNorthEast())).y;
+				let maxY = map.layerPointToContainerPoint(map.latLngToLayerPoint(RC.getMaxBounds().getSouthEast())).y;
+				let canvasWidth = this._canvas.width = maxX - minX;
+				let canvasHeight = this._canvas.height = maxY - minY;
 
-			log(ctx);
-			//this.bounds = self.RC.getMaxBounds();
+				// work out zoom %
+				let maxZoomLevel = self.getMapState().world.maxZoomLevel - 0.03;
+				let currentZoom = self.getCurrentZoom();
+				let nZoom = currentZoom / maxZoomLevel;
 
-			// Draw the outline of a square
-			ctx.fillRect(1,1,200,200);
+				// work out grid gap size
 
 
-			// Draw a square using the rect() method
-			ctx.rect(350,50,100,100);
-			ctx.stroke();
+				// cell size is already how many pixels a cell is at full zoom
 
-            // for (var i = 0; i < data.length; i++) {
-            //     var d = data[i];
-            //     if (params.bounds.contains([d[0], d[1]])) {
-			// 		//define the colour of the square
+				// need to find the ratio between the cell size in pix to the map dimensions (at full zoom)
 
-            //     }
-            // }
-        };
+				let gridSize = (self.mapConfig.cellSize * nZoom) / canvasWidth;
 
-			// var cellGridLayer = function(options) {
-			// 	this.onDrawLayer = function (layer) {
-
-			// 		// set up layer
-			// 		this.className = "cellGrid";
-			// 		layer.className = "cellGrid";
-			// 		log(layer);
-
-			// 		// set up canvas
-			// 		let ctx = layer.canvas.getContext('2d');
-			// 		let canvasWidth = layer.size.x;
-			// 		let canvasHeight = layer.size.y;
-
-			// 		// work out zoom %
-			// 		let maxZoomLevel = self.getMapState().world.maxZoomLevel - 0.03;
-			// 		let currentZoom = self.getCurrentZoom();
-			// 		let nZoom = currentZoom / maxZoomLevel;
+				log(gridSize);
 
 
 
-
-			// 		//define the colour of the square
-			// 		ctx.strokeStyle = "red";
-			// 		ctx.fillStyle = "red";
-
-			// 		log(ctx);
+				ctx.fillStyle = "rgba(255,116,0, 0.2)";
+				ctx.strokeStyle = "red";
+				ctx.fillStyle = "red";
 
 
-
-			// 		log(canvasWidth);
-
-
-			// 		//this.bounds = self.RC.getMaxBounds();
-
-			// 		// Draw the outline of a square
-			// 		ctx.fillRect(1,1,200,200);
+				// Draw the outline of a square
+				ctx.fillRect(1,1,200,200);
 
 
-			// 		// Draw a square using the rect() method
-			// 		ctx.rect(350,50,100,100);
-			// 		ctx.stroke();
+				// Draw a square using the rect() method
+				ctx.rect(350,50,100,100);
+				ctx.stroke();
 
-			// 	}
-			// }
-
-			// cellGridLayer.prototype = new L.CanvasLayer(); // -- setup prototype
-
-			// var cellGrid = new cellGridLayer({RC : RC});
-			// cellGrid.addTo(map);
+			};
 
 
 // 			// set base cell grid outline

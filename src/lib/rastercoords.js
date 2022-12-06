@@ -72,7 +72,7 @@ export default class RasterCoords {
 		let southWest = bounds._southWest;
 		let northEast = bounds._northEast;
 
-		const PADDING = 110;
+		const PADDING = 130;
 
 		log(northEast);
 

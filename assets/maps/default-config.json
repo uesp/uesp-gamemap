@@ -37,6 +37,7 @@
     },
 
     // Map grid info
+    "cellSize" : 256, // size of a cell at full zoom on the map, in pixels
     "gridWidth" : "1px",
     "gridColour" : "orange",
     "gridLabelColour" : "cyan",
