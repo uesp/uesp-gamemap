@@ -1129,8 +1129,8 @@ export default class Gamemap {
 
 				// set up canvas layer
 				let ctx = params.canvas.getContext('2d');
-				let canvasWidth = this._canvas.width;
-				let canvasHeight = this._canvas.height;
+				let canvasWidth = params.size.x;
+				let canvasHeight = params.size.y;
 
 				// work out zoom %
 				let maxZoomLevel = self.getMapState().world.maxZoomLevel - 0.03;
@@ -1138,30 +1138,40 @@ export default class Gamemap {
 				let nZoom = currentZoom / maxZoomLevel;
 
 				// work out grid gap size
-
-
-				// cell size is already how many pixels a cell is at full zoom
-
-				// need to find the ratio between the cell size in pix to the map dimensions (at full zoom)
-
 				let gridSize = ((self.mapConfig.cellSize * nZoom) / canvasWidth) * canvasWidth;
-
 				log(gridSize);
+				log(params);
 
+				// work out how many rows and columns there will be
+				let nRows = self.getMapImageDimensions(self.getCurrentWorld()).width / self.mapConfig.cellSize;
+				let nCols = self.getMapImageDimensions(self.getCurrentWorld()).height / self.mapConfig.cellSize;
+				log (nRows);
+				log (nCols);
 
+				// set up styles
+				layer._canvas.style.border = "2px solid red"
 
-				ctx.fillStyle = "rgba(255,116,0, 0.2)";
+				ctx.translate(0.5, 0.5); // https://stackoverflow.com/a/13294650/1762224
+
+				ctx.beginPath();
+				ctx.lineWidth = 1;
 				ctx.strokeStyle = "red";
-				ctx.fillStyle = "red";
 
+				let offsetX = gridSize;
+				let offsetY = gridSize;
 
-				// Draw the outline of a square
-				ctx.fillRect(1,1,200,200);
+				for (let x = offsetX; x < canvasWidth; x += offsetX) {
+				  ctx.moveTo(x, 0);
+				  ctx.lineTo(x, canvasHeight);
+				}
 
+				for (let y = offsetY; y < canvasHeight; y += offsetY) {
+				  ctx.moveTo(0, y);
+				  ctx.lineTo(canvasWidth, y);
+				}
 
-				// Draw a square using the rect() method
-				ctx.rect(350,50,100,100);
 				ctx.stroke();
+
 
 			};
 

@@ -68,12 +68,9 @@
 
       map._panes.overlayPane.appendChild(this._canvas);
 
-      map.on('moveend', this._reset, this);
+      map.on('zoom', this._reset, this);
       map.on('resize', this._reset, this);
 
-      if (animated) {
-        map.on('zoomanim', this._animateZoom, this);
-      }
 
       this._reset();
     },
@@ -81,12 +78,8 @@
     onRemove: function(map) {
       map.getPanes().overlayPane.removeChild(this._canvas);
 
-      map.off('moveend', this._reset, this);
+      map.off('zoom', this._reset, this);
       map.off('resize', this._reset, this);
-
-      if (map.options.zoomAnimation) {
-        map.off('zoomanim', this._animateZoom, this);
-      }
 
       this_canvas = null;
     },
@@ -103,12 +96,8 @@
     },
 
     _redraw: function () {
-        let map = this._map;
-      var size = this._map.getSize();
+      let map = this._map;
       var bounds = this.options.bounds || this._map.getBounds();
-      var zoomScale = (size.x * 180) / (20037508.34 * (bounds.getEast()
-        - bounds.getWest())); // resolution = 1/zoomScale
-      var zoom = this._map.getZoom();
 
       let minX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x;
       let maxX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x;
@@ -116,6 +105,12 @@
       let maxY = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y;
       this._canvas.width = maxX - minX;
       this._canvas.height = maxY - minY;
+
+      var size = { x: this._canvas.width, y: this._canvas.height };
+
+      var zoomScale = (size.x * 180) / (20037508.34 * (bounds.getEast()
+        - bounds.getWest())); // resolution = 1/zoomScale
+      var zoom = this._map.getZoom();
 
       if (this._userDrawFunc) {
         this._userDrawFunc(this, {
