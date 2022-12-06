@@ -1120,19 +1120,130 @@ export default class Gamemap {
 
 		if (toggle) {
 
+			var cellGridLayer = function() {
+				this.onDrawLayer = function (layer) {
 
-			var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-			svgElement.setAttribute('xmlns', "http://www.w3.org/2000/svg");
-			svgElement.setAttribute('viewBox', "0 0 256 256");
-			svgElement.innerHTML = '<rect x="0" y="200" width="50" height="2" style="fill:red"/><rect x="75" y="123" width="50" height="50" style="fill:#0013ff"/><text x="0" y="15" fill="red">I love SVG!</text>';
-			var svgElementBounds = RC.getMaxBounds();
-			L.svgOverlay(svgElement, svgElementBounds, {
-				opacity: 0.7,
-    			interactive: false,
-				className : "cellGrid",
-			}).addTo(map);
+					var ctx = layer.canvas.getContext('2d');
 
-			log(RC.getMaxBounds());
+					//define the colour of the square
+					ctx.strokeStyle = "red";
+					ctx.fillStyle = "red";
+
+					// Draw the outline of a square
+					ctx.strokeRect(50,50,100,100);
+
+					// Draw a square using the fillRect() method and fill it with the colour specified by the fillStyle attribute
+					ctx.fillRect(200,50,100,100);
+
+					// Draw a square using the rect() method
+					ctx.rect(350,50,100,100);
+					ctx.stroke();
+
+					log(layer);
+					log(this);
+					log("hello world!");
+				}
+			}
+
+			cellGridLayer.prototype = new L.CanvasLayer(); // -- setup prototype
+
+			var cellGrid = new cellGridLayer();
+			cellGrid.addTo(map);
+
+			// var layer = new L.FullCanvas({drawLine:true});
+			// layer.addLayerTo(map);
+
+			// let cellGrid = L.FullCanvas.extend({
+			// 	//over riding the getsource function
+			// 	drawSource: function(point) {
+			// 		//get the context
+			// 		var ctx = this.getCanvas().getContext("2d");
+			// 		ctx.globalCompositeOperation = "lighter";
+			// 		//drawing the shape of the point
+			// 		ctx.beginPath();
+			// 		//adding gradient
+			// 		var grd = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, 10);
+			// 		grd.addColorStop(0.200, 'rgba(255, 242, 0, 1)');
+			// 		grd.addColorStop(0.370, 'rgba(255, 157, 0, 1)');
+			// 		grd.addColorStop(0.5, 'rgba(255,255, 255, 1)');
+			// 		ctx.fillStyle = grd;
+			// 		ctx.arc(point.x, point.y , 2, 0, 2 * Math.PI, true);
+			// 		ctx.fill();
+			// 	}
+			// });
+
+			// map.addLayer(cellGrid);
+
+
+
+
+			// L.canvasLayer()
+			// 	.delegate(onDrawLayer) // -- if we do not inherit from L.CanvasLayer  we can setup a delegate to receive events from L.CanvasLayer
+			// 	.addTo(map);
+
+			// function onDrawLayer(info) {
+			// 	var ctx = info.canvas.getContext('2d');
+			// 	ctx.clearRect(0, 0, info.canvas.width, info.canvas.height);
+
+			// 	//define the colour of the square
+			// 	ctx.strokeStyle = "green";
+			// 	ctx.fillStyle = "green";
+
+			// 	// Draw the outline of a square
+			// 	ctx.strokeRect(50,50,100,100);
+
+			// 	// Draw a square using the fillRect() method and fill it with the colour specified by the fillStyle attribute
+			// 	ctx.fillRect(200,50,100,100);
+
+			// 	// Draw a square using the rect() method
+			// 	ctx.rect(350,50,100,100);
+			// 	ctx.stroke();
+			// };
+
+
+// 			let gridBounds = RC.getMaxBounds();
+
+// 			let mapDimens = this.getMapImageDimensions(this.getCurrentWorld());
+
+// 			let gridWidth = Math.abs(gridBounds._northEast.lng);
+// 			let gridHeight = Math.abs(gridBounds._southWest.lat);
+
+// 			// let gridWidth = mapDimens.width;
+// 			// let gridHeight = mapDimens.height;
+
+
+// 			let cellGrid = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+// 			cellGrid.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+// 			cellGrid.setAttribute('viewBox', "0 0 " + gridWidth + " " + gridHeight);
+
+
+// 			<svg width="800" height="600">
+// <defs>
+// 	<pattern id="tenthGrid" width="10" height="10" patternUnits="userSpaceOnUse">
+// 		<path d="M 10 0 L 0 0 0 10" fill="none" stroke="silver" stroke-width="0.5"/>
+// 	</pattern>
+// 	<pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
+// 		<rect width="100" height="100" fill="url(#tenthGrid)"/>
+// 		<path d="M 100 0 L 0 0 0 100" fill="none" stroke="gray" stroke-width="1"/>
+// 	</pattern>
+// </defs>
+// <rect width="100%" height="100%" fill="url(#grid)"/>
+// </svg>
+
+
+// 			// set base cell grid outline
+// 			cellGrid.innerHTML = '<line x1="0" y1="0" x2="'+gridWidth+'" y2="'+gridWidth+'" style="stroke-width:0.2;stroke:yellow"/>';
+
+// 			cellGrid.innerHTML += '<rect x="0" y="200" width="50" height="2" style="fill:red"/><rect x="75" y="123" width="50" height="50" style="fill:#0013ff"/><text x="0" y="15" fill="red">Canvas test</text>';
+
+// 			L.svgOverlay(cellGrid, gridBounds, {
+// 				opacity: 0.5,
+//     			interactive: false,
+// 				className : "cellGrid",
+// 				renderer: L.canvas(),
+// 			}).addTo(map);
+
+// 			log(RC.getMaxBounds());
 
 
 
@@ -1146,11 +1257,7 @@ export default class Gamemap {
 					// }
 
 		} else {
-			map.eachLayer((layer) => {
-				 if (layer.className === "cellGrid") {
-					 layer.remove();}
-				}
-			);
+			$(".cellGrid").remove();
 		}
 	}
 
