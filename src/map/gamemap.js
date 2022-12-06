@@ -1121,21 +1121,16 @@ export default class Gamemap {
 		if (toggle) {
 
 			L.canvasOverlay()
-				.params({bounds: RC.getMaxBounds(), className : "cellGrid"})
+				.params({bounds: RC.getMaxBounds(), className : "cellGrid", zoomAnimation: true})
 				.drawing(drawingOnCanvas)
 				.addTo(map);
 
 			function drawingOnCanvas(layer, params) {
 
 				// set up canvas layer
-				let map = layer._map;
 				let ctx = params.canvas.getContext('2d');
-				let minX = map.layerPointToContainerPoint(map.latLngToLayerPoint(RC.getMaxBounds().getNorthWest())).x;
-				let maxX = map.layerPointToContainerPoint(map.latLngToLayerPoint(RC.getMaxBounds().getNorthEast())).x;
-				let minY = map.layerPointToContainerPoint(map.latLngToLayerPoint(RC.getMaxBounds().getNorthEast())).y;
-				let maxY = map.layerPointToContainerPoint(map.latLngToLayerPoint(RC.getMaxBounds().getSouthEast())).y;
-				let canvasWidth = this._canvas.width = maxX - minX;
-				let canvasHeight = this._canvas.height = maxY - minY;
+				let canvasWidth = this._canvas.width;
+				let canvasHeight = this._canvas.height;
 
 				// work out zoom %
 				let maxZoomLevel = self.getMapState().world.maxZoomLevel - 0.03;
@@ -1149,7 +1144,7 @@ export default class Gamemap {
 
 				// need to find the ratio between the cell size in pix to the map dimensions (at full zoom)
 
-				let gridSize = (self.mapConfig.cellSize * nZoom) / canvasWidth;
+				let gridSize = ((self.mapConfig.cellSize * nZoom) / canvasWidth) * canvasWidth;
 
 				log(gridSize);
 
