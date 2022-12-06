@@ -1120,115 +1120,88 @@ export default class Gamemap {
 
 		if (toggle) {
 
-			var cellGridLayer = function() {
-				this.onDrawLayer = function (layer) {
+		L.canvasOverlay()
+			.params({bounds: RC.getMaxBounds(), className : "cellGrid"})
+            .drawing(drawingOnCanvas)
+            .addTo(map);
 
-					var ctx = layer.canvas.getContext('2d');
+        function drawingOnCanvas(canvasOverlay, params) {
+            var ctx = params.canvas.getContext('2d');
+            ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
+            ctx.fillStyle = "rgba(255,116,0, 0.2)";
 
-					//define the colour of the square
-					ctx.strokeStyle = "red";
-					ctx.fillStyle = "red";
+			ctx.strokeStyle = "red";
+			ctx.fillStyle = "red";
 
-					// Draw the outline of a square
-					ctx.strokeRect(50,50,100,100);
+			log(ctx);
+			//this.bounds = self.RC.getMaxBounds();
 
-					// Draw a square using the fillRect() method and fill it with the colour specified by the fillStyle attribute
-					ctx.fillRect(200,50,100,100);
+			// Draw the outline of a square
+			ctx.fillRect(1,1,200,200);
 
-					// Draw a square using the rect() method
-					ctx.rect(350,50,100,100);
-					ctx.stroke();
 
-					log(layer);
-					log(this);
-					log("hello world!");
-				}
-			}
+			// Draw a square using the rect() method
+			ctx.rect(350,50,100,100);
+			ctx.stroke();
 
-			cellGridLayer.prototype = new L.CanvasLayer(); // -- setup prototype
+            // for (var i = 0; i < data.length; i++) {
+            //     var d = data[i];
+            //     if (params.bounds.contains([d[0], d[1]])) {
+			// 		//define the colour of the square
 
-			var cellGrid = new cellGridLayer();
-			cellGrid.addTo(map);
+            //     }
+            // }
+        };
 
-			// var layer = new L.FullCanvas({drawLine:true});
-			// layer.addLayerTo(map);
+			// var cellGridLayer = function(options) {
+			// 	this.onDrawLayer = function (layer) {
 
-			// let cellGrid = L.FullCanvas.extend({
-			// 	//over riding the getsource function
-			// 	drawSource: function(point) {
-			// 		//get the context
-			// 		var ctx = this.getCanvas().getContext("2d");
-			// 		ctx.globalCompositeOperation = "lighter";
-			// 		//drawing the shape of the point
-			// 		ctx.beginPath();
-			// 		//adding gradient
-			// 		var grd = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, 10);
-			// 		grd.addColorStop(0.200, 'rgba(255, 242, 0, 1)');
-			// 		grd.addColorStop(0.370, 'rgba(255, 157, 0, 1)');
-			// 		grd.addColorStop(0.5, 'rgba(255,255, 255, 1)');
-			// 		ctx.fillStyle = grd;
-			// 		ctx.arc(point.x, point.y , 2, 0, 2 * Math.PI, true);
-			// 		ctx.fill();
+			// 		// set up layer
+			// 		this.className = "cellGrid";
+			// 		layer.className = "cellGrid";
+			// 		log(layer);
+
+			// 		// set up canvas
+			// 		let ctx = layer.canvas.getContext('2d');
+			// 		let canvasWidth = layer.size.x;
+			// 		let canvasHeight = layer.size.y;
+
+			// 		// work out zoom %
+			// 		let maxZoomLevel = self.getMapState().world.maxZoomLevel - 0.03;
+			// 		let currentZoom = self.getCurrentZoom();
+			// 		let nZoom = currentZoom / maxZoomLevel;
+
+
+
+
+			// 		//define the colour of the square
+			// 		ctx.strokeStyle = "red";
+			// 		ctx.fillStyle = "red";
+
+			// 		log(ctx);
+
+
+
+			// 		log(canvasWidth);
+
+
+			// 		//this.bounds = self.RC.getMaxBounds();
+
+			// 		// Draw the outline of a square
+			// 		ctx.fillRect(1,1,200,200);
+
+
+			// 		// Draw a square using the rect() method
+			// 		ctx.rect(350,50,100,100);
+			// 		ctx.stroke();
+
 			// 	}
-			// });
+			// }
 
-			// map.addLayer(cellGrid);
+			// cellGridLayer.prototype = new L.CanvasLayer(); // -- setup prototype
 
-
-
-
-			// L.canvasLayer()
-			// 	.delegate(onDrawLayer) // -- if we do not inherit from L.CanvasLayer  we can setup a delegate to receive events from L.CanvasLayer
-			// 	.addTo(map);
-
-			// function onDrawLayer(info) {
-			// 	var ctx = info.canvas.getContext('2d');
-			// 	ctx.clearRect(0, 0, info.canvas.width, info.canvas.height);
-
-			// 	//define the colour of the square
-			// 	ctx.strokeStyle = "green";
-			// 	ctx.fillStyle = "green";
-
-			// 	// Draw the outline of a square
-			// 	ctx.strokeRect(50,50,100,100);
-
-			// 	// Draw a square using the fillRect() method and fill it with the colour specified by the fillStyle attribute
-			// 	ctx.fillRect(200,50,100,100);
-
-			// 	// Draw a square using the rect() method
-			// 	ctx.rect(350,50,100,100);
-			// 	ctx.stroke();
-			// };
-
-
-// 			let gridBounds = RC.getMaxBounds();
-
-// 			let mapDimens = this.getMapImageDimensions(this.getCurrentWorld());
-
-// 			let gridWidth = Math.abs(gridBounds._northEast.lng);
-// 			let gridHeight = Math.abs(gridBounds._southWest.lat);
-
-// 			// let gridWidth = mapDimens.width;
-// 			// let gridHeight = mapDimens.height;
-
-
-// 			let cellGrid = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-// 			cellGrid.setAttribute('xmlns', "http://www.w3.org/2000/svg");
-// 			cellGrid.setAttribute('viewBox', "0 0 " + gridWidth + " " + gridHeight);
-
-
-// 			<svg width="800" height="600">
-// <defs>
-// 	<pattern id="tenthGrid" width="10" height="10" patternUnits="userSpaceOnUse">
-// 		<path d="M 10 0 L 0 0 0 10" fill="none" stroke="silver" stroke-width="0.5"/>
-// 	</pattern>
-// 	<pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
-// 		<rect width="100" height="100" fill="url(#tenthGrid)"/>
-// 		<path d="M 100 0 L 0 0 0 100" fill="none" stroke="gray" stroke-width="1"/>
-// 	</pattern>
-// </defs>
-// <rect width="100%" height="100%" fill="url(#grid)"/>
-// </svg>
+			// var cellGrid = new cellGridLayer({RC : RC});
+			// cellGrid.addTo(map);
 
 
 // 			// set base cell grid outline

@@ -50,7 +50,7 @@ L.CanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     },
     //-------------------------------------------------------------
     _updatePosition: function () {
-        var topLeft = this._map.containerPointToLayerPoint([70, 70]);
+        var topLeft = this._map.containerPointToLayerPoint([0, 0]);
         L.DomUtil.setPosition(this._canvas, topLeft);
     },
     _onLayerDidMove: function () {
