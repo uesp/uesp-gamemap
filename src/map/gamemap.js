@@ -1127,10 +1127,36 @@ export default class Gamemap {
 
 			function drawingOnCanvas(layer, params) {
 
-				// set up canvas layer
+				// set up layer
 				let ctx = params.canvas.getContext('2d');
-				let canvasWidth = params.size.x;
-				let canvasHeight = params.size.y;
+				ctx.clearRect(0, 0, params.size.x, params.size.y);
+
+				// set up bounds
+				let bounds = RC.getMaxBounds();
+				let minX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x;
+				let maxX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x;
+				let minY = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).y;
+				let maxY = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y;
+				// this.canvas.width = 1000;
+				// this.canvas.height = 1000;
+				// let dimen = (this.canvas.width + this.canvas.height) / 2;
+
+				// set up canvas layer
+
+
+
+
+				let gridWidth = maxX - minX;
+				let gridHeight = maxY - minY;
+
+				//draw the grid, starting with the outline
+				ctx.beginPath();
+				ctx.rect(minX, minY, gridWidth, gridHeight);
+				ctx.strokeStyle = self.mapConfig.gridLineColour;
+				ctx.lineWidth = self.mapConfig.gridLineWidth;
+				ctx.stroke();
+
+				log(gridWidth, gridHeight);
 
 				// work out zoom %
 				let maxZoomLevel = self.getMapState().world.maxZoomLevel - 0.03;
@@ -1138,7 +1164,7 @@ export default class Gamemap {
 				let nZoom = currentZoom / maxZoomLevel;
 
 				// work out grid gap size
-				let gridSize = ((self.mapConfig.cellSize * nZoom) / canvasWidth) * canvasWidth;
+				let gridSize = ((self.mapConfig.cellSize * nZoom) / gridWidth) * gridWidth;
 				log(gridSize);
 				log(params);
 
@@ -1149,28 +1175,27 @@ export default class Gamemap {
 				log (nCols);
 
 				// set up styles
-				layer._canvas.style.border = "2px solid red"
 
-				ctx.translate(0.5, 0.5); // https://stackoverflow.com/a/13294650/1762224
+				// ctx.translate(0.5, 0.5); // https://stackoverflow.com/a/13294650/1762224
 
-				ctx.beginPath();
-				ctx.lineWidth = 1;
-				ctx.strokeStyle = "red";
+				// ctx.beginPath();
+				// ctx.lineWidth = 1;
+				// ctx.strokeStyle = "red";
 
-				let offsetX = gridSize;
-				let offsetY = gridSize;
+				// let offsetX = gridSize;
+				// let offsetY = gridSize;
 
-				for (let x = offsetX; x < canvasWidth; x += offsetX) {
-				  ctx.moveTo(x, 0);
-				  ctx.lineTo(x, canvasHeight);
-				}
+				// for (let x = offsetX; x < gridWidth; x += offsetX) {
+				//   ctx.moveTo(x, 0);
+				//   ctx.lineTo(x, gridWidth);
+				// }
 
-				for (let y = offsetY; y < canvasHeight; y += offsetY) {
-				  ctx.moveTo(0, y);
-				  ctx.lineTo(canvasWidth, y);
-				}
+				// for (let y = offsetY; y < gridWidth; y += offsetY) {
+				//   ctx.moveTo(0, y);
+				//   ctx.lineTo(gridWidth, y);
+				// }
 
-				ctx.stroke();
+				// ctx.stroke();
 
 
 			};

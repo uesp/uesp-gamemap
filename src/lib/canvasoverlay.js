@@ -56,21 +56,24 @@
 
     onAdd: function(map) {
       this._map = map;
-      this._canvas = L.DomUtil.create('canvas', 'leaflet-canvas-overlay cellGrid');
+      this._canvas = L.DomUtil.create('canvas', 'leaflet-canvas-layer cellGrid');
 
       var size = this._map.getSize();
       this._canvas.width = size.x;
       this._canvas.height = size.y;
 
-      var animated = this._map.options.zoomAnimation;
+      var animated = this._map.options.zoomAnimation && L.Browser.any3d;
       L.DomUtil.addClass(this._canvas, 'leaflet-zoom-'
         + (animated ? 'animated' : 'hide'));
 
       map._panes.overlayPane.appendChild(this._canvas);
 
-      map.on('zoom', this._reset, this);
-      map.on('resize', this._reset, this);
+      map.on('move', this._reset, this);
+      map.on('resize', this._resize, this);
 
+      if (map.options.zoomAnimation && L.Browser.any3d) {
+        map.on('zoomanim', this._animateZoom, this);
+      }
 
       this._reset();
     },
@@ -78,8 +81,12 @@
     onRemove: function(map) {
       map.getPanes().overlayPane.removeChild(this._canvas);
 
-      map.off('zoom', this._reset, this);
-      map.off('resize', this._reset, this);
+      map.off('move', this._reset, this);
+      map.off('resize', this._resize, this);
+
+      if (map.options.zoomAnimation) {
+        map.off('zoomanim', this._animateZoom, this);
+      }
 
       this_canvas = null;
     },
@@ -89,25 +96,20 @@
       return this;
     },
 
+    _resize: function(resizeEvent) {
+      this._canvas.width = resizeEvent.newSize.x;
+      this._canvas.height = resizeEvent.newSize.y;
+    },
+
     _reset: function() {
-      var topLeft = this._map.latLngToLayerPoint([0, 0]);
+      var topLeft = this._map.containerPointToLayerPoint([0, 0]);
       L.DomUtil.setPosition(this._canvas, topLeft);
       this._redraw();
     },
 
     _redraw: function () {
-      let map = this._map;
+      var size = this._map.getSize();
       var bounds = this.options.bounds || this._map.getBounds();
-
-      let minX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x;
-      let maxX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x;
-      let minY = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).y;
-      let maxY = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y;
-      this._canvas.width = maxX - minX;
-      this._canvas.height = maxY - minY;
-
-      var size = { x: this._canvas.width, y: this._canvas.height };
-
       var zoomScale = (size.x * 180) / (20037508.34 * (bounds.getEast()
         - bounds.getWest())); // resolution = 1/zoomScale
       var zoom = this._map.getZoom();

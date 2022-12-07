@@ -38,8 +38,8 @@
 
     // Map grid info
     "cellSize" : 128, // size of a cell at full zoom on the map, in pixels
-    "gridWidth" : "1px",
-    "gridColour" : "orange",
+    "gridLineWidth" : 2,
+    "gridLineColour" : "orange",
     "gridLabelColour" : "cyan",
     "gridShowLabels" : true,
     "gridShowLabelZoom" : 2,
