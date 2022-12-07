@@ -1109,7 +1109,6 @@ export default class Gamemap {
 
 	}
 
-
 	/*================================================
 						  General
 	================================================*/
@@ -1128,7 +1127,6 @@ export default class Gamemap {
 				// set up layer
 				let ctx = params.canvas.getContext('2d');
 				ctx.clearRect(0, 0, params.size.x, params.size.y);
-				log(layer);
 
 				// set up bounds
 				let bounds = RC.getMaxBounds();
@@ -1213,9 +1211,8 @@ export default class Gamemap {
 
 							if (rowNum % 5 == 0 && colNum % 5 == 0) {
 								ctx.fillStyle = self.mapConfig.gridLabelColour;
-								ctx.font = "13px Arial";
-
-								ctx.fillText([colNum, rowNum].join(', '), toPix(nXOffset).x, toPix(nYOffset+0.0021).y);
+								ctx.font = "bold 13px Arial";
+								ctx.fillText([colNum, rowNum].join(', '), toPix(nXOffset).x, toPix(nYOffset + ((gridHeight / nRows) / gridHeight)).y);
 							}
 
 							nXOffset += (gridWidth / nCols) / gridWidth;
@@ -1224,40 +1221,9 @@ export default class Gamemap {
 						nYOffset += (gridHeight / nRows) / gridHeight;
 					}
 				}
-
-
-
-
-				// for (var cellY = labelStartY; cellY <= labelEndY; cellY += this.mapOptions.gridLabelDeltaY) {
-				// 	var y = cellY * this.mapOptions.gridDeltaY + this.mapOptions.gridLabelOffsetY;
-
-				// 	for (var cellX = labelStartX; cellX <= labelEndX; cellX += this.mapOptions.gridLabelDeltaX)
-				// 	{
-				// 		var x = cellX * this.mapOptions.gridDeltaX + this.mapOptions.gridLabelOffsetX;
-				// 		var pos = this.convertGameToPixelPos(x, y);
-
-				// 		pos.x += 1 - this.mapTransformX;
-				// 		pos.y += 10 - this.mapTransformY - gridOffsetY;
-
-				// 		gridText = "" + cellX + "," + cellY;
-
-				// 		//console.log(gridText, pos.x, pos.y, x, y, cellX, cellY);
-
-				// 		this.mapContextGrid.font = "8px Arial";
-				// 		this.mapContextGrid.textBaseLine = "bottom";
-				// 		this.mapContextGrid.fillStyle = this.mapOptions.gridStyle;
-				// 		this.mapContextGrid.fillText(gridText, pos.x, pos.y);
-				// 	}
-
-				// }
-
-
-
-
 			};
 
 		} else {
-
 			//remove the cell grid
 			map.eachLayer((layer) => {
 				if (layer.options.className == "cellGrid") {
