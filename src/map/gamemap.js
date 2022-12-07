@@ -777,8 +777,6 @@ export default class Gamemap {
 
 	gameToPixelPos(coords) {
 
-		log("test");
-
 		let gameX = coords[0];
 		let gameY = coords[1];
 
@@ -1209,7 +1207,7 @@ export default class Gamemap {
 							if (i % 5 == 0 && j % 5 == 0) {
 								ctx.fillStyle = self.mapConfig.gridLabelColour;
 								ctx.font = "13px Arial";
-								ctx.fillText([i, j].join(', '), toPix(nXOffset+0.0005).x, toPix(nYOffset+0.0021).y);
+								ctx.fillText([i, j].join(', '), toPix(nXOffset).x, toPix(nYOffset+0.0021).y);
 							}
 
 							nXOffset += (gridWidth / nCols) / gridWidth;
@@ -1954,28 +1952,6 @@ export default class Gamemap {
 // 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) { self.onReceiveCenterOnLocationData(data); });
 // 	}
 
-// }
-
-// uesp.gamemap.Map.prototype.panToGamePosCanvas = function(x, y)
-// {
-// 	var mapOffset = this.mapContainer.offset();
-// 	var pixelPos = this.convertGameToPixelPos(x, y);
-// 	var tilePos = this.convertGameToTilePos(x, y);
-
-// 	tilePos.x -= this.mapConfig.numTilesX/2;
-// 	tilePos.y -= this.mapConfig.numTilesY/2;
-
-// 	var tileX = Math.floor(tilePos.x);
-// 	var tileY = Math.floor(tilePos.y);
-
-// 	var newOffsetX = Math.round(mapOffset.left + this.mapContainer.width()/2  - this.mapConfig.numTilesX /2 * this.mapConfig.tileSize + (this.startTileX - tilePos.x) * this.mapConfig.tileSize);
-// 	var newOffsetY = Math.round(mapOffset.top  + this.mapContainer.height()/2 - this.mapConfig.numTilesY /2 * this.mapConfig.tileSize + (this.startTileY - tilePos.y) * this.mapConfig.tileSize);
-
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "newOffset = " + newOffsetX + ", " + newOffsetY);
-
-// 	this.resetTranslateCanvas();
-// 	this.translateCanvas(newOffsetX, newOffsetY);
-// 	this.redrawCanvas(true);
 // }
 
 // uesp.gamemap.Map.prototype.redrawLocationPaths = function()

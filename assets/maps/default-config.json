@@ -41,6 +41,7 @@
     "gridLineWidth" : 2,
     "gridLineColour" : "orange",
     "gridLabelColour" : "cyan",
+    "gridStart" : [0, 0],
     "gridShowLabels" : true,
     "gridShowLabelZoom" : 2,
 
