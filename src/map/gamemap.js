@@ -1201,13 +1201,21 @@ export default class Gamemap {
 				let nYOffset = 0;
 				let nXOffset = 0;
 				if (currentZoom > self.mapConfig.gridShowLabelZoom) {
-					for (let i = 0; i <= nRows; i++) {
-						for (let j = 0; j <= nCols; j++) {
+					for (let i = 0; i <= nCols; i++) {
+						for (let j = 0; j <= nRows; j++) {
 
-							if (i % 5 == 0 && j % 5 == 0) {
+							// COLS = X
+							// ROWS = Y
+							let gridStartX = self.mapConfig.gridStart[0];
+							let gridStartY = self.mapConfig.gridStart[1];
+							let colNum = j + gridStartX;
+							let rowNum = (-i) + gridStartY;
+
+							if (rowNum % 5 == 0 && colNum % 5 == 0) {
 								ctx.fillStyle = self.mapConfig.gridLabelColour;
 								ctx.font = "13px Arial";
-								ctx.fillText([i, j].join(', '), toPix(nXOffset).x, toPix(nYOffset+0.0021).y);
+
+								ctx.fillText([colNum, rowNum].join(', '), toPix(nXOffset).x, toPix(nYOffset+0.0021).y);
 							}
 
 							nXOffset += (gridWidth / nCols) / gridWidth;
