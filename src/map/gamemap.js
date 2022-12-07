@@ -1128,6 +1128,7 @@ export default class Gamemap {
 				// set up layer
 				let ctx = params.canvas.getContext('2d');
 				ctx.clearRect(0, 0, params.size.x, params.size.y);
+				log(layer);
 
 				// set up bounds
 				let bounds = RC.getMaxBounds();
@@ -1197,7 +1198,6 @@ export default class Gamemap {
 				}
 
 				// do cell labels
-
 				let nYOffset = 0;
 				let nXOffset = 0;
 				if (currentZoom > self.mapConfig.gridShowLabelZoom) {
@@ -1257,7 +1257,13 @@ export default class Gamemap {
 			};
 
 		} else {
-			$(".cellGrid").remove();
+
+			//remove the cell grid
+			map.eachLayer((layer) => {
+				if (layer.options.className == "cellGrid") {
+					layer.remove();
+				}
+			});
 		}
 	}
 
