@@ -628,6 +628,10 @@ li div.collapsible-header i {
 	user-select: none !important;
 }
 
+.cellGrid {
+	opacity: 0.4;
+}
+
 /*================================================
 				 	 Pop-ups
 ================================================*/

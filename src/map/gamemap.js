@@ -1155,11 +1155,6 @@ export default class Gamemap {
 					return new Point(minX + (nX * gridWidth), minY + (nY * gridHeight))
 				}
 
-				ctx.font = "30px Comic Sans MS";
-				ctx.fillStyle = "red";
-				ctx.textAlign = "center";
-				ctx.fillText("Hello World", toPix(0.5).x, toPix(0.5).y);
-
 				// work out zoom %
 				let maxZoomLevel = self.getMapState().world.maxZoomLevel - 0.03;
 				let currentZoom = self.getCurrentZoom();
@@ -1170,63 +1165,45 @@ export default class Gamemap {
 				let gridSize = ((self.mapConfig.cellSize * nZoom) / gridWidth) * gridWidth;
 				log("Grid offset (gap) is: "+ gridSize.toFixed(3) +"px");
 
-				// work out how many rows and columns there will be
+				// work out how many rows and columns there should be
 				let nRows = self.getMapImageDimensions(self.getCurrentWorld()).width / self.mapConfig.cellSize;
 				let nCols = self.getMapImageDimensions(self.getCurrentWorld()).height / self.mapConfig.cellSize;
-				// log (nRows);
-				// log (nCols);
+				log (nRows);
+				log (nCols);
 
-				// set up styles
+				// do rows
+				ctx.moveTo(toPix(0).x, toPix(0).y);
 
-				// ctx.translate(0.5, 0.5); // https://stackoverflow.com/a/13294650/1762224
+				let nOffset = 0;
+				for (let i = 0; i <= nRows; i++) {
+					let offset = gridWidth / nRows;
+					// draw a line
+					ctx.beginPath();
+					ctx.moveTo(toPix(nOffset).x, toPix(0).y);
+					ctx.lineTo(toPix(nOffset).x, toPix(1).y);
+					ctx.stroke();
+					nOffset += offset / gridWidth;
+				}
 
-				// ctx.beginPath();
-				// ctx.lineWidth = 1;
-				// ctx.strokeStyle = "red";
+				nOffset = 0;
+				for (let i = 0; i <= nCols; i++) {
+					let offset = gridHeight / nCols;
+					// draw a line
+					ctx.beginPath();
+					ctx.moveTo(toPix(0).x, toPix(nOffset).y);
+					ctx.lineTo(toPix(1).x, toPix(nOffset).y);
+					ctx.stroke();
+					nOffset += offset / gridHeight;
+				}
 
-				// let offsetX = gridSize;
-				// let offsetY = gridSize;
-
-				// for (let x = offsetX; x < gridWidth; x += offsetX) {
-				//   ctx.moveTo(x, 0);
-				//   ctx.lineTo(x, gridWidth);
+				// if (coords.x % 5 == 0 && coords.y % 5 == 0 && currentZoom > self.mapConfig.gridShowLabelZoom){
+				// 	this.tile.innerHTML = "<b class='grid_text' style='color:"+ self.mapConfig.gridLabelColour + "; padding-left: 3px;'>" + [coords.x, coords.y].join(', ') + "</b>";
 				// }
 
-				// for (let y = offsetY; y < gridWidth; y += offsetY) {
-				//   ctx.moveTo(0, y);
-				//   ctx.lineTo(gridWidth, y);
-				// }
 
-				// ctx.stroke();
 
 
 			};
-
-
-// 			// set base cell grid outline
-// 			cellGrid.innerHTML = '<line x1="0" y1="0" x2="'+gridWidth+'" y2="'+gridWidth+'" style="stroke-width:0.2;stroke:yellow"/>';
-
-// 			cellGrid.innerHTML += '<rect x="0" y="200" width="50" height="2" style="fill:red"/><rect x="75" y="123" width="50" height="50" style="fill:#0013ff"/><text x="0" y="15" fill="red">Canvas test</text>';
-
-// 			L.svgOverlay(cellGrid, gridBounds, {
-// 				opacity: 0.5,
-//     			interactive: false,
-// 				className : "cellGrid",
-// 				renderer: L.canvas(),
-// 			}).addTo(map);
-
-// 			log(RC.getMaxBounds());
-
-
-
-			// let maxZoomLevel = self.getMapState().world.maxZoomLevel;
-			// let currentZoom = self.getCurrentZoom() + 0.03;
-			// let nZoom = currentZoom / maxZoomLevel;
-
-
-								// if (coords.x % 5 == 0 && coords.y % 5 == 0 && currentZoom > self.mapConfig.gridShowLabelZoom){
-					// 	this.tile.innerHTML = "<b class='grid_text' style='color:"+ self.mapConfig.gridLabelColour + "; padding-left: 3px;'>" + [coords.x, coords.y].join(', ') + "</b>";
-					// }
 
 		} else {
 			$(".cellGrid").remove();
