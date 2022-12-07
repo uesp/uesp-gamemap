@@ -41,7 +41,7 @@
     "gridLineWidth" : 2,
     "gridLineColour" : "orange",
     "gridLabelColour" : "cyan",
-    "gridStart" : [0, 0],
+    "gridStart" : [0, 0], //cell coords of the top leftmost point (default: 0 , 0);
     "gridShowLabels" : true,
     "gridShowLabelZoom" : 2,
 
