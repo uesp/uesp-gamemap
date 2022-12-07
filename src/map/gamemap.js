@@ -1145,6 +1145,8 @@ export default class Gamemap {
 
 				function toPix(nX, nY) {
 					nY = (nY != null) ? nY : nX;
+					if (nY > 4 || nY < -4) { nY = nY / gridHeight; }
+					if (nX > 4 || nX < -4) { nX = nX / gridWidth; }
 					return new Point(minX + (nX * gridWidth), minY + (nY * gridHeight))
 				}
 
@@ -1200,17 +1202,24 @@ export default class Gamemap {
 
 				let nYOffset = 0;
 				let nXOffset = 0;
-				for (let i = 0; i <= nRows; i++) {
-					for (let j = 0; j <= nCols; j++) {
+				if (currentZoom > self.mapConfig.gridShowLabelZoom) {
+					for (let i = 0; i <= nRows; i++) {
+						for (let j = 0; j <= nCols; j++) {
 
-						ctx.font = "12px Arial";
-						ctx.fillText("Label", toPix(nXOffset).x, toPix(nYOffset+0.0021).y);
+							if (i % 5 == 0 && j % 5 == 0) {
+								ctx.fillStyle = self.mapConfig.gridLabelColour;
+								ctx.font = "13px Arial";
+								ctx.fillText("Label", toPix(nXOffset).x, toPix(nYOffset+0.0021).y);
+								//this.tile.innerHTML = "<b class='grid_text' style='color:"+ self.mapConfig.gridLabelColour + "; padding-left: 3px;'>" + [coords.x, coords.y].join(', ') + "</b>";
+							}
 
-						nXOffset += (gridWidth / nCols) / gridWidth;
+							nXOffset += (gridWidth / nCols) / gridWidth;
+						}
+						nXOffset = 0;
+						nYOffset += (gridHeight / nRows) / gridHeight;
 					}
-					nXOffset = 0;
-					nYOffset += (gridHeight / nRows) / gridHeight;
 				}
+
 
 
 
@@ -1235,10 +1244,6 @@ export default class Gamemap {
 				// 		this.mapContextGrid.fillText(gridText, pos.x, pos.y);
 				// 	}
 
-				// }
-
-				// if (coords.x % 5 == 0 && coords.y % 5 == 0 && currentZoom > self.mapConfig.gridShowLabelZoom){
-				// 	this.tile.innerHTML = "<b class='grid_text' style='color:"+ self.mapConfig.gridLabelColour + "; padding-left: 3px;'>" + [coords.x, coords.y].join(', ') + "</b>";
 				// }
 
 
