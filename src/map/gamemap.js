@@ -265,7 +265,7 @@ export default class Gamemap {
 		this.currentMapState = newMapState;
 
 		// update url
-		let mapLink = "?";
+		let mapLink = (window.location.href.includes("/"+this.mapConfig.database+"/")) ? "?" : (this.mapConfig.database+"/?");
 
 		if (this.hasMultipleWorlds()){
 			mapLink += 'world=' + newMapState.world.id;
