@@ -1137,42 +1137,44 @@ export default class Gamemap {
 				let maxX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x;
 				let minY = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).y;
 				let maxY = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y;
-				// this.canvas.width = 1000;
-				// this.canvas.height = 1000;
-				// let dimen = (this.canvas.width + this.canvas.height) / 2;
-
-				// set up canvas layer
-
-
-
 
 				let gridWidth = maxX - minX;
 				let gridHeight = maxY - minY;
+				log("Grid width: "+gridWidth+"px");
+				log("Grid height: "+gridHeight+"px");
 
-				//draw the grid, starting with the outline
+				// draw the outline of the grid
 				ctx.beginPath();
 				ctx.rect(minX, minY, gridWidth, gridHeight);
 				ctx.strokeStyle = self.mapConfig.gridLineColour;
 				ctx.lineWidth = self.mapConfig.gridLineWidth;
 				ctx.stroke();
 
-				log(gridWidth, gridHeight);
+				function toPix(nX, nY) {
+					nY = (nY != null) ? nY : nX;
+					return new Point(minX + (nX * gridWidth), minY + (nY * gridHeight))
+				}
+
+				ctx.font = "30px Comic Sans MS";
+				ctx.fillStyle = "red";
+				ctx.textAlign = "center";
+				ctx.fillText("Hello World", toPix(0.5).x, toPix(0.5).y);
 
 				// work out zoom %
 				let maxZoomLevel = self.getMapState().world.maxZoomLevel - 0.03;
 				let currentZoom = self.getCurrentZoom();
 				let nZoom = currentZoom / maxZoomLevel;
+				log("nZoom is ... " +nZoom.toFixed(3));
 
 				// work out grid gap size
 				let gridSize = ((self.mapConfig.cellSize * nZoom) / gridWidth) * gridWidth;
-				log(gridSize);
-				log(params);
+				log("Grid offset (gap) is: "+ gridSize.toFixed(3) +"px");
 
 				// work out how many rows and columns there will be
 				let nRows = self.getMapImageDimensions(self.getCurrentWorld()).width / self.mapConfig.cellSize;
 				let nCols = self.getMapImageDimensions(self.getCurrentWorld()).height / self.mapConfig.cellSize;
-				log (nRows);
-				log (nCols);
+				// log (nRows);
+				// log (nCols);
 
 				// set up styles
 
