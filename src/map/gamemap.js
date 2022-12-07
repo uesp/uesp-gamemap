@@ -1143,13 +1143,6 @@ export default class Gamemap {
 				log("Grid width: "+gridWidth+"px");
 				log("Grid height: "+gridHeight+"px");
 
-				// draw the outline of the grid
-				ctx.beginPath();
-				ctx.rect(minX, minY, gridWidth, gridHeight);
-				ctx.strokeStyle = self.mapConfig.gridLineColour;
-				ctx.lineWidth = self.mapConfig.gridLineWidth;
-				ctx.stroke();
-
 				function toPix(nX, nY) {
 					nY = (nY != null) ? nY : nX;
 					return new Point(minX + (nX * gridWidth), minY + (nY * gridHeight))
@@ -1171,30 +1164,78 @@ export default class Gamemap {
 				log (nRows);
 				log (nCols);
 
+				// draw the outline of the grid
+				ctx.beginPath();
+				ctx.rect(minX, minY, gridWidth, gridHeight);
+				ctx.strokeStyle = self.mapConfig.gridLineColour;
+				ctx.lineWidth = self.mapConfig.gridLineWidth;
+				ctx.stroke();
+
 				// do rows
 				ctx.moveTo(toPix(0).x, toPix(0).y);
 
 				let nOffset = 0;
 				for (let i = 0; i <= nRows; i++) {
-					let offset = gridWidth / nRows;
+					let offset = gridHeight / nRows;
 					// draw a line
 					ctx.beginPath();
 					ctx.moveTo(toPix(nOffset).x, toPix(0).y);
 					ctx.lineTo(toPix(nOffset).x, toPix(1).y);
 					ctx.stroke();
-					nOffset += offset / gridWidth;
+					nOffset += offset / gridHeight;
 				}
 
 				nOffset = 0;
 				for (let i = 0; i <= nCols; i++) {
-					let offset = gridHeight / nCols;
+					let offset = gridWidth / nCols;
 					// draw a line
 					ctx.beginPath();
 					ctx.moveTo(toPix(0).x, toPix(nOffset).y);
 					ctx.lineTo(toPix(1).x, toPix(nOffset).y);
 					ctx.stroke();
-					nOffset += offset / gridHeight;
+					nOffset += offset / gridWidth;
 				}
+
+				// do cell labels
+
+				let nYOffset = 0;
+				let nXOffset = 0;
+				for (let i = 0; i <= nRows; i++) {
+					for (let j = 0; j <= nCols; j++) {
+
+						ctx.font = "12px Arial";
+						ctx.fillText("Label", toPix(nXOffset).x, toPix(nYOffset+0.0021).y);
+
+						nXOffset += (gridWidth / nCols) / gridWidth;
+					}
+					nXOffset = 0;
+					nYOffset += (gridHeight / nRows) / gridHeight;
+				}
+
+
+
+				// for (var cellY = labelStartY; cellY <= labelEndY; cellY += this.mapOptions.gridLabelDeltaY) {
+				// 	var y = cellY * this.mapOptions.gridDeltaY + this.mapOptions.gridLabelOffsetY;
+
+				// 	for (var cellX = labelStartX; cellX <= labelEndX; cellX += this.mapOptions.gridLabelDeltaX)
+				// 	{
+				// 		var x = cellX * this.mapOptions.gridDeltaX + this.mapOptions.gridLabelOffsetX;
+				// 		var pos = this.convertGameToPixelPos(x, y);
+
+				// 		pos.x += 1 - this.mapTransformX;
+				// 		pos.y += 10 - this.mapTransformY - gridOffsetY;
+
+				// 		gridText = "" + cellX + "," + cellY;
+
+				// 		//console.log(gridText, pos.x, pos.y, x, y, cellX, cellY);
+
+				// 		this.mapContextGrid.font = "8px Arial";
+				// 		this.mapContextGrid.textBaseLine = "bottom";
+				// 		this.mapContextGrid.fillStyle = this.mapOptions.gridStyle;
+				// 		this.mapContextGrid.fillText(gridText, pos.x, pos.y);
+				// 	}
+
+				// }
 
 				// if (coords.x % 5 == 0 && coords.y % 5 == 0 && currentZoom > self.mapConfig.gridShowLabelZoom){
 				// 	this.tile.innerHTML = "<b class='grid_text' style='color:"+ self.mapConfig.gridLabelColour + "; padding-left: 3px;'>" + [coords.x, coords.y].join(', ') + "</b>";
@@ -2548,10 +2589,4 @@ export default class Gamemap {
 // 	this.recentChangesRoot.html(output);
 
 // 	return true;
-// }
-
-
-// uesp.gamemap.Map.prototype.clearRecentChanges = function ()
-// {
-// 	this.recentChangesRoot.text("");
 // }
