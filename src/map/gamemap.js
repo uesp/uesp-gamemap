@@ -1209,8 +1209,7 @@ export default class Gamemap {
 							if (i % 5 == 0 && j % 5 == 0) {
 								ctx.fillStyle = self.mapConfig.gridLabelColour;
 								ctx.font = "13px Arial";
-								ctx.fillText("Label", toPix(nXOffset).x, toPix(nYOffset+0.0021).y);
-								//this.tile.innerHTML = "<b class='grid_text' style='color:"+ self.mapConfig.gridLabelColour + "; padding-left: 3px;'>" + [coords.x, coords.y].join(', ') + "</b>";
+								ctx.fillText([i, j].join(', '), toPix(nXOffset+0.0005).x, toPix(nYOffset+0.0021).y);
 							}
 
 							nXOffset += (gridWidth / nCols) / gridWidth;
