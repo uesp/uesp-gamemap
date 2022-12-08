@@ -681,6 +681,7 @@ export default class Gamemap {
 
 			let options = {
 				noClip: true,
+				renderer: L.svg({ padding: 5 }),
 				smoothFactor: 2,
 				fillColor: location.style.fillColour,
 				color: location.style.strokeColour,
