@@ -154,7 +154,7 @@ export default class Gamemap {
 		mapState.world.totalHeight = this.mapImage.height;
 
 		// calculate raster coords
-		RC = new RasterCoords(map, this.mapImage)
+		RC = new RasterCoords(map, this.mapImage);
 
 		// default tilelayer options
 		let tileOptions = {
@@ -738,11 +738,30 @@ export default class Gamemap {
 	}
 
 
-	getLocationLabel(location){
+	getLocationLabel(location) {
+
+		let offset = [0, 0];
+		const OFFSET_AMOUNT = 5;
+
+		switch (location.labelDirection) {
+			case "top":
+				offset = [0, -OFFSET_AMOUNT];
+				break;
+			case "bottom":
+				offset = [0, OFFSET_AMOUNT];
+				break;
+			case "left":
+				offset = [-OFFSET_AMOUNT, 0];
+				break;
+			case "right":
+				offset = [OFFSET_AMOUNT, 0];
+				break;
+		}
 		return {
 			className : "location-label",
 			permanent: true,
 			direction: location.labelDirection,
+			offset: offset,
 		}
 	}
 

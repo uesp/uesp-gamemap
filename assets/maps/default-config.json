@@ -26,8 +26,8 @@
     ],
 
     // Map world info
-    "defaultWorldID" : 0,
-    "minWorldID" : 50,
+    "defaultWorldID" : 1,
+    "minWorldID" : 0,
     "maxWorldID" : 20000,
 
     // Map icon info
@@ -43,7 +43,7 @@
     "gridLabelColour" : "cyan",
     "gridStart" : [0, 0], //cell coords of the top leftmost point (default: 0 , 0);
     "gridShowLabels" : true,
-    "gridShowLabelZoom" : 2,
+    "gridShowLabelZoom" : 3,
 
     // core (do not copy or alter):
     "baseTileURL" : "//maps.uesp.net/",
