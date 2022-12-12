@@ -853,6 +853,18 @@ export default class Gamemap {
 			coords.y = (coords.y / this.mapImage.height).toFixed(3);
 		}
 
+		if (this.mapConfig.coordType == Constants.COORD_TYPES.WORLDSPACE) {
+
+			// get current map world pixel position values
+			let world = this.getCurrentWorld();
+			let nX = coords.x / world.totalWidth;
+			let nY = coords.y / world.totalHeight;
+
+			// reproject pixel values to worldspace
+			coords.x = Math.trunc(world.minX + (world.maxX - world.minX) * nX);
+			coords.y = Math.trunc(world.minY + (world.maxY - world.minY) * nY);
+		}
+
 		// return point object for coords
 		return coords;
 	}
