@@ -272,6 +272,8 @@ export default class Gamemap {
 			mapLink += '&';
 		}
 
+		(this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) ? log(Number(newMapState.coords[0]).toFixed(3)) : Math.trunc(newMapState.coords[0]);
+
 		mapLink += 'x=' + newMapState.coords[0];
 		mapLink += '&y=' + newMapState.coords[1];
 		mapLink += '&zoom=' + newMapState.zoomLevel;
@@ -858,7 +860,7 @@ export default class Gamemap {
 			// get current map world pixel position values
 			let world = this.getCurrentWorld();
 			let nX = coords.x / world.totalWidth;
-			let nY = coords.y / world.totalHeight;
+			let nY = 1 - (coords.y / world.totalHeight);
 
 			// reproject pixel values to worldspace
 			coords.x = Math.trunc(world.minX + (world.maxX - world.minX) * nX);
