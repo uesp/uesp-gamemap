@@ -15,7 +15,6 @@ import Gamemap from "./map/gamemap.js";
 ================================================*/
 
 var mapConfig = null;
-var gamemap = null;
 var currentTabID = "";
 var pairings = [];
 
@@ -120,7 +119,7 @@ function loadGamemap(mapConfig) {
 		onMapLoaded,
 	};
 
-	gamemap = new Gamemap('gamemap', mapConfig, mapCallbacks);
+	window.gamemap = new Gamemap('gamemap', mapConfig, mapCallbacks);
 }
 
 function onWorldsLoaded(mapWorlds) {

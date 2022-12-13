@@ -4,7 +4,7 @@
     "wikiNamespace": "Oblivion",
     "database" : "ob",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Oblivion_Map_Design",
-    "bgColour" : "#635F46",
+    "bgColour" : "#615f46",
 
     // Map options
     "defaultZoomLevel" : 2,
@@ -20,8 +20,8 @@
     "coordType" : 2,
 
     // Map grid info
-    "cellSize" : 4096, // size of a cell at full zoom on the map, in pixels
-    "gridStart" : [-64, 60], //cell coords of the top leftmost point (default: 0 , 0);
+    "cellSize" : 128, // size of a cell at full zoom on the map, in pixels
+    "gridStart" : [-64, 59], //cell coords of the top leftmost point (default: 0 , 0);
 
     // Map icon info
     "iconSize" : 16,
