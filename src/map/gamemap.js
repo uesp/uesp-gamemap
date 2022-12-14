@@ -65,7 +65,7 @@ export default class Gamemap {
 			this.getWorlds(mapConfig);
 
 		} else {
-			throw new Error("The gamemap constructor was provided invalid/missing params.");
+			throw new Error("The gamemap was provided invalid/missing params.");
 		}
 	}
 
@@ -93,7 +93,7 @@ export default class Gamemap {
         }
 
 		map = L.map(this.rootMapID, mapOptions);
-		this.setupInfobar(mapConfig);
+		this.updateInfobar(mapConfig);
 
 		let mapState = new MapState();
 		mapState.zoomLevel = mapConfig.defaultZoomLevel;
@@ -117,9 +117,11 @@ export default class Gamemap {
 	/** Simple function to create the infobar at the bottom right of the gamemap screen.
 	 * @param {Object} mapConfig - Object that controls the default/imported settings of the map.
 	 */
-	setupInfobar(mapConfig) {
+	updateInfobar(mapConfig) {
+		let coords = ((Utils.getCookie("debugging") == "true") && this.getCurrentWorld().totalWidth != null ) ? this.toCoords(map.getCenter(), true) : null;
 		map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home"><b class="wikiTitle">UESP</b></a>');
-		map.attributionControl.addAttribution('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  <a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>' );
+		map.attributionControl.addAttribution("<span id='mapAttribution'></span>");
+		$("#mapAttribution").html('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  ' + ((coords != null) ? "XY: " + Math.trunc(coords.x) + ", " + Math.trunc(coords.y)  + "  |  " : "") + '<a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>');
 	}
 
 	/*================================================
@@ -280,6 +282,7 @@ export default class Gamemap {
 
 		// update url with new state
 		window.history.replaceState(newMapState, document.title, mapLink);
+		this.updateInfobar(this.mapConfig);
 	}
 
 	/*================================================
@@ -745,6 +748,7 @@ export default class Gamemap {
 		let offset = [0, 0];
 		const OFFSET_AMOUNT = 5;
 
+		// set label offset based on direction
 		switch (location.labelDirection) {
 			case "top":
 				offset = [0, -OFFSET_AMOUNT];
@@ -797,45 +801,62 @@ export default class Gamemap {
 		return dimens;
 	}
 
-	gameToPixelPos(coords) {
+	/**
+	 * Convert leaflet XY pixel coordinates to creation kit game worldspace ones.
+	 * @param {Point} coord - the XY coordinate pair to be converted
+	 */
+	gameToPixelCoords(coord) {
 
-		let gameX = coords[0];
-		let gameY = coords[1];
-
-		if (gameX != null && gameY != null) {
-			let tilePos = this.gameToTilePos(gameX, gameY);
-
-			log(tilePos);
-
-			let xPos = Math.round(tilePos.x * this.mapConfig.tileSize);
-			let yPos = Math.round(tilePos.y * this.mapConfig.tileSize);
-
-			return [xPos, yPos];
-
-		} else {
-			throw new Error("Provided game coordinates were null!");
+		if (coord == null || coord.x == null) {
+			throw new Error("Tried to convert an invalid/null coord object.");
 		}
 
-	}
+		let world = this.getCurrentWorld();
 
-	gameToTilePos(gameX, gameY) {
-		let zoom = (map.getZoom() != null) ? map.getZoom() : this.getCurrentWorld().maxZoomLevel;
-		let maxTiles = Math.pow(2, zoom - this.getCurrentWorld().zoomOffset);
+		// get the current worldspace values in normalised form
+		let nX = coord.x / world.maxX;
+		let nY = 1 - (coord.y / world.maxY);
 
-		let tileX = (gameX - this.getCurrentWorld().minX) * maxTiles / (this.getCurrentWorld().maxX - this.getCurrentWorld().minX);
-		let tileY = (gameY - this.getCurrentWorld().minY) * maxTiles / (this.getCurrentWorld().maxY - this.getCurrentWorld().minY);
-
-		return new Point(tileX, tileY);
+		// project normalised worldspace values to pixel values
+		coord.x = Math.trunc(nX * world.totalWidth);
+		coord.y = Math.trunc(nY * world.totalHeight);
+		return coord;
 	}
 
 
 	/**
-	 * Convert leaflet LatLongs to XY / normalised coordinates.
+	 * Convert leaflet XY pixel coordinates to creation kit game worldspace ones.
+	 * @param {Point} coord - the XY coordinate pair to be converted
+	 */
+	pixelToGameCoords(coord) {
+
+		if (coord == null || coord.x == null) {
+			throw new Error("Tried to convert an invalid/null coord object.");
+		}
+
+		// get current map world pixel position values
+		let world = this.getCurrentWorld();
+		let nX = coord.x / world.totalWidth;
+		let nY = 1 - (coord.y / world.totalHeight);
+
+		// reproject pixel values to worldspace
+		coord.x = Math.trunc(world.minX + (world.maxX - world.minX) * nX);
+		coord.y = Math.trunc(world.minY + (world.maxY - world.minY) * nY);
+		return coord;
+	}
+
+	/**
+	 * Convert leaflet LatLngs to XY / normalised coordinates.
 	 * @param {Object} latLng - the leaflet coordinate object
 	 */
-	toCoords(latLng) {
+	toCoords(latLng, isDebug) {
 
 		var coords;
+
+		// are we given a debug flag to always output the leaflet XY coords?
+		if (isDebug) {
+			return RC.project(latLng);
+		}
 
 		// are we being given a latLng object from leaflet?
 		if (latLng.lat != null) {
@@ -856,15 +877,7 @@ export default class Gamemap {
 		}
 
 		if (this.mapConfig.coordType == Constants.COORD_TYPES.WORLDSPACE) {
-
-			// get current map world pixel position values
-			let world = this.getCurrentWorld();
-			let nX = coords.x / world.totalWidth;
-			let nY = 1 - (coords.y / world.totalHeight);
-
-			// reproject pixel values to worldspace
-			coords.x = Math.trunc(world.minX + (world.maxX - world.minX) * nX);
-			coords.y = Math.trunc(world.minY + (world.maxY - world.minY) * nY);
+			coords = this.pixelToGameCoords(coords);
 		}
 
 		// return point object for coords
@@ -940,7 +953,10 @@ export default class Gamemap {
 
 					latLng = RC.unproject(tempCoords);
 				} else if (this.mapConfig.coordType == Constants.COORD_TYPES.WORLDSPACE) {
-					latLng = RC.unproject(this.gameToPixelPos(coords));
+					log("coords");
+					log(coords);
+					log(this.gameToPixelCoords(new Point(coords[0], coords[1])));
+					latLng = RC.unproject(this.gameToPixelCoords(new Point(coords[0], coords[1])));
 				}
 			}
 
