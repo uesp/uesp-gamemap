@@ -118,7 +118,7 @@ export default class Gamemap {
 	 * @param {Object} mapConfig - Object that controls the default/imported settings of the map.
 	 */
 	updateInfobar(mapConfig) {
-		let coords = ((Utils.getCookie("debugging") == "true") && this.getCurrentWorld().totalWidth != null ) ? this.toCoords(map.getCenter(), true) : null;
+		let coords = (Utils.getCookie("debugging") && this.getCurrentWorld().totalWidth != null ) ? this.toCoords(map.getCenter(), true) : null;
 		map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home"><b class="wikiTitle">UESP</b></a>');
 		map.attributionControl.addAttribution("<span id='mapAttribution'></span>");
 		$("#mapAttribution").html('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  ' + ((coords != null) ? "XY: " + Math.trunc(coords.x) + ", " + Math.trunc(coords.y)  + "  |  " : "") + '<a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>');
@@ -282,7 +282,7 @@ export default class Gamemap {
 
 		// update url with new state
 		window.history.replaceState(newMapState, document.title, mapLink);
-		this.updateInfobar(this.mapConfig);
+		if (Utils.getCookie("debugging")) { this.updateInfobar(this.mapConfig); }
 	}
 
 	/*================================================
@@ -871,9 +871,12 @@ export default class Gamemap {
 		// is the current map using a normalised coordinate scheme?
 		if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
 
-			// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
-			coords.x = (coords.x / this.mapImage.width).toFixed(3);
-			coords.y = (coords.y / this.mapImage.height).toFixed(3);
+			if (coords.x > 1.5 || coords.y > 1.5) {
+				// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
+				coords.x = (coords.x / this.mapImage.width).toFixed(3);
+				coords.y = (coords.y / this.mapImage.height).toFixed(3);
+			}
+
 		}
 
 		if (this.mapConfig.coordType == Constants.COORD_TYPES.WORLDSPACE) {
@@ -1014,6 +1017,8 @@ export default class Gamemap {
 	}
 
 	onMarkerClicked(marker, shift, ctrl) {
+
+		log(marker.location);
 
 		let isJumpTo = marker.location != null && marker.location.isClickable();
 

@@ -146,7 +146,7 @@ export default class Location {
 
 		}
 
-		return new Point(x, y);
+		return gamemap.toCoords(new Point(x, y));
 	}
 
 	getTooltipContent() {
@@ -167,9 +167,6 @@ export default class Location {
 	}
 
 	getPopupContent() {
-
-		log("ligma")
-		log(gamemap.getCoords(new Point(this.coords[0].x, this.coords[0].y)));
 
 		let popupContent = "<div class='popupTitle'><a "+ this.createWikiLink() +"'>" + this.name + "</a></div>" +
 							"<div class='popupDesc'>" + this.description + "</div>" +

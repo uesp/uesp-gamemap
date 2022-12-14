@@ -10,8 +10,18 @@
 - key to hide ui
 - separate worlds and locations in search results "worlds" "locations"
 - allow world name instead of ID in url (used for centreon)
+- optimise grid code
+- add slightly transparent rect filling grid cells that have labels on it, to quickly show dif
 - make search in enter open first result
+- control search with arrow keys
 - add permalink option in location popups
+- fix popups having the wrong coord type on them
+- add way to show popups on centreon, optional param
+- fix all markers showing up at initial load on highest zoom level
+
+## this week:
+
+- added debug XY coordinates when in debug mode
 
 ## todo (future)
 
