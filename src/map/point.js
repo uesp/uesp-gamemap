@@ -10,4 +10,8 @@ export default class Point {
         this.x = (typeof x !== 'undefined') ? x : 0;
         this.y = (typeof y !== 'undefined') ? y : 0;
     }
+
+    toArray() {
+        return [this.x, this.y];
+    }
 }

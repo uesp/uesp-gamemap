@@ -146,7 +146,7 @@ export default class Location {
 
 		}
 
-		return gamemap.toCoords(new Point(x, y));
+		return new Point(x, y);
 	}
 
 	getTooltipContent() {

@@ -597,6 +597,10 @@ li div.collapsible-header i {
 	padding: 0px !important;
 }
 
+.leaflet-interactive {
+	animation: fadein 0.3s;
+}
+
 .location-tooltip {
 	z-index: 45;
 	position: absolute;
@@ -615,6 +619,7 @@ li div.collapsible-header i {
 .leaflet-tooltip::before {
 	display: none;
 }
+
 
 .tooltip-desc {
 	font-weight: normal;

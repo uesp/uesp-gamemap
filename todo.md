@@ -1,10 +1,21 @@
 
+## this week:
+
+
+- what do you want to focus on this year
+
+
+
+
 ## todo
 
 - add game worldspace XY conversion
 - add a way to pin search pane to the map (static)
 - refactor all locationIDs to be negative
+- truncate decimal points on XY, show on normalised
 - long press zoom buttons to zoom
+- fix overflow menu being cropped
+- add overflow menu icons
 - add go up button for mobile
 - fix polylines not respecting zoom levels
 - key to hide ui
@@ -18,10 +29,11 @@
 - fix popups having the wrong coord type on them
 - add way to show popups on centreon, optional param
 - fix all markers showing up at initial load on highest zoom level
+- banner ads on map
 
-## this week:
 
-- added debug XY coordinates when in debug mode
+2pm meetings
+
 
 ## todo (future)
 
@@ -32,3 +44,20 @@
 - edit
 - wiki features
 - email thing
+
+
+app :
+
+- cross platform
+- cross wiki
+- and maps
+
+
+
+akb - social
+me - frontend
+??? - php/backend
+
+
+- starfield wiki app
+- starfield map

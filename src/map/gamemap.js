@@ -118,7 +118,7 @@ export default class Gamemap {
 	 * @param {Object} mapConfig - Object that controls the default/imported settings of the map.
 	 */
 	updateInfobar(mapConfig) {
-		let coords = (Utils.getCookie("debugging") && this.getCurrentWorld().totalWidth != null ) ? this.toCoords(map.getCenter(), true) : null;
+		let coords = (Utils.getCookie("debugging") && this.getCurrentWorld().totalWidth != null ) ? this.toXY(map.getCenter(), true) : null;
 		map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home"><b class="wikiTitle">UESP</b></a>');
 		map.attributionControl.addAttribution("<span id='mapAttribution'></span>");
 		$("#mapAttribution").html('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  ' + ((coords != null) ? "XY: " + Math.trunc(coords.x) + ", " + Math.trunc(coords.y)  + "  |  " : "") + '<a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>');
@@ -261,7 +261,7 @@ export default class Gamemap {
 		}
 
 		// update map state
-		newMapState.coords = [Number(this.toCoords(map.getCenter()).x).toFixed(3), Number(this.toCoords(map.getCenter()).y).toFixed(3)];
+		newMapState.coords = [Number(this.toXY(map.getCenter()).x).toFixed(3), Number(this.toXY(map.getCenter()).y).toFixed(3)];
 		newMapState.zoomLevel = parseFloat(map.getZoom().toFixed(3));
 		newMapState.world = this.getWorldFromID(this.currentWorldID);
 		this.currentMapState = newMapState;
@@ -845,11 +845,15 @@ export default class Gamemap {
 		return coord;
 	}
 
+	toCoords(coords) {
+
+	}
+
 	/**
 	 * Convert leaflet LatLngs to XY / normalised coordinates.
 	 * @param {Object} latLng - the leaflet coordinate object
 	 */
-	toCoords(latLng, isDebug) {
+	toXY(latLng, isDebug) {
 
 		var coords;
 
@@ -871,7 +875,7 @@ export default class Gamemap {
 		// is the current map using a normalised coordinate scheme?
 		if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
 
-			if (coords.x > 1.5 || coords.y > 1.5) {
+			if (coords.x > 1.5 || coords.y > 1.5) { // make sure to only convert non-normalised coordinates
 				// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
 				coords.x = (coords.x / this.mapImage.width).toFixed(3);
 				coords.y = (coords.y / this.mapImage.height).toFixed(3);
@@ -897,6 +901,7 @@ export default class Gamemap {
 
 		// are we being given a coord object?
 		if (coords.x != null) {
+
 
 			// are we using a normalised coordinate scheme?
 			if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
