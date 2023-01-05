@@ -1,11 +1,7 @@
 
 ## this week:
 
-
-- what do you want to focus on this year
-
-
-
+-
 
 ## todo
 
@@ -31,10 +27,6 @@
 - fix all markers showing up at initial load on highest zoom level
 - banner ads on map
 
-
-2pm meetings
-
-
 ## todo (future)
 
 - do resource grid for skyrim
@@ -45,6 +37,8 @@
 - wiki features
 - email thing
 
+- starfield wiki app
+- starfield map
 
 app :
 
@@ -53,11 +47,3 @@ app :
 - and maps
 
 
-
-akb - social
-me - frontend
-??? - php/backend
-
-
-- starfield wiki app
-- starfield map

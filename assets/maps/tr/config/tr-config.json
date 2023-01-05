@@ -4,7 +4,7 @@
     "wikiNamespace": "Morrowind",
     "database" : "tr",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Morrowind_Map_Design",
-    "bgColour" : "#282520",
+    "bgColour" : "#000000",
 
     // Map options
     "hasCustomFavIcon" : true,
