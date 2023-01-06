@@ -1097,13 +1097,23 @@ input[type=checkbox].gmMapEditPopupInput {
 	margin-left: var(--padding_small);
 	width: 100%;
 	box-shadow: 0px 1.5px 4px 4px var(--shadow);
+	display: flex;
+}
+
+.layer-name {
+	font-size: 0.75rem;
+	font-weight: bold;
+	pointer-events: none;
+	text-align: center;
+	position: relative;
+	bottom: 3px;
 }
 
 #btn_layer_widget_switcher {
 	flex-shrink: 0;
 	height: var(--layer_widget_dimen);
 	width: var(--layer_widget_dimen);
-	background-image: url('https://live.staticflickr.com/6087/6127840661_17694226b5_b.jpg');
+	background-image: url('https://cdn.discordapp.com/attachments/979030537773650013/1061026748684320838/eso64_2022-10-15_23-05-09_1.jpg');
 	background-repeat:no-repeat;
 	background-position: center center;
 	background-size: 120%;
@@ -1118,7 +1128,6 @@ input[type=checkbox].gmMapEditPopupInput {
 	text-shadow: 0px 0px 6px var(--background);
 	cursor: pointer;
 	background-color: var(--text_low_emphasis);
-
 }
 
 #btn_layer_widget_switcher[has-background-image="true"] .material-icons {
@@ -1137,22 +1146,37 @@ input[type=checkbox].gmMapEditPopupInput {
 }
 
 #btn_layer_widget_switcher #layer-name {
-	opacity: 0;
 	transition: all 0.4s;
+	opacity: 0;
 }
 
 #btn_layer_widget_switcher[has-background-image="true"]:hover #layer-name {
 	opacity: 1;
 }
 
-
-
-
-
-
 #btn_layer_widget_switcher:active {
 	background-size: 150%;
 	background-color: var(--surface_dark);
+}
+
+
+.layer-button {
+	flex-shrink: 0;
+	height: calc(var(--layer_widget_dimen) - var(--padding_minimum)) !important;
+	width: calc(var(--layer_widget_dimen) - var(--padding_minimum));
+	border-radius: var(--padding_minimum);
+	background-color: var(--primary_variant_dark);
+	margin-top: auto;
+	margin-bottom: auto;
+	margin-left: 4px;
+	margin-right: 4px;
+}
+
+.layer-button .material-icons {
+	width: 100%;
+	text-align: center;
+	position: relative;
+	top: 9.5px;
 }
 
 /*================================================

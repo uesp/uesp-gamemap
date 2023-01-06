@@ -41,11 +41,6 @@
 				<input type="checkbox" onchange="toggleEdit(this.checked)"> <!-- todo: merge RC into edit menu-->
 			</div>
 
-			<div id="btn_toggle_grid" class='btn_icon_button_toggle waves-effect banishdefault' title="Toggle the cell grid">
-				<i class="material-icons">grid_on</i>
-				<input type="checkbox" onchange="toggleCellGrid(this.checked)">
-			</div>
-
 			<div class="icon_bar_responsive">
 
 				<!-- Common actions (Icon buttons with label) -->
@@ -76,15 +71,31 @@
 			<button id="btn_layer_widget_switcher" has-background-image="true">
 				Layers
 				<i class="small material-icons" style="position: relative; bottom: 45px;">layers</i>
-				<p id="layer-name" style="position: relative; bottom: 12px; font-size: 0.75rem;">Default</p>
+				<p id="layer-name" class="layer-name" style="bottom: 12px;">Gridmap</p>
 			</button>
 
 			<!-- Additional layer options (on hover) -->
 			<div class="layer_widget_options">
 
-				<hr>
+				<div id="btn_toggle_grid" class='btn_layer_toggle layer-button' title="Toggle cell grid">
+					<i class="material-icons">grid_on</i>
+					<p class="layer-name">Cell Grid</p>
+					<input type="checkbox" onchange="toggleCellGrid(this.checked)">
+				</div>
 
-				<hr>
+				<div id="btn_toggle_resource_grid" class='btn_layer_toggle layer-button' title="Toggle resource grid">
+					<i class="material-icons">local_florist</i>
+					<p class="layer-name">Resources</p>
+					<input type="checkbox" onchange="toggleCellGrid(this.checked)">
+				</div>
+
+
+
+<!--
+				<div id="btn_toggle_grid" class='btn_icon_button_toggle waves-effect banishdefault' title="Toggle the cell grid">
+					<i class="material-icons">grid_on</i>
+					<input type="checkbox" onchange="toggleCellGrid(this.checked)">
+				</div> -->
 
 
 			</div>

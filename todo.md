@@ -6,7 +6,8 @@ layer switcher should use sentence case for layer names Default, Gridmap
 
 - add layer switcher day/night ui
 
-
+ask dave to add DCSG paper oblivion map as optional layer
+- refactor bgcolour out to individial layer configs
 
 - add game worldspace XY conversion
 - add a way to pin search pane to the map (static)
