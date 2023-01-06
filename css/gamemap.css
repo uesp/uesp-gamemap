@@ -235,6 +235,7 @@ button {
 	position: absolute !important;
 	opacity: 0 !important;
 	pointer-events: auto !important;
+	cursor: pointer;
 }
 
 .btn_icon_button_toggle i {
@@ -1079,7 +1080,7 @@ input[type=checkbox].gmMapEditPopupInput {
 ================================================*/
 
 .layer_widget_root {
-	background-color: #33ff33;
+	/* background-color: #33ff33; */
 	position: absolute;
 	z-index: 900;
 	bottom: var(--padding_large);
@@ -1087,20 +1088,45 @@ input[type=checkbox].gmMapEditPopupInput {
 	left: var(--padding_small);
 	width: 500px;
 	max-width: var(--search_pane_width);
+	display: flex;
 }
 
-.layer_widget_button {
-	height: var(--layer_widget_dimen);
-	width: var(--layer_widget_dimen);
+.layer_widget_options {
+	background-color: var(--primary_variant_light);
+	border-radius: var(--padding_minimum);
+	margin-left: var(--padding_small);
+	width: 100%;
+	box-shadow: 0px 1.5px 4px 4px var(--shadow);
 }
 
 #btn_layer_widget_switcher {
-	height: inherit;
-	width: inherit;
-	background-image: url('https://catvills.com/wp-content/uploads/2017/08/litter-train-a-cat-f-850x657.jpg');
+	flex-shrink: 0;
+	height: var(--layer_widget_dimen);
+	width: var(--layer_widget_dimen);
+	background-image: url('https://live.staticflickr.com/6087/6127840661_17694226b5_b.jpg');
 	background-repeat:no-repeat;
 	background-position: center center;
-	background-size: cover;
+	background-size: 120%;
+	border-radius: var(--padding_minimum);
+	box-shadow: 0px 1.5px 4px 4px var(--shadow), inset 0 -7px 16px -7px rgba(0,0,0,0.9);
+	border-style: solid;
+	border-color: var(--primary);
+	transition: all 0.4s;
+	padding-top: 36px;
+	font-weight: bold;
+	color: white;
+	text-shadow: 0px 0px 6px var(--background);
+	cursor: pointer;
+}
+
+#btn_layer_widget_switcher:hover {
+	border-color: var(--surface_variant_dark);
+	background-size: 250%;
+	box-shadow: 0px 1.5px 4px 4px var(--shadow), inset 0px 0px 10px rgba(0,0,0,0.9);
+}
+
+#btn_layer_widget_switcher:active {
+	background-size: 150%;
 }
 
 /*================================================
