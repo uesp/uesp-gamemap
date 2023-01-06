@@ -1132,6 +1132,24 @@ input[type=checkbox].gmMapEditPopupInput {
 	box-shadow: 0px 1.5px 4px 4px var(--shadow), inset 0px 0px 10px rgba(0,0,0,0.9);
 }
 
+#btn_layer_widget_switcher[has-background-image="true"]:hover {
+	padding-top: 30px;
+}
+
+#btn_layer_widget_switcher #layer-name {
+	opacity: 0;
+	transition: all 0.4s;
+}
+
+#btn_layer_widget_switcher[has-background-image="true"]:hover #layer-name {
+	opacity: 1;
+}
+
+
+
+
+
+
 #btn_layer_widget_switcher:active {
 	background-size: 150%;
 	background-color: var(--surface_dark);
