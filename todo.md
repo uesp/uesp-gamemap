@@ -1,9 +1,12 @@
-
-## this week:
-
--
-
 ## todo
+
+- zap custom zoomer and replace with leaflet one
+
+layer switcher should use sentence case for layer names Default, Gridmap
+
+- add layer switcher day/night ui
+
+
 
 - add game worldspace XY conversion
 - add a way to pin search pane to the map (static)
@@ -26,6 +29,12 @@
 - add way to show popups on centreon, optional param
 - fix all markers showing up at initial load on highest zoom level
 - banner ads on map
+
+
+## this week:
+
+- smooth fadein animations for icons
+
 
 ## todo (future)
 

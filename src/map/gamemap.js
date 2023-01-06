@@ -274,7 +274,7 @@ export default class Gamemap {
 			mapLink += '&';
 		}
 
-		(this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) ? log(Number(newMapState.coords[0]).toFixed(3)) : Math.trunc(newMapState.coords[0]);
+		//(this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) ? log(Number(newMapState.coords[0]).toFixed(3)) : Math.trunc(newMapState.coords[0]);
 
 		mapLink += 'x=' + newMapState.coords[0];
 		mapLink += '&y=' + newMapState.coords[1];

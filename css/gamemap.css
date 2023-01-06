@@ -88,6 +88,12 @@ hr {
 		width: calc(100% - 80px) !important;
   	}
 
+	.layer_widget_root {
+		max-width: calc(100% - 80px) !important;
+	}
+
+
+
 	/* hide these elements on mobile */
 	[class*='nomobile'] {
 		display: none !important;
@@ -162,6 +168,7 @@ hr {
 :root {
 	/* heights, widths, and volume */
 	--appbar_dimen: 48px;
+	--layer_widget_dimen: 64px;
 	--search_pane_width: 420px;
 	--zindex_floating: 900;
 	--zindex_overlay: 9998;
@@ -1067,12 +1074,38 @@ input[type=checkbox].gmMapEditPopupInput {
 	text-align: center;
 }
 
+/*================================================
+				   	Layer Widget
+================================================*/
+
+.layer_widget_root {
+	background-color: #33ff33;
+	position: absolute;
+	z-index: 900;
+	bottom: var(--padding_large);
+	padding: 3px;
+	left: var(--padding_small);
+	width: 500px;
+	max-width: var(--search_pane_width);
+}
+
+.layer_widget_button {
+	height: var(--layer_widget_dimen);
+	width: var(--layer_widget_dimen);
+}
+
+#btn_layer_widget_switcher {
+	height: inherit;
+	width: inherit;
+	background-image: url('https://catvills.com/wp-content/uploads/2017/08/litter-train-a-cat-f-850x657.jpg');
+	background-repeat:no-repeat;
+	background-position: center center;
+	background-size: cover;
+}
 
 /*================================================
 				   	Icon Bar
 ================================================*/
-
-/* get all divs beginning with "icon_bar" */
 
 .icon_bar {
 	padding-top: var(--padding_minimum);

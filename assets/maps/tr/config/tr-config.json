@@ -31,6 +31,12 @@
     "gridStart" : [-44, 33], //cell coords of the top leftmost point (default: 0 , 0);
     "gridShowLabelZoom" : 3.5,
 
+    // Map tile info
+    "tileLayers" : [
+        "default",
+        "gridmap"
+    ],
+
     // Map icon info
     "iconSize" : 16,
     "icons": {
