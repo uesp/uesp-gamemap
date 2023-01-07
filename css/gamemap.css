@@ -1086,7 +1086,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	bottom: var(--padding_large);
 	padding: 3px;
 	left: var(--padding_small);
-	width: 500px;
+	width: fit-content;
 	max-width: var(--search_pane_width);
 	display: flex;
 }
@@ -1095,9 +1095,20 @@ input[type=checkbox].gmMapEditPopupInput {
 	background-color: var(--primary_variant_light);
 	border-radius: var(--padding_minimum);
 	margin-left: var(--padding_small);
-	width: 100%;
+	width: auto;
 	box-shadow: 0px 1.5px 4px 4px var(--shadow);
 	display: flex;
+}
+
+.layer_widget_options:before {
+	content: "\A";
+    border-style: solid;
+    border-width: 10px 15px 10px 0;
+    border-color: transparent var(--primary_variant_light) transparent transparent;
+	position: relative;
+	left: -7%;
+	top: 32%;
+	height: 10px;
 }
 
 .layer-name {
@@ -1170,6 +1181,18 @@ input[type=checkbox].gmMapEditPopupInput {
 	margin-bottom: auto;
 	margin-left: 4px;
 	margin-right: 4px;
+	z-index: 1;
+	border-style: solid;
+	border-width: 0px;
+	border-color: var(--text_on_primary);
+}
+
+.layer-button:hover {
+	background-color: var(--bubble_selection);
+}
+
+.layer-button:active {
+	background-color: var(--shadow);
 }
 
 .layer-button .material-icons {
