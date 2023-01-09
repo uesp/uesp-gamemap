@@ -1,115 +1,53 @@
 # UESP Gamemap
 
-The UESP Gamemap is a custom built, Google Maps alternative for the Unofficial Elder Scrolls Pages (www.uesp.net). It was specifically designed for showing Elder Scrolls maps, but it can be modified to use other game maps if desired.
+The UESP Gamemap is web app for displaying Elder Scrolls games' maps. It is designed for the **Unofficial Elder Scrolls Pages** (www.uesp.net).
 
-Under the hood, it uses a modified version of Leaflet, with some custom plugins. and Svelte
+While designed primarily for TES games, it supports a variety of map formats, and can be modified to support other games if desired.
+
+---
+
+Under the hood, it uses a modified version of [Leaflet](https://leafletjs.com/) for the map, and [Svelte](https://svelte.dev/) for the interface.
 
 ## Vality
 
-Vality is an in-development overhaul of the map system, focusing on usability and performance. It is named after Vality7, the modder that overhauled the Morrowind mod Project Tamriel's heightmap.
+Vality is an in-development overhaul of the gamemap system, focusing on usability and performance. It is named after Vality7, the mod author that overhauled the TES3's Project Tamriel mod's heightmap.
+## Getting started
 
-## Install
-## Get started
-
-- Clone the repo
-
-then run ``npm install .`` in terminal
-
-
-## Licensing
-
-Source code is released under the MIT by Dave Humphrey (dave@uesp.net).
-
-
-*Note that you will need to have [Node.js](https://nodejs.org) installed.*
-
-
-## Get started
-
-Install the dependencies...
+Clone this repo:
 
 ```bash
-cd svelte-app
+git clone https://github.com/uesp/uesp-gamemap.git
+```
+
+Install [Node.js](https://nodejs.org) dependencies:
+
+```bash
+cd uesp-gamemap
 npm install
 ```
 
-...then start [Rollup](https://rollupjs.org):
+Then run in browser:
 
 ```bash
 npm run dev
 ```
 
-Navigate to [localhost:8080](http://localhost:8080). You should see your app running. Edit a component file in `src`, save it, and reload the page to see your changes.
+The gamemap should now be running on [localhost:8080](http://localhost:8080).
 
-By default, the server will only respond to requests from localhost. To allow connections from other computers, edit the `sirv` commands in package.json to include the option `--host 0.0.0.0`.
+## Building for production
 
-If you're using [Visual Studio Code](https://code.visualstudio.com/) we recommend installing the official extension [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode). If you are using other editors you may need to install a plugin in order to get syntax highlighting and intellisense.
-
-## Building and running in production mode
-
-To create an optimised version of the app:
+To create a production optimised version:
 
 ```bash
 npm run build
 ```
 
-You can run the newly built app with `npm run start`. This uses [sirv](https://github.com/lukeed/sirv), which is included in your package.json's `dependencies` so that the app will work when you deploy to platforms like [Heroku](https://heroku.com).
-
-
-## Single-page app mode
-
-By default, sirv will only respond to requests that match files in `public`. This is to maximise compatibility with static fileservers, allowing you to deploy your app anywhere.
-
-If you're building a single-page app (SPA) with multiple routes, sirv needs to be able to respond to requests for *any* path. You can make it so by editing the `"start"` command in package.json:
-
-```js
-"start": "sirv public --single"
-```
-
-## Using TypeScript
-
-This template comes with a script to set up a TypeScript development environment, you can run it immediately after cloning the template with:
+To run use:
 
 ```bash
-node scripts/setupTypeScript.js
+npm run start
 ```
 
-Or remove the script via:
+## Licensing
 
-```bash
-rm scripts/setupTypeScript.js
-```
-
-If you want to use `baseUrl` or `path` aliases within your `tsconfig`, you need to set up `@rollup/plugin-alias` to tell Rollup to resolve the aliases. For more info, see [this StackOverflow question](https://stackoverflow.com/questions/63427935/setup-tsconfig-path-in-svelte).
-
-## Deploying to the web
-
-### With [Vercel](https://vercel.com)
-
-Install `vercel` if you haven't already:
-
-```bash
-npm install -g vercel
-```
-
-Then, from within your project folder:
-
-```bash
-cd public
-vercel deploy --name my-project
-```
-
-### With [surge](https://surge.sh/)
-
-Install `surge` if you haven't already:
-
-```bash
-npm install -g surge
-```
-
-Then, from within your project folder:
-
-```bash
-npm run build
-surge public my-project.surge.sh
-```
+Source code is released under the MIT by Dave Humphrey (dave@uesp.net).
