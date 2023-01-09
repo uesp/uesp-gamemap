@@ -4,8 +4,6 @@ The UESP Gamemap is web app for displaying Elder Scrolls games' maps. It is desi
 
 While designed primarily for TES games, it supports a variety of map formats, and can be modified to support other games if desired.
 
----
-
 Under the hood, it uses a modified version of [Leaflet](https://leafletjs.com/) for the map, and [Svelte](https://svelte.dev/) for the interface.
 
 ## Vality
@@ -34,18 +32,12 @@ npm run dev
 
 The gamemap should now be running on [localhost:8080](http://localhost:8080).
 
-## Building for production
+## Production
 
 To create a production optimised version:
 
 ```bash
 npm run build
-```
-
-To run use:
-
-```bash
-npm run start
 ```
 
 ## Licensing
