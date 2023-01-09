@@ -32,11 +32,12 @@ class CMakeTileSymLinks
 			'mwmap' => [
 					'prefix' => 'vvardenfell',
 					'newPrefix' => 'morrowind',
-			],
+			],*/
 			'dbmap' => [
 					'prefix' => 'db',
-					'newPrefix' => 'db',
-			],
+					'newPrefix' => 'solstheim',
+					'minZoom' => 10,
+			],/*
 			'simap' => [
 					'prefix' => 'seworld',
 					'newPrefix' => 'shiveringisles',
@@ -53,11 +54,12 @@ class CMakeTileSymLinks
 					'prefix' => 'bs',
 					'newPrefix' => 'skyrim',
 			], */
+			/*
 			'trmap' => [
 					'prefix' => 'TR',
 					'newPrefix' => 'tamrielrebuilt',
 					'emptyTile' => 'images/troutofrange.jpg',
-			], 
+			],*/ 
 	];
 	
 	
@@ -78,7 +80,7 @@ class CMakeTileSymLinks
 		
 		if ($blankTile == null || $blankTile == '') 
 		{
-			print("\tError: Missing empty tile filename in game data!\n");
+			print("\t\tError: Missing empty tile filename in game data!\n");
 			return false;
 		}
 		
@@ -205,6 +207,12 @@ class CMakeTileSymLinks
 		}
 		
 		print("\tFound min zoom level of $minZoomLevel!\n");
+		
+		if ($gameData['minZoom'] != null)
+		{
+			$minZoomLevel = $gameData['minZoom'];
+			print("\tUsing a manual min zoom level of $minZoomLevel!\n");
+		}
 		
 		foreach ($files as $filename)
 		{
