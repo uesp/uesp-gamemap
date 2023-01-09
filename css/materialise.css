@@ -3360,13 +3360,7 @@ table span.badge {
   margin-left: auto;
 }
 
-/* This is needed for some mobile phones to display the Google Icon font properly */
-.material-icons {
-  text-rendering: optimizeLegibility;
-  -webkit-font-feature-settings: "liga";
-     -moz-font-feature-settings: "liga";
-          font-feature-settings: "liga";
-}
+
 
 .container {
   margin: 0 auto;
@@ -5621,7 +5615,7 @@ body.keyboard-focused .dropdown-content li:focus {
   border-bottom: 2px solid var(--divider);
   box-shadow:
     inset 0px 11px 8px -10px var(--shadow),
-    inset 0px -11px 8px -10px var(--shadow); 
+    inset 0px -11px 8px -10px var(--shadow);
 }
 
 .sidenav .collapsible,

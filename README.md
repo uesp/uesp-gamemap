@@ -2,7 +2,7 @@
 
 The UESP Gamemap is web app for displaying Elder Scrolls games' maps. It is designed for the **Unofficial Elder Scrolls Pages** (www.uesp.net).
 
-While designed primarily for TES games, it supports a variety of map formats, and can be modified to support other games if desired.
+While primarily designed for TES games, it supports a variety of other map formats, and can be modified to support other games if desired.
 
 Under the hood, it uses a modified version of [Leaflet](https://leafletjs.com/) for the map, and [Svelte](https://svelte.dev/) for the interface.
 
