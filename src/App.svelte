@@ -9,7 +9,7 @@
 	<h1>Hello {name}!</h1>
 	<p>Deez nuts jerma adadada e adad<a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
 	<ErrorBox></ErrorBox>
-	<Icon name="settings" size="large"></Icon>
+	<Icon name="settings" size="small"></Icon>
 </main>
 
 <style>

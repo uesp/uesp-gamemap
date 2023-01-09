@@ -5,7 +5,7 @@
     export let size = 32;        // default: 32px
 
     // parse string sizes into css size
-    if (!isNaN(size)) {
+    if (isNaN(size)) {
         switch(size){
             case "tiny":
                 size = "1rem";
@@ -20,8 +20,8 @@
                 size = "6rem";
                 break;
         }
-
-        console.log(size);
+    } else {
+        size += "px";
     }
 </script>
 
