@@ -1,6 +1,8 @@
-## todo
 
-- zap custom zoomer and replace with leaflet one
+## this week:
+
+
+## todo
 
 layer switcher should use sentence case for layer names Default, Gridmap
 
@@ -30,12 +32,6 @@ ask dave to add DCSG paper oblivion map as optional layer
 - add way to show popups on centreon, optional param
 - fix all markers showing up at initial load on highest zoom level
 - banner ads on map
-
-
-## this week:
-
-- smooth fadein animations for icons
-
 
 ## todo (future)
 
