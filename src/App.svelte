@@ -1,15 +1,19 @@
 <script>
-	import PreloadBox from "./components/PreloadBox.svelte";
 	import ErrorBox from "./components/ErrorBox.svelte";
 	import Icon from "./components/Icon.svelte";
+	import Divider from "./components/Divider.svelte";
+	import ProgressBar from "./components/ProgressBar.svelte"
 	let name = "joe";
 </script>
 
 <main>
 	<h1>Hello {name}!</h1>
 	<p>Deez nuts jerma adadada e adad<a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-	<ErrorBox></ErrorBox>
-	<Icon name="settings" size="small"></Icon>
+	<ErrorBox/>
+	<Icon name="settings" size=80></Icon>
+	<Divider direction="vertical"></Divider>
+	<ProgressBar/>
+
 </main>
 
 <style>

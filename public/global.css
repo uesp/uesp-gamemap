@@ -49,11 +49,6 @@ body {
 	width: 75%;
 }
 
-hr {
-	border: 0;
-	border-top: 2px solid var(--divider);
-}
-
 /*================================================
 					Accessibility
 ================================================*/
@@ -117,6 +112,22 @@ hr {
 	}
 
 }
+
+@media only screen and (min-width: 0) {
+	html {
+	  font-size: 14px;
+	}
+  }
+  @media only screen and (min-width: 993px) {
+	html {
+	  font-size: 14.5px;
+	}
+  }
+  @media only screen and (min-width: 1201px) {
+	html {
+	  font-size: 15px;
+	}
+  }
 
 /*================================================
 					Colours
@@ -206,12 +217,3 @@ body {
 .wikiTitle{
 	font-family: 'wikiType', Arial, sans-serif;
 }
-
-
-/* This is needed for some mobile phones to display the Google Icon font properly */
-.material-icons {
-	text-rendering: optimizeLegibility;
-	-webkit-font-feature-settings: "liga";
-	   -moz-font-feature-settings: "liga";
-			font-feature-settings: "liga";
-  }

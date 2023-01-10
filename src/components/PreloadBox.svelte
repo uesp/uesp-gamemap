@@ -16,7 +16,7 @@
         vertical-align: middle;
         top: 50%;
         left: 50%;
-        min-width: 300px;
+        min-width: 200px;
         min-height: 50px;
         transform: translate(-50%, -50%);
     }

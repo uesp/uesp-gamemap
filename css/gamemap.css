@@ -1233,24 +1233,4 @@ div[class^="icon_bar"] {
 	margin-right: auto;
 }
 
-/*================================================
-				   Progress Bar
-================================================*/
 
-.progress_bar {
-	top: -9px;
-	width: 100%;
-	position: absolute;
-	z-index: 9999;
-	opacity: 0.85;
-	pointer-events: none;
-}
-
-.progress {
-	background-color: var(--secondary) !important;
-	box-shadow: 0 2px 2px 0px var(--shadow);
-}
-
-.progress .indeterminate {
-	background-color: var(--secondary_variant) !important;
-}

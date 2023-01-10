@@ -26,3 +26,21 @@
 </script>
 
 <i class="material-icons" style="font-size: {size};">{name}</i>
+
+<style>
+    /* Make sure icons cannot be selected */
+    i {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    /* This is needed for some mobile phones to display the Google Icon font properly */
+    .material-icons {
+        text-rendering: optimizeLegibility;
+        -webkit-font-feature-settings: "liga";
+        -moz-font-feature-settings: "liga";
+                font-feature-settings: "liga";
+    }
+</style>
