@@ -5,6 +5,7 @@
 	import Divider from "./components/Divider.svelte";
 	import ProgressBar from "./components/ProgressBar.svelte"
 	import LoadingBox from "./components/LoadingBox.svelte";
+	import ZoomWidget from "./components/ZoomWidget.svelte";
 
 
 	// state variables
@@ -20,6 +21,7 @@
 	<Icon name="settings" size=80></Icon>
 	<Divider direction="vertical"></Divider>
 	<ProgressBar/>
+	<ZoomWidget></ZoomWidget>
 
 
 

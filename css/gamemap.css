@@ -925,43 +925,7 @@ input[type=checkbox].gmMapEditPopupInput {
 	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
 }
 
-/*================================================
-				  Zoom Widget
-================================================*/
 
-#zoom_widget {
-	position: absolute;
-	background: var(--primary_variant_light);
-	border-radius: 64px;
-	z-index: 1000;
-	bottom: 45px;
-	right: var(--padding_minimum);
-	width: var(--appbar_dimen);
-	height: 100px;
-	display: flex;
-	flex-direction: column;
-	flex: auto;
-	box-shadow: 0px 1.5px 4px 4px var(--shadow);
-}
-
-.btn_zoom {
-	width: 100%;
-	flex-grow: 1;
-	background: transparent;
-	border: none;
-	transform: translateZ(0);
-	z-index: 1001;
-	border-radius: 64px;
-	transition: all ease-in-out 50ms;
-}
-
-.btn_zoom:hover:disabled  {
-	cursor: default;
-}
-
-.btn_zoom:hover:enabled, .btn_zoom:active:enabled {
-	background: var(--divider);
-}
 .collection a.collection-item:not(.active):hover {
 	background-color: var(--divider);
 }
