@@ -1,20 +1,30 @@
-
+<!-- Zoom widget component -->
 <script>
     import Icon from "./Icon.svelte";
+    import Divider from "./Divider.svelte";
+
+
+    function zoomIn() {
+        console.log("Zooming in");
+    }
+
+    function zoomInLongClick() {
+        console.log("Zooming in");
+    }
+
+    function zoomOut() {
+        console.log("Zooming out");
+    }
 </script>
 
-<!-- Zoom widget -->
+
 <div id="zoom_widget">
-    <button class="btn_zoom waves-effect" onclick="zoomIn()" id="btn_zoom_in" tabindex="-1" title="Zoom in"><Icon name="add"/></button>
-    <div class="horizontal_divider"></div>
-    <button class="btn_zoom waves-effect" onclick="zoomOut()" id="btn_zoom_out" tabindex="-1" title="Zoom out"><Icon name="remove"/></button>
+    <button on:click={zoomIn} class="btn_zoom waves-effect" id="btn_zoom_in" tabindex="-1" title="Zoom in"><Icon name="add"/></button>
+    <Divider/>
+    <button on:click={zoomOut} class="btn_zoom waves-effect" id="btn_zoom_out" tabindex="-1" title="Zoom out"><Icon name="remove"/></button>
 </div>
 
 <style>
-    /*================================================
-                        Zoom Widget
-    ================================================*/
-
     #zoom_widget {
         position: absolute;
         background: var(--primary_variant_light);

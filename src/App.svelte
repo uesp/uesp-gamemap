@@ -16,12 +16,12 @@
 <!-- App container -->
 <main id="app">
 	<h1>Svelte Testing</h1>
-	<p>Deez nuts jerma adadada e adad <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-	<LoadingBox reason="loading reason here"/>
+	<p>jerma adadada e adad <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+	<!-- <LoadingBox reason="loading reason here"/> -->
 	<Icon name="settings" size=80></Icon>
-	<Divider direction="vertical"></Divider>
-	<ProgressBar/>
-	<ZoomWidget></ZoomWidget>
+	<!-- <Divider direction="vertical"></Divider>
+	<ProgressBar/> -->
+	<ZoomWidget/>
 
 
 

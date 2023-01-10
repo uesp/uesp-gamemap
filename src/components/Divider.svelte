@@ -14,9 +14,8 @@
 
     hr {
         border: 0;
-        border-top: 2px solid var(--divider);
+        border-top: 3px solid var(--divider);
         margin-top: 2px;
-        margin-top: var(--padding_small);
         margin-bottom: 2px;
         width: 75%;
     }
