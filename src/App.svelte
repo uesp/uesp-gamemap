@@ -1,19 +1,30 @@
 <script>
-
 	// import UI components
 	import ErrorBox from "./components/ErrorBox.svelte";
 	import Icon from "./components/Icon.svelte";
 	import Divider from "./components/Divider.svelte";
 	import ProgressBar from "./components/ProgressBar.svelte"
+	import LoadingBox from "./components/LoadingBox.svelte";
+
+
+	// state variables
+
+	let loading = true;
 </script>
 
-<main>
+<!-- App container -->
+<main id="app">
 	<h1>Svelte Testing</h1>
 	<p>Deez nuts jerma adadada e adad <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-	<ErrorBox/>
+	<LoadingBox reason="loading reason here"/>
 	<Icon name="settings" size=80></Icon>
 	<Divider direction="vertical"></Divider>
 	<ProgressBar/>
+
+
+
+	<!-- Gamemap container -->
+	<div id="gamemap"></div>
 
 </main>
 

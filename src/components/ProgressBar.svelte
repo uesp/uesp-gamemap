@@ -1,24 +1,21 @@
-
-
+<!-- Progressbar component -->
 
 <div class="progress_bar">
     <div class="progress"><div class="indeterminate"></div></div>
 </div>
 
-
-
 <style>
 
-.progress {
-    position: relative;
-    height: 4px;
-    display: block;
-    width: 100%;
-    background-color: #acece6;
-    border-radius: 2px;
-    margin: 0.5rem 0 1rem 0;
-    overflow: hidden;
-  }
+    .progress {
+        position: relative;
+        height: 4px;
+        display: block;
+        width: 100%;
+        background-color: #acece6;
+        border-radius: 2px;
+        margin: 0.5rem 0 1rem 0;
+        overflow: hidden;
+    }
 
   .progress .indeterminate {
     background-color: #26a69a;

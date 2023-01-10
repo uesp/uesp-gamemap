@@ -32,9 +32,9 @@ npm run dev
 
 The gamemap should now be running on [localhost:8080](http://localhost:8080).
 
-## Production
+## Release
 
-To create a production optimised version:
+To create a release optimised version:
 
 ```bash
 npm run build

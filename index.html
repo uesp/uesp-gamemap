@@ -1,19 +1,6 @@
 <!DOCTYPE html>
 <html>
-	<head>
-
-		<!-- CSS -->
-		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.1/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
-		<link rel="stylesheet" href="./css/materialise.css" media="screen,projection"/>
-		<link rel="stylesheet" href="./css/gamemap.css"/>
-
-   </head>
-
    <body>
-
-		<!-- Gamemap -->
-		<div id="gamemap"></div>
 
 		<div class="icon_bar">
 			<div class="icon_bar_persistent">
@@ -134,35 +121,6 @@
 			<button class="btn_zoom waves-effect" onclick="zoomOut()" id="btn_zoom_out" tabindex="-1" title="Zoom out"><i class="material-icons">remove</i></button>
 		</div>
 
-		<!-- Errorbox -->
-		<div id="error_box" class="error_container hidedefault preload_box">
-			<span class="error_title">
-				<i class="medium material-icons">error</i><br/>
-				<b>Something went wrong.</b>
-			</span>
-			<div class="horizontal_divider"></div>
-			<p id="error_box_reason">A reason should be put here.</p>
-		</div>
-
-		<!-- Loading spinner -->
-		<div id="loading_spinner" class="spinner_container preload_box">
-			<div class="preloader-wrapper big active">
-				<div class="spinner-layer">
-					<div class="circle-clipper left">
-						<div class="circle"></div>
-					</div><div class="gap-patch">
-						<div class="circle"></div>
-					</div><div class="circle-clipper right">
-						<div class="circle"></div>
-					</div>
-				</div>
-			</div>
-
-			<p id="loading_reason">Loading config...</p>
-		</div>
-
-
-
 		<!-- Location switcher -->
 		<div id="location_switcher_root">
 
@@ -182,6 +140,11 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- CSS -->
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.1/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+		<link rel="stylesheet" href="./css/materialise.css" media="screen,projection"/>
+		<link rel="stylesheet" href="./css/gamemap.css"/>
 
 		<!-- Javascript -->
 		<script src="https://unpkg.com/leaflet@1.9.1/dist/leaflet.js" integrity="sha256-NDI0K41gVbWqfkkaHj15IzU7PtMoelkzyKp8TOaFQ3s=" crossorigin=""></script>
