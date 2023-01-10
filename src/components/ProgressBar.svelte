@@ -64,46 +64,46 @@
   }
 
   @keyframes indeterminate {
-    0% {
-      left: -35%;
-      right: 100%;
+        0% {
+        left: -35%;
+        right: 100%;
+        }
+        60% {
+        left: 100%;
+        right: -90%;
+        }
+        100% {
+        left: 100%;
+        right: -90%;
+        }
     }
-    60% {
-      left: 100%;
-      right: -90%;
-    }
-    100% {
-      left: 100%;
-      right: -90%;
-    }
-  }
   @-webkit-keyframes indeterminate-short {
-    0% {
-      left: -200%;
-      right: 100%;
-    }
-    60% {
-      left: 107%;
-      right: -8%;
-    }
-    100% {
-      left: 107%;
-      right: -8%;
-    }
+        0% {
+            left: -200%;
+            right: 100%;
+        }
+        60% {
+            left: 107%;
+            right: -8%;
+        }
+        100% {
+            left: 107%;
+            right: -8%;
+        }
   }
   @keyframes indeterminate-short {
-    0% {
-      left: -200%;
-      right: 100%;
-    }
-    60% {
-      left: 107%;
-      right: -8%;
-    }
-    100% {
-      left: 107%;
-      right: -8%;
-    }
+        0% {
+            left: -200%;
+            right: 100%;
+        }
+        60% {
+            left: 107%;
+            right: -8%;
+        }
+        100% {
+            left: 107%;
+            right: -8%;
+        }
   }
 
     .progress_bar {
@@ -116,11 +116,11 @@
     }
 
     .progress {
-    background-color: var(--secondary) !important;
-    box-shadow: 0 2px 2px 0px var(--shadow);
+        background-color: var(--secondary) !important;
+        box-shadow: 0 2px 2px 0px var(--shadow);
     }
 
     .progress .indeterminate {
-    background-color: var(--secondary_variant) !important;
+        background-color: var(--secondary_variant) !important;
     }
 </style>
