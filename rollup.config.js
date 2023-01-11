@@ -39,7 +39,8 @@ export default {
 	},
 	plugins: [
 		replace({
-			isProduction: production,
+			isRelease: production,
+			isDebug: !production,
 		}),
 		svelte({
 			compilerOptions: {

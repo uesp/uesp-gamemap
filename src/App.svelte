@@ -6,7 +6,6 @@
 	import ProgressBar from "./components/ProgressBar.svelte"
 	import LoadingBox from "./components/LoadingBox.svelte";
 	import ZoomWidget from "./components/ZoomWidget.svelte";
-
 	import DebugTag from "./components/DebugTag.svelte";
 
 
@@ -43,19 +42,23 @@
 
 	<ZoomWidget on:zoomclicked={zoom}/>
 
-	<DebugTag></DebugTag>
+
+
+
 
 
 	<!-- Gamemap container -->
 	<div id="gamemap"></div>
 
 
-	<!-- svelte-ignore missing-declaration -->
-	<b>Build Type: {isProduction ? "Release" : "Debug"}</b>
 
 </main>
 
-
+<!-- Show debug tag in top right corner if app is in dev mode -->
+<!-- svelte-ignore missing-declaration -->
+{#if isDebug}
+	<DebugTag/>
+{/if}
 
 <!-- Preloader component -->
 {#if loading}

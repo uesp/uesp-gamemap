@@ -333,52 +333,45 @@ export function injectCSS(cssPath) {
 	document.getElementsByTagName("head")[0].insertAdjacentHTML("beforeend","<link rel=\"stylesheet\" href=\"" + cssPath + "\" />");
 }
 
-
-/*================================================
-				   Debug mode
-================================================*/
-
-window.enableDebugging = function(){
-	document.cookie = "debugging=true";
-	console.log("Debug mode enabled!");
-}
-
 /*================================================
 				Debug print function
 ================================================*/
 
-let isDebug = getCookie("debugging") == "true";
+// if (isDebug) {
 
-if (isDebug) {
+// 	window.log = function(txt) {
 
-	window.log = function(txt) {
+// 		// only print if debugging is enabled
+// 		var canLog = (getCookie("debugging") == "true")
 
-		// only print if debugging is enabled
-		var canLog = (getCookie("debugging") == "true")
+// 		if (canLog) {
+// 			// check if payload is string
+// 			if (typeof txt === "string" || txt instanceof String) {
+// 				console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
+// 			} else {
+// 				console.log(txt);
+// 			}
+// 		}
 
-		if (canLog) {
-			// check if payload is string
-			if (typeof txt === "string" || txt instanceof String) {
-				console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
-			} else {
-				console.log(txt);
-			}
-		}
+// 	}
 
-	}
-
-} else { // disable logging
+// } else { // disable logging
 
 
 
-	// var console = {};
-	// console.log = function(){};
-	// window.console = console;
+// 	// var console = {};
+// 	// console.log = function(){};
+// 	// window.console = console;
 
-	// override print function
+// 	// override print function
 
 
-}
+
+
+// }
+
+
+console.log(isDebug);
 
 let print = {}
 print = function(){};

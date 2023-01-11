@@ -3,16 +3,14 @@
     <b>Debug</b>
 </div>
 
-
 <style>
-
     b {
         color: white;
         text-shadow: 0px 0px 6px var(--background);
     }
 
     #debug_tag {
-        opacity: 0.25;
+        opacity: 0.2;
         top: 15px;
         right: -35px;
         rotate: 45deg;
@@ -26,4 +24,3 @@
         pointer-events: none;
     }
 </style>
-
