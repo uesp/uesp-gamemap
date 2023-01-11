@@ -1288,7 +1288,7 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 	else if (nameValue == "lorebook" || nameValue == "lore book")
 	{
 		this.setIconTypeCustomListValue(76);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel - 2);
 		labelPos.val(0);
 	}
 	else if (uesp.endsWith(nameValue, "wayshrine"))
