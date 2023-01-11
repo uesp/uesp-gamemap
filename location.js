@@ -1285,7 +1285,7 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel-1);
 		labelPos.val(6);
 	}
-	else if (nameValue == "lorebook" || nameValue == "lore book")
+	else if (nameValue == "lorebook" || nameValue == "lore book" || uesp.beginsWith(nameValue, "lorebook"))
 	{
 		this.setIconTypeCustomListValue(76);
 		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel - 2);
