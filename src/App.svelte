@@ -8,20 +8,41 @@
 	import ZoomWidget from "./components/ZoomWidget.svelte";
 
 
-	// state variables
+	// import commons
+	import * as Utils from "./common/utils.js";
 
+
+	function zoom(event) {
+		console.log("ligma");
+	}
+
+
+
+
+	// state variables
 	let loading = true;
+	let loadingReason = "Loading config";
+
+	setTimeout(function() {
+		loading = false;
+		log("joe mama");
+
+	}, 5000);
+
+
 </script>
 
 <!-- App container -->
 <main id="app">
 	<h1>Svelte Testing</h1>
-	<p>jerma adadada e adad <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-	<!-- <LoadingBox reason="loading reason here"/> -->
+	<p>Testing using <a href="https://svelte.dev/tutorial">Svelte</a>.</p>
+
 	<Icon name="settings" size=80></Icon>
 	<!-- <Divider direction="vertical"></Divider>
 	<ProgressBar/> -->
-	<ZoomWidget/>
+
+
+	<ZoomWidget on:zoomclicked={zoom}/>
 
 
 
@@ -30,12 +51,19 @@
 
 </main>
 
+
+<!-- Preloader component -->
+{#if loading}
+	 <LoadingBox reason={loadingReason+"..."}/>
+{/if}
+
 <style>
 	main {
 		text-align: center;
 		padding: 1em;
 		max-width: 240px;
 		margin: 0 auto;
+		color: white;
 	}
 
 	@media (min-width: 640px) {

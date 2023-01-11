@@ -2,10 +2,14 @@
 <script>
     import Icon from "./Icon.svelte";
     import Divider from "./Divider.svelte";
+    import { createEventDispatcher } from "svelte";
+
+    const dispatch = createEventDispatcher();
 
 
     function zoomIn() {
         console.log("Zooming in");
+        dispatch("zoomclicked", "in");
     }
 
     function zoomInLongClick() {
@@ -14,6 +18,7 @@
 
     function zoomOut() {
         console.log("Zooming out");
+        dispatch("zoomclicked", "out");
     }
 </script>
 

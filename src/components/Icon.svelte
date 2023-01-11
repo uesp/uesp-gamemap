@@ -2,7 +2,7 @@
 
 <script>
     export let name = "person";  // default: person icon
-    export let size = 32;        // default: 32px
+    export let size = 24;        // default: 24px
 
     // parse string sizes into css size
     if (isNaN(size)) {

@@ -21,11 +21,11 @@ export function isMobileDevice() {
 export function getJSON(url, callback) {
 	try {
 		fetch(url)
-			.then((response) => response.text()) 
+			.then((response) => response.text())
 			.then((data) => {
 				try {
 					// remove comments before parsing
-					callback(null, JSON.parse((data.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m))));	
+					callback(null, JSON.parse((data.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m))));
 				} catch (error) {
 					console.log(error);
 					callback(error, null);
@@ -45,7 +45,7 @@ export function getURLParams(paramType){
 	let urlParams;
 
 	if (paramType == null || paramType == Constants.PARAM_TYPE_QUERY) {
-		
+
 		urlParams = location.search.replace("#\?", '');
 	} else {
 		urlParams = location.hash.replace("#\?", '');
@@ -76,24 +76,51 @@ export function getCookie(cname) {
 }
 
 /*================================================
-				Debug log function
+				Debug print function
 ================================================*/
 
-window.log = function(txt) {
+let isDebug = getCookie("debugging") == "true";
 
-	// only print if debugging is enabled
-	var canLog = (getCookie("debugging") == "true")
-	
-	if (canLog) {
-		// check if payload is string
-		if (typeof txt === "string" || txt instanceof String) {
-			console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
-		} else {
-			console.log(txt);
+if (isDebug) {
+
+	window.log = function(txt) {
+
+		// only print if debugging is enabled
+		var canLog = (getCookie("debugging") == "true")
+
+		if (canLog) {
+			// check if payload is string
+			if (typeof txt === "string" || txt instanceof String) {
+				console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
+			} else {
+				console.log(txt);
+			}
 		}
+
 	}
 
+} else { // disable logging
+
+
+
+	// var console = {};
+	// console.log = function(){};
+	// window.console = console;
+
+		var print = {}
+	print = function(){};
+	window.print = print;
+
 }
+
+
+
+
+
+
+
+
+
 
 /*================================================
 			  Is variable null function
@@ -133,7 +160,7 @@ export function cloneObject(obj){
 		copy.setTime(obj.getTime());
 		return copy;
 	}
-	
+
 	// Handle Array
 	if (obj instanceof Array) {
 		var copy = [];
@@ -142,7 +169,7 @@ export function cloneObject(obj){
 		}
 		return copy;
 	}
-	
+
 	// Handle Object
 	if (obj instanceof Object) {
 		var copy = {};
@@ -151,7 +178,7 @@ export function cloneObject(obj){
 		}
 		return copy;
 	}
-	
+
 	throw new Error("Unable to clone object! Its type is not supported.");
 }
 
@@ -162,10 +189,10 @@ export function cloneObject(obj){
 export function getFormData(form) {
 	formValues = {};
 	if (form == null) return formValues;
-	
+
 	$.each(form.serializeArray(), function(i, field) {
 		let fields = field.name.split('.');
-		
+
 		if (fields.length == 1) {
 			formValues[field.name] = field.value;
 		}
@@ -181,7 +208,7 @@ export function getFormData(form) {
 			log("Too many nested levels in form name'" + field.name + "'!");
 		}
 	});
-	
+
 	return formValues;
 }
 
@@ -209,11 +236,11 @@ export function distToSegment(px, py, x1, y1, x2, y2) {
 
 	let length2 = pointDistanceSquare(x1, y1, x2, y2);
 	if (length2 == 0) return pointDistanceSquare(px, py, x1, y1);
-	
+
 	let t = ((px - x1) * (x2 - x1) + (py - y1) * (y2 - y1)) / length2;
 	if (t < 0) return pointDistanceSquare(px, py, x1, y1);
 	if (t > 1) return pointDistanceSquare(px, py, x2, y2);
-	
+
 	return Math.sqrt(pointDistanceSquare(px, py, x1 + t * (x2 - x1), y1 + t * (y2 - y1)));
 }
 
@@ -273,11 +300,11 @@ export function fireClick(node){
     if (document.createEvent) {
         var evt = document.createEvent('MouseEvents');
         evt.initEvent('click', true, false);
-        node.dispatchEvent(evt);    
+        node.dispatchEvent(evt);
     } else if (document.createEventObject) {
-        node.fireEvent('onclick') ; 
+        node.fireEvent('onclick') ;
     } else if (typeof node.onclick == 'function') {
-        node.onclick(); 
+        node.onclick();
     }
 }
 
@@ -304,20 +331,20 @@ export function toNormalised(coord) {
 export function RGBAtoHex(color) {
 	if (/^rgb/.test(color)) {
 		const rgba = color.replace(/^rgba?\(|\s+|\)$/g, '').split(',');
-	
+
 		// rgb to hex
 		// eslint-disable-next-line no-bitwise
 		let hex = `#${((1 << 24) + (parseInt(rgba[0], 10) << 16) + (parseInt(rgba[1], 10) << 8) + parseInt(rgba[2], 10))
 		  .toString(16)
 		  .slice(1)}`;
-	
+
 		// added alpha param if exists
 		if (rgba[4]) {
 		  const alpha = Math.round(0o1 * 255);
 		  const hexAlpha = (alpha + 0x10000).toString(16).substr(-2).toUpperCase();
 		  hex += hexAlpha;
 		}
-	
+
 		return hex;
 	  }
 	  return color;
@@ -377,3 +404,12 @@ export function injectCSS(cssPath) {
 	document.getElementsByTagName("head")[0].insertAdjacentHTML("beforeend","<link rel=\"stylesheet\" href=\"" + cssPath + "\" />");
 }
 
+
+/*================================================
+				   Debug mode
+================================================*/
+
+window.enableDebugging = function(){
+	document.cookie = "debugging=true";
+	console.log("Debug mode enabled!");
+}

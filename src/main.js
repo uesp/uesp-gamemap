@@ -331,15 +331,6 @@ if (!(Utils.getCookie("debugging") == "true")) {
 }
 
 /*================================================
-				   Debug mode
-================================================*/
-
-window.enableDebugging = function(){
-	document.cookie = "debugging=true";
-	console.log("Debug mode enabled!");
-}
-
-/*================================================
 				Location Switcher
 ================================================*/
 
