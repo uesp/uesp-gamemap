@@ -7,6 +7,8 @@
 	import LoadingBox from "./components/LoadingBox.svelte";
 	import ZoomWidget from "./components/ZoomWidget.svelte";
 
+	import DebugTag from "./components/DebugTag.svelte";
+
 
 	// import commons
 	import * as Utils from "./common/utils.js";
@@ -40,6 +42,8 @@
 
 
 	<ZoomWidget on:zoomclicked={zoom}/>
+
+	<DebugTag></DebugTag>
 
 
 	<!-- Gamemap container -->
