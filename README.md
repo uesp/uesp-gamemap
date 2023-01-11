@@ -30,7 +30,7 @@ Then run in browser:
 npm run dev
 ```
 
-The gamemap should now be running on [localhost:8080](http://localhost:8080).
+The gamemap should now be running on [localhost:8080](http://localhost:8080). Any code changes will be reflected in the browser automatically.
 
 ## Release
 
@@ -38,6 +38,12 @@ To create a release optimised version:
 
 ```bash
 npm run build
+```
+
+To run the release build in your browser:
+
+```bash
+npm run start
 ```
 
 ## Licensing

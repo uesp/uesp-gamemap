@@ -16,9 +16,6 @@
 		console.log("ligma");
 	}
 
-
-
-
 	// state variables
 	let loading = true;
 	let loadingReason = "Loading config";
@@ -45,11 +42,15 @@
 	<ZoomWidget on:zoomclicked={zoom}/>
 
 
-
 	<!-- Gamemap container -->
 	<div id="gamemap"></div>
 
+
+	<!-- svelte-ignore missing-declaration -->
+	<b>Build Type: {isProduction ? "Release" : "Debug"}</b>
+
 </main>
+
 
 
 <!-- Preloader component -->

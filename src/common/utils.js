@@ -76,53 +76,6 @@ export function getCookie(cname) {
 }
 
 /*================================================
-				Debug print function
-================================================*/
-
-let isDebug = getCookie("debugging") == "true";
-
-if (isDebug) {
-
-	window.log = function(txt) {
-
-		// only print if debugging is enabled
-		var canLog = (getCookie("debugging") == "true")
-
-		if (canLog) {
-			// check if payload is string
-			if (typeof txt === "string" || txt instanceof String) {
-				console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
-			} else {
-				console.log(txt);
-			}
-		}
-
-	}
-
-} else { // disable logging
-
-
-
-	// var console = {};
-	// console.log = function(){};
-	// window.console = console;
-
-		var print = {}
-	print = function(){};
-	window.print = print;
-
-}
-
-
-
-
-
-
-
-
-
-
-/*================================================
 			  Is variable null function
 ================================================*/
 
@@ -242,30 +195,6 @@ export function distToSegment(px, py, x1, y1, x2, y2) {
 	if (t > 1) return pointDistanceSquare(px, py, x2, y2);
 
 	return Math.sqrt(pointDistanceSquare(px, py, x1 + t * (x2 - x1), y1 + t * (y2 - y1)));
-}
-
-/*================================================
-		      Sanitise HTML functions
-================================================*/
-
-const ESC_MAP = {
-	'&': '&amp;',
-	'<': '&lt;',
-	'>': '&gt;',
-	'"': '&quot;',
-	"'": '&#39;'
-};
-
-export function escapeHTML(unsafeStr, forAttribute) {
-	if (unsafeStr == null) return "";
-	if (unsafeStr.replace == null) return unsafeStr;
-	return unsafeStr.replace(forAttribute ? /[&<>'"]/g : /[&<>]/g, function(c) {
-	    return ESC_MAP[c];
-	});
-}
-
-export function escapeAttribute(unsafeStr) {
-	return escapeHTML(unsafeStr, true);
 }
 
 /*================================================
@@ -413,3 +342,48 @@ window.enableDebugging = function(){
 	document.cookie = "debugging=true";
 	console.log("Debug mode enabled!");
 }
+
+/*================================================
+				Debug print function
+================================================*/
+
+let isDebug = getCookie("debugging") == "true";
+
+if (isDebug) {
+
+	window.log = function(txt) {
+
+		// only print if debugging is enabled
+		var canLog = (getCookie("debugging") == "true")
+
+		if (canLog) {
+			// check if payload is string
+			if (typeof txt === "string" || txt instanceof String) {
+				console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
+			} else {
+				console.log(txt);
+			}
+		}
+
+	}
+
+} else { // disable logging
+
+
+
+	// var console = {};
+	// console.log = function(){};
+	// window.console = console;
+
+	// override print function
+
+
+}
+
+let print = {}
+print = function(){};
+window.print = print;
+print = console.log.bind(console);
+window.print = print;
+
+print("test");
