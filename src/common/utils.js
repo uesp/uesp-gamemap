@@ -379,4 +379,4 @@ window.print = print;
 print = console.log.bind(console);
 window.print = print;
 
-print("test");
+print("printed beans");

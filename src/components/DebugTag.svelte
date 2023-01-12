@@ -10,7 +10,7 @@
     }
 
     #debug_tag {
-        opacity: 0.2;
+        opacity: 0.225;
         top: 15px;
         right: -35px;
         rotate: 45deg;

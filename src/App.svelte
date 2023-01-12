@@ -23,11 +23,23 @@
 
 	setTimeout(function() {
 		loading = false;
-		log("joe mama");
+		print("joe mama");
 
 	}, 5000);
 
 
+	// Enable google analytics on release mode
+	if (isRelease) {
+		let _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-1386039-6']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			let ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			let s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	}
 </script>
 
 <!-- App container -->
@@ -41,11 +53,6 @@
 
 
 	<ZoomWidget on:zoomclicked={zoom}/>
-
-
-
-
-
 
 	<!-- Gamemap container -->
 	<div id="gamemap"></div>
