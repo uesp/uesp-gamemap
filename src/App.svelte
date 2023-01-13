@@ -14,39 +14,27 @@
 	// set up state variables
 	print("Initialising gamemap...");
 	let isLoading = true;
-	let loadingReason = "Loading map";
+	let loadingReason = "";
 	let isError = false;
 	let errorReason = "";
+	$: isLoaded = !isError && !isLoading;
 
 	// get game name from URL
-	let gameParam = (window.location.pathname.replace(/\\|\//g,'') != "") ? window.location.pathname.replace(/\\|\//g,'') : null;
-	print("Game parameter: " + gameParam);
+	// note: on localhost, use http://localhost:8080/?eso to load a certain map
+	let gameParam = (window.location.pathname.replace(/\\|\//g,'') != "") ? window.location.pathname.replace(/\\|\//g,'') : (window.location.search != null) ? window.location.search.replace("?", "") : null;
+	setLoading("Loading map");
+
+	print(window.location);
 
 	if (gameParam != null && gameParam.match(/^([a-z]+)/)) {
+		print("Game parameter was: " + gameParam);
+
+		// begin getting map config
 
 	} else {
+		print.warn("Game parameter was missing or invalid.");
 		setError("No valid game provided.");
 		// TODO: maybe show list of games here to select
-	}
-
-
-	function setLoading(reason) {
-		if (reason == false) {
-			isLoading = reason;
-		} else {
-			isLoading = true;
-			loadingReason = reason;
-		}
-	}
-
-	function setError(reason) {
-		if (reason == false) {
-			isError = reason;
-		} else {
-			setLoading(false);
-			isError = true;
-			errorReason = reason;
-		}
 	}
 
 	// if (gameParam != null && gameParam != "" && ) { // check if game name is valid
@@ -97,7 +85,6 @@
 	// 				})
 	// 			} else { showError("Provided game doesn't exist. Please check the URL.");}
 	// 		} else { showError("There was an error getting the default map config." + error);}})
-	// } else { showError("No valid game provided."); }
 
 
 
@@ -115,6 +102,26 @@
 		print("joe mama");
 	}, 3000);
 
+
+	function setLoading(reason) {
+		if (reason == false) {
+			isLoading = reason;
+		} else {
+			isLoading = true;
+			loadingReason = reason;
+		}
+	}
+
+	function setError(reason) {
+		if (reason == false) {
+			isError = reason;
+		} else {
+			setLoading(false);
+			isError = true;
+			errorReason = reason;
+			print.error(reason);
+		}
+	}
 
 	// Enable google analytics on release mode
 	if (isRelease) {

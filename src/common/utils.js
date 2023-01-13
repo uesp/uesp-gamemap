@@ -23,9 +23,12 @@ if (isDebug) {
 	let print = {};
 	print = function(){};
 	window.print = print;
-	print = window.console = window.console.log.bind(window.console.log, "%c[Debug]%o", "color: black; font-weight: bold; padding: 2px; background: aqua;");
+	print = window.console.log = window.console.log.bind(window.console.log, "%c[Debug]%o", "color: black; font-weight: bold; padding: 2px; background: aqua;");
+	print.warn = window.console.warn = window.console.warn.bind(window.console.warn, "%c[Warn]%o", "color: black; font-weight: bold; padding: 2px; background: yellow;");
+	print.error = window.console.error = window.console.error.bind(window.console.error, "%c[Error]%o", "color: black; font-weight: bold; padding: 2px; background: palevioletred ;");
 	window.print = print;
-
+	window.print.warn = print.warn;
+	window.print.error = print.error;
 } else {
 	// disable console logging entirely
 	let console = {};

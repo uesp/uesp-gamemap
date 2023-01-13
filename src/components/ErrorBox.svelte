@@ -13,7 +13,7 @@
         <Icon name="error" size="medium"></Icon><br>
         <b style="margin-bottom: 10px;">Something went wrong.</b>
     </span>
-    <p></p>
+    <p/>
     <Divider direction="horizontal"/>
     <p id="error_box_reason">{reason}</p>
 </PreloadBox>
