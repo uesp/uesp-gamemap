@@ -5,7 +5,7 @@
 </script>
 
 {#if direction == "horizontal"}
-     <hr>
+    <hr id="horizontal_divider">
 {:else if  direction == "vertical"}
     <div id="vertical_divider"></div>
 {/if}

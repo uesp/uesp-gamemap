@@ -22,64 +22,8 @@ var pairings = [];
 log("Page initialising...");
 $(document).ready(function() {
 
-	// load gamemap
-	log("Initialising gamemap...");
-	loading("map");
-
-	// get game name from URL
-	let gameParam = window.location.pathname.replace(/\\|\//g,'')
-	log("game: " +gameParam);
-
-	if (gameParam != null && gameParam != "" && gameParam.match(/^([a-z]+)/)) { // check if game name is valid
-
-		// we've got a valid game, now to check whether it has a valid config file, and merge with the client's default
-		log("URL has game param!");
 
 
-
-		// get default map config
-		Utils.getJSON(Constants.DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
-			if (error == null) {
-
-				// set up default map config
-				window.DEFAULT_MAP_CONFIG = defaultMapConfig;
-
-				// format: /assets/maps/{gameParam}/config/{gameParam}-config.json
-				// example: /assets/maps/eso/config/eso-config.json
-				let configURL = (Constants.MAP_ASSETS_DIR + gameParam + "/config/" + gameParam + "-" + Constants.MAP_CONFIG_FILENAME);
-				log("Getting map config at " + configURL + "...");
-
-				// check if provided map's map config exists before continuing
-				if (Utils.doesFileExist(configURL)) {
-
-					Utils.getJSON(configURL, function(error, object) {
-						if (error !== null) {
-							showError("Could not load map: " + error);
-						} else {
-							log("Imported map config successfully!");
-							mapConfig = object;
-
-							log("Merging with default map config...")
-							let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
-							mapConfig = mergedMapConfig;
-
-							// set up map config assets
-							mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
-							mapConfig.missingMapTilePath = mapConfig.assetsPath + "images/outofrange.jpg";
-							mapConfig.iconPath = mapConfig.assetsPath + "icons/";
-							mapConfig.imagesPath = mapConfig.assetsPath + "images/";
-							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/"; // note: sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this.
-
-							log("Completed merged map config:")
-							log(mapConfig);
-
-							// load map
-							loadGamemap(mapConfig);
-						}
-					})
-				} else { showError("Provided game doesn't exist. Please check the URL.");}
-			} else { showError("There was an error getting the default map config." + error);}})
-	} else { showError("No valid game provided."); }
 
 	// bind views from DOM
 	var searchbox = document.getElementById("searchbox");

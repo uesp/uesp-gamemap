@@ -23,7 +23,7 @@ if (isDebug) {
 	let print = {};
 	print = function(){};
 	window.print = print;
-	print = window.console = window.console.log.bind(window.console, "%c[Debug]%o", "color: black; font-weight: bold; padding: 2px; background: aqua;");
+	print = window.console = window.console.log.bind(window.console.log, "%c[Debug]%o", "color: black; font-weight: bold; padding: 2px; background: aqua;");
 	window.print = print;
 
 } else {

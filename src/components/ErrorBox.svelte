@@ -5,20 +5,21 @@
     import PreloadBox from "./PreloadBox.svelte";
     import Icon from "./Icon.svelte";
     import Divider from "./Divider.svelte";
-    export let errorReason = "Try refreshing and try again.";
+    export let reason = "Try refreshing and try again.";
 </script>
 
 <PreloadBox>
     <span class="error_title">
         <Icon name="error" size="medium"></Icon><br>
-        <b>Something went wrong.</b>
+        <b style="margin-bottom: 10px;">Something went wrong.</b>
     </span>
-
+    <p></p>
     <Divider direction="horizontal"/>
-    <p id="error_box_reason">{errorReason}</p>
+    <p id="error_box_reason">{reason}</p>
 </PreloadBox>
 
 <style>
+
     .error_title {
         color: var(--error_dark);
         vertical-align: middle;

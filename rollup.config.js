@@ -30,7 +30,7 @@ function serve() {
 }
 
 export default {
-	input: 'public/index.js',
+	input: 'public/mount.js',
 	output: {
 		sourcemap: true,
 		format: 'iife',
