@@ -1,4 +1,19 @@
+<!-- @component
+## Description
+ The main app component file for the gamemap,
+ see @gamemap.js for actual map viewer implementation.
+
+## Author(s)
+- Dave Humphrey <dave@uesp.net> (21st Jan 2014)
+- Thal-J <thal-j@uesp.net> (16th Aug 2022)
+-->
+
 <script>
+
+	/*================================================
+					   Initialisation
+	================================================*/
+
 	// import UI components
 	import ErrorBox from "./components/ErrorBox.svelte";
 	import Icon from "./components/Icon.svelte";
@@ -10,13 +25,16 @@
 
 	// import commons
 	import * as Utils from "./common/utils.js";
+	import * as Constants from "./common/constants.js";
+	import Gamemap from "./map/gamemap.js";
 
 	// set up state variables
-	print("Initialising gamemap...");
+	print("Initialising app...");
 	let isLoading = true;
 	let loadingReason = "";
 	let isError = false;
 	let errorReason = "";
+	let mapConfig = null;
 	$: isLoaded = !isError && !isLoading;
 
 	// get game name from URL
@@ -24,68 +42,75 @@
 	let gameParam = (window.location.pathname.replace(/\\|\//g,'') != "") ? window.location.pathname.replace(/\\|\//g,'') : (window.location.search != null) ? window.location.search.replace("?", "") : null;
 	setLoading("Loading map");
 
-	print(window.location);
-
 	if (gameParam != null && gameParam.match(/^([a-z]+)/)) {
 		print("Game parameter was: " + gameParam);
 
 		// begin getting map config
+		Utils.getJSON(Constants.DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
+			if (!error) {
 
+				// set up default map config
+				window.DEFAULT_MAP_CONFIG = defaultMapConfig;
+
+				// format: /assets/maps/{gameParam}/config/{gameParam}-config.json
+				// example: /assets/maps/eso/config/eso-config.json
+				let configURL = (Constants.MAP_ASSETS_DIR + gameParam + "/config/" + gameParam + "-" + Constants.MAP_CONFIG_FILENAME);
+				setLoading("Loading config");
+				print("Getting map config at " + configURL + "...");
+
+				// check if provided map's map config exists before continuing
+				if (Utils.doesFileExist(configURL)) {
+
+					Utils.getJSON(configURL, function(error, object) {
+						if (error !== null) {
+							setError("Could not load map: " + error);
+						} else {
+							print("Imported map config successfully.");
+							mapConfig = object;
+
+							print("Merging with default map config...")
+							let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
+							mapConfig = mergedMapConfig;
+
+							// set up map config assets
+							mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
+							mapConfig.missingMapTilePath = mapConfig.assetsPath + "images/outofrange.jpg";
+							mapConfig.iconPath = mapConfig.assetsPath + "icons/";
+							mapConfig.imagesPath = mapConfig.assetsPath + "images/";
+							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/"; // note: sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this.
+
+							print("Completed merged map config:")
+							print(mapConfig);
+
+							// load map
+							loadGamemap(mapConfig);
+						}
+					})
+				} else { setError("Provided game doesn't exist. Please check the URL.");}
+			} else { setError("There was an error getting the default map config." + error);}})
 	} else {
 		print.warn("Game parameter was missing or invalid.");
 		setError("No valid game provided.");
 		// TODO: maybe show list of games here to select
 	}
 
-	// if (gameParam != null && gameParam != "" && ) { // check if game name is valid
+	/*================================================
+						Gamemap
+	================================================*/
 
-	// 	// we've got a valid game, now to check whether it has a valid config file, and merge with the client's default
-	// 	log("URL has game param!");
+	function loadGamemap(mapConfig) {
 
+		// set up callbacks
+		var mapCallbacks = {
+			onWorldsLoaded,
+			onPermissionsLoaded,
+			onWorldChanged,
+			hideMenus,
+			onMapLoaded,
+		};
 
-	// 	// get default map config
-	// 	Utils.getJSON(Constants.DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
-	// 		if (error == null) {
-
-	// 			// set up default map config
-	// 			window.DEFAULT_MAP_CONFIG = defaultMapConfig;
-
-	// 			// format: /assets/maps/{gameParam}/config/{gameParam}-config.json
-	// 			// example: /assets/maps/eso/config/eso-config.json
-	// 			let configURL = (Constants.MAP_ASSETS_DIR + gameParam + "/config/" + gameParam + "-" + Constants.MAP_CONFIG_FILENAME);
-	// 			log("Getting map config at " + configURL + "...");
-
-	// 			// check if provided map's map config exists before continuing
-	// 			if (Utils.doesFileExist(configURL)) {
-
-	// 				Utils.getJSON(configURL, function(error, object) {
-	// 					if (error !== null) {
-	// 						showError("Could not load map: " + error);
-	// 					} else {
-	// 						log("Imported map config successfully!");
-	// 						mapConfig = object;
-
-	// 						log("Merging with default map config...")
-	// 						let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
-	// 						mapConfig = mergedMapConfig;
-
-	// 						// set up map config assets
-	// 						mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
-	// 						mapConfig.missingMapTilePath = mapConfig.assetsPath + "images/outofrange.jpg";
-	// 						mapConfig.iconPath = mapConfig.assetsPath + "icons/";
-	// 						mapConfig.imagesPath = mapConfig.assetsPath + "images/";
-	// 						mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/"; // note: sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this.
-
-	// 						log("Completed merged map config:")
-	// 						log(mapConfig);
-
-	// 						// load map
-	// 						loadGamemap(mapConfig);
-	// 					}
-	// 				})
-	// 			} else { showError("Provided game doesn't exist. Please check the URL.");}
-	// 		} else { showError("There was an error getting the default map config." + error);}})
-
+		window.gamemap = new Gamemap('gamemap', mapConfig, mapCallbacks);
+	}
 
 
 
@@ -109,6 +134,7 @@
 		} else {
 			isLoading = true;
 			loadingReason = reason;
+			print(loadingReason+"...");
 		}
 	}
 
@@ -164,6 +190,10 @@
 
 {#if isError}
 	 <ErrorBox reason={errorReason}/>
+{/if}
+
+{#if isLoading}
+	 <ProgressBar/>
 {/if}
 
 <!-- Show debug tag in top right corner if app is in dev mode -->

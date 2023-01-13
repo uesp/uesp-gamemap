@@ -853,12 +853,12 @@ export default class Gamemap {
 	 * Convert leaflet LatLngs to XY / normalised coordinates.
 	 * @param {Object} latLng - the leaflet coordinate object
 	 */
-	toXY(latLng, isDebug) {
+	toXY(latLng, debug) {
 
 		var coords;
 
 		// are we given a debug flag to always output the leaflet XY coords?
-		if (isDebug) {
+		if (debug) {
 			return RC.project(latLng);
 		}
 

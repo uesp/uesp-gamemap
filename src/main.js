@@ -1,14 +1,4 @@
-/**
- * @name main.js
- * @author Thal-J <thal-j@uesp.net> (16th Aug 2022)
- * @summary Contains the UI code for the gamemap.
- *
- * @see gamemap.js for actual map viewer implementation.
- */
 
-import * as Utils from "./common/utils.js";
-import * as Constants from "./common/constants.js";
-import Gamemap from "./map/gamemap.js";
 
 /*================================================
 				 Initialisation
@@ -48,23 +38,6 @@ $(document).ready(function() {
 	});
 });
 
-/*================================================
-					  Gamemap
-================================================*/
-
-function loadGamemap(mapConfig) {
-
-	// set up callbacks
-	var mapCallbacks = {
-		onWorldsLoaded,
-		onPermissionsLoaded,
-		onWorldChanged,
-		hideMenus,
-		onMapLoaded,
-	};
-
-	window.gamemap = new Gamemap('gamemap', mapConfig, mapCallbacks);
-}
 
 function onWorldsLoaded(mapWorlds) {
 
