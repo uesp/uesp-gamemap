@@ -30,7 +30,7 @@ function serve() {
 }
 
 export default {
-	input: 'src/run.js',
+	input: 'public/index.js',
 	output: {
 		sourcemap: true,
 		format: 'iife',
