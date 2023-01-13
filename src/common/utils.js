@@ -15,6 +15,30 @@ export function isMobileDevice() {
 }
 
 /*================================================
+				Debug print function
+================================================*/
+
+if (isDebug) {
+	// override print function to be custom console log
+	let print = {};
+	print = function(){};
+	window.print = print;
+	print = window.console = window.console.log.bind(window.console, "%c[Debug]%o", "color: black; font-weight: bold; padding: 2px; background: aqua;");
+	window.print = print;
+
+} else {
+	// disable console logging entirely
+	let console = {};
+	console.log = function(){};
+	window.console = console;
+	let print = {};
+	print = function(){};
+	window.print = print;
+	print = console.log.bind(console);
+	window.print = print;
+}
+
+/*================================================
 			JSON object parsing function
 ================================================*/
 
@@ -246,14 +270,6 @@ export function getUniqueListFrom(arr, key) {
 }
 
 /*================================================
-	  	  To normalised coords function
-================================================*/
-
-export function toNormalised(coord) {
-    return (coord / Constants.LEGACY_MAXIMUM_XY).toFixed(3);
-}
-
-/*================================================
 	  		RGBA to hex colour function
 ================================================*/
 
@@ -331,28 +347,4 @@ export function changeFavIcon(favIconURL) {
 export function injectCSS(cssPath) {
 	cssPath = cssPath + "?" + Math.random(); // ensure that the custom css is not cached and is redownloaded
 	document.getElementsByTagName("head")[0].insertAdjacentHTML("beforeend","<link rel=\"stylesheet\" href=\"" + cssPath + "\" />");
-}
-
-/*================================================
-				Debug print function
-================================================*/
-
-if (isDebug) {
-	// override print function to be custom console log
-	let print = {};
-	print = function(){};
-	window.print = print;
-	print = window.console = window.console.log.bind(window.console, "%c[Debug] %s", "color: aqua; font-weight: bold; padding: 2px; text-shadow: 0px 0px 4px black;");
-	window.print = print;
-
-} else {
-	// disable console logging entirely
-	let console = {};
-	console.log = function(){};
-	window.console = console;
-	let print = {};
-	print = function(){};
-	window.print = print;
-	print = console.log.bind(console);
-	window.print = print;
 }

@@ -8,7 +8,6 @@
 	import ZoomWidget from "./components/ZoomWidget.svelte";
 	import DebugTag from "./components/DebugTag.svelte";
 
-
 	// import commons
 	import * as Utils from "./common/utils.js";
 
@@ -24,7 +23,7 @@
 	setTimeout(function() {
 		loading = false;
 		print("joe mama");
-	}, 5000);
+	}, 3000);
 
 
 	// Enable google analytics on release mode
