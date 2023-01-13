@@ -337,46 +337,22 @@ export function injectCSS(cssPath) {
 				Debug print function
 ================================================*/
 
-// if (isDebug) {
+if (isDebug) {
+	// override print function to be custom console log
+	let print = {};
+	print = function(){};
+	window.print = print;
+	print = window.console = window.console.log.bind(window.console, "%c[Debug] %s", "color: aqua; font-weight: bold; padding: 2px; text-shadow: 0px 0px 4px black;");
+	window.print = print;
 
-// 	window.log = function(txt) {
-
-// 		// only print if debugging is enabled
-// 		var canLog = (getCookie("debugging") == "true")
-
-// 		if (canLog) {
-// 			// check if payload is string
-// 			if (typeof txt === "string" || txt instanceof String) {
-// 				console.log("%cdebug: " + txt, 'color: aqua; font-weight: bold;');
-// 			} else {
-// 				console.log(txt);
-// 			}
-// 		}
-
-// 	}
-
-// } else { // disable logging
-
-
-
-// 	// var console = {};
-// 	// console.log = function(){};
-// 	// window.console = console;
-
-// 	// override print function
-
-
-
-
-// }
-
-
-console.log(isDebug);
-
-let print = {}
-print = function(){};
-window.print = print;
-print = console.log.bind(console);
-window.print = print;
-
-print("printed beans");
+} else {
+	// disable console logging entirely
+	let console = {};
+	console.log = function(){};
+	window.console = console;
+	let print = {};
+	print = function(){};
+	window.print = print;
+	print = console.log.bind(console);
+	window.print = print;
+}

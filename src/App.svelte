@@ -24,13 +24,12 @@
 	setTimeout(function() {
 		loading = false;
 		print("joe mama");
-
 	}, 5000);
 
 
 	// Enable google analytics on release mode
 	if (isRelease) {
-		let _gaq = _gaq || [];
+		let _gaq = [];
 		_gaq.push(['_setAccount', 'UA-1386039-6']);
 		_gaq.push(['_trackPageview']);
 
