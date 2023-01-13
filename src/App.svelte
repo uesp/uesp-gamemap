@@ -5,8 +5,7 @@
 
 ## Author(s)
 - Dave Humphrey <dave@uesp.net> (21st Jan 2014)
-- Thal-J <thal-j@uesp.net> (16th Aug 2022)
--->
+- Thal-J <thal-j@uesp.net> (16th Aug 2022) -->
 
 <script>
 
@@ -95,38 +94,22 @@
 	}
 
 	/*================================================
-						Gamemap
+						  Gamemap
 	================================================*/
 
 	function loadGamemap(mapConfig) {
 
 		// set up callbacks
-		var mapCallbacks = {
-			onWorldsLoaded,
-			onPermissionsLoaded,
-			onWorldChanged,
-			hideMenus,
-			onMapLoaded,
+		let mapCallbacks = {
+			// onWorldsLoaded,
+			// onPermissionsLoaded,
+			// onWorldChanged,
+			// hideMenus,
+			// onMapLoaded,
 		};
 
 		window.gamemap = new Gamemap('gamemap', mapConfig, mapCallbacks);
 	}
-
-
-
-
-
-
-	function zoom(event) {
-		console.log("ligma");
-	}
-
-
-	setTimeout(function() {
-		isLoading = false;
-		print("joe mama");
-	}, 3000);
-
 
 	function setLoading(reason) {
 		if (reason == false) {
@@ -149,6 +132,18 @@
 		}
 	}
 
+	/*================================================
+						Callbacks
+	================================================*/
+
+	function zoom(event) {
+		console.log("ligma");
+	}
+
+	/*================================================
+						Analytics
+	================================================*/
+
 	// Enable google analytics on release mode
 	if (isRelease) {
 		let _gaq = [];
@@ -165,58 +160,32 @@
 
 <!-- App container -->
 <main id="app">
-	<h1>Svelte Testing</h1>
-	<p>Testing using <a href="https://svelte.dev/tutorial">Svelte</a>.</p>
-
+	<h1>Svelte Gamemap</h1>
 	<Icon name="settings" size=80></Icon>
-	<!-- <Divider direction="vertical"></Divider>
-	<ProgressBar/> -->
-
-
 	<ZoomWidget on:zoomclicked={zoom}/>
 
 	<!-- Gamemap container -->
 	<div id="gamemap"></div>
 
+	<!-- Preload components -->
+	{#if isLoading}
+		<LoadingBox reason={loadingReason+"..."}/>
+	{/if}
 
+	{#if isError}
+		<ErrorBox reason={errorReason}/>
+	{/if}
+
+	{#if isLoading}
+		<ProgressBar/>
+	{/if}
+
+	<!-- Show debug tag in top right corner if app is in dev mode -->
+	<!-- svelte-ignore missing-declaration -->
+	{#if isDebug}
+		<DebugTag/>
+	{/if}
 </main>
 
-
-
-<!-- Preload components -->
-{#if isLoading}
-	 <LoadingBox reason={loadingReason+"..."}/>
-{/if}
-
-{#if isError}
-	 <ErrorBox reason={errorReason}/>
-{/if}
-
-{#if isLoading}
-	 <ProgressBar/>
-{/if}
-
-<!-- Show debug tag in top right corner if app is in dev mode -->
-<!-- svelte-ignore missing-declaration -->
-{#if isDebug}
-	<DebugTag/>
-{/if}
-
-
-
-
-<style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-		color: white;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
-</style>
+<aside id="editor"></aside>
+<aside id="drawer"></aside>

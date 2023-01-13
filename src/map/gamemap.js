@@ -53,7 +53,7 @@ export default class Gamemap {
 			// set up css
 			if (this.mapConfig.hasCustomFavIcon) { Utils.changeFavIcon(mapConfig.imagesPath + "favicon.ico"); }
 			if (this.mapConfig.bgColour) { $("#"+mapRootID).css("background-color", mapConfig.bgColour); }
-			if (this.mapConfig.hasCustomCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; log ("Loading custom map css: " + cssPath); Utils.injectCSS(cssPath);}
+			if (this.mapConfig.hasCustomCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; print("Loading custom map css: " + cssPath); Utils.injectCSS(cssPath);}
 
 			// set the default map info
 			this.mapWorlds = {};
@@ -337,7 +337,7 @@ export default class Gamemap {
 		let queryParams = {};
 		queryParams.action = "get_worlds";
 		queryParams.db = mapConfig.database;
-		loading("world");
+		//loading("world");
 
 		if (this.isHiddenLocsShown()) {
 			queryParams.showhidden = 1;
@@ -1344,7 +1344,7 @@ export default class Gamemap {
 	// check if user has editing permissions
 	checkPermissions() {
 
-		loading("permissions");
+		//loading("permissions");
 
 		let queryParams = {};
 		let self = this;
