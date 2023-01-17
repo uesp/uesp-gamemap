@@ -133,7 +133,7 @@ export default class Gamemap {
 	 */
 	setMapState(mapState) {
 
-		log("Setting map state!");
+		print("Setting map state!");
 
 		// remove previous tiles
 		if (tileLayer != null) {
@@ -274,7 +274,7 @@ export default class Gamemap {
 			mapLink += '&';
 		}
 
-		//(this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) ? log(Number(newMapState.coords[0]).toFixed(3)) : Math.trunc(newMapState.coords[0]);
+		//(this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) ? print(Number(newMapState.coords[0]).toFixed(3)) : Math.trunc(newMapState.coords[0]);
 
 		mapLink += 'x=' + newMapState.coords[0];
 		mapLink += '&y=' + newMapState.coords[1];
@@ -337,7 +337,6 @@ export default class Gamemap {
 		let queryParams = {};
 		queryParams.action = "get_worlds";
 		queryParams.db = mapConfig.database;
-		//loading("world");
 
 		if (this.isHiddenLocsShown()) {
 			queryParams.showhidden = 1;
@@ -402,7 +401,7 @@ export default class Gamemap {
 
 		if (destID > 0) { // is this destination a world?
 			let worldID = destID;
-			log(worldID);
+			print(worldID);
 			if (this.isWorldValid(worldID)) {
 
 				let mapState = new MapState();
@@ -413,8 +412,8 @@ export default class Gamemap {
 				if (worldID == this.getCurrentWorldID()) {
 					map.setView(this.toLatLng(coords), zoom);
 				} else { // else load up the new world
-					log("Going to world... " + worldID);
-					log(this.getWorldFromID(worldID));
+					print("Going to world... " + worldID);
+					print(this.getWorldFromID(worldID));
 					$("#map_loading_bar").show();
 					this.clearLocations();
 					mapState.world = this.getWorldFromID(worldID);
@@ -429,13 +428,13 @@ export default class Gamemap {
 			let locationID = Math.abs(destID); // get positive locationID from input
 
 			function onGetLocation(location) {
-				log(location);
+				print(location);
 				self.gotoWorld(location.worldID, location.coords, self.getWorldFromID(location.worldID).maxZoomLevel)
 			}
 
 			this.getLocation(locationID, onGetLocation);
 
-			log("going to location");
+			print("going to location");
 		}
 	}
 
@@ -455,7 +454,7 @@ export default class Gamemap {
 
 	getLocations(world) {
 
-		log("Getting locations...");
+		print("Getting locations...");
 
 		// check if we've been sent a world ID
 		if (world != null && !isNaN(world)){
@@ -466,7 +465,7 @@ export default class Gamemap {
 
 		// make sure we're being given a valid world state
 		if (world == null || world.id == null || world.id < 0 ) {
-			log(world)
+			print(world)
 			return;
 		}
 
@@ -481,9 +480,9 @@ export default class Gamemap {
 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 
 			if (data.isError == null && data.locations != null) {
-				log("Got " + data.locationCount + " locations!");
+				print("Got " + data.locationCount + " locations!");
 				let locations = data.locations
-				//log(locations); // server side locations
+				//print(locations); // server side locations
 				let parsedLocations = {};
 
 				for (let key in locations) {
@@ -499,7 +498,7 @@ export default class Gamemap {
 				self.updateMapState();
 				self.redrawLocations(parsedLocations);
 			} else {
-				log("There was an error getting locations for this world.")
+				print("There was an error getting locations for this world.")
 			}
 		});
 	}
@@ -510,23 +509,23 @@ export default class Gamemap {
 			queryParams.action = "get_loc";
 			queryParams.locid  = locationID;
 			queryParams.db = this.mapConfig.database;
-			log(this.mapConfig.database)
+			print(this.mapConfig.database)
 			if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
 
 			$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 
-				log("Getting info for locationID: "+ locationID);
+				print("Getting info for locationID: "+ locationID);
 				if (!data.isError && data != null && data.locations[0] != null) {
-					log("Got location info!");
-					log(data);
+					print("Got location info!");
+					print(data);
 					if (!(onLoadFunction == null) ) {
 						let world = self.getWorldFromID(data.locations[0].worldId);
-						log(data.locations[0]);
+						print(data.locations[0]);
 						let location = new Location(self.mapConfig, data.locations[0], world)
 						onLoadFunction.call(null, location);
 					}
 					} else {
-						log("LocationID " + locationID + " was invalid.");
+						print("LocationID " + locationID + " was invalid.");
 					}
 
 			});
@@ -583,7 +582,7 @@ export default class Gamemap {
 				}
 
 			} else {
-				//log("should be getting removed");
+				//print("should be getting removed");
 				marker.remove();
 			}
 
@@ -612,18 +611,18 @@ export default class Gamemap {
 
 	redrawLocations(locations) {
 
-		log(locations);
+		print(locations);
 		// delete any existing location layers
 		this.clearLocations();
 
 		// set up location layer for each zoom level
-		log("Setting up location markers...")
+		print("Setting up location markers...")
 		let locationMarkers = [];
 
 		// check if current map has any locations
 		if (Object.keys(locations).length > 0) {
 
-			log("Loading locations...");
+			print("Loading locations...");
 
 			// iterate through each location in the list
 			Object.values(locations).forEach(location => {
@@ -653,7 +652,7 @@ export default class Gamemap {
 		this.markerLayer = new L.layerGroup(locationMarkers);
 
 		// add markers to map
-		log("Adding location markers to map...")
+		print("Adding location markers to map...")
 		this.markerLayer.addTo(map);
 
 		// callback to show map fully loaded
@@ -779,7 +778,7 @@ export default class Gamemap {
 	 * Gets width and height of the full map image.
 	 * @param world -
 	 * @returns mapImageDimens - The width/height of the map image as an object
-	 * @example log(getMapImageDimensions().width);
+	 * @example print(getMapImageDimensions().width);
 	 */
 	getMapImageDimensions(world) {
 
@@ -961,9 +960,9 @@ export default class Gamemap {
 
 					latLng = RC.unproject(tempCoords);
 				} else if (this.mapConfig.coordType == Constants.COORD_TYPES.WORLDSPACE) {
-					log("coords");
-					log(coords);
-					log(this.gameToPixelCoords(new Point(coords[0], coords[1])));
+					print("coords");
+					print(coords);
+					print(this.gameToPixelCoords(new Point(coords[0], coords[1])));
 					latLng = RC.unproject(this.gameToPixelCoords(new Point(coords[0], coords[1])));
 				}
 			}
@@ -1023,7 +1022,7 @@ export default class Gamemap {
 
 	onMarkerClicked(marker, shift, ctrl) {
 
-		log(marker.location);
+		print(marker.location);
 
 		let isJumpTo = marker.location != null && marker.location.isClickable();
 
@@ -1069,7 +1068,7 @@ export default class Gamemap {
 		}
 
 		if (!isEdit){
-			log("making popup");
+			print("making popup");
 			L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
 		} else {
 			M.toast({text: "TODO: Location editing not done yet."});
@@ -1197,8 +1196,8 @@ export default class Gamemap {
 
 				let gridWidth = maxX - minX;
 				let gridHeight = maxY - minY;
-				log("Grid width: "+gridWidth+"px");
-				log("Grid height: "+gridHeight+"px");
+				print("Grid width: "+gridWidth+"px");
+				print("Grid height: "+gridHeight+"px");
 
 				function toPix(nX, nY) {
 					nY = (nY != null) ? nY : nX;
@@ -1211,17 +1210,17 @@ export default class Gamemap {
 				let maxZoomLevel = self.getMapState().world.maxZoomLevel - 0.03;
 				let currentZoom = self.getCurrentZoom();
 				let nZoom = currentZoom / maxZoomLevel;
-				log("nZoom is ... " +nZoom.toFixed(3));
+				print("nZoom is ... " +nZoom.toFixed(3));
 
 				// work out grid gap size
 				let gridSize = ((self.mapConfig.cellSize * nZoom) / gridWidth) * gridWidth;
-				log("Grid offset (gap) is: "+ gridSize.toFixed(3) +"px");
+				print("Grid offset (gap) is: "+ gridSize.toFixed(3) +"px");
 
 				// work out how many rows and columns there should be
 				let nRows = self.getMapImageDimensions(self.getCurrentWorld()).width / self.mapConfig.cellSize;
 				let nCols = self.getMapImageDimensions(self.getCurrentWorld()).height / self.mapConfig.cellSize;
-				log (nRows);
-				log (nCols);
+				print (nRows);
+				print (nCols);
 
 				// draw the outline of the grid
 				ctx.beginPath();
@@ -1343,8 +1342,6 @@ export default class Gamemap {
 
 	// check if user has editing permissions
 	checkPermissions() {
-
-		//loading("permissions");
 
 		let queryParams = {};
 		let self = this;
@@ -1546,7 +1543,7 @@ export default class Gamemap {
 
 // 	if (!this.hasLocation(destId))
 // 	{
-// 		uesp.logDebug(uesp.LOG_LEVEL_ERROR, "Don't have data for destination location #" + destId + "!");
+// 		uesp.printDebug(uesp.print_LEVEL_ERROR, "Don't have data for destination location #" + destId + "!");
 // 		this.retrieveLocation(destId, this.onJumpToDestinationLoad, { destId: destId, openPopup:openPopup, useEditPoup:useEditPopup });
 // 		return;
 // 	}
@@ -1853,7 +1850,7 @@ export default class Gamemap {
 // 	if (!this.canEdit()) return false;
 
 // 	gamePos = this.convertWindowPixelToGamePos(event.pageX, event.pageY);
-// 	//uesp.logDebug(uesp.LOG_LEVEL_INFO, "onAddLocationClick()", gamePos);
+// 	//uesp.printDebug(uesp.print_LEVEL_INFO, "onAddLocationClick()", gamePos);
 
 // 	this.createNewLocation(gamePos);
 // 	this.redrawCanvas(true);
@@ -1914,8 +1911,8 @@ export default class Gamemap {
 
 // uesp.gamemap.Map.prototype.onReceiveCenterOnLocationData = function (data)
 // {
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, "Received centeron location data");
-// 	uesp.logDebug(uesp.LOG_LEVEL_INFO, data);
+// 	uesp.printDebug(uesp.print_LEVEL_INFO, "Received centeron location data");
+// 	uesp.printDebug(uesp.print_LEVEL_INFO, data);
 
 // 	if (data.isError === true || data.locations == null || data.locations.length === 0)
 // 	{
@@ -1981,7 +1978,7 @@ export default class Gamemap {
 // 	if (this.isHiddenLocsShown()) queryParams.showhidden = 1;
 
 // 	//if (!this.hasWorld(this.worldID)) queryParams.incworld = 1;
-// 	//if (queryParams.world <= 0) return uesp.logError("Unknown worldID " + this.currentWorldID + "!");
+// 	//if (queryParams.world <= 0) return uesp.printError("Unknown worldID " + this.currentWorldID + "!");
 
 // 	if (this.mapConfig.isOffline)
 // 	{
@@ -2304,8 +2301,8 @@ export default class Gamemap {
 
 // uesp.gamemap.Map.prototype.onSavedWorld = function (data)
 // {
-// 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, "Received onSavedWorld data");
-// 	uesp.logDebug(uesp.LOG_LEVEL_WARNING, data);
+// 	uesp.printDebug(uesp.print_LEVEL_WARNING, "Received onSavedWorld data");
+// 	uesp.printDebug(uesp.print_LEVEL_WARNING, data);
 
 // 	if (!(data.isError == null) || data.success === false)
 // 	{
@@ -2389,7 +2386,7 @@ export default class Gamemap {
 
 // 	$.get( this.mapConfig.helpTemplate, function( data ) {
 // 		self.helpBlockContents = data;
-// 		uesp.logDebug(uesp.LOG_LEVEL_WARNING, 'Received help block contents!', data);
+// 		uesp.printDebug(uesp.print_LEVEL_WARNING, 'Received help block contents!', data);
 // 		$('.gmHelpBlock').html(data);
 
 // 		self.helpBlockElement.find('.gmHelpCloseButton').bind("touchstart click", function(event) {

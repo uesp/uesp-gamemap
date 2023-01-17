@@ -1,4 +1,4 @@
-<!-- Debug indicator tag component -->
+<!-- Debug badge component -->
 <div id="debug_tag">
     <b>Debug</b>
 </div>
@@ -13,6 +13,7 @@
         opacity: 0.225;
         top: 15px;
         right: -35px;
+        z-index: 9999;
         rotate: 45deg;
         position: fixed;
         background-color: var(--error_dark);

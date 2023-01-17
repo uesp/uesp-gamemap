@@ -39,76 +39,12 @@ $(document).ready(function() {
 });
 
 
-function onWorldsLoaded(mapWorlds) {
-
-	log("Worlds loaded!");
-	log(mapWorlds);
-
-	$("#loading_spinner").hide();
-	$('#zoom_widget').css('visibility','visible');
-	$("#error_box").hide();
-
-	if (gamemap.hasMultipleWorlds()) {
-
-		// only show the location switcher if there are more than two worlds
-		$("#btn_location_switcher").show();
-		$("#btn_goto_article").show();
-
-		// populate location switcher
-		createWorldLists(mapWorlds);
-
-	}
-
-	if (mapConfig.hasCellGrid) {
-		$("#btn_toggle_grid").show();
-	}
-}
-
-function onMapLoaded() {
-	$("#map_loading_bar").hide();
-}
-
-function onPermissionsLoaded(enableEditing) {
-	log("Editing permissions loaded, editing enabled is: " + enableEditing);
-
-	if (enableEditing) {
-		$("#btn_toggle_edit").show();
-		$("#btn_toggle_recent_changes").show();
-	}
-
-	// canEdit = this.canEdit() && !isMobileDevice();
-
-	// if (canEdit) {
-	// 	$("#gmMapEditButtons").show();
-	// 	$("#addLocationButton").show();
-	// 	$("#addPathButton").show();
-	// 	$("#addAreaButton").show();
-	// 	$("#editWorldButton").show();
-	// 	$("#showRecentChangeButton").show();
-	// }
-	// else {
-	// 	$("#addLocationButton").hide();
-	// 	$("#addPathButton").hide();
-	// 	$("#addAreaButton").hide();
-	// 	$("#editWorldButton").hide();
-	// 	$("#showRecentChangeButton").hide();
-	// }
-}
-
-
 window.gotoWorld = function(worldID, coords) {
 	hideMenus();
 	clearSearch();
 	gamemap.gotoWorld(worldID, coords);
 }
 
-
-function onWorldChanged(newWorld) {
-	$('#current_location_label').text(newWorld.displayName);
-	setWindowTitle(newWorld.displayName);
-	updateWorldList(newWorld.name);
-	clearSearch();
-}
 
 /*================================================
 				Action Buttons

@@ -20,7 +20,7 @@
 	import ProgressBar from "./components/ProgressBar.svelte"
 	import LoadingBox from "./components/LoadingBox.svelte";
 	import ZoomWidget from "./components/ZoomWidget.svelte";
-	import DebugTag from "./components/DebugTag.svelte";
+	import DebugBadge from "./components/DebugBadge.svelte";
 
 	// import commons
 	import * as Utils from "./common/utils.js";
@@ -34,6 +34,7 @@
 	let isError = false;
 	let errorReason = "";
 	let mapConfig = null;
+	let gamemap;
 	$: isLoaded = !isError && !isLoading;
 
 	// get game name from URL
@@ -101,14 +102,17 @@
 
 		// set up callbacks
 		let mapCallbacks = {
-			// onWorldsLoaded,
-			// onPermissionsLoaded,
-			// onWorldChanged,
-			// hideMenus,
-			// onMapLoaded,
+			onWorldsLoaded,
+			onPermissionsLoaded,
+			onWorldChanged,
+			hideMenus,
+			onMapLoaded,
 		};
 
+
+		setLoading("Loading world");
 		window.gamemap = new Gamemap('gamemap', mapConfig, mapCallbacks);
+		gamemap = window.gamemap;
 	}
 
 	function setLoading(reason) {
@@ -131,6 +135,61 @@
 			print.error(reason);
 		}
 	}
+
+	function onWorldsLoaded(mapWorlds) {
+
+		// log("Worlds loaded!");
+		// log(mapWorlds);
+
+		// $("#loading_spinner").hide();
+		// $('#zoom_widget').css('visibility','visible');
+		// $("#error_box").hide();
+
+		if (gamemap.hasMultipleWorlds()) {
+
+			// // only show the location switcher if there are more than two worlds
+			// $("#btn_location_switcher").show();
+			// $("#btn_goto_article").show();
+
+			// // populate location switcher
+			// createWorldLists(mapWorlds);
+
+		}
+
+		if (mapConfig.hasCellGrid) {
+			// $("#btn_toggle_grid").show();
+		}
+	}
+
+	function onMapLoaded() {
+		isLoading = false;
+	}
+
+	function onPermissionsLoaded(enableEditing) {
+		print("Editing permissions loaded, editing enabled is: " + enableEditing);
+
+		if (enableEditing) {
+			// $("#btn_toggle_edit").show();
+			// $("#btn_toggle_recent_changes").show();
+		}
+
+	}
+
+
+	function onWorldChanged(newWorld) {
+		// $('#current_location_label').text(newWorld.displayName);
+		// setWindowTitle(newWorld.displayName);
+		// updateWorldList(newWorld.name);
+		// clearSearch();
+	}
+
+	function hideMenus(newWorld) {
+		// $('#current_location_label').text(newWorld.displayName);
+		// setWindowTitle(newWorld.displayName);
+		// updateWorldList(newWorld.name);
+		// clearSearch();
+	}
+
 
 	/*================================================
 						Callbacks
@@ -158,6 +217,9 @@
 	}
 </script>
 
+<!--==============================================
+						Markup
+===============================================-->
 <!-- App container -->
 <main id="app">
 	<h1>Svelte Gamemap</h1>
@@ -183,7 +245,7 @@
 	<!-- Show debug tag in top right corner if app is in dev mode -->
 	<!-- svelte-ignore missing-declaration -->
 	{#if isDebug}
-		<DebugTag/>
+		<DebugBadge/>
 	{/if}
 </main>
 

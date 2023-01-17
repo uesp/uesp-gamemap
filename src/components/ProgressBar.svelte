@@ -6,16 +6,25 @@
 
 <style>
 
-    .progress {
-        position: relative;
-        height: 4px;
-        display: block;
-        width: 100%;
-        background-color: #acece6;
-        border-radius: 2px;
-        margin: 0.5rem 0 1rem 0;
-        overflow: hidden;
-    }
+.progress_bar {
+  position: absolute;
+  top: -9px;
+  width: 100%;
+  z-index: 9900;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+  .progress {
+      position: relative;
+      height: 4px;
+      display: block;
+      width: 100%;
+      background-color: #acece6;
+      border-radius: 2px;
+      margin: 0.5rem 0 1rem 0;
+      overflow: hidden;
+  }
 
   .progress .indeterminate {
     background-color: #26a69a;
@@ -103,14 +112,7 @@
         }
   }
 
-    .progress_bar {
-        top: -9px;
-        width: 100%;
-        position: relative;
-        z-index: 9999;
-        opacity: 0.85;
-        pointer-events: none;
-    }
+
 
     .progress {
         background-color: var(--secondary) !important;
