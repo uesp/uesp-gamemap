@@ -38,7 +38,6 @@
 	$: isLoaded = !isError && !isLoading;
 
 	// get game name from URL
-	// note: on localhost, use http://localhost:8080/?eso to load a certain map
 	let gameParam = (window.location.pathname.replace(/\\|\//g,'') != "") ? window.location.pathname.replace(/\\|\//g,'') : (window.location.search != null) ? window.location.search.replace("?", "") : null;
 	setLoading("Loading map");
 
@@ -91,7 +90,7 @@
 	} else {
 
 		// if debug mode, redirect to eso map by default
-		if (isDebug) {
+		if (isDebug || location.href.includes("localhost")) {
 			location.href = "http://localhost:8080/?eso";
 		}
 		print.warn("Game parameter was missing or invalid.");
@@ -113,7 +112,6 @@
 			hideMenus,
 			onMapLoaded,
 		};
-
 
 		setLoading("Loading world");
 		window.gamemap = new Gamemap('gamemap', mapConfig, mapCallbacks);

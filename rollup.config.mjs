@@ -52,6 +52,7 @@ export default {
 			isRelease: production,
 			isDebug: !production,
 		}),
+
 		svelte({
 			compilerOptions: {
 				// enable run-time checks when not in production

@@ -32,18 +32,6 @@ npm run dev
 
 The gamemap should now be running on [localhost:8080](http://localhost:8080). Any code changes will be reflected in the browser automatically.
 
-To load a map on localhost, add the game parameter after the port number, like so:
-
-```bash
-http://localhost:8080/?eso
-```
-
-On the hosted version, the format is:
-
-```bash
-https://gamemap.uesp.net/eso
-```
-
 ## Release
 
 To create a release optimised version:
