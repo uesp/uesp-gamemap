@@ -89,6 +89,11 @@
 				} else { setError("Provided game doesn't exist. Please check the URL.");}
 			} else { setError("There was an error getting the default map config." + error);}})
 	} else {
+
+		// if debug mode, redirect to eso map by default
+		if (isDebug) {
+			location.href = "http://localhost:8080/?eso";
+		}
 		print.warn("Game parameter was missing or invalid.");
 		setError("No valid game provided.");
 		// TODO: maybe show list of games here to select

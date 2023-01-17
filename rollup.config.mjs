@@ -10,11 +10,11 @@ import phpServer from 'php-server';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
+// define is production or not
 const production = !process.env.ROLLUP_WATCH;
 
-const phpServ = await phpServer({
-	port : 2500,
-});
+// set up local php server
+const phpServ = await phpServer({ port : 2500 });
 console.log(`PHP server running at ${phpServ.url}`);
 
 function serve() {
