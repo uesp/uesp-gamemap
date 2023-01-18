@@ -4,3 +4,5 @@
 /node_modules/
 /public/build/
 .DS_Store
+gamemap.secrets
+uespservers.secrets

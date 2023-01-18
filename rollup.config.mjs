@@ -5,8 +5,10 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
 import replace from '@rollup/plugin-replace';
+import sveltePreprocess from 'svelte-preprocess'
 import phpServer from 'php-server';
 
+// create require
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
@@ -14,7 +16,7 @@ const require = createRequire(import.meta.url);
 const production = !process.env.ROLLUP_WATCH;
 
 // set up local php server
-const phpServ = await phpServer({ port : 2500 });
+const phpServ = await phpServer({ port : 2500, base : "public/" });
 console.log(`PHP server running at ${phpServ.url}`);
 
 function serve() {
@@ -48,16 +50,22 @@ export default {
 		file: 'public/build/bundle.js'
 	},
 	plugins: [
-		replace({
-			isRelease: production,
-			isDebug: !production,
-		}),
-
 		svelte({
+			onwarn: (warning, handler) => {
+				const { code, frame } = warning;
+				if (code === "css-unused-selector")
+					return;
+				handler(warning);
+			},
 			compilerOptions: {
 				// enable run-time checks when not in production
 				dev: !production
-			}
+			},
+			preprocess: sveltePreprocess({ markupTagName : "markup" }),
+		}),
+		replace({
+			isRelease: production,
+			isDebug: !production,
 		}),
 		// we'll extract any component CSS out into
 		// a separate file - better for performance

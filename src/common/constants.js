@@ -18,7 +18,7 @@ export const CSS_OVERRIDE_FILENAME = "override.css"
 export const MAP_CONFIG_FILENAME = "config.json"
 export const DEFAULT_MAP_CONFIG_DIR = MAP_ASSETS_DIR + "default-" + MAP_CONFIG_FILENAME;
 
-export const GAME_DATA_SCRIPT = (isRelease) ? "db/gamemap.php" : "http://localhost:2500/public/db/gamemap.php"
+export const GAME_DATA_SCRIPT = (isRelease) ? "db/gamemap.php" : "http://localhost:2500/db/gamemap.php"
 
 export const LOCTYPES = {
     NONE : 0,

@@ -34,8 +34,8 @@ export default class Gamemap {
 	 * @param {Object} mapConfig - The map config object, controls the type, state, and view of the map
 	 * @param {Object} mapCallbacks - The callbacks object, to optionally receive events back from the gamemap
 	 */
-	constructor(mapRootID, mapConfig, mapCallbacks) {
-		if (mapRootID != null && mapConfig != null && mapCallbacks != null) {
+	constructor(mapRoot, mapConfig, mapCallbacks) {
+		if (mapRoot != null && mapConfig != null && mapCallbacks != null) {
 
 			// load in map config
 			this.mapConfig = mapConfig;
@@ -44,15 +44,12 @@ export default class Gamemap {
 			this.mapCallbacks = mapCallbacks;
 
 			// set up the root map element
-			this.rootMapID = mapRootID;
-			if ($('#'+mapRootID) == null) {
-				throw new Error('The gamemap container \'' + mapRootID + '\' could not be found or was invalid.');
-			}
+			this.mapRoot = mapRoot;
 			self = this;
 
 			// set up css
 			if (this.mapConfig.hasCustomFavIcon) { Utils.changeFavIcon(mapConfig.imagesPath + "favicon.ico"); }
-			if (this.mapConfig.bgColour) { $("#"+mapRootID).css("background-color", mapConfig.bgColour); }
+			if (this.mapConfig.bgColour) { mapRoot.style.backgroundColor = mapConfig.bgColour; }
 			if (this.mapConfig.hasCustomCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; print("Loading custom map css: " + cssPath); Utils.injectCSS(cssPath);}
 
 			// set the default map info
@@ -92,7 +89,7 @@ export default class Gamemap {
   			smoothSensitivity: 0.9, // zoom speed. default is 1
         }
 
-		map = L.map(this.rootMapID, mapOptions);
+		map = L.map(this.mapRoot.id, mapOptions);
 		this.updateInfobar(mapConfig);
 
 		let mapState = new MapState();
@@ -121,7 +118,7 @@ export default class Gamemap {
 		let coords = (Utils.getCookie("debugging") && this.getCurrentWorld().totalWidth != null ) ? this.toXY(map.getCenter(), true) : null;
 		map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home"><b class="wikiTitle">UESP</b></a>');
 		map.attributionControl.addAttribution("<span id='mapAttribution'></span>");
-		$("#mapAttribution").html('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  ' + ((coords != null) ? "XY: " + Math.trunc(coords.x) + ", " + Math.trunc(coords.y)  + "  |  " : "") + '<a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>');
+		//$("#mapAttribution").html('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  ' + ((coords != null) ? "XY: " + Math.trunc(coords.x) + ", " + Math.trunc(coords.y)  + "  |  " : "") + '<a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>');
 	}
 
 	/*================================================

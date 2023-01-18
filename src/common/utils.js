@@ -39,6 +39,8 @@ if (isDebug) {
 	window.print = print;
 	print = console.log.bind(console);
 	window.print = print;
+	window.print.warn = print;
+	window.print.error = print;
 }
 
 /*================================================
