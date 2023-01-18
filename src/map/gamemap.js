@@ -6,11 +6,13 @@
 
 import * as Utils from "../common/utils.js";
 import * as Constants from "../common/constants.js";
-import World from "./world.js";
-import MapState from "./mapstate.js";
-import Location from "./location.js";
-import Point from "./point.js";
-import RasterCoords from "../lib/rastercoords.js";
+import World from "./objects/world.js";
+import MapState from "./objects/mapstate.js";
+import Location from "./objects/location.js";
+import Point from "./objects/point.js";
+import RasterCoords from "./plugins/rastercoords";
+
+import * as L from '../../node_modules/leaflet/dist/leaflet'
 
 /*================================================
 					Locals

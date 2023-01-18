@@ -4,8 +4,8 @@
  * @summary Contains class definition for the gamemap's locations.
  */
 
-import * as Constants from "../common/constants.js";
-import * as Utils from "../common/utils.js";
+import * as Constants from "../../common/constants.js";
+import * as Utils from "../../common/utils.js";
 import Point from "./point.js";
 
 let config;
