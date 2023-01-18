@@ -47,6 +47,15 @@ $: isLoaded = !isError && !isLoading;
 
 // on document load
 onMount(async () => {
+
+	// disable zooming on mobile
+	setTimeout(function() {
+		document.firstElementChild.style.zoom = "reset";
+		let viewportmeta = document.querySelector('meta[name="viewport"]');
+		viewportmeta.content = 'user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0';
+		print("App zoom disabled.");
+	}, 3500);
+
 	// get game name from URL
 	let gameParam = (window.location.pathname.replace(/\\|\//g,'') != "") ? window.location.pathname.replace(/\\|\//g,'') : (window.location.search != null) ? window.location.search.replace("?", "") : null;
 	setLoading("Loading map");
