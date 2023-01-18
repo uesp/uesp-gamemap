@@ -12,9 +12,6 @@ var pairings = [];
 log("Page initialising...");
 $(document).ready(function() {
 
-
-
-
 	// bind views from DOM
 	var searchbox = document.getElementById("searchbox");
 	var btn_clear_search = document.getElementById("btn_clear_search");

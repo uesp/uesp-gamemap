@@ -4,15 +4,21 @@
  * @summary The main source code for the interactive gamemap.
  */
 
+// import commons
 import * as Utils from "../common/utils.js";
 import * as Constants from "../common/constants.js";
+
+// import leaflet
+import * as L from '../../node_modules/leaflet/dist/leaflet';
+
+// import plugins
+import RasterCoords from "./plugins/rastercoords";
+
+// import map classes
 import World from "./objects/world.js";
 import MapState from "./objects/mapstate.js";
 import Location from "./objects/location.js";
 import Point from "./objects/point.js";
-import RasterCoords from "./plugins/rastercoords";
-
-import * as L from '../../node_modules/leaflet/dist/leaflet'
 
 /*================================================
 					Locals

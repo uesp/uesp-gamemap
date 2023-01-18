@@ -12,11 +12,14 @@
  the instructions on this page:
  https://stackoverflow.com/a/60720816 -->
 
-<style global src="./app.css"></style>
-<script>
+<style global src="./app.css"></style><script>
+
 /*================================================
 					Initialisation
 ================================================*/
+
+// import svelte core
+import { onMount } from 'svelte';
 
 // import UI components
 import ErrorBox from "./components/ErrorBox.svelte";
@@ -42,66 +45,70 @@ let mapConfig = null;
 let gamemap = null;
 $: isLoaded = !isError && !isLoading;
 
-// get game name from URL
-let gameParam = (window.location.pathname.replace(/\\|\//g,'') != "") ? window.location.pathname.replace(/\\|\//g,'') : (window.location.search != null) ? window.location.search.replace("?", "") : null;
-setLoading("Loading map");
+// on document load
+onMount(async () => {
+	// get game name from URL
+	let gameParam = (window.location.pathname.replace(/\\|\//g,'') != "") ? window.location.pathname.replace(/\\|\//g,'') : (window.location.search != null) ? window.location.search.replace("?", "") : null;
+	setLoading("Loading map");
 
-if (gameParam != null && gameParam.match(/^([a-z]+)/)) {
-	print("Game parameter was: " + gameParam);
+	if (gameParam != null && gameParam.match(/^([a-z]+)/)) {
+		print("Game parameter was: " + gameParam);
 
-	// begin getting map config
-	Utils.getJSON(Constants.DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
-		if (!error) {
+		// begin getting map config
+		Utils.getJSON(Constants.DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
+			if (!error) {
 
-			// set up default map config
-			window.DEFAULT_MAP_CONFIG = defaultMapConfig;
+				// set up default map config
+				window.DEFAULT_MAP_CONFIG = defaultMapConfig;
 
-			// format: /assets/maps/{gameParam}/config/{gameParam}-config.json
-			// example: /assets/maps/eso/config/eso-config.json
-			let configURL = (Constants.MAP_ASSETS_DIR + gameParam + "/config/" + gameParam + "-" + Constants.MAP_CONFIG_FILENAME);
-			setLoading("Loading config");
-			print("Getting map config at " + configURL + "...");
+				// format: /assets/maps/{gameParam}/config/{gameParam}-config.json
+				// example: /assets/maps/eso/config/eso-config.json
+				let configURL = (Constants.MAP_ASSETS_DIR + gameParam + "/config/" + gameParam + "-" + Constants.MAP_CONFIG_FILENAME);
+				setLoading("Loading config");
+				print("Getting map config at " + configURL + "...");
 
-			// check if provided map's map config exists before continuing
-			if (Utils.doesFileExist(configURL)) {
+				// check if provided map's map config exists before continuing
+				if (Utils.doesFileExist(configURL)) {
 
-				Utils.getJSON(configURL, function(error, object) {
-					if (error !== null) {
-						setError("Could not load map: " + error);
-					} else {
-						print("Imported map config successfully.");
-						mapConfig = object;
+					Utils.getJSON(configURL, function(error, object) {
+						if (error !== null) {
+							setError("Could not load map: " + error);
+						} else {
+							print("Imported map config successfully.");
+							mapConfig = object;
 
-						print("Merging with default map config...")
-						let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
-						mapConfig = mergedMapConfig;
+							print("Merging with default map config...")
+							let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
+							mapConfig = mergedMapConfig;
 
-						// set up map config assets
-						mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
-						mapConfig.missingMapTilePath = mapConfig.assetsPath + "images/outofrange.jpg";
-						mapConfig.iconPath = mapConfig.assetsPath + "icons/";
-						mapConfig.imagesPath = mapConfig.assetsPath + "images/";
-						mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/"; // note: sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this.
+							// set up map config assets
+							mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
+							mapConfig.missingMapTilePath = mapConfig.assetsPath + "images/outofrange.jpg";
+							mapConfig.iconPath = mapConfig.assetsPath + "icons/";
+							mapConfig.imagesPath = mapConfig.assetsPath + "images/";
+							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/"; // note: sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this.
 
-						print("Completed merged map config:")
-						print(mapConfig);
+							print("Completed merged map config:")
+							print(mapConfig);
 
-						// load map
-						loadGamemap(mapConfig);
-					}
-				})
-			} else { setError("Provided game doesn't exist. Please check the URL.");}
-		} else { setError("There was an error getting the default map config." + error);}})
-} else {
+							// load map
+							loadGamemap(mapConfig);
+						}
+					})
+				} else { setError("Provided game doesn't exist. Please check the URL.");}
+			} else { setError("There was an error getting the default map config." + error);}})
+	} else {
 
-	// if debug mode, redirect to eso map by default
-	if (isDebug || location.href.includes("localhost")) {
-		location.href = "http://localhost:8080/?eso";
+		// if debug mode, redirect to eso map by default
+		if (isDebug || location.href.includes("localhost")) {
+			location.href = "http://localhost:8080/?eso";
+		}
+		print.warn("Game parameter was missing or invalid.");
+		setError("No valid game provided.");
+		// TODO: maybe show list of games here to select
 	}
-	print.warn("Game parameter was missing or invalid.");
-	setError("No valid game provided.");
-	// TODO: maybe show list of games here to select
-}
+});
+
 
 /*================================================
 						Gamemap
@@ -120,7 +127,6 @@ function loadGamemap(mapConfig) {
 
 	setLoading("Loading world");
 	let gamemapRoot = document.querySelector('#gamemap');
-	print(gamemapRoot);
 	window.gamemap = new Gamemap(gamemapRoot, mapConfig, mapCallbacks);
 	gamemap = window.gamemap;
 }
@@ -228,34 +234,34 @@ if (isRelease) {
 </script>
 
 <markup>
-<!-- App container -->
-<main id="app">
+	<!-- App container -->
+	<main id="app">
 
-	<ZoomWidget on:zoomclicked={zoom}/>
+		<ZoomWidget on:zoomclicked={zoom}/>
 
-	<!-- Gamemap container -->
-	<div id="gamemap"></div>
+		<!-- Gamemap container -->
+		<div id="gamemap"></div>
 
-	<!-- Preload components -->
-	{#if isLoading}
-		<LoadingBox reason={loadingReason+"..."}/>
-	{/if}
+		<!-- Preload components -->
+		{#if isLoading}
+			<LoadingBox reason={loadingReason+"..."}/>
+		{/if}
 
-	{#if isError}
-		<ErrorBox reason={errorReason}/>
-	{/if}
+		{#if isError}
+			<ErrorBox reason={errorReason}/>
+		{/if}
 
-	{#if isLoading}
-		<ProgressBar/>
-	{/if}
+		{#if isLoading}
+			<ProgressBar/>
+		{/if}
 
-	<!-- Show debug tag in top right corner if app is in dev mode -->
-	<!-- svelte-ignore missing-declaration -->
-	{#if isDebug}
-		<DebugBadge/>
-	{/if}
-</main>
+		<!-- Show debug tag in top right corner if app is in dev mode -->
+		<!-- svelte-ignore missing-declaration -->
+		{#if isDebug}
+			<DebugBadge/>
+		{/if}
+	</main>
 
-<aside id="editor"></aside>
-<aside id="drawer"></aside>
+	<aside id="editor"></aside>
+	<aside id="drawer"></aside>
 </markup>
