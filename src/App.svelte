@@ -233,33 +233,30 @@ if (isRelease) {
 </script>
 
 <markup>
-	<!-- App container -->
-	<main id="app">
 
-		<ZoomWidget on:zoomclicked={zoom}/>
+	<!-- Gamemap container -->
+	<div id="gamemap"></div>
 
-		<!-- Gamemap container -->
-		<div id="gamemap"></div>
+	<ZoomWidget on:zoomclicked={zoom}/>
 
-		<!-- Preload components -->
-		{#if isLoading}
-			<LoadingBox reason={loadingReason+"..."}/>
-		{/if}
+	<!-- Preload components -->
+	{#if isLoading}
+		<LoadingBox reason={loadingReason+"..."}/>
+	{/if}
 
-		{#if isError}
-			<ErrorBox reason={errorReason}/>
-		{/if}
+	{#if isError}
+		<ErrorBox reason={errorReason}/>
+	{/if}
 
-		{#if isLoading}
-			<ProgressBar/>
-		{/if}
+	{#if isLoading}
+		<ProgressBar/>
+	{/if}
 
-		<!-- Show debug tag in top right corner if app is in dev mode -->
-		<!-- svelte-ignore missing-declaration -->
-		{#if isDebug}
-			<DebugBadge/>
-		{/if}
-	</main>
+	<!-- Show debug tag in top right corner if app is in dev mode -->
+	<!-- svelte-ignore missing-declaration -->
+	{#if isDebug}
+		<DebugBadge/>
+	{/if}
 
 	<aside id="editor"></aside>
 	<aside id="drawer"></aside>
