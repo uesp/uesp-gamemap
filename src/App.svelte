@@ -61,7 +61,6 @@ onMount(async () => {
 				// set up default map config
 				window.DEFAULT_MAP_CONFIG = defaultMapConfig;
 
-				// format: /assets/maps/{gameParam}/config/{gameParam}-config.json
 				// example: /assets/maps/eso/config/eso-config.json
 				let configURL = (Constants.MAP_ASSETS_DIR + gameParam + "/config/" + gameParam + "-" + Constants.MAP_CONFIG_FILENAME);
 				setLoading("Loading config");
