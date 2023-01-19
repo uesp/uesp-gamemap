@@ -252,7 +252,7 @@ html, body, main {
 	color: var(--text_loc_name);
 	font-weight: bolder;
 	font-family: "Arial", sans-serif;
-	font-size: 11px;
+	font-size: 12px !important;
 	text-shadow: 0px 0px 5px var(--background);
 	background-color: var(--shadow);
 	display: inline-block;
@@ -827,24 +827,6 @@ li div.collapsible-header i {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-}
-
-.location-label {
-	border-radius: var(--padding_large);
-	position: absolute;
-	white-space: nowrap;
-	z-index: 20;
-	color: var(--text_loc_name);
-	font-weight: bolder;
-	font-family: "Arial", sans-serif;
-	font-size: 11px;
-	text-shadow: 0px 0px 5px var(--background);
-	background-color: var(--shadow);
-	display: inline-block;
-	border: none;
-	box-shadow: 0px 0px 10px 6px var(--shadow);
-	cursor: pointer;
-	padding: 0px !important;
 }
 
 .leaflet-interactive {

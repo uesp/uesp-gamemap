@@ -13,6 +13,10 @@ import * as L from 'leaflet';
 
 // import plugins
 import RasterCoords from "./plugins/rastercoords";
+import './plugins/smoothwheelzoom';
+import './plugins/tilelayercanvas';
+import './plugins/canvasoverlay';
+import './plugins/edgebuffer';
 
 // import map classes
 import World from "./objects/world.js";
@@ -287,7 +291,7 @@ export default class Gamemap {
 
 		// update url with new state
 		window.history.replaceState(newMapState, document.title, mapLink);
-		if (Utils.getCookie("debugging")) { this.updateInfobar(this.mapConfig); }
+		if (isDebug) { this.updateInfobar(this.mapConfig); }
 	}
 
 	/*================================================
@@ -382,7 +386,7 @@ export default class Gamemap {
 				}
 
 			} else {
-				throw new Error("Could not retrieve world data.");
+				//throw new Error("Could not retrieve world data.");
 			}
 		});
 
@@ -488,9 +492,10 @@ export default class Gamemap {
 		if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
 
 		// make api query
-		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 
-			if (data.isError == null && data.locations != null) {
+
+		Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
+			if (!error && data != null) {
 				print("Got " + data.locationCount + " locations!");
 				let locations = data.locations
 				let parsedLocations = {};
@@ -508,9 +513,10 @@ export default class Gamemap {
 				self.updateMapState();
 				self.redrawLocations(parsedLocations);
 			} else {
-				print("There was an error getting locations for this world.")
+				print.warn("There was an error getting locations for this world.");
 			}
 		});
+
 	}
 
 	getLocation(locationID, onLoadFunction) {
@@ -1009,16 +1015,16 @@ export default class Gamemap {
 
 		map.on("zoom", function(e) {
 			if (map.getZoom() >= (self.getCurrentWorld().maxZoomLevel - 0.03)) {
-				$("#btn_zoom_in").prop("disabled",true);
+				//$("#btn_zoom_in").prop("disabled",true);
 			}
 
 			if (map.getZoom() <= self.getCurrentWorld().minZoomLevel) {
-				$("#btn_zoom_out").prop("disabled",true);
+				//$("#btn_zoom_out").prop("disabled",true);
 			}
 
 			if (map.getZoom() > self.getCurrentWorld().minZoomLevel && map.getZoom() < self.getCurrentWorld().maxZoomLevel) {
-				$("#btn_zoom_out").prop("disabled", false);
-				$("#btn_zoom_in").prop("disabled", false);
+				//$("#btn_zoom_out").prop("disabled", false);
+				//$("#btn_zoom_in").prop("disabled", false);
 			}
 
 		})

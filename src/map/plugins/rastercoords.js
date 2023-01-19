@@ -74,8 +74,6 @@ export default class RasterCoords {
 
 		const PADDING = 130;
 
-		print(northEast);
-
 		southWest.lng = southWest.lng - PADDING;
 		southWest.lat = southWest.lat - PADDING;
 		northEast.lng = northEast.lng + PADDING;
