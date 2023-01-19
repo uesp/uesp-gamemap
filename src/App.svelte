@@ -74,35 +74,31 @@ onMount(async () => {
 				setLoading("Loading config");
 				print("Getting map config at " + configURL + "...");
 
-				// check if provided map's map config exists before continuing
-				if (Utils.doesFileExist(configURL)) {
+				Utils.getJSON(configURL, function(error, object) {
+					if (!error) {
+						print("Imported map config successfully.");
+						mapConfig = object;
 
-					Utils.getJSON(configURL, function(error, object) {
-						if (error !== null) {
-							setError("Could not load map: " + error);
-						} else {
-							print("Imported map config successfully.");
-							mapConfig = object;
+						print("Merging with default map config...")
+						let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
+						mapConfig = mergedMapConfig;
 
-							print("Merging with default map config...")
-							let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
-							mapConfig = mergedMapConfig;
+						// set up map config assets
+						mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
+						mapConfig.missingMapTilePath = mapConfig.assetsPath + "images/outofrange.jpg";
+						mapConfig.iconPath = mapConfig.assetsPath + "icons/";
+						mapConfig.imagesPath = mapConfig.assetsPath + "images/";
+						mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/"; // note: sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this.
 
-							// set up map config assets
-							mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
-							mapConfig.missingMapTilePath = mapConfig.assetsPath + "images/outofrange.jpg";
-							mapConfig.iconPath = mapConfig.assetsPath + "icons/";
-							mapConfig.imagesPath = mapConfig.assetsPath + "images/";
-							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/"; // note: sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this.
+						print("Completed merged map config:")
+						print(mapConfig);
 
-							print("Completed merged map config:")
-							print(mapConfig);
+						// load map
+						loadGamemap(mapConfig);
 
-							// load map
-							loadGamemap(mapConfig);
-						}
-					})
-				} else { setError("Provided game doesn't exist. Please check the URL.");}
+					} else {
+						error.toString().includes("JSON.parse") ? setError("Provided game doesn't exist. Please check the URL.") : setError("Could not load map: " + error);
+					}});
 			} else { setError("There was an error getting the default map config." + error);}})
 	} else {
 

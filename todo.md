@@ -1,6 +1,25 @@
 
 ## this week:
 
+- tried getting local server to work (set up php server and stuff)
+>>> thwarted by uesp server stuff :<
+
+- since svelte is all loaded from JS, added noscript warning "please turn js on" when users dont have JS
+
+- many optimisations:
+
+- one of the big perf problems was loading leaflet + app js/css from different bundles
+>>> leaflet, css, etc are all now compiled into one bundle, and minified
+>>> had to do some hacky preprocessing stuff to get that working, but its good now
+
+- css is now non-blocking, only loads when it's done
+>>> to prevent page looking ugly before css loads, <main> is opacity 0, then when stylesheet loads in,
+>>> it fade-animates the page, hiding ugliness away from user
+
+- leaflet map itself is non-blocking, instead of loading *at the same time* as the app, it only loads when it's done
+
+- removed jquery since svelte does that for me (another dep gone)
+>>> minor refactor because of that
 
 
 ## todo

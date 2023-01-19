@@ -85,34 +85,6 @@ export function getURLParams(paramType){
 }
 
 /*================================================
-			 	Get cookie function
-================================================*/
-
-export function getCookie(cname) {
-	let name = cname + "=";
-	let decodedCookie = decodeURIComponent(document.cookie);
-	let ca = decodedCookie.split(';');
-	for(let i = 0; i <ca.length; i++) {
-	  let c = ca[i];
-	  while (c.charAt(0) == ' ') {
-		c = c.substring(1);
-	  }
-	  if (c.indexOf(name) == 0) {
-		return c.substring(name.length, c.length);
-	  }
-	}
-	return null;
-}
-
-/*================================================
-			  Is variable null function
-================================================*/
-
-export function isNull(variable) {
-	return (typeof variable === 'undefined' || variable === null);
-}
-
-/*================================================
 			 String ends-with function
 ================================================*/
 
@@ -236,34 +208,6 @@ export function mergeObjects(obj1, obj2) {
 		...obj2
 	};
 	return obj3;
-}
-
-/*================================================
-		  Check if page exists function
-================================================*/
-
-export function doesFileExist(url) {
-    var http = new XMLHttpRequest();
-    http.open('HEAD', url, false);
-    http.send();
-    return http.status!=404;
-}
-
-
-/*================================================
-		  	  Force click function
-================================================*/
-
-export function fireClick(node){
-    if (document.createEvent) {
-        var evt = document.createEvent('MouseEvents');
-        evt.initEvent('click', true, false);
-        node.dispatchEvent(evt);
-    } else if (document.createEventObject) {
-        node.fireEvent('onclick') ;
-    } else if (typeof node.onclick == 'function') {
-        node.onclick();
-    }
 }
 
 /*================================================
