@@ -6,6 +6,10 @@
  *
  */
 
+//  uncomment to enable error reporting
+// error_reporting(E_ALL);
+// ini_set('display_errors', '1');
+
 // return local secrets file if debug or hosted version if release
 if (in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1', "localhost"))) {
     require 'gamemap.secrets';
@@ -14,7 +18,6 @@ if (in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1', "localhost"))) {
 }
 
 require_once 'UespMemcachedSession.php';
-
 
 class GameMap
 {

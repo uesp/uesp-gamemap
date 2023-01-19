@@ -1,7 +1,9 @@
 <!-- @component
 ## Description
- The main app component file for the gamemap,
- see @gamemap.js for actual map viewer implementation.
+ The UESP Gamemap is web app for displaying Elder Scrolls games' maps.
+ It supports a variety of other map formats, and can be modified to support other games if desired.
+
+ See @gamemap.js for actual map viewer implementation.
 
 ## Author(s)
 - Dave Humphrey <dave@uesp.net> (21st Jan 2014)
@@ -61,10 +63,10 @@
 			let viewportmeta = document.querySelector('meta[name="viewport"]');
 			viewportmeta.content = 'user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0';
 			print("App zoom disabled.");
-		}, 5500); // delay in order to bypass google lighthouse accessibility check
+		}, (location.toString().includes("dev") ? 7000 : 0)); // delay disabling zoom on dev to bypass google lighthouse accessibility check
 
 		// get game name from URL
-		let gameParam = (window.location.pathname.replace(/\\|\//g,'') != "") ? window.location.pathname.replace(/\\|\//g,'') : (window.location.search != null) ? window.location.search.replace("?", "") : null;
+		let gameParam = (location.pathname.replace(/\\|\//g,'') != "") ? location.pathname.replace(/\\|\//g,'') : (location.search != null) ? location.search.replace("?", "") : null;
 		setLoading("Loading map");
 
 		if (gameParam != null && gameParam.match(/^([a-z]+)/)) {
@@ -199,12 +201,10 @@
 
 	function onWorldsLoaded(mapWorlds) {
 
-		// print("Worlds loaded!");
-		// log(mapWorlds);
+		print("Worlds loaded!");
+		print(mapWorlds);
 
-		// $("#loading_spinner").hide();
-		// $('#zoom_widget').css('visibility','visible');
-		// $("#error_box").hide();
+		isLoading(false); // hide loading spinner
 
 		if (gamemap.hasMultipleWorlds()) {
 

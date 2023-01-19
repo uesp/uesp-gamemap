@@ -1,6 +1,8 @@
 
 ## this week:
 
+use SE#17 to connect
+
 - tried getting local server to work (set up php server and stuff)
 >>> thwarted by uesp server stuff :<
 

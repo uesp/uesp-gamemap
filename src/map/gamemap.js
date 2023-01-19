@@ -1358,7 +1358,7 @@ export default class Gamemap {
 		queryParams.db = this.mapConfig.database;
 
 		if (this.mapCallbacks != null) {
-			this.mapCallbacks.setLoading("Loading permissions");
+			this.mapCallbacks.setLoading("Getting permissions");
 		}
 
 		Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
