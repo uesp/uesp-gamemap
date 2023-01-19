@@ -297,3 +297,35 @@ export function injectCSS(cssPath) {
 	cssPath = cssPath + "?" + Math.random(); // ensure that the custom css is not cached and is redownloaded
 	document.getElementsByTagName("head")[0].insertAdjacentHTML("beforeend","<link rel=\"stylesheet\" href=\"" + cssPath + "\" />");
 }
+
+
+/*================================================
+	  			Queryify function
+================================================*/
+
+export function queryify(object) {
+
+	//gamemap.php?action=get_perm&db=eso
+
+	let query = "?";
+	let entries = Object.entries(object);
+
+	// let str = JSON.stringify(object);
+
+	// print(object);
+	// print(str);
+	// print(entries);
+
+	entries.forEach(function(entry) {
+		query += (entry[0] + "=" + entry[1]);
+
+		if ((entries.indexOf(entry) + 1) < entries.length) {
+			query += "&"
+		}
+
+	})
+
+	// print(query);
+
+	return query;
+}

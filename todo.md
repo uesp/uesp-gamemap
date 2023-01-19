@@ -15,8 +15,11 @@
 - css is now non-blocking, only loads when it's done
 >>> to prevent page looking ugly before css loads, <main> is opacity 0, then when stylesheet loads in,
 >>> it fade-animates the page, hiding ugliness away from user
+>>> https://cdn.discordapp.com/attachments/806672739057664034/1065456203876016128/image.png
 
 - leaflet map itself is non-blocking, instead of loading *at the same time* as the app, it only loads when it's done
+
+- optimised a bit to use less network calls
 
 - removed jquery since svelte does that for me (another dep gone)
 >>> minor refactor because of that

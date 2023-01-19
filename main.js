@@ -127,43 +127,6 @@ window.zoomOut = function(){
 	}
 }
 
-/*================================================
-				Change tab title
-================================================*/
-
-function setWindowTitle(title) {
-
-	// default dynamic map title
-	document.title = mapConfig.mapTitle;
-
-	if (gamemap.hasMultipleWorlds()) { // show map world in title if there is one
-		document.title = document.title + " | " + title;
-	}
-
-	document.title = document.title + (" (UESP)");
-}
-
-/*================================================
-				   Error box
-================================================*/
-
-function showError(reason){
-	$("#error_box").show();
-	$('#error_box').css('visibility','visible');
-	$("#error_box_reason").text(reason);
-	log("Error: " + reason);
-	$("#loading_spinner").hide();
-	$("#map_loading_bar").hide();
-}
-
-/*================================================
-				   Loading box
-================================================*/
-
-window.loading = function(reason){
-	$("#loading_reason").text("Loading "+reason+"...");
-}
-
 
 /*================================================
 				Location Switcher

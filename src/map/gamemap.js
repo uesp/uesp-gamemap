@@ -9,7 +9,7 @@ import * as Utils from "../common/utils.js";
 import * as Constants from "../common/constants.js";
 
 // import leaflet
-import * as L from '../../node_modules/leaflet/dist/leaflet';
+import * as L from 'leaflet';
 
 // import plugins
 import RasterCoords from "./plugins/rastercoords";
@@ -60,7 +60,7 @@ export default class Gamemap {
 			if (this.mapConfig.bgColour) { mapRoot.style.backgroundColor = mapConfig.bgColour; }
 			if (this.mapConfig.hasCustomCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; print("Loading custom map css: " + cssPath); Utils.injectCSS(cssPath);}
 
-			// set the default map info
+			// set the default map world info
 			this.mapWorlds = {};
 
 			// check user editing permission
@@ -347,43 +347,45 @@ export default class Gamemap {
 			queryParams.showhidden = 1;
 		}
 
-		if (this.mapCallbacks != null) {
-			this.mapCallbacks.setLoading("Loading world");
-		}
+		Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
+			if (!error && data != null) {
 
-		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
-			if (data.isError) {
-				throw new Error("Could not retrieve world data.");
-			} else {
 				if (data.worlds == null) {
 					throw new Error("World data was null.");
 				}
-			}
 
-			for (var key in data.worlds) {
-				let world = data.worlds[key];
-
-				if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name != null) {
-
-					self.mapWorlds[world.id] = new World(world, mapConfig);
-					mapWorldNameIndex[world.name] = world.id;
-
-					if (world.displayName != null) {
-						mapWorldDisplayNameIndex[world.displayName] = world.id;
-					} else {
-						mapWorldDisplayNameIndex[world.name] = world.id;
-					}
-
+				if (this.mapCallbacks != null) {
+					this.mapCallbacks.setLoading("Loading world");
 				}
-			}
-			if (self.mapCallbacks != null) {
-				self.mapCallbacks.onWorldsLoaded(self.mapWorlds);
 
-				// load map
-				self.initialiseMap(mapConfig);
+				for (var key in data.worlds) {
+					let world = data.worlds[key];
 
+					if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name != null) {
+
+						self.mapWorlds[world.id] = new World(world, mapConfig);
+						mapWorldNameIndex[world.name] = world.id;
+
+						if (world.displayName != null) {
+							mapWorldDisplayNameIndex[world.displayName] = world.id;
+						} else {
+							mapWorldDisplayNameIndex[world.name] = world.id;
+						}
+
+					}
+				}
+				if (self.mapCallbacks != null) {
+					self.mapCallbacks.onWorldsLoaded(self.mapWorlds);
+
+					// load map
+					self.initialiseMap(mapConfig);
+				}
+
+			} else {
+				throw new Error("Could not retrieve world data.");
 			}
 		});
+
 	}
 
 	/** Simple function that does stuffblah blah fill this in later
@@ -491,7 +493,6 @@ export default class Gamemap {
 			if (data.isError == null && data.locations != null) {
 				print("Got " + data.locationCount + " locations!");
 				let locations = data.locations
-				//print(locations); // server side locations
 				let parsedLocations = {};
 
 				for (let key in locations) {
@@ -521,10 +522,11 @@ export default class Gamemap {
 			print(this.mapConfig.database)
 			if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
 
-			$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
+			Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
 
 				print("Getting info for locationID: "+ locationID);
-				if (!data.isError && data != null && data.locations[0] != null) {
+
+				if (!error && data != null && data.locations[0] != null) {
 					print("Got location info!");
 					print(data);
 					if (!(onLoadFunction == null) ) {
@@ -533,12 +535,10 @@ export default class Gamemap {
 						let location = new Location(self.mapConfig, data.locations[0], world)
 						onLoadFunction.call(null, location);
 					}
-					} else {
-						print("LocationID " + locationID + " was invalid.");
-					}
-
+				} else {
+					print("LocationID " + locationID + " was invalid.");
+				}
 			});
-
 		}
 	}
 
@@ -1361,16 +1361,20 @@ export default class Gamemap {
 			this.mapCallbacks.setLoading("Loading permissions");
 		}
 
-		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
+		Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
 
-			if (data.canEdit != null) {
-				self.mapConfig.editingEnabled = data.canEdit;
+			let canEdit = false;
+
+			if (!error && data != null) {
+				canEdit = data.canEdit;
+			} else {
+				print.warn("There was an error getting permissions.")
 			}
 
+			self.mapConfig.editingEnabled = canEdit;
 			if (self.mapCallbacks != null) {
-				self.mapCallbacks.onPermissionsLoaded(self.isMapEditingEnabled());
+				self.mapCallbacks.onPermissionsLoaded(canEdit);
 			}
-
 		});
 
 	}
