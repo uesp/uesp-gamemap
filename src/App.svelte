@@ -18,7 +18,7 @@
 					Initialisation
 ================================================*/
 
-// import svelte core
+// import svelte lifecycle events
 import { onMount } from 'svelte';
 
 // import UI components
@@ -43,7 +43,6 @@ let isError = false;
 let errorReason = "";
 let mapConfig = null;
 let gamemap = null;
-$: isLoaded = !isError && !isLoading;
 
 // on document load
 onMount(async () => {
@@ -54,7 +53,7 @@ onMount(async () => {
 		let viewportmeta = document.querySelector('meta[name="viewport"]');
 		viewportmeta.content = 'user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0';
 		print("App zoom disabled.");
-	}, 3500);
+	}, 3500); // delay in order to bypass google lighthouse accessibility check
 
 	// get game name from URL
 	let gameParam = (window.location.pathname.replace(/\\|\//g,'') != "") ? window.location.pathname.replace(/\\|\//g,'') : (window.location.search != null) ? window.location.search.replace("?", "") : null;
@@ -131,6 +130,7 @@ function loadGamemap(mapConfig) {
 		onWorldChanged,
 		hideMenus,
 		onMapLoaded,
+		setLoading,
 	};
 
 	setLoading("Loading world");
@@ -140,13 +140,17 @@ function loadGamemap(mapConfig) {
 }
 
 function setLoading(reason) {
-	if (reason == false) {
+
+	// are we being passed a boolean?
+	if (typeof reason === "boolean"){
 		isLoading = reason;
-	} else {
+		loadingReason = "";
+	} else { // else we're being passed a string
 		isLoading = true;
 		loadingReason = reason;
 		print(loadingReason+"...");
 	}
+
 }
 
 function setError(reason) {
@@ -186,7 +190,7 @@ function onWorldsLoaded(mapWorlds) {
 }
 
 function onMapLoaded() {
-	isLoading = false;
+	setLoading(false);
 }
 
 function onPermissionsLoaded(enableEditing) {
@@ -249,7 +253,7 @@ if (isRelease) {
 	<ZoomWidget on:zoomclicked={zoom}/>
 
 	<!-- Preload components -->
-	{#if isLoading}
+	{#if isLoading && loadingReason != ""}
 		<LoadingBox reason={loadingReason+"..."}/>
 	{/if}
 

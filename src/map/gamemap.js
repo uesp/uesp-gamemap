@@ -126,7 +126,7 @@ export default class Gamemap {
 		let coords = (Utils.getCookie("debugging") && this.getCurrentWorld().totalWidth != null ) ? this.toXY(map.getCenter(), true) : null;
 		map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home"><b class="wikiTitle">UESP</b></a>');
 		map.attributionControl.addAttribution("<span id='mapAttribution'></span>");
-		//$("#mapAttribution").html('<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  ' + ((coords != null) ? "XY: " + Math.trunc(coords.x) + ", " + Math.trunc(coords.y)  + "  |  " : "") + '<a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>');
+		document.querySelector('#mapAttribution').innerHTML = '<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  ' + ((coords != null) ? "XY: " + Math.trunc(coords.x) + ", " + Math.trunc(coords.y)  + "  |  " : "") + '<a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>';
 	}
 
 	/*================================================
@@ -347,6 +347,10 @@ export default class Gamemap {
 			queryParams.showhidden = 1;
 		}
 
+		if (this.mapCallbacks != null) {
+			this.mapCallbacks.setLoading("Loading world");
+		}
+
 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 			if (data.isError) {
 				throw new Error("Could not retrieve world data.");
@@ -369,8 +373,6 @@ export default class Gamemap {
 					} else {
 						mapWorldDisplayNameIndex[world.name] = world.id;
 					}
-
-					//self.worlds[world.id].mergeFromJson(world);
 
 				}
 			}
@@ -419,7 +421,9 @@ export default class Gamemap {
 				} else { // else load up the new world
 					print("Going to world... " + worldID);
 					print(this.getWorldFromID(worldID));
-					$("#map_loading_bar").show();
+					if (this.mapCallbacks != null) {
+						this.mapCallbacks.setLoading(true);
+					}
 					this.clearLocations();
 					mapState.world = this.getWorldFromID(worldID);
 					this.setMapState(mapState);
@@ -1352,6 +1356,10 @@ export default class Gamemap {
 		let self = this;
 		queryParams.action = "get_perm";
 		queryParams.db = this.mapConfig.database;
+
+		if (this.mapCallbacks != null) {
+			this.mapCallbacks.setLoading("Loading permissions");
+		}
 
 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
 
