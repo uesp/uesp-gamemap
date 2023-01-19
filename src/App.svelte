@@ -204,7 +204,7 @@
 		print("Worlds loaded!");
 		print(mapWorlds);
 
-		isLoading(false); // hide loading spinner
+		setLoading(false); // hide loading spinner
 
 		if (gamemap.hasMultipleWorlds()) {
 

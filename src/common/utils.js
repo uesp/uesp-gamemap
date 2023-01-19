@@ -282,6 +282,14 @@ export function sanitiseString(str){
 }
 
 /*================================================
+			  Is variable null function
+================================================*/
+
+export function isNull(variable) {
+	return (typeof variable === 'undefined' || variable === null);
+}
+
+/*================================================
 	  	    Change FavIcon function
 ================================================*/
 

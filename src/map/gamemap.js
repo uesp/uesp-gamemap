@@ -123,7 +123,7 @@ export default class Gamemap {
 	 * @param {Object} mapConfig - Object that controls the default/imported settings of the map.
 	 */
 	updateInfobar(mapConfig) {
-		let coords = (Utils.getCookie("debugging") && this.getCurrentWorld().totalWidth != null ) ? this.toXY(map.getCenter(), true) : null;
+		let coords = (isDebug && this.getCurrentWorld().totalWidth != null ) ? this.toXY(map.getCenter(), true) : null;
 		map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home"><b class="wikiTitle">UESP</b></a>');
 		map.attributionControl.addAttribution("<span id='mapAttribution'></span>");
 		document.querySelector('#mapAttribution').innerHTML = '<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  ' + ((coords != null) ? "XY: " + Math.trunc(coords.x) + ", " + Math.trunc(coords.y)  + "  |  " : "") + '<a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>';
@@ -347,15 +347,15 @@ export default class Gamemap {
 			queryParams.showhidden = 1;
 		}
 
+		if (self.mapCallbacks != null) {
+			self.mapCallbacks.setLoading("Loading world");
+		}
+
 		Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
 			if (!error && data != null) {
 
 				if (data.worlds == null) {
 					throw new Error("World data was null.");
-				}
-
-				if (this.mapCallbacks != null) {
-					this.mapCallbacks.setLoading("Loading world");
 				}
 
 				for (var key in data.worlds) {
