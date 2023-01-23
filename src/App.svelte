@@ -63,10 +63,10 @@
 			let viewportmeta = document.querySelector('meta[name="viewport"]');
 			viewportmeta.content = 'user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0';
 			print("App zoom disabled.");
-		}, (location.toString().includes("dev") ? 7000 : 0)); // delay disabling zoom on dev to bypass google lighthouse accessibility check
+		}, (location.toString().includes("dev") ? 10000 : 0)); // wait 10s on dev to bypass google lighthouse accessibility check
 
 		// get game name from URL
-		let gameParam = (location.pathname.replace(/\\|\//g,'') != "") ? location.pathname.replace(/\\|\//g,'') : (location.search != null) ? location.search.replace("?", "") : null;
+		let gameParam = (location.pathname.replace(/\\|\//g,'') != "") ? location.pathname.replace(/\\|\//g,'') : (location.search != null) ? Utils.getURLParams().get("game") : null;
 		setLoading("Loading map");
 
 		if (gameParam != null && gameParam.match(/^([a-z]+)/)) {
@@ -114,7 +114,7 @@
 
 			// if debug mode, redirect to eso map by default
 			if (isDebug || location.href.includes("localhost")) {
-				location.href = "http://localhost:8080/?eso";
+				location.href = "http://localhost:8080/?game=eso";
 			}
 			print.warn("Game parameter was missing or invalid.");
 			setError("No valid game provided.");

@@ -263,7 +263,7 @@ html, body, main {
 }
 
 .leaflet-interactive {
-	animation: fadein 0.3s;
+	animation: fade-in 0.3s;
 }
 
 .location-tooltip {
@@ -279,6 +279,11 @@ html, body, main {
 	font-family: sans-serif;
 	white-space: nowrap;
 	border-image: url(../assets/images/tooltip-border.png) 2 2 2 2 stretch;
+}
+
+@keyframes fade-in {
+	0% { opacity: 0; }
+	100% { opacity: 1; }
 }
 
 .leaflet-tooltip::before {

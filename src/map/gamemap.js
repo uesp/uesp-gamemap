@@ -276,7 +276,14 @@ export default class Gamemap {
 		this.currentMapState = newMapState;
 
 		// update url
-		let mapLink = (window.location.href.includes("/"+this.mapConfig.database+"/")) ? "?" : (this.mapConfig.database+"/?");
+
+		let mapLink;
+
+		if (!location.href.includes("localhost")) {
+			mapLink = (window.location.href.includes("/"+this.mapConfig.database+"/")) ? "?" : (this.mapConfig.database+"/?");
+		} else {
+			mapLink = "?game=" + this.mapConfig.database + "&";
+		}
 
 		if (this.hasMultipleWorlds()){
 			mapLink += 'world=' + newMapState.world.id;
