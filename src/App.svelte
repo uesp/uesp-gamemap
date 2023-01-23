@@ -1,15 +1,15 @@
 <!-- @component
-## Description
+### Description
  The UESP Gamemap is web app for displaying Elder Scrolls games' maps.
  It supports a variety of other map formats, and can be modified to support other games if desired.
 
  See @gamemap.js for actual map viewer implementation.
 
-## Author(s)
+### Author(s)
 - Dave Humphrey <dave@uesp.net> (21st Jan 2014)
 - Thal-J <thal-j@uesp.net> (16th Aug 2022)
 
-## Note
+### Note
  To disable the unused css warnings in this file, follow
  the instructions on this page:
  https://stackoverflow.com/a/60720816 -->
@@ -25,6 +25,8 @@
 	import { onMount } from 'svelte';
 
 	// import UI components
+	import "materialize-css";
+	import 'materialize-css/dist/css/materialize.min.css';
 	import ErrorBox from "./components/ErrorBox.svelte";
 	import ProgressBar from "./components/ProgressBar.svelte"
 	import LoadingBox from "./components/LoadingBox.svelte";

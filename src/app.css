@@ -1,7 +1,5 @@
-/* Import Material Design CSS */
+/* Import Material Design Icons */
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
-@import url("https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.2.1/dist/css/materialize.min.css");
-@import url("https://unpkg.com/leaflet@1.9.3/dist/leaflet.css");
 
 /*================================================
 					Colours
@@ -245,40 +243,40 @@ html, body, main {
 }
 
 .location-label {
-	border-radius: var(--padding_large);
-	position: absolute;
-	white-space: nowrap;
-	z-index: 20;
-	color: var(--text_loc_name);
-	font-weight: bolder;
-	font-family: "Arial", sans-serif;
+	border-radius: var(--padding_large) !important;
+	position: absolute !important;
+	white-space: nowrap !important;
+	z-index: 20 !important;
+	color: var(--text_loc_name) !important;
+	font-weight: bolder !important;
+	font-family: "Arial", sans-serif !important;
 	font-size: 12px !important;
-	text-shadow: 0px 0px 5px var(--background);
-	background-color: var(--shadow);
-	display: inline-block;
-	border: none;
-	box-shadow: 0px 0px 10px 6px var(--shadow);
-	cursor: pointer;
+	text-shadow: 0px 0px 5px var(--background) !important;
+	background-color: var(--shadow) !important;
+	display: inline-block !important;
+	border: none !important;
+	box-shadow: 0px 0px 10px 6px var(--shadow) !important;
+	cursor: pointer !important;
 	padding: 0px !important;
 }
 
 .leaflet-interactive {
-	animation: fade-in 0.3s;
+	animation: fade-in 0.3s !important;
 }
 
 .location-tooltip {
-	z-index: 45;
-	position: absolute;
-	border: 2px solid #606030;
-	background-color: rgba(0,0,0,0.85);
-	padding: 3px;
-	display: inline-block;
-	color: #ffffff;
-	font-size: 11px;
-	font-weight: bold;
-	font-family: sans-serif;
-	white-space: nowrap;
-	border-image: url(../assets/images/tooltip-border.png) 2 2 2 2 stretch;
+	z-index: 45 !important;
+	position: absolute !important;
+	border: 2px solid #606030 !important;
+	background-color: rgba(0,0,0,0.85) !important;
+	padding: 3px !important;
+	display: inline-block !important;
+	color: #ffffff !important;
+	font-size: 11px !important;
+	font-weight: bold !important;
+	font-family: sans-serif !important;
+	white-space: nowrap !important;
+	border-image: url(../assets/images/tooltip-border.png) 2 2 2 2 stretch !important;
 }
 
 @keyframes fade-in {
@@ -289,7 +287,6 @@ html, body, main {
 .leaflet-tooltip::before {
 	display: none;
 }
-
 
 .tooltip-desc {
 	font-weight: normal;
@@ -312,18 +309,18 @@ html, body, main {
 ================================================*/
 
 .leaflet-popup-content-wrapper {
-	display: block;
-	background-color: var(--surface);
-	border: none;
-	z-index: 30;
-	font-family: "Arial", sans-serif;
-	font-size: 13px;
-	padding: 4px;
-	box-shadow: 0px 0px 2px 2px var(--shadow);
+	display: block !important;
+	background-color: var(--surface) !important;
+	border: none !important;
+	z-index: 30 !important;
+	font-family: "Arial", sans-serif !important;
+	font-size: 13px !important;
+	padding: 4px !important;
+	box-shadow: 0px 0px 2px 2px var(--shadow) !important;
 }
 
 .leaflet-popup-content {
-	margin: 13px var(--padding_minimum) 13px var(--padding_minimum);
+	margin: 13px var(--padding_minimum) 13px var(--padding_minimum) !important;
 }
 
 .leaflet-popup-tip {
@@ -384,40 +381,40 @@ hr {
 ================================================*/
 
 .leaflet-control-attribution {
-	position: fixed;
+	position: fixed !important;
 	background: var(--primary_dark_variant) !important;
-	z-index: 1000;
-	bottom: 0;
-	right: 0;
-	width: auto;
-	padding: 3px;
-	padding-left: 12px;
-	padding-right: 12px;
-	border-radius: 12px 0px 0px 0px;
-	font-size: 12px;
-	color: white;
-	opacity: 0.45;
-	transition: opacity ease-in-out 150ms;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+	z-index: 99 !important;
+	bottom: 0 !important;
+	right: 0 !important;
+	width: auto !important;
+	padding: 3px !important;
+	padding-left: 12px !important;
+	padding-right: 12px !important;
+	border-radius: 12px 0px 0px 0px !important;
+	font-size: 12px !important;
+	color: white !important;
+	opacity: 0.45 !important;
+	transition: opacity ease-in-out 150ms !important;
+	-webkit-user-select: none !important;
+	-moz-user-select: none !important;
+	-ms-user-select: none !important;
+	user-select: none !important;
 
 }
 
 .leaflet-control-attribution:hover {
-	opacity: 1.0;
+	opacity: 1.0 !important;
 }
 
 .leaflet-control-attribution a {
 	text-decoration: none !important;
-	color: white;
+	color: white !important;
 }
 
 .leaflet-control-attribution a:hover {
-	text-decoration: underline;
-	border-bottom: solid white;
-	border-width: medium;
+	text-decoration: underline !important;
+	border-bottom: solid white !important;
+	border-width: medium !important;
 }
 
 
@@ -836,21 +833,6 @@ li div.collapsible-header i {
 
 .leaflet-interactive {
 	animation: fadein 0.3s;
-}
-
-.location-tooltip {
-	z-index: 45;
-	position: absolute;
-	border: 2px solid #606030;
-	background-color: rgba(0,0,0,0.85);
-	padding: 3px;
-	display: inline-block;
-	color: #ffffff;
-	font-size: 11px;
-	font-weight: bold;
-	font-family: sans-serif;
-	white-space: nowrap;
-	border-image: url(../assets/images/tooltip-border.png) 2 2 2 2 stretch;
 }
 
 .leaflet-tooltip::before {

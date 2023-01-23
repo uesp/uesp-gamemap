@@ -1,11 +1,16 @@
-<!-- Zoom widget component -->
+<!-- @component
+### Description
+ Zoom widget component for the UESP gamemap.
+
+### Author(s)
+- Thal-J <thal-j@uesp.net> (10th Jan, 2023) -->
+
 <script>
     import Icon from "./Icon.svelte";
     import Divider from "./Divider.svelte";
     import { createEventDispatcher } from "svelte";
 
     const dispatch = createEventDispatcher();
-
 
     function zoomIn() {
         console.log("Zooming in");

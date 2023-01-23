@@ -5,6 +5,9 @@
 
 ## todo
 
+
+- get zoom working
+
 layer switcher should use sentence case for layer names Default, Gridmap
 
 - add layer switcher day/night ui

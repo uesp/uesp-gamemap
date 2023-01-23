@@ -10,6 +10,7 @@ import * as Constants from "../common/constants.js";
 
 // import leaflet
 import * as L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 // import plugins
 import RasterCoords from "./plugins/rastercoords";
@@ -276,10 +277,8 @@ export default class Gamemap {
 		this.currentMapState = newMapState;
 
 		// update url
-
 		let mapLink;
-
-		if (!location.href.includes("localhost")) {
+		if (!location.href.includes("localhost")) { // use server schema if hosted, else use query params
 			mapLink = (window.location.href.includes("/"+this.mapConfig.database+"/")) ? "?" : (this.mapConfig.database+"/?");
 		} else {
 			mapLink = "?game=" + this.mapConfig.database + "&";
@@ -289,8 +288,6 @@ export default class Gamemap {
 			mapLink += 'world=' + newMapState.world.id;
 			mapLink += '&';
 		}
-
-		//(this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) ? print(Number(newMapState.coords[0]).toFixed(3)) : Math.trunc(newMapState.coords[0]);
 
 		mapLink += 'x=' + newMapState.coords[0];
 		mapLink += '&y=' + newMapState.coords[1];
