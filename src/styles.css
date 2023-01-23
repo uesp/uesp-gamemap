@@ -324,8 +324,8 @@ html, body, main {
 }
 
 .leaflet-popup-tip {
-	box-shadow: 0px 0px 2px 2px var(--shadow);
-	background-color: var(--surface);
+	box-shadow: 0px 0px 2px 2px var(--shadow) !important;
+	background-color: var(--surface) !important;
 }
 
 .popupTitle a {
@@ -410,13 +410,6 @@ hr {
 	text-decoration: none !important;
 	color: white !important;
 }
-
-.leaflet-control-attribution a:hover {
-	text-decoration: underline !important;
-	border-bottom: solid white !important;
-	border-width: medium !important;
-}
-
 
 
 
@@ -1139,115 +1132,6 @@ input[type=checkbox].gmMapEditPopupInput {
 
 .collection a.collection-item:not(.active):hover {
 	background-color: var(--divider);
-}
-
-.gmMapKey {
-	background-color: #EBDDB4;
-	border: 1px solid gray;
-	color: #000000;
-	font-family: sans-serif;
-	font-size: 12px;
-	position: absolute;
-	top: 10px;
-	left: 325px;
-	z-index: 150;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-	padding: 5px;
-	overflow-y: auto;
-	max-height: 95%;
-}
-
-.gmMapKeyCloseButton {
-	position: absolute;
-	right: 5px;
-	top: 5px;
-}
-
-.gmMapKeyColumn {
-	float: left;
-	margin: 0;
-	padding-left: 5px;
-}
-
-.gmMapKeyTitle {
-	font-size: 18px;
-	font-weight: bold;
-	display: inline-block;
-	width: 100%;
-	text-align: center;
-}
-
-.gmMapKeyItem {
-	display: inline-block;
-	line-height: 30px;
-	height: 30px;
-}
-
-.gmMapKeyImageImage
-{
-	width: 32px;
-	display: inline-block;
-	vertical-align: middle;
-}
-
-.gmMapKeyItem img {
-	display: block;
-	margin: auto auto;
-}
-
-.gmMapKeyItemLabel {
-	display: inline-block;
-	vertical-align: middle;
-	margin-left: 5px;
-}
-
-#gmMapEditButtons {
-	display: inline-block;
-	text-align: center;
-}
-
-
-.gmMapRCRoot {
-	position: absolute;
-	right: 2px;
-	top: 30px;
-	bottom: 2px;
-	z-index: 100;
-	font-family: Arial, sans-serif;
-	font-size: 12px;
-	z-index: 75;
-	overflow: auto;
-	padding: 2px;
-}
-
-.gmHelpBlock {
-	background-color: #EBDDB4;
-	border: 1px solid gray;
-	color: #000000;
-	font-family: sans-serif;
-	font-size: 12px;
-	position: absolute;
-	top: 50px;
-	margin-left: auto;
-	margin-right: auto;
-	left: 0;
-	right: 0;
-	width: 500px;
-	z-index: 150;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-	padding: 5px;
-}
-
-.gmHelpBlockTitle {
-	font-size: 18px;
-	font-weight: bold;
-	display: inline-block;
-	width: 400px;
-	text-align: center;
 }
 
 /*================================================

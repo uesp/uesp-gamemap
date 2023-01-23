@@ -290,4 +290,4 @@
 </markup>
 
 <!-- App stylesheet -->
-<style global src="./app.css"></style>
+<style global src="./styles.css"></style>
