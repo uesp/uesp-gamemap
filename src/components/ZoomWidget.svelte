@@ -40,7 +40,7 @@
         background: var(--primary_variant_light);
         border-radius: 64px;
         z-index: 1000;
-        bottom: var(--padding_large);
+        bottom: var(--padding_medium);
         right: var(--padding_minimum);
         width: var(--appbar_dimen);
         height: 100px;

@@ -32,6 +32,8 @@
 	import LoadingBox from "./components/LoadingBox.svelte";
 	import ZoomWidget from "./components/ZoomWidget.svelte";
 	import DebugBadge from "./components/DebugBadge.svelte";
+	import LayerSwitcher from './components/LayerSwitcher.svelte';
+	import Watermark from './components/Watermark.svelte';
 
 	// import commons
 	import * as Utils from "./common/utils.js";
@@ -40,8 +42,9 @@
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
 
-	// set up state variables
 	print("Initialising app...");
+
+	// set up state variables
 	let isLoading = true;
 	let loadingReason = "";
 	let isError = false;
@@ -49,6 +52,8 @@
 	let mapConfig = null;
 	let gamemap = null;
 	let editingEnabled = false;
+	let isEmbedded = window.self !== window.top;
+	let uespEmbed = isEmbedded && Utils.getURLParams.get("uespEmbed");
 
 	// on document load
 	onMount(async () => {
@@ -284,6 +289,13 @@
 	{#if isDebug}
 		<DebugBadge/>
 	{/if}
+
+	{#if gamemap}
+		 <LayerSwitcher></LayerSwitcher>
+		 <Watermark mapName = {mapConfig.mapTitle} embedType = {(isEmbedded) ? (uespEmbed) ? "uesp" : "normal" : "none"}/>
+	{/if}
+
+
 
 	<aside id="editor"></aside>
 	<aside id="drawer"></aside>

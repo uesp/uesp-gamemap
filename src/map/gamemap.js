@@ -91,7 +91,6 @@ export default class Gamemap {
 		// set global map options
 		var mapOptions = {
 			crs: L.CRS.Simple, // CRS: coordinate reference system
-			// zoom options:
 			zoomSnap: false, // enable snapping to zoom levels
 			zoomDelta: 0.50, // control how much the map zooms in by per scroll
 			zoomControl: false, // hide leaflet zoom control (we have our own)
@@ -99,11 +98,11 @@ export default class Gamemap {
 			doubleClickZoom: false, // disable double click to zoom
 			scrollWheelZoom: false, // disable original zoom function
 			smoothWheelZoom: true,  // enable smooth zoom
-  			smoothSensitivity: 0.9, // zoom speed. default is 1
+  			smoothSensitivity: 0.9, // zoom sensitivity. default is 1
+			attributionControl: false, // disable leaflet attribution control
         }
 
 		map = L.map(this.mapRoot.id, mapOptions);
-		this.updateInfobar(mapConfig);
 
 		let mapState = new MapState();
 		mapState.zoomLevel = mapConfig.defaultZoomLevel;
@@ -122,16 +121,6 @@ export default class Gamemap {
 
 		// bind map events
 		this.bindMapEvents();
-	}
-
-	/** Simple function to create the infobar at the bottom right of the gamemap screen.
-	 * @param {Object} mapConfig - Object that controls the default/imported settings of the map.
-	 */
-	updateInfobar(mapConfig) {
-		let coords = (isDebug && this.getCurrentWorld().totalWidth != null ) ? this.toXY(map.getCenter(), true) : null;
-		map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home"><b class="wikiTitle">UESP</b></a>');
-		map.attributionControl.addAttribution("<span id='mapAttribution'></span>");
-		document.querySelector('#mapAttribution').innerHTML = '<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);" title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  ' + ((coords != null) ? "XY: " + Math.trunc(coords.x) + ", " + Math.trunc(coords.y)  + "  |  " : "") + '<a id="mapFeedbackLink" href="'+ mapConfig.feedbackURL +'" title="Give feedback about this map">Send Feedback</a>';
 	}
 
 	/*================================================
@@ -295,7 +284,6 @@ export default class Gamemap {
 
 		// update url with new state
 		window.history.replaceState(newMapState, document.title, mapLink);
-		if (isDebug) { this.updateInfobar(this.mapConfig); }
 	}
 
 	/*================================================
