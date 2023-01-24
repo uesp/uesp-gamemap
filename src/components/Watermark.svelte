@@ -10,6 +10,9 @@
 <!-- TODO: make ctll click make watermark clickable -->
 
 <script>
+
+    import Icon from "./Icon.svelte";
+
     export let mapName = "Gamemap";
     export let embedType = "none";
     let isEmbedded = false;
@@ -22,12 +25,11 @@
 
 <markup>
     <div id=watermark_container>
-        <div id="watermark">
-
+        <div id="watermark" class:watermark={!isEmbedded}>
             {#if !isEmbedded}
                 <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home">UESP</a></span> • {mapName}</b>
             {:else}
-                <b>Open bigger map</b>
+                <b>{#if embedType == "uesp"}<span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home">UESP</a></span> • {/if}View larger map <Icon name="open_in_new" size="tiny"/></b>
             {/if}
         </div>
     </div>
@@ -58,7 +60,6 @@
         box-shadow: 0px 0px 10px 6px var(--shadow) !important;
         padding-left: 5px;
         padding-right: 5px;
-        opacity: 0.60;
         transition: opacity ease 150ms;
         -webkit-user-select: none;
         -moz-user-select: none;
@@ -79,6 +80,10 @@
         text-decoration: underline;
         border-bottom: solid white;
         border-width: medium;
+    }
+
+    .watermark {
+        opacity: 0.60;
     }
 
 </style>
