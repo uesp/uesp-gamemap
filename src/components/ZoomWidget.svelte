@@ -14,40 +14,36 @@
     import Icon from "./Icon.svelte";
     import Divider from "./Divider.svelte";
 
+    export let currentZoom;
+
     const dispatch = createEventDispatcher();
 
-    let maxZoomLevel = gamemap.getMaxZoom();
-    let currentZoomLevel = gamemap.getCurrentZoom();
-
-    let canZoomIn = true;
-    let canZoomOut = true;
+    $: canZoomIn = currentZoom < (gamemap.getMaxZoom() - 0.03);
+    $: canZoomOut = currentZoom > 0;
 
 
-    function zoomIn() {
-        let zoomStep = 	gamemap.getMapObject().options.zoomDelta;
-        console.log("Zooming in");
-        dispatch("zoomclicked", "in");
+    function zoom(amount) {
+
+        let zoomAmount;
+
+        if (typeof amount === "string") {
+            zoomAmount = (amount == "all_in") ? gamemap.getMaxZoom() : 0;
+        } else {
+            zoomAmount = gamemap.getCurrentZoom() + amount;
+        }
+
+        dispatch("zoomclicked", zoomAmount);
     }
 
-    function zoomInLongClick() {
-        console.log("Zooming in");
-        // zoom in to max zoom level
-    }
-
-    function zoomOut() {
-        let zoomStep = 	gamemap.getMapObject().options.zoomDelta;
-        console.log("Zooming out");
-        dispatch("zoomclicked", "out");
-        print(gamemap);
-        print(zoomStep);
-    }
 </script>
 
 <markup>
     <div id="zoom_widget">
-        <button on:click={zoomIn} class="btn_zoom waves-effect" id="btn_zoom_in" tabindex="-1" title="Zoom in" disabled={!canZoomIn}><Icon name="add"/></button>
+        <!-- svelte-ignore missing-declaration -->
+        <button on:click={() => zoom(gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect" id="btn_zoom_in" tabindex="-1" title="Zoom in" disabled={!canZoomIn}><Icon name="add"/></button>
         <Divider/>
-        <button on:click={zoomOut} class="btn_zoom waves-effect" id="btn_zoom_out" tabindex="-1" title="Zoom out"><Icon name="remove" disabled={!canZoomOut}/></button>
+        <!-- svelte-ignore missing-declaration -->
+        <button on:click={() => zoom(-gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect" id="btn_zoom_out" tabindex="-1" title="Zoom out" disabled={!canZoomOut}><Icon name="remove"/></button>
     </div>
 </markup>
 

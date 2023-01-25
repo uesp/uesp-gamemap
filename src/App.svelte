@@ -57,7 +57,7 @@
 	let editingEnabled = false;
 	let isEmbedded = window.self !== window.top;
 	let uespEmbed = isEmbedded && Utils.getURLParams.get("uespEmbed");
-	$: currentZoom = (gamemap != null) ? gamemap.getCurrentZoom() : 0;
+	let currentZoom = Utils.getURLParams().has("zoom") ? Utils.getURLParams().get("zoom") : 0;
 
 	setContext("mapConfig", mapConfig);
 
@@ -185,6 +185,7 @@
 			onWorldsLoaded,
 			onPermissionsLoaded,
 			onWorldChanged,
+			onZoom,
 			hideMenus,
 			onMapLoaded,
 			setLoading,
@@ -212,12 +213,14 @@
 
 	function onMapLoaded() {
 		setLoading(false);
+		currentZoom = gamemap.getCurrentZoom();
 	}
 
 	function onWorldsLoaded(mapWorlds) {
 
 		print("Worlds loaded!");
 		print(mapWorlds);
+
 
 		setLoading(false); // hide loading spinner
 
@@ -246,8 +249,17 @@
 		// clearSearch();
 	}
 
-	function onZoom(event) {
-		console.log("ligma");
+	function onZoom(data) {
+
+		// if data an int, then update zoom level
+		// however, if its an event, then send zoom back to gamemap
+
+		if (!isNaN(data)) {
+            currentZoom = data;
+        } else {
+			gamemap.setZoomTo(data.detail)
+		}
+
 	}
 
 	function onPermissionsLoaded(enableEditing) {

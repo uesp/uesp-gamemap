@@ -1006,19 +1006,9 @@ export default class Gamemap {
 		})
 
 		map.on("zoom", function(e) {
-			if (map.getZoom() >= (self.getCurrentWorld().maxZoomLevel - 0.03)) {
-				//$("#btn_zoom_in").prop("disabled",true);
+			if (self.mapCallbacks != null) {
+				self.mapCallbacks.onZoom(map.getZoom());
 			}
-
-			if (map.getZoom() <= self.getCurrentWorld().minZoomLevel) {
-				//$("#btn_zoom_out").prop("disabled",true);
-			}
-
-			if (map.getZoom() > self.getCurrentWorld().minZoomLevel && map.getZoom() < self.getCurrentWorld().maxZoomLevel) {
-				//$("#btn_zoom_out").prop("disabled", false);
-				//$("#btn_zoom_in").prop("disabled", false);
-			}
-
 		})
 
 		map.on("dblclick", function(event){
@@ -1151,12 +1141,8 @@ export default class Gamemap {
 
 	}
 
-	zoomIn(){
-		map.zoomIn();
-	}
-
-	zoomOut(){
-		map.zoomOut();
+	setZoomTo(zoom) {
+		map.setZoom(zoom, {animate: true})
 	}
 
 	hideMenus(){
