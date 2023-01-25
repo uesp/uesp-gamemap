@@ -21,8 +21,9 @@
 						Initialisation
 	================================================*/
 
-	// import svelte lifecycle events
+	// import svelte core stuff
 	import { onMount } from 'svelte';
+	import { setContext } from 'svelte';
 
 	// import UI components
 	import "materialize-css";
@@ -42,11 +43,13 @@
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
 
+
 	print("Initialising app...");
 
 	// set up state variables
 	let isLoading = true;
 	let loadingReason = "";
+	let isLoaded = false;
 	let isError = false;
 	let errorReason = "";
 	let mapConfig = null;
@@ -54,6 +57,9 @@
 	let editingEnabled = false;
 	let isEmbedded = window.self !== window.top;
 	let uespEmbed = isEmbedded && Utils.getURLParams.get("uespEmbed");
+	$: currentZoom = (gamemap != null) ? gamemap.getCurrentZoom() : 0;
+
+	setContext("mapConfig", mapConfig);
 
 	// on document load
 	onMount(async () => {
@@ -172,6 +178,8 @@
 
 	function loadGamemap(mapConfig) {
 
+		print("Is embedded: " + isEmbedded);
+
 		// define callbacks
 		let mapCallbacks = {
 			onWorldsLoaded,
@@ -232,11 +240,13 @@
 	function onWorldChanged(newWorld) {
 		// $('#current_location_label').text(newWorld.displayName);
 		setWindowTitle(newWorld.displayName);
+		isLoaded = true;
+		//setContext("currentWorld", newWorld);
 		// updateWorldList(newWorld.name);
 		// clearSearch();
 	}
 
-	function zoom(event) {
+	function onZoom(event) {
 		console.log("ligma");
 	}
 
@@ -276,17 +286,14 @@
 			<ProgressBar/>
 		{/if}
 
-		<!-- only show these elements when not being embedded -->
-		{#if !isEmbedded}
-			<ZoomWidget on:zoomclicked={zoom}/>
-			<LayerSwitcher></LayerSwitcher>
+		<!-- otherwise, show these eleents when fully loaded -->
+		{#if isLoaded}
+			<!-- only show these elements when not being embedded -->
+			{#if !isEmbedded}
+				<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom} />
+				<LayerSwitcher></LayerSwitcher>
+			{/if}
 		{/if}
-
-
-
-
-
-
 
 		 <Watermark mapName = {mapConfig.mapTitle} embedType = {(isEmbedded) ? (uespEmbed) ? "uesp" : "normal" : "none"}/>
 	{/if}

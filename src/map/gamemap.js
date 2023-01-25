@@ -1384,9 +1384,12 @@ export default class Gamemap {
 	}
 
 	getCurrentZoom() {
-		return map.getZoom();
+		return (map != null) ? map.getZoom() : 0;
 	}
 
+	getMaxZoom() {
+		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().maxZoomLevel : 5;
+	}
 
 }
 

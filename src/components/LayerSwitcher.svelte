@@ -10,12 +10,10 @@
     let isHovered = false;
 
     function onMouseEnter(event) {
-        print("Mouse entered");
         isHovered = true;
     }
 
     function onMouseExit(event) {
-        print("Mouse exit");
         isHovered = false;
     }
 
