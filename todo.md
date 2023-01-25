@@ -1,7 +1,8 @@
 
 ## this week:
 
-
+- updated watermark design (changes based on embedded, non embedded, uesp embedded)
+- pixel-perfect aligned ui elements (wasnt before)
 
 ## todo
 

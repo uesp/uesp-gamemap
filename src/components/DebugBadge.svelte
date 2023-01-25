@@ -10,7 +10,7 @@
     }
 
     #debug_tag {
-        opacity: 0.225;
+        opacity: 0.5;
         top: 15px;
         right: -35px;
         z-index: 9999;

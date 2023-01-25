@@ -5,10 +5,6 @@
 ### Author(s)
 - Thal-J <thal-j@uesp.net> (24th Jan, 2023) -->
 
-
-
-<!-- TODO: make ctll click make watermark clickable -->
-
 <script>
 
     import Icon from "./Icon.svelte";
@@ -22,7 +18,6 @@
 
 </script>
 
-
 <markup>
     <div id=watermark_container>
         <div id="watermark" class:watermark={!isEmbedded}>
@@ -35,13 +30,11 @@
     </div>
 </markup>
 
-
 <style>
-
     #watermark_container {
         width: 100%;
         pointer-events: none;
-        position: fixed;
+        position: absolute;
         bottom: var(--padding_medium);
         color: white;
         z-index: 800;
@@ -53,7 +46,7 @@
         display: inline-block;
         width: auto;
         margin: 0 auto;
-        font-size: 1.3rem;
+        font-size: 1.1rem;
         text-shadow: 0px 0px 5px var(--background) !important;
         background-color: var(--shadow) !important;
         border: none !important;
@@ -83,7 +76,7 @@
     }
 
     .watermark {
-        opacity: 0.60;
+        opacity: 0.55;
     }
 
 </style>

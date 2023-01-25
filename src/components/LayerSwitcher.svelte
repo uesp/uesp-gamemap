@@ -5,10 +5,25 @@
 ### Author(s)
 - Thal-J <thal-j@uesp.net> (24th Jan, 2023) -->
 
-<markup>
+<script>
 
+    let isHovered = false;
+
+    function onMouseEnter(event) {
+        print("Mouse entered");
+        isHovered = true;
+    }
+
+    function onMouseExit(event) {
+        print("Mouse exit");
+        isHovered = false;
+    }
+
+</script>
+
+<markup>
     <!-- Layer switcher Widget -->
-    <div class="layer_widget_root">
+    <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit}>
 
         <!-- Primary layer switcher button -->
         <button id="btn_layer_widget_switcher" has-background-image="true">
@@ -18,7 +33,7 @@
         </button>
 
         <!-- Additional layer options (on hover) -->
-        <div class="layer_widget_options">
+        <div class="layer_widget_options" class:isShown={isHovered}>
 
             <div id="btn_toggle_grid waves-effect" class='btn_layer_toggle layer-button' title="Toggle cell grid">
                 <i class="material-icons">grid_on</i>
@@ -31,7 +46,6 @@
                 <p class="layer-name">Resources</p>
                 <input type="checkbox" onchange="toggleCellResources(this.checked)">
             </div>
-
         </div>
     </div>
 </markup>
@@ -39,7 +53,6 @@
 
 <style>
     .layer_widget_root {
-        /* background-color: #33ff33; */
         position: absolute;
         z-index: 900;
         bottom: var(--padding_medium);
@@ -55,7 +68,27 @@
         margin-left: var(--padding_small);
         width: auto;
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
+        position: relative;
+        opacity: 0;
+        display: none;
+    }
+
+    .isShown {
         display: flex;
+        animation: fadein 0.2s;
+        opacity: 1;
+    }
+
+    @keyframes fadein {
+        0% {
+            opacity: 0;
+            left: -10px;
+        }
+
+        100% {
+            opacity: 1;
+            left: 0px;
+        }
     }
 
     .layer_widget_options:before {
@@ -127,7 +160,6 @@
         background-size: 150%;
         background-color: var(--surface_dark);
     }
-
 
     .layer-button {
         flex-shrink: 0;

@@ -192,7 +192,7 @@
 		document.title = mapConfig.mapTitle;
 
 		if (gamemap.hasMultipleWorlds()) { // show map world in title if there is one
-			document.title = document.title + " | " + worldName;
+			document.title = worldName + " | " + document.title;
 		}
 
 		document.title = document.title + (" (UESP)");
@@ -231,7 +231,7 @@
 
 	function onWorldChanged(newWorld) {
 		// $('#current_location_label').text(newWorld.displayName);
-		// setWindowTitle(newWorld.displayName);
+		setWindowTitle(newWorld.displayName);
 		// updateWorldList(newWorld.name);
 		// clearSearch();
 	}
@@ -269,7 +269,27 @@
 	<!-- Gamemap container -->
 	<div id="gamemap"></div>
 
-	<ZoomWidget on:zoomclicked={zoom}/>
+	{#if gamemap}
+
+		<!-- only show loading bar when map is loading -->
+		{#if isLoading}
+			<ProgressBar/>
+		{/if}
+
+		<!-- only show these elements when not being embedded -->
+		{#if !isEmbedded}
+			<ZoomWidget on:zoomclicked={zoom}/>
+			<LayerSwitcher></LayerSwitcher>
+		{/if}
+
+
+
+
+
+
+
+		 <Watermark mapName = {mapConfig.mapTitle} embedType = {(isEmbedded) ? (uespEmbed) ? "uesp" : "normal" : "none"}/>
+	{/if}
 
 	<!-- Preload components -->
 	{#if isLoading && loadingReason != ""}
@@ -280,22 +300,11 @@
 		<ErrorBox reason={errorReason}/>
 	{/if}
 
-	{#if isLoading}
-		<ProgressBar/>
-	{/if}
-
 	<!-- Show debug tag in top right corner if app is in dev mode -->
 	<!-- svelte-ignore missing-declaration -->
 	{#if isDebug}
 		<DebugBadge/>
 	{/if}
-
-	{#if gamemap}
-		 <LayerSwitcher></LayerSwitcher>
-		 <Watermark mapName = {mapConfig.mapTitle} embedType = {(isEmbedded) ? (uespEmbed) ? "uesp" : "normal" : "none"}/>
-	{/if}
-
-
 
 	<aside id="editor"></aside>
 	<aside id="drawer"></aside>
