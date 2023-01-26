@@ -9,10 +9,12 @@
 	// import svelte core stuff
 	import { getContext } from 'svelte';
     import { createEventDispatcher } from "svelte";
+    import "long-press-event";
 
     // import ui components
     import Icon from "./Icon.svelte";
     import Divider from "./Divider.svelte";
+
 
     export let currentZoom;
 
@@ -21,13 +23,23 @@
     $: canZoomIn = currentZoom < (gamemap.getMaxZoom() - 0.03);
     $: canZoomOut = currentZoom > 0;
 
+    // long press listener
+    document.addEventListener('long-press', function(e) {
+        if (e.target.closest(".btn_zoom")) {
+            let zoomButton = e.target.closest(".btn_zoom");
+            zoom(zoomButton.id.replace("btn_zoom_", ""));
+        }
+    });
 
+    // zoom function
     function zoom(amount) {
+
+        document.activeElement.blur();
 
         let zoomAmount;
 
         if (typeof amount === "string") {
-            zoomAmount = (amount == "all_in") ? gamemap.getMaxZoom() : 0;
+            zoomAmount = (amount == "in") ? gamemap.getMaxZoom() : 0;
         } else {
             zoomAmount = gamemap.getCurrentZoom() + amount;
         }
@@ -40,10 +52,10 @@
 <markup>
     <div id="zoom_widget">
         <!-- svelte-ignore missing-declaration -->
-        <button on:click={() => zoom(gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect" id="btn_zoom_in" tabindex="-1" title="Zoom in" disabled={!canZoomIn}><Icon name="add"/></button>
+        <button on:click={() => zoom(gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect long-press" id="btn_zoom_in" tabindex="-1" title="Zoom in" disabled={!canZoomIn} data-long-press-delay="500"><Icon name="add"/></button>
         <Divider/>
         <!-- svelte-ignore missing-declaration -->
-        <button on:click={() => zoom(-gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect" id="btn_zoom_out" tabindex="-1" title="Zoom out" disabled={!canZoomOut}><Icon name="remove"/></button>
+        <button on:click={() => zoom(-gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect long-press" id="btn_zoom_out" tabindex="-1" title="Zoom out" disabled={!canZoomOut} data-long-press-delay="500"><Icon name="remove"/></button>
     </div>
 </markup>
 
