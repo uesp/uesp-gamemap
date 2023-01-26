@@ -43,7 +43,6 @@
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
 
-
 	print("Initialising app...");
 
 	// set up state variables
@@ -300,7 +299,6 @@
 
 	<!-- Gamemap container -->
 	<div id="gamemap"></div>
-
 	{#if gamemap}
 
 		<!-- only show ui when ui is enabled -->
@@ -321,31 +319,31 @@
 			{/if}
 
 	 		<Watermark mapName = {mapConfig.mapTitle} embedType = {(isEmbedded) ? (uespEmbed) ? "uesp" : "normal" : "none"}/>
+
+			<!-- Show debug tag in top right corner if app is in dev mode -->
+			<!-- svelte-ignore missing-declaration -->
+			{#if isDebug}
+				<DebugBadge/>
+			{/if}
+
+			<!-- TODO -->
+			<!-- <aside id="editor"></aside>
+			<aside id="drawer"></aside> -->
 		{/if}
 
 	{/if}
 
-	<!-- Preload components -->
+	<!-- Preloader components -->
 	{#if isLoading && loadingReason != ""}
 		<LoadingBox reason={loadingReason+"..."}/>
-	{/if}
-
-	{#if isError}
+	{:else if isError}
 		<ErrorBox reason={errorReason}/>
 	{/if}
 
-	<!-- Show debug tag in top right corner if app is in dev mode -->
-	<!-- svelte-ignore missing-declaration -->
-	{#if isDebug}
-		<DebugBadge/>
-	{/if}
-
-	<aside id="editor"></aside>
-	<aside id="drawer"></aside>
 </markup>
 
 <!-- App stylesheet -->
 <style global src="./styles.css"></style>
 
 <!-- Global key listener -->
-<svelte:window on:keydown={onKeyPressed} />
+<svelte:window on:keydown={onKeyPressed}/>

@@ -4,6 +4,7 @@
 - updated watermark design (changes based on embedded, non embedded, uesp embedded)
 - pixel-perfect aligned ui elements (wasnt before)
 - qol: made long-pressing the zoom widget go full zoom in or out
+- qol: hide UI by pressing insert key (suggested by TR people)
 
 ## todo
 
@@ -23,7 +24,6 @@ ask dave to add DCSG paper oblivion map as optional layer
 - add overflow menu icons
 - add go up button for mobile
 - fix polylines not respecting zoom levels
-- key to hide ui
 - separate worlds and locations in search results "worlds" "locations"
 - allow world name instead of ID in url (used for centreon)
 - optimise grid code
