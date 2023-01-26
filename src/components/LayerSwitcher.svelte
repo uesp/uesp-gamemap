@@ -7,15 +7,16 @@
 
 <script>
 
+    // state vars
     let isHovered = false;
+    let hasLayerImage = gamemap.getMapConfig().tileLayers.length > 1;
 
-    function onMouseEnter(event) {
-        isHovered = true;
-    }
+    print(hasLayerImage);
+    print(gamemap.getMapConfig().tileURL);
 
-    function onMouseExit(event) {
-        isHovered = false;
-    }
+    // event listeners
+    function onMouseEnter() { isHovered = true;}
+    function onMouseExit() { isHovered = false;}
 
 </script>
 

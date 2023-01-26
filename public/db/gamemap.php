@@ -343,6 +343,8 @@ class GameMap
 				return $this->doGetRecentChanges();
 			case 'get_cellresource':
 				return $this->doGetCellResource();
+			case 'get_maps':
+				return $this->doGetMaps();
 			case 'default':
 			default:
 				break;
@@ -776,6 +778,25 @@ class GameMap
 		return true;
 	}
 
+	public function doGetMaps() {
+		$path = '../assets/maps';
+
+		$dirs = array();
+
+		// directory handle
+		$dir = dir($path);
+
+		while (false !== ($entry = $dir->read())) {
+			if ($entry != '.' && $entry != '..') {
+			   if (is_dir($path . '/' .$entry)) {
+					$dirs[] = $entry;
+			   }
+			}
+		}
+
+		$this->addOutputItem("maps", json_encode($dirs));
+		return true;
+	}
 
 	public function doGetCellResource()
 	{

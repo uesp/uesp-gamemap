@@ -33,12 +33,15 @@
     // zoom function
     function zoom(amount) {
 
-        document.activeElement.blur();
-
         let zoomAmount;
 
         if (typeof amount === "string") {
             zoomAmount = (amount == "in") ? gamemap.getMaxZoom() : 0;
+
+            // if > defaultzoomlevel, and longpress zoom out, then
+            // do gamemap.reset(false) where the boolean determines whether
+            // just reset the current map view or go back to default map
+            // if < default zoomlevel, then just zoomamount 0
         } else {
             zoomAmount = gamemap.getCurrentZoom() + amount;
         }

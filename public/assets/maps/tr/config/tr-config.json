@@ -33,7 +33,7 @@
 
     // Map tile info
     "tileLayers" : [
-        "default",
+        "world",
         "gridmap"
     ],
 

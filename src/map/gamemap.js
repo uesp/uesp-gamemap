@@ -172,9 +172,9 @@ export default class Gamemap {
 		//TODO: make tilelayer optional as param
 
 		if (Utils.isFirefox()){ // use HTML-based rendering on firefox
-			tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, this.mapConfig, this.mapConfig.tileLayers[0]), tileOptions);
+			tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, this.mapConfig.tileLayers[0]), tileOptions);
 		} else { // use canvas based tile rendering on everything else
-			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, this.mapConfig, this.mapConfig.tileLayers[0]), tileOptions);
+			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, this.mapConfig.tileLayers[0]), tileOptions);
 		}
 		tileLayer.addTo(map);
 
@@ -208,6 +208,13 @@ export default class Gamemap {
 	 */
 	getMapState() {
 		return this.currentMapState;
+	}
+
+	/** Get current map config object.
+	 * @returns {Object} mapConfig - Object that controls the configuration of the map.
+	 */
+	getMapConfig() {
+		return this.mapConfig;
 	}
 
 	/** Gets map state object from URL params (XY coords, world etc).
@@ -1364,9 +1371,11 @@ export default class Gamemap {
 	}
 
 	// tileX, tileY, zoom, world
-	getMapTileImageURL(world, mapConfig, layerName) {
-		// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
-		return mapConfig.tileURL + world.name + "/leaflet/" + layerName + "/zoom{z}/" + world.name + "-{x}-" + "{y}" + ".jpg";
+	// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
+	getMapTileImageURL(world, layerName, root) {
+		let zoom = (root) ? "/zoom0/" : "/zoom{z}/";
+		let xy = (root) ? "-0-0.jpg" : "-{x}-{y}.jpg";
+		return this.mapConfig.tileURL + world.name + "/leaflet/" + layerName + zoom + world.name + xy;
 	}
 
 	getCurrentZoom() {

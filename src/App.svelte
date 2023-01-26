@@ -182,6 +182,7 @@
 		// if "Insert" key pressed, hide UI
 		if (key.keyCode == 45) {
 			showUI = !showUI;
+			print("UI " + ((showUI) ? "shown." : "hidden."));
 		}
 
 	}
@@ -326,7 +327,7 @@
 
 					<!-- show layer switcher when available -->
 					{#if showLayerSwitcher}
-						<LayerSwitcher></LayerSwitcher>
+						<LayerSwitcher />
 					{/if}
 
 				{/if}
