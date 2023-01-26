@@ -58,6 +58,7 @@
 	let isEmbedded = window.self !== window.top;
 	let uespEmbed = isEmbedded && Utils.getURLParams.get("uespEmbed");
 	let currentZoom = Utils.getURLParams().has("zoom") ? Utils.getURLParams().get("zoom") : 0;
+	let showUI = true;
 
 	setContext("mapConfig", mapConfig);
 
@@ -170,6 +171,15 @@
 		// setWindowTitle(newWorld.displayName);
 		// updateWorldList(newWorld.name);
 		// clearSearch();
+	}
+
+	function onKeyPressed(key) {
+
+		// if "Insert" key pressed, hide UI
+		if (key.keyCode == 45) {
+			showUI = !showUI;
+		}
+
 	}
 
 	/*================================================
@@ -293,21 +303,26 @@
 
 	{#if gamemap}
 
-		<!-- only show loading bar when map is loading -->
-		{#if isLoading}
-			<ProgressBar/>
-		{/if}
+		<!-- only show ui when ui is enabled -->
+		{#if showUI}
 
-		<!-- otherwise, show these eleents when fully loaded -->
-		{#if isLoaded}
-			<!-- only show these elements when not being embedded -->
-			{#if !isEmbedded}
-				<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom} />
-				<LayerSwitcher></LayerSwitcher>
+			<!-- only show loading bar when map is loading -->
+			{#if isLoading}
+				<ProgressBar/>
 			{/if}
+
+			<!-- otherwise, show these eleents when fully loaded -->
+			{#if isLoaded}
+				<!-- only show these elements when not being embedded -->
+				{#if !isEmbedded}
+					<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom} />
+					<LayerSwitcher></LayerSwitcher>
+				{/if}
+			{/if}
+
+	 		<Watermark mapName = {mapConfig.mapTitle} embedType = {(isEmbedded) ? (uespEmbed) ? "uesp" : "normal" : "none"}/>
 		{/if}
 
-		 <Watermark mapName = {mapConfig.mapTitle} embedType = {(isEmbedded) ? (uespEmbed) ? "uesp" : "normal" : "none"}/>
 	{/if}
 
 	<!-- Preload components -->
@@ -331,3 +346,6 @@
 
 <!-- App stylesheet -->
 <style global src="./styles.css"></style>
+
+<!-- Global key listener -->
+<svelte:window on:keydown={onKeyPressed} />

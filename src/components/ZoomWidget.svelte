@@ -15,7 +15,6 @@
     import Icon from "./Icon.svelte";
     import Divider from "./Divider.svelte";
 
-
     export let currentZoom;
 
     const dispatch = createEventDispatcher();
@@ -52,10 +51,10 @@
 <markup>
     <div id="zoom_widget">
         <!-- svelte-ignore missing-declaration -->
-        <button on:click={() => zoom(gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect long-press" id="btn_zoom_in" tabindex="-1" title="Zoom in" disabled={!canZoomIn} data-long-press-delay="500"><Icon name="add"/></button>
+        <button on:click={() => zoom(gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect long-press" id="btn_zoom_in" tabindex="-1" title="Zoom in" disabled={!canZoomIn} data-long-press-delay="600"><Icon name="add"/></button>
         <Divider/>
         <!-- svelte-ignore missing-declaration -->
-        <button on:click={() => zoom(-gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect long-press" id="btn_zoom_out" tabindex="-1" title="Zoom out" disabled={!canZoomOut} data-long-press-delay="500"><Icon name="remove"/></button>
+        <button on:click={() => zoom(-gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect long-press" id="btn_zoom_out" tabindex="-1" title="Zoom out" disabled={!canZoomOut} data-long-press-delay="600"><Icon name="remove"/></button>
     </div>
 </markup>
 
@@ -66,7 +65,7 @@
         border-radius: 64px;
         z-index: 1000;
         bottom: var(--padding_medium);
-        right: var(--padding_minimum);
+        right: 10px;
         width: var(--appbar_dimen);
         height: 100px;
         display: flex;

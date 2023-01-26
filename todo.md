@@ -3,11 +3,10 @@
 
 - updated watermark design (changes based on embedded, non embedded, uesp embedded)
 - pixel-perfect aligned ui elements (wasnt before)
+- qol: made long-pressing the zoom widget go full zoom in or out
 
 ## todo
 
-
-- get zoom working
 
 layer switcher should use sentence case for layer names Default, Gridmap
 
@@ -20,7 +19,6 @@ ask dave to add DCSG paper oblivion map as optional layer
 - add a way to pin search pane to the map (static)
 - refactor all locationIDs to be negative
 - truncate decimal points on XY, show on normalised
-- long press zoom buttons to zoom
 - fix overflow menu being cropped
 - add overflow menu icons
 - add go up button for mobile
