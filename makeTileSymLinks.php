@@ -45,6 +45,7 @@ class CMakeTileSymLinks
 			'trmap' => [
 					'prefix' => 'TR',
 					'newPrefix' => 'tamrielrebuilt',
+					'layer' => 'world',
 			],
 			'obmap' => [
 					'prefix' => 'tamriel',
