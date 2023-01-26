@@ -58,6 +58,9 @@
 	let uespEmbed = isEmbedded && Utils.getURLParams.get("uespEmbed");
 	let currentZoom = Utils.getURLParams().has("zoom") ? Utils.getURLParams().get("zoom") : 0;
 	let showUI = true;
+	let showLayerSwitcher = false;
+	$: editMode = false;
+
 
 	setContext("mapConfig", mapConfig);
 
@@ -112,6 +115,8 @@
 							mapConfig.iconPath = mapConfig.assetsPath + "icons/";
 							mapConfig.imagesPath = mapConfig.assetsPath + "images/";
 							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/"; // note: sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this.
+							mapConfig.hasGrid = mapConfig.cellSize != null;
+							mapConfig.hasResources = mapConfig.hasGrid && false; // TODO
 
 							print("Completed merged map config:")
 							print(mapConfig);
@@ -230,6 +235,8 @@
 		print("Worlds loaded!");
 		print(mapWorlds);
 
+		showLayerSwitcher = (mapConfig.tileLayers.length > 1 || mapConfig.hasResources || mapConfig.hasGrid);
+
 
 		setLoading(false); // hide loading spinner
 
@@ -309,12 +316,19 @@
 				<ProgressBar/>
 			{/if}
 
-			<!-- otherwise, show these eleents when fully loaded -->
+			<!-- otherwise, show these elements when fully loaded -->
 			{#if isLoaded}
 				<!-- only show these elements when not being embedded -->
 				{#if !isEmbedded}
+
+
 					<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom} />
-					<LayerSwitcher></LayerSwitcher>
+
+					<!-- show layer switcher when available -->
+					{#if showLayerSwitcher}
+						<LayerSwitcher></LayerSwitcher>
+					{/if}
+
 				{/if}
 			{/if}
 
