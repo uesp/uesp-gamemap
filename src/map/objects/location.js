@@ -1,7 +1,7 @@
 /**
  * @name location.js
  * @author Dave Humphrey <dave@uesp.net> (23rd Jan 2014)
- * @summary Contains class definition for the gamemap's locations.
+ * @summary Class definition for the gamemap's locations.
  */
 
 import * as Constants from "../../common/constants.js";

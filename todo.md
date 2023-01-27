@@ -1,9 +1,23 @@
 
 ## this week:
 
-- updated watermark design (changes based on embedded, non embedded, uesp embedded)
+this week i focused on QoL stuff as i bring ui elements into svelte
+
+- rewrote how watermark works
+>>> updated design
+>>> no longer bottom right, but centre
+>>> now uses new bottom "options" pane which will be used for Cell Resource's options as well
+>>> potentially banner ads??
+
 - pixel-perfect aligned ui elements (wasnt before)
+
+- improved embedding support
+>>> big ui elements like search, zoom etc now hide on embed mode
+>>> watermark changes based on embedded, non embedded, uesp embedded "open in bigger map" etc
+
 - qol: made long-pressing the zoom widget go full zoom in or out
+>>> also bugfix: debounced zoom widget so cant spam zoom
+
 - qol: hide UI by pressing insert key (suggested by TR people)
 
 ## todo

@@ -25,7 +25,7 @@
     <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit}>
 
         <!-- Primary layer switcher button -->
-        <button id="btn_layer_widget_switcher" has-background-image="true">
+        <button id="btn_layer_widget_switcher" has-background-image="true" class="waves-effect">
             Layers
             <i class="small material-icons" style="position: relative; bottom: 45px;">layers</i>
             <p id="layer-name" class="layer-name" style="bottom: 12px;">Gridmap</p>
@@ -160,34 +160,5 @@
         background-color: var(--surface_dark);
     }
 
-    .layer-button {
-        flex-shrink: 0;
-        height: calc(var(--layer_widget_dimen) - var(--padding_minimum)) !important;
-        width: calc(var(--layer_widget_dimen) - var(--padding_minimum));
-        border-radius: var(--padding_minimum);
-        background-color: var(--primary_variant_dark);
-        margin-top: auto;
-        margin-bottom: auto;
-        margin-left: 4px;
-        margin-right: 4px;
-        z-index: 1;
-        border-style: solid;
-        border-width: 0px;
-        border-color: var(--text_on_primary);
-    }
 
-    .layer-button:hover {
-        background-color: var(--bubble_selection);
-    }
-
-    .layer-button:active {
-        background-color: var(--shadow);
-    }
-
-    .layer-button .material-icons {
-        width: 100%;
-        text-align: center;
-        position: relative;
-        top: 9.5px;
-    }
 </style>

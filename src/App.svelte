@@ -35,6 +35,9 @@
 	import DebugBadge from "./components/DebugBadge.svelte";
 	import LayerSwitcher from './components/LayerSwitcher.svelte';
 	import Watermark from './components/Watermark.svelte';
+	import LayerButton from './components/LayerButton.svelte';
+	import LoadingSpinner from './components/LoadingSpinner.svelte';
+  	import PreloadBox from './components/PreloadBox.svelte';
 
 	// import commons
 	import * as Utils from "./common/utils.js";
@@ -59,6 +62,7 @@
 	let currentZoom = Utils.getURLParams().has("zoom") ? Utils.getURLParams().get("zoom") : 0;
 	let showUI = true;
 	let showLayerSwitcher = false;
+	let maps = [];
 	$: editMode = false;
 
 
@@ -131,13 +135,23 @@
 		} else {
 
 			// if debug mode, redirect to eso map by default
-			if (isDebug || location.href.includes("localhost")) {
-				location.href = "http://localhost:8080/?game=eso";
-			}
+			// if (isDebug || location.href.includes("localhost")) {
+			// 	location.href = "http://localhost:8080/?game=eso";
+			// }
 			print.warn("Game parameter was missing or invalid.");
 			setError("No valid game provided.");
 
-			// TODO: maybe show list of games here to select
+			// get list of games to show
+			print("Getting available maps...");
+			var queryParams = {};
+			queryParams.action = "get_maps";
+
+			Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
+				if (!error && data != null) {
+					print(data.maps);
+					maps = data.maps;
+				}
+			});
 		}
 	});
 
@@ -322,7 +336,6 @@
 				<!-- only show these elements when not being embedded -->
 				{#if !isEmbedded}
 
-
 					<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom} />
 
 					<!-- show layer switcher when available -->
@@ -354,6 +367,19 @@
 	{:else if isError}
 		<ErrorBox reason={errorReason}/>
 	{/if}
+
+			<!-- {#if maps != []}
+			<PreloadBox>
+				{#each maps as map}
+					{map}
+				{/each}
+			</PreloadBox>
+		{/if} -->
+
+	<LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked="true"></LayerButton>
+	<LayerButton label="Resource Grid" tooltip="Toggle resource grid" icon="local_florist"></LayerButton>
+	<LayerButton label="ESO" icon="assets/maps/eso/images/favicon.ico"></LayerButton>
+	<LayerButton label="ESO" image="assets/maps/eso/images/favicon.ico"></LayerButton>
 
 </markup>
 

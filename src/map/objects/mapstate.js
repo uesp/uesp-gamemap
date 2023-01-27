@@ -1,7 +1,7 @@
 /**
  * @name mapState.js
  * @author Thal-J <thal-j@uesp.net> (2nd Sept 2022)
- * @summary Catch-all class for the map's state.
+ * @summary Data class for the map's state.
  */
 
  export default class MapState {
@@ -14,12 +14,13 @@
         this.showGrid = false;
         this.cellResource = "";
         this.displayState = "";
+		this.tileLayer = null;
 
     }
 
     createSaveQuery() {
 		let query = 'action=set_world';
-		
+
 		query += '&worldid=' + this.world.id;
 		query += '&parentid=' + this.world.parentID;
 		query += '&revisionid=' + this.world.revisionID;
@@ -37,7 +38,7 @@
 		query += '&zoomoffset=' + this.zoomOffset;
 		query += '&enabled=' + (this.enabled ? '1' : '0');
 		query += '&db=' + this.mapConfig.database;
-		
+
 		return query;
 	}
 }

@@ -794,7 +794,7 @@ class GameMap
 			}
 		}
 
-		$this->addOutputItem("maps", json_encode($dirs));
+		$this->addOutputItem("maps", $dirs);
 		return true;
 	}
 

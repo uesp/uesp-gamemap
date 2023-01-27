@@ -41,7 +41,8 @@
 	--shadow: rgba(0, 0, 0, 0.35);
 	--secondary: #8a5a44;
 	--secondary_variant: #A69480;
-  	--selection: rgba(138, 90, 68, 0.152);
+	--secondary_variant_dark: #8b7d6d;
+  	--selection: rgba(121, 80, 60, 0.152);
 	--bubble_selection: rgba(84, 84, 84, 0.5);
 	--error: #C2571B;
 	--error_dark: #DD8A5B;
