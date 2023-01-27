@@ -67,6 +67,7 @@ export default class Gamemap {
 
 			// set the default map world info
 			this.mapWorlds = {};
+			this.gridEnabled = false;
 
 			// check user editing permission
 			this.checkPermissions();
@@ -1172,7 +1173,27 @@ export default class Gamemap {
 						  General
 	================================================*/
 
+	setTileLayerTo(layer) {
+		// check to make sure layer name is valid
+		if (layer != null && this.mapConfig.tileLayers.indexOf(layer) > -1 ) {
+			print("TODO! should change layer!");
+		} else {
+			print.error("Provided TileLayer was invalid.")
+		}
+	}
+
+	isGridEnabled() {
+		return this.gridEnabled;
+	}
+
+	// placeholder
+	isResourceGridEnabled() {
+		return false;
+	}
+
 	toggleCellGrid(toggle) {
+
+		this.gridEnabled = toggle;
 
 		if (toggle) {
 

@@ -12,9 +12,11 @@
     import LayerButton from "./LayerButton.svelte";
 
     // state vars
-    let isHovered = true;
+    let isHovered = false;
     let hasMultipleLayers = gamemap.getMapConfig().tileLayers.length > 1;
     let layers = gamemap.getMapConfig().tileLayers;
+    $: gridEnabled = gamemap.isGridEnabled();
+    let resourceGridEnabled = gamemap.isResourceGridEnabled();
 
     print(hasMultipleLayers);
     print(gamemap.getMapConfig().tileURL);
@@ -22,9 +24,18 @@
     // event listeners
     function onMouseEnter() {
         isHovered = true;
-        // update other states here
+        gridEnabled = gamemap.isGridEnabled();
+        resourceGridEnabled = gamemap.isResourceGridEnabled();
     }
-    function onMouseExit() { isHovered = false;}
+    function onMouseExit() {
+        isHovered = false;
+        gridEnabled = gamemap.isGridEnabled();
+        resourceGridEnabled = gamemap.isResourceGridEnabled();
+    }
+
+    function test() {
+        alert("ligma");
+    }
 
 </script>
 
@@ -42,20 +53,25 @@
         <!-- Additional layer options (on hover) -->
         <div class="layer_widget_options" class:isShown={isHovered}>
 
+            <!-- Dynamic map layers -->
             {#if hasMultipleLayers}
                  {#each layers as layer}
                     <!-- svelte-ignore missing-declaration -->
-                    <LayerButton label={layer.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer, true)}></LayerButton>
+                    <LayerButton label={layer.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer, true)}/>
                  {/each}
-
                  <Divider direction="vertical"></Divider>
             {/if}
 
+            <!-- Predefined optional map layers -->
+            <!-- svelte-ignore missing-declaration -->
+            {#if gamemap.getMapConfig().hasGrid}
+                <LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked={gridEnabled} on:onClick={(event) => (gamemap.toggleCellGrid(event.detail))}/>
+            {/if}
 
-
-            <LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked="true"></LayerButton>
-            <LayerButton label="Resources" tooltip="Toggle resource grid" icon="local_florist" checked="true"></LayerButton>
-
+            <!-- svelte-ignore missing-declaration -->
+            {#if gamemap.getMapConfig().hasResources}
+                <LayerButton label="Resources" tooltip="Toggle resource grid" icon="local_florist" checked={resourceGridEnabled}/>
+            {/if}
         </div>
     </div>
 </markup>
@@ -107,7 +123,7 @@
         border-width: 10px 15px 10px 0;
         border-color: transparent var(--primary_variant_light) transparent transparent;
         position: absolute;
-        left: -4.5%;
+        left: -5%;
         top: 35%;
         height: 10px;
     }
