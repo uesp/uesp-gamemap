@@ -376,8 +376,6 @@
 			</PreloadBox>
 		{/if} -->
 
-	<LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked="true"></LayerButton>
-	<LayerButton label="Resource Grid" tooltip="Toggle resource grid" icon="local_florist"></LayerButton>
 	<LayerButton label="ESO" icon="assets/maps/eso/images/favicon.ico"></LayerButton>
 	<LayerButton label="ESO" image="assets/maps/eso/images/favicon.ico"></LayerButton>
 

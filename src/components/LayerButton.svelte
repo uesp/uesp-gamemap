@@ -6,25 +6,28 @@
 - Thal-J <thal-j@uesp.net> (27th Jan, 2023) -->
 
 <script>
+    // import svelte stuff
+    import { createEventDispatcher } from "svelte";
+
+    // state vars
     export let tooltip = "";
     export let label = "layer";
     export let icon = null;
     export let image = null;
     export let checked;
+    const dispatch = createEventDispatcher();
 
     let hasIcon = (icon != null && !image);
     let iconIsURL = hasIcon && icon.includes("/");
-
-    if (image) {
-        print(this);
-    }
 
     function onClick() {
 
         if (checked != null) {
             checked = !checked;
+            dispatch("onClick", checked);
+        } else {
+            dispatch("onClick", "clicked");
         }
-
     }
 
 </script>
@@ -64,7 +67,7 @@
         height: calc(var(--layer_widget_dimen) - var(--padding_minimum)) !important;
         width: calc(var(--layer_widget_dimen) - var(--padding_minimum));
         border-radius: var(--padding_minimum);
-        background-color: var(--primary_variant_light);
+        background-color: var(--primary_variant_dark);
         margin-top: auto;
         margin-bottom: auto;
         margin-left: 4px;
@@ -77,7 +80,7 @@
     }
 
     .layer-button:hover {
-        background-color: var(--primary_variant_dark);
+        background-color: var(--shadow);
     }
 
     .layer-button .material-icons {
@@ -103,19 +106,19 @@
     .hasImage {
         background-repeat:no-repeat;
         background-position: center center;
-        background-size: 120%;
+        background-size: 165%;
         color: white;
         text-shadow: 0px 0px 6px var(--background);
         box-shadow: inset 0 -7px 16px -7px rgba(0,0,0,0.9);
         cursor: pointer;
         background-color: var(--text_low_emphasis);
-        border-color: var(--surface_variant);
+        border-color: var(--divider);
         border-style: solid;
-        border-width: medium;
+        border-width: 3px;
     }
 
     .hasImage:hover {
-        border-color: var(--surface_variant_dark);
+        border-color: var(--secondary_variant);
         background-color: var(--surface_dark_variant);
         background-size: 250%;
         box-shadow: inset 0px 0px 10px rgba(0,0,0,0.9);

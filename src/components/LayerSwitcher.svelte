@@ -7,15 +7,24 @@
 
 <script>
 
+    // import ui components
+    import Divider from "./Divider.svelte";
+import LayerButton from "./LayerButton.svelte";
+
+
     // state vars
     let isHovered = false;
-    let hasLayerImage = gamemap.getMapConfig().tileLayers.length > 1;
+    let hasMultipleLayers = gamemap.getMapConfig().tileLayers.length > 1;
+    let layers = gamemap.getMapConfig().tileLayers;
 
-    print(hasLayerImage);
+    print(hasMultipleLayers);
     print(gamemap.getMapConfig().tileURL);
 
     // event listeners
-    function onMouseEnter() { isHovered = true;}
+    function onMouseEnter() {
+        isHovered = true;
+        // update other states here
+    }
     function onMouseExit() { isHovered = false;}
 
 </script>
@@ -34,17 +43,21 @@
         <!-- Additional layer options (on hover) -->
         <div class="layer_widget_options" class:isShown={isHovered}>
 
-            <div id="btn_toggle_grid waves-effect" class='btn_layer_toggle layer-button' title="Toggle cell grid">
-                <i class="material-icons">grid_on</i>
-                <p class="layer-name">Cell Grid</p>
-                <input type="checkbox" onchange="toggleCellGrid(this.checked)">
-            </div>
+            {#if hasMultipleLayers}
+                 {#each layers as layer}
+                    <!-- svelte-ignore missing-declaration -->
+                    <LayerButton label={layer.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer, true)}></LayerButton>
+                 {/each}
 
-            <div id="btn_toggle_resource_grid waves-effect" class='btn_layer_toggle layer-button' title="Toggle resource grid">
-                <i class="material-icons">local_florist</i>
-                <p class="layer-name">Resources</p>
-                <input type="checkbox" onchange="toggleCellResources(this.checked)">
-            </div>
+                 <Divider direction="vertical"></Divider>
+            {/if}
+
+
+
+            <LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked="true"></LayerButton>
+
+            <LayerButton label="Resource Grid" tooltip="Toggle resource grid" icon="local_florist" checked="true"></LayerButton>
+
         </div>
     </div>
 </markup>
@@ -117,7 +130,7 @@
         background-image: url('https://cdn.discordapp.com/attachments/979030537773650013/1061026748684320838/eso64_2022-10-15_23-05-09_1.jpg');
         background-repeat:no-repeat;
         background-position: center center;
-        background-size: 120%;
+        background-size: 165%;
         border-radius: var(--padding_minimum);
         box-shadow: 0px 1.5px 4px 4px var(--shadow), inset 0 -7px 16px -7px rgba(0,0,0,0.9);
         border-style: solid;
@@ -159,6 +172,5 @@
         background-size: 150%;
         background-color: var(--surface_dark);
     }
-
 
 </style>
