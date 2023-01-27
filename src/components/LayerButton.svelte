@@ -58,8 +58,7 @@
         text-align: center;
         position: absolute;
         width: 100%;
-        bottom: -8px;
-        line-height: 12px;
+        bottom: -9px;
     }
 
     .layer-button {

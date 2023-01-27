@@ -9,11 +9,10 @@
 
     // import ui components
     import Divider from "./Divider.svelte";
-import LayerButton from "./LayerButton.svelte";
-
+    import LayerButton from "./LayerButton.svelte";
 
     // state vars
-    let isHovered = false;
+    let isHovered = true;
     let hasMultipleLayers = gamemap.getMapConfig().tileLayers.length > 1;
     let layers = gamemap.getMapConfig().tileLayers;
 
@@ -55,8 +54,7 @@ import LayerButton from "./LayerButton.svelte";
 
 
             <LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked="true"></LayerButton>
-
-            <LayerButton label="Resource Grid" tooltip="Toggle resource grid" icon="local_florist" checked="true"></LayerButton>
+            <LayerButton label="Resources" tooltip="Toggle resource grid" icon="local_florist" checked="true"></LayerButton>
 
         </div>
     </div>
@@ -108,9 +106,9 @@ import LayerButton from "./LayerButton.svelte";
         border-style: solid;
         border-width: 10px 15px 10px 0;
         border-color: transparent var(--primary_variant_light) transparent transparent;
-        position: relative;
-        left: -7%;
-        top: 32%;
+        position: absolute;
+        left: -4.5%;
+        top: 35%;
         height: 10px;
     }
 

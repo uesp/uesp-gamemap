@@ -25,7 +25,9 @@
         width: 2px; /* Width instead of height */
         margin-left: 2px;
         margin-right: 2px;
-        height: 75%;
+        margin-top: auto;
+        margin-bottom: auto;
+        height: 80%;
     }
 
 </style>
