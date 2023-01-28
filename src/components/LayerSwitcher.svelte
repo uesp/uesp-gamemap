@@ -33,8 +33,16 @@
         resourceGridEnabled = gamemap.isResourceGridEnabled();
     }
 
-    function test() {
-        alert("ligma");
+    function onLayerClicked(event) {
+        gamemap.setTileLayerTo(event.detail);
+        //isHovered = false;
+        // TODO: update layer state in main window
+    }
+
+    function onLayerSwitcherClicked(event) {
+
+        // should cycle through layers, 1 - x, then restart
+        print("TODO: layer switcher clicked");
     }
 
 </script>
@@ -44,7 +52,7 @@
     <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit}>
 
         <!-- Primary layer switcher button -->
-        <button id="btn_layer_widget_switcher" has-background-image="true" class="waves-effect">
+        <button id="btn_layer_widget_switcher" has-background-image="true" class="waves-effect" on:click={onLayerSwitcherClicked}>
             Layers
             <i class="small material-icons" style="position: relative; bottom: 45px;">layers</i>
             <p id="layer-name" class="layer-name" style="bottom: 12px;">Gridmap</p>
@@ -57,7 +65,7 @@
             {#if hasMultipleLayers}
                  {#each layers as layer}
                     <!-- svelte-ignore missing-declaration -->
-                    <LayerButton label={layer.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer, true)}/>
+                    <LayerButton on:onClick={onLayerClicked} label={layer.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer, true)}/>
                  {/each}
                  <Divider direction="vertical"></Divider>
             {/if}

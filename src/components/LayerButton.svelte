@@ -26,7 +26,7 @@
             checked = !checked;
             dispatch("onClick", checked);
         } else {
-            dispatch("onClick", "clicked");
+            dispatch("onClick", label.toLowerCase());
         }
     }
 
