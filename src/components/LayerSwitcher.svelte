@@ -19,6 +19,7 @@
     let resourceGridEnabled = gamemap.isResourceGridEnabled();
 
     $: layerName = gamemap.getNextTileLayerName();
+    $: layerImage = (hasMultipleLayers) ? gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layerName, true) : null;
 
     print(layerName);
 
@@ -56,11 +57,11 @@
     <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit}>
 
         <!-- Primary layer switcher button -->
-        <button id="btn_layer_widget_switcher" has-background-image="true" class:hasLayerImage={hasMultipleLayers} class="waves-effect" on:click={onLayerClicked}>
+        <button id="btn_layer_widget_switcher" has-background-image="true" class:hasLayerImage={hasMultipleLayers} class="waves-effect" on:click={onLayerClicked} style="background-image: url({layerImage});">
             Layers
             <i class="small material-icons" style="position: relative; bottom: 45px;">layers</i>
             {#if hasMultipleLayers}
-                <p id="layer-name" class="layer-name" style="bottom: 12px;">{layerName}</p>
+                <p id="layer-name" class="layer-name" style="bottom: 12px;">{layerName.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())}</p>
             {/if}
         </button>
 
@@ -155,7 +156,6 @@
         flex-shrink: 0;
         height: var(--layer_widget_dimen);
         width: var(--layer_widget_dimen);
-        background-image: url('https://cdn.discordapp.com/attachments/979030537773650013/1061026748684320838/eso64_2022-10-15_23-05-09_1.jpg');
         background-repeat:no-repeat;
         background-position: center center;
         background-size: 165%;
