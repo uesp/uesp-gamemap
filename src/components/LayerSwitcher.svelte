@@ -18,6 +18,10 @@
     $: gridEnabled = gamemap.isGridEnabled();
     let resourceGridEnabled = gamemap.isResourceGridEnabled();
 
+    $: layerName = gamemap.getNextTileLayerName();
+
+    print(layerName);
+
     print(hasMultipleLayers);
     print(gamemap.getMapConfig().tileURL);
 
@@ -34,16 +38,16 @@
     }
 
     function onLayerClicked(event) {
-        gamemap.setTileLayerTo(event.detail);
-        //isHovered = false;
-        // TODO: update layer state in main window
+
+        if (event.target == null) {
+            gamemap.setTileLayerTo(event.detail);
+        } else {
+            print(gamemap.getNextTileLayerIndex());
+            gamemap.setTileLayerTo(gamemap.getNextTileLayerName());
+        }
+        layerName = gamemap.getNextTileLayerName();
     }
 
-    function onLayerSwitcherClicked(event) {
-
-        // should cycle through layers, 1 - x, then restart
-        print("TODO: layer switcher clicked");
-    }
 
 </script>
 
@@ -52,10 +56,12 @@
     <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit}>
 
         <!-- Primary layer switcher button -->
-        <button id="btn_layer_widget_switcher" has-background-image="true" class="waves-effect" on:click={onLayerSwitcherClicked}>
+        <button id="btn_layer_widget_switcher" has-background-image="true" class:hasLayerImage={hasMultipleLayers} class="waves-effect" on:click={onLayerClicked}>
             Layers
             <i class="small material-icons" style="position: relative; bottom: 45px;">layers</i>
-            <p id="layer-name" class="layer-name" style="bottom: 12px;">Gridmap</p>
+            {#if hasMultipleLayers}
+                <p id="layer-name" class="layer-name" style="bottom: 12px;">{layerName}</p>
+            {/if}
         </button>
 
         <!-- Additional layer options (on hover) -->

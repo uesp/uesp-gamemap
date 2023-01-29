@@ -376,8 +376,8 @@
 			</PreloadBox>
 		{/if} -->
 
-	<LayerButton label="ESO" icon="assets/maps/eso/images/favicon.ico"></LayerButton>
-	<LayerButton label="ESO" image="assets/maps/eso/images/favicon.ico"></LayerButton>
+	<!-- <LayerButton label="ESO" icon="assets/maps/eso/images/favicon.ico"></LayerButton>
+	<LayerButton label="ESO" image="assets/maps/eso/images/favicon.ico"></LayerButton> -->
 
 </markup>
 

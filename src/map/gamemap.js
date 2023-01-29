@@ -1381,16 +1381,20 @@ export default class Gamemap {
 		return this.mapConfig.editingEnabled;
 	}
 
-	getCurrentTileLayer() {
+	getCurrentTileLayerIndex() {
 		return this.getMapState().tileLayer;
 	}
 
-	getNextTileLayer() {
-		if ((this.getCurrentTileLayer() +1) > this.mapConfig.tileLayers.length) {
-			return 0;
-		} else {
-			return this.getCurrentTileLayer() + 1;
-		}
+	getNextTileLayerIndex() {
+		return (this.getCurrentTileLayerIndex() +1) == (this.mapConfig.tileLayers.length) ? 0 : this.getCurrentTileLayerIndex() + 1;
+	}
+
+	getNextTileLayerName() {
+		return this.mapConfig.tileLayers[this.getNextTileLayerIndex()];
+	}
+
+	getCurrentTileLayerName() {
+		return this.mapConfig.tileLayers[this.getCurrentTileLayerIndex()];
 	}
 
 	// check if user has editing permissions
