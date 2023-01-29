@@ -130,7 +130,7 @@ export default class Gamemap {
 
 	/** Set map to saved map state (use to load from URL or from saved state).
 	 * @param {Object} mapState - Object that controls the state and view of the map.
-	 * @param {Boolean} onlyTiles - Flag to only update map tiles.
+	 * @param {Boolean} onlyTiles - Flag to only update map tiles. Default: false (overwrites everything).
 	 */
 	setMapState(mapState, onlyTiles) {
 
@@ -1194,15 +1194,27 @@ export default class Gamemap {
 	================================================*/
 
 	setTileLayerTo(layer) {
-		// check to make sure layer name is valid
-		if (layer != null && this.mapConfig.tileLayers.indexOf(layer) > -1 ) {
-			let layerIndex = this.mapConfig.tileLayers.indexOf(layer);
-			let mapState = this.getMapState();
 
-			if (mapState.tileLayer != layerIndex) {
-				mapState.tileLayer = layerIndex;
-				this.setMapState(mapState, true);
+		if (layer != null) {
+			let layerIndex;
+			if (isNaN(layer)){
+				if (this.mapConfig.tileLayers.indexOf(layer) > -1 ) {
+					layerIndex = this.mapConfig.tileLayers.indexOf(layer);
+				}
+			} else {
+				layerIndex = layer;
 			}
+
+			if (layerIndex > -1 && layerIndex < this.mapConfig.tileLayers.length) {
+				let mapState = this.getMapState();
+				if (mapState.tileLayer != layerIndex) {
+					mapState.tileLayer = layerIndex;
+					this.setMapState(mapState, true);
+				}
+			} else {
+				print.warn("TileLayer index was out of bounds.")
+			}
+
 		} else {
 			print.error("Provided TileLayer was invalid.")
 		}

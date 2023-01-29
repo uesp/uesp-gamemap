@@ -44,7 +44,7 @@
             gamemap.setTileLayerTo(event.detail);
         } else {
             print(gamemap.getNextTileLayerIndex());
-            gamemap.setTileLayerTo(gamemap.getNextTileLayerName());
+            gamemap.setTileLayerTo(gamemap.getNextTileLayerIndex());
         }
         layerName = gamemap.getNextTileLayerName();
     }
