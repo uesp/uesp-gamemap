@@ -130,15 +130,19 @@ export default class Gamemap {
 
 	/** Set map to saved map state (use to load from URL or from saved state).
 	 * @param {Object} mapState - Object that controls the state and view of the map.
+	 * @param {Boolean} onlyTiles - Flag to only update map tiles.
 	 */
-	setMapState(mapState) {
+	setMapState(mapState, onlyTiles) {
 
 		print("Setting map state!");
+		onlyTiles = (onlyTiles != null) ? onlyTiles : false;
 
 		// remove previous tiles
 		if (tileLayer != null) {
 			tileLayer.remove();
-			this.clearLocations();
+			if (!onlyTiles) {
+				this.clearLocations();
+			}
 		}
 
 		if (mapState.world == null) {
@@ -186,13 +190,15 @@ export default class Gamemap {
 			this.mapCallbacks.onWorldChanged(this.mapWorlds[this.currentWorldID])
 		}
 
-		// get/set locations
-		if (mapState.world.locations == null) {
-			// get locations for this map
-			this.getLocations(mapState.world.id);
-		} else {
-			//redraw locations from cache
-			this.redrawLocations(mapState.world.locations);
+		if (!onlyTiles) {
+			// get/set locations
+			if (mapState.world.locations == null) {
+				// get locations for this map
+				this.getLocations(mapState.world.id);
+			} else {
+				//redraw locations from cache
+				this.redrawLocations(mapState.world.locations);
+			}
 		}
 
 		// add padding around max bounds
@@ -1195,7 +1201,7 @@ export default class Gamemap {
 
 			if (mapState.tileLayer != layerIndex) {
 				mapState.tileLayer = layerIndex;
-				this.setMapState(mapState);
+				this.setMapState(mapState, true);
 			}
 		} else {
 			print.error("Provided TileLayer was invalid.")
@@ -1628,7 +1634,6 @@ export default class Gamemap {
 // 	newState.zoomLevel = this.zoomLevel;
 // 	if (newState.zoomLevel < destLoc.displayLevel) newState.zoomLevel = destLoc.displayLevel;
 
-// 	this.setMapState(newState);
 
 // 	if (openPopup === true || (this.openPopupOnJump && (destLoc.displayData.labelPos != 0 || destLoc.iconType != 0)))
 // 	{
