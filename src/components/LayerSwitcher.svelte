@@ -89,8 +89,8 @@
     .layer_widget_root {
         position: absolute;
         z-index: 900;
-        bottom: var(--padding_medium);
-        left: var(--padding_minimum);
+        bottom: 10px;
+        left: 10px;
         width: fit-content;
         max-width: var(--search_pane_width);
         display: flex;

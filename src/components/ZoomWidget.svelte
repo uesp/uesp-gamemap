@@ -67,7 +67,7 @@
         background: var(--primary_variant_light);
         border-radius: 64px;
         z-index: 1000;
-        bottom: var(--padding_medium);
+        bottom: 10px;
         right: 10px;
         width: var(--appbar_dimen);
         height: 100px;

@@ -35,7 +35,7 @@
         width: 100%;
         pointer-events: none;
         position: absolute;
-        bottom: var(--padding_medium);
+        bottom: 10px;
         color: white;
         z-index: 800;
         text-align: center;

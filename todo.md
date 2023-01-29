@@ -20,6 +20,9 @@ this week i focused on QoL stuff as i bring ui elements into svelte
 
 - qol: hide UI by pressing insert key (suggested by TR people)
 
+- linked up layer switcher to the gamemap
+- did some animations and styling on it too
+
 ## todo
 
 
