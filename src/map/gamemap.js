@@ -170,12 +170,10 @@ export default class Gamemap {
 
 		// set map tile layer
 
-		//TODO: make tilelayer optional as param
-
 		if (Utils.isFirefox()){ // use HTML-based rendering on firefox
-			tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, this.mapConfig.tileLayers[0]), tileOptions);
+			tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, this.mapConfig.tileLayers[mapState.tileLayer]), tileOptions);
 		} else { // use canvas based tile rendering on everything else
-			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, this.mapConfig.tileLayers[0]), tileOptions);
+			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, this.mapConfig.tileLayers[mapState.tileLayer]), tileOptions);
 		}
 		tileLayer.addTo(map);
 
@@ -223,6 +221,7 @@ export default class Gamemap {
 	 */
 	getMapStateFromURL() {
 
+		// initialise mapstate
 		let mapState = new MapState();
 
 		if (Utils.getURLParams().has("zoom")){
@@ -254,7 +253,18 @@ export default class Gamemap {
 			mapState.cellResource = Utils.getURLParams().get("cellresource");
 		}
 
+		if (Utils.getURLParams().has("layer")) {
+			let tileLayer = Utils.getURLParams().get("layer");
+			mapState.tileLayer = (!isNaN(tileLayer)) ? tileLayer : (this.mapConfig.tileLayers.indexOf(tileLayer) > -1) ? this.mapConfig.tileLayers.indexOf(tileLayer) : 0;
+		} else {
+			mapState.tileLayer = 0;
+		}
+
 		return mapState;
+	}
+
+	hasMultipleMapLayers() {
+		return this.mapConfig.tileLayers.length > 1;
 	}
 
 	updateMapState(mapState) {
@@ -289,6 +299,10 @@ export default class Gamemap {
 		mapLink += 'x=' + newMapState.coords[0];
 		mapLink += '&y=' + newMapState.coords[1];
 		mapLink += '&zoom=' + newMapState.zoomLevel;
+
+		if (this.hasMultipleMapLayers()) {
+			mapLink += '&layer=' + this.mapConfig.tileLayers[newMapState.tileLayer];
+		}
 
 		// update url with new state
 		window.history.replaceState(newMapState, document.title, mapLink);
@@ -1176,7 +1190,13 @@ export default class Gamemap {
 	setTileLayerTo(layer) {
 		// check to make sure layer name is valid
 		if (layer != null && this.mapConfig.tileLayers.indexOf(layer) > -1 ) {
-			print("TODO! should change layer!");
+			let layerIndex = this.mapConfig.tileLayers.indexOf(layer);
+			let mapState = this.getMapState();
+
+			if (mapState.tileLayer != layerIndex) {
+				mapState.tileLayer = layerIndex;
+				this.setMapState(mapState);
+			}
 		} else {
 			print.error("Provided TileLayer was invalid.")
 		}
@@ -1359,6 +1379,18 @@ export default class Gamemap {
 	// get if editing is enabled on this map
 	isMapEditingEnabled() {
 		return this.mapConfig.editingEnabled;
+	}
+
+	getCurrentTileLayer() {
+		return this.getMapState().tileLayer;
+	}
+
+	getNextTileLayer() {
+		if ((this.getCurrentTileLayer() +1) > this.mapConfig.tileLayers.length) {
+			return 0;
+		} else {
+			return this.getCurrentTileLayer() + 1;
+		}
 	}
 
 	// check if user has editing permissions

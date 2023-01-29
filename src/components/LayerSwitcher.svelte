@@ -13,7 +13,7 @@
 
     // state vars
     let isHovered = false;
-    let hasMultipleLayers = gamemap.getMapConfig().tileLayers.length > 1;
+    let hasMultipleLayers = gamemap.hasMultipleMapLayers();
     let layers = gamemap.getMapConfig().tileLayers;
     $: gridEnabled = gamemap.isGridEnabled();
     let resourceGridEnabled = gamemap.isResourceGridEnabled();

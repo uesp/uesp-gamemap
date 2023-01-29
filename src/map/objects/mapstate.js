@@ -13,9 +13,7 @@
         this.world = null;
         this.showGrid = false;
         this.cellResource = "";
-        this.displayState = "";
-		this.tileLayer = null;
-
+		this.tileLayer = 0;
     }
 
     createSaveQuery() {
