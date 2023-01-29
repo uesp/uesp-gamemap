@@ -57,7 +57,7 @@
     <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit}>
 
         <!-- Primary layer switcher button -->
-        <button id="btn_layer_widget_switcher" has-background-image="true" class:hasLayerImage={hasMultipleLayers} class="waves-effect" on:click={onLayerClicked} style="background-image: url({layerImage});">
+        <button id="btn_layer_widget_switcher" class:hasLayerImage={hasMultipleLayers} class="waves-effect" on:click={onLayerClicked} style="background-image: url({layerImage});">
             Layers
             <i class="small material-icons" style="position: relative; bottom: 45px;">layers</i>
             {#if hasMultipleLayers}
@@ -172,7 +172,7 @@
         background-color: var(--text_low_emphasis);
     }
 
-    #btn_layer_widget_switcher[has-background-image="true"] .material-icons {
+    .hasLayerImage .material-icons {
         display: none;
     }
 
@@ -183,7 +183,7 @@
         box-shadow: 0px 1.5px 4px 4px var(--shadow), inset 0px 0px 10px rgba(0,0,0,0.9);
     }
 
-    #btn_layer_widget_switcher[has-background-image="true"]:hover {
+    #btn_layer_widget_switcher.hasLayerImage:hover {
         padding-top: 30px;
     }
 
@@ -192,7 +192,7 @@
         opacity: 0;
     }
 
-    #btn_layer_widget_switcher[has-background-image="true"]:hover #layer-name {
+    #btn_layer_widget_switcher.hasLayerImage:hover #layer-name {
         opacity: 1;
     }
 
