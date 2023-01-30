@@ -25,9 +25,12 @@
 	import { onMount } from 'svelte';
 	import { setContext } from 'svelte';
 
-	// import UI components
+	// import material design UI
 	import "materialize-css";
 	import 'materialize-css/dist/css/materialize.min.css';
+	import 'material-design-icons-iconfont';
+
+	// import UI components
 	import ErrorBox from "./components/ErrorBox.svelte";
 	import ProgressBar from "./components/ProgressBar.svelte"
 	import LoadingBox from "./components/LoadingBox.svelte";
@@ -118,7 +121,8 @@
 							mapConfig.missingMapTilePath = mapConfig.assetsPath + "images/outofrange.jpg";
 							mapConfig.iconPath = mapConfig.assetsPath + "icons/";
 							mapConfig.imagesPath = mapConfig.assetsPath + "images/";
-							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/"; // note: sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this.
+							// note: sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this.
+							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/";
 							mapConfig.hasGrid = mapConfig.cellSize != null;
 							mapConfig.hasResources = mapConfig.hasGrid && false; // TODO
 
