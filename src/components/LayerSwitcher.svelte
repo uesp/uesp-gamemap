@@ -11,6 +11,9 @@
     import Divider from "./Divider.svelte";
     import LayerButton from "./LayerButton.svelte";
 
+    // import commons
+    import * as Utils from "../common/utils"
+
     // state vars
     let isHovered = false;
     let hasMultipleLayers = gamemap.hasMultipleMapLayers();
@@ -20,11 +23,6 @@
 
     $: layerName = gamemap.getNextTileLayerName();
     $: layerImage = (hasMultipleLayers) ? gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layerName, true) : null;
-
-    print(layerName);
-
-    print(hasMultipleLayers);
-    print(gamemap.getMapConfig().tileURL);
 
     // event listeners
     function onMouseEnter() {
@@ -43,12 +41,18 @@
         if (event.target == null) {
             gamemap.setTileLayerTo(event.detail);
         } else {
-            print(gamemap.getNextTileLayerIndex());
-            gamemap.setTileLayerTo(gamemap.getNextTileLayerIndex());
+            if (Utils.isMobile()) {
+                isHovered = !isHovered;
+            } else {
+                gamemap.setTileLayerTo(gamemap.getNextTileLayerIndex());
+            }
         }
         layerName = gamemap.getNextTileLayerName();
-    }
 
+        if (Utils.isMobile()) {
+            isHovered = false;
+        }
+    }
 
 </script>
 

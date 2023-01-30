@@ -206,6 +206,9 @@ export default class Gamemap {
 
 		// finally, update map state
 		this.updateMapState(mapState);
+
+		// set grid if available
+		this.toggleCellGrid(mapState.showGrid);
 	}
 
 	/** Get current map state object.
@@ -253,6 +256,8 @@ export default class Gamemap {
 
 		if (Utils.getURLParams().has("grid")) {
 			mapState.showGrid = Utils.getURLParams().get("grid");
+		} else {
+			mapState.showGrid = false;
 		}
 
 		if (Utils.getURLParams().has("cellresource")) {
@@ -308,6 +313,10 @@ export default class Gamemap {
 
 		if (this.hasMultipleMapLayers()) {
 			mapLink += '&layer=' + this.mapConfig.tileLayers[newMapState.tileLayer];
+		}
+
+		if (newMapState.showGrid) {
+			mapLink += '&grid=' + newMapState.showGrid;
 		}
 
 		// update url with new state
@@ -512,8 +521,6 @@ export default class Gamemap {
 		if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
 
 		// make api query
-
-
 		Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
 			if (!error && data != null) {
 				print("Got " + data.locationCount + " locations!");
@@ -1015,7 +1022,7 @@ export default class Gamemap {
 
 		map.on('resize moveend zoomend', function() {
 			self.updateMapState();
-			if (!Utils.isMobileDevice()) {
+			if (!Utils.isMobile()) {
 				self.hideMenus();
 			}
 

@@ -10,7 +10,7 @@ import * as Constants from "./constants.js";
 			Is mobile device function
 ================================================*/
 
-export function isMobileDevice() {
+export function isMobile() {
 	return (navigator.userAgent.match(/Mobi/));
 }
 

@@ -20,20 +20,35 @@ this week i focused on QoL stuff as i bring ui elements into svelte
 
 - qol: hide UI by pressing insert key (suggested by TR people)
 
-- linked up layer switcher to the gamemap
-- did some animations and styling on it too
+- got layer switcher fully working
+>>> nice animations, shows next layer name
+>>> hitting the button maps with multiple layers will cycle through layers
+>>> hovering over will show layer options and grid, cell resource etc (only shows if available)
+>>> on maps with no multiple layers like mw, will just show the button to hover and enable grid
+>>> on maps with no grid options like eso, layer switcher doesnt show at all
+>>> layer switcher always shows the "next" layer, except in cases where there are none (shows icon instead)
+
+
+## problems / stuff to ask:
+
+ask dave to add DCSG paper oblivion map as optional layer
+TR gridmap layer is off#
+TR gridmap border is wrong colour
+layer switching works, but foresee an issue
+
+could the tilelayers array be stored on the server, per world instead?
+because for thing like dragonborn/skyrim, the skyrim world has a dark/night but the solstheim might not
+
+
+
 
 ## todo
 
+make map reset use zoomtoBounds or equivalent from leaflet docs
 
-layer switcher should use sentence case for layer names Default, Gridmap
-
-- add layer switcher day/night ui
-
-ask dave to add DCSG paper oblivion map as optional layer
 - refactor bgcolour out to individial layer configs
 
-- add game worldspace XY conversion
+- fix game worldspace XY conversion
 - add a way to pin search pane to the map (static)
 - refactor all locationIDs to be negative
 - truncate decimal points on XY, show on normalised
@@ -58,7 +73,6 @@ ask dave to add DCSG paper oblivion map as optional layer
 - do resource grid for skyrim
 - other maps
 - help and stuff
-- custom tilelayers (nice to have)
 - edit
 - wiki features
 - email thing
