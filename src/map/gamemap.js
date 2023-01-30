@@ -173,7 +173,6 @@ export default class Gamemap {
 		}
 
 		// set map tile layer
-
 		if (Utils.isFirefox()){ // use HTML-based rendering on firefox
 			tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, this.mapConfig.tileLayers[mapState.tileLayer]), tileOptions);
 		} else { // use canvas based tile rendering on everything else

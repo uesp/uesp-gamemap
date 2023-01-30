@@ -58,7 +58,7 @@
 	let gamemap = null;
 	let editingEnabled = false;
 	let isEmbedded = window.self !== window.top;
-	let uespEmbed = isEmbedded && Utils.getURLParams.get("uespEmbed");
+	let uespEmbed = isEmbedded && Utils.getURLParams.has("uespEmbed");
 	let currentZoom = Utils.getURLParams().has("zoom") ? Utils.getURLParams().get("zoom") : 0;
 	let showUI = true;
 	let showLayerSwitcher = false;

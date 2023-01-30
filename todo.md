@@ -1,46 +1,6 @@
 
 ## this week:
 
-this week i focused on QoL stuff as i bring ui elements into svelte
-
-- rewrote how watermark works
->>> updated design
->>> no longer bottom right, but centre
->>> now uses new bottom "options" pane which will be used for Cell Resource's options as well
->>> potentially banner ads??
-
-- pixel-perfect aligned ui elements (wasnt before)
-
-- improved embedding support
->>> big ui elements like search, zoom etc now hide on embed mode
->>> watermark changes based on embedded, non embedded, uesp embedded "open in bigger map" etc
-
-- qol: made long-pressing the zoom widget go full zoom in or out
->>> also bugfix: debounced zoom widget so cant spam zoom
-
-- qol: hide UI by pressing insert key (suggested by TR people)
-
-- got layer switcher fully working
->>> nice animations, shows next layer name
->>> hitting the button maps with multiple layers will cycle through layers
->>> hovering over will show layer options and grid, cell resource etc (only shows if available)
->>> on maps with no multiple layers like mw, will just show the button to hover and enable grid
->>> on maps with no grid options like eso, layer switcher doesnt show at all
->>> layer switcher always shows the "next" layer, except in cases where there are none (shows icon instead)
-
-
-## problems / stuff to ask:
-
-ask dave to add DCSG paper oblivion map as optional layer
-TR gridmap layer is off#
-TR gridmap border is wrong colour
-layer switching works, but foresee an issue
-
-could the tilelayers array be stored on the server, per world instead?
-because for thing like dragonborn/skyrim, the skyrim world has a dark/night but the solstheim might not
-
-
-
 
 ## todo
 
