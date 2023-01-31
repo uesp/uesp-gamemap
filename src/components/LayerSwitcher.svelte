@@ -91,7 +91,6 @@
     </div>
 </markup>
 
-
 <style>
     .layer_widget_root {
         position: absolute;

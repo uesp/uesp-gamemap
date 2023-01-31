@@ -50,7 +50,7 @@
 
         {#if maps != null}
             <p/>
-            <div>
+            <div id="options_container">
                 {#each maps as map}
                     <LayerButton label={map.toUpperCase()} icon="assets/maps/{map}/images/favicon.ico" dark="true" on:onClick={() => (location.href = "https://gamemap.uesp.net/"+map)}/>
                 {/each}
@@ -63,6 +63,13 @@
 </markup>
 
 <style>
+    div#options_container > * + * {
+        margin-top: 30px;
+        padding-bottom: 2px !important;
+        display: block;
+        margin: 30px 0;
+    }
+
     .info_title {
         color: var(--primary);
         vertical-align: middle;

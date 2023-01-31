@@ -14,7 +14,7 @@
  the instructions on this page:
  https://stackoverflow.com/a/60720816 -->
 
-<!-- App runtime -->
+<!-- App -->
 <script>
 
 	/*================================================
@@ -135,14 +135,16 @@
 				} else { setError("There was an error getting the default map config." + error);}})
 		} else {
 
-			// if debug mode, redirect to eso map by default
-			// if (isDebug || location.href.includes("localhost")) {
-			// 	location.href = "http://localhost:8080/?game=eso";
-			// }
 			print.warn("Game parameter was missing or invalid.");
 
-			showMaps = true;
+			// if debug mode, redirect to eso map by default
+			if (isDebug || location.href.includes("localhost")) {
+				location.href = "http://localhost:8080/?game=eso";
+			}
+
+			// hide loading spinner and show map selector
 			setLoading(false);
+			showMaps = true;
 		}
 	});
 
@@ -172,14 +174,6 @@
 			errorReason = reason;
 			print.error(reason);
 		}
-	}
-
-
-	function hideMenus(newWorld) {
-		// $('#current_location_label').text(newWorld.displayName);
-		// setWindowTitle(newWorld.displayName);
-		// updateWorldList(newWorld.name);
-		// clearSearch();
 	}
 
 	function onKeyPressed(key) {
@@ -284,6 +278,13 @@
 
 	}
 
+	function hideMenus(newWorld) {
+		// $('#current_location_label').text(newWorld.displayName);
+		// setWindowTitle(newWorld.displayName);
+		// updateWorldList(newWorld.name);
+		// clearSearch();
+	}
+
 	function onPermissionsLoaded(enableEditing) {
 		print("Editing permissions loaded, editing is: " + enableEditing);
 		editingEnabled = enableEditing;
@@ -345,9 +346,6 @@
 				<DebugBadge/>
 			{/if}
 
-			<!-- TODO -->
-			<!-- <aside id="editor"></aside>
-			<aside id="drawer"></aside> -->
 		{/if}
 
 	{/if}
@@ -363,9 +361,6 @@
 	{#if showMaps}
 		<MapChooser/>
 	{/if}
-
-	<!-- <LayerButton label="ESO" icon="assets/maps/eso/images/favicon.ico"></LayerButton>
-	<LayerButton label="ESO" image="assets/maps/eso/images/favicon.ico"></LayerButton> -->
 
 </markup>
 
