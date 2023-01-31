@@ -23,9 +23,8 @@
 
 	// import svelte core stuff
 	import { onMount } from 'svelte';
-	import { setContext } from 'svelte';
 
-	// import material design UI
+	// import material UI
 	import "materialize-css";
 	import 'materialize-css/dist/css/materialize.min.css';
 	import 'material-design-icons-iconfont';
@@ -65,8 +64,6 @@
 	let showLayerSwitcher = false;
 	let showMaps = false;
 	$: editMode = false;
-
-	setContext("mapConfig", mapConfig);
 
 	// on document load
 	onMount(async () => {

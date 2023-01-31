@@ -259,7 +259,11 @@ html, body, main {
 }
 
 .leaflet-interactive {
-	animation: fade-in 0.3s !important;
+	-webkit-animation: fade-in 0.3s !important;
+    -moz-animation: fade-in 0.3s !important;
+    -ms-animation: fade-in 0.3s !important;
+    -o-animation: fade-in 0.3s !important;
+    animation: fade-in 0.3s !important;
 }
 
 .location-tooltip {

@@ -12,11 +12,11 @@
     import Icon from "./Icon.svelte";
     import LoadingSpinner from "./LoadingSpinner.svelte";
     import PreloadBox from "./PreloadBox.svelte";
+    import LayerButton from "./LayerButton.svelte";
 
     // import commons
 	import * as Utils from "../common/utils.js";
     import * as Constants from "../common/constants.js";
-  import LayerButton from "./LayerButton.svelte";
 
     $: maps = null;
 
@@ -52,7 +52,7 @@
             <p/>
             <div id="options_container">
                 {#each maps as map}
-                    <LayerButton label={map.toUpperCase()} icon="assets/maps/{map}/images/favicon.ico" dark="true" on:onClick={() => (location.href = "https://gamemap.uesp.net/"+map)}/>
+                    <LayerButton label={map.toUpperCase()} icon="assets/maps/{map}/images/favicon.ico" dark="true" on:onClick={() => (location.pathname = map+"/")}/>
                 {/each}
             </div>
         {:else}
