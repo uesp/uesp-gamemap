@@ -88,8 +88,8 @@ iconButton element:
     .checked {
         background-color: var(--secondary_variant);
 	    box-shadow: 0px 1.5px 4px 4px var(--shadow);
+        color: black;
     }
-
 
     /* bgless */
     .bgless {

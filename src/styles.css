@@ -112,6 +112,10 @@ html, body, main {
 	user-select: none;
 }
 
+[class*="icon_button"] i {
+	margin: 5px;
+}
+
 /* hide these elements by default */
 .onlymobile {
 	display: none !important;
@@ -216,17 +220,17 @@ button {
 	html {
 	  font-size: 14px;
 	}
-  }
-  @media only screen and (min-width: 993px) {
+}
+@media only screen and (min-width: 993px) {
 	html {
-	  font-size: 14.5px;
+		font-size: 14.5px;
 	}
-  }
+}
   @media only screen and (min-width: 1201px) {
 	html {
 	  font-size: 15px;
 	}
-  }
+}
 
 /*================================================
 					Gamemap
@@ -437,17 +441,32 @@ button {
 ================================================*/
 
 
-.btn_icon_button_toggle:has(input:checked) {
 
+
+
+
+.collection a.collection-item:not(.active):hover {
+	background-color: var(--divider);
 }
 
-.btn_icon_button_toggle:has(input:checked) i {
-	color: white;
-}
 
-[class*="icon_button"] i {
-	margin: 5px;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*===============================================
@@ -687,336 +706,6 @@ li div.collapsible-header i {
 	border-radius: var(--padding_small);
 	background-color: var(--surface);
 	box-shadow: 0px 1.5px 4px 4px var(--shadow);
-}
-
-/*================================================
-					Gamemap
-================================================*/
-
-#gamemap {
-	position: absolute;
-	overflow: hidden;
-	bottom: 0px;
-	top: 0px;
-	left: 0px;
-	right: 0px;
-}
-
-#gamemap * {
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
-.leaflet-interactive {
-	animation: fadein 0.3s;
-}
-
-.leaflet-tooltip::before {
-	display: none;
-}
-
-
-.tooltip-desc {
-	font-weight: normal;
-	font-size: 0.9em;
-}
-
-.leaflet-marker-icon {
-	-webkit-user-select: none !important;
-	-moz-user-select: none !important;
-	-ms-user-select: none !important;
-	user-select: none !important;
-}
-
-.cellGrid {
-	opacity: 0.45;
-}
-
-/*================================================
-				 	 Pop-ups
-================================================*/
-
-.leaflet-popup-content-wrapper {
-	display: block;
-	background-color: var(--surface);
-	border: none;
-	z-index: 30;
-	font-family: "Arial", sans-serif;
-	font-size: 13px;
-	padding: 4px;
-	box-shadow: 0px 0px 2px 2px var(--shadow);
-}
-
-.leaflet-popup-content {
-	margin: 13px var(--padding_minimum) 13px var(--padding_minimum);
-}
-
-.leaflet-popup-tip {
-	box-shadow: 0px 0px 2px 2px var(--shadow);
-	background-color: var(--surface);
-}
-
-.popupTitle a {
-	font-weight: bolder;
-	font-size: 14px;
-	color: var(--text_low_emphasis);
-}
-
-.popupTitle a[href] {
-	color: #0078A8;
-}
-
-.popupTitle a[href]:hover {
-	text-decoration: underline !important;
-}
-
-.popupDesc, .popupDesc * {
-	color: var(--text_on_primary);
-	font-size: 10px;
-	user-select: text !important;
-}
-
-.popupInfo, .popupInfo * {
-	font-size: 9px;
-	color: var(--text_low_emphasis);
-	user-select: text !important;
-}
-
-.popupEditButton {
-	margin-top: 10px;
-	text-align: center;
-	font-weight: normal;
-	width: 100%;
-	color: var(--text_link);
-	cursor: pointer;
-}
-
-.popupEditButton:hover {
-	background: var(--selection);
-}
-
-.popupEditButton:active {
-	background: var(--bubble_selection);
-}
-
-.gmMapPopupWikiPage {
-	font-size: 11px;
-	padding-left: 10px;
-}
-
-#gmMapEditNotice {
-	border: 1px solid gray;
-	background: rgba(0,0,0,0.7);
-	color: #ffff00;
-	font-family: sans-serif;
-	font-size: 12px;
-	font-weight: bold;
-	width: auto;
-	height: auto;
-	position: absolute;
-	top: 5px;
-	left: 310px;
-	z-index: 200;
-	padding: 5px;
-	text-align: left;
-	vertical-align: middle;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
-#gmMapEditNoticeCancel {
-	float: right;
-	cursor: pointer;
-	color: #000000;
-}
-
-#gmMapEditNoticeFinish {
-	float: right;
-	cursor: pointer;
-	color: #000000;
-}
-
-.gmMapEditPopupTitle {
-	border-radius: 2px;
-	display: inline-block;
-	position: relative;
-	width: 100%;
-	background-color: var(--secondary_variant);
-	height: 18px;
-	line-height: 18px;
-	font-size: 13px;
-	font-family: sans-serif;
-	font-weight: bold;
-	text-align: center;
-	vertical-align: middle;
-	margin-bottom: 5px;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
-.gmMapEditPopupLabel {
-	width: 90px;
-	font-size: 11px;
-	font-family: sans-serif;
-	text-align: right;
-	display: inline-block;
-	position: relative;
-	height: 18px;
-	line-height: 18px;
-	vertical-align: middle;
-}
-
-.gmMapEditPopupInput {
-	left: 5px;
-	font-size: 11px;
-	font-family: sans-serif;
-	display: inline-block;
-	position: relative;
-	height: 11px;
-	padding-bottom: 2px;
-}
-
-.gmMapEditPopupCurrentZoom
-{
-	font-size: 9px;
-	display: inline-block;
-	position: relative;
-	padding-left: 10px;
-}
-
-.gmMapEditPopupStatus {
-	width: 100%;
-	height: 24px;
-	font-family: Arial, sans-serif;
-	font-size: 10px;
-	float: left;
-}
-
-.gmMapEditPopupStatusOk {
-	background-color: none;
-}
-
-.gmMapEditPopupStatusNote {
-	background-color: #99ff99;
-}
-
-.gmMapEditPopupStatusWarning {
-	background-color: #ffff99;
-}
-
-.gmMapEditPopupStatusError {
-	background-color: #ff9999;
-}
-
-.gmMapEditPopupButtons {
-	font-family: Arial, sans-serif;
-	font-size: 12px;
-}
-
-.gmMapEditPopupButtonSave {
-	float: right;
-	font-weight: bold;
-}
-
-.gmMapEditPopupButtonClose {
-	float: right;
-}
-
-.gmMapEditPopupButtonDelete {
-	float: left;
-}
-
-div.gmMapEditPopupInput {
-	height: 16px;
-	top: 1px;
-}
-
-.gmMapEditPopupIconPreview
-{
-	background-repeat: no-repeat;
-	background-position: center;
-	display: inline-block;
-	position: absolute;
-	height: 32px;
-	width: 32px;
-	left: 260px;
-	top: 130px;
-}
-
-
-select.gmMapEditPopupInput {
-	border: 1px solid gray;
-	padding: 0;
-	margin: 0;
-	height: 17px;
-	top: 1px;
-	left: 5px;
-	width: 160px;
-	margin-bottom: 2px;
-}
-
-input.gmMapEditPopupInput {
-	border: 1px solid gray;
-	padding-left: 4px;
-}
-
-input[type=checkbox].gmMapEditPopupInput {
-	position: relative;
-	border: none;
-	outline: none;
-	margin: 0;
-	text-align: left;
-	height: 13px;
-	width: 20px;
-	right: 1px;
-	top: 4px;
-	font-family: Arial, sans-serif !important;
-	font-size: 11px !important;
-}
-
-#gmMapRootClickWall {
-	cursor: crosshair;
-	z-index: 0;
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	top: 0px;
-	left: 0px;
-}
-
-#gmMapWorldEdit {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	margin: auto;
-	font-size: 11px;
-	font-family: sans-serif;
-	display: block;
-	width: 300px;
-	height: 330px;
-	background-color: var(--surface);
-	border: none;
-	z-index: 300;
-	padding: 4px;
-	border-radius: 5px;
-	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.5);
-}
-
-
-.collection a.collection-item:not(.active):hover {
-	background-color: var(--divider);
 }
 
 /*================================================
