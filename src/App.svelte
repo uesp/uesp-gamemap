@@ -135,7 +135,7 @@
 			print.warn("Game parameter was missing or invalid.");
 
 			// if debug mode, redirect to eso map by default
-			if (isDebug || location.href.includes("localhost")) {
+			if (location.href.includes("localhost") && isDebug) {
 				location.href = "http://localhost:8080/?game=eso";
 			}
 
@@ -233,7 +233,6 @@
 		print(mapWorlds);
 
 		showLayerSwitcher = (mapConfig.tileLayers.length > 1 || mapConfig.hasResources || mapConfig.hasGrid);
-
 
 		setLoading(false); // hide loading spinner
 

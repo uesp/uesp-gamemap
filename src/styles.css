@@ -231,6 +231,7 @@ html, body, main {
 	left: 0px;
 	right: 0px;
 	background-color: var(--background_dark);
+	transition: background-color ease 900ms;
 }
 
 #gamemap * {

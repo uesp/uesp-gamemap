@@ -1,13 +1,26 @@
 
 ## this week:
 
+- added map menu on root (devgamemap.uesp.net)
 
 ## todo
 
+
+iconBar element
+
+iconButton element:
+> has background
+> has checkable state
+> can be expanded to have text and stuff
+
+
+
+
+
+
 make map reset use zoomtoBounds or equivalent from leaflet docs
 
-- refactor bgcolour out to individial layer configs
-
+- refactor layer bgcolour out to individial layer configs
 - fix game worldspace XY conversion
 - add a way to pin search pane to the map (static)
 - refactor all locationIDs to be negative
@@ -36,7 +49,6 @@ make map reset use zoomtoBounds or equivalent from leaflet docs
 - edit
 - wiki features
 - email thing
-
 - starfield wiki app
 - starfield map
 
@@ -45,5 +57,3 @@ app :
 - cross platform
 - cross wiki
 - and maps
-
-
