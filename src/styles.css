@@ -38,6 +38,7 @@
 	--shadow: rgba(0, 0, 0, 0.35);
 	--secondary: #8a5a44;
 	--secondary_variant: #A69480;
+	--secondary_variant_light: #bda993;
 	--secondary_variant_dark: #8b7d6d;
   	--selection: rgba(121, 80, 60, 0.152);
 	--bubble_selection: rgba(84, 84, 84, 0.5);
@@ -94,19 +95,13 @@ body {
 					 General
 ================================================*/
 
+/* style body */
 html, body, main {
 	position: absolute;
 	width: 100%;
 	height: 100%;
 	margin: 0 auto;
 	opacity: 1 !important;
-}
-
-#gamemap {
-	top: 0px;
-	position: absolute;
-	width: inherit;
-	height: inherit;
 }
 
 /* prevent icons being selectable */
@@ -132,6 +127,7 @@ html, body, main {
 	color: var(--text_low_emphasis);
 }
 
+/*  horizontal dividers */
 .horizontal_divider {
 	background: var(--divider);
 	height: 1.8px;
@@ -139,6 +135,19 @@ html, body, main {
 	margin-top: 2px;
 	margin-bottom: 2px;
 	width: 75%;
+}
+
+hr {
+	border: 0;
+	border-top: 3px solid var(--divider);
+}
+
+/* prevent buttons being selectable */
+button {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 /*================================================
@@ -226,6 +235,8 @@ html, body, main {
 #gamemap {
 	position: absolute;
 	overflow: hidden;
+	width: inherit;
+	height: inherit;
 	bottom: 0px;
 	top: 0px;
 	left: 0px;
@@ -357,11 +368,6 @@ html, body, main {
 	user-select: text !important;
 }
 
-hr {
-	border: 0;
-	border-top: 3px solid var(--divider);
-}
-
 .popupEditButton {
 	margin-top: 10px;
 	text-align: center;
@@ -431,54 +437,8 @@ hr {
 ================================================*/
 
 
-/*===============================================
-				Buttons General
-================================================*/
-
-/* prevent buttons being selectable */
-button {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/*===============================================
-				  Icon Buttons
-================================================*/
-
-[class*="icon_button"] {
-	text-shadow: 0px 0px 6px var(--background);
-	background: var(--shadow);
-	border: none;
-	color: var(--text_on_secondary);
-	padding: auto;
-	border-radius: var(--appbar_dimen);
-	transition: all ease-in 150ms;
-	height: var(--appbar_dimen);
-	min-width: var(--appbar_dimen);
-	text-align: center;
-	vertical-align: middle;
-	line-height: 100%;
-}
-
-.btn_icon_button_toggle input {
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	position: absolute !important;
-	opacity: 0 !important;
-	pointer-events: auto !important;
-	cursor: pointer;
-}
-
-.btn_icon_button_toggle i {
-	padding-top: 7px;
-}
-
 .btn_icon_button_toggle:has(input:checked) {
-	background-color: var(--secondary_variant);
-	box-shadow: 0px 1.5px 4px 4px var(--shadow);
+
 }
 
 .btn_icon_button_toggle:has(input:checked) i {
@@ -487,37 +447,6 @@ button {
 
 [class*="icon_button"] i {
 	margin: 5px;
-}
-
-[class*="icon_button"]:hover {
-	background: var(--bubble_selection);
-}
-
-[class*="icon_button"]:active {
-	transform: scale(0.94);
-}
-
-button[class*="bgless"]:hover {
-	background: var(--divider);
-	color: black;
-}
-
-button[class*="bgless"] {
-	background: 0;
-	color: black;
-}
-
-b[class^="icon_btn_label"] {
-	margin-left: 4px;
-	margin-right: 12px;
-	font-size: medium;
-	white-space: nowrap;
-	position: relative;
-	top: -6.5px;
-	max-width: 150px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 

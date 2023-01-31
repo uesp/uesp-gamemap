@@ -39,20 +39,20 @@
     <PreloadBox>
 
         <span class="info_title">
-            <Icon name="info" size="medium"></Icon><br>
+            <Icon name="map" size="medium"></Icon><br>
             <b style="margin-bottom: 10px;">Choose a game map:</b>
         </span>
         <p/>
         <Divider direction="horizontal"/>
         <p/>
 
-        A game wasn't provided, please choose one from the options below.
+        Please choose a game from the options below.
 
         {#if maps != null}
             <p/>
             <div id="options_container">
                 {#each maps as map}
-                    <LayerButton label={map.toUpperCase()} icon="assets/maps/{map}/images/favicon.ico" dark="true" on:onClick={() => (location.pathname = map+"/")}/>
+                    <LayerButton label={map.toUpperCase()} icon="assets/maps/{map}/images/favicon.ico" dark="true" on:onClick={() => (location.pathname = map)}/>
                 {/each}
             </div>
         {:else}
@@ -71,7 +71,7 @@
     }
 
     .info_title {
-        color: var(--primary);
+        color: var(--secondary_variant_light);
         vertical-align: middle;
         font-size: 1.2em !important;
         vertical-align: middle;

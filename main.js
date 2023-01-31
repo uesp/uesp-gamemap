@@ -35,14 +35,6 @@ $(document).ready(function() {
 	});
 });
 
-
-window.gotoWorld = function(worldID, coords) {
-	hideMenus();
-	clearSearch();
-	gamemap.gotoWorld(worldID, coords);
-}
-
-
 /*================================================
 				Action Buttons
 ================================================*/
@@ -73,11 +65,6 @@ window.gotoArticle = function(){
 	}
 }
 
-// toggle cell grid
-window.toggleCellGrid = function(toggle) {
-	gamemap.toggleCellGrid(toggle);
-}
-
 window.showHelp = function() {
 	M.toast({text: "TODO: not implemented yet"});
 }
@@ -101,32 +88,6 @@ window.toggleFullscreen = function() {
 		$("#fullscreen-toggle").text("Fullscreen");
 	}
 }
-
-/*================================================
-				  Zoom Buttons
-================================================*/
-
-// zoom in
-window.zoomIn = function(){
-	gamemap.zoomIn();
-
-	$("#btn_zoom_out").prop("disabled",false);
-	// check if we're zoomed in max, then disable button
-	if (gamemap.getCurrentZoom() + mapConfig.zoomStep >= mapConfig.maxZoomLevel) {
-		$("#btn_zoom_in").prop("disabled",true);
-	}
-}
-
-// zoom out
-window.zoomOut = function(){
-	$("#btn_zoom_in").prop("disabled",false);
-	gamemap.zoomOut();
-	// check if we're zoomed out max, then disable button
-	if (gamemap.getCurrentZoom() - mapConfig.zoomStep <= mapConfig.minZoomLevel) {
-		$("#btn_zoom_out").prop("disabled",true);
-	}
-}
-
 
 /*================================================
 				Location Switcher

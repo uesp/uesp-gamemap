@@ -1,6 +1,10 @@
-<!-- /*================================================
-				   Error box
-================================================*/ -->
+<!-- @component
+### Description
+ Error box component for the UESP gamemap.
+
+### Author(s)
+- Thal-J <thal-j@uesp.net> (9th Jan, 2023) -->
+
 <script>
     import PreloadBox from "./PreloadBox.svelte";
     import Icon from "./Icon.svelte";

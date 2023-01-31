@@ -45,6 +45,7 @@
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
+  import IconButton from './components/IconButton.svelte';
 
 	print("Initialising app...");
 
@@ -136,7 +137,7 @@
 
 			// if debug mode, redirect to eso map by default
 			if (location.href.includes("localhost") && isDebug) {
-				location.href = "http://localhost:8080/?game=eso";
+				//location.href = "http://localhost:8080?game=eso;
 			}
 
 			// hide loading spinner and show map selector
@@ -355,6 +356,7 @@
 
 	<!-- Show map selection menu on 404 -->
 	{#if showMaps}
+		<IconButton icon="article" label="deez" tooltip="ligma"/>
 		<MapChooser/>
 	{/if}
 

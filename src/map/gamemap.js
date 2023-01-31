@@ -301,18 +301,18 @@ export default class Gamemap {
 			mapLink = "?game=" + this.mapConfig.database + "&";
 		}
 
+		// world related
 		if (this.hasMultipleWorlds()){
 			mapLink += 'world=' + newMapState.world.id;
 			mapLink += '&';
 		}
-
+		if (this.hasMultipleMapLayers()) {
+			mapLink += 'layer=' + this.mapConfig.tileLayers[newMapState.tileLayer];
+			mapLink += '&';
+		}
 		mapLink += 'x=' + newMapState.coords[0];
 		mapLink += '&y=' + newMapState.coords[1];
 		mapLink += '&zoom=' + newMapState.zoomLevel;
-
-		if (this.hasMultipleMapLayers()) {
-			mapLink += '&layer=' + this.mapConfig.tileLayers[newMapState.tileLayer];
-		}
 
 		if (newMapState.showGrid) {
 			mapLink += '&grid=' + newMapState.showGrid;

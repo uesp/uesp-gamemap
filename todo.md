@@ -1,21 +1,12 @@
+## last week:
 
-## this week:
+eye candy and QoL
 
 - added map menu on root (devgamemap.uesp.net)
+- gamemap now fade-transition bg colour when loading (most noticeable when clicking into maps from the above)
+>> anticipating this because when doing skyrim day/night mode, it should also have bg colour fade
 
 ## todo
-
-
-iconBar element
-
-iconButton element:
-> has background
-> has checkable state
-> can be expanded to have text and stuff
-
-
-
-
 
 
 make map reset use zoomtoBounds or equivalent from leaflet docs
