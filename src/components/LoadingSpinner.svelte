@@ -1,6 +1,15 @@
-<!-- Loading spinner component -->
+<!-- @component
+### Description
+ Loading spinner component for the UESP gamemap.
 
-<div class="spinner">
+### Author(s)
+- Thal-J <thal-j@uesp.net> (10th Jan, 2023) -->
+
+<script>
+  export let size = "140px";
+</script>
+
+<div class="spinner" style="height: {size};">
   <svg viewBox="0 0 100 100">
     <circle cx="50" cy="50" r="20" />
   </svg>
@@ -8,8 +17,7 @@
 
 <style>
 .spinner {
-  width: 200px;
-  height: 150px;
+  width: auto;
 }
 
 .spinner svg {

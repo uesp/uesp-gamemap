@@ -38,9 +38,7 @@
 	import DebugBadge from "./components/DebugBadge.svelte";
 	import LayerSwitcher from './components/LayerSwitcher.svelte';
 	import Watermark from './components/Watermark.svelte';
-	import LayerButton from './components/LayerButton.svelte';
-	import LoadingSpinner from './components/LoadingSpinner.svelte';
-  	import PreloadBox from './components/PreloadBox.svelte';
+	import MapChooser from './components/MapChooser.svelte';
 
 	// import commons
 	import * as Utils from "./common/utils.js";
@@ -65,9 +63,8 @@
 	let currentZoom = Utils.getURLParams().has("zoom") ? Utils.getURLParams().get("zoom") : 0;
 	let showUI = true;
 	let showLayerSwitcher = false;
-	let maps = [];
+	let showMaps = false;
 	$: editMode = false;
-
 
 	setContext("mapConfig", mapConfig);
 
@@ -143,19 +140,9 @@
 			// 	location.href = "http://localhost:8080/?game=eso";
 			// }
 			print.warn("Game parameter was missing or invalid.");
-			setError("No valid game provided.");
 
-			// get list of games to show
-			print("Getting available maps...");
-			var queryParams = {};
-			queryParams.action = "get_maps";
-
-			Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
-				if (!error && data != null) {
-					print(data.maps);
-					maps = data.maps;
-				}
-			});
+			showMaps = true;
+			setLoading(false);
 		}
 	});
 
@@ -302,9 +289,9 @@
 		editingEnabled = enableEditing;
 	}
 
-/*================================================
-					Analytics
-================================================*/
+	/*================================================
+						Analytics
+	================================================*/
 
 	// Enable google analytics on release mode
 	if (isRelease) {
@@ -372,13 +359,10 @@
 		<ErrorBox reason={errorReason}/>
 	{/if}
 
-			<!-- {#if maps != []}
-			<PreloadBox>
-				{#each maps as map}
-					{map}
-				{/each}
-			</PreloadBox>
-		{/if} -->
+	<!-- Show map selection menu on 404 -->
+	{#if showMaps}
+		<MapChooser/>
+	{/if}
 
 	<!-- <LayerButton label="ESO" icon="assets/maps/eso/images/favicon.ico"></LayerButton>
 	<LayerButton label="ESO" image="assets/maps/eso/images/favicon.ico"></LayerButton> -->
