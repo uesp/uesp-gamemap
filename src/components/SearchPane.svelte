@@ -6,12 +6,9 @@
 - Thal-J <thal-j@uesp.net> (31st Jan, 2023) -->
 
 <script>
-
-    // import svelte core stuff
-	import { onMount } from 'svelte';
-
     // import UI components
-    import Icon from "./Icon.svelte";
+    import Checkbox from "./Checkbox.svelte";
+import Icon from "./Icon.svelte";
     import IconButton from "./IconButton.svelte";
     import ProgressBar from "./ProgressBar.svelte";
 
@@ -20,23 +17,12 @@
     let isLoading = false;
     let doPinSearch = getPrefs("pinsearch");
     $: expandOptions = getPrefs("expandsearchoptions");
-
     $: searchQuery = "";
     $: searchResults = null;
     $: searchFocused = null;
-    $: showSearchPane = searchQuery.length > 0 && searchQuery != "" && searchFocused && searchBox.value != "";
+    $: showSearchPane = (searchQuery.length > 0 && searchQuery != "" && searchFocused && searchBox.value != "");
 
     // TODO: look into adding a way to pin the search for dave
-
-
-    onMount(async () => {
-        //expandOptions = getPrefs("expandsearchoptions");
-        print(expandOptions);
-    });
-
-
-
-
 
     // if (searchQuery != null && searchQuery.length == 0) {
     //     // show options div
@@ -324,22 +310,18 @@
                     <div id="search_options" class:fullPane={showSearchPane}>
                         <!-- svelte-ignore a11y-click-events-have-key-events -->
                         <!-- svelte-ignore missing-declaration -->
-                        <b style="font-size: 1.0rem;" class="waves-effect" on:click={() => {setPrefs("expandsearchoptions", !JSON.parse(getPrefs("expandsearchoptions"))); expandOptions = getPrefs("expandsearchoptions"); print(getPrefs("expandsearchoptions"));}}>Search options <Icon name={(expandOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b><br>
+                        <b style="font-size: 1.0rem;" class="waves-effect" on:click={() => {setPrefs("expandsearchoptions", !getPrefs("expandsearchoptions")); expandOptions = getPrefs("expandsearchoptions");}}>Search options <Icon name={(expandOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b><br>
 
-                        {#if expandOptions == true}
-                            <label class="waves-effect" style="width: 100%; padding-top: 8px;">
-                                <input id="search_current_map_checkbox" type="checkbox" class="filled-in" onchange="updateSearch($('#searchbox').val(), this.checked);" />
-                                <span>Pin search window</span>
-                            </label>
-
-                            <label class="waves-effect" style="width: 100%; padding-top: 8px;">
-                                <input id="search_current_map_checkbox" type="checkbox" class="filled-in" onchange="updateSearch($('#searchbox').val(), this.checked);" />
-                                <span>Only show results from this map</span>
-                            </label>
+                        {#if expandOptions}
+                            <Checkbox label="Pin search window" on:change={(e) => print(e.detail)}></Checkbox>
+                            <Checkbox label="Only show results from this map" on:change={(e) => print(e.detail)}></Checkbox>
                         {/if}
-
-                        <hr id="search_divider" class="banishdefault">
                     </div>
+
+                    <!-- Divider -->
+                    {#if showSearchPane}
+                        <hr id="search_divider" >
+                    {/if}
 
                     <!-- Search Results -->
                     <div id="search_results" class='search_results'>

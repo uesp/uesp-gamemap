@@ -159,6 +159,11 @@ button {
 	background: var(--selection);
 }
 
+[type="checkbox"].filled-in:checked + span:not(.lever)::after {
+	background-color: var(--secondary) !important;
+	border-color: var(--secondary) !important;
+}
+
 /*================================================
 					Accessibility
 ================================================*/
