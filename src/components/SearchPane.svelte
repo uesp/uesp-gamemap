@@ -6,58 +6,20 @@
 - Thal-J <thal-j@uesp.net> (31st Jan, 2023) -->
 
 <script>
-
     // import UI components
     import Icon from "./Icon.svelte";
     import IconButton from "./IconButton.svelte";
+  import ProgressBar from "./ProgressBar.svelte";
 
     // declare state vars
     let searchBox = null;
+    let isLoading = false;
     $: searchQuery = "";
     $: searchResults = null;
-    $: currentWorldOnly = false;
+    $: searchFocused = null;
+    $: showSearchPane = searchQuery.length > 0 && searchQuery != "" && searchFocused && searchBox.value != "";
 
     // TODO: look into adding a way to pin the search for dave
-
-
-    // callbacks
-    function onSearchQueryChanged(query, searchCurrentWorld) {
-        // redo search
-    }
-
-    function onSearchFocused(event, isFocused) {
-
-        // if the event is a blur, and the related target is not a child or inside search container, then close search
-    }
-
-    // listen to key press events
-    function onKeyPressed(event) {
-
-        // if ctrl + F pressed, focus search
-        if ((event.ctrlKey || event.metaKey) && event.keyCode === 70) {
-    		event.preventDefault();
-            searchBox.focus();
-    	}
-
-    }
-
-    function clearSearch() {
-        searchQuery = "";
-        //maybe focus search
-    }
-
-
-    // window.focusSearch = function() {
-
-    // // focus search if it's not already
-    // if (document.activeElement.id != searchbox.id) {
-    //     searchbox.focus();
-    // }
-
-    // $("#search_results_container").show();
-
-    // log("focusing search");
-    // let searchQuery = searchbox.value;
 
 
     // if (searchQuery != null && searchQuery.length == 0) {
@@ -76,38 +38,14 @@
 
     // function toggleSearchPane(toggle) {
     // if (toggle) {
-    //     $("#search_results_container").show();
-    //     $("#search_results_container").css("background-color", "var(--surface)");
-    //     $("#search_options_container").css("box-shadow", "none");
-    //     $("#searchbar").css({
-    //         BorderTopLeftRadius: 'var(--padding_small)',
-    //         BorderTopRightRadius: 'var(--padding_small)',
-    //         BorderBottomLeftRadius: '0px',
-    //         BorderBottomRightRadius: '0px',
-    //     });
     //     $("#search_divider").show();
-    //     $("#search_results_container").css("box-shadow", "0px 1.5px 4px 4px var(--shadow)");
+
     // } else {
     //     $("#searchbar").css({'border-radius': 'var(--padding_large)'});
     //     $("#search_results_container").css("background-color", "transparent");
     //     $("#search_results_container").css("box-shadow", "");
     //     $("#search_divider").hide();
     // }
-    // }
-
-    // window.hideSearch = function() {
-    // toggleSearchPane(false);
-    // $("#search_results_container").hide();
-    // // hide the search pane without clearing search query
-    // }
-
-    // function clearSearch() {
-    // searchbox.value = "";
-    // $("#btn_clear_search").hide();
-    // $("#search_loading_bar").hide();
-    // $("#search_results").html("");
-    // $(".search_results_container").hide();
-    // hideSearch();
     // }
 
     // let timer;
@@ -295,36 +233,75 @@
 
     // }
 
+
+    // callbacks
+    function onSearchQueryChanged(query, searchCurrentWorld) {
+        // update search query
+        searchQuery = query;
+
+        print(searchQuery);
+
+        // do search
+    }
+
+    function onSearchFocused(event, isFocused) {
+
+        if (event.type == "blur" || event.type == "mousedown") {
+            let searchPane = document.querySelector('#search_pane');
+            let target = (event.relatedTarget != null) ? event.relatedTarget : event.explicitOriginalTarget;
+            let isInsideSearchPane = searchPane !== target && searchPane.contains(target);
+
+            // if pin search is false:
+            searchFocused = isInsideSearchPane;
+        } else {
+            searchFocused = isFocused;
+        }
+    }
+
+    // listen to key press events
+    function onKeyPressed(event) {
+
+        // if ctrl + F pressed, focus search
+        if ((event.ctrlKey || event.metaKey) && event.keyCode === 70) {
+    		event.preventDefault();
+            searchBox.focus();
+    	}
+
+    }
+
+    function clearSearch() { searchBox.value = ""; onSearchQueryChanged("", false) }
+    window.addEventListener('mousedown', function(e) { onSearchFocused(e, null); });
 </script>
 
 <markup>
     <div id="search_pane">
-        <div id="searchbar_container">
+        <div id="search_container">
             <!-- Search bar -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div id='searchbar' class="waves-effect" on:click={() => (searchBox.focus())}>
+            <div id='searchbar' class="waves-effect" class:fullPane={showSearchPane} on:click={() => (searchBox.focus())}>
+                <!-- Magnifying glass icon -->
                 <div id="search_icon">
                     <Icon name="search"></Icon>
                 </div>
-
+                <!-- Searchbox -->
                 <div id='searchbox_container'>
-                    <input id='searchbox' type='search' placeholder="Where would you like to go?" maxlength='100' style="border-bottom: none !important; box-shadow: none !important;" autocomplete='off' bind:value={searchQuery} on:focus={(e) => onSearchFocused(e, true)} on:blur={(e) => onSearchFocused(e, false)} on:input={onSearchQueryChanged} bind:this={searchBox}/>
+                    <input id='searchbox' type='search' placeholder="Where would you like to go?" maxlength='100' style="border-bottom: none !important; box-shadow: none !important;" autocomplete='off' on:focus={(e) => onSearchFocused(e, true)} on:blur={(e) => onSearchFocused(e, false)} bind:this={searchBox} bind:value={searchQuery} on:input={() => onSearchQueryChanged(searchBox.value, false)}/>
                 </div>
-
-                {#if searchQuery.length > 0}
+                <!-- Clear search button -->
+                {#if searchQuery.length > 0 && searchBox.value != ""}
                     <IconButton icon="close" tooltip="Clear the current search" on:click={clearSearch}></IconButton>
+                {/if}
+                <!-- Loading bar -->
+                {#if showSearchPane && isLoading}
+                    <div style="top: 46px; position: absolute; left: 0px; width: 100%;"><ProgressBar/></div>
                 {/if}
             </div>
 
-            {#if searchResults != null}
-                <!-- Search Results -->
-                <div id='search_results_container' class="banishdefault">
+            {#if searchFocused}
+                <div id="search_content_container" class:fullPane={showSearchPane}>
 
-                    <div id="search_progress_bar" class="progress_bar banishdefault">
-                        <div class="progress"><div class="indeterminate"></div></div>
-                    </div>
-
-                    <div id="search_options_container">
+                    <!-- Search Options -->
+                    <div id="search_options" class:fullPane={showSearchPane}>
                         <b style="font-size: 1.0rem;">Search options</b><br>
                         <label class="waves-effect" style="width: 100%; padding-top: 8px;">
                             <input id="search_current_map_checkbox" type="checkbox" class="filled-in" onchange="updateSearch($('#searchbox').val(), this.checked);" />
@@ -332,6 +309,8 @@
                         </label>
                         <hr id="search_divider" class="banishdefault">
                     </div>
+
+                    <!-- Search Results -->
                     <div id="search_results" class='search_results'>
                         <!-- search results go here-->
                     </div>
@@ -341,9 +320,7 @@
     </div>
 </markup>
 
-
 <style>
-
     /* Search pane */
     #search_pane {
         position: absolute;
@@ -355,12 +332,24 @@
         pointer-events: none;
     }
 
-    /* Searchbar */
-    #searchbar_container {
+    #search_container > * {
         margin-left: var(--padding_minimum);
         margin-right: var(--padding_minimum);
-        cursor:pointer;
     }
+
+    #search_content_container {
+        padding-top: var(--padding_medium);
+        pointer-events: visible;
+        position: relative;
+        top: 2px;
+        border-radius: var(--padding_small);
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
+        max-height: 80vh;
+        padding-bottom: var(--padding_minimum);
+    }
+
+    /* Searchbar */
     #searchbar {
         display: flex;
         position: relative;
@@ -375,6 +364,13 @@
         transition: all ease 150ms;
         height: var(--appbar_dimen);
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
+        cursor:text !important;
+    }
+    #searchbar.fullPane {
+        border-top-left-radius: var(--padding_small);
+        border-top-right-radius: var(--padding_small);
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
     }
     #search_icon {
         color: var(--text_low_emphasis);
@@ -401,19 +397,21 @@
         font-size: 1.5em;
     }
 
-    /* Search results */
-    #search_results_container {
-        pointer-events: visible;
-        position: relative;
-        top: 2px;
+    #search_content_container.fullPane {
+        background-color: var(--surface) !important;
+        box-shadow: 0px 1.5px 4px 4px var(--shadow);
+    }
+
+    /* Search options */
+    #search_options {
+        padding-top: var(--padding_large);
+        padding: var(--padding_small);
         border-radius: var(--padding_small);
-        border-top-left-radius: 0px;
-        border-top-right-radius: 0px;
-        padding-top: 19px;
-        overflow-x: hidden;
-        overflow-y: auto;
-        max-height: 80vh;
-        padding-bottom: var(--padding_minimum);
+        background-color: var(--surface);
+        box-shadow: 0px 1.5px 4px 4px var(--shadow);
+    }
+    #search_options.fullPane {
+        box-shadow: none;
     }
 
     .search-item {
@@ -424,11 +422,10 @@
         top: -2px;
     }
 
-    #search_options_container {
-        padding: var(--padding_small);
-        border-radius: var(--padding_small);
-        background-color: var(--surface);
-        box-shadow: 0px 1.5px 4px 4px var(--shadow);
+    /* Search results */
+    #search_results_container {
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 </style>
 
