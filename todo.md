@@ -13,7 +13,15 @@ eye candy and QoL
 
 - QoL: added "pin search" option (your suggestion)
 - QoL: added expando to search options menu to show/hide the search options and save space
+- QoL: added shared preference support, saves prefs as cookies
 
+the saerch pane now remembers whether you:
+- prefer the options minimised
+- prefer the search to be pinned
+
+any url parameters will overwrite cookie-based preferences
+
+fixed bug with search setting options appearing inconsistently when focusing the search box
 ## todo
 
 

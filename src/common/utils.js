@@ -333,14 +333,15 @@ export function queryify(object) {
 	  			   Set cookie
 ================================================*/
 
-export function setCookie(key, value, days) {
+export function setCookie(key, value, days, recursion) {
+
 	if (days == null) {
 		days = 9999;
 	}
 	const d = new Date();
 	d.setTime(d.getTime() + (days*24*60*60*1000));
 	let expires = "expires="+ d.toUTCString();
-	document.cookie = key + "=" + value + ";" + expires + ";path=/";
+	document.cookie = key + "=" + value + ";" + expires + ";path=/;SameSite=Lax";
 }
 
 /*================================================
@@ -381,6 +382,12 @@ window.getPrefs = function(key) {
 	if (getURLParams().has(key)){
 		return getURLParams().get(key);
 	} else {
-		return (getCookie(key) != null && getCookie(key) != "") ? getCookie(key) : null;
+		let value = (getCookie(key) != null && getCookie(key) != "") ? getCookie(key) : false;
+
+		if ((typeof value === 'string' || value instanceof String) && (value.toLowerCase() == "true" || value.toLowerCase() == "false")) {
+			return JSON.parse(value);
+		} else {
+			return value;
+		}
 	}
 }
