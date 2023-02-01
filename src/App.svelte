@@ -46,7 +46,7 @@
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
   import IconButton from './components/IconButton.svelte';
-  import Search from './components/Search.svelte';
+  import Search from './components/SearchPane.svelte';
 
 	print("Initialising app...");
 

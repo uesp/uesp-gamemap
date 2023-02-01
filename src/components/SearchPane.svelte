@@ -308,7 +308,7 @@
                 </div>
 
                 <div id='searchbox_container'>
-                    <input id='searchbox' type='search' placeholder="Where would you like to go?" maxlength='100' autocomplete='off' bind:value={searchQuery} on:focus={(e) => onSearchFocused(e, true)} on:blur={(e) => onSearchFocused(e, false)} on:input={onSearchQueryChanged} bind:this={searchBox}/>
+                    <input id='searchbox' type='search' placeholder="Where would you like to go?" maxlength='100' style="border-bottom: none !important; box-shadow: none !important;" autocomplete='off' bind:value={searchQuery} on:focus={(e) => onSearchFocused(e, true)} on:blur={(e) => onSearchFocused(e, false)} on:input={onSearchQueryChanged} bind:this={searchBox}/>
                 </div>
 
                 {#if searchQuery.length > 0}
@@ -395,8 +395,6 @@
         height: 100%;
         position: relative;
         padding-left: 5px;
-        border: none;
-        border-bottom: solid 1px #00000000 !important;
         align-self: stretch;
         outline: none;
         background-color: transparent;

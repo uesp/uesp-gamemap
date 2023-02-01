@@ -6,6 +6,9 @@ eye candy and QoL
 - gamemap now fade-transition bg colour when loading (most noticeable when clicking into maps from the above)
 >> anticipating this because when doing skyrim day/night mode, it should also have bg colour fade
 
+- clicking anywhere on the searchbar now focuses the textbox (didnt before)
+- shrunk the saerchbar a bit to give map more breathing room (a complaint from TR people)
+
 ## todo
 
 
