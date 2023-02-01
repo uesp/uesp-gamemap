@@ -67,8 +67,8 @@
         background: var(--primary_variant_light);
         border-radius: 64px;
         z-index: 1000;
-        bottom: 10px;
-        right: 10px;
+        bottom: var(--padding_minimum);
+        right: var(--padding_minimum);
         width: var(--appbar_dimen);
         height: 100px;
         display: flex;
