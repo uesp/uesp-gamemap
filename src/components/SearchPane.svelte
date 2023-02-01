@@ -14,6 +14,9 @@
     // declare state vars
     let searchBox = null;
     let isLoading = false;
+    let doPinSearch = false;
+    let expandOptions = true;
+
     $: searchQuery = "";
     $: searchResults = null;
     $: searchFocused = null;
@@ -279,18 +282,22 @@
             <!-- Search bar -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div id='searchbar' class="waves-effect" class:fullPane={showSearchPane} on:click={() => (searchBox.focus())}>
+
                 <!-- Magnifying glass icon -->
                 <div id="search_icon">
                     <Icon name="search"></Icon>
                 </div>
+
                 <!-- Searchbox -->
                 <div id='searchbox_container'>
                     <input id='searchbox' type='search' placeholder="Where would you like to go?" maxlength='100' style="border-bottom: none !important; box-shadow: none !important;" autocomplete='off' on:focus={(e) => onSearchFocused(e, true)} on:blur={(e) => onSearchFocused(e, false)} bind:this={searchBox} bind:value={searchQuery} on:input={() => onSearchQueryChanged(searchBox.value, false)}/>
                 </div>
+
                 <!-- Clear search button -->
                 {#if searchQuery.length > 0 && searchBox.value != ""}
                     <IconButton icon="close" tooltip="Clear the current search" on:click={clearSearch}></IconButton>
                 {/if}
+
                 <!-- Loading bar -->
                 {#if showSearchPane && isLoading}
                     <div style="top: 46px; position: absolute; left: 0px; width: 100%;"><ProgressBar/></div>
@@ -302,11 +309,21 @@
 
                     <!-- Search Options -->
                     <div id="search_options" class:fullPane={showSearchPane}>
-                        <b style="font-size: 1.0rem;">Search options</b><br>
-                        <label class="waves-effect" style="width: 100%; padding-top: 8px;">
-                            <input id="search_current_map_checkbox" type="checkbox" class="filled-in" onchange="updateSearch($('#searchbox').val(), this.checked);" />
-                            <span>Only show results from this map</span>
-                        </label>
+                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <b style="font-size: 1.0rem;" class="waves-effect" on:click={() => expandOptions = !expandOptions}>Search options <Icon name={(expandOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b><br>
+
+                        {#if expandOptions}
+                            <label class="waves-effect" style="width: 100%; padding-top: 8px;">
+                                <input id="search_current_map_checkbox" type="checkbox" class="filled-in" onchange="updateSearch($('#searchbox').val(), this.checked);" />
+                                <span>Pin search window</span>
+                            </label>
+
+                            <label class="waves-effect" style="width: 100%; padding-top: 8px;">
+                                <input id="search_current_map_checkbox" type="checkbox" class="filled-in" onchange="updateSearch($('#searchbox').val(), this.checked);" />
+                                <span>Only show results from this map</span>
+                            </label>
+                        {/if}
+
                         <hr id="search_divider" class="banishdefault">
                     </div>
 

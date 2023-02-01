@@ -9,6 +9,8 @@ eye candy and QoL
 - clicking anywhere on the searchbar now focuses the textbox (didnt before)
 - shrunk the saerchbar a bit to give map more breathing room (a complaint from TR people)
 
+- fixed search options shadow being cut off (minor thing)
+
 ## todo
 
 
