@@ -1021,16 +1021,8 @@ export default class Gamemap {
 
 		map.on('resize moveend zoomend', function() {
 			self.updateMapState();
-			if (!Utils.isMobile()) {
-				self.hideMenus();
-			}
-
 			self.clearTooltips();
 		});
-
-		map.on("mousedown", function(e){
-			self.hideMenus();
-		})
 
 		map.on("contextmenu", function(e){
 			if (self.getMapState().world.parentID != null && self.getMapState().world.parentID != -1 ) {
@@ -1177,12 +1169,6 @@ export default class Gamemap {
 
 	setZoomTo(zoom) {
 		map.setZoom(zoom, {animate: true})
-	}
-
-	hideMenus(){
-		if (this.mapCallbacks != null) {
-			this.mapCallbacks.hideMenus();
-		}
 	}
 
 	// clear tooltips
@@ -2500,18 +2486,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.hideHelpBlock = function()
-// {
-// 	if (this.currentEditMode == 'showhelpblock')
-// 	{
-// 		this.currentEditMode = '';
-// 		this.removeEditClickWall();
-// 	}
-
-// 	if (this.helpBlockElement != null) this.helpBlockElement.hide();
-// }
-
-
 // uesp.gamemap.Map.prototype.showHelpBlock = function()
 // {
 // 	if (this.currentEditMode != '') return false;
@@ -2524,17 +2498,6 @@ export default class Gamemap {
 // 	this.helpBlockElement.show();
 // }
 
-
-// uesp.gamemap.Map.prototype.hideMapKey = function()
-// {
-// 	if (this.currentEditMode == 'showmapkey')
-// 	{
-// 		this.currentEditMode = '';
-// 		this.removeEditClickWall();
-// 	}
-
-// 	if (this.mapKeyElement != null) this.mapKeyElement.hide();
-// }
 
 
 // uesp.gamemap.Map.prototype.showMapKey = function()

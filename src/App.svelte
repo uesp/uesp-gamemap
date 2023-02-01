@@ -46,6 +46,7 @@
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
   import IconButton from './components/IconButton.svelte';
+  import Search from './components/Search.svelte';
 
 	print("Initialising app...");
 
@@ -132,14 +133,6 @@
 						}});
 				} else { setError("There was an error getting the default map config." + error);}})
 		} else {
-
-			print.warn("Game parameter was missing or invalid.");
-
-			// if debug mode, redirect to eso map by default
-			if (location.href.includes("localhost") && isDebug) {
-				//location.href = "http://localhost:8080?game=eso;
-			}
-
 			// hide loading spinner and show map selector
 			setLoading(false);
 			showMaps = true;
@@ -198,7 +191,6 @@
 			onPermissionsLoaded,
 			onWorldChanged,
 			onZoom,
-			hideMenus,
 			onMapLoaded,
 			setLoading,
 		};
@@ -248,9 +240,6 @@
 
 		}
 
-		if (mapConfig.hasCellGrid) {
-			// $("#btn_toggle_grid").show();
-		}
 	}
 
 	function onWorldChanged(newWorld) {
@@ -259,7 +248,6 @@
 		isLoaded = true;
 		//setContext("currentWorld", newWorld);
 		// updateWorldList(newWorld.name);
-		// clearSearch();
 	}
 
 	function onZoom(data) {
@@ -273,13 +261,6 @@
 			gamemap.setZoomTo(data.detail)
 		}
 
-	}
-
-	function hideMenus(newWorld) {
-		// $('#current_location_label').text(newWorld.displayName);
-		// setWindowTitle(newWorld.displayName);
-		// updateWorldList(newWorld.name);
-		// clearSearch();
 	}
 
 	function onPermissionsLoaded(enableEditing) {
@@ -314,6 +295,8 @@
 
 		<!-- only show ui when ui is enabled -->
 		{#if showUI}
+
+			<Search></Search>
 
 			<!-- only show loading bar when map is loading -->
 			{#if isLoading}
@@ -356,8 +339,11 @@
 
 	<!-- Show map selection menu on 404 -->
 	{#if showMaps}
-		<IconButton icon="article" label="deez" tooltip="ligma"/>
 		<MapChooser/>
+
+		<!-- <IconButton icon="article" label="deez" tooltip="ligma" hasBackground="true"/>
+		<IconButton icon="article" label="deez" tooltip="ligma"/>
+		<IconButton icon="article" label="deez" tooltip="ligma" checked="true"/> -->
 	{/if}
 
 </markup>

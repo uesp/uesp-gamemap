@@ -4,7 +4,6 @@
 				 Initialisation
 ================================================*/
 
-var mapConfig = null;
 var currentTabID = "";
 var pairings = [];
 
@@ -12,27 +11,12 @@ var pairings = [];
 log("Page initialising...");
 $(document).ready(function() {
 
-	// bind views from DOM
-	var searchbox = document.getElementById("searchbox");
-	var btn_clear_search = document.getElementById("btn_clear_search");
-
 	// add click listeners on tabs
 	$('#abc_tab').on('click', function(event) { onTabClicked(event.target); });
 	$('#group_tab').on('click', function(event) { onTabClicked(event.target); });
 
-	// setup event listeners
-	btn_clear_search.addEventListener("click", clearSearch);
-	searchbox.addEventListener("input", function(){updateSearch(searchbox.value, document.querySelector('#search_current_map_checkbox').checked); });
-
 	M.AutoInit();
 
-	// hijack ctrl + F to redirect to custom search
-	$(window).keydown(function(event){
-		if ((event.ctrlKey || event.metaKey) && event.keyCode === 70) {
-			event.preventDefault();
-			focusSearch();
-		}
-	});
 });
 
 /*================================================
@@ -124,16 +108,6 @@ function reselectTabs() {
 	tabs.select(currentTabID || 'tab_categories');
 }
 
-function hideMenus() {
-	toggleLocationSwitcher(false);
-	hideSearch();
-
-	if (Utils.isMobileDevice()) {
-		clearSearch();
-	}
-
-	// one here for overflow as well;
-}
 
 function onTabClicked(element) {
 	if (locationSwitcherRoot.classList.contains("shown")) {
@@ -378,257 +352,4 @@ function createGroupListHTML(groups) {
 		});
 	}
 	return output;
-}
-
-/*================================================
-					  Search
-================================================*/
-
-window.focusSearch = function() {
-
-	// focus search if it's not already
-	if (document.activeElement.id != searchbox.id) {
-		searchbox.focus();
-	}
-
-	$("#search_results_container").show();
-
-	log("focusing search");
-	let searchQuery = searchbox.value;
-
-
-	if (searchQuery != null && searchQuery.length == 0) {
-		// show options div
-		if (!gamemap.hasMultipleWorlds()) {
-			$("#search_options_container").hide();
-		}
-		$("#search_options_container").css("box-shadow", "0px 1.5px 4px 4px var(--shadow)");
-		$("#search_results").html(""); // blank current search results
-	} else if (searchQuery.length > 0) {
-		toggleSearchPane(true);
-	}
-
-	// is there a search query, if so do stuff with
-}
-
-function toggleSearchPane(toggle) {
-	if (toggle) {
-		$("#search_results_container").show();
-		$("#search_results_container").css("background-color", "var(--surface)");
-		$("#search_options_container").css("box-shadow", "none");
-		$("#searchbar").css({
-			BorderTopLeftRadius: 'var(--padding_small)',
-			BorderTopRightRadius: 'var(--padding_small)',
-			BorderBottomLeftRadius: '0px',
-			BorderBottomRightRadius: '0px',
-		});
-		$("#search_divider").show();
-		$("#search_results_container").css("box-shadow", "0px 1.5px 4px 4px var(--shadow)");
-	} else {
-		$("#searchbar").css({'border-radius': 'var(--padding_large)'});
-		$("#search_results_container").css("background-color", "transparent");
-		$("#search_results_container").css("box-shadow", "");
-		$("#search_divider").hide();
-	}
-}
-
-window.hideSearch = function() {
-	toggleSearchPane(false);
-	$("#search_results_container").hide();
-	// hide the search pane without clearing search query
-}
-
-function clearSearch() {
-	searchbox.value = "";
-	$("#btn_clear_search").hide();
-	$("#search_loading_bar").hide();
-	$("#search_results").html("");
-	$(".search_results_container").hide();
-	hideSearch();
-}
-
-let timer;
-const DELAY_AMOUNT = 500;
-
-window.updateSearch = function(query, currentMapOnly) {
-
-	if (currentMapOnly == null) {
-		currentMapOnly = false;
-	}
-
-	log(query);
-
-	// toggle clear button visibility
-	if (query.length > 0) {
-		$("#btn_clear_search").show();
-		toggleSearchPane(true);
-		$("#search_progress_bar").show();
-		$("#search_results").html("<b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small) '>Searching...<b>");
-
-		// search debouncing
-		if (timer != null){
-			clearTimeout(timer);
-		}
-		timer = setTimeout(() => {
-			doSearch(query, currentMapOnly);
-		}, DELAY_AMOUNT)
-
-	} else {
-		clearSearch();
-		toggleSearchPane(false);
-	}
-}
-
-//gamemap.php?action=search&search=morrowind&world=2282&db=eso
-function doSearch(searchQuery, currentMapOnly) {
-
-	if (searchQuery != null && searchQuery.length > 0) {
-
-		// do search stuff
-		let queryParams = {};
-
-		queryParams.action = 'search';
-		queryParams.search = encodeURIComponent(searchQuery);
-		log("search query: " + queryParams.search + ", search in map: " + currentMapOnly);
-		if (gamemap.isHiddenLocsShown()) {
-			queryParams.showhidden = 1;
-		}
-
-		if (currentMapOnly == true) {
-			queryParams.world = gamemap.getCurrentWorldID();
-		}
-
-		queryParams.db = mapConfig.database;
-
-		if (searchQuery.substring(0, 5) === "type:") {
-			let locType = gamemap.getLocTypeByName(searchQuery.substring(5));
-			if (locType != null) {
-				queryParams.searchtype = locType;
-			}
-		}
-
-		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
-
-			// inline search result object
-			let SearchResult = class {
-				constructor(name, description, icon, destinationID) {
-					this.name = name;
-					this.description = description;
-					this.icon = icon || null;
-					this.destinationID = destinationID;
-				}
-			};
-
-			if (!data.isError) {
-				$("#search_progress_bar").hide();
-				$(".search_results_container").show();
-				let searchResults = []; // SearchResults go in here
-
-				// merge both locations and worlds into a single array
-				let tempResults = [].concat(data.worlds, data.locations);
-
-				for (let i in tempResults) {
-
-					let result = tempResults[i];
-
-					if (result != null) {
-						let searchResult;
-
-						if (result.tilesX != null) { // check if this is a world or a location
-							// if true, then we are a world
-							searchResult = new SearchResult(result.displayName, null,  null, result.id);
-						} else {
-							// if not, this is a location
-							let world = gamemap.getWorldFromID(result.worldId);
-							if (world != null) {
-								searchResult = new SearchResult(result.name, world.displayName, result.iconType, -result.id);
-							}
-						}
-
-						if (searchResult != null) {
-							searchResults.push(searchResult);
-						}
-					}
-
-				}
-
-				updateSearchResults(searchResults);
-				console.log(searchResults);
-
-			} else {
-				log("there was an error getting search results");
-			}
-		});
-	}
-}
-
-function updateSearchResults(results){
-	if (results == null) {
-		//hide results menu
-		clearSearch();
-	} else {
-		// get searchHTML
-
-		let html = "";
-
-		if (results.length >= 1) {
-			for (let i in results) {
-				if (results[i] != null) {
-					html += createLocationRowHTML(results[i]);
-				}
-			}
-		} else {
-			html = "<b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small) '>No results found.<b>";
-		}
-
-		$("#search_results").html(html);
-	}
-}
-
-function createLocationRowHTML(data) {
-
-	if (!Number.isNaN(data)) {
-		let worldID = data;
-		let world = gamemap.getWorldFromID(worldID);
-
-		if (world != null) {
-			return ("<div class='collection'><a name='" + world.name + "' onclick='gotoWorld("+worldID+")' class='collection-item waves-effect'> " + world.displayName + " </a></div>");
-		}
-	}
-
-	if (data != null && data.name != null) {
-
-		let imgHTML;
-		let isWorld;
-		let iconSize = 30;
-		if (data.icon != null) {
-			let iconURL = mapConfig.iconPath + "/" + data.icon + ".png";
-			iconURL = iconURL.replace("//", "/"); // bypass bug doubling forward slashes for some reason
-			imgHTML = "<img class='circle' src="+iconURL+" width='"+iconSize+"' height='"+iconSize+"'></img>";
-		} else {
-			if (data.icon == null && data.description == null) {
-				imgHTML = "<i class='small material-icons circle'>public</i>";
-				isWorld = true;
-			} else {
-				imgHTML = "<i class='small material-icons circle'>location_on</i>";
-			}
-		}
-
-		let nameHTML = "";
-
-		if (isWorld) { nameHTML += "<b>" }
-		nameHTML += data.name;
-		if (isWorld) { nameHTML += "</b>" }
-
-		if (data.description != null && gamemap.hasMultipleWorlds()) {
-			nameHTML += "<br><small style='color: var(--text_low_emphasis);'>"+ data.description + "</small>";
-		}
-
-		if (isWorld && !gamemap.hasMultipleWorlds()) {
-			return "";
-		}
-
-		return ("<div class='collection'><a onclick='gotoWorld("+data.destinationID+")' class='collection-item search-item avatar waves-effect'> " + imgHTML + nameHTML + "</a></div>");
-
-	}
 }

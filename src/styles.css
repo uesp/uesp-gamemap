@@ -40,7 +40,7 @@
 	--secondary_variant: #A69480;
 	--secondary_variant_light: #bda993;
 	--secondary_variant_dark: #8b7d6d;
-  	--selection: rgba(121, 80, 60, 0.152);
+  	--selection: rgba(121, 80, 60, 0.353);
 	--bubble_selection: rgba(84, 84, 84, 0.5);
 	--error: #C2571B;
 	--error_dark: #DD8A5B;
@@ -54,7 +54,7 @@
 	/* heights, widths, and volume */
 	--appbar_dimen: 48px;
 	--layer_widget_dimen: 64px;
-	--search_pane_width: 420px;
+	--side_panel_width: 420px;
 	--zindex_floating: 900;
 	--zindex_overlay: 9998;
 
@@ -112,10 +112,6 @@ html, body, main {
 	user-select: none;
 }
 
-[class*="icon_button"] i {
-	margin: 5px;
-}
-
 /* hide these elements by default */
 .onlymobile {
 	display: none !important;
@@ -128,7 +124,11 @@ html, body, main {
 }
 
 ::placeholder {
-	color: var(--text_low_emphasis);
+	color: var(--text_low_emphasis) !important;
+}
+
+[class*="icon_button"] i {
+	margin: 5px;
 }
 
 /*  horizontal dividers */
@@ -154,6 +154,11 @@ button {
 	user-select: none;
 }
 
+::selection {
+	color: var(--text_on_primary);
+	background: var(--selection);
+}
+
 /*================================================
 					Accessibility
 ================================================*/
@@ -170,7 +175,7 @@ button {
 				   Mobile CSS
 ================================================*/
 
-@media only screen and (max-device-width:900px) {
+@media only screen and (max-device-width:600px) {
 
 	#location_switcher_root {
 		left: calc(50% - var(--appbar_dimen) + var(--padding_large)) !important;
@@ -214,22 +219,6 @@ button {
 		flex-direction: column !important;
 	}
 
-}
-
-@media only screen and (min-width: 0) {
-	html {
-	  font-size: 14px;
-	}
-}
-@media only screen and (min-width: 993px) {
-	html {
-		font-size: 14.5px;
-	}
-}
-  @media only screen and (min-width: 1201px) {
-	html {
-	  font-size: 15px;
-	}
 }
 
 /*================================================
@@ -444,6 +433,57 @@ button {
 
 
 
+/*================================================
+				   	Icon Bar
+================================================*/
+
+.icon_bar {
+	padding-top: var(--padding_minimum);
+	padding-bottom: var(--padding_minimum);
+	padding-right: var(--padding_minimum);
+	right:  var(--padding_minimum);
+	position: absolute;
+	display: flex;
+	flex-wrap: nowrap;
+	width: calc(100% - (var(--search_pane_width) + var(--padding_minimum))) !important;
+	overflow: hidden;
+}
+
+div[class^="icon_bar"] {
+	z-index: var(--zindex_floating);
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-end;
+	gap: var(--padding_medium);
+}
+
+.icon_bar_responsive {
+	flex: none;
+	flex-direction: row !important;
+	overflow: hidden;
+	margin-right: auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .collection a.collection-item:not(.active):hover {
 	background-color: var(--divider);
@@ -605,136 +645,4 @@ li div.collapsible-header i {
 
 .tabs .tab a:focus, .tabs .tab a:focus.active {
 	background-color: var(--selection);
-}
-
-/*================================================
-					  Search
-================================================*/
-
-/* --- root search view --- */
-.search_root {
-	position: absolute;
-	width: var(--search_pane_width);
-	height: 100%;
-	z-index: 100;
-	font-size: 12px;
-	z-index: var(--zindex_overlay);
-	pointer-events: none;
-}
-
-#btn_clear_search i {
-	text-shadow: none;
-}
-
-.search_container {
-	margin-left: var(--padding_minimum);
-	margin-right: var(--padding_medium);
-	margin-bottom: var(--padding_medium);
-}
-
-#searchbar {
-  	display: flex;
-	position: relative;
-	top: var(--padding_minimum);
-  	flex-wrap: nowrap;
-	flex-grow: 2;
-	justify-content: space-between;
-	background-color: var(--primary);
-	z-index: var(--zindex_floating);
-	border-radius: var(--padding_large);
-	pointer-events: auto;
-  	transition: all ease 150ms;
-	height: var(--appbar_dimen);
-  	box-shadow: 0px 1.5px 4px 4px var(--shadow);
-}
-
-.search_icon {
-  color: var(--text_low_emphasis);
-  margin-top: auto;
-  margin-bottom: auto;
-  margin-left: 12px;
-}
-
-.searchbar:hover {
-	background-color: var(--primary_variant);
-	box-shadow: 0px 1.5px 5px 6px var(--shadow);
-}
-
-.search_box {
-	margin-top: -1.1%;
-	width: 100%;
-	height: 100%;
-	position: relative;
-	padding-left: 5px;
-	border: none;
-	align-self: stretch;
-	outline: none;
-	background-color: transparent;
-	font-size: 1.5em;
-	border-bottom: none !important;
-}
-
-.searchbox_container {
-	margin: auto;
-	width: 100%;
-}
-
-#search_results_container {
-	pointer-events: visible;
-	position: relative;
-	top: 2px;
-	border-radius: var(--padding_small);
-	border-top-left-radius: 0px;
-	border-top-right-radius: 0px;
-	padding-top: 19px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	max-height: 80vh;
-	padding-bottom: var(--padding_minimum);
-}
-
-.search-item {
-	font-size: 14px;
-}
-
-#search_progress_bar {
-	top: -2px;
-}
-
-#search_options_container {
-	padding: var(--padding_small);
-	border-radius: var(--padding_small);
-	background-color: var(--surface);
-	box-shadow: 0px 1.5px 4px 4px var(--shadow);
-}
-
-/*================================================
-				   	Icon Bar
-================================================*/
-
-.icon_bar {
-	padding-top: var(--padding_minimum);
-	padding-bottom: var(--padding_minimum);
-	padding-right: var(--padding_minimum);
-	right:  var(--padding_minimum);
-	position: absolute;
-	display: flex;
-	flex-wrap: nowrap;
-	width: calc(100% - (var(--search_pane_width) + var(--padding_minimum))) !important;
-	overflow: hidden;
-}
-
-div[class^="icon_bar"] {
-	z-index: var(--zindex_floating);
-	display: flex;
-	flex-direction: row-reverse;
-	justify-content: flex-end;
-	gap: var(--padding_medium);
-}
-
-.icon_bar_responsive {
-	flex: none;
-	flex-direction: row !important;
-	overflow: hidden;
-	margin-right: auto;
 }

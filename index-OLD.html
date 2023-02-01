@@ -42,46 +42,6 @@
 			</div>
 		</div>
 
-		<!-- Search -->
-		<div class ='search_root' id="search_root">
-
-			<div class='search_container' id="search_container">
-
-				<!-- Search bar -->
-				<div id='searchbar' tabindex="0">
-					<div class="search_icon">
-						<i class="material-icons">search</i>
-					</div>
-
-					<div class='searchbox_container'>
-						<input class='search_box' type='search' id='searchbox' placeholder="Where would you like to go?" size='25' maxlength='100' autocomplete='off' onfocus="focusSearch()" />
-					</div>
-
-					<button id="btn_clear_search" class='btn_bgless_icon_button banishdefault waves-effect waves-circle' title="Clear the current search" type='reset'><i class="material-icons">close</i></button>
-				</div>
-
-				<!-- Search Results -->
-				<div id='search_results_container' class="banishdefault">
-
-					<div id="search_progress_bar" class="progress_bar banishdefault">
-						<div class="progress"><div class="indeterminate"></div></div>
-					</div>
-
-					<div id="search_options_container">
-						<b style="font-size: 1.0rem;">Search options</b><br>
-						<label class="waves-effect" style="width: 100%; padding-top: 8px;">
-							<input id="search_current_map_checkbox" type="checkbox" class="filled-in" onchange="updateSearch($('#searchbox').val(), this.checked);" />
-							<span>Only show results from this map</span>
-						</label>
-						<hr id="search_divider" class="banishdefault">
-					</div>
-					<div id="search_results" class='search_results'>
-						<!-- search results go here-->
-					</div>
-				</div>
-			</div>
-		</div>
-
 		<!-- Location switcher -->
 		<div id="location_switcher_root">
 
