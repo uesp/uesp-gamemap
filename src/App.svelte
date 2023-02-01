@@ -60,8 +60,8 @@
 	let gamemap = null;
 	let editingEnabled = false;
 	let isEmbedded = window.self !== window.top;
-	let uespEmbed = isEmbedded && Utils.getURLParams.has("uespEmbed");
-	let currentZoom = Utils.getURLParams().has("zoom") ? Utils.getURLParams().get("zoom") : 0;
+	let uespEmbed = isEmbedded && getURLParams().has("uespEmbed");
+	let currentZoom = getURLParams().has("zoom") ? getURLParams().get("zoom") : 0;
 	let showUI = true;
 	let showLayerSwitcher = false;
 	let showMaps = false;
@@ -85,7 +85,7 @@
 		}, (location.toString().includes("dev") ? 10000 : 0)); // wait 10s on dev to bypass google lighthouse accessibility check
 
 		// get game name from URL
-		let gameParam = (location.pathname.replace(/\\|\//g,'') != "") ? location.pathname.replace(/\\|\//g,'') : (location.search != null) ? Utils.getURLParams().get("game") : null;
+		let gameParam = (location.pathname.replace(/\\|\//g,'') != "") ? location.pathname.replace(/\\|\//g,'') : (location.search != null) ? getURLParams().get("game") : null;
 		setLoading("Loading map");
 
 		if (gameParam != null && gameParam.match(/^([a-z]+)/)) {

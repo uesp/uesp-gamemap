@@ -22,6 +22,9 @@
     $: searchFocused = null;
     $: showSearchPane = searchQuery.length > 0 && searchQuery != "" && searchFocused && searchBox.value != "";
 
+
+    getPrefs("ligma");
+
     // TODO: look into adding a way to pin the search for dave
 
 

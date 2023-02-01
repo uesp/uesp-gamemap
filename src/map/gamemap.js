@@ -232,14 +232,14 @@ export default class Gamemap {
 		// initialise mapstate
 		let mapState = new MapState();
 
-		if (Utils.getURLParams().has("zoom")){
-			mapState.zoomLevel = Utils.getURLParams().get("zoom");
+		if (getURLParams().has("zoom")){
+			mapState.zoomLevel = getURLParams().get("zoom");
 		} else {
 			mapState.zoomLevel = this.mapConfig.defaultZoomLevel;
 		}
 
-		if (Utils.getURLParams().has("world")){
-			mapState.world = this.getWorldFromID(Utils.getURLParams().get("world"));
+		if (getURLParams().has("world")){
+			mapState.world = this.getWorldFromID(getURLParams().get("world"));
 			if (mapState.world == "undefined") {
 				mapState.world = this.getWorldFromID(this.mapConfig.defaultWorldID);
 			}
@@ -247,24 +247,24 @@ export default class Gamemap {
 			mapState.world = this.getWorldFromID(this.mapConfig.defaultWorldID);
 		}
 
-		if (Utils.getURLParams().has("x") && Utils.getURLParams().has("y")) {
-			mapState.coords = [Utils.getURLParams().get("x"), Utils.getURLParams().get("y")];
+		if (getURLParams().has("x") && getURLParams().has("y")) {
+			mapState.coords = [getURLParams().get("x"), getURLParams().get("y")];
 		} else {
 			mapState.coords = [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
 		}
 
-		if (Utils.getURLParams().has("grid")) {
-			mapState.showGrid = Utils.getURLParams().get("grid");
+		if (getURLParams().has("grid")) {
+			mapState.showGrid = getURLParams().get("grid");
 		} else {
 			mapState.showGrid = false;
 		}
 
-		if (Utils.getURLParams().has("cellresource")) {
-			mapState.cellResource = Utils.getURLParams().get("cellresource");
+		if (getURLParams().has("cellresource")) {
+			mapState.cellResource = getURLParams().get("cellresource");
 		}
 
-		if (Utils.getURLParams().has("layer")) {
-			let tileLayer = Utils.getURLParams().get("layer");
+		if (getURLParams().has("layer")) {
+			let tileLayer = getURLParams().get("layer");
 			mapState.tileLayer = (!isNaN(tileLayer)) ? tileLayer : (this.mapConfig.tileLayers.indexOf(tileLayer) > -1) ? this.mapConfig.tileLayers.indexOf(tileLayer) : 0;
 		} else {
 			mapState.tileLayer = 0;
@@ -1344,7 +1344,7 @@ export default class Gamemap {
 	}
 
 	isHiddenLocsShown() {
-		if (Utils.getURLParams().get("showhidden") === "true") {
+		if (getURLParams().get("showhidden") === "true") {
 			return true;
 		} else {
 			return false;
@@ -1353,7 +1353,7 @@ export default class Gamemap {
 	}
 
 	hasCenterOnURLParam(){
-		return Utils.getURLParams().get("centeron") != null && Utils.getURLParams().get("centeron") !== '';
+		return getURLParams().get("centeron") != null && getURLParams().get("centeron") !== '';
 	}
 
 	getArticleLink() {
@@ -1379,7 +1379,7 @@ export default class Gamemap {
 	}
 
 	hasMultipleURLParams() {
-		return (Array.from(Utils.getURLParams().values())).length >= 2;
+		return (Array.from(getURLParams().values())).length >= 2;
 	}
 
 	/*================================================

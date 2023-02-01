@@ -70,7 +70,7 @@ export function getJSON(url, callback) {
 			 Get URL parameters function
 ================================================*/
 
-export function getURLParams(paramType){
+window.getURLParams = function(paramType) {
 	let urlParams;
 
 	if (paramType == null || paramType == Constants.PARAM_TYPE_QUERY) {
@@ -314,15 +314,8 @@ export function injectCSS(cssPath) {
 export function queryify(object) {
 
 	//gamemap.php?action=get_perm&db=eso
-
 	let query = "?";
 	let entries = Object.entries(object);
-
-	// let str = JSON.stringify(object);
-
-	// print(object);
-	// print(str);
-	// print(entries);
 
 	entries.forEach(function(entry) {
 		query += (entry[0] + "=" + entry[1]);
@@ -333,7 +326,61 @@ export function queryify(object) {
 
 	})
 
-	// print(query);
-
 	return query;
+}
+
+/*================================================
+	  			   Set cookie
+================================================*/
+
+export function setCookie(key, value, days) {
+	if (days == null) {
+		days = 9999;
+	}
+	const d = new Date();
+	d.setTime(d.getTime() + (days*24*60*60*1000));
+	let expires = "expires="+ d.toUTCString();
+	document.cookie = key + "=" + value + ";" + expires + ";path=/";
+}
+
+/*================================================
+	  			   Get cookie
+================================================*/
+
+export function getCookie(c_name) {
+    var c_value = " " + document.cookie;
+    var c_start = c_value.indexOf(" " + c_name + "=");
+    if (c_start == -1) {
+        c_value = null;
+    }
+    else {
+        c_start = c_value.indexOf("=", c_start) + 1;
+        var c_end = c_value.indexOf(";", c_start);
+        if (c_end == -1) {
+            c_end = c_value.length;
+        }
+        c_value = unescape(c_value.substring(c_start,c_end));
+    }
+    return c_value;
+}
+
+/*================================================
+	  			   Set prefs
+================================================*/
+
+window.setPrefs = function(key, value) {
+	setCookie(key, value);
+}
+
+/*================================================
+	  			   Get prefs
+================================================*/
+
+window.getPrefs = function(key) {
+	// take preference over URL parms over cookies
+	if (getURLParams().has(key)){
+		return getURLParams().get(key);
+	} else {
+		return (getCookie(key) != null && getCookie(key) != "") ? getCookie(key) : null;
+	}
 }

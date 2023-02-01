@@ -11,6 +11,9 @@ eye candy and QoL
 
 - fixed search options shadow being cut off (minor thing)
 
+- QoL: added "pin search" option (your suggestion)
+- QoL: added expando to search options menu to show/hide the search options and save space
+
 ## todo
 
 
