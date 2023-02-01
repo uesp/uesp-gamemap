@@ -358,7 +358,7 @@
     /* Searchbar */
     #searchbar_container {
         margin-left: var(--padding_minimum);
-        margin-right: var(--padding_medium);
+        margin-right: var(--padding_minimum);
         cursor:pointer;
     }
     #searchbar {

@@ -54,7 +54,7 @@
 	/* heights, widths, and volume */
 	--appbar_dimen: 48px;
 	--layer_widget_dimen: 64px;
-	--side_panel_width: 420px;
+	--side_panel_width: 380px;
 	--zindex_floating: 900;
 	--zindex_overlay: 9998;
 
