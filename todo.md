@@ -25,6 +25,8 @@ fixed bug with search setting options appearing inconsistently when focusing the
 
 
 - because you can collapse the settings and pin things, added a small pin icon so you can always tell when it's pinned
+
+- replaced existing favicons with higher quality ones
 ## todo
 
 - make ListItem component

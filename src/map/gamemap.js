@@ -718,7 +718,7 @@ export default class Gamemap {
 		// make a generic fallback marker
 		let marker = new L.marker(coords[0]);
 		L.Marker.prototype.options.icon = L.icon({
-			iconUrl: this.mapConfig.iconPath + "transparent.png",
+			iconUrl: Constants.IMAGES_DIR + "transparent.png",
 		});
 
 		// create specific marker type
