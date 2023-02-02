@@ -7,12 +7,7 @@
 
 ### Author(s)
 - Dave Humphrey <dave@uesp.net> (21st Jan 2014)
-- Thal-J <thal-j@uesp.net> (16th Aug 2022)
-
-### Note
- To disable the unused css warnings in this file, follow
- the instructions on this page:
- https://stackoverflow.com/a/60720816 -->
+- Thal-J <thal-j@uesp.net> (16th Aug 2022)-->
 
 <!-- App -->
 <script>

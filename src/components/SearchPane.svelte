@@ -203,9 +203,12 @@
     // on search pane focused
     function onSearchFocused(event, isFocused) {
 
-        if (event.type == "blur" || event.type == "mousedown") {
+        print(event);
+
+        if (event.type != "focus") {
             let searchPane = document.querySelector('#search_pane');
-            let target = (event.relatedTarget != null) ? event.relatedTarget : event.explicitOriginalTarget;
+            let target = (event.relatedTarget != null) ? event.relatedTarget : (event.explicitOriginalTarget != null) ? event.explicitOriginalTarget : document.elementsFromPoint(event.clientX, event.clientY)[0];
+
             let isInsideSearchPane = searchPane !== target && searchPane.contains(target);
 
             // hide search if it's not pinned
@@ -245,7 +248,7 @@
 
                 <!-- Searchbox -->
                 <div id='searchbox_container'>
-                    <input id='searchbox' type='search' placeholder="Where would you like to go?" maxlength='100' style="border-bottom: none !important; box-shadow: none !important;" autocomplete='off' on:focus={(e) => onSearchFocused(e, true)} on:blur={(e) => onSearchFocused(e, false)} bind:this={searchBox} bind:value={searchQuery} on:input={() => updateSearch(searchBox.value, searchCurrentMap)}/>
+                    <input id='searchbox' type='search' placeholder="Where would you like to go?" maxlength='100' style="border-bottom: none !important; box-shadow: none !important;" autocomplete='off' on:focus={(e) => onSearchFocused(e, true)} bind:this={searchBox} bind:value={searchQuery} on:input={() => updateSearch(searchBox.value, searchCurrentMap)}/>
                 </div>
 
                 <!-- Clear search button -->
