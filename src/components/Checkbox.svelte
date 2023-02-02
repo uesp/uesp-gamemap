@@ -29,11 +29,8 @@
     </label>
 </markup>
 
-
 <style>
-
     span {
         color: var(--text_low_emphasis);
     }
-
 </style>

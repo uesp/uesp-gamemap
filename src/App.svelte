@@ -38,6 +38,7 @@
 	import LayerSwitcher from './components/LayerSwitcher.svelte';
 	import Watermark from './components/Watermark.svelte';
 	import MapChooser from './components/MapChooser.svelte';
+	import Search from './components/SearchPane.svelte';
 
 	// import commons
 	import * as Utils from "./common/utils.js";
@@ -45,8 +46,6 @@
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
-  import IconButton from './components/IconButton.svelte';
-  import Search from './components/SearchPane.svelte';
 
 	print("Initialising app...");
 

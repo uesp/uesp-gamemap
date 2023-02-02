@@ -8,13 +8,18 @@
 <script>
     // import UI components
     import Checkbox from "./Checkbox.svelte";
-import Icon from "./Icon.svelte";
+    import Icon from "./Icon.svelte";
     import IconButton from "./IconButton.svelte";
     import ProgressBar from "./ProgressBar.svelte";
+
+    // import commons
+	import * as Utils from "../common/utils.js";
+	import * as Constants from "../common/constants.js";
 
     // declare state vars
     let searchBox = null;
     let isLoading = false;
+    let searchCurrentMap = false;
     let doPinSearch = getPrefs("pinsearch");
     $: expandOptions = getPrefs("expandsearchoptions");
     $: searchQuery = "";
@@ -22,148 +27,15 @@ import Icon from "./Icon.svelte";
     $: searchFocused = null;
     $: showSearchPane = (searchQuery.length > 0 && searchQuery != "" && searchFocused && searchBox.value != "");
 
-    // TODO: look into adding a way to pin the search for dave
-
-    // if (searchQuery != null && searchQuery.length == 0) {
-    //     // show options div
-    //     if (!gamemap.hasMultipleWorlds()) {
-    //         $("#search_options_container").hide();
-    //     }
-    //     $("#search_options_container").css("box-shadow", "0px 1.5px 4px 4px var(--shadow)");
-    //     $("#search_results").html(""); // blank current search results
-    // } else if (searchQuery.length > 0) {
-    //     toggleSearchPane(true);
-    // }
-
-    // // is there a search query, if so do stuff with
-    // }
-
-    // function toggleSearchPane(toggle) {
-    // if (toggle) {
-    //     $("#search_divider").show();
-
-    // } else {
-    //     $("#searchbar").css({'border-radius': 'var(--padding_large)'});
-    //     $("#search_results_container").css("background-color", "transparent");
-    //     $("#search_results_container").css("box-shadow", "");
-    //     $("#search_divider").hide();
-    // }
-    // }
-
-    // let timer;
-    // const DELAY_AMOUNT = 500;
-
-    // window.updateSearch = function(query, currentMapOnly) {
-
-    // if (currentMapOnly == null) {
-    //     currentMapOnly = false;
-    // }
-
-    // log(query);
-
-    // // toggle clear button visibility
-    // if (query.length > 0) {
-    //     $("#btn_clear_search").show();
-    //     toggleSearchPane(true);
-    //     $("#search_progress_bar").show();
-    //     $("#search_results").html("<b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small) '>Searching...<b>");
-
-    //     // search debouncing
-    //     if (timer != null){
-    //         clearTimeout(timer);
-    //     }
-    //     timer = setTimeout(() => {
-    //         doSearch(query, currentMapOnly);
-    //     }, DELAY_AMOUNT)
-
-    // } else {
-    //     clearSearch();
-    //     toggleSearchPane(false);
-    // }
-    // }
-
-    // //gamemap.php?action=search&search=morrowind&world=2282&db=eso
-    // function doSearch(searchQuery, currentMapOnly) {
-
-    // if (searchQuery != null && searchQuery.length > 0) {
-
-    //     // do search stuff
-    //     let queryParams = {};
-
-    //     queryParams.action = 'search';
-    //     queryParams.search = encodeURIComponent(searchQuery);
-    //     log("search query: " + queryParams.search + ", search in map: " + currentMapOnly);
-    //     if (gamemap.isHiddenLocsShown()) {
-    //         queryParams.showhidden = 1;
-    //     }
-
-    //     if (currentMapOnly == true) {
-    //         queryParams.world = gamemap.getCurrentWorldID();
-    //     }
-
-    //     queryParams.db = mapConfig.database;
-
-    //     if (searchQuery.substring(0, 5) === "type:") {
-    //         let locType = gamemap.getLocTypeByName(searchQuery.substring(5));
-    //         if (locType != null) {
-    //             queryParams.searchtype = locType;
-    //         }
-    //     }
-
-    //     $.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
-
-    //         // inline search result object
-    //         let SearchResult = class {
-    //             constructor(name, description, icon, destinationID) {
-    //                 this.name = name;
-    //                 this.description = description;
-    //                 this.icon = icon || null;
-    //                 this.destinationID = destinationID;
-    //             }
-    //         };
-
-    //         if (!data.isError) {
-    //             $("#search_progress_bar").hide();
-    //             $(".search_results_container").show();
-    //             let searchResults = []; // SearchResults go in here
-
-    //             // merge both locations and worlds into a single array
-    //             let tempResults = [].concat(data.worlds, data.locations);
-
-    //             for (let i in tempResults) {
-
-    //                 let result = tempResults[i];
-
-    //                 if (result != null) {
-    //                     let searchResult;
-
-    //                     if (result.tilesX != null) { // check if this is a world or a location
-    //                         // if true, then we are a world
-    //                         searchResult = new SearchResult(result.displayName, null,  null, result.id);
-    //                     } else {
-    //                         // if not, this is a location
-    //                         let world = gamemap.getWorldFromID(result.worldId);
-    //                         if (world != null) {
-    //                             searchResult = new SearchResult(result.name, world.displayName, result.iconType, -result.id);
-    //                         }
-    //                     }
-
-    //                     if (searchResult != null) {
-    //                         searchResults.push(searchResult);
-    //                     }
-    //                 }
-
-    //             }
-
-    //             updateSearchResults(searchResults);
-    //             console.log(searchResults);
-
-    //         } else {
-    //             log("there was an error getting search results");
-    //         }
-    //     });
-    // }
-    // }
+    // search result object
+    let SearchResult = class {
+        constructor(name, description, icon, destinationID) {
+            this.name = name;
+            this.description = description;
+            this.icon = icon || null;
+            this.destinationID = destinationID;
+        }
+    };
 
     // function updateSearchResults(results){
     // if (results == null) {
@@ -181,7 +53,7 @@ import Icon from "./Icon.svelte";
     //             }
     //         }
     //     } else {
-    //         html = "<b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small) '>No results found.<b>";
+    //         html =
     //     }
 
     //     $("#search_results").html(html);
@@ -236,16 +108,99 @@ import Icon from "./Icon.svelte";
     // }
 
 
-    // callbacks
-    function onSearchQueryChanged(query, searchCurrentWorld) {
+    // update search query
+    let timer;
+    const DELAY_AMOUNT = 500;
+    function updateSearch(query, currentMapOnly) {
         // update search query
         searchQuery = query;
+        currentMapOnly = (currentMapOnly != null) ? currentMapOnly : false;
 
-        print(searchQuery);
+        if (query != null && query.length > 0) {
+            searchResults = null;
+            isLoading = true;
 
-        // do search
+            // search debouncing
+            if (timer != null){
+                clearTimeout(timer);
+            }
+            timer = setTimeout(() => {
+                doSearch(query, currentMapOnly);
+            }, DELAY_AMOUNT)
+
+        } else {
+            isLoading = false;
+            searchResults = null;
+        }
     }
 
+    // perform search request
+    function doSearch(searchQuery, currentMapOnly) {
+
+        let queryParams = {};
+        queryParams.action = 'search';
+        queryParams.search = encodeURIComponent(searchQuery);
+        print("search query: " + queryParams.search + ", search in map: " + currentMapOnly);
+
+        if (gamemap.isHiddenLocsShown()) {
+            queryParams.showhidden = 1;
+        }
+
+        if (currentMapOnly == true) {
+            queryParams.world = gamemap.getCurrentWorldID();
+        }
+
+        queryParams.db = gamemap.getMapConfig().database;
+
+        if (searchQuery.substring(0, 5) === "type:") {
+            let locType = gamemap.getLocTypeByName(searchQuery.substring(5));
+            if (locType != null) {
+                queryParams.searchtype = locType;
+            }
+        }
+
+        Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
+
+            if (!error && data != null) {
+
+                // merge both locations and worlds into a single array
+                let tempResults = [].concat(data.worlds, data.locations);
+                let tempSearchResults = []; // search results go in here
+
+                for (let i in tempResults) {
+
+                    let result = tempResults[i];
+
+                    if (result != null) {
+                        let searchResult;
+
+                        // check if this is a world or a location
+                        if (result.tilesX != null) {
+                            // if true, then we are a world
+                            searchResult = new SearchResult(result.displayName, null,  null, result.id);
+                        } else {
+                            // if not, this is a location
+                            let world = gamemap.getWorldFromID(result.worldId);
+                            if (world != null) {
+                                searchResult = new SearchResult(result.name, world.displayName, result.iconType, -result.id);
+                            }
+                        }
+
+                        if (searchResult != null) {
+                            tempSearchResults.push(searchResult);
+                        }
+                    }
+                }
+                searchResults = tempSearchResults;
+                isLoading = false;
+                print(searchResults);
+            } else {
+                print.warn("There was an error getting search results.");
+            }
+        });
+    }
+
+    // on search pane focused
     function onSearchFocused(event, isFocused) {
 
         if (event.type == "blur" || event.type == "mousedown") {
@@ -253,8 +208,10 @@ import Icon from "./Icon.svelte";
             let target = (event.relatedTarget != null) ? event.relatedTarget : event.explicitOriginalTarget;
             let isInsideSearchPane = searchPane !== target && searchPane.contains(target);
 
-            // if pin search is false:
-            searchFocused = isInsideSearchPane;
+            // hide search if it's not pinned
+            if (!doPinSearch) {
+                searchFocused = isInsideSearchPane;
+            }
         } else {
             searchFocused = isFocused;
         }
@@ -262,16 +219,15 @@ import Icon from "./Icon.svelte";
 
     // listen to key press events
     function onKeyPressed(event) {
-
         // if ctrl + F pressed, focus search
         if ((event.ctrlKey || event.metaKey) && event.keyCode === 70) {
     		event.preventDefault();
             searchBox.focus();
     	}
-
     }
 
-    function clearSearch() { searchBox.value = ""; onSearchQueryChanged("", false) }
+    // callbacks
+    function clearSearch() { searchBox.value = ""; updateSearch("", false) }
     window.addEventListener('mousedown', function(e) { onSearchFocused(e, null); });
 </script>
 
@@ -289,7 +245,7 @@ import Icon from "./Icon.svelte";
 
                 <!-- Searchbox -->
                 <div id='searchbox_container'>
-                    <input id='searchbox' type='search' placeholder="Where would you like to go?" maxlength='100' style="border-bottom: none !important; box-shadow: none !important;" autocomplete='off' on:focus={(e) => onSearchFocused(e, true)} on:blur={(e) => onSearchFocused(e, false)} bind:this={searchBox} bind:value={searchQuery} on:input={() => onSearchQueryChanged(searchBox.value, false)}/>
+                    <input id='searchbox' type='search' placeholder="Where would you like to go?" maxlength='100' style="border-bottom: none !important; box-shadow: none !important;" autocomplete='off' on:focus={(e) => onSearchFocused(e, true)} on:blur={(e) => onSearchFocused(e, false)} bind:this={searchBox} bind:value={searchQuery} on:input={() => updateSearch(searchBox.value, searchCurrentMap)}/>
                 </div>
 
                 <!-- Clear search button -->
@@ -313,20 +269,34 @@ import Icon from "./Icon.svelte";
                         <b style="font-size: 1.0rem;" class="waves-effect" on:click={() => {setPrefs("expandsearchoptions", !getPrefs("expandsearchoptions")); expandOptions = getPrefs("expandsearchoptions");}}>Search options <Icon name={(expandOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b><br>
 
                         {#if expandOptions}
-                            <Checkbox label="Pin search window" on:change={(e) => print(e.detail)}></Checkbox>
-                            <Checkbox label="Only show results from this map" on:change={(e) => print(e.detail)}></Checkbox>
+                            <!-- svelte-ignore missing-declaration -->
+                            <Checkbox label="Pin search window" checked={doPinSearch} on:change={(e) => {setPrefs("pinsearch", e.detail); doPinSearch = getPrefs("pinsearch");}}></Checkbox>
+                            <!-- svelte-ignore missing-declaration -->
+                            {#if gamemap.hasMultipleWorlds()}<Checkbox label="Only show results from this map" checked={searchCurrentMap} on:change={(e) => searchCurrentMap = e.detail}></Checkbox>{/if}
                         {/if}
                     </div>
 
-                    <!-- Divider -->
+                    <!-- Search content -->
                     {#if showSearchPane}
-                        <hr id="search_divider" >
-                    {/if}
+                        <!-- Divider -->
+                        <hr id="search_divider">
 
-                    <!-- Search Results -->
-                    <div id="search_results" class='search_results'>
-                        <!-- search results go here-->
-                    </div>
+                        <!-- Placeholder text -->
+                        {#if !searchResults}
+                            <b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small) '>Searching...</b>
+                        {/if}
+
+                        <!-- Search Results -->
+                        {#if searchResults != null}
+                            <div id="search_results" class='search_results'>
+                                {#if searchResults.length > 0}
+                                     <!-- search results go here-->
+                                {:else}
+                                    <b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small);'>No results found.</b>
+                                {/if}
+                            </div>
+                        {/if}
+                    {/if}
                 </div>
             {/if}
         </div>
@@ -429,10 +399,6 @@ import Icon from "./Icon.svelte";
 
     .search-item {
         font-size: 14px;
-    }
-
-    #search_progress_bar {
-        top: -2px;
     }
 
     /* Search results */
