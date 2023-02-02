@@ -1247,8 +1247,6 @@ class GameMap
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
 			settype($row['tilesY'], "integer");
-			settype($row['tilesX'], "integer");
-			settype($row['tilesY'], "integer");
 			settype($row['hasCellResource'], "integer");
 			settype($row['hasGrid'], "integer");
 			
