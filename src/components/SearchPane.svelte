@@ -203,12 +203,9 @@
     // on search pane focused
     function onSearchFocused(event, isFocused) {
 
-        print(event);
-
         if (event.type != "focus") {
             let searchPane = document.querySelector('#search_pane');
             let target = (event.relatedTarget != null) ? event.relatedTarget : (event.explicitOriginalTarget != null) ? event.explicitOriginalTarget : document.elementsFromPoint(event.clientX, event.clientY)[0];
-
             let isInsideSearchPane = searchPane !== target && searchPane.contains(target);
 
             // hide search if it's not pinned
@@ -273,9 +270,9 @@
 
                         {#if expandOptions}
                             <!-- svelte-ignore missing-declaration -->
-                            <Checkbox label="Pin search pane" checked={doPinSearch} on:change={(e) => {setPrefs("pinsearch", e.detail); doPinSearch = getPrefs("pinsearch");}}></Checkbox>
-                            <!-- svelte-ignore missing-declaration -->
                             {#if gamemap.hasMultipleWorlds()}<Checkbox label="Only show results from this map" checked={searchCurrentMap} on:change={(e) => {searchCurrentMap = e.detail; updateSearch(searchQuery, searchCurrentMap)}}></Checkbox>{/if}
+                            <!-- svelte-ignore missing-declaration -->
+                            <Checkbox label="Pin search pane" checked={doPinSearch} on:change={(e) => {setPrefs("pinsearch", e.detail); doPinSearch = getPrefs("pinsearch");}}></Checkbox>
                         {/if}
                     </div>
 
@@ -395,9 +392,11 @@
         border-radius: var(--padding_small);
         background-color: var(--surface);
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
+        width:fit-content;
     }
     #search_options.fullPane {
         box-shadow: none;
+        width: 100%;
     }
 
     .search-item {
