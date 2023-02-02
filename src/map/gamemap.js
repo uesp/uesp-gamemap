@@ -61,7 +61,7 @@ export default class Gamemap {
 			self = this;
 
 			// set up css
-			if (this.mapConfig.hasCustomFavIcon) { Utils.changeFavIcon(mapConfig.imagesPath + "favicon.ico"); }
+			if (this.mapConfig.hasCustomFavIcon) { Utils.changeFavIcon(mapConfig.imagesPath + "favicon.png"); }
 			if (this.mapConfig.bgColour) { mapRoot.style.backgroundColor = mapConfig.bgColour; }
 			if (this.mapConfig.hasCustomCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; print("Loading custom map css: " + cssPath); Utils.injectCSS(cssPath);}
 

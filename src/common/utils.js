@@ -295,8 +295,8 @@ export function isNull(variable) {
 
 export function changeFavIcon(favIconURL) {
 	let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-	link.type = 'image/x-icon';
-	link.rel = 'shortcut icon';
+	link.type = 'image/png';
+	link.rel = 'icon';
 	link.href = favIconURL;
 	document.getElementsByTagName('head')[0].appendChild(link);
 }
