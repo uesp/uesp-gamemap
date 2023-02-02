@@ -4148,6 +4148,9 @@ uesp.gamemap.Map.prototype.createSearchQuery = function (searchText, searchMapOn
 	if (searchMapOnly === true) queryParams.world = this.currentWorldId;
 	queryParams.db = this.mapOptions.dbPrefix;
 	
+	//Hack for only searching in original world for OB/SR databases. Remove for new leaflet map.
+	if (queryParams.db == 'ob' || queryParams.db == 'sr') queryParams.worldid = 1;
+	
 	if (searchText.substring(0, 5) === "type:")
 	{
 		var locType = this.FindMapLocTypeString(searchText.substring(5));

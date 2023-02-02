@@ -189,6 +189,10 @@ class GameMap
 					`posRight` INTEGER NOT NULL,
 					`posBottom` INTEGER NOT NULL,
 					`enabled` TINYINT NOT NULL,
+					`hasGrid` TINYINT(1) NOT NULL,
+					`hasCellResource` TINYINT(1) NOT NULL,
+					`gridStart` TINYTEXT NOT NULL,
+					`layers` TINYTEXT NOT NULL,
 					PRIMARY KEY ( id ),
 					FULLTEXT(displayName, description, wikiPage)
 				) ENGINE=MYISAM;";
@@ -214,6 +218,10 @@ class GameMap
 					posRight INTEGER NOT NULL,
 					posBottom INTEGER NOT NULL,
 					enabled TINYINT NOT NULL,
+					hasGrid` TINYINT(1) NOT NULL,
+					hasCellResource TINYINT(1) NOT NULL,
+					gridStart TINYTEXT NOT NULL,
+					layers TINYTEXT NOT NULL,
 					PRIMARY KEY ( id ),
 				) ENGINE=MYISAM;";
 		
@@ -414,8 +422,8 @@ class GameMap
 	{
 		if ($this->worldId == 0) return $this->reportError("Cannot copy empty world record to history!");
 		
-		$query = "INSERT INTO world_history(worldId, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled)
-					SELECT id, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled
+		$query = "INSERT INTO world_history(worldId, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled, hasGrid, hasCellResource, gridStart, layers)
+					SELECT id, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled, hasGrid, hasCellResource, gridStart, layers
 					FROM world WHERE id={$this->worldId};";
 		
 		$result = $this->db->query($query);
@@ -430,14 +438,14 @@ class GameMap
 	public function copyToLocationHistory ()
 	{
 		if ($this->locationId == 0) return $this->reportError("Cannot copy empty location record to history!");
-	
+		
 		$query = "INSERT INTO location_history(locationId, revisionId, worldId, locType, x, y, displayLevel, iconType, destinationId, visible, name, description, wikiPage, displayData, width, height)
 		SELECT id, revisionId, worldId, locType, x, y, displayLevel, iconType, destinationId, visible, name, description, wikiPage, displayData, width, height 
 		FROM location WHERE id={$this->locationId};";
-	
+		
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to copy location {$this->locationId} to history table!");
-	
+		
 		$this->locationHistoryId = $this->db->insert_id;
 		$this->addOutputItem("newLocationHistoryId", $this->locationHistoryId);
 		return true;
@@ -504,7 +512,10 @@ class GameMap
 		$this->safeSearchWordWildcard = $this->db->real_escape_string($this->searchWordWildcard);
 		$this->safeSearchWord = $this->db->real_escape_string($this->unsafeSearch);
 		
-		$this->searchWorldId = $this->FindWorld($this->world, false);
+		if ($this->worldId > 0)
+			$this->searchWorldId = $this->worldId;
+		else
+			$this->searchWorldId = $this->FindWorld($this->world, false);
 		
 			/* Try an exact match first */
 		$worldCount = $this->doWorldSearch(true);
