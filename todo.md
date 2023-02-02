@@ -24,6 +24,9 @@ any url parameters will overwrite cookie-based preferences
 fixed bug with search setting options appearing inconsistently when focusing the search box
 ## todo
 
+- animation on layer widget exit
+- animation on search options resize
+- refactor watermark area to be optioons component
 
 make map reset use zoomtoBounds or equivalent from leaflet docs
 

@@ -211,7 +211,10 @@
             // hide search if it's not pinned
             if (!doPinSearch) {
                 searchFocused = isInsideSearchPane;
+            } else if (searchQuery == "") {
+                searchFocused = isInsideSearchPane;
             }
+
         } else {
             searchFocused = isFocused;
         }
@@ -392,7 +395,7 @@
         border-radius: var(--padding_small);
         background-color: var(--surface);
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
-        width:fit-content;
+        width: fit-content;
     }
     #search_options.fullPane {
         box-shadow: none;
