@@ -270,6 +270,7 @@
                         <!-- svelte-ignore a11y-click-events-have-key-events -->
                         <!-- svelte-ignore missing-declaration -->
                         <b style="font-size: 1.0rem;" class="waves-effect" on:click={() => {setPrefs("expandsearchoptions", !getPrefs("expandsearchoptions")); expandOptions = getPrefs("expandsearchoptions");}}>Search options <Icon name={(expandOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b><br>
+                        {#if doPinSearch && showSearchPane}<div id="search_pin_status" title="Search is pinned."><Icon name="push_pin" size="tiny"></Icon></div>{/if}
 
                         {#if expandOptions}
                             <!-- svelte-ignore missing-declaration -->
@@ -277,6 +278,7 @@
                             <!-- svelte-ignore missing-declaration -->
                             <Checkbox label="Pin search pane" checked={doPinSearch} on:change={(e) => {setPrefs("pinsearch", e.detail); doPinSearch = getPrefs("pinsearch");}}></Checkbox>
                         {/if}
+
                     </div>
 
                     <!-- Search content -->
@@ -404,6 +406,12 @@
 
     .search-item {
         font-size: 14px;
+    }
+
+    #search_pin_status {
+        position: absolute;
+        right: var(--padding_small);
+        top: 33px;
     }
 
     /* Search results */

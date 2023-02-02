@@ -22,8 +22,12 @@ the saerch pane now remembers whether you:
 any url parameters will overwrite cookie-based preferences
 
 fixed bug with search setting options appearing inconsistently when focusing the search box
+
+
+- because you can collapse the settings and pin things, added a small pin icon so you can always tell when it's pinned
 ## todo
 
+- make ListItem component
 - animation on layer widget exit
 - animation on search options resize
 - refactor watermark area to be optioons component
