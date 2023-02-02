@@ -2,7 +2,7 @@
 *.pyc
 .vscode/*
 /node_modules/
-/public/build/
+/public/build/bundle.js
+/public/build/bundle.css
+/public/build/bundle.js.map
 .DS_Store
-gamemap.secrets
-uespservers.secrets

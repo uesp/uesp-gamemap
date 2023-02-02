@@ -103,7 +103,7 @@
 
     .icon-img {
         max-height: 100%;
-        max-width: 100%;
+        max-width: 55%;
         width: auto;
         height: auto;
         position: absolute;
