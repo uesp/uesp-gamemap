@@ -568,7 +568,11 @@ class GameMap
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
 			settype($row['zoomOffset'], "float");
-				
+			settype($row['tilesX'], "integer");
+			settype($row['tilesY'], "integer");
+			settype($row['hasGrid'], "integer");
+			settype($row['hasCellOffset'], "integer");
+			
 			$worlds[] = $row;
 			$count += 1;
 		}
@@ -617,6 +621,10 @@ class GameMap
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
 			settype($row['zoomOffset'], "float");
+			settype($row['tilesX'], "integer");
+			settype($row['tilesY'], "integer");
+			settype($row['hasGrid'], "integer");
+			settype($row['hasCellOffset'], "integer");
 			
 			$worlds[] = $row;
 			$count += 1;
@@ -1181,7 +1189,11 @@ class GameMap
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
 			settype($row['zoomOffset'], "float");
-				
+			settype($row['tilesX'], "integer");
+			settype($row['tilesY'], "integer");
+			settype($row['hasCellResource'], "integer");
+			settype($row['hasGrid'], "integer");
+			
 			$worlds[] = $row;
 			$count += 1;
 		}
@@ -1233,6 +1245,12 @@ class GameMap
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
 			settype($row['zoomOffset'], "float");
+			settype($row['tilesX'], "integer");
+			settype($row['tilesY'], "integer");
+			settype($row['tilesX'], "integer");
+			settype($row['tilesY'], "integer");
+			settype($row['hasCellResource'], "integer");
+			settype($row['hasGrid'], "integer");
 			
 			$worlds[] = $row;
 			$count += 1;
