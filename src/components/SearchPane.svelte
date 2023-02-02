@@ -270,9 +270,9 @@
 
                         {#if expandOptions}
                             <!-- svelte-ignore missing-declaration -->
-                            <Checkbox label="Pin search window" checked={doPinSearch} on:change={(e) => {setPrefs("pinsearch", e.detail); doPinSearch = getPrefs("pinsearch");}}></Checkbox>
+                            <Checkbox label="Pin search pane" checked={doPinSearch} on:change={(e) => {setPrefs("pinsearch", e.detail); doPinSearch = getPrefs("pinsearch");}}></Checkbox>
                             <!-- svelte-ignore missing-declaration -->
-                            {#if gamemap.hasMultipleWorlds()}<Checkbox label="Only show results from this map" checked={searchCurrentMap} on:change={(e) => searchCurrentMap = e.detail}></Checkbox>{/if}
+                            {#if gamemap.hasMultipleWorlds()}<Checkbox label="Only show results from this map" checked={searchCurrentMap} on:change={(e) => {searchCurrentMap = e.detail; updateSearch(searchQuery, searchCurrentMap)}}></Checkbox>{/if}
                         {/if}
                     </div>
 
