@@ -1202,17 +1202,15 @@ export default class Gamemap {
 		if (layer != null) {
 			let layerIndex;
 			if (isNaN(layer)){
-				if (this.mapConfig.tileLayers.indexOf(layer) > -1 ) {
-					layerIndex = this.mapConfig.tileLayers.indexOf(layer);
-				}
+				layerIndex = this.getLayerIndexFromName(layer);
 			} else {
 				layerIndex = layer;
 			}
 
-			if (layerIndex > -1 && layerIndex < this.mapConfig.tileLayers.length) {
+			if (layerIndex > -1 && layerIndex < this.getCurrentWorld().layers.length) {
 				let mapState = this.getMapState();
-				if (mapState.tileLayer != layerIndex) {
-					mapState.tileLayer = layerIndex;
+				if (mapState.layerIndex != layerIndex) {
+					mapState.layerIndex = layerIndex;
 					this.setMapState(mapState, true);
 				}
 			} else {

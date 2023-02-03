@@ -72,19 +72,19 @@
             {#if hasMultipleLayers}
                  {#each layers as layer}
                     <!-- svelte-ignore missing-declaration -->
-                    <LayerButton on:onClick={onLayerClicked} label={layer.name.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer, true)}/>
+                    <LayerButton on:onClick={onLayerClicked} label={layer.name.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer.name, true)}/>
                  {/each}
                  <Divider direction="vertical"></Divider>
             {/if}
 
             <!-- Predefined optional map layers -->
             <!-- svelte-ignore missing-declaration -->
-            {#if gamemap.getMapConfig().hasGrid}
+            {#if gamemap.getCurrentWorld().hasGrid}
                 <LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked={gridEnabled} on:onClick={(event) => (gamemap.toggleCellGrid(event.detail))}/>
             {/if}
 
             <!-- svelte-ignore missing-declaration -->
-            {#if gamemap.getMapConfig().hasResources}
+            {#if gamemap.getCurrentWorld().hasCellResources}
                 <LayerButton label="Resources" tooltip="Toggle resource grid" icon="local_florist" checked={resourceGridEnabled}/>
             {/if}
         </div>
