@@ -164,6 +164,48 @@ button {
 	border-color: var(--secondary) !important;
 }
 
+.collection {
+	margin: 0px !important;
+	border: none !important;
+	border-radius: unset !important;
+}
+
+.collection a.collection-item {
+	background-color: transparent !important;
+}
+
+.collection a.collection-item:hover {
+	background-color: var(--divider) !important;
+}
+
+.collection .collection-item.active {
+	background-color: var(--secondary_variant) !important;
+	color: var(--text_on_secondary) !important;
+}
+.collection a.collection-item {
+	color: var(--text_on_primary) !important;
+	border-bottom: none !important;
+}
+
+.collection a.collection-item:not(.active):hover {
+	background-color: var(--divider);
+}
+
+.material-icons.circle::before {
+	content: unset !important;
+}
+
+.collection .collection-item.avatar {
+	min-height: 60px !important;
+}
+
+.circle {
+	color: black !important;
+	background-color: var(--divider) !important;
+	font-size: 1.8rem !important;
+	object-fit: scale-down;
+}
+
 /*================================================
 					Accessibility
 ================================================*/
@@ -490,11 +532,6 @@ div[class^="icon_bar"] {
 
 
 
-.collection a.collection-item:not(.active):hover {
-	background-color: var(--divider);
-}
-
-
 
 
 
@@ -598,22 +635,6 @@ li div.collapsible-header i {
 	transition: all 0.2s ease-out;
 }
 
-.collection {
-	margin: 0px !important;
-}
-
-.collection a.collection-item:hover {
-	background-color: var(--secondary);
-}
-
-.collection .collection-item.active {
-	background-color: var(--secondary_variant);
-	color: var(--text_on_secondary);
-}
-.collection a.collection-item {
-	color: var(--text_on_primary);
-	border-bottom: none;
-}
 
 #location_switcher_tab_bar {
 	border-radius: var(--padding_medium) var(--padding_medium) 0 0;

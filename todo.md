@@ -14,6 +14,7 @@ eye candy and QoL
 - QoL: added "pin search" option (your suggestion)
 - QoL: added expando to search options menu to show/hide the search options and save space
 - QoL: added shared preference support, saves prefs as cookies
+- QoL: added tooltip to search result icons to indicate what it is (people were confused)
 
 the saerch pane now remembers whether you:
 - prefer the options minimised
@@ -27,7 +28,14 @@ fixed bug with search setting options appearing inconsistently when focusing the
 - because you can collapse the settings and pin things, added a small pin icon so you can always tell when it's pinned
 
 - replaced existing favicons with higher quality ones
+
+
+
+
 ## todo
+
+- make search in enter open first result
+- control search with arrow keys
 
 - make ListItem component
 - animation on layer widget exit
@@ -45,17 +53,13 @@ make map reset use zoomtoBounds or equivalent from leaflet docs
 - add overflow menu icons
 - add go up button for mobile
 - fix polylines not respecting zoom levels
-- separate worlds and locations in search results "worlds" "locations"
 - allow world name instead of ID in url (used for centreon)
 - optimise grid code
 - add slightly transparent rect filling grid cells that have labels on it, to quickly show dif
-- make search in enter open first result
-- control search with arrow keys
 - add permalink option in location popups
 - fix popups having the wrong coord type on them
 - add way to show popups on centreon, optional param
 - fix all markers showing up at initial load on highest zoom level
-- banner ads on map
 
 ## todo (future)
 

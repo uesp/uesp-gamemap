@@ -11,10 +11,12 @@
     import Icon from "./Icon.svelte";
     import IconButton from "./IconButton.svelte";
     import ProgressBar from "./ProgressBar.svelte";
+    import ListItem from "./ListItem.svelte";
 
     // import commons
 	import * as Utils from "../common/utils.js";
 	import * as Constants from "../common/constants.js";
+
 
     // declare state vars
     let searchBox = null;
@@ -36,77 +38,6 @@
             this.destinationID = destinationID;
         }
     };
-
-    // function updateSearchResults(results){
-    // if (results == null) {
-    //     //hide results menu
-    //     clearSearch();
-    // } else {
-    //     // get searchHTML
-
-    //     let html = "";
-
-    //     if (results.length >= 1) {
-    //         for (let i in results) {
-    //             if (results[i] != null) {
-    //                 html += createLocationRowHTML(results[i]);
-    //             }
-    //         }
-    //     } else {
-    //         html =
-    //     }
-
-    //     $("#search_results").html(html);
-    // }
-    // }
-
-    // function createLocationRowHTML(data) {
-
-    // if (!Number.isNaN(data)) {
-    //     let worldID = data;
-    //     let world = gamemap.getWorldFromID(worldID);
-
-    //     if (world != null) {
-    //         return ("<div class='collection'><a name='" + world.name + "' onclick='gotoWorld("+worldID+")' class='collection-item waves-effect'> " + world.displayName + " </a></div>");
-    //     }
-    // }
-
-    // if (data != null && data.name != null) {
-
-    //     let imgHTML;
-    //     let isWorld;
-    //     let iconSize = 30;
-    //     if (data.icon != null) {
-    //         let iconURL = mapConfig.iconPath + "/" + data.icon + ".png";
-    //         iconURL = iconURL.replace("//", "/"); // bypass bug doubling forward slashes for some reason
-    //         imgHTML = "<img class='circle' src="+iconURL+" width='"+iconSize+"' height='"+iconSize+"'></img>";
-    //     } else {
-    //         if (data.icon == null && data.description == null) {
-    //             imgHTML = "<i class='small material-icons circle'>public</i>";
-    //             isWorld = true;
-    //         } else {
-    //             imgHTML = "<i class='small material-icons circle'>location_on</i>";
-    //         }
-    //     }
-
-    //     let nameHTML = "";
-
-    //     if (isWorld) { nameHTML += "<b>" }
-    //     nameHTML += data.name;
-    //     if (isWorld) { nameHTML += "</b>" }
-
-    //     if (data.description != null && gamemap.hasMultipleWorlds()) {
-    //         nameHTML += "<br><small style='color: var(--text_low_emphasis);'>"+ data.description + "</small>";
-    //     }
-
-    //     if (isWorld && !gamemap.hasMultipleWorlds()) {
-    //         return "";
-    //     }
-
-    //     return ("<div class='collection'><a onclick='gotoWorld("+data.destinationID+")' class='collection-item search-item avatar waves-effect'> " + imgHTML + nameHTML + "</a></div>");
-
-    // }
-
 
     // update search query
     let timer;
@@ -295,6 +226,9 @@
                         {#if searchResults != null}
                             <div id="search_results" class='search_results'>
                                 {#if searchResults.length > 0}
+                                    {#each searchResults as result}
+                                        <ListItem title={result.name} description={result.description} icon={result.icon} destinationID={result.destinationID}></ListItem>
+                                    {/each}
                                      <!-- search results go here-->
                                 {:else}
                                     <b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small);'>No results found.</b>
@@ -373,17 +307,6 @@
         margin: auto;
         width: 100%;
     }
-    #search_box {
-        margin-top: -1.1%;
-        width: 100%;
-        height: 100%;
-        position: relative;
-        padding-left: 5px;
-        align-self: stretch;
-        outline: none;
-        background-color: transparent;
-        font-size: 1.5em;
-    }
 
     #search_content_container.fullPane {
         background-color: var(--surface) !important;
@@ -404,10 +327,6 @@
         width: 100%;
     }
 
-    .search-item {
-        font-size: 14px;
-    }
-
     #search_pin_status {
         position: absolute;
         right: var(--padding_small);
@@ -415,8 +334,9 @@
     }
 
     /* Search results */
-    #search_results_container {
-        overflow-x: hidden;
+    #search_results {
+        height: max-content;
+        max-height: max-content;
         overflow-y: auto;
     }
 </style>
