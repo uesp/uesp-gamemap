@@ -9,6 +9,8 @@ mainly QoL focusing on search, bug fixes and some eye candy
 >> it uses cookies to remember your preference, so you only set it once
 - added expando to search settings, to save space with many options (suggested by TR)
 >> this also uses cookies to save preferences across maps
+- can now navigate search results via keyboard (works well with pinned search)
+>> pressing enter on any search result will open the first result
 
 # eye candy
 - gamemap now fade-transitions bg colour when loading between maps
@@ -62,9 +64,6 @@ mainly QoL focusing on search, bug fixes and some eye candy
 
 ## todo
 
-- make search in enter open first result
-- control search with arrow keys
-
 - animation on layer widget exit
 - animation on search options resize
 - refactor watermark area to be optioons component
@@ -74,7 +73,6 @@ make map reset use zoomtoBounds or equivalent from leaflet docs
 
 - refactor layer bgcolour out to individial layer configs
 - fix game worldspace XY conversion
-- add a way to pin search pane to the map (static)
 - refactor all locationIDs to be negative
 - truncate decimal points on XY, show on normalised
 - fix overflow menu being cropped
@@ -92,7 +90,7 @@ this is just to speed up perceived loading times with a nice transition."
 >> document all functions in it
 >> have the file separated by "functions" in big block comment, and then "constants"
 >> document all the functions in it
-- do resource grid for skyrim
+- do cell resource grid for skyrim
 - other maps
 - help and stuff
 - edit

@@ -186,13 +186,13 @@
     }
 
     function selectSearchResult(index) {
-
+        // deselect previous results
         let selectedElements = document.querySelectorAll(".list-item.selected");
-
         [].forEach.call(selectedElements, function(element) {
             element.classList.remove("selected");
         });
 
+        // select the new result and scroll it into view
         let elements = document.getElementsByClassName("list-item");
         elements[index].classList.add("selected");
         elements[index].scrollIntoView({
@@ -353,6 +353,7 @@
     }
 
     #search_content_container {
+        overflow: scroll;
         pointer-events: none;
     }
 
@@ -385,9 +386,9 @@
 
     /* Search results */
     #search_results {
-        height: max-content;
-        max-height: max-content;
-        overflow-y: auto;
+        max-height: fit-content;
+        overflow: scroll;
+        height: 100%;
     }
 </style>
 
