@@ -156,6 +156,7 @@
 
     // listen to key press events
     function onKeyPressed(event) {
+        print(event);
         // if ctrl + F pressed, focus search
         if ((event.ctrlKey || event.metaKey) && event.keyCode === 70) {
     		event.preventDefault();
@@ -186,6 +187,13 @@
                 currentlySelectedResult = (currentlySelectedResult + 1 != searchResults.length) ? currentlySelectedResult + 1 : currentlySelectedResult;
                 selectSearchResult(currentlySelectedResult);
                 event.preventDefault();
+            }
+        }
+
+        if (searchFocused) {
+            if (event.key == "Escape" || event.keyCode == 27) {
+                searchFocused = false;
+                gamemap.mapRoot.focus();
             }
         }
     }
@@ -315,9 +323,18 @@
         border-radius: var(--padding_small);
         border-top-left-radius: 0px;
         border-top-right-radius: 0px;
-        max-height: 80vh;
+        max-height: 83vh;
         padding-bottom: var(--padding_minimum);
+        pointer-events: none;
     }
+
+    #search_content_container.fullPane {
+        overflow: auto;
+        background-color: var(--surface) !important;
+        box-shadow: 0px 1.5px 4px 4px var(--shadow);
+        pointer-events: visible;
+    }
+
 
     /* Searchbar */
     #searchbar {
@@ -356,17 +373,6 @@
         width: 100%;
     }
 
-    #search_content_container {
-        pointer-events: none;
-    }
-
-    #search_content_container.fullPane {
-        overflow: scroll;
-        background-color: var(--surface) !important;
-        box-shadow: 0px 1.5px 4px 4px var(--shadow);
-        pointer-events: visible;
-    }
-
     /* Search options */
     #search_options {
         pointer-events: visible;
@@ -391,7 +397,7 @@
     /* Search results */
     #search_results {
         max-height: fit-content;
-        overflow: scroll;
+        overflow: auto;
         height: 100%;
     }
 </style>

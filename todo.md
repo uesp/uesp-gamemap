@@ -33,6 +33,7 @@ mainly QoL focusing on search, bug fixes and some eye candy
 
 ## suggestions:
 - rename ob's world to "Cyrodiil"
+- link "gate to cyrodiil" in SI with cyrodiil's world ID
 
 
 
@@ -64,10 +65,7 @@ mainly QoL focusing on search, bug fixes and some eye candy
 
 ## todo
 
-- animation on layer widget exit
-- animation on search options resize
 - refactor watermark area to be optioons component
-- fix layer widget being unusable on chrome
 
 make map reset use zoomtoBounds or equivalent from leaflet docs
 
