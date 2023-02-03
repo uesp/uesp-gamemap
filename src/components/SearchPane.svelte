@@ -353,11 +353,11 @@
     }
 
     #search_content_container {
-        overflow: scroll;
         pointer-events: none;
     }
 
     #search_content_container.fullPane {
+        overflow: scroll;
         background-color: var(--surface) !important;
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
         pointer-events: visible;
