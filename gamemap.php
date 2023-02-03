@@ -65,6 +65,7 @@ class GameMap
 	public $worldPosTop = 10000;
 	public $worldPosBottom = 0;
 	public $worldEnabled = 1;
+	public $worldDisplayData = null;
 	
 	public $limitBottom = 0;
 	public $limitTop    = 1000;
@@ -189,10 +190,7 @@ class GameMap
 					`posRight` INTEGER NOT NULL,
 					`posBottom` INTEGER NOT NULL,
 					`enabled` TINYINT NOT NULL,
-					`hasGrid` TINYINT(1) NOT NULL,
-					`hasCellResource` TINYINT(1) NOT NULL,
-					`gridStart` TINYTEXT NOT NULL,
-					`layers` TINYTEXT NOT NULL,
+					`displayData` TEXT NOT NULL,
 					PRIMARY KEY ( id ),
 					FULLTEXT(displayName, description, wikiPage)
 				) ENGINE=MYISAM;";
@@ -218,10 +216,7 @@ class GameMap
 					posRight INTEGER NOT NULL,
 					posBottom INTEGER NOT NULL,
 					enabled TINYINT NOT NULL,
-					hasGrid` TINYINT(1) NOT NULL,
-					hasCellResource TINYINT(1) NOT NULL,
-					gridStart TINYTEXT NOT NULL,
-					layers TINYTEXT NOT NULL,
+					displayData TEXT NOT NULL,
 					PRIMARY KEY ( id ),
 				) ENGINE=MYISAM;";
 		
@@ -422,8 +417,8 @@ class GameMap
 	{
 		if ($this->worldId == 0) return $this->reportError("Cannot copy empty world record to history!");
 		
-		$query = "INSERT INTO world_history(worldId, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled, hasGrid, hasCellResource, gridStart, layers)
-					SELECT id, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled, hasGrid, hasCellResource, gridStart, layers
+		$query = "INSERT INTO world_history(worldId, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled, displayData)
+					SELECT id, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled, displayData
 					FROM world WHERE id={$this->worldId};";
 		
 		$result = $this->db->query($query);
@@ -570,8 +565,6 @@ class GameMap
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
 			settype($row['tilesY'], "integer");
-			settype($row['hasGrid'], "integer");
-			settype($row['hasCellOffset'], "integer");
 			
 			$worlds[] = $row;
 			$count += 1;
@@ -623,8 +616,6 @@ class GameMap
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
 			settype($row['tilesY'], "integer");
-			settype($row['hasGrid'], "integer");
-			settype($row['hasCellOffset'], "integer");
 			
 			$worlds[] = $row;
 			$count += 1;
@@ -1002,6 +993,10 @@ class GameMap
 		$query .= "posTop={$this->worldPosTop}, ";
 		$query .= "posBottom={$this->worldPosBottom}, ";
 		$query .= "enabled={$this->worldEnabled} ";
+		
+			// Should enable this when editing for it is added on the client side
+		//if ($this->worldDisplayData) $query .= ", displayData='{$this->worldDisplayData}' ";
+		
 		$query .= " WHERE id={$this->worldId};";
 		
 		$result = $this->db->query($query);
@@ -1191,8 +1186,6 @@ class GameMap
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
 			settype($row['tilesY'], "integer");
-			settype($row['hasCellResource'], "integer");
-			settype($row['hasGrid'], "integer");
 			
 			$worlds[] = $row;
 			$count += 1;
@@ -1247,8 +1240,6 @@ class GameMap
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
 			settype($row['tilesY'], "integer");
-			settype($row['hasCellResource'], "integer");
-			settype($row['hasGrid'], "integer");
 			
 			$worlds[] = $row;
 			$count += 1;
@@ -1436,7 +1427,13 @@ class GameMap
 		if (array_key_exists('name', $this->inputParams)) $this->locName = $this->db->real_escape_string($this->inputParams['name']);
 		if (array_key_exists('description', $this->inputParams)) $this->locDescription = $this->db->real_escape_string($this->inputParams['description']);
 		if (array_key_exists('wikipage', $this->inputParams)) $this->locWikiPage = $this->db->real_escape_string($this->inputParams['wikipage']);
-		if (array_key_exists('displaydata', $this->inputParams)) $this->locDisplayData = $this->db->real_escape_string($this->inputParams['displaydata']);
+		
+		if (array_key_exists('displaydata', $this->inputParams)) 
+		{
+			$this->locDisplayData = $this->db->real_escape_string($this->inputParams['displaydata']);
+			$this->worldDisplayData = $this->db->real_escape_string($this->inputParams['displaydata']);
+		}
+		
 		if (array_key_exists('displayname', $this->inputParams)) $this->worldDisplayName = $this->db->real_escape_string($this->inputParams['displayname']);
 		if (array_key_exists('missingtile', $this->inputParams)) $this->worldMissingTile = $this->db->real_escape_string($this->inputParams['missingtile']);
 		if (array_key_exists('enabled',  $this->inputParams)) $this->worldEnabled = intval($this->inputParams['enabled']);
