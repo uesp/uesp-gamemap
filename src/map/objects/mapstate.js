@@ -6,7 +6,6 @@
 
  export default class MapState {
     constructor() {
-
         //set default state
         this.zoomLevel = DEFAULT_MAP_CONFIG.zoomLevel;
         this.coords = [DEFAULT_MAP_CONFIG.defaultXPos, DEFAULT_MAP_CONFIG.defaultYPos];

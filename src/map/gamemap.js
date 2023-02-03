@@ -103,8 +103,10 @@ export default class Gamemap {
 			attributionControl: false, // disable leaflet attribution control
         }
 
+		// create root map object
 		map = L.map(this.mapRoot.id, mapOptions);
 
+		// create inital mapState object
 		let mapState = new MapState();
 		mapState.zoomLevel = mapConfig.defaultZoomLevel;
 		mapState.world = this.getWorldFromID(mapConfig.defaultWorldID || 0);
@@ -128,23 +130,24 @@ export default class Gamemap {
 						  State
 	================================================*/
 
-	/** Set map to saved map state (use to load from URL or from saved state).
+	/** Override mapState to provided map state (use to load from URL or from saved state).
 	 * @param {Object} mapState - Object that controls the state and view of the map.
-	 * @param {Boolean} onlyTiles - Flag to only update map tiles. Default: false (overwrites everything).
+	 * @param {Boolean} onlyUpdateTiles - Flag to only update map tiles. Default: false (overrides everything).
 	 */
-	setMapState(mapState, onlyTiles) {
+	setMapState(mapState, onlyUpdateTiles) {
 
 		print("Setting map state!");
-		onlyTiles = (onlyTiles != null) ? onlyTiles : false;
+		onlyUpdateTiles = (onlyUpdateTiles != null) ? onlyUpdateTiles : false;
 
 		// remove previous tiles
 		if (tileLayer != null) {
 			tileLayer.remove();
-			if (!onlyTiles) {
+			if (!onlyUpdateTiles) {
 				this.clearLocations();
 			}
 		}
 
+		// make sure the map state is valid
 		if (mapState.world == null) {
 			throw new Error("Map was provided an invalid/null world!");
 		}
@@ -155,7 +158,6 @@ export default class Gamemap {
 			width : mapImageDimens.width,  // original width of image
 			height: mapImageDimens.height, // original height of image
 		}
-
 		mapState.world.totalWidth = this.mapImage.width;
 		mapState.world.totalHeight = this.mapImage.height;
 
@@ -189,7 +191,7 @@ export default class Gamemap {
 			this.mapCallbacks.onWorldChanged(this.mapWorlds[this.currentWorldID])
 		}
 
-		if (!onlyTiles) {
+		if (!onlyUpdateTiles) {
 			// get/set locations
 			if (mapState.world.locations == null) {
 				// get locations for this map
@@ -551,7 +553,6 @@ export default class Gamemap {
 			queryParams.action = "get_loc";
 			queryParams.locid  = locationID;
 			queryParams.db = this.mapConfig.database;
-			print(this.mapConfig.database)
 			if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
 
 			Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {

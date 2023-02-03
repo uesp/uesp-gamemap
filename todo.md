@@ -1,43 +1,61 @@
 ## last week:
 
-eye candy and QoL
+mainly QoL focusing on search, bug fixes and some eye candy
 
+# main features
 - added map menu on root (devgamemap.uesp.net)
-- gamemap now fade-transition bg colour when loading (most noticeable when clicking into maps from the above)
+>> now shows list of all available maps
+- search now has option to pin the search view (your suggestion)
+>> it uses cookies to remember your preference, so you only set it once
+- added expando to search settings, to save space with many options (suggested by TR)
+>> this also uses cookies to save preferences across maps
 
-- the experience is lovely and you should try it yourself. it just feels so smooth
-note: may have to ctrl refresh if maps are using old codeto get the full experience
->> anticipating this because when doing skyrim day/night mode, it should also have bg colour fade
-
-- clicking anywhere on the searchbar now focuses the textbox (didnt before)
-- shrunk the saerchbar a bit to give map more breathing room (a complaint from TR people)
-
-- fixed search options shadow being cut off (minor thing)
-
-- QoL: added "pin search" option (your suggestion)
-- QoL: added expando to search options menu to show/hide the search options and save space
-- QoL: added shared preference support, saves prefs as cookies
-- QoL: added tooltip to search result icons to indicate what it is (people were confused)
-
-bugfix: fix search query being reset after clicking a location
-
-the saerch pane now remembers whether you:
-- prefer the options minimised
-- prefer the search to be pinned
-
-any url parameters will overwrite cookie-based preferences
-
-fixed bug with search setting options appearing inconsistently when focusing the search box
-
-
-- because you can collapse the settings and pin things, added a small pin icon so you can always tell when it's pinned
-
+# eye candy
+- gamemap now fade-transitions bg colour when loading between maps
+>> most noticeable when clicking into maps from map menu above
+>> give it ago. i think it feels really smooth (may have to force refresh)
+>> this should help make skyrim day/night mode switch feel smoother too
+- added small pin icon to indicate when search is pinned
 - replaced existing favicons with higher quality ones
 
+# QoL
+- clicking anywhere on the searchbar now focuses the textbox (didnt before)
+- added tooltip on search results to indicate what kind of location it is
+- shrunk the saerchbar a bit to give map more breathing room (a complaint from TR people)
+- search options also minimises when focused search but not typed anything, to save space
+
+# bug fixes
+- fixed search options shadow being cut off (minor thing)
+- fixed search query being reset after clicking a location
+- fixed bug with search setting options disappearing inconsistently when focusing the search box
 
 ## suggestions:
-
 - rename ob's world to "Cyrodiil"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -47,7 +65,6 @@ fixed bug with search setting options appearing inconsistently when focusing the
 - make search in enter open first result
 - control search with arrow keys
 
-- make ListItem component
 - animation on layer widget exit
 - animation on search options resize
 - refactor watermark area to be optioons component
@@ -71,23 +88,26 @@ this is just to speed up perceived loading times with a nice transition."
 - optimise grid code
 - add slightly transparent rect filling grid cells that have labels on it, to quickly show dif
 - add permalink option in location popups
-- fix popups having the wrong coord type on them
-- add way to show popups on centreon, optional param
-- fix all markers showing up at initial load on highest zoom level
-
-## todo (future)
-
+- refactor utils and constants out to its own file "commons.js" in the same root as app.svelte
+>> document all functions in it
+>> have the file separated by "functions" in big block comment, and then "constants"
+>> document all the functions in it
 - do resource grid for skyrim
 - other maps
 - help and stuff
 - edit
+- fix popups having the wrong coord type on them
+- add way to show popups on centreon, optional param
+- fix all markers showing up at initial load on highest zoom level
+- fix polygons disappearing when outer points are not viewable (consider centre point as well)
+
+## todo (future)
 - wiki features
 - email thing
 - starfield wiki app
 - starfield map
 
 app :
-
 - cross platform
 - cross wiki
 - and maps

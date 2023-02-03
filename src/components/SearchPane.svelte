@@ -28,6 +28,7 @@
     $: searchResults = null;
     $: searchFocused = null;
     $: showSearchPane = (searchQuery.length > 0 && searchQuery != "" && searchFocused && searchBox.value != "");
+    let currentlySelectedResult = 0;
 
     // search result object
     let SearchResult = class {
@@ -49,6 +50,7 @@
 
         if (query != null && query.length > 0) {
             searchResults = null;
+            currentlySelectedResult = 0;
             isLoading = true;
 
             // search debouncing
@@ -60,6 +62,7 @@
             }, DELAY_AMOUNT)
 
         } else {
+            currentlySelectedResult = 0;
             isLoading = false;
             searchResults = null;
         }
@@ -158,10 +161,50 @@
     		event.preventDefault();
             searchBox.focus();
     	}
+
+        // navigate search results using keyboard
+        if (searchFocused && showSearchPane && searchResults != null && searchResults.length > 0) {
+
+            if (event.key == "Enter" || event.keyCode == 13) {
+                gotoDest(searchResults[currentlySelectedResult].destinationID);
+                selectSearchResult(currentlySelectedResult);
+                event.preventDefault();
+            }
+
+            if (event.key == "ArrowUp" || event.keyCode == 38) {
+                currentlySelectedResult = (currentlySelectedResult - 1 >= 0) ? currentlySelectedResult -1 : 0;
+                selectSearchResult(currentlySelectedResult);
+                event.preventDefault();
+            }
+
+            if (event.key == "ArrowDown" || event.keyCode == 40) {
+                currentlySelectedResult = (currentlySelectedResult + 1 != searchResults.length) ? currentlySelectedResult + 1 : currentlySelectedResult;
+                selectSearchResult(currentlySelectedResult);
+                event.preventDefault();
+            }
+        }
+    }
+
+    function selectSearchResult(index) {
+
+        let selectedElements = document.querySelectorAll(".list-item.selected");
+
+        [].forEach.call(selectedElements, function(element) {
+            element.classList.remove("selected");
+        });
+
+        let elements = document.getElementsByClassName("list-item");
+        elements[index].classList.add("selected");
+        elements[index].scrollIntoView({
+            behavior: "auto",
+            block: "center",
+            inline: "center"
+		});
     }
 
     // callbacks
     function clearSearch() { searchBox.value = ""; updateSearch("", false) }
+    function gotoDest(destinationID) {gamemap.gotoDest(destinationID); if (!doPinSearch){ searchFocused = false; } }
     window.addEventListener('mousedown', function(e) { onSearchFocused(e, null); });
 </script>
 
@@ -228,7 +271,7 @@
                                 {#if searchResults.length > 0}
                                     {#each searchResults as result}
                                         <!-- svelte-ignore missing-declaration -->
-                                        <ListItem title={result.name} description={result.description} icon={result.icon} destinationID={result.destinationID} on:click={(e) => {gamemap.gotoDest(e.detail); if (!doPinSearch){ searchFocused = false; }}}/>
+                                        <ListItem title={result.name} description={result.description} icon={result.icon} destinationID={result.destinationID} on:click={(e) => {gotoDest(e.detail)}}/>
                                     {/each}
                                      <!-- search results go here-->
                                 {:else}
@@ -309,13 +352,19 @@
         width: 100%;
     }
 
+    #search_content_container {
+        pointer-events: none;
+    }
+
     #search_content_container.fullPane {
         background-color: var(--surface) !important;
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
+        pointer-events: visible;
     }
 
     /* Search options */
     #search_options {
+        pointer-events: visible;
         padding-top: var(--padding_large);
         padding: var(--padding_small);
         border-radius: var(--padding_small);

@@ -182,6 +182,11 @@ button {
 	background-color: var(--secondary_variant) !important;
 	color: var(--text_on_secondary) !important;
 }
+
+.collection .collection-item.selected {
+	background-color: var(--selection) !important;
+}
+
 .collection a.collection-item {
 	color: var(--text_on_primary) !important;
 	border-bottom: none !important;
