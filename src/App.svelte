@@ -217,8 +217,6 @@
 		print("Worlds loaded!");
 		print(mapWorlds);
 
-		showLayerSwitcher = (mapConfig.tileLayers.length > 1 || mapConfig.hasResources || mapConfig.hasGrid);
-
 		setLoading(false); // hide loading spinner
 
 		if (gamemap.hasMultipleWorlds()) {
@@ -235,11 +233,9 @@
 	}
 
 	function onWorldChanged(newWorld) {
-		// $('#current_location_label').text(newWorld.displayName);
 		setWindowTitle(newWorld.displayName);
 		isLoaded = true;
-		//setContext("currentWorld", newWorld);
-		// updateWorldList(newWorld.name);
+		showLayerSwitcher = (newWorld.layers.length > 1 || newWorld.hasResources || newWorld.hasGrid);
 	}
 
 	function onZoom(data) {

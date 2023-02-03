@@ -65,11 +65,13 @@ mainly QoL focusing on search, bug fixes and some eye candy
 
 ## todo
 
+
+- refactor layers and bgcolour out of mapconfig into world displaydata
+
 - refactor watermark area to be optioons component
 
 make map reset use zoomtoBounds or equivalent from leaflet docs
 
-- refactor layer bgcolour out to individial layer configs
 - fix game worldspace XY conversion
 - refactor all locationIDs to be negative
 - truncate decimal points on XY, show on normalised
@@ -106,4 +108,4 @@ this is just to speed up perceived loading times with a nice transition."
 app :
 - cross platform
 - cross wiki
-- and maps
+- integrate maps

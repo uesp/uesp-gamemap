@@ -12,7 +12,7 @@
         this.world = null;
         this.showGrid = false;
         this.cellResource = "";
-		this.tileLayer = 0;
+		this.layerIndex = 0;
     }
 
     createSaveQuery() {

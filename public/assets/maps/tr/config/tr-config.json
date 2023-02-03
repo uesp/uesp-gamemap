@@ -4,7 +4,6 @@
     "wikiNamespace": "Morrowind",
     "database" : "tr",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Morrowind_Map_Design",
-    "bgColour" : "#000000",
 
     // Map options
     "hasCustomFavIcon" : true,
@@ -30,12 +29,6 @@
     "cellSize" : 128, // size of a cell at full zoom on the map, in pixels
     "gridStart" : [-46, 37], //cell coords of the top leftmost point (default: 0 , 0);
     "gridShowLabelZoom" : 3.5,
-
-    // Map tile info
-    "tileLayers" : [
-        "world",
-        "gridmap"
-    ],
 
     // Map icon info
     "iconSize" : 16,

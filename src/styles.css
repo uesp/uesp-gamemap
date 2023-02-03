@@ -155,7 +155,6 @@ button {
 }
 
 ::selection {
-	color: var(--text_on_primary);
 	background: var(--selection);
 }
 

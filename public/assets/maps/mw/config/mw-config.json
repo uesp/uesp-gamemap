@@ -4,7 +4,7 @@
     "wikiNamespace": "Morrowind",
     "database" : "mw",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Morrowind_Map_Design",
-    "bgColour" : "#7076AA",
+    "bgColor" : "#7076AA",
 
     // Map options
     "defaultZoomLevel" : 2,

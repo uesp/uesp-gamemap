@@ -4,7 +4,7 @@
     "wikiNamespace": "Oblivion",
     "database" : "ob",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Oblivion_Map_Design",
-    "bgColour" : "#615f46",
+    "bgColor" : "#615f46",
 
     // Map options
     "defaultZoomLevel" : 2,

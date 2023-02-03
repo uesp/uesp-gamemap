@@ -5,7 +5,7 @@
     "wikiURL": "//en.uesp.net/wiki/",
     "database" : "",
     "feedbackURL" : "https://github.com/uesp/uesp-gamemap/issues",
-    "bgColour" : "#000000",
+    "bgColor" : "#000000", // initial background colour of the map (can be overwritten by world layers)
     "customCSS" : false,
 
     // Map options
@@ -19,12 +19,6 @@
     // 2: Worldspace
     "coordType" : 0,
 
-    // Map tile info
-    "tileSize" : 256,
-    "tileLayers" : [
-        "default"
-    ],
-
     // Map world info
     "defaultWorldID" : 1,
     "minWorldID" : 0,
@@ -37,16 +31,19 @@
     },
 
     // Map grid info
-    // "cellSize" : 128, // size of a cell at full zoom on the map, in pixels
+    "gridStart" : [0, 0], //cell coords of the top leftmost point (default: 0 , 0);
     "gridLineWidth" : 2,
     "gridLineColour" : "orange",
     "gridLabelColour" : "cyan",
-    "gridStart" : [0, 0], //cell coords of the top leftmost point (default: 0 , 0);
     "gridShowLabels" : true,
     "gridShowLabelZoom" : 3,
 
-    // core (do not copy or alter):
+    // core
+    "tileSize" : 256, // size of tiles in pixels
     "baseTileURL" : "//maps.uesp.net/",
-    "assetsPath" : "assets/maps/"
+    "assetsPath" : "assets/maps/",
+    "layers" : [{
+        "name" : "default"
+    }]
 }
 

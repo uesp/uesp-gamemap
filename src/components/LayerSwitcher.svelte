@@ -17,7 +17,7 @@
     // state vars
     let isHovered = false;
     let hasMultipleLayers = gamemap.hasMultipleMapLayers();
-    let layers = gamemap.getMapConfig().tileLayers;
+    let layers = gamemap.getCurrentWorld().layers;
     $: gridEnabled = gamemap.isGridEnabled();
     let resourceGridEnabled = gamemap.isResourceGridEnabled();
 
@@ -72,7 +72,7 @@
             {#if hasMultipleLayers}
                  {#each layers as layer}
                     <!-- svelte-ignore missing-declaration -->
-                    <LayerButton on:onClick={onLayerClicked} label={layer.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer, true)}/>
+                    <LayerButton on:onClick={onLayerClicked} label={layer.name.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer, true)}/>
                  {/each}
                  <Divider direction="vertical"></Divider>
             {/if}

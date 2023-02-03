@@ -62,7 +62,7 @@ export default class Gamemap {
 
 			// set up css
 			if (this.mapConfig.hasCustomFavIcon) { Utils.changeFavIcon(mapConfig.iconPath + "favicon.png"); }
-			if (this.mapConfig.bgColour) { mapRoot.style.backgroundColor = mapConfig.bgColour; }
+			if (this.mapConfig.bgColor) { mapRoot.style.backgroundColor = mapConfig.bgColor; }
 			if (this.mapConfig.hasCustomCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; print("Loading custom map css: " + cssPath); Utils.injectCSS(cssPath);}
 
 			// set the default map world info
@@ -176,9 +176,9 @@ export default class Gamemap {
 
 		// set map tile layer
 		if (Utils.isFirefox()){ // use HTML-based rendering on firefox
-			tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, this.mapConfig.tileLayers[mapState.tileLayer]), tileOptions);
+			tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, mapState.layerIndex), tileOptions);
 		} else { // use canvas based tile rendering on everything else
-			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, this.mapConfig.tileLayers[mapState.tileLayer]), tileOptions);
+			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, mapState.layerIndex), tileOptions);
 		}
 		tileLayer.addTo(map);
 
@@ -190,6 +190,7 @@ export default class Gamemap {
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.onWorldChanged(this.mapWorlds[this.currentWorldID])
 		}
+		if (mapState.world.layers[mapState.layerIndex].bg_color != null) { this.mapRoot.style.backgroundColor = mapState.world.layers[mapState.layerIndex].bg_color; }
 
 		if (!onlyUpdateTiles) {
 			// get/set locations
@@ -266,17 +267,27 @@ export default class Gamemap {
 		}
 
 		if (getURLParams().has("layer")) {
-			let tileLayer = getURLParams().get("layer");
-			mapState.tileLayer = (!isNaN(tileLayer)) ? tileLayer : (this.mapConfig.tileLayers.indexOf(tileLayer) > -1) ? this.mapConfig.tileLayers.indexOf(tileLayer) : 0;
+			let layer = getURLParams().get("layer");
+			mapState.layerIndex = (isNaN(parseInt(layer))) ? this.getLayerIndexFromName(layer, mapState.world.layers) : parseInt(layer);
 		} else {
-			mapState.tileLayer = 0;
+			mapState.layerIndex = 0;
 		}
 
 		return mapState;
 	}
 
+	getLayerIndexFromName(layerName, layersObj) {
+		let layers = (layersObj != null) ? layersObj : this.getCurrentWorld().layers;
+		for (let [key, value] of Object.entries(layers)) {
+			if (layers[key].name == layerName) {
+				return parseInt(key);
+			}
+		}
+		return 0;
+	}
+
 	hasMultipleMapLayers() {
-		return this.mapConfig.tileLayers.length > 1;
+		return this.getCurrentWorld().layers.length > 1;
 	}
 
 	updateMapState(mapState) {
@@ -309,7 +320,7 @@ export default class Gamemap {
 			mapLink += '&';
 		}
 		if (this.hasMultipleMapLayers()) {
-			mapLink += 'layer=' + this.mapConfig.tileLayers[newMapState.tileLayer];
+			mapLink += 'layer=' + newMapState.world.layers[newMapState.layerIndex].name;
 			mapLink += '&';
 		}
 		mapLink += 'x=' + newMapState.coords[0];
@@ -1393,19 +1404,24 @@ export default class Gamemap {
 	}
 
 	getCurrentTileLayerIndex() {
-		return this.getMapState().tileLayer;
+		return parseInt(this.getMapState().layerIndex);
 	}
 
 	getNextTileLayerIndex() {
-		return (this.getCurrentTileLayerIndex() +1) == (this.mapConfig.tileLayers.length) ? 0 : this.getCurrentTileLayerIndex() + 1;
+		return (this.getCurrentTileLayerIndex() +1 == this.getCurrentWorld().layers.length) ? 0 : this.getCurrentTileLayerIndex() + 1;
 	}
 
 	getNextTileLayerName() {
-		return this.mapConfig.tileLayers[this.getNextTileLayerIndex()];
+		print(this.getCurrentWorld());
+		print(this.getCurrentWorld().layers);
+		print(this.getCurrentWorld().layers.length);
+		print(this.getCurrentWorld().layers[this.getNextTileLayerIndex()]);
+		print(this.getMapState().layerIndex);
+		return this.getCurrentWorld().layers[this.getNextTileLayerIndex()].name;
 	}
 
 	getCurrentTileLayerName() {
-		return this.mapConfig.tileLayers[this.getCurrentTileLayerIndex()];
+		return this.getCurrentWorld().layers[this.getCurrentTileLayerIndex()].name;
 	}
 
 	// check if user has editing permissions
@@ -1440,10 +1456,18 @@ export default class Gamemap {
 
 	// tileX, tileY, zoom, world
 	// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
-	getMapTileImageURL(world, layerName, root) {
+	getMapTileImageURL(world, layerIndex, root) {
+
+		if (isNaN(layerIndex)) {
+			layerIndex = this.getLayerIndexFromName(layerIndex);
+		}
+
 		let zoom = (root) ? "/zoom0/" : "/zoom{z}/";
 		let xy = (root) ? "-0-0.jpg" : "-{x}-{y}.jpg";
-		return this.mapConfig.tileURL + world.name + "/leaflet/" + layerName + zoom + world.name + xy;
+		print(world);
+		print(world.layers);
+		print(layerIndex);
+		return this.mapConfig.tileURL + world.name + "/leaflet/" + world.layers[layerIndex].name + zoom + world.name + xy;
 	}
 
 	getCurrentZoom() {

@@ -19,5 +19,6 @@
         min-width: 200px;
         min-height: 50px;
         transform: translate(-50%, -50%);
+        z-index: 900;
     }
 </style>
