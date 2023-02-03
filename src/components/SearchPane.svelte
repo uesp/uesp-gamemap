@@ -227,7 +227,8 @@
                             <div id="search_results" class='search_results'>
                                 {#if searchResults.length > 0}
                                     {#each searchResults as result}
-                                        <ListItem title={result.name} description={result.description} icon={result.icon} destinationID={result.destinationID}></ListItem>
+                                        <!-- svelte-ignore missing-declaration -->
+                                        <ListItem title={result.name} description={result.description} icon={result.icon} destinationID={result.destinationID} on:click={(e) => {gamemap.gotoDest(e.detail); if (!doPinSearch){ searchFocused = false; }}}/>
                                     {/each}
                                      <!-- search results go here-->
                                 {:else}

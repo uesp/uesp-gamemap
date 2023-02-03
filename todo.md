@@ -4,6 +4,9 @@ eye candy and QoL
 
 - added map menu on root (devgamemap.uesp.net)
 - gamemap now fade-transition bg colour when loading (most noticeable when clicking into maps from the above)
+
+- the experience is lovely and you should try it yourself. it just feels so smooth
+note: may have to ctrl refresh if maps are using old codeto get the full experience
 >> anticipating this because when doing skyrim day/night mode, it should also have bg colour fade
 
 - clicking anywhere on the searchbar now focuses the textbox (didnt before)
@@ -15,6 +18,8 @@ eye candy and QoL
 - QoL: added expando to search options menu to show/hide the search options and save space
 - QoL: added shared preference support, saves prefs as cookies
 - QoL: added tooltip to search result icons to indicate what it is (people were confused)
+
+bugfix: fix search query being reset after clicking a location
 
 the saerch pane now remembers whether you:
 - prefer the options minimised
@@ -30,6 +35,11 @@ fixed bug with search setting options appearing inconsistently when focusing the
 - replaced existing favicons with higher quality ones
 
 
+## suggestions:
+
+- rename ob's world to "Cyrodiil"
+
+
 
 
 ## todo
@@ -41,6 +51,7 @@ fixed bug with search setting options appearing inconsistently when focusing the
 - animation on layer widget exit
 - animation on search options resize
 - refactor watermark area to be optioons component
+- fix layer widget being unusable on chrome
 
 make map reset use zoomtoBounds or equivalent from leaflet docs
 
@@ -51,6 +62,9 @@ make map reset use zoomtoBounds or equivalent from leaflet docs
 - truncate decimal points on XY, show on normalised
 - fix overflow menu being cropped
 - add overflow menu icons
+- refactor bgcolour in mapconfig to "initalBGColour" with a comment that states
+"what the map's initial colour will be on first load. note that when the world is loaded, it may overwrite this.
+this is just to speed up perceived loading times with a nice transition."
 - add go up button for mobile
 - fix polylines not respecting zoom levels
 - allow world name instead of ID in url (used for centreon)

@@ -24,10 +24,6 @@ export default class World {
 			this.maxZoomLevel = (world.maxZoom - this.zoomOffset) + 0.03; // add 0.03 to fix leaflet bug of only going up to x.97 zoom
 			this.minZoomLevel = (world.minZoom - this.zoomOffset) || 0;
 
-			this.missingMapTilePath = mapConfig.missingMapTilePath;
-
-			this.legacy = world; // legacy attributes from server
-
 			this.minX = (mapConfig.minX != null) ? mapConfig.minX : world.posLeft;
 			this.maxX = (mapConfig.maxX != null) ? mapConfig.maxX : world.posRight;
 			this.minY = (mapConfig.minY != null) ? mapConfig.minY : world.posBottom;
@@ -37,6 +33,8 @@ export default class World {
 			this.numTilesY = world.tilesY;
 
 			this.locations = null; // locations are loaded async after the world is created
+
+			this.legacy = world; // legacy attributes from server
 		} else {
 			throw new Error("World cannot be null!");
 		}

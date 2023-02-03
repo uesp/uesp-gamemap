@@ -16,6 +16,7 @@
     export let iconTooltip;
     export let isWorld;
     export let destinationID;
+    export let date;
     let iconIsURL = false;
     let isLocation = false;
     let hasIcon = false;
@@ -54,48 +55,9 @@
     }
     hasIcon = icon != null && icon != false;
 
-
-
-
-
-    function onClick(event) {
-        dispatch("click", "ligma");
-        print(isWorld);
-        print(destinationID);
+    function onClick() {
+        dispatch("click", destinationID);
     }
-
-
-    //     let iconSize = 30;
-    //     if (data.icon != null) {
-
-    //         imgHTML = ";
-    //     } else {
-    //         if (data.icon == null && data.description == null) {
-    //             imgHTML = "<i class='small material-icons circle'>public</i>";
-    //             isWorld = true;
-    //         } else {
-    //             imgHTML = "<i class='small material-icons circle'>location_on</i>";
-    //         }
-    //     }
-
-    //     let nameHTML = "";
-
-    //     if (isWorld) { nameHTML += "<b>" }
-    //     nameHTML += data.name;
-    //     if (isWorld) { nameHTML += "</b>" }
-
-    //     if (data.description != null && gamemap.hasMultipleWorlds()) {
-    //         nameHTML += ";
-    //     }
-
-    //     if (isWorld && !gamemap.hasMultipleWorlds()) {
-    //         return "";
-    //     }
-
-    //     return ("");
-
-    // }
-
 
 </script>
 

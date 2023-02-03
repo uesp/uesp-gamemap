@@ -26,7 +26,6 @@
 		query += '&displayname=' + encodeURIComponent(this.world.displayName);
 		query += '&description=' + encodeURIComponent(this.world.description);
 		query += '&wikipage=' + encodeURIComponent(this.world.wikiPage);
-		query += '&missingtile=' + encodeURIComponent(this.missingMapTile);
 		query += '&minzoom=' + this.minZoomLevel;
 		query += '&maxzoom=' + this.maxZoomLevel;
 		query += '&posleft=' + this.minX;

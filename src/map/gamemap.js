@@ -166,7 +166,7 @@ export default class Gamemap {
 		let tileOptions = {
 			noWrap: true,
 			bounds: RC.getMaxBounds(),
-			errorTileUrl: mapState.world.missingMapTilePath,
+			errorTileUrl: Constants.IMAGES_DIR + "outofrange.png",
 			minZoom: mapState.world.minZoomLevel,
 			maxZoom: mapState.world.maxZoomLevel,
 			edgeBufferTiles: 2,
