@@ -173,6 +173,11 @@
 
             if (event.key == "ArrowUp" || event.keyCode == 38) {
                 currentlySelectedResult = (currentlySelectedResult - 1 >= 0) ? currentlySelectedResult -1 : 0;
+                // scroll to top of the list if index is zero
+                if (currentlySelectedResult == 0) {
+                    document.getElementById('search_content_container').scroll({top:0,behavior:'auto'});
+                }
+
                 selectSearchResult(currentlySelectedResult);
                 event.preventDefault();
             }
@@ -197,8 +202,7 @@
         elements[index].classList.add("selected");
         elements[index].scrollIntoView({
             behavior: "auto",
-            block: "center",
-            inline: "center"
+            block: "nearest",
 		});
     }
 
