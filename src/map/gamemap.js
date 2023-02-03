@@ -711,6 +711,8 @@ export default class Gamemap {
 		// callback to show map fully loaded
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.onMapLoaded(true);
+			// set bg fade transition to be same speed as leaflet's
+			this.mapRoot.style.transition = "background-color ease 100ms";
 		}
 
 	}
