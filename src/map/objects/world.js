@@ -37,7 +37,7 @@ export default class World {
 
 			// world display data (grids and layers)
 			this.displayData = JSON.parse(world.displayData);
-			this.hasGrid = (this.displayData.hasGrid != null) ? this.displayData.hasGrid : false;
+			this.hasGrid = (this.displayData.hasGrid != null && this.displayData.gridStart != null) ? this.displayData.hasGrid : false;
 			this.hasCellResources = (this.displayData.hasCellResource != null) ? this.displayData.hasCellResource : false;
 			this.layers = (this.displayData.layers != null) ? this.displayData.layers : mapConfig.layers;
 		} else {

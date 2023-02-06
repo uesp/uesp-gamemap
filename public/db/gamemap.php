@@ -66,6 +66,7 @@ class GameMap
 	public $worldMissingTile = '';
 	public $worldParentId = 0;
 	public $worldMinZoom = 0;
+	public $worldDisplayData = null;
 	public $worldMaxZoom = 20;
 	public $worldZoomOffset = 0;
 	public $worldPosLeft = 0;

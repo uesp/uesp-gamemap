@@ -190,6 +190,7 @@ export default class Gamemap {
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.onWorldChanged(this.mapWorlds[this.currentWorldID])
 		}
+
 		if (mapState.world.layers[mapState.layerIndex].bg_color != null) { this.mapRoot.style.backgroundColor = mapState.world.layers[mapState.layerIndex].bg_color; }
 
 		if (!onlyUpdateTiles) {
@@ -711,7 +712,6 @@ export default class Gamemap {
 		// callback to show map fully loaded
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.onMapLoaded(true);
-			// set bg fade transition to be same speed as leaflet's
 			this.mapRoot.style.transition = "background-color ease 100ms";
 		}
 

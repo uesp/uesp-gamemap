@@ -41,6 +41,7 @@
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
+  import MapOptions from './components/MapOptions.svelte';
 
 	print("Initialising app...");
 
@@ -304,7 +305,9 @@
 				{/if}
 			{/if}
 
-	 		<Watermark mapName = {mapConfig.mapTitle} embedType = {(isEmbedded) ? (uespEmbed) ? "uesp" : "normal" : "none"}/>
+			<MapOptions>
+				<Watermark mapName = {mapConfig.mapTitle} embedType = {(isEmbedded) ? (uespEmbed) ? "uesp" : "normal" : "none"}/>
+			</MapOptions>
 
 			<!-- Show debug tag in top right corner if app is in dev mode -->
 			<!-- svelte-ignore missing-declaration -->

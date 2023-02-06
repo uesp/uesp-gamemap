@@ -19,28 +19,16 @@
 </script>
 
 <markup>
-    <div id=watermark_container>
-        <div id="watermark" class:watermark={!isEmbedded}>
-            {#if !isEmbedded}
-                <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home">UESP</a></span> • {mapName}</b>
-            {:else}
-                <b>{#if embedType == "uesp"}<span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home">UESP</a></span> • {/if}View larger map <Icon name="open_in_new" size="tiny"/></b>
-            {/if}
-        </div>
+    <div id="watermark" class:watermark={!isEmbedded}>
+        {#if !isEmbedded}
+            <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home">UESP</a></span> • {mapName}</b>
+        {:else}
+            <b>{#if embedType == "uesp"}<span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home">UESP</a></span> • {/if}View larger map <Icon name="open_in_new" size="tiny"/></b>
+        {/if}
     </div>
 </markup>
 
 <style>
-    #watermark_container {
-        width: 100%;
-        pointer-events: none;
-        position: absolute;
-        bottom: var(--padding_minimum);
-        color: white;
-        z-index: 800;
-        text-align: center;
-    }
-
     #watermark {
         pointer-events: visible;
         display: inline-block;

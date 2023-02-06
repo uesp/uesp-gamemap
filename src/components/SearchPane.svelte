@@ -323,7 +323,7 @@
         border-radius: var(--padding_small);
         border-top-left-radius: 0px;
         border-top-right-radius: 0px;
-        max-height: 79vh;
+        max-height: 91vh;
         padding-bottom: var(--padding_minimum);
         pointer-events: none;
     }

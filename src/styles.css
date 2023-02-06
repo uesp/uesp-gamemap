@@ -186,6 +186,14 @@ button {
 	background-color: var(--selection) !important;
 }
 
+.collection a.collection-item:hover {
+	background-color: var(--divider) !important;
+}
+
+.collection .collection-item.selected:hover {
+	background-color: var(--secondary_variant_light) !important;
+}
+
 .collection a.collection-item {
 	color: var(--text_on_primary) !important;
 	border-bottom: none !important;
