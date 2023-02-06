@@ -7,7 +7,6 @@
 
 <script>
 	// import svelte core stuff
-	import { getContext } from 'svelte';
     import { createEventDispatcher } from "svelte";
     import "long-press-event";
 

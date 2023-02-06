@@ -4,10 +4,6 @@
  * @summary The main source code for the interactive gamemap.
  */
 
-// import commons
-import * as Utils from "../common/utils.js";
-import * as Constants from "../common/constants.js";
-
 // import leaflet
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -61,9 +57,9 @@ export default class Gamemap {
 			self = this;
 
 			// set up css
-			if (this.mapConfig.hasCustomFavIcon) { Utils.changeFavIcon(mapConfig.iconPath + "favicon.png"); }
+			if (this.mapConfig.hasCustomFavIcon) { changeFavIcon(mapConfig.iconPath + "favicon.png"); }
 			if (this.mapConfig.bgColor) { mapRoot.style.backgroundColor = mapConfig.bgColor; }
-			if (this.mapConfig.hasCustomCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; print("Loading custom map css: " + cssPath); Utils.injectCSS(cssPath);}
+			if (this.mapConfig.hasCustomCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; print("Loading custom map css: " + cssPath); injectCSS(cssPath);}
 
 			// set the default map world info
 			this.mapWorlds = {};
@@ -168,14 +164,14 @@ export default class Gamemap {
 		let tileOptions = {
 			noWrap: true,
 			bounds: RC.getMaxBounds(),
-			errorTileUrl: Constants.IMAGES_DIR + "outofrange.png",
+			errorTileUrl: IMAGES_DIR + "outofrange.png",
 			minZoom: mapState.world.minZoomLevel,
 			maxZoom: mapState.world.maxZoomLevel,
 			edgeBufferTiles: 2,
 		}
 
 		// set map tile layer
-		if (Utils.isFirefox()){ // use HTML-based rendering on firefox
+		if (isFirefox()){ // use HTML-based rendering on firefox
 			tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, mapState.layerIndex), tileOptions);
 		} else { // use canvas based tile rendering on everything else
 			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, mapState.layerIndex), tileOptions);
@@ -348,7 +344,7 @@ export default class Gamemap {
 	}
 
 	getCurrentWorld() {
-		return ( !Utils.isNull(this.getMapState()) && !Utils.isNull(this.getMapState().world) != null) ? self.getMapState().world : this.getWorldFromID( (this.currentWorldID != null) ? this.currentWorldID : this.mapConfig.defaultWorldID);
+		return ( !isNull(this.getMapState()) && !isNull(this.getMapState().world) != null) ? self.getMapState().world : this.getWorldFromID( (this.currentWorldID != null) ? this.currentWorldID : this.mapConfig.defaultWorldID);
 	}
 
 	/** Gets the world object associated to a given worldID.
@@ -397,7 +393,7 @@ export default class Gamemap {
 			self.mapCallbacks.setLoading("Loading world");
 		}
 
-		Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
+		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 			if (!error && data != null) {
 
 				if (data.worlds == null) {
@@ -534,7 +530,7 @@ export default class Gamemap {
 		if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
 
 		// make api query
-		Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
+		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 			if (!error && data != null) {
 				print("Got " + data.locationCount + " locations!");
 				let locations = data.locations
@@ -567,7 +563,7 @@ export default class Gamemap {
 			queryParams.db = this.mapConfig.database;
 			if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
 
-			Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
+			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 
 				print("Getting info for locationID: "+ locationID);
 
@@ -732,7 +728,7 @@ export default class Gamemap {
 		// make a generic fallback marker
 		let marker = new L.marker(coords[0]);
 		L.Marker.prototype.options.icon = L.icon({
-			iconUrl: Constants.IMAGES_DIR + "transparent.png",
+			iconUrl: IMAGES_DIR + "transparent.png",
 		});
 
 		// create specific marker type
@@ -749,7 +745,7 @@ export default class Gamemap {
 				weight: location.style.lineWidth,
 			}
 
-			if (location.locType == Constants.LOCTYPES.AREA) {
+			if (location.locType == LOCTYPES.AREA) {
 				marker = new L.polygon(coords, options);
 
 				if (location.hasIcon()){
@@ -759,7 +755,7 @@ export default class Gamemap {
 				}
 			}
 
-			if (location.locType == Constants.LOCTYPES.PATH) {
+			if (location.locType == LOCTYPES.PATH) {
 				marker = new L.polyline(coords, options);
 			}
 
@@ -927,7 +923,7 @@ export default class Gamemap {
 		}
 
 		// is the current map using a normalised coordinate scheme?
-		if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
+		if (this.mapConfig.coordType == COORD_TYPES.NORMALISED) {
 
 			if (coords.x > 1.5 || coords.y > 1.5) { // make sure to only convert non-normalised coordinates
 				// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
@@ -937,7 +933,7 @@ export default class Gamemap {
 
 		}
 
-		if (this.mapConfig.coordType == Constants.COORD_TYPES.WORLDSPACE) {
+		if (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) {
 			coords = this.pixelToGameCoords(coords);
 		}
 
@@ -958,7 +954,7 @@ export default class Gamemap {
 
 
 			// are we using a normalised coordinate scheme?
-			if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
+			if (this.mapConfig.coordType == COORD_TYPES.NORMALISED) {
 
 				// multiply the normalised coords by the map image dimensions
 				// to get the XY coordinates
@@ -1006,7 +1002,7 @@ export default class Gamemap {
 				let tempCoords = coords;
 
 				// are we using a normalised coordinate scheme?
-				if (this.mapConfig.coordType == Constants.COORD_TYPES.NORMALISED) {
+				if (this.mapConfig.coordType == COORD_TYPES.NORMALISED) {
 
 					// multiply the normalised coords by the map image dimensions
 					// to get the XY coordinates
@@ -1014,7 +1010,7 @@ export default class Gamemap {
 					tempCoords[1] = (tempCoords[1] * this.mapImage.height);
 
 					latLng = RC.unproject(tempCoords);
-				} else if (this.mapConfig.coordType == Constants.COORD_TYPES.WORLDSPACE) {
+				} else if (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) {
 					print("coords");
 					print(coords);
 					print(this.gameToPixelCoords(new Point(coords[0], coords[1])));
@@ -1129,7 +1125,7 @@ export default class Gamemap {
 			}
 
 			if (location.displayLevel > map.getZoom()) {
-				if (location.locType != Constants.LOCTYPES.PATH) {
+				if (location.locType != LOCTYPES.PATH) {
 					marker.remove();
 				}
 			}
@@ -1436,7 +1432,7 @@ export default class Gamemap {
 			this.mapCallbacks.setLoading("Getting permissions");
 		}
 
-		Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
+		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 
 			let canEdit = false;
 

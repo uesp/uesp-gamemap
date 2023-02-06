@@ -11,9 +11,6 @@
     import Divider from "./Divider.svelte";
     import LayerButton from "./LayerButton.svelte";
 
-    // import commons
-    import * as Utils from "../common/utils"
-
     // state vars
     let isHovered = false;
     let hasMultipleLayers = gamemap.hasMultipleMapLayers();
@@ -40,7 +37,7 @@
 
         if (event.target == null) {
 
-            if (Utils.isMobile()) {
+            if (isMobile()) {
                 isHovered = false;
             }
             gamemap.setTileLayerTo(event.detail);

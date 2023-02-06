@@ -13,11 +13,6 @@
     import ProgressBar from "./ProgressBar.svelte";
     import ListItem from "./ListItem.svelte";
 
-    // import commons
-	import * as Utils from "../common/utils.js";
-	import * as Constants from "../common/constants.js";
-
-
     // declare state vars
     let searchBox = null;
     let isLoading = false;
@@ -93,7 +88,7 @@
             }
         }
 
-        Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
+        getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 
             if (!error && data != null) {
 

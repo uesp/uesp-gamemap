@@ -5,7 +5,6 @@
 </div>
 
 <style>
-
 .progress_bar {
   position: absolute;
   top: -9px;

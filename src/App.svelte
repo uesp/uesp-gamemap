@@ -34,14 +34,13 @@
 	import Watermark from './components/Watermark.svelte';
 	import MapChooser from './components/MapChooser.svelte';
 	import Search from './components/SearchPane.svelte';
+	import MapOptions from './components/MapOptions.svelte';
 
 	// import commons
-	import * as Utils from "./common/utils.js";
-	import * as Constants from "./common/constants.js";
+	import './commons.js';
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
-  import MapOptions from './components/MapOptions.svelte';
 
 	print("Initialising app...");
 
@@ -87,24 +86,24 @@
 			print("Game parameter was: " + gameParam);
 
 			// begin getting map config
-			Utils.getJSON(Constants.DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
+			getJSON(DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
 				if (!error) {
 
 					// set up default map config
 					window.DEFAULT_MAP_CONFIG = defaultMapConfig;
 
 					// example: /assets/maps/eso/config/eso-config.json
-					let configURL = (Constants.MAP_ASSETS_DIR + gameParam + "/config/" + gameParam + "-" + Constants.MAP_CONFIG_FILENAME);
+					let configURL = (MAP_ASSETS_DIR + gameParam + "/config/" + gameParam + "-" + MAP_CONFIG_FILENAME);
 					setLoading("Loading config");
 					print("Getting map config at " + configURL + "...");
 
-					Utils.getJSON(configURL, function(error, object) {
+					getJSON(configURL, function(error, object) {
 						if (!error) {
 							print("Imported map config successfully.");
 							mapConfig = object;
 
 							print("Merging with default map config...")
-							let mergedMapConfig = Utils.mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
+							let mergedMapConfig = mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
 							mapConfig = mergedMapConfig;
 
 							// set up map config assets

@@ -4,8 +4,6 @@
  * @summary Class definition for the gamemap's locations.
  */
 
-import * as Constants from "../../common/constants.js";
-import * as Utils from "../../common/utils.js";
 import Point from "./point.js";
 
 let config;
@@ -33,7 +31,7 @@ export default class Location {
 		numTiles = world.numTilesX;
 
 		// set location type
-		this.locType = location.locType || Constants.LOCTYPES.NONE;
+		this.locType = location.locType || LOCTYPES.NONE;
 
 		// set basic location info
 		this.id = location.id || 0;
@@ -107,11 +105,11 @@ export default class Location {
 			this.style.strokeOpacity = this.displayData.strokeStyle.replace(/^.*,(.+)\)/,'$1');
 			this.style.hover.strokeOpacity = this.displayData.hover.strokeStyle.replace(/^.*,(.+)\)/,'$1');
 
-			this.style.fillColour = Utils.RGBAtoHex(this.displayData.fillStyle);
-			this.style.hover.fillColour = Utils.RGBAtoHex(this.displayData.hover.fillStyle);
+			this.style.fillColour = RGBAtoHex(this.displayData.fillStyle);
+			this.style.hover.fillColour = RGBAtoHex(this.displayData.hover.fillStyle);
 
-			this.style.strokeColour = Utils.RGBAtoHex(this.displayData.strokeStyle);
-			this.style.hover.strokeColour = Utils.RGBAtoHex(this.displayData.hover.strokeStyle);
+			this.style.strokeColour = RGBAtoHex(this.displayData.strokeStyle);
+			this.style.hover.strokeColour = RGBAtoHex(this.displayData.hover.strokeStyle);
 
 			this.style.strokeWidth = this.displayData.lineWidth;
 			this.style.hover.strokeWidth = this.displayData.hover.lineWidth;
@@ -124,7 +122,7 @@ export default class Location {
 		let x = coords[0];
 		let y = coords[1];
 
-		if (config.coordType != Constants.COORD_TYPES.XY) {
+		if (config.coordType != COORD_TYPES.XY) {
 
 			// get max range of x and y, assure it is a positive number
 			let maxRangeX = Math.abs(currentWorld.maxX - currentWorld.minX);
@@ -134,11 +132,11 @@ export default class Location {
             x = (x - currentWorld.minX) / maxRangeX;
 			y = Math.abs((y - currentWorld.maxY) / maxRangeY); // flip y around
 
-			if (config.coordType == Constants.COORD_TYPES.NORMALISED) {
+			if (config.coordType == COORD_TYPES.NORMALISED) {
 				// transform coords to better fit power of two numbers of tiles
-				x = (x * Utils.nextPowerOfTwo(numTiles) / numTiles).toFixed(3);
-				y = (y * Utils.nextPowerOfTwo(numTiles) / numTiles).toFixed(3);
-			} else if (config.coordType == Constants.COORD_TYPES.WORLDSPACE) {
+				x = (x * nextPowerOfTwo(numTiles) / numTiles).toFixed(3);
+				y = (y * nextPowerOfTwo(numTiles) / numTiles).toFixed(3);
+			} else if (config.coordType == COORD_TYPES.WORLDSPACE) {
 				//log(currentWorld);
 				x = x * currentWorld.totalWidth;
 				y = y * currentWorld.totalHeight;

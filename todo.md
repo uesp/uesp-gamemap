@@ -3,28 +3,16 @@
 
 ## todo
 
-- refactor watermark area to be optioons component
-
-make map reset use zoomtoBounds or equivalent from leaflet docs
-
-- fix game worldspace XY conversion
-- refactor all locationIDs to be negative
-- truncate decimal points on XY, show on normalised
 - fix overflow menu being cropped
 - add overflow menu icons
-- refactor bgcolour in mapconfig to "initalBGColour" with a comment that states
-"what the map's initial colour will be on first load. note that when the world is loaded, it may overwrite this.
-this is just to speed up perceived loading times with a nice transition."
-- add go up button for mobile
-- fix polylines not respecting zoom levels
 - allow world name instead of ID in url (used for centreon)
+- add allow long clicking on mobile to open popups
+- fix game worldspace XY conversion
+- fix polylines not respecting zoom levels
 - optimise grid code
 - add slightly transparent rect filling grid cells that have labels on it, to quickly show dif
 - add permalink option in location popups
-- refactor utils and constants out to its own file "commons.js" in the same root as app.svelte
->> document all functions in it
->> have the file separated by "functions" in big block comment, and then "constants"
->> document all the functions in it
+- make map reset use zoomtoBounds or equivalent from leaflet docs
 - do cell resource grid for skyrim
 - other maps
 - help and stuff

@@ -14,17 +14,13 @@
     import PreloadBox from "./PreloadBox.svelte";
     import LayerButton from "./LayerButton.svelte";
 
-    // import commons
-	import * as Utils from "../common/utils.js";
-    import * as Constants from "../common/constants.js";
-
     $: maps = null;
 
     // get list of games to show
     print("Getting available maps...");
     let queryParams = {};
 	queryParams.action = "get_maps";
-    Utils.getJSON(Constants.GAME_DATA_SCRIPT + Utils.queryify(queryParams), function(error, data) {
+    getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
         if (!error && data != null) {
             print(data.maps);
 
