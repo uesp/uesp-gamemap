@@ -216,7 +216,7 @@ window.RGBAtoHex = function RGBAtoHex(color) {
  * @param {Integer} n - The number to be compared
  * @returns {Integer} n - The next power of two from that number
  */
-export function nextPowerOfTwo(n) {
+window.nextPowerOfTwo = function nextPowerOfTwo(n) {
 	// decrement `n` (to handle cases when `n` itself
 	// is a power of 2)
 	n = n - 1;
