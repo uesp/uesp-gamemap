@@ -25,11 +25,12 @@ iconButton element:
     export let hasBackground;
     export let checked;
     export let hideMobile;
+    export let dropdown;
 
     const dispatch = createEventDispatcher();
 
-    if (!hasBackground) { label = null; }
     if (checked != null) { hasBackground = true; }
+    if (!hasBackground) { label = null; }
 
     function onClicked() {
 
@@ -45,9 +46,10 @@ iconButton element:
 </script>
 
 <markup>
-    <button class='btn_icon_button waves-effect' title={tooltip} on:click={onClicked} class:checked={checked} class:hasBackground={hasBackground} class:bgless={!hasBackground} class:nomobile={hideMobile} >
+    <button class='btn_icon_button waves-effect' title={tooltip} on:click={onClicked} class:checked={checked} class:hasBackground={hasBackground} class:bgless={!hasBackground} class:nomobile={hideMobile} class:dropdown={dropdown}>
         {#if icon}<Icon name={icon}/>{/if}
         {#if label}<b class="icon_btn_label nomobile">{label}</b>{/if}
+        {#if dropdown}<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>{/if}
     </button>
 </markup>
 
@@ -66,6 +68,7 @@ iconButton element:
         text-align: center;
         vertical-align: middle;
         line-height: 100%;
+        text-overflow: ellipsis;
     }
 
     button:hover {
@@ -93,8 +96,9 @@ iconButton element:
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        max-width: 15ch;
+        display: inline-block;
     }
-
 
     /* checked state */
     .checked {
@@ -119,7 +123,32 @@ iconButton element:
         background-color: var(--divider) !important;
         color: black;
     }
-    button.bgless.focus {
-        background-color: unset !important;
+
+    /* dropdown */
+    .dropdown {
+        border-radius: var(--padding_minimum) !important;
+	    color: var(--highlight_light);
+        background-color: var(--shadow) !important;
+    }
+
+    .dropdown.checked:hover {
+        background-color: var(--bubble_selection) !important;
+    }
+
+    .dropdown #dropdown_icon {
+        transition: all 0.2s ease-out;
+    }
+
+    .dropdown.checked {
+	    background-color: var(--shadow) !important;
+        box-shadow: unset;
+    }
+
+    .dropdown.checked #dropdown_icon{
+	    transform: rotate(180deg);
+    }
+
+    .dropdown b{
+	    margin-right: -2px;
     }
 </style>

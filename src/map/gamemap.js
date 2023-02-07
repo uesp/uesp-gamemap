@@ -36,7 +36,6 @@ let tileLayer; // Local tiles
 				  Constructor
 ================================================*/
 export default class Gamemap {
-
 	/**
 	 * Interactive map viewer class.
 	 * @param {String} mapRootID - The root gamemap element in which the map is displayed
@@ -1224,9 +1223,8 @@ export default class Gamemap {
 		return this.gridEnabled;
 	}
 
-	// placeholder
 	isResourceGridEnabled() {
-		return false;
+		return this.getCurrentWorld().hasCellResources;
 	}
 
 	toggleCellGrid(toggle) {
@@ -1237,10 +1235,10 @@ export default class Gamemap {
 
 			L.canvasOverlay()
 				.params({bounds: RC.getMaxBounds(), className : "cellGrid", zoomAnimation: true})
-				.drawing(drawingOnCanvas)
+				.drawing(drawGrid)
 				.addTo(map);
 
-			function drawingOnCanvas(layer, params) {
+			function drawGrid(_, params) {
 
 				// set up layer
 				let ctx = params.canvas.getContext('2d');
@@ -1543,15 +1541,6 @@ export default class Gamemap {
 // 	return this.convertTileToGamePos(tileX, tileY);
 // }
 
-// uesp.gamemap.Map.prototype.displayLocation = function (location)
-// {
-// 	if (location.worldID != this.currentWorldID) return;
-// 	if (!location.visible && !this.isHiddenLocsShown()) return;
-
-// 	location.computeOffset();
-// 	location.update();
-// }
-
 
 // uesp.gamemap.Map.prototype.hasLocation = function(locId)
 // {
@@ -1665,110 +1654,6 @@ export default class Gamemap {
 // 		if (useEditPopup === true) destLoc.useEditPopup = true;
 // 		destLoc.showPopup();
 // 	}
-// }
-
-
-// uesp.gamemap.Map.prototype.createEditNoticeDiv = function()
-// {
-// 	this.editNoticeDiv = $('<div />').attr('id', 'gmMapEditNotice')
-// 								.attr('class', '')
-// 								.appendTo(this.mapContainer);
-// }
-
-
-// uesp.gamemap.Map.prototype.displayEditNotice = function(Notice, FinishButton, CancelButton)
-// {
-// 	var self = this;
-
-// 	if (!this.editNoticeDiv) this.createEditNoticeDiv();
-
-// 	if (CancelButton != null && CancelButton.length > 0)
-// 	{
-// 		Notice += "<button id='gmMapEditNoticeCancel'>" + CancelButton + "</button>";
-// 	}
-
-// 	if (FinishButton != null && FinishButton.length > 0)
-// 	{
-// 		Notice += "<button id='gmMapEditNoticeFinish'>" + FinishButton + "</button>";
-// 	}
-
-// 	this.editNoticeDiv.html(Notice);
-// 	this.editNoticeDiv.show();
-
-// 	$('#gmMapEditNoticeCancel').bind("touchstart click", function(event) {
-// 		self.onCancelEditMode(event);
-// 		return false;
-// 	});
-
-// 	$('#gmMapEditNoticeFinish').bind("touchstart click", function(event) {
-// 		self.onFinishEditMode(event);
-// 		return false;
-// 	});
-// }
-
-
-// uesp.gamemap.Map.prototype.hideEditNotice = function()
-// {
-// 	if (this.editNoticeDiv)
-// 	{
-// 		this.editNoticeDiv.hide();
-// 		this.editNoticeDiv.html('');
-// 	}
-// }
-
-
-// uesp.gamemap.Map.prototype.onCancelEditMode = function(event)
-// {
-// 	if (this.currentEditMode == '') return true;
-
-// 	this.removeEditClickWall();
-// 	this.hideEditNotice();
-
-// 	if (this.currentEditMode == 'edithandles')
-// 	{
-// 		this.currentEditLocation.editPathHandles = false;
-
-// 		if (this.currentEditLocation.pathElement)
-// 		{
-// 			this.currentEditLocation.pathElement.css('z-index', '');
-// 		}
-
-// 		this.currentEditLocation.displayData.points = this.currentEditPathPoints;
-// 		this.currentEditLocation.computePathSize();
-// 		this.currentEditLocation.updateFormPosition();
-// 		this.currentEditLocation.computeOffset();
-// 		this.currentEditLocation.updatePath();
-
-// 		this.currentEditLocation.showPopup();
-// 	}
-// 	else if (this.currentEditMode == 'draglocation')
-// 	{
-// 		this.currentEditLocation.displayData.points = this.currentEditPathPoints;
-// 		this.currentEditLocation.computePathSize();
-// 		this.currentEditLocation.updateFormPosition();
-// 		this.currentEditLocation.computeOffset();
-
-// 		this.currentEditLocation.update();
-// 		this.currentEditLocation.showPopup();
-// 	}
-// 	else if (this.currentEditMode == 'editworld')
-// 	{
-// 		this.hideWorldEditForm();
-// 	}
-// 	else if (this.currentEditMode == 'addpath' || this.currentEditMode == 'addarea')
-// 	{
-// 		delete this.locations[this.currentEditLocation.id];
-// 		this.currentEditLocation.removeElements();
-// 	}
-
-// 	this.currentEditLocation = null;
-// 	this.currentEditPathPoints = null;
-// 	this.currentEditMode = '';
-// 	this.currentEditWorld = null;
-
-// 	this.redrawCanvas(true);
-
-// 	return true;
 // }
 
 
@@ -2090,62 +1975,6 @@ export default class Gamemap {
 // 	}
 
 // }
-
-// uesp.gamemap.Map.prototype.redrawLocationPaths = function()
-// {
-// 	for (key in this.locations)
-// 	{
-// 		if (this.locations[key].locType >= Constants.LOCTYPE_PATH) this.locations[key].updatePathSize();
-// 	}
-// }
-
-// uesp.gamemap.Map.prototype.updateLocationId = function(oldId, newId)
-// {
-// 	if (oldId in this.locations)
-// 	{
-// 		var location = this.locations[oldId];
-// 		delete this.locations[oldId];
-// 		location.id = newId;
-// 		this.locations[newId] = location;
-// 	}
-// }
-
-
-// uesp.gamemap.Map.prototype.addEditClickWall = function(cursor)
-// {
-
-// 	if (this.editClickWall == null)
-// 	{
-// 		this.editClickWall = $('<div />')
-// 				.attr('id', 'gmMapRootClickWall')
-// 				.appendTo(this.mapContainer);
-
-// 		this.editClickWall.bind("touchstart click", { self: this }, this.onClick);
-// 		this.editClickWall.mousemove({ self: this }, this.onMouseMove);
-// 		this.editClickWall.mouseup({ self: this }, this.onMouseUp);
-// 		this.editClickWall.mousedown({ self: this }, this.onMouseDown);
-// 	}
-
-// 	if (cursor == null)
-// 		this.editClickWall.css('cursor', '');
-// 	else
-// 		this.editClickWall.css('cursor', cursor);
-
-// 	this.editClickWall.css('z-index', 101);
-// 	this.editClickWall.show();
-// }
-
-
-// uesp.gamemap.Map.prototype.removeEditClickWall = function()
-// {
-// 	if (this.editClickWall == null) return;
-
-// 	this.editClickWall.css('cursor', '');
-// 	this.editClickWall.css('background', '');
-// 	this.editClickWall.css('z-index', 0);
-// 	this.editClickWall.hide();
-// }
-
 
 // uesp.gamemap.Map.prototype.onEditDragLocationStart = function (location)
 // {

@@ -567,24 +567,6 @@ div[class^="icon_bar"] {
 				Location Switcher
 ================================================*/
 
-#btn_location_switcher{
-	border-radius: var(--padding_minimum);
-	color: var(--highlight_light);
-
-}
-
-#btn_location_switcher #dropdown_icon{
-	transition: all 0.2s ease-out;
-}
-
-#btn_location_switcher.toggled #dropdown_icon{
-	transform: rotate(180deg);
-}
-
-#btn_location_switcher b{
-	margin-right: -2px;
-}
-
 #location_switcher_root:before {
 	content: "\A";
     border-style: solid;

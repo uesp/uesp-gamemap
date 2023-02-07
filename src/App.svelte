@@ -19,6 +19,9 @@
 	// import svelte core stuff
 	import { onMount } from 'svelte';
 
+	// import commons
+	import './commons.js';
+
 	// import material UI
 	import "materialize-css";
 	import 'materialize-css/dist/css/materialize.min.css';
@@ -35,9 +38,7 @@
 	import MapChooser from './components/MapChooser.svelte';
 	import Search from './components/SearchPane.svelte';
 	import MapOptions from './components/MapOptions.svelte';
-
-	// import commons
-	import './commons.js';
+	import IconButton from './components/IconButton.svelte';
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
@@ -329,9 +330,10 @@
 	{#if showMaps}
 		<MapChooser/>
 
-		<!-- <IconButton icon="article" label="deez" tooltip="ligma" hasBackground="true"/>
+		<IconButton icon="article" label="deez" tooltip="ligma" hasBackground="true"/>
 		<IconButton icon="article" label="deez" tooltip="ligma"/>
-		<IconButton icon="article" label="deez" tooltip="ligma" checked="true"/> -->
+		<IconButton icon="article" label="deez" tooltip="ligma" checked="false"/>
+		<IconButton icon="explore" label="Loading... with really big looooonng text" tooltip="Jump to location" checked="true" dropdown="true"/>
 	{/if}
 
 </markup>
