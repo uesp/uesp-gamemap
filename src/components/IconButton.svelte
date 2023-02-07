@@ -29,6 +29,7 @@ iconButton element:
 
     const dispatch = createEventDispatcher();
 
+    if (dropdown != null) { checked = false; }
     if (checked != null) { hasBackground = true; }
     if (!hasBackground) { label = null; }
 
@@ -142,6 +143,12 @@ iconButton element:
     .dropdown.checked {
 	    background-color: var(--shadow) !important;
         box-shadow: unset;
+    }
+
+    .dropdown b {
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+        top: 8px;
     }
 
     .dropdown.checked #dropdown_icon{

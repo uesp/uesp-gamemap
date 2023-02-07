@@ -2,7 +2,6 @@
 
 - made location list dropdown truncate with really long location names
 
-
 ## todo
 
 

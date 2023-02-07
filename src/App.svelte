@@ -333,7 +333,7 @@
 		<IconButton icon="article" label="deez" tooltip="ligma" hasBackground="true"/>
 		<IconButton icon="article" label="deez" tooltip="ligma"/>
 		<IconButton icon="article" label="deez" tooltip="ligma" checked="false"/>
-		<IconButton icon="explore" label="Loading... with really big looooonng text" tooltip="Jump to location" checked="true" dropdown="true"/>
+		<IconButton icon="explore" label="Loading..." tooltip="Jump to location" dropdown="true"/>
 	{/if}
 
 </markup>
