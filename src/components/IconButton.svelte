@@ -32,6 +32,7 @@ iconButton element:
     if (dropdown != null) { checked = false; }
     if (checked != null) { hasBackground = true; }
     if (!hasBackground) { label = null; }
+    if (label == null && dropdown) { label = "Loading..."; }
 
     function onClicked() {
 

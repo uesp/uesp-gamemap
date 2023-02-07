@@ -212,7 +212,6 @@
     // callbacks
     function clearSearch() { searchBox.value = ""; updateSearch("", false) }
     function gotoDest(destinationID) {gamemap.gotoDest(destinationID); if (!doPinSearch){ searchFocused = false; } }
-    window.addEventListener('mousedown', function(e) { onSearchFocused(e, null); });
 </script>
 
 <markup>
@@ -397,5 +396,5 @@
     }
 </style>
 
-<!-- Global key listener -->
-<svelte:window on:keydown={onKeyPressed}/>
+<!-- Global event listeners -->
+<svelte:window on:keydown={onKeyPressed} on:mousedown={e => onSearchFocused(e, null)}/>

@@ -1,4 +1,9 @@
-<!-- Bidirectional divider component -->
+<!-- @component
+### Description
+ Bidirectional divider component for the UESP gamemap.
+
+### Author(s)
+- Thal-J <thal-j@uesp.net> (10th Jan, 2023) -->
 
 <script>
     export let direction = "horizontal" // default: horizontal

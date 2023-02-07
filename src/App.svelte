@@ -39,9 +39,11 @@
 	import Search from './components/SearchPane.svelte';
 	import MapOptions from './components/MapOptions.svelte';
 	import IconButton from './components/IconButton.svelte';
+	import Collapsible from './components/Collapsible.svelte';
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
+  import LocationList from './components/LocationList.svelte';
 
 	print("Initialising app...");
 
@@ -333,7 +335,9 @@
 		<IconButton icon="article" label="deez" tooltip="ligma" hasBackground="true"/>
 		<IconButton icon="article" label="deez" tooltip="ligma"/>
 		<IconButton icon="article" label="deez" tooltip="ligma" checked="false"/>
-		<IconButton icon="explore" label="Loading..." tooltip="Jump to location" dropdown="true"/>
+		<IconButton icon="explore" label={null} tooltip="Jump to location" dropdown="true"/>
+		<Collapsible></Collapsible>
+		<LocationList></LocationList>
 	{/if}
 
 </markup>

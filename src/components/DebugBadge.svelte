@@ -1,4 +1,10 @@
-<!-- Debug badge component -->
+<!-- @component
+### Description
+ Debug tag component for the UESP gamemap.
+
+### Author(s)
+- Thal-J <thal-j@uesp.net> (10th Jan, 2023) -->
+
 <div id="debug_tag">
     <b>Debug</b>
 </div>

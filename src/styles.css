@@ -112,6 +112,14 @@ html, body, main {
 	user-select: none;
 }
 
+/* prevent tab text being selectable */
+.tabs {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
 /* hide these elements by default */
 .onlymobile {
 	display: none !important;
@@ -216,6 +224,24 @@ button {
 	background-color: var(--divider) !important;
 	font-size: 1.8rem !important;
 	object-fit: scale-down;
+}
+
+.tabs .indicator {
+	height: 3px !important;
+	background-color: var(--secondary) !important;
+}
+
+.tabs .tab a:focus, .tabs .tab a.active {
+	background-color: var(--selection) !important;
+}
+
+.tabs .tab a:focus, .tabs .tab a:focus.active {
+	background-color: var(--selection) !important;
+}
+
+#location_list_tab_bar .tab a.active {
+	color: var(--text_on_primary) !important;
+	font-weight: bold !important;
 }
 
 /*================================================
@@ -485,14 +511,6 @@ button {
 
 
 /*================================================
-					   STUFF
-================================================*/
-
-
-
-
-
-/*================================================
 				   	Icon Bar
 ================================================*/
 
@@ -521,148 +539,4 @@ div[class^="icon_bar"] {
 	flex-direction: row !important;
 	overflow: hidden;
 	margin-right: auto;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*===============================================
-				Location Switcher
-================================================*/
-
-#location_switcher_root:before {
-	content: "\A";
-    border-style: solid;
-    border-width: 10px 15px 10px 0;
-    border-color: transparent var(--primary_variant_dark) transparent transparent;
-    position: absolute;
-    left: 50%;
-	top: -17px;
-	transform: rotate(90deg);
-}
-
-#location_switcher_root {
-	position: fixed;
-	display: none !important;
-	width: calc(var(--search_pane_width) * 0.75 );
-	height: 65%;
-	background-color: var(--surface);
-	color: var(--text_on_primary);
-	top: 50%;
-	left: calc(var(--search_pane_width) + var(--padding_large));
-	top: 40%;
-	transform: translate(-50%, -50%);
-	z-index: 100000;
-	border-radius: var(--padding_medium);
-	box-shadow: 0px 1.5px 4px 4px var(--shadow);
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-}
-
-#location_switcher_root.shown {
-	opacity: 1;
-	display: block !important;
-	visibility: visible;
-	pointer-events: auto;
-	animation: fadein 0.2s;
-	top:42%;
-}
-
-@keyframes fadein {
-    0% {
-        opacity: 0;
-		top:40%;
-    }
-
-    100% {
-        opacity: 1;
-		top:42%;
-    }
-}
-
-.collapsible-header {
-	background-color: var(--surface_variant_dark);
-	font-weight: bold;
-	justify-content: space-between;
-	padding-left: 1.4em;
-}
-
-li div.collapsible-header i {
-	transition: all 0.2s ease-out;
-}
-
-
-#location_switcher_tab_bar {
-	border-radius: var(--padding_medium) var(--padding_medium) 0 0;
-	height: var(--appbar_dimen) !important;
-	background-color: var(--primary_variant_dark);
-	box-shadow: 0 2px 2px 0px var(--shadow);
-	z-index: 999;
-}
-
-#location_switcher_tab_bar .tab a {
-	color: var(--text_low_emphasis);
-	font-weight: bold;
-}
-
-#location_switcher_tab_bar .tab a.active {
-	color: var(--text_on_primary);
-	font-weight: bold;
-}
-
-#location_switcher_content {
-	overflow-y: auto;
-	height: calc(100% - var(--appbar_dimen));
-	border-radius: 0 0 var(--padding_medium) var(--padding_medium);
-}
-
-.tabs .indicator {
-	height: 3px;
-	background-color: var(--secondary);
-}
-
-.tabs .tab a:focus, .tabs .tab a.active {
-	background-color: var(--selection);
-}
-
-.tabs .tab a:focus, .tabs .tab a:focus.active {
-	background-color: var(--selection);
 }
