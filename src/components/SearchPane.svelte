@@ -8,7 +8,7 @@
 <script>
 
     // import core svelte stuff
-    import { fade } from 'svelte/transition';
+    import { fade, fly } from 'svelte/transition';
 
     // import UI components
     import Checkbox from "./Checkbox.svelte";
@@ -218,7 +218,7 @@
 </script>
 
 <markup>
-    <div id="search_pane" in:fade="{{duration: 150 }}" out:fade="{{duration: 150}}">
+    <div id="search_pane" in:fly="{{ x: -5, duration: 250 }}" out:fade="{{duration: 150}}">
         <div id="search_container">
             <!-- Search bar -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
