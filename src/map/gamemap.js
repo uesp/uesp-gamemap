@@ -1219,6 +1219,13 @@ export default class Gamemap {
 		}
 	}
 
+	// todo
+	reset(currentWorldOnly) {
+		//resets the gamemap to its default position and world. if currentWorldOnly is set, then it only resets
+		// current world's position
+		print("todo! reset!");
+	}
+
 	isGridEnabled() {
 		return this.gridEnabled;
 	}

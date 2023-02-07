@@ -21,7 +21,11 @@
 <markup>
     <div id="watermark" class:watermark={!isEmbedded}>
         {#if !isEmbedded}
-            <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home">UESP</a></span> • {mapName}</b>
+            <!-- svelte-ignore a11y-missing-attribute -->
+            <!-- svelte-ignore missing-declaration -->
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-invalid-attribute -->
+            <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home">UESP</a></span> • <a title="Reset this map" href="javascript:;" onclick="gamemap.reset();">{mapName}</a></b>
         {:else}
             <b>{#if embedType == "uesp"}<span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home">UESP</a></span> • {/if}View larger map <Icon name="open_in_new" size="tiny"/></b>
         {/if}
