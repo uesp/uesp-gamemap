@@ -10,24 +10,20 @@
     import Icon from "./Icon.svelte";
 
     export let mapName = "Gamemap";
-    export let embedType = "none";
-    let isEmbedded = false;
-    if (embedType != "none") {
-        isEmbedded = true;
-    }
+    export let embedded = false;
 
 </script>
 
 <markup>
-    <div id="watermark" class:watermark={!isEmbedded}>
-        {#if !isEmbedded}
+    <div id="watermark" class:watermark={!embedded}>
+        {#if !embedded}
             <!-- svelte-ignore a11y-missing-attribute -->
             <!-- svelte-ignore missing-declaration -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-invalid-attribute -->
             <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home">UESP</a></span> • <a title="Reset this map" href="javascript:;" onclick="gamemap.reset();">{mapName}</a></b>
         {:else}
-            <b>{#if embedType == "uesp"}<span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home">UESP</a></span> • {/if}View larger map <Icon name="open_in_new" size="tiny"/></b>
+            <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home">UESP</a></span> • View larger map <Icon name="open_in_new" size="tiny"/></b>
         {/if}
     </div>
 </markup>

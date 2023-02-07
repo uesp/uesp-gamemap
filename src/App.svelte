@@ -40,10 +40,10 @@
 	import MapOptions from './components/MapOptions.svelte';
 	import IconButton from './components/IconButton.svelte';
 	import Collapsible from './components/Collapsible.svelte';
+	import LocationList from './components/LocationList.svelte';
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
-  import LocationList from './components/LocationList.svelte';
 
 	print("Initialising app...");
 
@@ -57,7 +57,6 @@
 	let gamemap = null;
 	let editingEnabled = false;
 	let isEmbedded = window.self !== window.top;
-	let uespEmbed = isEmbedded && getURLParams().has("uespEmbed");
 	let currentZoom = getURLParams().has("zoom") ? getURLParams().get("zoom") : 0;
 	let showUI = true;
 	let showLayerSwitcher = false;
@@ -295,19 +294,26 @@
 				<!-- only show these elements when not being embedded -->
 				{#if !isEmbedded}
 
-					<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom} />
-					<Search></Search>
+					<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom}/>
+					<Search/>
 
 					<!-- show layer switcher when available -->
 					{#if showLayerSwitcher}
-						<LayerSwitcher />
+						<LayerSwitcher/>
 					{/if}
+
+					<!-- <IconButton icon="article" label="deez" tooltip="ligma" hasBackground="true"/>
+					<IconButton icon="article" label="deez" tooltip="ligma"/>
+					<IconButton icon="article" label="deez" tooltip="ligma" checked="false"/>
+					<IconButton icon="explore" label={null} tooltip="Jump to location" dropdown="true"/>
+					<Collapsible></Collapsible>
+					<LocationList></LocationList> -->
 
 				{/if}
 			{/if}
 
 			<MapOptions>
-				<Watermark mapName = {mapConfig.mapTitle} embedType = {(isEmbedded) ? (uespEmbed) ? "uesp" : "normal" : "none"}/>
+				<Watermark mapName = {mapConfig.mapTitle} embedded = {isEmbedded}/>
 			</MapOptions>
 
 			<!-- Show debug tag in top right corner if app is in dev mode -->
@@ -330,13 +336,6 @@
 	<!-- Show map selection menu on 404 -->
 	{#if showMaps}
 		<MapChooser/>
-
-		<IconButton icon="article" label="deez" tooltip="ligma" hasBackground="true"/>
-		<IconButton icon="article" label="deez" tooltip="ligma"/>
-		<IconButton icon="article" label="deez" tooltip="ligma" checked="false"/>
-		<IconButton icon="explore" label={null} tooltip="Jump to location" dropdown="true"/>
-		<Collapsible></Collapsible>
-		<LocationList></LocationList>
 	{/if}
 
 </markup>

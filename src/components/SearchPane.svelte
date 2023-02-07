@@ -155,7 +155,6 @@
 
     // listen to key press events
     function onKeyPressed(event) {
-        print(event);
         // if ctrl + F pressed, focus search
         if ((event.ctrlKey || event.metaKey) && event.keyCode === 70) {
     		event.preventDefault();
