@@ -7,6 +7,7 @@
 
 <script>
 	// import svelte core stuff
+    import { fade } from 'svelte/transition';
     import { createEventDispatcher } from "svelte";
     import "long-press-event";
 
@@ -51,7 +52,7 @@
 </script>
 
 <markup>
-    <div id="zoom_widget">
+    <div id="zoom_widget" in:fade="{{duration: 150 }}" out:fade="{{duration: 150}}">
         <!-- svelte-ignore missing-declaration -->
         <button on:click={() => zoom(gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect long-press" id="btn_zoom_in" tabindex="-1" title="Zoom in" disabled={!canZoomIn} data-long-press-delay="600"><Icon name="add"/></button>
         <Divider/>

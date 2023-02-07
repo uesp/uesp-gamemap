@@ -53,7 +53,7 @@
 
 <markup>
     <!-- Layer switcher Widget -->
-    <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit}>
+    <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit} in:fade="{{duration: 150 }}" out:fade="{{duration: 150}}">
 
         <!-- Primary layer switcher button -->
         <button id="btn_layer_widget_switcher" class:hasLayerImage={hasMultipleLayers} class="waves-effect" on:click={onLayerClicked} style="background-image: url({layerImage});">
@@ -66,7 +66,7 @@
 
         <!-- Additional layer options (on hover) -->
         {#if isHovered}
-            <div class="layer_widget_options" in:fly="{{ x: -15, duration: 200 }}" out:fade="{{duration: 200}}">
+            <div class="layer_widget_options" in:fly="{{ x: -15, duration: 200 }}" out:fade="{{duration: 125}}">
 
                 <!-- Dynamic map layers -->
                 {#if hasMultipleLayers}

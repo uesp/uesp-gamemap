@@ -285,8 +285,6 @@
 		<!-- only show ui when ui is enabled -->
 		{#if showUI}
 
-			<Search></Search>
-
 			<!-- only show loading bar when map is loading -->
 			{#if isLoading}
 				<ProgressBar/>
@@ -298,6 +296,7 @@
 				{#if !isEmbedded}
 
 					<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom} />
+					<Search></Search>
 
 					<!-- show layer switcher when available -->
 					{#if showLayerSwitcher}

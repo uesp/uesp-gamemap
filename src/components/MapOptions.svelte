@@ -5,12 +5,15 @@
 ### Author(s)
 - Thal-J <thal-j@uesp.net> (06th Feb, 2023) -->
 
-<markup>
+<script>
+    // import svelte core stuff
+    import { fade, fly } from 'svelte/transition';
+</script>
 
-    <div>
+<markup>
+    <div in:fly="{{ y: 40, duration: 250 }}" out:fade="{{duration: 150}}">
         <slot/>
     </div>
-
 </markup>
 
 <style>

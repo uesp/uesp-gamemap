@@ -6,6 +6,10 @@
 - Thal-J <thal-j@uesp.net> (31st Jan, 2023) -->
 
 <script>
+
+    // import core svelte stuff
+    import { fade } from 'svelte/transition';
+
     // import UI components
     import Checkbox from "./Checkbox.svelte";
     import Icon from "./Icon.svelte";
@@ -215,7 +219,7 @@
 </script>
 
 <markup>
-    <div id="search_pane">
+    <div id="search_pane" in:fade="{{duration: 150 }}" out:fade="{{duration: 150}}">
         <div id="search_container">
             <!-- Search bar -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
