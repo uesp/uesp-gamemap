@@ -56,7 +56,6 @@
 	let mapConfig = null;
 	let gamemap = null;
 	let editingEnabled = false;
-	let isEmbedded = window.self !== window.top;
 	let currentZoom = getURLParams().has("zoom") ? getURLParams().get("zoom") : 0;
 	let showUI = true;
 	let showLayerSwitcher = false;
@@ -292,7 +291,7 @@
 			<!-- otherwise, show these elements when fully loaded -->
 			{#if isLoaded}
 				<!-- only show these elements when not being embedded -->
-				{#if !isEmbedded}
+				{#if !gamemap.isEmbedded()}
 
 					<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom}/>
 					<Search/>
@@ -313,7 +312,7 @@
 			{/if}
 
 			<MapOptions>
-				<Watermark mapName = {mapConfig.mapTitle} embedded = {isEmbedded}/>
+				<Watermark mapName = {mapConfig.mapTitle} embedded = {gamemap.isEmbedded()}/>
 			</MapOptions>
 
 			<!-- Show debug tag in top right corner if app is in dev mode -->

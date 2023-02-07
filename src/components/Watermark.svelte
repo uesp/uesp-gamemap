@@ -21,9 +21,9 @@
             <!-- svelte-ignore missing-declaration -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-invalid-attribute -->
-            <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home" target="_blank" rel="noopener noreferrer">UESP</a></span> • <a title="Reset this map" href="javascript:;" onclick="gamemap.reset();">{mapName}</a></b>
+            <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home" target='_top'>UESP</a></span> • <a title="Reset this map" href="javascript:;" onclick="gamemap.reset();">{mapName}</a></b>
         {:else}
-            <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home" target="_blank" rel="noopener noreferrer">UESP</a></span> • View larger map <Icon name="open_in_new" size="tiny"/></b>
+            <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home" target='_top'>UESP</a></span> • View larger map <Icon name="open_in_new" size="tiny"/></b>
         {/if}
     </div>
 </markup>

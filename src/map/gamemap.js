@@ -1447,12 +1447,16 @@ export default class Gamemap {
 				print.warn("There was an error getting permissions.")
 			}
 
-			self.mapConfig.editingEnabled = canEdit;
+			self.mapConfig.editingEnabled = canEdit && !self.isEmbedded();
 			if (self.mapCallbacks != null) {
-				self.mapCallbacks.onPermissionsLoaded(canEdit);
+				self.mapCallbacks.onPermissionsLoaded(self.mapConfig.editingEnabled);
 			}
 		});
 
+	}
+
+	isEmbedded() {
+		return window.self !== window.top;
 	}
 
 	// tileX, tileY, zoom, world
