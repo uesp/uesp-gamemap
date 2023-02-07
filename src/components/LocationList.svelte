@@ -9,6 +9,7 @@
 <script>
     // import svelte core stuff
 	import { onMount } from 'svelte';
+    import { fade, fly } from 'svelte/transition';
 
     let tabBar = null;
     let locationList = null;
@@ -27,7 +28,7 @@
 
 <markup>
     <!-- Location list -->
-    <div id="location_list" bind:this={locationList}>
+    <div id="location_list" bind:this={locationList} in:fly="{{ y: -20, duration: 200 }}" out:fade>
 
         <ul id="location_list_tab_bar" class="tabs" bind:this={tabBar}>
             <li id="group_tab" class="tab"><a href="#tab_categories">Groups</a></li>

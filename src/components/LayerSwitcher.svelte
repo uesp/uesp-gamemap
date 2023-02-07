@@ -6,6 +6,8 @@
 - Thal-J <thal-j@uesp.net> (24th Jan, 2023) -->
 
 <script>
+    // import core svelte stuff
+    import { fade, fly } from 'svelte/transition';
 
     // import ui components
     import Divider from "./Divider.svelte";
@@ -63,28 +65,30 @@
         </button>
 
         <!-- Additional layer options (on hover) -->
-        <div class="layer_widget_options" class:isShown={isHovered}>
+        {#if isHovered}
+            <div class="layer_widget_options" in:fly="{{ x: -15, duration: 200 }}" out:fade="{{duration: 200}}">
 
-            <!-- Dynamic map layers -->
-            {#if hasMultipleLayers}
-                 {#each layers as layer}
-                    <!-- svelte-ignore missing-declaration -->
-                    <LayerButton on:onClick={onLayerClicked} label={layer.name.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer.name, true)}/>
-                 {/each}
-                 <Divider direction="vertical"></Divider>
-            {/if}
+                <!-- Dynamic map layers -->
+                {#if hasMultipleLayers}
+                    {#each layers as layer}
+                        <!-- svelte-ignore missing-declaration -->
+                        <LayerButton on:onClick={onLayerClicked} label={layer.name.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer.name, true)}/>
+                    {/each}
+                    <Divider direction="vertical"></Divider>
+                {/if}
 
-            <!-- Predefined optional map layers -->
-            <!-- svelte-ignore missing-declaration -->
-            {#if gamemap.getCurrentWorld().hasGrid}
-                <LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked={gridEnabled} on:onClick={(event) => (gamemap.toggleCellGrid(event.detail))}/>
-            {/if}
+                <!-- Predefined optional map layers -->
+                <!-- svelte-ignore missing-declaration -->
+                {#if gamemap.getCurrentWorld().hasGrid}
+                    <LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked={gridEnabled} on:onClick={(event) => (gamemap.toggleCellGrid(event.detail))}/>
+                {/if}
 
-            <!-- svelte-ignore missing-declaration -->
-            {#if gamemap.getCurrentWorld().hasCellResources}
-                <LayerButton label="Resources" tooltip="Toggle resource grid" icon="local_florist" checked={resourceGridEnabled}/>
-            {/if}
-        </div>
+                <!-- svelte-ignore missing-declaration -->
+                {#if gamemap.getCurrentWorld().hasCellResources}
+                    <LayerButton label="Resources" tooltip="Toggle resource grid" icon="local_florist" checked={resourceGridEnabled}/>
+                {/if}
+            </div>
+        {/if}
     </div>
 </markup>
 
@@ -106,26 +110,7 @@
         width: auto;
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
         position: relative;
-        opacity: 0;
-        display: none;
-    }
-
-    .isShown {
         display: flex;
-        animation: fadein 0.2s;
-        opacity: 1;
-    }
-
-    @keyframes fadein {
-        0% {
-            opacity: 0;
-            left: -10px;
-        }
-
-        100% {
-            opacity: 1;
-            left: 0px;
-        }
     }
 
     .layer_widget_options:before {
