@@ -90,6 +90,17 @@ body {
 	font-family: 'wikiType', Arial, sans-serif;
 }
 
+/*================================================
+					Accessibility
+================================================*/
+
+/* disable animations for browsers requesting reduced motion */
+@media (prefers-reduced-motion) {
+	* {
+		transition: none 0ms !important;
+		animation: none !important;
+	}
+}
 
 /*================================================
 					 General
@@ -102,6 +113,7 @@ html, body, main {
 	height: 100%;
 	margin: 0 auto;
 	opacity: 1 !important;
+	overflow: hidden;
 }
 
 /* prevent icons being selectable */
@@ -245,18 +257,6 @@ button {
 }
 
 /*================================================
-					Accessibility
-================================================*/
-
-/* disable animations for browsers requesting reduced motion */
-@media (prefers-reduced-motion) {
-	* {
-		transition: none 0ms !important;
-		animation: none !important;
-	}
-}
-
-/*================================================
 				   Mobile CSS
 ================================================*/
 
@@ -300,7 +300,7 @@ button {
 		width: var(--appbar_dimen) !important;
 	}
 
-	.icon_bar_responsive {
+	.icon_bar_secondary {
 		flex-direction: column !important;
 	}
 
@@ -461,82 +461,4 @@ button {
 
 .popupEditButton:active {
 	background: var(--bubble_selection);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*================================================
-				   	Icon Bar
-================================================*/
-
-.icon_bar {
-	padding-top: var(--padding_minimum);
-	padding-bottom: var(--padding_minimum);
-	padding-right: var(--padding_minimum);
-	right:  var(--padding_minimum);
-	position: absolute;
-	display: flex;
-	flex-wrap: nowrap;
-	width: calc(100% - (var(--search_pane_width) + var(--padding_minimum))) !important;
-	overflow: hidden;
-}
-
-div[class^="icon_bar"] {
-	z-index: var(--zindex_floating);
-	display: flex;
-	flex-direction: row-reverse;
-	justify-content: flex-end;
-	gap: var(--padding_medium);
-}
-
-.icon_bar_responsive {
-	flex: none;
-	flex-direction: row !important;
-	overflow: hidden;
-	margin-right: auto;
 }

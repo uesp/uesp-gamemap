@@ -16,6 +16,7 @@ make current world button elipsize after certain amount, prevent being too big
 - allow world name instead of ID in url (used for centreon)
 - add allow long clicking on mobile to open popups
 - fix game worldspace XY conversion
+- make app crop any overflow, to prevent scrollbars
 - fix polylines not respecting zoom levels
 - optimise grid code
 - make loading bar show as soon as gotoDest is called

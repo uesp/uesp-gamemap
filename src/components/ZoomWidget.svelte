@@ -52,7 +52,7 @@
 </script>
 
 <markup>
-    <div id="zoom_widget" in:fly="{{ x: 10, duration: 250 }}" out:fade="{{duration: 150}}">
+    <div id="zoom_widget" in:fly="{{ x: 5, duration: 250 }}" out:fade="{{duration: 75}}">
         <!-- svelte-ignore missing-declaration -->
         <button on:click={() => zoom(gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect long-press" id="btn_zoom_in" tabindex="-1" title="Zoom in" disabled={!canZoomIn} data-long-press-delay="600"><Icon name="add"/></button>
         <Divider/>

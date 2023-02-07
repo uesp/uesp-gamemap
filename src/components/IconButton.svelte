@@ -74,6 +74,7 @@ iconButton element:
         vertical-align: middle;
         line-height: 100%;
         text-overflow: ellipsis;
+        pointer-events: visible;
     }
 
     button:hover {

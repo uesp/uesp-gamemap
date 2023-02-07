@@ -218,7 +218,7 @@
 </script>
 
 <markup>
-    <div id="search_pane" in:fly="{{ x: -5, duration: 250 }}" out:fade="{{duration: 150}}">
+    <div id="search_pane" in:fly="{{ x: -5, duration: 250 }}" out:fade="{{duration: 75}}">
         <div id="search_container">
             <!-- Search bar -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->

@@ -11,7 +11,7 @@
 </script>
 
 <markup>
-    <div in:fly="{{ y: 40, duration: 250 }}" out:fade="{{duration: 100}}">
+    <div in:fly="{{ y: 5, duration: 250 }}" out:fade="{{duration: 100}}">
         <slot/>
     </div>
 </markup>

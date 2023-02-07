@@ -15,33 +15,43 @@
 </script>
 
 <markup>
-    <div class="icon_bar" in:fly={{ x: 10, duration: 250 }} out:fade={{duration: 150}}>
-        <div class="icon_bar_persistent">
-
-            <IconButton icon="more_vert" tooltip="More" data-target='overflow-menu' on:click={() => (print("not implemented"))}/>
-
-            <!-- Overflow Menu Items
-            <ul id='overflow-menu' class='dropdown-content'>
-                <li><a onclick="showHelp()" href="javascript:void(0);">Help</a></li>
-                <li><a onclick="resetMap()" href="javascript:void(0);">Reset Map</a></li>
-                <li><a onclick="toggleFullscreen();" href="javascript:void(0);" id="fullscreen-toggle"><i class="material-icons small">fullscreen</i>Fullscreen</a></li>
-            </ul> -->
+    <div class="icon_bar" in:fly={{ x: 5, duration: 250 }} out:fade={{duration: 75}}>
+        <div class="icon_bar_primary">
+            <slot name="primary"></slot>
         </div>
 
-        <IconButton icon="edit" tooltip="Toggle edit mode" noMobile="true" checked="false" on:checked={() => (print("not implemented"))}/>
-
-        <div class="icon_bar_responsive">
-            <IconButton icon="explore" tooltip="Jump to location" dropdown="true" on:checked={() => (print("not implemented"))}/>
-
-            <IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" on:click={() => (print("not implemented"))}/>
-
-            <IconButton icon="link" label="Copy Link" tooltip="Copy link to this location" on:click={() => (print("not implemented"))}/>
+        <div class="icon_bar_secondary">
+            <slot name="secondary"></slot>
         </div>
     </div>
 </markup>
 
 
 <style>
+    .icon_bar {
+        padding-top: var(--padding_minimum);
+        padding-bottom: var(--padding_minimum);
+        right:  var(--padding_minimum);
+        position: absolute;
+        display: flex;
+        flex-wrap: nowrap;
+        width: calc(100% - (var(--side_panel_width) + var(--padding_minimum))) !important;
+        overflow: hidden;
+        pointer-events: none;
+    }
 
+    div[class^="icon_bar"] {
+        z-index: var(--zindex_floating);
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: var(--padding_medium);
+    }
 
+    .icon_bar_responsive {
+        flex: none;
+        flex-direction: row !important;
+        overflow: hidden;
+        margin-right: auto;
+    }
 </style>

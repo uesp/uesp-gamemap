@@ -301,17 +301,23 @@
 					{/if}
 
 					<IconBar>
+						<slot:template slot="primary">
+							<IconButton icon="more_vert" tooltip="More" data-target='overflow-menu' on:click={() => (print("not implemented"))}/>
+							<IconButton icon="edit" tooltip="Toggle edit mode" noMobile="true" checked="false" on:checked={() => (print("not implemented"))}/>
+							<!-- Overflow Menu Items
+							<ul id='overflow-menu' class='dropdown-content'>
+								<li><a onclick="showHelp()" href="javascript:void(0);">Help</a></li>
+								<li><a onclick="resetMap()" href="javascript:void(0);">Reset Map</a></li>
+								<li><a onclick="toggleFullscreen();" href="javascript:void(0);" id="fullscreen-toggle"><i class="material-icons small">fullscreen</i>Fullscreen</a></li>
+							</ul> -->
+						</slot:template>
 
-
+						<slot:template slot="secondary">
+							<IconButton icon="explore" tooltip="Jump to location" dropdown="true" on:checked={() => (print("not implemented"))}/>
+							<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" on:click={() => (print("not implemented"))}/>
+							<IconButton icon="link" label="Copy Link" tooltip="Copy link to this location" on:click={() => (print("not implemented"))}/>
+						</slot:template>
 					</IconBar>
-
-					<!-- <IconButton icon="article" label="deez" tooltip="ligma" hasBackground="true"/>
-					<IconButton icon="article" label="deez" tooltip="ligma"/>
-					<IconButton icon="article" label="deez" tooltip="ligma" checked="false"/>
-					<IconButton icon="explore" label={null} tooltip="Jump to location" dropdown="true"/>
-					<Collapsible></Collapsible>
-					<LocationList></LocationList> -->
-
 				{/if}
 			{/if}
 
