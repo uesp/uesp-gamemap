@@ -166,7 +166,7 @@ export default class Location {
 
 	getPopupContent() {
 
-		let popupContent = "<div class='popupTitle'><a "+ this.createWikiLink() +"'>" + this.name + "</a></div>" +
+		let popupContent = "<div class='popupTitle'><a "+ this.createWikiLink() +" target='_blank' rel='noopener noreferrer'>" + this.name + "</a></div>" +
 							"<div class='popupDesc'>" + this.description + "</div>" +
 							"<hr/>" +
 							"<div class='popupInfo'><b>Internal ID:</b> " + this.id + "</div>";
