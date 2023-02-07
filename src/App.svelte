@@ -44,6 +44,7 @@
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
+  import IconBar from './components/IconBar.svelte';
 
 	print("Initialising app...");
 
@@ -174,8 +175,6 @@
 
 	function loadGamemap(mapConfig) {
 
-		print("Is embedded: " + isEmbedded);
-
 		// define callbacks
 		let mapCallbacks = {
 			onWorldsLoaded,
@@ -300,6 +299,11 @@
 					{#if showLayerSwitcher}
 						<LayerSwitcher/>
 					{/if}
+
+					<IconBar>
+
+
+					</IconBar>
 
 					<!-- <IconButton icon="article" label="deez" tooltip="ligma" hasBackground="true"/>
 					<IconButton icon="article" label="deez" tooltip="ligma"/>

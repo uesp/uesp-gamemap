@@ -22,10 +22,13 @@ iconButton element:
     export let tooltip;
     export let icon;
     export let label;
-    export let hasBackground;
+    export let hasBackground = true;
     export let checked;
-    export let hideMobile;
+    export let noMobile;
     export let dropdown;
+
+    checked = (checked != null) ? JSON.parse(checked) : null;
+    hasBackground = (hasBackground != null) ? JSON.parse(hasBackground) : null;
 
     const dispatch = createEventDispatcher();
 
@@ -48,7 +51,7 @@ iconButton element:
 </script>
 
 <markup>
-    <button class='btn_icon_button waves-effect' title={tooltip} on:click={onClicked} class:checked={checked} class:hasBackground={hasBackground} class:bgless={!hasBackground} class:nomobile={hideMobile} class:dropdown={dropdown}>
+    <button class='btn_icon_button waves-effect' title={tooltip} on:click={onClicked} class:checked={checked} class:hasBackground={hasBackground} class:bgless={!hasBackground} class:nomobile={noMobile} class:dropdown={dropdown}>
         {#if icon}<Icon name={icon}/>{/if}
         {#if label}<b class="icon_btn_label nomobile">{label}</b>{/if}
         {#if dropdown}<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>{/if}
@@ -100,6 +103,9 @@ iconButton element:
         text-overflow: ellipsis;
         max-width: 15ch;
         display: inline-block;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+        top: 9px;
     }
 
     /* checked state */
@@ -144,12 +150,6 @@ iconButton element:
     .dropdown.checked {
 	    background-color: var(--shadow) !important;
         box-shadow: unset;
-    }
-
-    .dropdown b {
-        padding-bottom: 5px;
-        margin-bottom: 10px;
-        top: 8px;
     }
 
     .dropdown.checked #dropdown_icon{

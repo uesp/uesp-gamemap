@@ -236,7 +236,7 @@
 
                 <!-- Clear search button -->
                 {#if searchQuery.length > 0 && searchBox.value != ""}
-                    <IconButton icon="close" tooltip="Clear the current search" on:click={clearSearch}></IconButton>
+                    <IconButton icon="close" tooltip="Clear the current search" hasBackground={false} on:click={clearSearch}></IconButton>
                 {/if}
 
                 <!-- Loading bar -->

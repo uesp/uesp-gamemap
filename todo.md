@@ -2,6 +2,7 @@
 
 - made location list dropdown truncate with really long location names
 - eye candy: improved smoothness, animations for everything
+- improved embed support
 
 ## todo
 
