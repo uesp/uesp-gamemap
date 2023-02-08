@@ -259,6 +259,7 @@ button {
 div[class^="icon_bar"] > * > *{
 	margin-left: 2px;
 	margin-right: 2px;
+	margin-bottom: 8px;
 }
 
 /* no label */

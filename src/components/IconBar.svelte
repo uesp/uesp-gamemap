@@ -42,7 +42,7 @@
         } else {
             iconBarSecondary.style.removeProperty("left");
             iconBarSecondary.style.right = "8px";
-            iconBarSecondary.style.top = iconBarPrimary.clientHeight + 19 + "px";
+            iconBarSecondary.style.top = iconBarPrimary.clientHeight + 8 + "px";
         }
 
         // setIconBarPositioning();
