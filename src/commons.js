@@ -339,3 +339,10 @@ window.getPrefs = function getPrefs(key) {
 		}
 	}
 }
+
+/** Function that checks to see if an element has overflowing content
+ * @returns {Boolean} Whether the element is overflowing
+ */
+Element.prototype.isOverflowing = function(){
+    return this.scrollHeight > this.clientHeight || this.scrollWidth > this.clientWidth;
+}

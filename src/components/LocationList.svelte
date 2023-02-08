@@ -24,8 +24,6 @@
 
 </script>
 
-
-
 <markup>
     <!-- Location list -->
     <div id="location_list" bind:this={locationList} in:fly="{{ y: -20, duration: 200 }}" out:fade>
@@ -49,7 +47,6 @@
 
 
 <style>
-
     #location_list {
         position: fixed;
         width: calc(var(--side_panel_width) * 0.80 );

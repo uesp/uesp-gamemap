@@ -256,11 +256,25 @@ button {
 	font-weight: bold !important;
 }
 
+div[class^="icon_bar"] > * > *{
+	margin-left: 2px;
+	margin-right: 2px;
+}
+
+/* no label */
+.noLabel b{
+	display: none !important;
+}
+
+.noLabel #dropdown_icon{
+	display: none;
+}
+
 /*================================================
 				   Mobile CSS
 ================================================*/
 
-@media only screen and (max-device-width:600px) {
+@media only screen and (max-device-width:670px) {
 
 	#location_switcher_root {
 		left: calc(50% - var(--appbar_dimen) + var(--padding_large)) !important;
@@ -273,12 +287,12 @@ button {
 		transform: rotate(180deg) !important;
 	}
 
-	.search_root {
+	#search_pane {
 		width: 100% !important;
 	}
 
-	.search_container {
-		width: calc(100% - 80px) !important;
+	#search_container {
+		width: calc(100% - 56px) !important;
   	}
 
 	.layer_widget_root {

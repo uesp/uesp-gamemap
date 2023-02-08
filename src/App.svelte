@@ -41,10 +41,10 @@
 	import IconButton from './components/IconButton.svelte';
 	import Collapsible from './components/Collapsible.svelte';
 	import LocationList from './components/LocationList.svelte';
+	import IconBar from './components/IconBar.svelte';
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
-  import IconBar from './components/IconBar.svelte';
 
 	print("Initialising app...");
 
@@ -302,8 +302,8 @@
 
 					<IconBar>
 						<slot:template slot="primary">
-							<IconButton icon="more_vert" tooltip="More" data-target='overflow-menu' on:click={() => (print("not implemented"))}/>
 							<IconButton icon="edit" tooltip="Toggle edit mode" noMobile="true" checked="false" on:checked={() => (print("not implemented"))}/>
+							<IconButton icon="more_vert" tooltip="More" data-target='overflow-menu' on:click={() => (print("not implemented"))}/>
 							<!-- Overflow Menu Items
 							<ul id='overflow-menu' class='dropdown-content'>
 								<li><a onclick="showHelp()" href="javascript:void(0);">Help</a></li>
