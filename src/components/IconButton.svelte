@@ -13,6 +13,7 @@ iconButton element:
 <script>
 
     // import svelte stuff
+    import { onMount } from 'svelte';
     import { createEventDispatcher } from "svelte";
 
     // import UI components
@@ -26,6 +27,7 @@ iconButton element:
     export let checked;
     export let noMobile;
     export let dropdown;
+    export let menu;
 
     checked = (checked != null) ? JSON.parse(checked) : null;
     hasBackground = (hasBackground != null) ? JSON.parse(hasBackground) : null;
@@ -36,6 +38,17 @@ iconButton element:
     if (checked != null) { hasBackground = true; }
     if (!hasBackground) { label = null; }
     if (label == null && dropdown) { label = "Loading..."; }
+
+    onMount(async () => {
+        // if menu not null, initiate it
+        if (menu != null) {
+            var elems = document.querySelectorAll('.dropdown-trigger');
+            M.Dropdown.init(elems, {
+                constrainWidth: false,
+                closeOnClick: true,
+            });
+        }
+    });
 
     function onClicked() {
 
@@ -51,11 +64,14 @@ iconButton element:
 </script>
 
 <markup>
-    <button class='btn_icon_button waves-effect' title={tooltip} on:click={onClicked} class:checked={checked} class:hasBackground={hasBackground} class:bgless={!hasBackground} class:nomobile={noMobile} class:dropdown={dropdown}>
+    <button class='btn_icon_button waves-effect' title={tooltip} on:click={onClicked} class:checked={checked} class:hasBackground={hasBackground} class:bgless={!hasBackground} class:nomobile={noMobile} class:dropdown={dropdown} class:dropdown-trigger={menu != null} data-target={menu}>
         {#if icon}<Icon name={icon}/>{/if}
         {#if label}<b class="icon_btn_label nomobile">{label}</b>{/if}
         {#if dropdown}<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>{/if}
     </button>
+    <slot>
+        <!-- optional menu items go here -->
+    </slot>
 </markup>
 
 <style>

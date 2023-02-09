@@ -1,9 +1,17 @@
 ## last week:
 
-- made location list dropdown truncate with really long location names
-- polish: improved smoothness, subtle animations for more things
-- improved embed support
-- put world name in URL instead of world id
+
+## Polish / QoL
+
+- iconbar menu is now more responsive, hides stuff based on window size
+- embed support is a little better
+- made location dropdown truncate really long names
+- now supports both world name and id in URL (also now defaults to show world name)
+
+## Bugfixes:
+
+- fixed: bug with toasts overlaying elements on mobile (would prevent buttons being pressed)
+- fixed: not being able to click behind the icon bar, to the map
 
 ## todo
 

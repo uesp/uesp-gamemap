@@ -305,13 +305,15 @@
 					<IconBar>
 						<slot:template slot="primary">
 							{#if canEdit}<IconButton icon="edit" tooltip="Toggle edit pane" noMobile="true" checked="false" on:checked={() => (print("not implemented"))}/>{/if}
-							<IconButton icon="more_vert" tooltip="More" data-target='overflow-menu' on:click={() => (print("not implemented"))}/>
-							<!-- Overflow Menu Items
-							<ul id='overflow-menu' class='dropdown-content'>
-								<li><a onclick="showHelp()" href="javascript:void(0);">Help</a></li>
-								<li><a onclick="resetMap()" href="javascript:void(0);">Reset Map</a></li>
-								<li><a onclick="toggleFullscreen();" href="javascript:void(0);" id="fullscreen-toggle"><i class="material-icons small">fullscreen</i>Fullscreen</a></li>
-							</ul> -->
+							<IconButton icon="more_vert" tooltip="More" menu='overflow-menu' on:click={() => (print("not implemented"))}>
+								<!-- Menu Items -->
+								<ul id='overflow-menu' class='dropdown-content'>
+									<li><a onclick="showHelp()" href="javascript:void(0);">Help</a></li>
+									<li><a onclick="resetMap()" href="javascript:void(0);">Reset Map</a></li>
+									<li><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps">Send Feedback</a></li>
+									<li><a onclick="toggleFullscreen();" href="javascript:void(0);" id="fullscreen-toggle"><i class="material-icons small">fullscreen</i>Fullscreen</a></li>
+								</ul>
+							</IconButton>
 						</slot:template>
 
 						<slot:template slot="secondary">
