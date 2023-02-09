@@ -8,6 +8,8 @@ ported over the menu bar to svelte, and fixed some longstanding bugs
 - embed support is a little better
 - made location dropdown truncate really long names
 - now supports both world name and id in URL (also now defaults to show world name)
+- "more" menu now has icons on it
+- "more" menu also now has tooltips describing what things do
 
 ## Bugfixes:
 

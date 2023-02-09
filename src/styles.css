@@ -284,7 +284,7 @@ div[class^="icon_bar"] > * > *{
 }
 
 .toast {
-	font-weight: bold !important;
+	font-weight: 500 !important;
 	width: fit-content !important;
 	margin-left: auto !important;
 	margin-right: auto !important;
@@ -396,7 +396,7 @@ div[class^="icon_bar"] > * > *{
 	right: 0px;
 	background-color: var(--background_dark);
 	transition: background-color ease 900ms;
-	z-index: 1;
+	z-index: 0;
 }
 
 #gamemap * {

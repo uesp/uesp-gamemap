@@ -310,8 +310,8 @@
 								<!-- Menu Items -->
 								<ul id='overflow-menu' class='dropdown-content'>
 									<!-- svelte-ignore a11y-missing-attribute -->
-									<li><a onclick="showHelp()" title="See help, map key info"><Icon name="help"/>Help</a></li>
-									<li><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Give us feedback"><Icon name="feedback"/>Feedback</a></li>
+									<li><a onclick="showHelp()" title="See help & map key info"><Icon name="help"/>Help</a></li>
+									<li><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Give us feedback!"><Icon name="feedback"/>Feedback</a></li>
 									<!-- svelte-ignore a11y-missing-attribute -->
 									<!-- svelte-ignore a11y-click-events-have-key-events -->
 									<li><a on:click={gamemap.reset()} title="Reset this map"><Icon name="refresh"/>Reset Map</a></li>
