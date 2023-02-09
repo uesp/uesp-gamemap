@@ -1447,7 +1447,7 @@ export default class Gamemap {
 				print.warn("There was an error getting permissions.")
 			}
 
-			self.mapConfig.editingEnabled = canEdit && !self.isEmbedded();
+			self.mapConfig.editingEnabled = ((canEdit || isDebug) && (!self.isEmbedded() && !isMobile()));
 			if (self.mapCallbacks != null) {
 				self.mapCallbacks.onPermissionsLoaded(self.mapConfig.editingEnabled);
 			}
