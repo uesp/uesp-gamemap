@@ -12,28 +12,18 @@
 
     let iconBarPrimary = null;
     let iconBarSecondary = null;
-    let actions = null;
-    let actionCropIndex = 0;
-    let actionWidthArray = [];
     let searchPaneWidth = null;
     $: isMobile = false;
 
-    // some kind of check to see if mobile
-
-    // work out what the width of the icon bar would be by getting the end of search panel to end of screen
-
-
     // initiate icon bar
     onMount(async () => {
-
-        // actions = document.querySelector('#actions').children[0].children;
-        // actionCropIndex = actions.length - 1;
         onResize();
     });
 
     function onResize() {
         isMobile = window.innerWidth < 670;
         searchPaneWidth = document.querySelector('#search_pane').clientWidth + 4;
+        let screenWidth = window.innerWidth;
 
         if (!isMobile) {
             iconBarSecondary.style.left = searchPaneWidth + "px";
@@ -45,53 +35,12 @@
             iconBarSecondary.style.top = iconBarPrimary.clientHeight + 8 + "px";
         }
 
-        // setIconBarPositioning();
-
-        // let actionsWidth = document.querySelector('#actions').children[0].clientWidth;
-
-        // // let delta = 1 - (document.querySelector('#actions').children[0].clientWidth / iconBar.clientWidth)
-
-        // // print(Math.floor(delta * (actions.length - 1)));
-
-        // if (iconBar.isOverflowing()) {
-
-        //     print("overflowing!");
-        //     print(actions);
-
-        //     if (actionCropIndex != -1) {
-        //         let action = actions[actionCropIndex];
-        //         let beforeWidth = action.clientWidth;
-        //         action.classList.add("noLabel");
-        //         let afterWidth = action.clientWidth;
-        //         actionWidthArray.push((beforeWidth - afterWidth));
-        //         // if ()
-        //         // actionCropIndex = (actionCropIndex != 0) ? actionCropIndex-- : 0;
-        //     }
-
-        //     print(actionWidthArray);
-        // } else {
-        //     print(actions[actionCropIndex].clientWidth);
-        //     if (actions[actionCropIndex].clientWidth + actionWidthArray[(actionCropIndex.length - 1) - actionCropIndex] < actionsWidth) {
-        //         actions[actionCropIndex].classList.remove("noLabel");
-        //         actionCropIndex++;
-        //         print("aaaaa");
-        //     }
-        // }
-
-    }
-
-    function setIconBarPositioning() {
-        let screenWidth = window.innerWidth;
-        if (screenWidth > 500) {
+        if (!isMobile) {
             let iconBarWidth = screenWidth - (searchPaneWidth + iconBarPrimary.clientWidth + 19);
-
-            iconBarSecondary.style.maxWidth = iconBarWidth + "px";
-
-            if (iconBarSecondary.clientWidth > iconBarSecondary.style.maxWidth) {
-                iconBarSecondary.style.width = iconBarWidth + "px";
-            }
+            iconBarSecondary.style.width = iconBarWidth + "px";
         }
     }
+
 </script>
 
 <markup>
@@ -108,11 +57,9 @@
     div[class^="icon_bar"] {
         position: absolute;
         z-index: var(--zindex_floating);
-        flex-direction: row-reverse;
         gap: var(--padding_medium);
         pointer-events: none;
-        display: flex;
-        flex-wrap: nowrap;
+        display: inline;
         top: var(--padding_minimum);
     }
 
@@ -121,8 +68,9 @@
     }
 
     .icon_bar_secondary {
-        flex-direction: row !important;
         width: fit-content;
+        max-height: calc(var(--appbar_dimen) + var(--padding_small));
+        overflow-y: hidden;
     }
 
 </style>

@@ -320,7 +320,7 @@
         border-radius: var(--padding_small);
         border-top-left-radius: 0px;
         border-top-right-radius: 0px;
-        max-height: 83.25vh;
+        max-height: 70vh;
         padding-bottom: var(--padding_minimum);
         pointer-events: none;
     }

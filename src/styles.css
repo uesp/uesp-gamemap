@@ -259,7 +259,7 @@ button {
 div[class^="icon_bar"] > * > *{
 	margin-left: 2px;
 	margin-right: 2px;
-	margin-bottom: 8px;
+	margin-bottom: 12px;
 }
 
 /* no label */
@@ -317,6 +317,8 @@ div[class^="icon_bar"] > * > *{
 
 	.icon_bar_secondary {
 		flex-direction: column !important;
+		max-height: unset !important;
+        overflow-y: unset !important;
 	}
 
 }
