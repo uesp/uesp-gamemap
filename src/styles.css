@@ -305,6 +305,7 @@ div[class^="icon_bar"] > * > *{
 	font-weight: bold;
 	width: fit-content !important;
 	height: fit-content !important;
+	box-shadow: 0px 1.5px 4px 2px var(--shadow) !important
 }
 
 .dropdown-content li > a, .dropdown-content li > span {

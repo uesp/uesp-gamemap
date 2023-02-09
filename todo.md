@@ -10,6 +10,10 @@ ported over the menu bar to svelte, and fixed some longstanding bugs
 - now supports both world name and id in URL (also now defaults to show world name)
 - "more" menu now has icons on it
 - "more" menu also now has tooltips describing what things do
+- more menu also keyboard controlled
+
+## Misc:
+- because the "feedback" page is no longer per-map, i moved it to the overflow menu
 
 ## Bugfixes:
 

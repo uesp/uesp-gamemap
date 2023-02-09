@@ -13,6 +13,7 @@
     // state vars
     export let label;
     export let checked = false;
+    export let title;
 
     const dispatch = createEventDispatcher();
 
@@ -23,7 +24,7 @@
 </script>
 
 <markup>
-    <label class="waves-effect" style="width: 100%; padding-top: 8px;">
+    <label class="waves-effect" style="width: 100%; padding-top: 8px;" title={title}>
         <input type="checkbox" class="filled-in" on:change={onChange} checked={checked}/>
         <span>{label}</span>
     </label>

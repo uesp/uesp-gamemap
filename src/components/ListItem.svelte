@@ -65,7 +65,7 @@
     <div class='collection'>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-missing-attribute -->
-        <a class='collection-item waves-effect list-item' class:avatar={hasIcon} on:click={onClick}>
+        <a class='collection-item waves-effect list-item' class:avatar={hasIcon} on:click={onClick} title={(isWorld) ? "Click to visit this map" : (isLocation) ? "Click to centre on this location" : null}>
             {#if hasIcon}
                 {#if iconIsURL}
                     <img class='circle' src={icon} width=30 height=30 title={iconTooltip}/>
