@@ -23,18 +23,6 @@ $(document).ready(function() {
 				Action Buttons
 ================================================*/
 
-// copy link to clipboard button
-window.copyMapLink = function(){
-	log("copying link to clipboard...");
-	navigator.clipboard.writeText(window.location)
-	.then(() => {
-		M.toast({text: "Map link copied to clipboard!"});
-	})
-	.catch(err => {
-		log("Error copying link to clipboard.");
-	});
-}
-
 // goto article button
 window.gotoArticle = function(){
 	if (gamemap != null) {

@@ -1,6 +1,16 @@
-<!-- Progressbar component -->
+<!-- @component
+### Description
+ Progress bar component for the UESP gamemap.
 
-<div class="progress_bar">
+### Author(s)
+- Thal-J <thal-j@uesp.net> (17th Jan, 2023) -->
+
+<script>
+    // import svelte animations
+    import { fade} from 'svelte/transition';
+</script>
+
+<div class="progress_bar" out:fade={{duration: 150}}>
     <div class="progress"><div class="indeterminate"></div></div>
 </div>
 

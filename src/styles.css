@@ -271,6 +271,25 @@ div[class^="icon_bar"] > * > *{
 	display: none;
 }
 
+/* toasts */
+#toast-container {
+	top: unset !important;
+	right: unset !important;
+	bottom: 8% !important;
+	left: 0px !important;
+	max-width: 100% !important;
+	width: 100% !important;
+	pointer-events: none !important;
+}
+
+.toast {
+	font-weight: bold !important;
+	width: fit-content !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+	pointer-events: visible !important;
+}
+
 /*================================================
 				   Mobile CSS
 ================================================*/

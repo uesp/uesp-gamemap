@@ -16,9 +16,7 @@
     $: isMobile = false;
 
     // initiate icon bar
-    onMount(async () => {
-        onResize();
-    });
+    onMount(async () => { onResize(); });
 
     function onResize() {
         isMobile = window.innerWidth < 670;

@@ -56,8 +56,9 @@
 	let errorReason = "";
 	let mapConfig = null;
 	let gamemap = null;
-	let editingEnabled = false;
+	let canEdit = false;
 	let currentZoom = getURLParams().has("zoom") ? getURLParams().get("zoom") : 0;
+	$: currentWorld = null;
 	let showUI = true;
 	let showLayerSwitcher = false;
 	let showMaps = false;
@@ -65,6 +66,9 @@
 
 	// on document load
 	onMount(async () => {
+
+
+		M.AutoInit();
 
 		// remove noscript message
 		var element = document.getElementsByTagName("noscript");
@@ -232,6 +236,7 @@
 
 	function onWorldChanged(newWorld) {
 		setWindowTitle(newWorld.displayName);
+		currentWorld = newWorld;
 		isLoaded = true;
 		showLayerSwitcher = (newWorld.layers.length > 1 || newWorld.hasResources || newWorld.hasGrid);
 	}
@@ -251,7 +256,7 @@
 
 	function onPermissionsLoaded(enableEditing) {
 		print("Editing permissions loaded, editing is: " + enableEditing);
-		editingEnabled = enableEditing;
+		canEdit = enableEditing;
 	}
 
 	/*================================================
@@ -297,12 +302,12 @@
 
 					<!-- show layer switcher when available -->
 					{#if showLayerSwitcher}
-						<LayerSwitcher/>
+						<LayerSwitcher world={currentWorld}/>
 					{/if}
 
 					<IconBar>
 						<slot:template slot="primary">
-							<IconButton icon="edit" tooltip="Toggle edit mode" noMobile="true" checked="false" on:checked={() => (print("not implemented"))}/>
+							{#if canEdit}<IconButton icon="edit" tooltip="Toggle edit pane" noMobile="true" checked="false" on:checked={() => (print("not implemented"))}/>{/if}
 							<IconButton icon="more_vert" tooltip="More" data-target='overflow-menu' on:click={() => (print("not implemented"))}/>
 							<!-- Overflow Menu Items
 							<ul id='overflow-menu' class='dropdown-content'>
@@ -313,9 +318,18 @@
 						</slot:template>
 
 						<slot:template slot="secondary">
-							<IconButton icon="explore" tooltip="Jump to location" dropdown="true" on:checked={() => (print("not implemented"))}/>
-							<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" on:click={() => (print("not implemented"))}/>
-							<IconButton icon="link" label="Copy Link" tooltip="Copy link to this location" on:click={() => (print("not implemented"))}/>
+							{#if gamemap.hasMultipleWorlds()}
+								<IconButton icon="explore" label={currentWorld.displayName} tooltip="Jump to location" dropdown="true" on:checked={() => (print("not implemented"))}/>
+								<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" on:click={() => (print("not implemented"))}/>
+							{/if}
+							<!-- svelte-ignore missing-declaration -->
+							<IconButton icon="link" label="Copy Link" tooltip="Copy link to this location" on:click={() => {
+								print("Copying link to clipboard...");
+								navigator.clipboard.writeText(window.location)
+								.then(() => {
+									M.toast({html: 'Map link copied to clipboard!'});
+								});
+							}}/>
 						</slot:template>
 					</IconBar>
 				{/if}
