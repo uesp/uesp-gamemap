@@ -275,7 +275,7 @@ div[class^="icon_bar"] > * > *{
 #toast-container {
 	top: unset !important;
 	right: unset !important;
-	bottom: 8% !important;
+	bottom: 7% !important;
 	left: 0px !important;
 	max-width: 100% !important;
 	width: 100% !important;

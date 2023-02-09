@@ -23,20 +23,6 @@ $(document).ready(function() {
 				Action Buttons
 ================================================*/
 
-// goto article button
-window.gotoArticle = function(){
-	if (gamemap != null) {
-		log("getting article link...");
-
-		let link = gamemap.getArticleLink();
-
-		if (link != null && link != "") {
-			window.open(link);
-		}
-
-	}
-}
-
 window.showHelp = function() {
 	M.toast({text: "TODO: not implemented yet"});
 }
