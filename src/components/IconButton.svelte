@@ -176,4 +176,8 @@ iconButton element:
     .dropdown b{
 	    margin-right: -2px;
     }
+
+    .dropdown-trigger {
+        z-index: 9999 !important;
+    }
 </style>

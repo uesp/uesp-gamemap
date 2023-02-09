@@ -54,7 +54,6 @@
 <style>
     div[class^="icon_bar"] {
         position: absolute;
-        z-index: var(--zindex_floating);
         gap: var(--padding_medium);
         pointer-events: none;
         display: inline;

@@ -55,7 +55,7 @@
 	--appbar_dimen: 48px;
 	--layer_widget_dimen: 64px;
 	--side_panel_width: 380px;
-	--zindex_floating: 900;
+	--zindex_floating: 800;
 	--zindex_overlay: 9998;
 
 	/* padding */
@@ -147,10 +147,6 @@ html, body, main {
 	color: var(--text_low_emphasis) !important;
 }
 
-[class*="icon_button"] i {
-	margin: 5px;
-}
-
 /*  horizontal dividers */
 .horizontal_divider {
 	background: var(--divider);
@@ -178,11 +174,15 @@ button {
 	background: var(--selection);
 }
 
+
+/* checkboxes */
 [type="checkbox"].filled-in:checked + span:not(.lever)::after {
 	background-color: var(--secondary) !important;
 	border-color: var(--secondary) !important;
 }
 
+
+/* rows */
 .collection {
 	margin: 0px !important;
 	border: none !important;
@@ -238,6 +238,7 @@ button {
 	object-fit: scale-down;
 }
 
+/* tabs */
 .tabs .indicator {
 	height: 3px !important;
 	background-color: var(--secondary) !important;
@@ -250,24 +251,25 @@ button {
 .tabs .tab a:focus, .tabs .tab a:focus.active {
 	background-color: var(--selection) !important;
 }
-
 #location_list_tab_bar .tab a.active {
 	color: var(--text_on_primary) !important;
 	font-weight: bold !important;
 }
 
+/* icon bar */
 div[class^="icon_bar"] > * > *{
 	margin-left: 2px;
 	margin-right: 2px;
 	margin-bottom: 12px;
 }
-
-/* no label */
 .noLabel b{
 	display: none !important;
 }
 .noLabel #dropdown_icon{
 	display: none;
+}
+[class*="icon_button"] i {
+	margin: 5px;
 }
 
 /* toasts */
@@ -291,6 +293,13 @@ div[class^="icon_bar"] > * > *{
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+/* dropdown menus */
+.dropdown-content {
+	pointer-events: visible;
+	position: absolute;
+	z-index: 99999 !important;
 }
 
 /*================================================
@@ -360,6 +369,7 @@ div[class^="icon_bar"] > * > *{
 	right: 0px;
 	background-color: var(--background_dark);
 	transition: background-color ease 900ms;
+	z-index: 1;
 }
 
 #gamemap * {

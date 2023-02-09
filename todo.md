@@ -1,5 +1,6 @@
 ## last week:
 
+ported over the menu bar to svelte, and fixed some longstanding bugs
 
 ## Polish / QoL
 
