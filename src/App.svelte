@@ -67,9 +67,6 @@
 	// on document load
 	onMount(async () => {
 
-
-		M.AutoInit();
-
 		// remove noscript message
 		var element = document.getElementsByTagName("noscript");
 		for (let index = element.length - 1; index >= 0; index--) {

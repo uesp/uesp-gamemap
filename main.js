@@ -15,8 +15,6 @@ $(document).ready(function() {
 	$('#abc_tab').on('click', function(event) { onTabClicked(event.target); });
 	$('#group_tab').on('click', function(event) { onTabClicked(event.target); });
 
-	M.AutoInit();
-
 });
 
 /*================================================

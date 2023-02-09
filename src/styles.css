@@ -266,7 +266,6 @@ div[class^="icon_bar"] > * > *{
 .noLabel b{
 	display: none !important;
 }
-
 .noLabel #dropdown_icon{
 	display: none;
 }
@@ -288,6 +287,10 @@ div[class^="icon_bar"] > * > *{
 	margin-left: auto !important;
 	margin-right: auto !important;
 	pointer-events: visible !important;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 /*================================================

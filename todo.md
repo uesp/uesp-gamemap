@@ -1,19 +1,16 @@
 ## last week:
 
 - made location list dropdown truncate with really long location names
-- eye candy: improved smoothness, animations for everything
+- polish: improved smoothness, subtle animations for more things
 - improved embed support
+- put world name in URL instead of world id
 
 ## todo
 
-
-make action bar dynamic, crop to icons/put stuff in overflow menu if too small
 make location list centred with button
-make current world button elipsize after certain amount, prevent being too big
 
 - fix overflow menu being cropped
 - add overflow menu icons
-- allow world name instead of ID in url (used for centreon)
 - add allow long clicking on mobile to open popups
 - fix game worldspace XY conversion
 - fix polylines not respecting zoom levels

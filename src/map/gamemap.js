@@ -237,11 +237,8 @@ export default class Gamemap {
 			mapState.zoomLevel = this.mapConfig.defaultZoomLevel;
 		}
 
-		if (getURLParams().has("world")){
-			mapState.world = this.getWorldFromID(getURLParams().get("world"));
-			if (mapState.world == "undefined") {
-				mapState.world = this.getWorldFromID(this.mapConfig.defaultWorldID);
-			}
+		if (getURLParams().has("world")) {
+			mapState.world = isNaN(parseInt(getURLParams().get("world"))) ? (getURLParams().get("world") != "undefined" ? this.getWorldFromName(getURLParams().get("world")) : this.getWorldFromID(this.mapConfig.defaultWorldID)) : this.getWorldFromID(getURLParams().get("world"));
 		} else {
 			mapState.world = this.getWorldFromID(this.mapConfig.defaultWorldID);
 		}
@@ -312,7 +309,7 @@ export default class Gamemap {
 
 		// world related
 		if (this.hasMultipleWorlds()){
-			mapLink += 'world=' + newMapState.world.id;
+			mapLink += 'world=' + newMapState.world.name;
 			mapLink += '&';
 		}
 		if (this.hasMultipleMapLayers()) {
@@ -376,7 +373,7 @@ export default class Gamemap {
 		return this.mapWorlds[mapWorldDisplayNameIndex[worldDisplayName]];
 	}
 
-	/** Download and parse world data for this game's mapConfig.
+	/** Get world data for this game's mapConfig.
 	 * @see initialiseMap()
 	 */
 	getWorlds(mapConfig) {
@@ -495,8 +492,8 @@ export default class Gamemap {
 		this.gotoWorld(destID);
 	}
 
+	// TODO
 	centreOn(locationID, openPopup) {
-
 
 	}
 
@@ -1413,11 +1410,6 @@ export default class Gamemap {
 	}
 
 	getNextTileLayerName() {
-		print(this.getCurrentWorld());
-		print(this.getCurrentWorld().layers);
-		print(this.getCurrentWorld().layers.length);
-		print(this.getCurrentWorld().layers[this.getNextTileLayerIndex()]);
-		print(this.getMapState().layerIndex);
 		return this.getCurrentWorld().layers[this.getNextTileLayerIndex()].name;
 	}
 
