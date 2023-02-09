@@ -300,6 +300,33 @@ div[class^="icon_bar"] > * > *{
 	pointer-events: visible;
 	position: absolute;
 	z-index: 99999 !important;
+	background-color: var(--surface_variant) !important;
+	border-radius: 16px !important;
+	font-weight: bold;
+	width: fit-content !important;
+	height: fit-content !important;
+}
+
+.dropdown-content li > a, .dropdown-content li > span {
+	color: var(--text_on_primary) !important;
+	padding-left: var(--padding_small) !important;
+	padding-right: var(--padding_small) !important;
+}
+
+.dropdown-content li > a > i {
+	margin-right: var(--padding_small) !important;
+}
+
+.dropdown-content li > a {
+	display:inline-flex !important;
+}
+
+.dropdown-content li:hover {
+	background: var(--divider) !important;
+}
+
+.dropdown-content li:active {
+	background: var(--divider) !important;
 }
 
 /*================================================

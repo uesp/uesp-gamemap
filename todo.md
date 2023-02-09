@@ -13,6 +13,8 @@ ported over the menu bar to svelte, and fixed some longstanding bugs
 
 - fixed: bug with toasts overlaying elements on mobile (would prevent buttons being pressed)
 - fixed: not being able to click behind the icon bar, to the map
+- fixed: dropdown menu behind behind search and the other menu buttons
+- fixed: dropdown menu being cropped errorneously
 
 ## todo
 

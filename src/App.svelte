@@ -45,6 +45,7 @@
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
+  import Icon from './components/Icon.svelte';
 
 	print("Initialising app...");
 
@@ -308,10 +309,13 @@
 							<IconButton icon="more_vert" tooltip="More" menu='overflow-menu' on:click={() => (print("not implemented"))}>
 								<!-- Menu Items -->
 								<ul id='overflow-menu' class='dropdown-content'>
-									<li><a onclick="showHelp()" href="javascript:void(0);">Help</a></li>
-									<li><a onclick="resetMap()" href="javascript:void(0);">Reset Map</a></li>
-									<li><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps">Send Feedback</a></li>
-									<li><a onclick="toggleFullscreen();" href="javascript:void(0);" id="fullscreen-toggle"><i class="material-icons small">fullscreen</i>Fullscreen</a></li>
+									<!-- svelte-ignore a11y-missing-attribute -->
+									<li><a onclick="showHelp()" title="See help, map key info"><Icon name="help"/>Help</a></li>
+									<li><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Give us feedback"><Icon name="feedback"/>Feedback</a></li>
+									<!-- svelte-ignore a11y-missing-attribute -->
+									<!-- svelte-ignore a11y-click-events-have-key-events -->
+									<li><a on:click={gamemap.reset()} title="Reset this map"><Icon name="refresh"/>Reset Map</a></li>
+									<li><a onclick="toggleFullscreen();" id="fullscreen-toggle" title="Toggle fullscreen mode"><Icon name="fullscreen"/>Fullscreen</a></li>
 								</ul>
 							</IconButton>
 						</slot:template>
