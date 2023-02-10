@@ -2,6 +2,11 @@
 
 ported over the menu bar to svelte, and fixed some longstanding bugs
 
+## New features
+
+- added map key menu
+>> is fully responsive to mobile and different screen sizes
+
 ## Polish / QoL
 
 - iconbar menu is now more responsive, hides stuff based on window size

@@ -6,6 +6,11 @@
 - Thal-J <thal-j@uesp.net> (10th Feb, 2023) -->
 
 <script>
+
+	// import svelte core stuff
+	import { onMount } from 'svelte';
+    import { createEventDispatcher } from "svelte";
+
     // import ui components
     import LoadingSpinner from "./LoadingSpinner.svelte";
 
@@ -13,7 +18,18 @@
     export let fixedFooter = false;
     export let title = "Modal dialog";
     export let cancel = "Close";
+    export let dismissible = true;
 
+    const dispatch = createEventDispatcher();
+
+    onMount(async () => {
+        // initiate modal dialog
+        var elems = document.querySelectorAll('.modal');
+		M.Modal.init(elems, {
+            dismissible: dismissible,
+            onCloseEnd: () => (dispatch("dismiss", "dismissed")),
+        });
+    });
 </script>
 
 <markup>

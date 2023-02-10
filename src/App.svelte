@@ -65,13 +65,12 @@
 	let showUI = true;
 	let showLayerSwitcher = false;
 	let showMaps = false;
+	let showHelp = false;
+	let showMapKey = false;
 	$: editMode = false;
 
 	// on document load
 	onMount(async () => {
-
-		var elems = document.querySelectorAll('.modal');
-		M.Modal.init(elems, {});
 
 		// remove noscript message
 		var element = document.getElementsByTagName("noscript");
@@ -301,7 +300,7 @@
 								<ul id='overflow-menu' class='dropdown-content'>
 									<li class="waves-effect"><a class="modal-trigger" title="See help info" href="#help_modal"><Icon name="help_outline"/>Help</a></li>
 									<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>
-									<li class="waves-effect"><a class="modal-trigger" title="Show map key" href="#map_key_modal"><Icon name="list"/>Map Key</a></li>
+									<li class="waves-effect"><a class="modal-trigger" title="Show map key" href="#map_key_modal" on:click={() => (showMapKey = true)}><Icon name="list"/>Map Key</a></li>
 									<li class="waves-effect"><a onclick="toggleFullscreen();" id="fullscreen-toggle" title="Toggle fullscreen mode"><Icon name="fullscreen"/>Fullscreen</a></li>
 								</ul>
 							</IconButton>
@@ -349,26 +348,27 @@
 	<!-- Map selection menu -->
 	{#if showMaps}
 		<MapChooser/>
-	{:else}
-		<!-- Help dialog -->
-		<Modal title="Help" id="help_modal" fixedFooter="true">
-			<!-- content goes here -->
-		</Modal>
+	{/if}
 
-		<!-- Map key dialog -->
-		<Modal title="Map Key" id="map_key_modal"  fixedFooter="true">
-			{#if mapConfig != null}
-				{@const iconIDs = Object.keys(mapConfig.icons)}
-				{@const iconNames = Object.values(mapConfig.icons)}
-				<div id="map_key_container">
-					{#each iconNames as name, i}
-						<div class="map_key_item left-align">
-							<img title={name} alt={name} src={mapConfig.iconPath + "/" + iconIDs[i] + ".png"}/>
-							<b class="left-align">{name}</b>
-						</div>
-					{/each}
-				</div>
-			{/if}
+
+	<!-- Help dialog -->
+	<!-- <Modal title="Help" id="help_modal" fixedFooter="true">
+		content goes here
+	</Modal> -->
+
+	<!-- Map key dialog -->
+	{#if showMapKey}
+		<Modal title="Map Key" id="map_key_modal" fixedFooter="true" on:dismiss={() => (showMapKey = false)}>
+			{@const iconIDs = Object.keys(mapConfig.icons)}
+			{@const iconNames = Object.values(mapConfig.icons)}
+			<div id="map_key_container">
+				{#each iconNames as name, i}
+					<div class="map_key_item left-align">
+						<img title={name} alt={name} src={mapConfig.iconPath + "/" + iconIDs[i] + ".png"}/>
+						<b class="left-align">{name}</b>
+					</div>
+				{/each}
+			</div>
 		</Modal>
 	{/if}
 
