@@ -11,6 +11,7 @@ ported over the menu bar to svelte, and fixed some longstanding bugs
 - "more" menu now has icons on it
 - "more" menu also now has tooltips describing what things do
 - more menu also keyboard controlled
+- added explanatory tooltips to more things
 
 ## Misc:
 - because the "feedback" page is no longer per-map, i moved it to the overflow menu
@@ -38,6 +39,7 @@ make location list centred with button
 - make map reset use zoomtoBounds or equivalent from leaflet docs
 - link up watermark map name to gamemap.resetMap
 - fix icons randomly disappearng from listItem
+- add "map key" to layers menu to all maps, use help_center icon
 - make embeded map watermark actually open in new tab
 - add feedback button to overflow menu
 - do cell resource grid for skyrim

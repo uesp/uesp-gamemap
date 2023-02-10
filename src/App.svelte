@@ -213,23 +213,9 @@
 	}
 
 	function onWorldsLoaded(mapWorlds) {
-
 		print("Worlds loaded!");
 		print(mapWorlds);
-
 		setLoading(false); // hide loading spinner
-
-		if (gamemap.hasMultipleWorlds()) {
-
-			// // only show the location switcher if there are more than two worlds
-			// $("#btn_location_switcher").show();
-			// $("#btn_goto_article").show();
-
-			// // populate location switcher
-			// createWorldLists(mapWorlds);
-
-		}
-
 	}
 
 	function onWorldChanged(newWorld) {
@@ -243,7 +229,6 @@
 
 		// if data an int, then update zoom level
 		// however, if its an event, then send zoom back to gamemap
-
 		if (!isNaN(data)) {
             currentZoom = data;
         } else {
@@ -306,12 +291,12 @@
 					<IconBar>
 						<slot:template slot="primary">
 							{#if canEdit}<IconButton icon="edit" tooltip="Toggle edit pane" noMobile="true" checked="false" on:checked={() => (print("not implemented"))}/>{/if}
-							<IconButton icon="more_vert" tooltip="More" menu='overflow-menu' on:click={() => (print("not implemented"))}>
+							<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu' on:click={() => (print("not implemented"))}>
 								<!-- Menu Items -->
 								<ul id='overflow-menu' class='dropdown-content'>
 									<!-- svelte-ignore a11y-missing-attribute -->
-									<li class="waves-effect"><a onclick="showHelp()" title="See help & map key info"><Icon name="help"/>Help</a></li>
-									<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Give us feedback!"><Icon name="feedback"/>Feedback</a></li>
+									<li class="waves-effect"><a onclick="showHelp()" title="See help, map key info"><Icon name="help_outline"/>Help</a></li>
+									<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>
 									<!-- svelte-ignore a11y-missing-attribute -->
 									<!-- svelte-ignore a11y-click-events-have-key-events -->
 									<li class="waves-effect"><a on:click={gamemap.reset()} title="Reset this map"><Icon name="refresh"/>Reset Map</a></li>
@@ -322,7 +307,7 @@
 
 						<slot:template slot="secondary">
 							{#if gamemap.hasMultipleWorlds()}
-								<IconButton icon="explore" label={currentWorld.displayName} tooltip="Jump to location" dropdown="true" on:checked={() => (print("not implemented"))}/>
+								<IconButton icon="explore" label={currentWorld.displayName} tooltip="Show location list" dropdown="true" on:checked={() => (print("not implemented"))}/>
 								<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" on:click={() => {
 									print("Getting article link...");
 									let link = gamemap.getArticleLink();
