@@ -15,6 +15,7 @@ ported over the menu bar to svelte, and fixed some longstanding bugs
 
 ## Misc:
 - because the "feedback" page is no longer per-map, i moved it to the overflow menu
+- slight blur behind buttons
 
 ## Bugfixes:
 
@@ -25,10 +26,13 @@ ported over the menu bar to svelte, and fixed some longstanding bugs
 
 ## todo
 
+- make gamemap.js create its own element
+- import materialise buttons into svelte components
+- make modal svelte component
+- import help from server request
+
 make location list centred with button
 
-- fix overflow menu being cropped
-- add overflow menu icons
 - add allow long clicking on mobile to open popups
 - fix game worldspace XY conversion
 - fix polylines not respecting zoom levels
@@ -41,6 +45,8 @@ make location list centred with button
 - fix icons randomly disappearng from listItem
 - add "map key" to layers menu to all maps, use help_center icon
 - make embeded map watermark actually open in new tab
+- add map key
+- fix layer widget pip/triangle being messed up
 - add feedback button to overflow menu
 - do cell resource grid for skyrim
 - other maps

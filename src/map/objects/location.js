@@ -180,7 +180,7 @@ export default class Location {
 		}
 
 		if (config.editingEnabled) {
-			popupContent += "<hr/><div class='popupEditButton'>Edit this location</div>";
+			popupContent += "<hr/> <a style='text-align: center; height: unset; margin-bottom: -8px; width: inherit; line-height: 26px;' class='btn-flat waves-effect'>Edit</a>";
 		}
 
 		// if (this.parentMap.canEdit())

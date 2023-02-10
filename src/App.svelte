@@ -46,6 +46,8 @@
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
   import Icon from './components/Icon.svelte';
+  import Divider from './components/Divider.svelte';
+  import Modal from './components/Modal.svelte';
 
 	print("Initialising app...");
 
@@ -297,12 +299,9 @@
 							<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu' on:click={() => (print("not implemented"))}>
 								<!-- Menu Items -->
 								<ul id='overflow-menu' class='dropdown-content'>
-									<!-- svelte-ignore a11y-missing-attribute -->
-									<li class="waves-effect"><a class="modal-trigger" title="See help, map key info" href="#help_modal"><Icon name="help_outline"/>Help</a></li>
+									<li class="waves-effect"><a class="modal-trigger" title="See help info" href="#help_modal"><Icon name="help_outline"/>Help</a></li>
 									<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>
-									<!-- svelte-ignore a11y-missing-attribute -->
-									<!-- svelte-ignore a11y-click-events-have-key-events -->
-									<li class="waves-effect"><a on:click={gamemap.reset()} title="Reset this map"><Icon name="refresh"/>Reset Map</a></li>
+									<li class="waves-effect"><a class="modal-trigger" title="Show map key" href="#map_key_modal"><Icon name="list"/>Map Key</a></li>
 									<li class="waves-effect"><a onclick="toggleFullscreen();" id="fullscreen-toggle" title="Toggle fullscreen mode"><Icon name="fullscreen"/>Fullscreen</a></li>
 								</ul>
 							</IconButton>
@@ -329,31 +328,16 @@
 				{/if}
 			{/if}
 
-			<MapOptions>
-				<Watermark mapName = {mapConfig.mapTitle} embedded = {gamemap.isEmbedded()}/>
-			</MapOptions>
+			<!-- Gamemap watermark -->
+			<MapOptions><Watermark mapName = {mapConfig.mapTitle} embedded = {gamemap.isEmbedded()}/></MapOptions>
 
 			<!-- Show debug tag in top right corner if app is in dev mode -->
 			<!-- svelte-ignore missing-declaration -->
 			{#if isDebug}
 				<DebugBadge/>
 			{/if}
-
 		{/if}
-
 	{/if}
-
-
-	<!-- Help menu -->
-	<div id="help_modal" class="modal modal-fixed-footer">
-		<div class="modal-content">
-			<h4 style="font-weight: bold; text-align: center;">Help</h4>
-			<p>A bunch of text</p>
-		</div>
-		<div class="modal-footer">
-			<a href="#!" class="modal-close waves-effect btn-flat">Close</a>
-		</div>
-	</div>
 
 	<!-- Preloader components -->
 	{#if isLoading && loadingReason != ""}
@@ -362,11 +346,20 @@
 		<ErrorBox reason={errorReason}/>
 	{/if}
 
-	<!-- Show map selection menu on 404 -->
+	<!-- Map selection menu -->
 	{#if showMaps}
 		<MapChooser/>
 	{/if}
 
+	<!-- Help dialog -->
+	<Modal title="Help" id="help_modal" fixedFooter="true">
+		<!-- content goes here -->
+	</Modal>
+
+	<!-- Map key dialog -->
+	<Modal title="Map Key" id="map_key_modal"  fixedFooter="true">
+		<!-- content goes here -->
+	</Modal>
 </markup>
 
 <!-- App stylesheet -->

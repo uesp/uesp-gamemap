@@ -341,14 +341,26 @@ div[class^="icon_bar"] > * > *{
 	background-color: var(--surface_variant) !important;
 }
 
-a.btn_flat {
-	color: var(--secondary) !important;
-	font-weight: 550 !important;
+.modal-content h4 {
+	font-weight: bold !important;
+	text-align: center !important;
 }
 
-.btn_flat:hover {
+.btn-flat {
+	color: var(--secondary) !important;
+	font-weight: 600 !important;
+	text-transform: none !important;
+	letter-spacing: 0.55px;
+}
+
+.btn-flat:hover {
 	background-color: var(--selection) !important;
 }
+
+.modal.modal-fixed-footer .modal-footer {
+	border-top: 2px solid var(--divider) !important;
+}
+
 /*================================================
 				   Mobile CSS
 ================================================*/

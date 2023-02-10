@@ -87,6 +87,9 @@
                 {#if gamemap.getCurrentWorld().hasCellResources}
                     <LayerButton label="Resources" tooltip="Toggle resource grid" icon="local_florist" checked={resourceGridEnabled}/>
                 {/if}
+
+                <!-- <Divider direction="vertical"></Divider>
+                <LayerButton label="Map Key" tooltip="Show map key" icon="view_list"/> -->
             </div>
         {/if}
     </div>
