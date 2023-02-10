@@ -320,6 +320,7 @@ div[class^="icon_bar"] > * > *{
 
 .dropdown-content li > a {
 	display:inline-flex !important;
+	width: 100%;
 }
 
 .dropdown-content li:hover {
@@ -330,6 +331,24 @@ div[class^="icon_bar"] > * > *{
 	background: var(--divider) !important;
 }
 
+/* modals */
+.modal {
+	border-radius: var(--padding_medium) !important;
+	background-color: var(--primary) !important;
+}
+
+.modal-footer {
+	background-color: var(--surface_variant) !important;
+}
+
+a.btn_flat {
+	color: var(--secondary) !important;
+	font-weight: 550 !important;
+}
+
+.btn_flat:hover {
+	background-color: var(--selection) !important;
+}
 /*================================================
 				   Mobile CSS
 ================================================*/

@@ -303,7 +303,7 @@
         height: 100%;
         z-index: 100;
         font-size: 12px;
-        z-index: var(--zindex_overlay);
+        z-index: 10;
         pointer-events: none;
     }
 

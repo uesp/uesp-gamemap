@@ -178,6 +178,6 @@ iconButton element:
     }
 
     .dropdown-trigger {
-        z-index: 9999 !important;
+        z-index: 10 !important;
     }
 </style>

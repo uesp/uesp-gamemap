@@ -68,6 +68,9 @@
 	// on document load
 	onMount(async () => {
 
+		var elems = document.querySelectorAll('.modal');
+		M.Modal.init(elems, {});
+
 		// remove noscript message
 		var element = document.getElementsByTagName("noscript");
 		for (let index = element.length - 1; index >= 0; index--) {
@@ -295,7 +298,7 @@
 								<!-- Menu Items -->
 								<ul id='overflow-menu' class='dropdown-content'>
 									<!-- svelte-ignore a11y-missing-attribute -->
-									<li class="waves-effect"><a onclick="showHelp()" title="See help, map key info"><Icon name="help_outline"/>Help</a></li>
+									<li class="waves-effect"><a class="modal-trigger" title="See help, map key info" href="#help_modal"><Icon name="help_outline"/>Help</a></li>
 									<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>
 									<!-- svelte-ignore a11y-missing-attribute -->
 									<!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -339,6 +342,18 @@
 		{/if}
 
 	{/if}
+
+
+	<!-- Help menu -->
+	<div id="help_modal" class="modal modal-fixed-footer">
+		<div class="modal-content">
+			<h4 style="font-weight: bold; text-align: center;">Help</h4>
+			<p>A bunch of text</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="modal-close waves-effect btn-flat">Close</a>
+		</div>
+	</div>
 
 	<!-- Preloader components -->
 	{#if isLoading && loadingReason != ""}
