@@ -42,12 +42,12 @@
 	import Collapsible from './components/Collapsible.svelte';
 	import LocationList from './components/LocationList.svelte';
 	import IconBar from './components/IconBar.svelte';
+	import Icon from './components/Icon.svelte';
+	import Divider from './components/Divider.svelte';
+	import Modal from './components/Modal.svelte';
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
-  import Icon from './components/Icon.svelte';
-  import Divider from './components/Divider.svelte';
-  import Modal from './components/Modal.svelte';
 
 	print("Initialising app...");
 
@@ -349,17 +349,29 @@
 	<!-- Map selection menu -->
 	{#if showMaps}
 		<MapChooser/>
+	{:else}
+		<!-- Help dialog -->
+		<Modal title="Help" id="help_modal" fixedFooter="true">
+			<!-- content goes here -->
+		</Modal>
+
+		<!-- Map key dialog -->
+		<Modal title="Map Key" id="map_key_modal"  fixedFooter="true">
+			{#if mapConfig != null}
+				{@const iconIDs = Object.keys(mapConfig.icons)}
+				{@const iconNames = Object.values(mapConfig.icons)}
+				<div id="map_key_container">
+					{#each iconNames as name, i}
+						<div class="map_key_item left-align">
+							<img title={name} alt={name} src={mapConfig.iconPath + "/" + iconIDs[i] + ".png"}/>
+							<b class="left-align">{name}</b>
+						</div>
+					{/each}
+				</div>
+			{/if}
+		</Modal>
 	{/if}
 
-	<!-- Help dialog -->
-	<Modal title="Help" id="help_modal" fixedFooter="true">
-		<!-- content goes here -->
-	</Modal>
-
-	<!-- Map key dialog -->
-	<Modal title="Map Key" id="map_key_modal"  fixedFooter="true">
-		<!-- content goes here -->
-	</Modal>
 </markup>
 
 <!-- App stylesheet -->

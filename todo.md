@@ -43,6 +43,7 @@ make location list centred with button
 - make map reset use zoomtoBounds or equivalent from leaflet docs
 - link up watermark map name to gamemap.resetMap
 - fix icons randomly disappearng from listItem
+- optimise help and map key menu to only do stuff when pressed (saves having to do all network requests at once)
 - add "map key" to layers menu to all maps, use help_center icon
 - make embeded map watermark actually open in new tab
 - add map key
