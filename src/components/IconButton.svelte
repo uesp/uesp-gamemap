@@ -91,7 +91,6 @@ iconButton element:
         line-height: 100%;
         text-overflow: ellipsis;
         pointer-events: visible;
-        backdrop-filter: blur(0.85px);
     }
 
     button:hover {

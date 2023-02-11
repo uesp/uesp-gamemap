@@ -20,7 +20,6 @@ ported over the menu bar to svelte, and fixed some longstanding bugs
 
 ## Misc:
 - because the "feedback" page is no longer per-map, i moved it to the overflow menu
-- slight blur behind buttons
 
 ## Bugfixes:
 
@@ -45,6 +44,7 @@ make location list centred with button
 - make loading bar show as soon as gotoDest is called
 - for grid, fill in the cells up//along every 5 cells with slightly transparent rect, to add more contrast
 - add permalink option in location popups
+- copy to clipboard isnt working on mobile
 - make map reset use zoomtoBounds or equivalent from leaflet docs
 - link up watermark map name to gamemap.resetMap
 - fix icons randomly disappearng from listItem

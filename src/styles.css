@@ -367,6 +367,7 @@ div[class^="icon_bar"] > * > *{
 #map_key_container {
 	width: 100%;
 	margin-left: auto;
+	margin-top: var(--padding_large);
 	margin-right: auto;
 	column-count: 3;
 	column-gap: 25px;

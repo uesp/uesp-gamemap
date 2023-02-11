@@ -298,7 +298,7 @@
 							<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu' on:click={() => (print("not implemented"))}>
 								<!-- Menu Items -->
 								<ul id='overflow-menu' class='dropdown-content'>
-									<li class="waves-effect"><a class="modal-trigger" title="See help info" href="#help_modal"><Icon name="help_outline"/>Help</a></li>
+									<li class="waves-effect"><a class="modal-trigger" title="See help info" href="#help_modal" on:click={() => (showHelp = true)}><Icon name="help_outline"/>Help</a></li>
 									<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>
 									<li class="waves-effect"><a class="modal-trigger" title="Show map key" href="#map_key_modal" on:click={() => (showMapKey = true)}><Icon name="list"/>Map Key</a></li>
 									<li class="waves-effect"><a onclick="toggleFullscreen();" id="fullscreen-toggle" title="Toggle fullscreen mode"><Icon name="fullscreen"/>Fullscreen</a></li>
@@ -350,11 +350,20 @@
 		<MapChooser/>
 	{/if}
 
-
 	<!-- Help dialog -->
-	<!-- <Modal title="Help" id="help_modal" fixedFooter="true">
-		content goes here
-	</Modal> -->
+	{#if showHelp}
+		<!-- svelte-ignore missing-declaration -->
+		<Modal title="Help" id="help_modal" fixedFooter="true" on:dismiss={() => (showMapKey = false)}>
+			{@const helpPromise = fetch(ASSETS_DIR+'help.txt').then(response => response.text()).then((data) => { return data; })}
+			{#await helpPromise}
+				<p>Loading...</p>
+			{:then helpText}
+				{@html helpText}
+			{:catch error}
+				<p style="color: red">{error.message}</p>
+			{/await}
+		</Modal>
+	{/if}
 
 	<!-- Map key dialog -->
 	{#if showMapKey}
@@ -371,7 +380,6 @@
 			</div>
 		</Modal>
 	{/if}
-
 </markup>
 
 <!-- App stylesheet -->
