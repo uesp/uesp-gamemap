@@ -3,9 +3,8 @@
 ported over the menu bar to svelte, and fixed some longstanding bugs
 
 ## New features
-
-- added map key menu
->> is fully responsive to mobile and different screen sizes
+- added map key and help menus
+>> fully responsive to mobile and different screen sizes
 
 ## Polish / QoL
 
@@ -32,8 +31,6 @@ ported over the menu bar to svelte, and fixed some longstanding bugs
 
 - make gamemap.js create its own element
 - import materialise buttons into svelte components
-- make modal svelte component
-- import help from server request
 
 make location list centred with button
 
@@ -48,15 +45,11 @@ make location list centred with button
 - make map reset use zoomtoBounds or equivalent from leaflet docs
 - link up watermark map name to gamemap.resetMap
 - fix icons randomly disappearng from listItem
-- optimise help and map key menu to only do stuff when pressed (saves having to do all network requests at once)
-- add "map key" to layers menu to all maps, use help_center icon
 - make embeded map watermark actually open in new tab
-- add map key
 - fix layer widget pip/triangle being messed up
 - add feedback button to overflow menu
 - do cell resource grid for skyrim
 - other maps
-- help and stuff
 - edit
 - fix popups having the wrong coord type on them
 - add way to show popups on centreon, optional param

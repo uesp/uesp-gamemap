@@ -373,7 +373,7 @@
 			<div id="map_key_container">
 				{#each iconNames as name, i}
 					<div class="map_key_item left-align">
-						<img title={name} alt={name} src={mapConfig.iconPath + "/" + iconIDs[i] + ".png"}/>
+						<img title={name} alt={name} src={mapConfig.iconPath + iconIDs[i] + ".png"}/>
 						<b class="left-align">{name}</b>
 					</div>
 				{/each}

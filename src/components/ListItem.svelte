@@ -45,9 +45,7 @@
     if (icon != null && icon != false) {
         // is the icon numeric?
         if (!isNaN(icon)) {
-            icon = gamemap.getMapConfig().iconPath + "/" + icon + ".png";
-            // bypass bug doubling forward slashes for some reason
-            icon = icon.replace("//", "/");
+            icon = gamemap.getMapConfig().iconPath + icon + ".png";
             iconIsURL = true;
         }
     } else if (icon == null) {

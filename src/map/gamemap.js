@@ -775,8 +775,7 @@ export default class Gamemap {
 
 	makeMarker(location, coords) {
 		let anchor = [location.iconSize/2, location.iconSize/2];
-		let iconURL = this.mapConfig.iconPath + "/" + location.icon + ".png";
-		iconURL = iconURL.replace("//", "/"); // bypass bug doubling forward slashes for some reason
+		let iconURL = this.mapConfig.iconPath + location.icon + ".png";
 
 		let locationIcon = L.icon({
 			iconUrl: iconURL,
