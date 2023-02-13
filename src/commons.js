@@ -71,7 +71,7 @@ window.isFirefox = function isFirefox() {
 }
 
 /** Debug print function,disabled on release */
-if (isDebug) {
+if (isDebug || location.toString().includes("localhost") || location.toString().includes("dev")) {
 	// override print function to be custom console log
 	let print = {};
 	print = function(){};

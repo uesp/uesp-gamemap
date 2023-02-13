@@ -11,9 +11,6 @@
 	import { onMount } from 'svelte';
     import { createEventDispatcher } from "svelte";
 
-    // import ui components
-    import LoadingSpinner from "./LoadingSpinner.svelte";
-
     export let id;
     export let fixedFooter = false;
     export let title = "Modal dialog";
@@ -37,8 +34,8 @@
 		<div class="modal-content">
 			<h4>{title}</h4>
             <slot>
-                <!-- default spinner when nothing's provided -->
-                <LoadingSpinner/>
+                <!-- Default loading text when nothing provided -->
+                <p>Loading...</p>
             </slot>
 		</div>
 		<div class="modal-footer">
