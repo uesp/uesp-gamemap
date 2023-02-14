@@ -1102,7 +1102,7 @@ export default class Gamemap {
 			print("making popup");
 			L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
 		} else {
-			M.toast({text: "TODO: Location editing not done yet."});
+			M.toast({html: "TODO: Editing not done yet."});
 		}
 	}
 

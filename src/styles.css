@@ -149,8 +149,11 @@ html, body, main {
 
 h6 {
 	font-weight: bold !important;
-	text-decoration: underline;
 	font-size: 1.25rem !important;
+}
+
+strong {
+	font-weight: bold !important;
 }
 
 /*  horizontal dividers */
@@ -352,15 +355,32 @@ div[class^="icon_bar"] > * > *{
 	text-align: center !important;
 }
 
+.modal-content h5 {
+	font-weight: bold !important;
+	text-decoration: underline;
+}
+
 .modal-content a {
 	color: var(--text_link);
 	text-decoration: none;
 	font-weight: bold;
 }
 
+.modal-content code {
+	background-color: var(--primary_variant_dark);
+}
+
 .modal-content a:hover {
 	background-color: var(--selection);
 	text-decoration: underline;
+}
+
+.modal-content ul {
+	padding-left: var(--padding_large) !important;
+}
+
+.modal-content li {
+	list-style-type: square !important;
 }
 
 .modal.modal-fixed-footer .modal-footer {

@@ -1,9 +1,11 @@
 ## last week:
 
+- Rewrote help menu to be relevant to be vality
+- added MD parser for help menu
 
 ## todo
-- rewrite help.txt to be more relevant to new gamemap
 - make gamemap.js create its own element
+- make fullscreen menu work
 - import materialise buttons into svelte components
 
 

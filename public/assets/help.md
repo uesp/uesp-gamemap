@@ -1,77 +1,129 @@
-A description of how the UESP gamemap works can be found below.
+A description of how to use the UESP gamemap can be found below.
 
-See the [UESPWiki:Maps](https://en.uesp.net/wiki/UESPWiki:Maps) on our wiki for more detailed help, or use the [Talk Page](https://en.uesp.net/wiki/UESPWiki_talk:Maps) to give feedback or to discuss the map itself.
+See the [UESPWiki:Maps](https://en.uesp.net/wiki/UESPWiki:Maps) on our wiki for more info, or use the [Feedback Page](https://en.uesp.net/wiki/UESPWiki_talk:Maps) to discuss the map or to ask questions.
 
+##### Map Navigation
+
+This section describes how to navigate around the gamemap's map/world.
+###### Zooming/Panning
+
+There are different ways to zoom and pan the map depending on what device you are on.
+
+**Panning**
+
+**PC:** Long click and move the mouse in order to pan the map, or use the keyboard shortcuts below.
+
+- **Arrow keys**: Pans the map in provided direction
+- **Shift + Arrow keys**: Pans the map a larger amount, in the provided direction
+
+**Mobile:** Long press and move your finger to pan the map.
+
+**Zooming**
+
+In addition to the zoom buttons in the bottom right of the map, you can use these methods to zoom the map:
+
+**PC:** Use the mouse wheel to zoom in/out. If using a laptop, use two fingers on the trackpad in an up/down motion to zoom to where the mouse cursor is.  You can also use the keyboard shortcuts listed below.
+
+- **+ / - keys**: Zooms the map in/out
+
+**Mobile:** Use two fingers to pinch/zoom in and out of the map.
+
+###### Changing maps
+
+If the current gamemap supports multiple maps, there are various ways to change maps depending on what device you are on.
+
+Multiple maps means allowing you to click into a new world (a cave, a delve) or a new realm entirely.
+
+If you are on a gamemap that supports multiple maps, a golden **Location List** menu ( <i class="material-icons tiny">explore</i> ) will appear in the menu bar. You can click that to see a list of all available maps to jump to.
+
+In general however: these are the main ways to navigate between maps:
+
+**PC:** Hover over a location with the mouse to see its tooltip, if it has an **Internal Map** icon ( <i class="material-icons tiny">open_in_browser</i> ) then clicking on it will click into that map. To navigate back up, right click in an empty spot on the map.
+
+**Mobile:** Long press an empty spot on the map to navigate up to the previous map.
+
+##### Map Interface
+
+This section describes how to use the gamemap's interface. If you want to hide all UI temporarily, you can press the ``Insert`` key to toggle the UI.
 ###### Searching
 
+**General**
 
+To search for locations, or maps, use the search bar in the upper-left corner (or top of screen, if on mobile). Upon typing in the search bar, results will automatically begin to show. To clear the current search query, click the "Clear" icon ( <i class="material-icons tiny">close</i> ).
 
-<p>
+To only search for specific _types_ of locations (i.e, caves), you can do ``type: cave`` in the search field. See the map key for all available location types. (<i class="material-icons tiny">more_vert</i> > <i class="material-icons tiny">list</i> Map Key)
 
-Use the search bar in the upper-left corner to search for specific locations. Begin entering text in the search bar, enter
+**Options**
 
-and you will begin searching automatically
+To pin the search window above the map, expand the search options, and enable "Pin search pane". A pin icon ( <i class="material-icons tiny">push_pin</i> ) will appear to indicate whether the search window is pinned or not.
 
-</p>
+If the current gamemap you are viewing supports multiple maps, there will be an additional option: ``Only show results from this map`` - check this to only search locations in the currently visible map.
 
+**Keyboard shortcuts**
 
+- **Ctrl + F**: Focuses/opens search
+- **Enter**: Opens selected search result
+- **Arrow keys**: Selects next/previous search result
 
+###### Menu bar
 
-Enter search text in the input area and press Enter or click on the icon.
+The menu bar contains several useful actions dependent on the current map. On PC, it is at the top of the screen, by the search bar, and on mobile, it is to the right, underneath it.
 
-Click the "Show Search Results" below the search input box to display a list of search results. Reset the search results by clicking the icon on the right of the search input or perform a search of an empty string.
+**Location List**
 
-    Use the input box in the upper-left corner to search for specific locations. Enter search text in the input area and press Enter or click on the icon.
+The **Location List** ( <i class="material-icons tiny">explore</i> ) menu is a gold-coloured dropdown list of all available maps, if the current gamemap only has one world, it won't show. It is split into a hierarchical list of maps (Groups) or an alphabetical one (ABC).
 
-    Click the "Show Search Results" below the search input box to display a list of search results. Reset the search results by clicking the icon on the right of the search input or perform a search of an empty string.
+**Wiki Article Button**
 
+The **Article Button** ( <i class="material-icons tiny">article</i> ) allows you to quickly go to the UESPWiki's page for the current map. It only shows if the current gamemap supports multiple worlds.
 
+**Permalink**
 
+The **Permalink Button** ( <i class="material-icons tiny">link</i> ) allows you to copy a permanent link to the current pan and zoom of the map to share with others.
 
-Map Navigation
+**Overflow**
 
-    Pan - Use the arrow control in the upper right or "drag" the map using the mouse.
-    Zoom - Use the zoom control in the upper right or the mouse scroll wheel.
-    Center - Double-click a map location to center it on that location.
-    Reset - Use the Reset Map link at the top of the page or perform a manual page reload.
-    Cell Grid - Click the "Show cell Grid" option at the top of the page to show and hide the cell grid and labels.
+The **Overflow Menu** ( <i class="material-icons tiny">more_vert</i> ) contains other misc features in a separate sub-menu:
 
-Searching
+- **Help Menu** (You are here)
+- **Feedback** - A link to the map's feedback page
+- **Map Key** - A button to view the current map's key
+- **Fullscreen** - A button to toggle fullscreen mode
 
-    Use the input box in the upper-left corner to search for specific locations. Enter search text in the input area and press Enter or click on the icon.
+###### Layer Menu
 
-    Click the "Show Search Results" below the search input box to display a list of search results. Reset the search results by clicking the icon on the right of the search input or perform a search of an empty string.
+If the current map has multiple layers, the  **Layer Menu** ( <i class="material-icons tiny">layers</i> ) will show at the bottom left of the screen. A layer is a different skin or view, over or on the current map world.
 
-Map Link
+Clicking on the main layer button will switch to the next layer, if available. Hovering over the layer button will show available layer options:
 
-    Use the "Link to Current Map" at the top of the page to obtain a permanent link to the currently displayed map.
+**Layers**
 
-Cell Resources
+If there are any layers for the current world (ex: day/night mode), they will be shown first, along with a thumbnail of what the layer looks like. Clicking on the layer will switch the map to that layer.
 
-    On the Skyrim map you can use the Cell Resource drop-down list on the top menu bar to display color-coded cells representing the amount of that resource in the cell.
+**Cell Grid**
 
-Need More Help?
+The **Cell Grid** button ( <i class="material-icons tiny">grid_on</i> ) shows when the current map world has the cell grid enabled. Clicking it will toggle the cell grid, which will show cell coordinates and cell boundaries.
 
+**Cell Resources**
 
+The **Cell Resources** button ( <i class="material-icons tiny">local_florist</i> ) shows when the current world has cell grid resources turned on. This allows you to see a colour-coded representation of what resources (mineral, ingredients) are in each cell. Clicking the cell resource button will toggle the cell resource menu.
 
-<ul>
-<li><b>Zooming</b> -- Using the mouse's scroll wheel or the +/- buttons in the upper right. <br/> &nbsp;</li>
-<li><b>Panning</b> -- Click and drag the mouse around or use the arrow keys in the upper right. Currently you cannot drag on
-	top of an "area" element in the map.<br/> &nbsp;</li>
-<li><b>Changing Maps</b> -- Click on a "door" or other icon/text on the map to jump to that map location.
-	Use the right mouse button to return the parent map. You can also manually select a map to view  from the map list at
-	the top	of the screen.<br/> &nbsp;</li>
-<li><b>Wiki Article</b> -- Use the <em>Goto Wiki Page</em> at the top of the map to view the wiki article for the
-	current map. Click on any regular location to display a popup window (note that this will teleport you to another
-	map for door locations). Click the title text at the top of the popup window to jump to the relevant wiki article if
-	available. <br/> &nbsp;</li>
-<li><b>Searching</b> -- Use the text field in the upper left of the map to find a particular location. Click on a result to
-	jump to that location. Use the <em>"Only Search in this Map"</em> option to limit results to within the current map.
-	You can search for location names, types, and some quests and achievements as well.
-	<br/> &nbsp;</li>
-<li><b>Perma-Linking</b> -- Use the <em>"Link"</em> button at the top of the map to create a unique link that duplicates
-	the current map, location, and zoom level.<br/> &nbsp;</li>
-<li><b>Editing</b> -- Certain users of the UESP Wiki are able to add/edit/delete locations. Simply login to the wiki in the
-	same browser in another tab and reload the map. Edit buttons should appear at the top of the map if you are permitted
-	to edit.<br/> &nbsp;</li>
-</ul>
+###### Zoom menu
+
+The zoom menu at the bottom right of the screen allows you to control the zoom of the map without a mouse or gestures.
+
+Long pressing the **Zoom In** ( + ) button will zoom in the map to its maximum zoom.
+
+Long pressing the **Zoom Out** ( - ) button will reset the map view and centre it, long pressing it again will zoom the map all the way out.
+
+###### Watermark
+
+The watermark is a small, semi-transparent box at the bottom of the screen that contains the UESP logo and the name of the current gamemap. You can click the gamemap name to reset the map back to its default state.
+
+##### Map Editing
+
+Certain users of the UESPWiki are able to edit, modify the map world, and its locations. If you are one of these users, and are logged in, a button to enable to the Edit Pane ( <i class="material-icons tiny">edit</i> ) should appear next to the **Overflow Menu** button ( <i class="material-icons tiny">more_vert</i> ) in the top right. This will allow you to modify the current map world, and its locations in any way you see fit.
+
+**Editing tips:**
+
+Clicking on locations will sometimes open into different maps, other times it will simply open its popup. If you want to quickly edit a location; shift click on it. Otherwise, if you want to always open a location's popup, ctrl click on it.
