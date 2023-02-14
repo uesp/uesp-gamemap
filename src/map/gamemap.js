@@ -807,6 +807,9 @@ export default class Gamemap {
 			case "right":
 				offset = [OFFSET_AMOUNT, 0];
 				break;
+			case "auto":
+				offset = [OFFSET_AMOUNT, 0];
+				break;
 		}
 		return {
 			className : "location-label",

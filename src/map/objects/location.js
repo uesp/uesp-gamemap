@@ -286,6 +286,9 @@ export default class Location {
 				// bottom right
 				this.labelDirection = "right";
 				break;
+			default:
+				// auto
+				this.labelDirection = "auto";
 		}
 	}
 
