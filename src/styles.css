@@ -147,6 +147,12 @@ html, body, main {
 	color: var(--text_low_emphasis) !important;
 }
 
+h6 {
+	font-weight: bold !important;
+	text-decoration: underline;
+	font-size: 1.25rem !important;
+}
+
 /*  horizontal dividers */
 .horizontal_divider {
 	background: var(--divider);
@@ -344,6 +350,17 @@ div[class^="icon_bar"] > * > *{
 .modal-content h4 {
 	font-weight: bold !important;
 	text-align: center !important;
+}
+
+.modal-content a {
+	color: var(--text_link);
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.modal-content a:hover {
+	background-color: var(--selection);
+	text-decoration: underline;
 }
 
 .modal.modal-fixed-footer .modal-footer {

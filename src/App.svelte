@@ -18,6 +18,7 @@
 
 	// import svelte core stuff
 	import { onMount } from 'svelte';
+	import { marked } from 'marked';
 
 	// import commons
 	import './commons.js';
@@ -354,11 +355,11 @@
 	{#if showHelp}
 		<!-- svelte-ignore missing-declaration -->
 		<Modal title="Help" id="help_modal" fixedFooter="true" on:dismiss={() => (showMapKey = false)}>
-			{@const helpPromise = fetch(ASSETS_DIR+'help.txt').then(response => response.text()).then((data) => { return data; })}
+			{@const helpPromise = fetch(ASSETS_DIR+'help.md').then(response => response.text()).then((data) => { return data; })}
 			{#await helpPromise}
 				<p>Loading...</p>
 			{:then helpText}
-				{@html helpText}
+				{@html marked.parse(helpText)}
 			{:catch error}
 				<p style="color: red">{error.message}</p>
 			{/await}
