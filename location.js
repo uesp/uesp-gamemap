@@ -2854,7 +2854,7 @@ uesp.gamemap.Location.prototype.updateTooltip = function ()
 	
 	this.updateTooltipOffset();
 	
-	if (this.wikiPage != "" && this.name != this.wikiPage)
+	if (this.wikiPage != "" && !this.wikiPage.includes(this.name))
 		this.tooltipElement.html(this.name + "<div class='gmLocTooltipDesc'>" + this.description + "<br/>" + this.wikiPage + "</div>");
 	else
 		this.tooltipElement.html(this.name + "<div class='gmLocTooltipDesc'>" + this.description + "</div>");
