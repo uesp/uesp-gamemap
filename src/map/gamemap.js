@@ -48,10 +48,12 @@ export default class Gamemap {
 		if (mapRoot == null) {
 			let gamemap = document.createElement("div");
 			gamemap.id = "gamemap"
-			document.body.children[0].appendChild(gamemap);
+			let appNode = (document.body.children[0] != null) ? document.body.children[0] : document.body;
+			appNode.appendChild(gamemap);
 			mapRoot = gamemap;
 		}
 
+		// check if other params are valid
 		if (mapConfig != null && mapCallbacks != null) {
 
 			// load in map config

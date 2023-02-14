@@ -40,11 +40,9 @@
 	import Search from './components/SearchPane.svelte';
 	import MapOptions from './components/MapOptions.svelte';
 	import IconButton from './components/IconButton.svelte';
-	import Collapsible from './components/Collapsible.svelte';
 	import LocationList from './components/LocationList.svelte';
 	import IconBar from './components/IconBar.svelte';
 	import Icon from './components/Icon.svelte';
-	import Divider from './components/Divider.svelte';
 	import Modal from './components/Modal.svelte';
 
 	// import gamemap
@@ -57,6 +55,7 @@
 	let loadingReason = "";
 	let isLoaded = false;
 	let isError = false;
+	let isFullscreen = false;
 	let errorReason = "";
 	let mapConfig = null;
 	let gamemap = null;
@@ -142,6 +141,7 @@
 						General
 	================================================*/
 
+	// set loading reason function
 	function setLoading(reason) {
 
 		// are we being passed a boolean?
@@ -155,6 +155,7 @@
 		}
 	}
 
+	// set error function
 	function setError(reason) {
 		if (reason == false) {
 			isError = reason;
@@ -166,6 +167,7 @@
 		}
 	}
 
+	// handle keypresses
 	function onKeyPressed(key) {
 
 		// if "Insert" key pressed, hide UI
@@ -176,10 +178,28 @@
 
 	}
 
+	// handle toggling fullscreen
+	function toggleFullscreen(event) {
+
+		isFullscreen = document.fullscreenElement != null;
+
+		if (event.type != "fullscreenchange") {
+			if (isFullscreen) {
+				document.exitFullscreen();
+			} else {
+				document.documentElement.requestFullscreen();
+			}
+			isFullscreen = document.fullscreenElement != null;
+		} else if (event.type == "fullscreenchange") {
+			isFullscreen = document.fullscreenElement != null;
+		}
+	}
+
 	/*================================================
-							Gamemap
+						  Gamemap
 	================================================*/
 
+	// init gamemap
 	function loadGamemap(mapConfig) {
 
 		// define callbacks
@@ -192,7 +212,7 @@
 			setLoading,
 		};
 
-		window.gamemap = new Gamemap(_, mapConfig, mapCallbacks);
+		window.gamemap = new Gamemap(null, mapConfig, mapCallbacks);
 		gamemap = window.gamemap;
 	}
 
@@ -267,7 +287,6 @@
 
 <!-- App markup -->
 <markup>
-
 	<!-- Gamemap container -->
 	{#if gamemap}
 
@@ -301,7 +320,8 @@
 									<li class="waves-effect"><a class="modal-trigger" title="See help info" href="#help_modal" on:click={() => (showHelp = true)}><Icon name="help_outline"/>Help</a></li>
 									<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>
 									<li class="waves-effect"><a class="modal-trigger" title="Show map key" href="#map_key_modal" on:click={() => (showMapKey = true)}><Icon name="list"/>Map Key</a></li>
-									<li class="waves-effect"><a onclick="toggleFullscreen();" id="fullscreen-toggle" title="Toggle fullscreen mode"><Icon name="fullscreen"/>Fullscreen</a></li>
+									<!-- svelte-ignore a11y-click-events-have-key-events -->
+									<li class="waves-effect"><a on:click={toggleFullscreen} id="fullscreen-toggle" title="Toggle fullscreen mode"><Icon name={(!isFullscreen) ? "fullscreen" : "fullscreen_exit"}/>{(!isFullscreen) ? "Fullscreen" : "Exit"}</a></li>
 								</ul>
 							</IconButton>
 						</slot:template>
@@ -338,7 +358,7 @@
 		{/if}
 	{/if}
 
-	<!-- Preloader components -->
+	<!-- Preloading components -->
 	{#if isLoading && loadingReason != ""}
 		<LoadingBox reason={loadingReason+"..."}/>
 	{:else if isError}
@@ -386,4 +406,4 @@
 <style global src="./styles.css"></style>
 
 <!-- Global key listener -->
-<svelte:window on:keydown={onKeyPressed}/>
+<svelte:window on:keydown={onKeyPressed} on:fullscreenchange={toggleFullscreen}/>
