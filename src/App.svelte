@@ -192,7 +192,7 @@
 			setLoading,
 		};
 
-		window.gamemap = new Gamemap(document.querySelector('#gamemap'), mapConfig, mapCallbacks);
+		window.gamemap = new Gamemap(_, mapConfig, mapCallbacks);
 		gamemap = window.gamemap;
 	}
 
@@ -269,7 +269,6 @@
 <markup>
 
 	<!-- Gamemap container -->
-	<div id="gamemap"></div>
 	{#if gamemap}
 
 		<!-- only show ui when ui is enabled -->

@@ -43,7 +43,16 @@ export default class Gamemap {
 	 * @param {Object} mapCallbacks - The callbacks object, to optionally receive events back from the gamemap
 	 */
 	constructor(mapRoot, mapConfig, mapCallbacks) {
-		if (mapRoot != null && mapConfig != null && mapCallbacks != null) {
+
+		// create map root element if it doesn't exist
+		if (mapRoot == null) {
+			let gamemap = document.createElement("div");
+			gamemap.id = "gamemap"
+			document.body.children[0].appendChild(gamemap);
+			mapRoot = gamemap;
+		}
+
+		if (mapConfig != null && mapCallbacks != null) {
 
 			// load in map config
 			this.mapConfig = mapConfig;
@@ -704,7 +713,6 @@ export default class Gamemap {
 		// callback to show map fully loaded
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.onMapLoaded(true);
-			this.mapRoot.style.transition = "background-color ease 100ms";
 		}
 
 	}

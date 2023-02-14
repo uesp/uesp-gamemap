@@ -516,7 +516,8 @@ div[class^="icon_bar"] > * > *{
 	left: 0px;
 	right: 0px;
 	background-color: var(--background_dark);
-	transition: background-color ease 900ms;
+	transition: background-color ease 100ms;
+	animation: fade-in 0.9s !important;
 	z-index: 0;
 }
 
