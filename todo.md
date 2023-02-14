@@ -1,5 +1,6 @@
 ## last week:
 
+- Got full screen option working
 - Rewrote help menu to be relevant to be vality
 
 
@@ -7,7 +8,8 @@
 - gamemap now creates its own gamemap element if none provided
 - added MD (markdown) parser for help menu instead of html from txt
 
-
+## Bug Fixes
+- fixed copy link button not working on mobile
 
 
 
@@ -42,6 +44,7 @@
 - make map reset use zoomtoBounds or equivalent from leaflet docs
 - fix icons randomly disappearng from listItem
 - make embeded map watermark actually open in new tab
+- make labels clickable
 - fix layer widget pip/triangle being messed up
 - edit
 - import materialise buttons into svelte components

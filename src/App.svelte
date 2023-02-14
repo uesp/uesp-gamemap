@@ -327,6 +327,7 @@
 						</slot:template>
 
 						<slot:template slot="secondary">
+
 							{#if gamemap.hasMultipleWorlds()}
 								<IconButton icon="explore" label={currentWorld.displayName} tooltip="Show location list" dropdown="true" on:checked={() => (print("not implemented"))}/>
 								<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" on:click={() => {
@@ -337,11 +338,14 @@
 									}
 								}}/>
 							{/if}
+
 							<!-- svelte-ignore missing-declaration -->
 							<IconButton icon="link" label="Copy Link" tooltip="Copy link to this location" on:click={() => {
 								print("Copying link to clipboard...");
-								navigator.clipboard.writeText(window.location).then(() => { M.toast({html: 'Map link copied to clipboard!'});});
+								M.toast({html: 'Map link copied to clipboard!'});
+								navigator.clipboard.writeText(window.location);
 							}}/>
+
 						</slot:template>
 					</IconBar>
 				{/if}
