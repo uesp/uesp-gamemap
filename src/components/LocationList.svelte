@@ -16,6 +16,7 @@
     let tabBar = null;
     let locationList = null;
     let dropdownButton = null;
+    let mobile = window.innerWidth <= 670;
 
     const dispatch = createEventDispatcher();
 
@@ -32,7 +33,8 @@
 
     // dyamically centre dropdown when not mobile
     function reposition() {
-        if (!(isMobile() || window.innerWidth <= 670)) {
+        mobile = (isMobile() || window.innerWidth <= 670);
+        if (!mobile) {
             let dropdownX = dropdownButton.getBoundingClientRect().left;
             let offset = dropdownX + (dropdownButton.offsetWidth / 2);
             locationList.style.left = offset + "px";
@@ -338,7 +340,7 @@
 
 <markup>
     <!-- Location list -->
-    <div id="location_list" bind:this={locationList} in:fly={{ y: -15, duration: 200 }} out:fly={{ y: -5, duration: 150 }}>
+    <div id="location_list" bind:this={locationList} in:fly={!mobile ? { y: -15, duration: 200 } : { x: 15, duration: 150 }} out:fly={ !mobile ? { y: -5, duration: 150 } : { x: 5, duration: 150 } }>
 
         <ul id="location_list_tab_bar" class="tabs" bind:this={tabBar}>
             <li id="group_tab" class="tab"><a href="#tab_categories">Groups</a></li>
