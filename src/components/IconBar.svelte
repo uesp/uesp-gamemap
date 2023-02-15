@@ -19,7 +19,7 @@
     onMount(async () => { onResize(); });
 
     function onResize() {
-        isMobile = window.innerWidth < 670;
+        isMobile = window.innerWidth <= 670;
         searchPaneWidth = document.querySelector('#search_pane').clientWidth + 4;
         let screenWidth = window.innerWidth;
 

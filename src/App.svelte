@@ -350,10 +350,10 @@
 						</slot:template>
 					</IconBar>
 
+					{@const tabName = "group_tab"}
 					{#if showLocationList}
 						 <LocationList on:dismiss={() => (showLocationList = false)}/>
 					{/if}
-
 
 				{/if}
 			{/if}

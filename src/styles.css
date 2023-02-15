@@ -456,12 +456,13 @@ div[class^="icon_bar"] > * > *{
 
 @media only screen and (max-device-width:670px) {
 
-	#location_switcher_root {
+	#location_list {
 		left: calc(50% - var(--appbar_dimen) + var(--padding_large)) !important;
 		width: 75% !important;
+		top: 41.5%;
 	}
 
-	#location_switcher_root:before {
+	#location_list:before {
 		left: calc(100% - 2px) !important;
 		top: 15px !important;
 		transform: rotate(180deg) !important;

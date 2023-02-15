@@ -12,6 +12,7 @@
     import { createEventDispatcher } from "svelte";
 
     // state vars
+    let tabName = 'group_tab';
     let tabBar = null;
     let locationList = null;
     let dropdownButton = null;
@@ -21,21 +22,23 @@
     onMount(async () => {
         // initiate tabs
         let tabs = M.Tabs.init(tabBar, {});
-        tabs.select('group_tab');
+        tabs.select(tabName);
         dropdownButton = document.querySelector('#dropdown_icon').parentElement;
 
-        // dyamically centre dropdown when not mobile
-        if (!isMobile()) {
-            print(dropdownButton.offsetWidth);
-            print(locationList.offsetWidth);
+        // reposition menu
+        reposition();
 
+	});
+
+    // dyamically centre dropdown when not mobile
+    function reposition() {
+        if (!(isMobile() || window.innerWidth <= 670)) {
             let dropdownX = dropdownButton.getBoundingClientRect().left;
             let offset = dropdownX + (dropdownButton.offsetWidth / 2);
-
             locationList.style.left = offset + "px";
             locationList.style.top = (locationList.offsetHeight / 2) + dropdownButton.offsetHeight + 16 + "px";
         }
-	});
+    }
 
     // todo: make location list always appear in the direct centre of location dropdown
 
@@ -324,9 +327,6 @@
     // }
 
     function onMouseDown(event) {
-
-        print(event);
-
         let target = (event.relatedTarget != null) ? event.relatedTarget : (event.explicitOriginalTarget != null) ? event.explicitOriginalTarget : document.elementsFromPoint(event.clientX, event.clientY)[0];
         let isOutsideLocationList = !(locationList !== target && locationList.contains(target));
         if (isOutsideLocationList && !dropdownButton.contains(target)) {
@@ -407,4 +407,4 @@
 </style>
 
 <!-- Global event listeners -->
-<svelte:window on:mousedown={e => onMouseDown(e)} />
+<svelte:window on:mousedown={e => onMouseDown(e)} on:resize={reposition} />
