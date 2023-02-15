@@ -11,7 +11,6 @@
     import { fly } from 'svelte/transition';
     import { createEventDispatcher } from "svelte";
 
-
     // state vars
     let tabBar = null;
     let locationList = null;
@@ -19,12 +18,13 @@
 
     const dispatch = createEventDispatcher();
 
-    // initiate tabs
     onMount(async () => {
+        // initiate tabs
         let tabs = M.Tabs.init(tabBar, {});
         tabs.select('group_tab');
         dropdownButton = document.querySelector('#dropdown_icon').parentElement;
 
+        // dyamically centre dropdown when not mobile
         if (!isMobile()) {
             print(dropdownButton.offsetWidth);
             print(locationList.offsetWidth);
@@ -33,6 +33,7 @@
             let offset = dropdownX + (dropdownButton.offsetWidth / 2);
 
             locationList.style.left = offset + "px";
+            locationList.style.top = (locationList.offsetHeight / 2) + dropdownButton.offsetHeight + 16 + "px";
         }
 	});
 
@@ -323,6 +324,9 @@
     // }
 
     function onMouseDown(event) {
+
+        print(event);
+
         let target = (event.relatedTarget != null) ? event.relatedTarget : (event.explicitOriginalTarget != null) ? event.explicitOriginalTarget : document.elementsFromPoint(event.clientX, event.clientY)[0];
         let isOutsideLocationList = !(locationList !== target && locationList.contains(target));
         if (isOutsideLocationList && !dropdownButton.contains(target)) {
@@ -360,7 +364,6 @@
         height: 65%;
         background-color: var(--surface);
         color: var(--text_on_primary);
-        top: 40%;
         transform: translate(-50%, -50%);
         z-index: 100000;
         border-radius: var(--padding_medium);
@@ -379,11 +382,16 @@
         background-color: var(--primary_variant_dark);
         box-shadow: 0 2px 2px 0px var(--shadow);
         z-index: 999;
+        display: flex;
     }
 
     #location_list_tab_bar .tab a {
         color: var(--text_low_emphasis);
         font-weight: bold;
+    }
+
+    .tab {
+        flex-grow: 1;
     }
 
     #location_list:before {
@@ -399,4 +407,4 @@
 </style>
 
 <!-- Global event listeners -->
-<svelte:window on:mousedown={e => onMouseDown(e)}/>
+<svelte:window on:mousedown={e => onMouseDown(e)} />

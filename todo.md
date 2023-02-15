@@ -3,10 +3,8 @@
 - Got full screen option working
 - Rewrote help menu to be relevant to be vality
 
-## Design
+## Misc / Technical
 - location list is now dynamically centred to dropdown button (wasnt before)
-
-## Technical
 - gamemap now creates its own gamemap element if none provided
 - added MD (markdown) parser for help menu instead of html from txt
 
