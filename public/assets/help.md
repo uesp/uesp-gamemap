@@ -104,9 +104,7 @@ If there are any layers for the current world (ex: day/night mode), they will be
 
 The **Cell Grid** button ( <i class="material-icons tiny">grid_on</i> ) shows when the current map world has the cell grid enabled. Clicking it will toggle the cell grid, which will show cell coordinates and cell boundaries.
 
-**Cell Resources**
-
-The **Cell Resources** button ( <i class="material-icons tiny">local_florist</i> ) shows when the current world has cell grid resources turned on. This allows you to see a colour-coded representation of what resources (mineral, ingredients) are in each cell. Clicking the cell resource button will toggle the cell resource menu.
+If the current map also supports cell resources, then turning the cell grid on will show the **Cell Resources** menu. This will allow you to see a colour-coded representation of what resources (mineral, ingredients) are in each cell.
 
 ###### Zoom menu
 

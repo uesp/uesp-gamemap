@@ -8,44 +8,45 @@
 <script>
     // import svelte core stuff
 	import { onMount } from 'svelte';
-    import { fade, fly } from 'svelte/transition';
+    import { fly } from 'svelte/transition';
+    import { createEventDispatcher } from "svelte";
 
+
+    // state vars
     let tabBar = null;
     let locationList = null;
+    let dropdownButton = null;
+
+    const dispatch = createEventDispatcher();
 
     // initiate tabs
     onMount(async () => {
         let tabs = M.Tabs.init(tabBar, {});
         tabs.select('group_tab');
+        dropdownButton = document.querySelector('#dropdown_icon').parentElement;
+
+        if (!isMobile()) {
+            print(dropdownButton.offsetWidth);
+            print(locationList.offsetWidth);
+
+            let dropdownX = dropdownButton.getBoundingClientRect().left;
+            let offset = dropdownX + (dropdownButton.offsetWidth / 2);
+
+            locationList.style.left = offset + "px";
+        }
 	});
 
     // todo: make location list always appear in the direct centre of location dropdown
 
 
 
-    // /*================================================
-    // 				 Initialisation
-    // ================================================*/
-
     // var currentTabID = "";
     // var pairings = [];
 
-    // // on page load
-    // log("Page initialising...");
-    // $(document).ready(function() {
-
-    // 	// add click listeners on tabs
-    // 	$('#abc_tab').on('click', function(event) { onTabClicked(event.target); });
-    // 	$('#group_tab').on('click', function(event) { onTabClicked(event.target); });
-
-    // });
 
     // /*================================================
     // 				Location Switcher
     // ================================================*/
-
-    // const btnLocationSwitcher = document.querySelector("#btn_location_switcher");
-    // const locationSwitcherRoot = document.querySelector("#location_switcher_root");
 
     // // disappear location switcher when clicking outside of it
     // document.addEventListener("click", function (event) {
@@ -321,11 +322,19 @@
     // 	return output;
     // }
 
+    function onMouseDown(event) {
+        let target = (event.relatedTarget != null) ? event.relatedTarget : (event.explicitOriginalTarget != null) ? event.explicitOriginalTarget : document.elementsFromPoint(event.clientX, event.clientY)[0];
+        let isOutsideLocationList = !(locationList !== target && locationList.contains(target));
+        if (isOutsideLocationList && !dropdownButton.contains(target)) {
+            dispatch("dismiss", "dismissed");
+        }
+    }
+
 </script>
 
 <markup>
     <!-- Location list -->
-    <div id="location_list" bind:this={locationList} in:fly="{{ y: -20, duration: 200 }}" out:fade>
+    <div id="location_list" bind:this={locationList} in:fly={{ y: -15, duration: 200 }} out:fly={{ y: -5, duration: 150 }}>
 
         <ul id="location_list_tab_bar" class="tabs" bind:this={tabBar}>
             <li id="group_tab" class="tab"><a href="#tab_categories">Groups</a></li>
@@ -344,7 +353,6 @@
     </div>
 </markup>
 
-
 <style>
     #location_list {
         position: fixed;
@@ -352,8 +360,6 @@
         height: 65%;
         background-color: var(--surface);
         color: var(--text_on_primary);
-        top: 50%;
-        left: calc(var(--side_panel_width) + var(--padding_large));
         top: 40%;
         transform: translate(-50%, -50%);
         z-index: 100000;
@@ -391,3 +397,6 @@
         transform: rotate(90deg);
     }
 </style>
+
+<!-- Global event listeners -->
+<svelte:window on:mousedown={e => onMouseDown(e)}/>

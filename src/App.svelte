@@ -38,7 +38,7 @@
 	import Watermark from './components/Watermark.svelte';
 	import MapChooser from './components/MapChooser.svelte';
 	import Search from './components/SearchPane.svelte';
-	import MapOptions from './components/MapOptions.svelte';
+	import WatermarkContainer from './components/WatermarkContainer.svelte';
 	import IconButton from './components/IconButton.svelte';
 	import LocationList from './components/LocationList.svelte';
 	import IconBar from './components/IconBar.svelte';
@@ -64,6 +64,7 @@
 	$: currentWorld = null;
 	let showUI = true;
 	let showLayerSwitcher = false;
+	let showLocationList = false;
 	let showMaps = false;
 	let showHelp = false;
 	let showMapKey = false;
@@ -314,7 +315,7 @@
 					<IconBar>
 						<slot:template slot="primary">
 							{#if canEdit}<IconButton icon="edit" tooltip="Toggle edit pane" noMobile="true" checked="false" on:checked={() => (print("not implemented"))}/>{/if}
-							<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu' on:click={() => (print("not implemented"))}>
+							<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu'>
 								<!-- Menu Items -->
 								<ul id='overflow-menu' class='dropdown-content'>
 									<li class="waves-effect"><a class="modal-trigger" title="See help info" href="#help_modal" on:click={() => (showHelp = true)}><Icon name="help_outline"/>Help</a></li>
@@ -329,7 +330,7 @@
 						<slot:template slot="secondary">
 
 							{#if gamemap.hasMultipleWorlds()}
-								<IconButton icon="explore" label={currentWorld.displayName} tooltip="Show location list" dropdown="true" on:checked={() => (print("not implemented"))}/>
+								<IconButton icon="explore" label={currentWorld.displayName} tooltip="Show location list" dropdown="true" checked={showLocationList} on:checked={(e) => (showLocationList = e.detail)}/>
 								<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" on:click={() => {
 									print("Getting article link...");
 									let link = gamemap.getArticleLink();
@@ -348,11 +349,21 @@
 
 						</slot:template>
 					</IconBar>
+
+					{#if showLocationList}
+						 <LocationList on:dismiss={() => (showLocationList = false)}/>
+					{/if}
+
+
 				{/if}
 			{/if}
 
-			<!-- Gamemap watermark -->
-			<MapOptions><Watermark mapName = {mapConfig.mapTitle} embedded = {gamemap.isEmbedded()}/></MapOptions>
+			<!-- Watermark -->
+			<WatermarkContainer>
+				<Watermark mapName = {mapConfig.mapTitle} embedded = {gamemap.isEmbedded()}/>
+
+				<!-- if grid on and has cell resources, show grid options -->
+			</WatermarkContainer>
 
 			<!-- Show debug tag in top right corner if app is in dev mode -->
 			<!-- svelte-ignore missing-declaration -->

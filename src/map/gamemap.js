@@ -49,7 +49,7 @@ export default class Gamemap {
 			let gamemap = document.createElement("div");
 			gamemap.id = "gamemap"
 			let appNode = (document.body.children[0] != null) ? document.body.children[0] : document.body;
-			appNode.appendChild(gamemap);
+			appNode.prepend(gamemap);
 			mapRoot = gamemap;
 		}
 
