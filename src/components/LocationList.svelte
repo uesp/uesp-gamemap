@@ -16,7 +16,7 @@
     let tabBar = null;
     let locationList = null;
     let dropdownButton = null;
-    let mobile = window.innerWidth <= 670;
+    let mobile = isMobile() || window.innerWidth <= 670;
 
     const dispatch = createEventDispatcher();
 

@@ -3,14 +3,17 @@
 - Got full screen option working
 - Rewrote help menu to be relevant to be vality
 
-## Misc / Technical
+## Polish
 - location list is now dynamically centred to dropdown button (wasnt before)
 - location list has dynamic animation depending on mobile or desktop (comes out from button)
+
+## Misc / Technical
 - gamemap now creates its own gamemap element if none provided
 - added MD (markdown) parser for help menu instead of html from txt
 
 ## Bug Fixes
 - fixed copy link button not working on mobile
+- fixed fullscreen button not being synced to actual fullscreen state
 
 
 
