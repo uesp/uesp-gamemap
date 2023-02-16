@@ -21,7 +21,6 @@
     let dropdownButton = null;
     let contentView = null;
     let tabBar = null;
-    let tabs = null;
     let mobile = isMobile() || window.innerWidth <= 670;
     let mapWorlds = gamemap.getWorlds();
     $: isReady = false;
@@ -39,7 +38,8 @@
         reposition();
 
         // initiate tabs
-        tabs = M.Tabs.init(tabBar, {});
+        M.Tabs.init(tabBar, {});
+        selectTab(currentTab);
 
         //create world lists
         getWorldLists();
@@ -51,14 +51,6 @@
     }
 
     function selectTab(index) {
-        switch (index) {
-            case 0 :
-                tabs.select("group_tab");
-                break;
-            case 1 :
-                tabs.select("abc_tab");
-                break;
-        }
         currentTab = index;
         dispatch("tabChange", currentTab);
     }
@@ -354,9 +346,9 @@
 
         <ul id="location_list_tab_bar" class="tabs" bind:this={tabBar}>
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <li id="group_tab" class="tab" on:click={() => selectTab(0)}><a href="#tab_categories">Groups</a></li>
+            <li id="group_tab" class="tab" on:click={() => selectTab(0)}><a class:active={currentTab == 0} href="#tab_categories">Groups</a></li>
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <li id="abc_tab" class="tab" on:click={() => selectTab(1)}><a href="#tab_alphabetical">{hasGroupedList ? "ABC" : "Locations"}</a></li>
+            <li id="abc_tab" class="tab" on:click={() => selectTab(1)}><a class:active={currentTab == 1} href="#tab_alphabetical">{hasGroupedList ? "ABC" : "Locations"}</a></li>
         </ul>
 
         <div id="location_list_content" bind:this={contentView}>
