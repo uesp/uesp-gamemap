@@ -14,6 +14,7 @@
     // import ui components
     import VirtualList from 'svelte-tiny-virtual-list';
     import ListItem from './ListItem.svelte';
+  import LocationCollapsible from './LocationCollapsible.svelte';
 
     // state vars
     export let currentTab = 0;
@@ -191,137 +192,6 @@
     	}
     }
 
-    // 	// get HTML for group list pane
-    // 	$("#tab_categories").html(createGroupListHTML(finalGroups));
-
-    // 	// init collapsers
-    // 	$('.collapsible').collapsible({
-    // 		accordion: true,
-
-    // 		onOpenStart: function(element) {
-    // 			// darken collapsible
-    // 			$(element).find(".collapsible-header:first").css("background-color", "var(--surface_variant)");
-    // 			$(element).find("i:first").css("transform", "rotate(180deg)");
-    // 		},
-
-    // 		onCloseStart: function(element){
-    // 			$(element).find(".collapsible-header:first").css("background-color", "var(--surface_variant_dark)");
-    // 			$(element).find("i:first").css("transform", "rotate(360deg)");
-
-    // 		}
-    // 	});
-
-    // }
-
-    // function updateWorldList(worldName) {
-    // 	// deselect previous location in loc switcher
-    // 	let selectedElements = document.getElementsByClassName("collection-item active");
-
-    // 	if (selectedElements != null) {
-    // 		for (let i = 0; i < selectedElements.length; i++) {
-
-    // 			if (selectedElements[i] != null) {
-    // 				selectedElements[i].classList.remove("active");
-    // 			}
-
-    // 		}
-    // 	}
-
-
-    // 	// select new location in loc switcher
-    // 	let elements = document.getElementsByName(worldName);
-    // 	for (let i = 0; i < elements.length; i++) {
-    // 		elements[i].classList.toggle("active", true);
-    // 	}
-    // }
-
-
-
-    // function createGroupListHTML(groups) {
-    // 	let output = "";
-    // 	let name;
-    // 	let displayName;
-    // 	let worldID;
-
-    // 	// if the passed grouplist is an array of objects
-    // 	if (Array.isArray(groups)) {
-    // 		groups.forEach(world => {
-    // 			worldID = world.id;
-    // 			if (worldID < 0) {
-    // 				if (worldID == -1) displayName = "Orphaned Maps";
-    // 				if (worldID == -1337) displayName = "Beta Maps";
-    // 			} else {
-    // 				name = gamemap.getWorldNameFromID(worldID);
-    // 				displayName = gamemap.getWorldDisplayNameFromID(worldID);
-    // 			}
-
-    // 			if (world["children"]) {
-
-    // 				output += "<ul class='collapsible'><li><div class='collapsible-header waves-effect'>" + displayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body''>"
-    // 				if (worldID >= 0) output += createLocationRowHTML(worldID);
-    // 				output += createGroupListHTML(world["children"]);
-    // 				output += "</div></li></ul>";
-    // 			} else {
-    // 				output += createLocationRowHTML(worldID);
-    // 			}
-
-    // 		});
-    // 	}
-    // 	return output;
-    // }
-
-        // window.toggleLocationSwitcher = function(toggle){
-    // 	if (toggle || toggle == null){
-    // 		$("#location_switcher_root").show();
-    // 		hideSearch();
-    // 		updateWorldList(gamemap.getWorldFromID(gamemap.getCurrentWorldID()).name);
-    // 	} else {
-    // 		$("#location_switcher_root").hide();
-    // 	}
-
-    // 	btnLocationSwitcher.classList.toggle("toggled", toggle);
-    // 	locationSwitcherRoot.classList.toggle("shown", toggle);
-
-    // 	reselectTabs();
-    // }
-
-    // function reselectTabs() {
-    // 	var tabs = M.Tabs.init(document.querySelector("#location_switcher_tab_bar"));
-    // 	tabs.select(currentTabID || 'tab_categories');
-    // }
-
-        // var currentTabID = "";
-
-
-    // function onTabClicked(element) {
-    // 	if (locationSwitcherRoot.classList.contains("shown")) {
-
-    // 		log("tab clicked!");
-    // 		currentTabID = element.href.split("#")[1];
-
-    // 		setTimeout(function() {
-    // 			let worldName = gamemap.getWorldFromID(gamemap.getCurrentWorldID()).name;
-    // 			let elements = document.getElementsByName(worldName);
-
-    // 			for (let i = 0; elements[i]; i++) {
-    // 				let element = elements[i];
-
-    // 				if($(element).is(":visible")){
-    // 					setTimeout(function() {
-    // 						updateWorldList(worldName);
-    // 						element.scrollIntoView({
-    // 							behavior: "auto",
-    // 							block: "center",
-    // 							inline: "center"
-    // 						});
-    // 					}, 10);
-    // 				}
-    // 			}
-    // 		}, 10);
-    // 	}
-    // }
-
-
     // detect when clicked outside of the popup
     function onMouseDown(event) {
         let target = (event.relatedTarget != null) ? event.relatedTarget : (event.explicitOriginalTarget != null) ? event.explicitOriginalTarget : document.elementsFromPoint(event.clientX, event.clientY)[0];
@@ -357,7 +227,9 @@
 
             {#if currentTab == 0}
                 <div id="tab_categories" class="tab-pane">
-                    <!-- grouped locations go here -->
+                    {#each groupedWorldList as group,i}
+                        <LocationCollapsible data={group} expanded={i==0}/>
+                    {/each}
                 </div>
             {/if}
 
@@ -430,7 +302,7 @@
         border-color: transparent var(--primary_variant_dark) transparent transparent;
         position: absolute;
         left: 50%;
-        top: -17px;
+        top: -16px;
         transform: rotate(90deg);
     }
 </style>

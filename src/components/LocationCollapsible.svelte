@@ -9,10 +9,64 @@
     // import svelte core stuff
 	import { onMount } from 'svelte';
 
-    export let title = "This is a header";
     export let data;
-    let expanded = false;
+    export let expanded = false;
+
+    let title = "This is a title";
+
     let collapsible = null;
+
+        // 	// init collapsers
+    // 	$('.collapsible').collapsible({
+    // 		accordion: true,
+
+    // 		onOpenStart: function(element) {
+    // 			// darken collapsible
+    // 			$(element).find(".collapsible-header:first").css("background-color", "var(--surface_variant)");
+    // 			$(element).find("i:first").css("transform", "rotate(180deg)");
+    // 		},
+
+    // 		onCloseStart: function(element){
+    // 			$(element).find(".collapsible-header:first").css("background-color", "var(--surface_variant_dark)");
+    // 			$(element).find("i:first").css("transform", "rotate(360deg)");
+
+    // 		}
+    // 	});
+
+    // }
+
+    // function createGroupListHTML(groups) {
+    // 	let output = "";
+    // 	let name;
+    // 	let displayName;
+    // 	let worldID;
+
+    // 	// if the passed grouplist is an array of objects
+    // 	if (Array.isArray(groups)) {
+    // 		groups.forEach(world => {
+    // 			worldID = world.id;
+    // 			if (worldID < 0) {
+    // 				if (worldID == -1) displayName = "Orphaned Maps";
+    // 				if (worldID == -1337) displayName = "Beta Maps";
+    // 			} else {
+    // 				name = gamemap.getWorldNameFromID(worldID);
+    // 				displayName = gamemap.getWorldDisplayNameFromID(worldID);
+    // 			}
+
+    // 			if (world["children"]) {
+
+    // 				output += "<ul class='collapsible'><li><div class='collapsible-header waves-effect'>" + displayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body''>"
+    // 				if (worldID >= 0) output += createLocationRowHTML(worldID);
+    // 				output += createGroupListHTML(world["children"]);
+    // 				output += "</div></li></ul>";
+    // 			} else {
+    // 				output += createLocationRowHTML(worldID);
+    // 			}
+
+    // 		});
+    // 	}
+    // 	return output;
+    // }
 
     // initiate collapsible
     onMount(async () => {
@@ -34,7 +88,6 @@
             </div>
             <div class='collapsible-body'>
                 {#if expanded}
-                    <b>ligma balls</b>
                     if (worldID >= 0) output += createLocationRowHTML(worldID);
                     output += createGroupListHTML(world["children"]);
                     output += "

@@ -7,6 +7,7 @@
 ## Polish
 - location list is now dynamically centred to dropdown button (wasnt before)
 - location list has dynamic animation depending on mobile or desktop (comes out from button)
+- location list only shows group (categories) tab when there are lots of worlds
 
 ## Misc / Technical
 - gamemap now creates its own gamemap element if none provided
