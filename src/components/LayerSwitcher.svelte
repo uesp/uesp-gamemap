@@ -14,25 +14,30 @@
     import LayerButton from "./LayerButton.svelte";
 
     // state vars
-    let isHovered = false;
-    let hasMultipleLayers = gamemap.hasMultipleMapLayers();
-    let layers = gamemap.getCurrentWorld().layers;
+    export let world = gamemap.getCurrentWorld();
+    $: hasMultipleLayers = world.hasMultipleLayers();
+    $: layers = world.layers;
     $: gridEnabled = gamemap.isGridEnabled();
-    let resourceGridEnabled = gamemap.isResourceGridEnabled();
-
     $: layerName = gamemap.getNextTileLayerName();
-    $: layerImage = (hasMultipleLayers) ? gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layerName, true) : null;
+    $: layerImage = (hasMultipleLayers) ? gamemap.getMapTileImageURL(world, layerName, true) : null;
+
+    let isHovered = false;
+    let resourceGridEnabled = world.hasCellResources();
+
 
     // event listeners
     function onMouseEnter() {
+        if (world != gamemap.getCurrentWorld()) {
+            world = gamemap.getCurrentWorld();
+        }
         isHovered = true;
         gridEnabled = gamemap.isGridEnabled();
-        resourceGridEnabled = gamemap.isResourceGridEnabled();
+        resourceGridEnabled = world.hasCellResources();
     }
     function onMouseExit() {
         isHovered = false;
         gridEnabled = gamemap.isGridEnabled();
-        resourceGridEnabled = gamemap.isResourceGridEnabled();
+        resourceGridEnabled = world.hasCellResources();
     }
 
     function onLayerClicked(event) {
@@ -79,12 +84,12 @@
 
                 <!-- Predefined optional map layers -->
                 <!-- svelte-ignore missing-declaration -->
-                {#if gamemap.getCurrentWorld().hasGrid}
+                {#if world.hasGrid()}
                     <LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked={gridEnabled} on:onClick={(event) => (gamemap.toggleCellGrid(event.detail))}/>
                 {/if}
 
                 <!-- svelte-ignore missing-declaration -->
-                {#if gamemap.getCurrentWorld().hasCellResources}
+                {#if world.hasCellResources()}
                     <LayerButton label="Resources" tooltip="Toggle resource grid" icon="local_florist" checked={resourceGridEnabled}/>
                 {/if}
 
