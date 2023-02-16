@@ -24,7 +24,6 @@
     let isHovered = false;
     let resourceGridEnabled = world.hasCellResources();
 
-
     // event listeners
     function onMouseEnter() {
         if (world != gamemap.getCurrentWorld()) {

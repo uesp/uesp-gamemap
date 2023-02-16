@@ -1,6 +1,6 @@
 <!-- @component
 ### Description
- Collapsible header component for the UESP gamemap.
+ Collapsible location header component for the UESP gamemap.
 
 ### Author(s)
 - Thal-J <thal-j@uesp.net> (07th Feb, 2023) -->

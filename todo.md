@@ -2,6 +2,7 @@
 
 - Got full screen option working
 - Rewrote help menu to be relevant to be vality
+- got skyrim map working
 
 ## Polish
 - location list is now dynamically centred to dropdown button (wasnt before)
@@ -14,6 +15,7 @@
 ## Bug Fixes
 - fixed copy link button not working on mobile
 - fixed fullscreen button not being synced to actual fullscreen state
+- fixed layer switcher not updating between worlds
 
 
 

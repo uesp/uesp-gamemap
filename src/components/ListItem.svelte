@@ -16,6 +16,7 @@
     export let iconTooltip;
     export let isWorld;
     export let destinationID;
+    export let selected;
     export let date;
     let iconIsURL = false;
     let isLocation = false;
@@ -60,7 +61,7 @@
 </script>
 
 <markup>
-    <div class='collection'>
+    <div class='collection' class:selected={selected}>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-missing-attribute -->
         <a class='collection-item waves-effect list-item' class:avatar={hasIcon} on:click={onClick} title={(isWorld) ? "Click to visit this map" : (isLocation) ? "Click to centre on this location" : null}>
@@ -92,5 +93,9 @@
 
     .collection-item {
         font-size: 14px;
+    }
+
+    .selected {
+        background-color: var(--selection);
     }
 </style>

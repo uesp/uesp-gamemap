@@ -48,7 +48,7 @@ export default class World {
 	}
 
 	hasCellResources() {
-		return (this.displayData.hasCellResource != null) ? this.displayData.hasCellResource : false;
+		return (this.displayData.hasCellResource != null) ? this.hasGrid() && this.displayData.hasCellResource : false;
 	}
 
 	hasMultipleLayers() {

@@ -244,11 +244,11 @@
 		setLoading(false); // hide loading spinner
 	}
 
-	function onWorldChanged(newWorld) {
-		setWindowTitle(newWorld.displayName);
-		currentWorld = newWorld;
+	function onWorldChanged(world) {
+		setWindowTitle(world.displayName);
+		currentWorld = world;
 		isLoaded = true;
-		showLayerSwitcher = (newWorld.layers.length > 1 || newWorld.hasResources || newWorld.hasGrid);
+		showLayerSwitcher = (currentWorld.layers.length > 1 || currentWorld.hasGrid());
 	}
 
 	function onZoom(data) {
@@ -380,11 +380,6 @@
 		<ErrorBox reason={errorReason}/>
 	{/if}
 
-	<!-- Map selection menu -->
-	{#if showMaps}
-		<MapChooser/>
-	{/if}
-
 	<!-- Help dialog -->
 	{#if showHelp}
 		<!-- svelte-ignore missing-declaration -->
@@ -415,6 +410,12 @@
 			</div>
 		</Modal>
 	{/if}
+
+	<!-- Map selection menu -->
+	{#if showMaps}
+		<MapChooser/>
+	{/if}
+
 </markup>
 
 <!-- App stylesheet -->

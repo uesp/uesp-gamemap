@@ -384,57 +384,62 @@ export default class Gamemap {
 		return this.mapWorlds[mapWorldDisplayNameIndex[worldDisplayName]];
 	}
 
-	/** Get world data for this game's mapConfig.
+	/** Get world data for this game's mapConfig. If no mapConfig param provided, returns current list of worlds
 	 * @see initialiseMap()
 	 */
 	getWorlds(mapConfig) {
-		let queryParams = {};
-		queryParams.action = "get_worlds";
-		queryParams.db = mapConfig.database;
 
-		if (this.isHiddenLocsShown()) {
-			queryParams.showhidden = 1;
-		}
+		if (mapConfig != null) {
 
-		if (self.mapCallbacks != null) {
-			self.mapCallbacks.setLoading("Loading world");
-		}
+			let queryParams = {};
+			queryParams.action = "get_worlds";
+			queryParams.db = mapConfig.database;
 
-		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-			if (!error && data != null) {
-
-				if (data.worlds == null) {
-					throw new Error("World data was null.");
-				}
-
-				for (var key in data.worlds) {
-					let world = data.worlds[key];
-
-					if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name != null) {
-
-						self.mapWorlds[world.id] = new World(world, mapConfig);
-						mapWorldNameIndex[world.name] = world.id;
-
-						if (world.displayName != null) {
-							mapWorldDisplayNameIndex[world.displayName] = world.id;
-						} else {
-							mapWorldDisplayNameIndex[world.name] = world.id;
-						}
-
-					}
-				}
-				if (self.mapCallbacks != null) {
-					self.mapCallbacks.onWorldsLoaded(self.mapWorlds);
-
-					// load map
-					self.initialiseMap(mapConfig);
-				}
-
-			} else {
-				//throw new Error("Could not retrieve world data.");
+			if (this.isHiddenLocsShown()) {
+				queryParams.showhidden = 1;
 			}
-		});
 
+			if (self.mapCallbacks != null) {
+				self.mapCallbacks.setLoading("Loading world");
+			}
+
+			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+				if (!error && data != null) {
+
+					if (data.worlds == null) {
+						throw new Error("World data was null.");
+					}
+
+					for (var key in data.worlds) {
+						let world = data.worlds[key];
+
+						if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name != null) {
+
+							self.mapWorlds[world.id] = new World(world, mapConfig);
+							mapWorldNameIndex[world.name] = world.id;
+
+							if (world.displayName != null) {
+								mapWorldDisplayNameIndex[world.displayName] = world.id;
+							} else {
+								mapWorldDisplayNameIndex[world.name] = world.id;
+							}
+
+						}
+					}
+					if (self.mapCallbacks != null) {
+						self.mapCallbacks.onWorldsLoaded(self.mapWorlds);
+
+						// load map
+						self.initialiseMap(mapConfig);
+					}
+
+				} else {
+					throw new Error("Could not retrieve world data.");
+				}
+			});
+		} else {
+			return this.mapWorlds;
+		}
 	}
 
 	/** Simple function that does stuffblah blah fill this in later

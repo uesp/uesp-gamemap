@@ -11,28 +11,52 @@
     import { fly } from 'svelte/transition';
     import { createEventDispatcher } from "svelte";
 
+    // import ui components
+    import VirtualList from 'svelte-tiny-virtual-list';
+    import LoadingSpinner from './LoadingSpinner.svelte';
+    import ListItem from './ListItem.svelte';
+
     // state vars
-    let tabName = 'group_tab';
+    let tabName = 'abc_tab';
     let tabBar = null;
     let locationList = null;
     let dropdownButton = null;
+    let contentView = null;
     let mobile = isMobile() || window.innerWidth <= 670;
+    let mapWorlds = gamemap.getWorlds();
+    $: isReady = false;
+
+    let abcWorldList = [];
+    let groupedWorldList = [];
+    let pairings = [];
+    $: hasGroupedList = false;
 
     const dispatch = createEventDispatcher();
 
     onMount(async () => {
-        // initiate tabs
-        let tabs = M.Tabs.init(tabBar, {});
-        tabs.select(tabName);
-        dropdownButton = document.querySelector('#dropdown_icon').parentElement;
 
         // reposition menu
         reposition();
 
+        //create world lists
+        getWorldLists();
+
 	});
+
+    function dismiss() {
+        dispatch("dismiss", "dismissed");
+    }
+
+    function initialise() {
+        // initiate tabs
+        let tabs = M.Tabs.init(tabBar, {});
+        tabs.select(0);
+        isReady = true;
+    }
 
     // dyamically centre dropdown when not mobile
     function reposition() {
+        dropdownButton = document.querySelector('#dropdown_icon').parentElement;
         mobile = (isMobile() || window.innerWidth <= 670);
         if (!mobile) {
             let dropdownX = dropdownButton.getBoundingClientRect().left;
@@ -42,176 +66,140 @@
         }
     }
 
-    // todo: make location list always appear in the direct centre of location dropdown
 
+    function getWorldLists() {
 
+        let groups = {};
+    	const GROUP_DEV_ID = -1337;
+    	const GROUP_UNSORTED_ID = -1;
+    	let rootID = gamemap.getMapConfig().rootWorldID || gamemap.getMapConfig().defaultWorldID;
+    	let topLevelWorldIDs = [rootID, GROUP_DEV_ID, GROUP_UNSORTED_ID];
 
-    // var currentTabID = "";
-    // var pairings = [];
+        abcWorldList = [];
+        groupedWorldList = [];
+        pairings = [];
 
+        // get alphabetical list
+        for (let key in mapWorlds) {
+    		if (mapWorlds[key].displayName[0] != '_' && key > 0) abcWorldList.push(mapWorlds[key].displayName);
+    	}
+    	abcWorldList = abcWorldList.sort(function(a, b) {
+    		// ignore "The" in alphabetical sort
+    		a = a.replace("The ", "");
+    		b = b.replace("The ", "");
+    		// make alphabetical sort case insensitive
+    		if (a.toLowerCase() < b.toLowerCase()) return -1;
+    		if (a.toLowerCase() > b.toLowerCase()) return 1;
+    		return 0;
+    	});
 
-    // /*================================================
-    // 				Location Switcher
-    // ================================================*/
+        // get grouped list if there's enough worlds
+        if (abcWorldList.length > 3) {
+            hasGroupedList = true;
+            for (let i = 0; i < abcWorldList.length; i++) {
+                let displayName = abcWorldList[i];
+                let world = gamemap.getWorldFromDisplayName(displayName);
 
-    // // disappear location switcher when clicking outside of it
-    // document.addEventListener("click", function (event) {
-    // 	var root = document.getElementById('location_switcher_root');
-    // 	if (!root.contains(event.target) && !btnLocationSwitcher.contains(event.target) ) {
-    // 		toggleLocationSwitcher(false);
-    // 	}
-    // }, true);
+                if (world != null && world.id != 0 && !displayName.endsWith("(Test)")) {
+                    let worldID = world.id;
+                    let parentID = world.parentID;
 
-    // window.toggleLocationSwitcher = function(toggle){
-    // 	if (toggle || toggle == null){
-    // 		$("#location_switcher_root").show();
-    // 		hideSearch();
-    // 		updateWorldList(gamemap.getWorldFromID(gamemap.getCurrentWorldID()).name);
-    // 	} else {
-    // 		$("#location_switcher_root").hide();
-    // 	}
+                    if (parentID <= 0) {
+                        parentID = 0;
 
-    // 	btnLocationSwitcher.classList.toggle("toggled", toggle);
-    // 	locationSwitcherRoot.classList.toggle("shown", toggle);
+                        if (worldID != rootID) {
+                            parentID = GROUP_UNSORTED_ID;
+                        }
+                    }
 
-    // 	reselectTabs();
-    // }
+                    if (displayName.endsWith("(Dev)") || displayName.endsWith("(Beta)")) {
+                        parentID = GROUP_DEV_ID;
+                    }
 
-    // function reselectTabs() {
-    // 	var tabs = M.Tabs.init(document.querySelector("#location_switcher_tab_bar"));
-    // 	tabs.select(currentTabID || 'tab_categories');
-    // }
+                    if (groups[parentID] != null) {
+                        groups[parentID].push(worldID);
+                    } else {
+                        groups[parentID] = [worldID];
+                    }
+                }
+            }
+            for (let i in topLevelWorldIDs){
 
+                pairings = [];
 
-    // function onTabClicked(element) {
-    // 	if (locationSwitcherRoot.classList.contains("shown")) {
+                // parse location list
+                parseGroupList(groups, groups, '', topLevelWorldIDs[i]);
 
-    // 		log("tab clicked!");
-    // 		currentTabID = element.href.split("#")[1];
+                //remove duplicates from location list
+                pairings = getUniqueListFrom(pairings, 'id');
 
-    // 		setTimeout(function() {
-    // 			let worldName = gamemap.getWorldFromID(gamemap.getCurrentWorldID()).name;
-    // 			let elements = document.getElementsByName(worldName);
+                // map each location to a position in the array
+                const pairMappings = pairings.reduce((obj, world, i) => {
+                    obj[world.id] = i;
+                    return obj;
+                }, {});
 
-    // 			for (let i = 0; elements[i]; i++) {
-    // 				let element = elements[i];
+                // create the hierarchy of locations
+                let output = groups;
+                pairings.forEach((world) => {
+                    // Handle the root element
+                    if (world.parentID === null) {
+                        output = world;
+                        return;
+                    }
+                    // Use our mapping to locate the parent element in our data array
+                    const parentWorld = pairings[pairMappings[world.parentID]];
+                    // Add our current world to its parent's `children` array
+                    parentWorld.children = [...(parentWorld.children || []), world];
+                });
 
-    // 				if($(element).is(":visible")){
-    // 					setTimeout(function() {
-    // 						updateWorldList(worldName);
-    // 						element.scrollIntoView({
-    // 							behavior: "auto",
-    // 							block: "center",
-    // 							inline: "center"
-    // 						});
-    // 					}, 10);
-    // 				}
-    // 			}
-    // 		}, 10);
-    // 	}
-    // }
+                groupedWorldList.push(output);
+            }
+        }
 
-    // function createWorldLists(mapWorlds) {
+        print(abcWorldList);
+        print(groupedWorldList);
+        initialise();
+    }
 
-    // 	let abcWorldList = [];
-    // 	let groups = {};
-    // 	const GROUP_DEV_ID = -1337;
-    // 	const GROUP_UNSORTED_ID = -1;
-    // 	let rootID = mapConfig.rootWorldID || mapConfig.defaultWorldID;
+    function parseGroupList(root, obj, stack, rootWorldID) {
+    	for (var property in obj) {
+    		if (obj.hasOwnProperty(property)) {
+    			if (typeof obj[property] == "object") {
+    				parseGroupList(root, obj[property], stack + '.' + property, rootWorldID);
+    			} else {
 
-    // 	let topLevelWorldIDs = [rootID, GROUP_DEV_ID, GROUP_UNSORTED_ID];
+    				//console.log("i: " + property + "   " + obj[property]);
+    				if (root[obj[property]] != null) {
+    					parseGroupList(root, root[obj[property]], stack + '.' + obj[property], rootWorldID);
+    				} else {
 
-    // 	for (let key in mapWorlds) {
-    // 		if (mapWorlds[key].displayName[0] != '_' && key > 0) abcWorldList.push(mapWorlds[key].displayName);
-    // 	}
+    					// reached the end of the location tree
+    					let path = stack + '.' + obj[property];
+    					let pathArray = path.split('.');
+    					pathArray.shift();
 
-    // 	abcWorldList = abcWorldList.sort(function(a, b) {
-    // 		// ignore "The" in alphabetical sort
-    // 		a = a.replace("The ", "");
-    // 		b = b.replace("The ", "");
-    // 		// make alphabetical sort case insensitive
-    // 		if (a.toLowerCase() < b.toLowerCase()) return -1;
-    // 		if (a.toLowerCase() > b.toLowerCase()) return 1;
-    // 		return 0;
-    // 	});
+    					if (pathArray[0] == rootWorldID){
 
-    // 	let abcHTML = "";
+    						for (let i = 0; i < pathArray.length; i++) {
+    							let obj;
 
-    // 	for (let i = 0; i < abcWorldList.length; i++) {
+    							if (i == 0) {
+    								obj = { id: pathArray[i], parentID: null }
+    							} else {
+    								obj = { id: pathArray[i], parentID: pathArray[i-1] }
+    							}
+    							pairings.push(obj);
+    						}
+    					}
+    				}
+    			}
+    		}
+    	}
+    }
 
-    // 		let world = gamemap.getWorldFromDisplayName(abcWorldList[i]);
+    // todo: if more than 5 locations, show group tab, else show abc but rename it to "locations"
 
-    // 		if (world != null) {
-    // 			abcHTML += createLocationRowHTML(world.id);
-    // 		}
-    // 	}
-
-    // 	$("#tab_alphabetical").html(abcHTML);
-
-    // 	for (let i = 0; i < abcWorldList.length; i++) {
-    // 		let displayName = abcWorldList[i];
-    // 		let world = gamemap.getWorldFromDisplayName(displayName);
-
-    // 		if (world != null && world.id != 0 && !displayName.endsWith("(Test)")) {
-    // 			let worldID = world.id;
-    // 			let parentID = world.parentID;
-
-    // 			if (parentID <= 0) {
-    // 				parentID = 0;
-
-    // 				if (worldID != rootID) {
-    // 					parentID = GROUP_UNSORTED_ID;
-    // 				}
-
-    // 			}
-
-    // 			if (displayName.endsWith("(Dev)") || displayName.endsWith("(Beta)")) {
-    // 				parentID = GROUP_DEV_ID;
-    // 			}
-
-    // 			if (groups[parentID] != null) {
-    // 				groups[parentID].push(worldID);
-    // 			} else {
-    // 				groups[parentID] = [worldID];
-    // 			}
-    // 		}
-    // 	}
-
-    // 	let finalGroups = [];
-
-    // 	for (let i in topLevelWorldIDs){
-
-    // 		pairings = [];
-
-    // 		// parse location list
-    // 		parseGroupList(groups, groups, '', topLevelWorldIDs[i]);
-
-    // 		//remove duplicates from location list
-    // 		pairings = Utils.getUniqueListFrom(pairings, 'id');
-
-    // 		// map each location to a position in the array
-    // 		const pairMappings = pairings.reduce((obj, world, i) => {
-    // 			obj[world.id] = i;
-    // 			return obj;
-    // 		}, {});
-
-    // 		// create the hierarchy of locations
-    // 		let output = groups;
-    // 		pairings.forEach((world) => {
-    // 			// Handle the root element
-    // 			if (world.parentID === null) {
-    // 				output = world;
-    // 				return;
-    // 			}
-    // 			// Use our mapping to locate the parent element in our data array
-    // 			const parentWorld = pairings[pairMappings[world.parentID]];
-    // 			// Add our current world to its parent's `children` array
-    // 			parentWorld.children = [...(parentWorld.children || []), world];
-    // 		});
-
-    // 		finalGroups.push(output);
-
-    // 	}
 
     // 	// get HTML for group list pane
     // 	$("#tab_categories").html(createGroupListHTML(finalGroups));
@@ -257,43 +245,7 @@
     // 	}
     // }
 
-    // function parseGroupList(root, obj, stack, rootWorldID) {
-    // 	for (var property in obj) {
-    // 		if (obj.hasOwnProperty(property)) {
-    // 			if (typeof obj[property] == "object") {
-    // 				parseGroupList(root, obj[property], stack + '.' + property, rootWorldID);
-    // 			} else {
 
-    // 				//console.log("i: " + property + "   " + obj[property]);
-    // 				if (root[obj[property]] != null) {
-    // 					parseGroupList(root, root[obj[property]], stack + '.' + obj[property], rootWorldID);
-    // 				} else {
-
-    // 					// reached the end of the location tree
-    // 					let path = stack + '.' + obj[property];
-    // 					let pathArray = path.split('.');
-    // 					pathArray.shift();
-
-    // 					if (pathArray[0] == rootWorldID){
-
-    // 						for (let i = 0; i < pathArray.length; i++) {
-    // 							let obj;
-
-    // 							if (i == 0) {
-    // 								obj = { id: pathArray[i], parentID: null }
-    // 							} else {
-    // 								obj = { id: pathArray[i], parentID: pathArray[i-1] }
-    // 							}
-
-    // 							pairings.push(obj);
-
-    // 						}
-    // 					}
-    // 				}
-    // 			}
-    // 		}
-    // 	}
-    // }
 
     // function createGroupListHTML(groups) {
     // 	let output = "";
@@ -328,11 +280,63 @@
     // 	return output;
     // }
 
+        // window.toggleLocationSwitcher = function(toggle){
+    // 	if (toggle || toggle == null){
+    // 		$("#location_switcher_root").show();
+    // 		hideSearch();
+    // 		updateWorldList(gamemap.getWorldFromID(gamemap.getCurrentWorldID()).name);
+    // 	} else {
+    // 		$("#location_switcher_root").hide();
+    // 	}
+
+    // 	btnLocationSwitcher.classList.toggle("toggled", toggle);
+    // 	locationSwitcherRoot.classList.toggle("shown", toggle);
+
+    // 	reselectTabs();
+    // }
+
+    // function reselectTabs() {
+    // 	var tabs = M.Tabs.init(document.querySelector("#location_switcher_tab_bar"));
+    // 	tabs.select(currentTabID || 'tab_categories');
+    // }
+
+        // var currentTabID = "";
+
+
+    // function onTabClicked(element) {
+    // 	if (locationSwitcherRoot.classList.contains("shown")) {
+
+    // 		log("tab clicked!");
+    // 		currentTabID = element.href.split("#")[1];
+
+    // 		setTimeout(function() {
+    // 			let worldName = gamemap.getWorldFromID(gamemap.getCurrentWorldID()).name;
+    // 			let elements = document.getElementsByName(worldName);
+
+    // 			for (let i = 0; elements[i]; i++) {
+    // 				let element = elements[i];
+
+    // 				if($(element).is(":visible")){
+    // 					setTimeout(function() {
+    // 						updateWorldList(worldName);
+    // 						element.scrollIntoView({
+    // 							behavior: "auto",
+    // 							block: "center",
+    // 							inline: "center"
+    // 						});
+    // 					}, 10);
+    // 				}
+    // 			}
+    // 		}, 10);
+    // 	}
+    // }
+
+
     function onMouseDown(event) {
         let target = (event.relatedTarget != null) ? event.relatedTarget : (event.explicitOriginalTarget != null) ? event.explicitOriginalTarget : document.elementsFromPoint(event.clientX, event.clientY)[0];
         let isOutsideLocationList = !(locationList !== target && locationList.contains(target));
         if (isOutsideLocationList && !dropdownButton.contains(target)) {
-            dispatch("dismiss", "dismissed");
+            dismiss();
         }
     }
 
@@ -343,18 +347,34 @@
     <div id="location_list" bind:this={locationList} in:fly={!mobile ? { y: -15, duration: 200 } : { x: 15, duration: 150 }} out:fly={ !mobile ? { y: -5, duration: 150 } : { x: 5, duration: 150 } }>
 
         <ul id="location_list_tab_bar" class="tabs" bind:this={tabBar}>
-            <li id="group_tab" class="tab"><a href="#tab_categories">Groups</a></li>
-            <li id="abc_tab" class="tab"><a href="#tab_alphabetical">ABC</a></li>
+            {#if hasGroupedList}
+                <li id="group_tab" class="tab"><a href="#tab_categories">Groups</a></li>
+            {/if}
+            <li id="abc_tab" class="tab"><a href="#tab_alphabetical">{hasGroupedList ? "ABC" : "Locations"}</a></li>
         </ul>
 
-        <div id="location_list_content">
+        <div id="location_list_content" bind:this={contentView}>
             <div id="tab_categories" class="tab-pane">
                 <!-- grouped locations go here -->
             </div>
 
-            <div id="tab_alphabetical" class="tab-pane">
-                <!-- alphabetical locations goes here -->
-            </div>
+            {#if isReady}
+                <div id="tab_alphabetical" class="tab-pane">
+                    <VirtualList
+                        width="100%"
+                        height={contentView.clientHeight}
+                        itemCount={abcWorldList.length}
+                        itemSize={41}
+                        scrollToIndex={abcWorldList.indexOf(gamemap.getCurrentWorld().displayName)}
+                        scrollToAlignment="center">
+                        <!-- svelte-ignore missing-declaration -->
+                        <div slot="item" let:index let:style {style}>
+                            {@const world = gamemap.getWorldFromDisplayName(abcWorldList[index])}
+                            <ListItem title={world.displayName} destinationID={world.id} icon={false} selected={gamemap.getCurrentWorld().displayName == abcWorldList[index]} on:click={(e) => {gamemap.gotoDest(e.detail); dismiss()}}></ListItem>
+                        </div>
+                    </VirtualList>
+                </div>
+            {/if}
         </div>
     </div>
 </markup>
