@@ -65,6 +65,7 @@
 	let showUI = true;
 	let showLayerSwitcher = false;
 	let showLocationList = false;
+	let locationListTab = 0;
 	let showMaps = false;
 	let showHelp = false;
 	let showMapKey = false;
@@ -352,7 +353,7 @@
 
 					{@const tabName = "group_tab"}
 					{#if showLocationList}
-						 <LocationList on:dismiss={() => (showLocationList = false)}/>
+						 <LocationList on:dismiss={() => (showLocationList = false)} currentTab={locationListTab} on:tabChange={(e) => (locationListTab = e.detail)}/>
 					{/if}
 
 				{/if}

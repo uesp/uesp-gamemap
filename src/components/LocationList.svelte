@@ -13,15 +13,15 @@
 
     // import ui components
     import VirtualList from 'svelte-tiny-virtual-list';
-    import LoadingSpinner from './LoadingSpinner.svelte';
     import ListItem from './ListItem.svelte';
 
     // state vars
-    let tabName = 'abc_tab';
-    let tabBar = null;
+    export let currentTab = 0;
     let locationList = null;
     let dropdownButton = null;
     let contentView = null;
+    let tabBar = null;
+    let tabs = null;
     let mobile = isMobile() || window.innerWidth <= 670;
     let mapWorlds = gamemap.getWorlds();
     $: isReady = false;
@@ -38,6 +38,9 @@
         // reposition menu
         reposition();
 
+        // initiate tabs
+        tabs = M.Tabs.init(tabBar, {});
+
         //create world lists
         getWorldLists();
 
@@ -47,11 +50,17 @@
         dispatch("dismiss", "dismissed");
     }
 
-    function initialise() {
-        // initiate tabs
-        let tabs = M.Tabs.init(tabBar, {});
-        tabs.select(0);
-        isReady = true;
+    function selectTab(index) {
+        switch (index) {
+            case 0 :
+                tabs.select("group_tab");
+                break;
+            case 1 :
+                tabs.select("abc_tab");
+                break;
+        }
+        currentTab = index;
+        dispatch("tabChange", currentTab);
     }
 
     // dyamically centre dropdown when not mobile
@@ -65,7 +74,6 @@
             locationList.style.top = (locationList.offsetHeight / 2) + dropdownButton.offsetHeight + 16 + "px";
         }
     }
-
 
     function getWorldLists() {
 
@@ -159,7 +167,7 @@
 
         print(abcWorldList);
         print(groupedWorldList);
-        initialise();
+        isReady = true;
     }
 
     function parseGroupList(root, obj, stack, rootWorldID) {
@@ -335,9 +343,7 @@
     function onMouseDown(event) {
         let target = (event.relatedTarget != null) ? event.relatedTarget : (event.explicitOriginalTarget != null) ? event.explicitOriginalTarget : document.elementsFromPoint(event.clientX, event.clientY)[0];
         let isOutsideLocationList = !(locationList !== target && locationList.contains(target));
-        if (isOutsideLocationList && !dropdownButton.contains(target)) {
-            dismiss();
-        }
+        if (isOutsideLocationList && !dropdownButton.contains(target)) { dismiss(); }
     }
 
 </script>
@@ -347,33 +353,40 @@
     <div id="location_list" bind:this={locationList} in:fly={!mobile ? { y: -15, duration: 200 } : { x: 15, duration: 150 }} out:fly={ !mobile ? { y: -5, duration: 150 } : { x: 5, duration: 150 } }>
 
         <ul id="location_list_tab_bar" class="tabs" bind:this={tabBar}>
-            {#if hasGroupedList}
-                <li id="group_tab" class="tab"><a href="#tab_categories">Groups</a></li>
-            {/if}
-            <li id="abc_tab" class="tab"><a href="#tab_alphabetical">{hasGroupedList ? "ABC" : "Locations"}</a></li>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <li id="group_tab" class="tab" on:click={() => selectTab(0)}><a href="#tab_categories">Groups</a></li>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <li id="abc_tab" class="tab" on:click={() => selectTab(1)}><a href="#tab_alphabetical">{hasGroupedList ? "ABC" : "Locations"}</a></li>
         </ul>
 
         <div id="location_list_content" bind:this={contentView}>
-            <div id="tab_categories" class="tab-pane">
-                <!-- grouped locations go here -->
-            </div>
 
-            {#if isReady}
-                <div id="tab_alphabetical" class="tab-pane">
-                    <VirtualList
-                        width="100%"
-                        height={contentView.clientHeight}
-                        itemCount={abcWorldList.length}
-                        itemSize={41}
-                        scrollToIndex={abcWorldList.indexOf(gamemap.getCurrentWorld().displayName)}
-                        scrollToAlignment="center">
-                        <!-- svelte-ignore missing-declaration -->
-                        <div slot="item" let:index let:style {style}>
-                            {@const world = gamemap.getWorldFromDisplayName(abcWorldList[index])}
-                            <ListItem title={world.displayName} destinationID={world.id} icon={false} selected={gamemap.getCurrentWorld().displayName == abcWorldList[index]} on:click={(e) => {gamemap.gotoDest(e.detail); dismiss()}}></ListItem>
-                        </div>
-                    </VirtualList>
+            {#if currentTab == 0}
+                <div id="tab_categories" class="tab-pane">
+                    <!-- grouped locations go here -->
                 </div>
+            {/if}
+
+            {#if currentTab == 1}
+                {#if isReady}
+                    <div id="tab_alphabetical" class="tab-pane">
+                        <!-- svelte-ignore missing-declaration -->
+                        <VirtualList
+                            width="100%"
+                            height={contentView.clientHeight}
+                            itemCount={abcWorldList.length}
+                            itemSize={41}
+                            scrollToIndex={abcWorldList.indexOf(gamemap.getCurrentWorld().displayName)}
+                            scrollToAlignment="center">
+                            <!-- svelte-ignore missing-declaration -->
+                            <!-- svelte-ignore missing-declaration -->
+                            <div slot="item" let:index let:style {style}>
+                                {@const world = gamemap.getWorldFromDisplayName(abcWorldList[index])}
+                                <ListItem title={world.displayName} destinationID={world.id} icon={false} selected={gamemap.getCurrentWorld().displayName == abcWorldList[index]} on:click={(e) => {gamemap.gotoDest(e.detail); dismiss()}}></ListItem>
+                            </div>
+                        </VirtualList>
+                    </div>
+                {/if}
             {/if}
         </div>
     </div>

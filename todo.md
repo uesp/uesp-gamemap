@@ -11,11 +11,13 @@
 ## Misc / Technical
 - gamemap now creates its own gamemap element if none provided
 - added MD (markdown) parser for help menu instead of html from txt
+- location list no longer displays the full list, only whats visible, better performance
 
 ## Bug Fixes
 - fixed copy link button not working on mobile
 - fixed fullscreen button not being synced to actual fullscreen state
 - fixed layer switcher not updating between worlds
+- fixed location list not selecting the current world properly
 
 
 
