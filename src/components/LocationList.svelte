@@ -24,14 +24,14 @@
     let mobile = isMobile() || window.innerWidth <= 670;
     let mapWorlds = gamemap.getWorlds();
     $: isReady = false;
-
     let abcWorldList = [];
     let groupedWorldList = [];
     let pairings = [];
-    $: hasGroupedList = false;
+    $: hasGroupedList = true;
 
     const dispatch = createEventDispatcher();
 
+    // on added to DOM
     onMount(async () => {
 
         // reposition menu
@@ -45,15 +45,6 @@
         getWorldLists();
 
 	});
-
-    function dismiss() {
-        dispatch("dismiss", "dismissed");
-    }
-
-    function selectTab(index) {
-        currentTab = index;
-        dispatch("tabChange", currentTab);
-    }
 
     // dyamically centre dropdown when not mobile
     function reposition() {
@@ -95,7 +86,6 @@
 
         // get grouped list if there's enough worlds
         if (abcWorldList.length > 3) {
-            hasGroupedList = true;
             for (let i = 0; i < abcWorldList.length; i++) {
                 let displayName = abcWorldList[i];
                 let world = gamemap.getWorldFromDisplayName(displayName);
@@ -155,11 +145,14 @@
 
                 groupedWorldList.push(output);
             }
+        } else {
+            hasGroupedList = false;
         }
 
         print(abcWorldList);
         print(groupedWorldList);
         isReady = true;
+        selectTab(currentTab);
     }
 
     function parseGroupList(root, obj, stack, rootWorldID) {
@@ -197,9 +190,6 @@
     		}
     	}
     }
-
-    // todo: if more than 5 locations, show group tab, else show abc but rename it to "locations"
-
 
     // 	// get HTML for group list pane
     // 	$("#tab_categories").html(createGroupListHTML(finalGroups));
@@ -332,11 +322,21 @@
     // }
 
 
+    // detect when clicked outside of the popup
     function onMouseDown(event) {
         let target = (event.relatedTarget != null) ? event.relatedTarget : (event.explicitOriginalTarget != null) ? event.explicitOriginalTarget : document.elementsFromPoint(event.clientX, event.clientY)[0];
         let isOutsideLocationList = !(locationList !== target && locationList.contains(target));
         if (isOutsideLocationList && !dropdownButton.contains(target)) { dismiss(); }
     }
+
+    // select provided tab
+    function selectTab(index) {
+        currentTab = (hasGroupedList) ? index : 1;
+        dispatch("tabChange", currentTab);
+    }
+
+    // dismiss the popup
+    function dismiss() {dispatch("dismiss", "dismissed"); }
 
 </script>
 
@@ -346,7 +346,9 @@
 
         <ul id="location_list_tab_bar" class="tabs" bind:this={tabBar}>
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <li id="group_tab" class="tab" on:click={() => selectTab(0)}><a class:active={currentTab == 0} href="#tab_categories">Groups</a></li>
+            {#if hasGroupedList}
+                <li id="group_tab" class="tab" on:click={() => selectTab(0)}><a class:active={currentTab == 0} href="#tab_categories">Groups</a></li>
+            {/if}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <li id="abc_tab" class="tab" on:click={() => selectTab(1)}><a class:active={currentTab == 1} href="#tab_alphabetical">{hasGroupedList ? "ABC" : "Locations"}</a></li>
         </ul>

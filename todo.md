@@ -18,6 +18,7 @@
 - fixed fullscreen button not being synced to actual fullscreen state
 - fixed layer switcher not updating between worlds
 - fixed location list not selecting the current world properly
+- fixed location list tabs not being selected properly (and removed poor hack with timeout to force them to be selected)
 
 
 
