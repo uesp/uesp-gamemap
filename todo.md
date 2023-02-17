@@ -23,16 +23,15 @@
 - fixed location list tabs not being selected properly (and removed poor hack with timeout to force them to be selected)
 
 
+## remind dave:
 
+- beyond skyrim's tile bg colours either need to be the same blue as the world bg, or the world bg needs to be changed to #2f2d20
 
 
 
 ## todo
 
 - get location list menu working
-- make location list centred with button
-- get skyrim map done
-
 
 - optimise grid code
 - do cell resource grid for skyrim
@@ -50,6 +49,7 @@
 - fix polylines not respecting zoom levels
 - gamemap not loading after initial full load (gamemap.net/ob/....) results in null latlngs -- only happening on shivering
 - fix grid disappearing when switching layers
+- refactor GetMapImageDimensions(world) into world
 - make loading bar show as soon as gotoDest is called
 - make leaflet popup wikilinks turn black if there's no href
 - for grid, fill in the cells up//along every 5 cells with slightly transparent rect, to add more contrast

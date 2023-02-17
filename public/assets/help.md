@@ -2,6 +2,14 @@ A description of how to use the UESP gamemap can be found below.
 
 See the [UESPWiki:Maps](https://en.uesp.net/wiki/UESPWiki:Maps) on our wiki for more info, or use the [Feedback Page](https://en.uesp.net/wiki/UESPWiki_talk:Maps) to discuss the map or to ask questions.
 
+##### Quick Tips
+
+- Some locations will take you to other maps when you click on them, this is indicated by a ( <i class="material-icons tiny">open_in_browser</i> ) icon in the tooltip.
+- You can click the map name in the watermark at the bottom of the screen to reset the map back to its default state.
+- You can ctrl-click a location to see more info about it, even if it takes you elsewhere normally.
+- If you have editing permissions, you can shift-click a location to edit it.
+- If you want to hide all UI temporarily, you can press the ``Insert`` key to toggle the UI.
+
 ##### Map Navigation
 
 This section describes how to navigate around the gamemap's map/world.
@@ -38,13 +46,13 @@ If you are on a gamemap that supports multiple maps, a golden **Location List** 
 
 In general however: these are the main ways to navigate between maps:
 
-**PC:** Hover over a location with the mouse to see its tooltip, if it has an **Internal Map** icon ( <i class="material-icons tiny">open_in_browser</i> ) then clicking on it will click into that map. To navigate back up, right click in an empty spot on the map.
+**PC:** Hover over a location with the mouse to see its tooltip. Locations with a ( <i class="material-icons tiny">open_in_browser</i> ) icon will take you to different maps when clicking on them. To navigate back up, right click in an empty spot on the map.
 
 **Mobile:** Long press an empty spot on the map to navigate up to the previous map.
 
 ##### Map Interface
 
-This section describes how to use the gamemap's interface. If you want to hide all UI temporarily, you can press the ``Insert`` key to toggle the UI.
+This section describes how to use the gamemap's interface.
 ###### Searching
 
 **General**
@@ -114,14 +122,6 @@ Long pressing the **Zoom In** ( + ) button will zoom in the map to its maximum z
 
 Long pressing the **Zoom Out** ( - ) button will reset the map view and centre it, long pressing it again will zoom the map all the way out.
 
-###### Watermark
-
-The watermark is a small, semi-transparent box at the bottom of the screen that contains the UESP logo and the name of the current gamemap. You can click the gamemap name to reset the map back to its default state.
-
 ##### Map Editing
 
 Certain users of the UESPWiki are able to edit, modify the map world, and its locations. If you are one of these users, and are logged in, a button to enable to the Edit Pane ( <i class="material-icons tiny">edit</i> ) should appear next to the **Overflow Menu** button ( <i class="material-icons tiny">more_vert</i> ) in the top right. This will allow you to modify the current map world, and its locations in any way you see fit.
-
-**Editing tips:**
-
-Clicking on locations will sometimes open into different maps, other times it will simply open its popup. If you want to quickly edit a location; shift click on it. Otherwise, if you want to always open a location's popup, ctrl click on it.
