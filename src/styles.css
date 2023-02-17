@@ -232,6 +232,10 @@ button {
 	background-color: var(--divider);
 }
 
+.collapsible {
+	box-shadow: unset !important;
+}
+
 .material-icons.circle::before {
 	content: unset !important;
 }
