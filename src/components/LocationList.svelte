@@ -308,17 +308,14 @@
         transform: rotate(90deg);
     }
 
-    .singleTab .tab{
+    .singleTab .tab a{
 	    cursor: default !important;
     }
 
-    .singleTab .tabs .tab a:focus, .tabs .tab a.active {
+    .singleTab .tab a {
 	    background-color: var(--primary_variant_dark) !important;
     }
 
-    .singleTab .tabs .tab a:focus, .tabs .tab a:focus.active {
-        background-color: var(--primary_variant_dark) !important;
-    }
 </style>
 
 <!-- Global event listeners -->

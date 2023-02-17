@@ -105,15 +105,39 @@
 
 <style>
     ul.collapsible {
-        background-color: aquamarine;
         position: relative;
+        border: none;
+        margin: 0rem 0 0.2rem 0;
     }
 
     .collapsible-header {
         background-color: var(--surface_variant_dark) !important;
         font-weight: bold;
         justify-content: space-between;
-        padding-left: 1.4em;
+        padding-left: 1.4em !important;
+        display: flex;
+        cursor: pointer;
+        line-height: 1.5;
+        padding: 0.8rem;
+        margin-top: 5px;
+        padding-left: 0.8rem;
+        border-bottom: 2px solid var(--divider);
+    }
+
+    .collapsible-body {
+        height: inherit;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        border-bottom: 2px solid var(--divider);
+        box-shadow: inset 0px 11px 8px -10px var(--shadow), inset 0px -11px 8px -10px var(--shadow);
+        padding-top: var(--padding_small);
+        padding-right: 0px;
+        padding-bottom: 0px;
+        padding-left: 0px;
+    }
+
+    .collapsible {
+        box-shadow: unset;
     }
 
     .collapsible-header.expanded {
@@ -122,6 +146,14 @@
 
     li div.collapsible-header i {
         transition: all 0.2s ease-out;
+    }
+
+    .collapsible-header i {
+        width: 2rem;
+        font-size: 1.6rem;
+        display: inline-block;
+        text-align: center;
+        margin-right: 0rem;
     }
 
     ul.collapsible li.active div.collapsible-header i {

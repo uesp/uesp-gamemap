@@ -56,7 +56,6 @@
 - add permalink option in location popups
 - make map reset use zoomtoBounds or equivalent from leaflet docs
 - fix icons randomly disappearng from listItem
-- fix eastmarch location having weird characters
 - make embeded map watermark actually open in new tab
 - fix tooltip lines being compressed, wikilink and detail not being put on sep lines
 - make labels clickable
