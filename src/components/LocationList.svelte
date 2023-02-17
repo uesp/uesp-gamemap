@@ -14,7 +14,7 @@
     // import ui components
     import VirtualList from 'svelte-tiny-virtual-list';
     import ListItem from './ListItem.svelte';
-  import LocationCollapsible from './LocationCollapsible.svelte';
+    import LocationCollapsible from './LocationCollapsible.svelte';
 
     // state vars
     export let currentTab = 0;
@@ -47,18 +47,7 @@
 
 	});
 
-    // dyamically centre dropdown when not mobile
-    function reposition() {
-        dropdownButton = document.querySelector('#dropdown_icon').parentElement;
-        mobile = (isMobile() || window.innerWidth <= 670);
-        if (!mobile) {
-            let dropdownX = dropdownButton.getBoundingClientRect().left;
-            let offset = dropdownX + (dropdownButton.offsetWidth / 2);
-            locationList.style.left = offset + "px";
-            locationList.style.top = (locationList.offsetHeight / 2) + dropdownButton.offsetHeight + 16 + "px";
-        }
-    }
-
+    // get world lists
     function getWorldLists() {
 
         let groups = {};
@@ -156,6 +145,7 @@
         selectTab(currentTab);
     }
 
+    // create hiearchical group list
     function parseGroupList(root, obj, stack, rootWorldID) {
     	for (var property in obj) {
     		if (obj.hasOwnProperty(property)) {
@@ -190,6 +180,18 @@
     			}
     		}
     	}
+    }
+
+    // dyamically centre dropdown when not mobile
+    function reposition() {
+        dropdownButton = document.querySelector('#dropdown_icon').parentElement;
+        mobile = (isMobile() || window.innerWidth <= 670);
+        if (!mobile) {
+            let dropdownX = dropdownButton.getBoundingClientRect().left;
+            let offset = dropdownX + (dropdownButton.offsetWidth / 2);
+            locationList.style.left = offset + "px";
+            locationList.style.top = (locationList.offsetHeight / 2) + dropdownButton.offsetHeight + 16 + "px";
+        }
     }
 
     // detect when clicked outside of the popup
