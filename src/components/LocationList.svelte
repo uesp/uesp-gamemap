@@ -216,7 +216,7 @@
     <!-- Location list -->
     <div id="location_list" bind:this={locationList} in:fly={!mobile ? { y: -15, duration: 200 } : { x: 15, duration: 150 }} out:fly={ !mobile ? { y: -5, duration: 150 } : { x: 5, duration: 150 } }>
 
-        <ul id="location_list_tab_bar" class="tabs" bind:this={tabBar}>
+        <ul id="location_list_tab_bar" class="tabs" class:singleTab={!hasGroupedList} bind:this={tabBar}>
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             {#if hasGroupedList}
                 <li id="group_tab" class="tab" on:click={() => selectTab(0)}><a class:active={currentTab == 0} href="#tab_categories">Groups</a></li>
@@ -306,6 +306,18 @@
         left: 50%;
         top: -16px;
         transform: rotate(90deg);
+    }
+
+    .singleTab .tab{
+	    cursor: default !important;
+    }
+
+    .singleTab .tabs .tab a:focus, .tabs .tab a.active {
+	    background-color: var(--primary_variant_dark) !important;
+    }
+
+    .singleTab .tabs .tab a:focus, .tabs .tab a:focus.active {
+        background-color: var(--primary_variant_dark) !important;
     }
 </style>
 

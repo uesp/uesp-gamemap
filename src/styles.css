@@ -253,6 +253,10 @@ button {
 	background-color: var(--secondary) !important;
 }
 
+.singleTab .indicator {
+	display: none;
+}
+
 .tabs .tab a:focus, .tabs .tab a.active {
 	background-color: var(--selection) !important;
 }

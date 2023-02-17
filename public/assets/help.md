@@ -7,8 +7,9 @@ See the [UESPWiki:Maps](https://en.uesp.net/wiki/UESPWiki:Maps) on our wiki for 
 - Some locations will take you to other maps when you click on them, this is indicated by a ( <i class="material-icons tiny">open_in_browser</i> ) icon in the tooltip.
 - You can click the map name in the watermark at the bottom of the screen to reset the map back to its default state.
 - You can ctrl-click a location to see more info about it, even if it takes you elsewhere normally.
-- If you have editing permissions, you can shift-click a location to edit it.
 - If you want to hide all UI temporarily, you can press the ``Insert`` key to toggle the UI.
+- To search for a specific type of location, you can do ``type: cave`` in the search box.
+- You can long press the zoom buttons to quickly zoom in or out.
 
 ##### Map Navigation
 
@@ -124,4 +125,4 @@ Long pressing the **Zoom Out** ( - ) button will reset the map view and centre i
 
 ##### Map Editing
 
-Certain users of the UESPWiki are able to edit, modify the map world, and its locations. If you are one of these users, and are logged in, a button to enable to the Edit Pane ( <i class="material-icons tiny">edit</i> ) should appear next to the **Overflow Menu** button ( <i class="material-icons tiny">more_vert</i> ) in the top right. This will allow you to modify the current map world, and its locations in any way you see fit.
+Certain users of the UESPWiki are able to edit, modify the map world, and its locations. If you are one of these users, and are logged in, a button to enable to the Edit Pane ( <i class="material-icons tiny">edit</i> ) should appear next to the **Overflow Menu** button ( <i class="material-icons tiny">more_vert</i> ) in the top right. This will allow you to modify the current map world, and its locations in any way you see fit. To quickly edit a location, you can shift-click on it.

@@ -2,7 +2,7 @@
 
 - Got full screen option working
 - Rewrote help menu to be relevant to be vality
-- got skyrim map working
+- got rest of the maps working
 
 ## Polish
 - location list is now dynamically centred to dropdown button (wasnt before)
