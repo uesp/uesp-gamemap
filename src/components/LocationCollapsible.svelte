@@ -46,13 +46,14 @@
 
                     {#if expanded}
                         <div class='collapsible-body' in:slide out:slide>
+                            <ListItem title={worldName} selected={gamemap.getCurrentWorld().displayName == worldName} on:click={() => onLocationClicked(gamemap.getWorldFromDisplayName(worldName).id)}/>
                             <svelte:self data={item["children"]}/>
                         </div>
                     {/if}
                 </div>
             {:else}
                 <!-- svelte-ignore missing-declaration -->
-                <ListItem title={worldName} on:click={() => onLocationClicked(gamemap.getWorldFromDisplayName(worldName).id)}/>
+                <ListItem title={worldName} selected={gamemap.getCurrentWorld().displayName == worldName} on:click={() => onLocationClicked(gamemap.getWorldFromDisplayName(worldName).id)}/>
             {/if}
         {/each}
 
@@ -66,6 +67,13 @@
 
             {#if expanded}
                 <div class='collapsible-body' in:slide out:slide>
+                    <!-- svelte-ignore missing-declaration -->
+                    {#if data.id > 0}
+                        {@const worldID = data.id}
+                        {@const worldName = gamemap.getWorldDisplayNameFromID(worldID)}
+                        <!-- svelte-ignore missing-declaration -->
+                        <ListItem title={worldName} selected={gamemap.getCurrentWorld().displayName == worldName} on:click={() => onLocationClicked(gamemap.getWorldFromDisplayName(worldName).id)}/>
+                    {/if}
                     <svelte:self data={data["children"]}/>
                 </div>
             {/if}
