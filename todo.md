@@ -9,6 +9,7 @@
 - location list has dynamic animation depending on mobile or desktop (comes out from button)
 - location list only shows group (categories) tab when there are lots of worlds
 - location list's group tab now auto expands the first section by default
+- improve location switcher animation, more springy
 
 ## Misc / Technical
 - gamemap now creates its own gamemap element if none provided

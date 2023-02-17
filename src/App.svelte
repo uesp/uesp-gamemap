@@ -249,6 +249,7 @@
 		setWindowTitle(world.displayName);
 		currentWorld = world;
 		isLoaded = true;
+		showLocationList = false;
 		showLayerSwitcher = (currentWorld.layers.length > 1 || currentWorld.hasGrid());
 	}
 
@@ -351,7 +352,6 @@
 						</slot:template>
 					</IconBar>
 
-					{@const tabName = "group_tab"}
 					{#if showLocationList}
 						 <LocationList on:dismiss={() => (showLocationList = false)} currentTab={locationListTab} on:tabChange={(e) => (locationListTab = e.detail)}/>
 					{/if}

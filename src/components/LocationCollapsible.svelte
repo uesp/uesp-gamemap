@@ -7,47 +7,24 @@
 
 <script>
     // import svelte core stuff
-	import { onMount } from 'svelte';
+    import { slide } from 'svelte/transition';
+    import { createEventDispatcher } from "svelte";
+
+    // import ui components
     import ListItem from './ListItem.svelte';
 
     // state vars
     export let data;
     export let expanded = false;
     export let title = "This is a header";
-
     let isArray = Array.isArray(data);
-
-    let id = Math.random();
-
-
-
-    // function createGroupListHTML(groups) {
-    // 	let output = "";
-    // 	let name;
-    // 	let displayName;
-    // 	let worldID;
-
-    // 	// if the passed grouplist is an array of objects
-    // 	if (Array.isArray(groups)) {
-    // 		groups.forEach(world => {
-
-    // 			if (world["children"]) {
-
-    // 				output += "<ul class='collapsible'><li><div class='collapsible-header waves-effect'>" + displayName + "<i class='material-icons'>expand_more</i></div><div class='collapsible-body''>"
-    // 				if (worldID >= 0) output += createLocationRowHTML(worldID);
-    // 				output += createGroupListHTML(world["children"]);
-    // 				output += "</div></li></ul>";
-    // 			} else {
-    // 				output += createLocationRowHTML(worldID);
-    // 			}
-
-    // 		});
-    // 	}
-    // 	return output;
-    // }
 
     function onClick() {
         expanded = !expanded;
+    }
+
+    function onLocationClicked(id) {
+        gamemap.gotoDest(id);
     }
 
 </script>
@@ -55,6 +32,7 @@
 <markup>
 
     {#if isArray}
+        <!-- svelte-ignore missing-declaration -->
         {#each data as item}
             {@const worldID = item.id}
             {@const worldName = gamemap.getWorldDisplayNameFromID(worldID)}
@@ -62,19 +40,19 @@
                 <div class="collapsible">
 
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <div id={id} class='collapsible-header waves-effect' class:expanded={expanded} on:click={onClick}>
+                    <div class='collapsible-header waves-effect' class:expanded={expanded} on:click={onClick}>
                         {worldName}<i class='material-icons'>expand_more</i>
                     </div>
 
                     {#if expanded}
-                        <div class='collapsible-body'>
+                        <div class='collapsible-body' in:slide out:slide>
                             <svelte:self data={item["children"]}/>
                         </div>
                     {/if}
                 </div>
             {:else}
                 <!-- svelte-ignore missing-declaration -->
-                <ListItem title={worldName}></ListItem>
+                <ListItem title={worldName} on:click={() => onLocationClicked(gamemap.getWorldFromDisplayName(worldName).id)}/>
             {/if}
         {/each}
 
@@ -87,7 +65,7 @@
             </div>
 
             {#if expanded}
-                <div class='collapsible-body'>
+                <div class='collapsible-body' in:slide out:slide>
                     <svelte:self data={data["children"]}/>
                 </div>
             {/if}
