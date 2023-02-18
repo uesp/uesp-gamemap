@@ -3,6 +3,7 @@
 - Got full screen option working
 - Rewrote help menu to be relevant to be vality
 - got rest of the maps working
+- ported location switcher to svelte
 
 ## Polish
 - location list is now dynamically centred to dropdown button (wasnt before)

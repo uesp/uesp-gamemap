@@ -139,8 +139,6 @@
             hasGroupedList = false;
         }
 
-        print(abcWorldList);
-        print(groupedWorldList);
         isReady = true;
         selectTab(currentTab);
     }

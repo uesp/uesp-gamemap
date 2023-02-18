@@ -8,7 +8,6 @@
 <script>
     // import svelte core stuff
     import { slide } from 'svelte/transition';
-    import { createEventDispatcher } from "svelte";
 
     // import ui components
     import ListItem from './ListItem.svelte';
@@ -18,10 +17,6 @@
     export let expanded = false;
     export let title = "This is a header";
     let isArray = Array.isArray(data);
-
-    function onClick() {
-        expanded = !expanded;
-    }
 
     function onLocationClicked(id) {
         gamemap.gotoDest(id);
@@ -33,24 +28,11 @@
 
     {#if isArray}
         <!-- svelte-ignore missing-declaration -->
-        {#each data as item}
+        {#each data as item, i}
             {@const worldID = item.id}
             {@const worldName = gamemap.getWorldDisplayNameFromID(worldID)}
             {#if item["children"]}
-                <div class="collapsible">
-
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <div class='collapsible-header waves-effect' class:expanded={expanded} on:click={onClick}>
-                        {worldName}<i class='material-icons'>expand_more</i>
-                    </div>
-
-                    {#if expanded}
-                        <div class='collapsible-body' in:slide out:slide>
-                            <ListItem title={worldName} selected={gamemap.getCurrentWorld().displayName == worldName} on:click={() => onLocationClicked(gamemap.getWorldFromDisplayName(worldName).id)}/>
-                            <svelte:self data={item["children"]}/>
-                        </div>
-                    {/if}
-                </div>
+                <svelte:self data={data[i]} title={worldName} />
             {:else}
                 <!-- svelte-ignore missing-declaration -->
                 <ListItem title={worldName} selected={gamemap.getCurrentWorld().displayName == worldName} on:click={() => onLocationClicked(gamemap.getWorldFromDisplayName(worldName).id)}/>
@@ -61,7 +43,7 @@
         <div class="collapsible">
 
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div class='collapsible-header waves-effect' class:expanded={expanded} on:click={onClick}>
+            <div class='collapsible-header waves-effect' class:expanded={expanded} on:click={() => expanded = !expanded}>
                 {title}<i class='material-icons'>expand_more</i>
             </div>
 
