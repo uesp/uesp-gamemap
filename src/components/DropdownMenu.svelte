@@ -15,9 +15,8 @@
 
     // initiate dropdown menu
     onMount(async () => {
-        var elems = document.querySelectorAll('select');
-        var instances = M.FormSelect.init(elems, {
-        // specify options here
+        M.FormSelect.init(document.querySelectorAll('select'), {
+            dropdownOptions : {alignment: 'right', constrainWidth: false}
         });
     });
 

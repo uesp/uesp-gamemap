@@ -34,6 +34,7 @@ In addition to the zoom buttons in the bottom right of the map, you can use thes
 **PC:** Use the mouse wheel to zoom in/out. If using a laptop, use two fingers on the trackpad in an up/down motion to zoom to where the mouse cursor is.  You can also use the keyboard shortcuts listed below.
 
 - **+ / - keys**: Zooms the map in/out
+- **Shift and + / - keys**: Zooms the map in/out one full zoom level
 
 **Mobile:** Use two fingers to pinch/zoom in and out of the map.
 

@@ -345,6 +345,22 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	padding-right: var(--padding_small) !important;
 }
 
+.dropdown-content li[id^="select-options"].disabled {
+	background-color: var(--surface_variant) !important;
+	cursor: default !important;
+	min-height: unset !important;
+}
+
+.dropdown-content li[id^="select-options"].disabled:hover {
+	background-color: var(--surface_variant) !important;
+}
+
+.dropdown-content li[id^="select-options"].disabled span {
+	font-size: small !important;
+	color: var(--text_low_emphasis) !important;
+	padding-bottom: 4px !important;
+}
+
 .dropdown-content li > a > i {
 	margin-right: var(--padding_small) !important;
 }

@@ -37,6 +37,7 @@
 
     .lever {
         float: right;
+        margin-right: 2px !important;
     }
 
 </style>
