@@ -38,7 +38,7 @@
 	import Watermark from './components/Watermark.svelte';
 	import MapChooser from './components/MapChooser.svelte';
 	import Search from './components/SearchPane.svelte';
-	import WatermarkContainer from './components/WatermarkContainer.svelte';
+	import LayerOptionsContainer from './components/LayerOptionsContainer.svelte';
 	import IconButton from './components/IconButton.svelte';
 	import LocationList from './components/LocationList.svelte';
 	import IconBar from './components/IconBar.svelte';
@@ -70,6 +70,7 @@
 	let showHelp = false;
 	let showMapKey = false;
 	$: editMode = false;
+	$: gridEnabled = false;
 
 	// on document load
 	onMount(async () => {
@@ -311,7 +312,7 @@
 
 					<!-- show layer switcher when available -->
 					{#if showLayerSwitcher}
-						<LayerSwitcher world={currentWorld}/>
+						<LayerSwitcher world={currentWorld} on:gridChecked={(e) => gridEnabled = e.detail}/>
 					{/if}
 
 					<IconBar>
@@ -360,11 +361,11 @@
 			{/if}
 
 			<!-- Watermark -->
-			<WatermarkContainer>
-				<Watermark mapName = {mapConfig.mapTitle} embedded = {gamemap.isEmbedded()}/>
-
-				<!-- if grid on and has cell resources, show grid options -->
-			</WatermarkContainer>
+			{#if !gridEnabled}
+				<LayerOptionsContainer>
+					<Watermark mapName = {mapConfig.mapTitle} embedded = {gamemap.isEmbedded()}/>
+				</LayerOptionsContainer>
+			{/if}
 
 			<!-- Show debug tag in top right corner if app is in dev mode -->
 			<!-- svelte-ignore missing-declaration -->

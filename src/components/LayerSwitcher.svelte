@@ -8,10 +8,12 @@
 <script>
     // import core svelte stuff
     import { fade, fly } from 'svelte/transition';
+    import { createEventDispatcher } from "svelte";
 
     // import ui components
     import Divider from "./Divider.svelte";
     import LayerButton from "./LayerButton.svelte";
+    import LayerOptionsContainer from './LayerOptionsContainer.svelte';
 
     // state vars
     export let world = gamemap.getCurrentWorld();
@@ -20,6 +22,8 @@
     $: gridEnabled = gamemap.isGridEnabled();
     $: layerName = gamemap.getNextTileLayerName();
     $: layerImage = (hasMultipleLayers) ? gamemap.getMapTileImageURL(world, layerName, true) : null;
+
+    const dispatch = createEventDispatcher();
 
     let isHovered = false;
     let resourceGridEnabled = world.hasCellResources();
@@ -53,6 +57,13 @@
         layerName = gamemap.getNextTileLayerName();
     }
 
+    function onGridChecked(event) {
+        gridEnabled = event.detail;
+        isHovered = false;
+        gamemap.toggleCellGrid(event.detail)
+        dispatch("gridChecked", event.detail);
+    }
+
 </script>
 
 <markup>
@@ -84,12 +95,21 @@
                 <!-- Predefined optional map layers -->
                 <!-- svelte-ignore missing-declaration -->
                 {#if world.hasGrid()}
-                    <LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked={gridEnabled} on:onClick={(event) => (gamemap.toggleCellGrid(event.detail))}/>
+                    <LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked={gridEnabled} on:onClick={onGridChecked}/>
                 {/if}
 
             </div>
         {/if}
     </div>
+
+    {#if gridEnabled}
+        <LayerOptionsContainer>
+            <div class="cell_grid_options">
+                <b>Grid Options</b>
+                Hello world
+            </div>
+        </LayerOptionsContainer>
+    {/if}
 </markup>
 
 <style>
@@ -180,6 +200,18 @@
     #btn_layer_widget_switcher:active {
         background-size: 150%;
         background-color: var(--surface_dark);
+    }
+    .cell_grid_options {
+        min-width: 45%;
+        pointer-events: visible;
+        display: inline-block;
+        background-color: var(--surface);
+        padding: var(--padding_small);
+        width: auto;
+        box-shadow: 0px 0px 10px 6px var(--shadow) !important;
+        margin: 0 auto;
+        color:black;
+        border-radius: var(--padding_medium) !important;
     }
 
 </style>

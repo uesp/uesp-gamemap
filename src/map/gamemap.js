@@ -275,6 +275,9 @@ export default class Gamemap {
 		return mapState;
 	}
 
+	/** Update the map state with a given mapState object.
+	 * @param {Object} mapState - Object that controls the state and view of the map.
+	 */
 	updateMapState(mapState) {
 
 		let newMapState;
@@ -378,6 +381,9 @@ export default class Gamemap {
 		}
 	}
 
+	/** Get the current world object
+	 * @returns {Object} world - An object that represents the current map world.
+	 */
 	getCurrentWorld() {
 		return ( !isNull(this.getMapState()) && !isNull(this.getMapState().world) != null) ? self.getMapState().world : this.getWorldFromID( (this.currentWorldID != null) ? this.currentWorldID : this.mapConfig.defaultWorldID);
 	}
@@ -389,7 +395,6 @@ export default class Gamemap {
 		return (this.currentWorldID != null) ? this.currentWorldID : getCurrentWorld().id;
 	}
 
-
 	/** Gets the world object associated to a given worldID.
 	 * @param {int} worldID - ID that represents a world in the database.
 	 * @returns {Object} world - A world object that contains map info for the gamemap.
@@ -398,6 +403,10 @@ export default class Gamemap {
 		return this.mapWorlds[worldID];
 	}
 
+	/** Get internal world name from a given worldID
+	 * @param {Object} world - An object that represents the current map world.
+	 * @returns {String} worldName - The internal name of the world.
+	 */
 	getWorldNameFromID(worldID) {
 		if (this.getWorldFromID(worldID) != null) return this.getWorldFromID(worldID).name; else return null;
 	}
@@ -420,19 +429,8 @@ export default class Gamemap {
 		return this.mapWorlds[mapWorldDisplayNameIndex[worldDisplayName]];
 	}
 
-	/** Simple function that does stuffblah blah fill this in later
-	 * @returns {Boolean} - A boolean whether or not the current mapConfig contains multiple worlds.
-	 */
-	hasMultipleWorlds() {
-		return Object.keys(this.mapWorlds).length > 1;
-	}
-
-	hasWorld(worldID) {
-		return worldID in this.mapWorlds;
-	}
-
 	isWorldValid(worldID) {
-		return (worldID != null && worldID >= 0 && this.hasWorld(worldID));
+		return (worldID != null && worldID >= 0 && worldID in this.mapWorlds);
 	}
 
 	gotoWorld(destID, coords, zoom) {
@@ -483,6 +481,72 @@ export default class Gamemap {
 	// convenience method to jump to destination
 	gotoDest(destID) {
 		this.gotoWorld(destID);
+	}
+
+	goto(id, coords, zoom) {
+
+	}
+
+	/*================================================
+						 Layers
+	================================================*/
+
+	setTileLayerTo(layer) {
+
+		if (layer != null) {
+			let layerIndex;
+			if (isNaN(layer)){
+				layerIndex = this.getLayerIndexFromName(layer);
+			} else {
+				layerIndex = layer;
+			}
+
+			if (layerIndex > -1 && layerIndex < this.getCurrentWorld().layers.length) {
+				let mapState = this.getMapState();
+				if (mapState.layerIndex != layerIndex) {
+					mapState.layerIndex = layerIndex;
+					this.setMapState(mapState, true);
+				}
+			} else {
+				print.warn("TileLayer index was out of bounds.")
+			}
+
+		} else {
+			print.error("Provided TileLayer was invalid.")
+		}
+	}
+
+	getCurrentTileLayerIndex() {
+		return parseInt(this.getMapState().layerIndex);
+	}
+
+	getNextTileLayerIndex() {
+		return (this.getCurrentTileLayerIndex() +1 == this.getCurrentWorld().layers.length) ? 0 : this.getCurrentTileLayerIndex() + 1;
+	}
+
+	getNextTileLayerName() {
+		return this.getCurrentWorld().layers[this.getNextTileLayerIndex()].name;
+	}
+
+	getCurrentTileLayerName() {
+		return this.getCurrentWorld().layers[this.getCurrentTileLayerIndex()].name;
+	}
+
+
+	// tileX, tileY, zoom, world
+	// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
+	getMapTileImageURL(world, layerIndex, root) {
+
+		if (isNaN(layerIndex)) {
+			layerIndex = this.getLayerIndexFromName(layerIndex);
+		}
+
+		let zoom = (root) ? "/zoom0/" : "/zoom{z}/";
+		let xy = (root) ? "-0-0.jpg" : "-{x}-{y}.jpg";
+		print(world);
+		print(world.layers);
+		print(layerIndex);
+		return this.mapConfig.tileURL + world.name + "/leaflet/" + world.layers[layerIndex].name + zoom + world.name + xy;
 	}
 
 	/*================================================
@@ -772,7 +836,6 @@ export default class Gamemap {
 		return marker;
 	}
 
-
 	getLocationLabel(location) {
 
 		let offset = [0, 0];
@@ -804,13 +867,440 @@ export default class Gamemap {
 		}
 	}
 
-	/*================================================
-						 Layers
-	================================================*/
 
 	/*================================================
-						  Utility
+						  Events
 	================================================*/
+
+	bindMapEvents() {
+
+		map.on('resize moveend zoomend', function() {
+			self.updateMapState();
+			self.clearTooltips();
+		});
+
+		map.on("contextmenu", function(e){
+			if (self.getMapState().world.parentID != null && self.getMapState().world.parentID != -1 ) {
+				let parentID = self.getMapState().world.parentID;
+				self.gotoWorld(parentID);
+			}
+		})
+
+		map.on("zoom", function(e) {
+			if (self.mapCallbacks != null) {
+				self.mapCallbacks.onZoom(map.getZoom());
+			}
+		})
+
+		map.on("dblclick", function(event){
+			map.panTo(event.latlng, {animate: true});
+		})
+
+	}
+
+	onMarkerClicked(marker, shift, ctrl) {
+
+		print(marker.location);
+
+		let isJumpTo = marker.location != null && marker.location.isClickable();
+
+		if (isJumpTo && !shift && !ctrl) { // is location a link to a worldspace/location
+
+			let location = marker.location;
+			if (location != null){
+				if (location.destinationID < 0) { // is location destination a worldID
+					this.gotoWorld(Math.abs(location.destinationID));
+				} else { // it is a location ID
+					function onGetLocation(location) {
+						self.gotoWorld(location.worldID);
+					}
+					this.getLocation(location.destinationID, onGetLocation);
+				}
+			}
+		} else {
+			if (shift) { // if shift pressed, and can edit, show edit menu
+				this.openPopup(marker, this.canEdit());
+			}
+		}
+
+		// if normally clicked or pressing ctrl, show popup
+		if (!shift || ctrl ) {
+
+			if (isJumpTo && !ctrl){
+				// do nothing
+			} else {
+				this.openPopup(marker);
+			}
+
+		}
+
+	}
+
+	openPopup(marker, isEdit) {
+		let latlng;
+
+		try {
+			latlng = marker.getCenter();
+		} catch (e) {
+			latlng = marker.getLatLng();
+		}
+
+		if (!isEdit){
+			print("making popup");
+			L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
+		} else {
+			M.toast({html: "TODO: Editing not done yet."});
+		}
+	}
+
+	bindMarkerEvents(marker, location) {
+
+		// on add to map
+		marker.once('add', function () {
+
+			marker.location = location;
+
+			if (location.worldID == self.getCurrentWorldID()){
+				this.displayLevel = location.displayLevel;
+
+				map.on('resize moveend zoomend', function(){
+					self.redrawMarkers(marker);
+				});
+
+			}
+
+			if (location.displayLevel > map.getZoom()) {
+				if (location.locType != LOCTYPES.PATH) {
+					marker.remove();
+				}
+			}
+
+		});
+
+		// on marker deselected
+		marker.on("mouseout", function () {
+			self.clearTooltips();
+			let isPolygon = marker.location.isPolygon() && marker._path != null;
+
+			if (isPolygon){
+				this.setStyle({
+					fillColor: location.style.fillColour,
+					color: location.style.strokeColour,
+					opacity: location.style.strokeOpacity,
+					fillOpacity: location.style.fillOpacity,
+					weight: location.style.lineWidth,
+				});
+			}
+		});
+
+		// on marker hovered over
+		marker.on('mouseover', function () {
+
+			let isPolygon = marker.location.isPolygon() && marker._path != null;
+			let latLngs = (isPolygon ) ? marker.getCenter() : marker.getLatLng();
+
+
+			L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
+
+			if (isPolygon){
+				this.setStyle({
+					fillColor: location.style.hover.fillColour,
+					color: location.style.hover.strokeColour,
+					opacity: location.style.hover.strokeOpacity,
+					fillOpacity: location.style.hover.fillOpacity,
+					weight: location.style.hover.lineWidth,
+				});
+			}
+		});
+
+		// on marker clicked
+		marker.on('click', function (event) {
+			let shift = event.originalEvent.shiftKey; // edit
+			let ctrl = event.originalEvent.ctrlKey; // popup
+			self.onMarkerClicked(this, shift, ctrl);
+		});
+
+	}
+
+	setZoomTo(zoom) {
+		map.setZoom(zoom, {animate: true})
+	}
+
+	// clear tooltips
+	clearTooltips(){
+		map.eachLayer((layer) => {
+			if (layer.options.className == "location-tooltip") { // clear any tooltip
+				layer.remove();
+			}
+		});
+
+	}
+
+	/*================================================
+						  General
+	================================================*/
+
+	// todo
+	reset(currentWorldOnly) {
+		//resets the gamemap to its default position and world. if currentWorldOnly is set, then it only resets
+		// current world's position
+		print("todo! reset!");
+	}
+
+	isGridEnabled() {
+		return this.gridEnabled;
+	}
+
+	getMapBounds() {
+		return RC.getMaxBounds();
+	}
+
+	isResourceGridEnabled() {
+		return this.getCurrentWorld().hasCellResources;
+	}
+
+	toggleCellGrid(toggle) {
+
+		this.gridEnabled = toggle;
+
+		if (toggle) {
+
+			L.canvasOverlay()
+				.params({bounds: RC.getMaxBounds(), className : "cellGrid", zoomAnimation: true})
+				.drawing(drawGrid)
+				.addTo(map);
+
+			function drawGrid(_, params) {
+
+				// set up layer
+				let ctx = params.canvas.getContext('2d');
+				ctx.clearRect(0, 0, params.size.x, params.size.y);
+
+				// set up bounds
+				let bounds = RC.getMaxBounds();
+				let minX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x;
+				let maxX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x;
+				let minY = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).y;
+				let maxY = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y;
+
+				let gridWidth = maxX - minX;
+				let gridHeight = maxY - minY;
+				print("Grid width: "+gridWidth+"px");
+				print("Grid height: "+gridHeight+"px");
+
+				function toPix(nX, nY) {
+					nY = (nY != null) ? nY : nX;
+					if (nY > 4 || nY < -4) { nY = nY / gridHeight; }
+					if (nX > 4 || nX < -4) { nX = nX / gridWidth; }
+					return new Point(minX + (nX * gridWidth), minY + (nY * gridHeight))
+				}
+
+				// work out zoom %
+				let maxZoomLevel = self.getMapState().world.maxZoomLevel - 0.03;
+				let currentZoom = self.getCurrentZoom();
+				let nZoom = currentZoom / maxZoomLevel;
+				print("nZoom is ... " +nZoom.toFixed(3));
+
+				// work out grid gap size
+				let gridSize = ((self.mapConfig.cellSize * nZoom) / gridWidth) * gridWidth;
+				print("Grid offset (gap) is: "+ gridSize.toFixed(3) +"px");
+
+				// work out how many rows and columns there should be
+				let nRows = self.getMapImageDimensions(self.getCurrentWorld()).width / self.mapConfig.cellSize;
+				let nCols = self.getMapImageDimensions(self.getCurrentWorld()).height / self.mapConfig.cellSize;
+				print (nRows);
+				print (nCols);
+
+				// draw the outline of the grid
+				ctx.beginPath();
+				ctx.rect(minX, minY, gridWidth, gridHeight);
+				ctx.strokeStyle = self.mapConfig.gridLineColour;
+				ctx.lineWidth = self.mapConfig.gridLineWidth;
+				ctx.stroke();
+
+				// do rows
+				ctx.moveTo(toPix(0).x, toPix(0).y);
+
+				let nOffset = 0;
+				for (let i = 0; i <= nRows; i++) {
+					let offset = gridHeight / nRows;
+					// draw a line
+					ctx.beginPath();
+					ctx.moveTo(toPix(nOffset).x, toPix(0).y);
+					ctx.lineTo(toPix(nOffset).x, toPix(1).y);
+					ctx.stroke();
+					nOffset += offset / gridHeight;
+				}
+
+				nOffset = 0;
+				for (let i = 0; i <= nCols; i++) {
+					let offset = gridWidth / nCols;
+					// draw a line
+					ctx.beginPath();
+					ctx.moveTo(toPix(0).x, toPix(nOffset).y);
+					ctx.lineTo(toPix(1).x, toPix(nOffset).y);
+					ctx.stroke();
+					nOffset += offset / gridWidth;
+				}
+
+				// do cell labels
+				let nYOffset = 0;
+				let nXOffset = 0;
+				if (currentZoom > self.mapConfig.gridShowLabelZoom) {
+					for (let i = 0; i <= nCols; i++) {
+						for (let j = 0; j <= nRows; j++) {
+
+							// COLS = X
+							// ROWS = Y
+							let gridStartX = self.mapConfig.gridStart[0];
+							let gridStartY = self.mapConfig.gridStart[1];
+							let colNum = j + gridStartX;
+							let rowNum = (-i) + gridStartY;
+
+							if (rowNum % 5 == 0 && colNum % 5 == 0) {
+								ctx.fillStyle = self.mapConfig.gridLabelColour;
+								ctx.font = "bold 13px Arial";
+								ctx.fillText([colNum, rowNum].join(', '), toPix(nXOffset).x, toPix(nYOffset + ((gridHeight / nRows) / gridHeight)).y);
+							}
+
+							nXOffset += (gridWidth / nCols) / gridWidth;
+						}
+						nXOffset = 0;
+						nYOffset += (gridHeight / nRows) / gridHeight;
+					}
+				}
+			};
+
+		} else {
+			//remove the cell grid
+			map.eachLayer((layer) => {
+				if (layer.options.className == "cellGrid") {
+					layer.remove();
+				}
+			});
+		}
+	}
+
+	getMapObject() {
+		return map;
+	}
+
+	hasMultipleURLParams() {
+		return (Array.from(getURLParams().values())).length >= 2;
+	}
+
+	/*================================================
+						Editing
+	================================================*/
+
+	// get if editing is enabled on this map
+	canEdit() {
+		return this.mapConfig.editingEnabled;
+	}
+
+	checkEditingPermissions() {
+
+		let queryParams = {};
+		let self = this;
+		queryParams.action = "get_perm";
+		queryParams.db = this.mapConfig.database;
+
+		if (this.mapCallbacks != null) {
+			this.mapCallbacks.setLoading("Getting permissions");
+		}
+
+		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+
+			let canEdit = false;
+
+			if (!error && data != null) {
+				canEdit = data.canEdit;
+			} else {
+				print.warn("There was an error getting permissions.")
+			}
+
+			self.mapConfig.editingEnabled = ((canEdit || isDebug) && (!self.isEmbedded() && !isMobile()));
+			if (self.mapCallbacks != null) {
+				self.mapCallbacks.onPermissionsLoaded(self.mapConfig.editingEnabled);
+			}
+		});
+
+	}
+
+
+
+	isEmbedded() {
+		return window.self !== window.top;
+	}
+
+
+
+
+
+	/*================================================
+						  Utils
+	================================================*/
+
+	/** Get current map config object.
+	 * @returns {Object} mapConfig - Object that controls the configuration of the map.
+	 */
+	getMapConfig() {
+		return this.mapConfig;
+	}
+
+	getCurrentZoom() {
+		return (map != null) ? map.getZoom() : 0;
+	}
+
+	getMaxZoom() {
+		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().maxZoomLevel : 5;
+	}
+
+	getMinZoom() {
+		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().minZoomLevel : 0;
+	}
+
+	/** Get wiki link for the current map world.
+	 * @returns {String} URL on the wiki for the current map world.
+	 */
+	getArticleLink() {
+
+		if (!(this.currentWorldID in this.mapWorlds)) {
+			return "";
+		}
+
+		let wikiPage = this.mapWorlds[this.currentWorldID].wikiPage;
+		if (wikiPage == null || wikiPage == '') wikiPage = this.mapWorlds[this.currentWorldID].displayName;
+
+		let namespace = '';
+		if (this.mapConfig.wikiNamespace != null && this.mapConfig.wikiNamespace != '') namespace = this.mapConfig.wikiNamespace + ':';
+
+		wikiPage = encodeURIComponent(wikiPage);
+
+		return this.mapConfig.wikiURL + namespace + wikiPage;
+	}
+
+
+	getLayerIndexFromName(layerName, layersObj) {
+		let layers = (layersObj != null) ? layersObj : this.getCurrentWorld().layers;
+		for (let [key, value] of Object.entries(layers)) {
+			if (layers[key].name == layerName) {
+				return parseInt(key);
+			}
+		}
+		return 0;
+	}
+
+	hasMultipleMapLayers() {
+		return this.getCurrentWorld().layers.length > 1;
+	}
+
+	/** Simple function that returns whether the current gamemap has multiple worlds.
+	 * @returns {Boolean} - A boolean whether or not the current gamemap contains multiple worlds.
+	 */
+	hasMultipleWorlds() {
+		return Object.keys(this.mapWorlds).length > 1;
+	}
 
 	/**
 	 * Gets width and height of the full map image.
@@ -1005,487 +1495,6 @@ export default class Gamemap {
 		return latLng;
 	}
 
-
-	/*================================================
-						  Events
-	================================================*/
-
-	bindMapEvents() {
-
-		map.on('resize moveend zoomend', function() {
-			self.updateMapState();
-			self.clearTooltips();
-		});
-
-		map.on("contextmenu", function(e){
-			if (self.getMapState().world.parentID != null && self.getMapState().world.parentID != -1 ) {
-				let parentID = self.getMapState().world.parentID;
-				self.gotoWorld(parentID);
-			}
-		})
-
-		map.on("zoom", function(e) {
-			if (self.mapCallbacks != null) {
-				self.mapCallbacks.onZoom(map.getZoom());
-			}
-		})
-
-		map.on("dblclick", function(event){
-			map.panTo(event.latlng, {animate: true});
-		})
-
-	}
-
-	onMarkerClicked(marker, shift, ctrl) {
-
-		print(marker.location);
-
-		let isJumpTo = marker.location != null && marker.location.isClickable();
-
-		if (isJumpTo && !shift && !ctrl) { // is location a link to a worldspace/location
-
-			let location = marker.location;
-			if (location != null){
-				if (location.destinationID < 0) { // is location destination a worldID
-					this.gotoWorld(Math.abs(location.destinationID));
-				} else { // it is a location ID
-					function onGetLocation(location) {
-						self.gotoWorld(location.worldID);
-					}
-					this.getLocation(location.destinationID, onGetLocation);
-				}
-			}
-		} else {
-			if (shift) { // if shift pressed, and can edit, show edit menu
-				this.openPopup(marker, this.canEdit());
-			}
-		}
-
-		// if normally clicked or pressing ctrl, show popup
-		if (!shift || ctrl ) {
-
-			if (isJumpTo && !ctrl){
-				// do nothing
-			} else {
-				this.openPopup(marker);
-			}
-
-		}
-
-	}
-
-	openPopup(marker, isEdit) {
-		let latlng;
-
-		try {
-			latlng = marker.getCenter();
-		} catch (e) {
-			latlng = marker.getLatLng();
-		}
-
-		if (!isEdit){
-			print("making popup");
-			L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
-		} else {
-			M.toast({html: "TODO: Editing not done yet."});
-		}
-	}
-
-	bindMarkerEvents(marker, location) {
-
-		// on add to map
-		marker.once('add', function () {
-
-			marker.location = location;
-
-			if (location.worldID == self.getCurrentWorldID()){
-				this.displayLevel = location.displayLevel;
-
-				map.on('resize moveend zoomend', function(){
-					self.redrawMarkers(marker);
-				});
-
-			}
-
-			if (location.displayLevel > map.getZoom()) {
-				if (location.locType != LOCTYPES.PATH) {
-					marker.remove();
-				}
-			}
-
-		});
-
-		// on marker deselected
-		marker.on("mouseout", function () {
-			self.clearTooltips();
-			let isPolygon = marker.location.isPolygon() && marker._path != null;
-
-			if (isPolygon){
-				this.setStyle({
-					fillColor: location.style.fillColour,
-					color: location.style.strokeColour,
-					opacity: location.style.strokeOpacity,
-					fillOpacity: location.style.fillOpacity,
-					weight: location.style.lineWidth,
-				});
-			}
-		});
-
-		// on marker hovered over
-		marker.on('mouseover', function () {
-
-			let isPolygon = marker.location.isPolygon() && marker._path != null;
-			let latLngs = (isPolygon ) ? marker.getCenter() : marker.getLatLng();
-
-
-			L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
-
-			if (isPolygon){
-				this.setStyle({
-					fillColor: location.style.hover.fillColour,
-					color: location.style.hover.strokeColour,
-					opacity: location.style.hover.strokeOpacity,
-					fillOpacity: location.style.hover.fillOpacity,
-					weight: location.style.hover.lineWidth,
-				});
-			}
-		});
-
-		// on marker clicked
-		marker.on('click', function (event) {
-			let shift = event.originalEvent.shiftKey; // edit
-			let ctrl = event.originalEvent.ctrlKey; // popup
-			self.onMarkerClicked(this, shift, ctrl);
-		});
-
-	}
-
-	setZoomTo(zoom) {
-		map.setZoom(zoom, {animate: true})
-	}
-
-	// clear tooltips
-	clearTooltips(){
-		map.eachLayer((layer) => {
-			if (layer.options.className == "location-tooltip") { // clear any tooltip
-				layer.remove();
-			}
-		});
-
-	}
-
-	/*================================================
-						  General
-	================================================*/
-
-	setTileLayerTo(layer) {
-
-		if (layer != null) {
-			let layerIndex;
-			if (isNaN(layer)){
-				layerIndex = this.getLayerIndexFromName(layer);
-			} else {
-				layerIndex = layer;
-			}
-
-			if (layerIndex > -1 && layerIndex < this.getCurrentWorld().layers.length) {
-				let mapState = this.getMapState();
-				if (mapState.layerIndex != layerIndex) {
-					mapState.layerIndex = layerIndex;
-					this.setMapState(mapState, true);
-				}
-			} else {
-				print.warn("TileLayer index was out of bounds.")
-			}
-
-		} else {
-			print.error("Provided TileLayer was invalid.")
-		}
-	}
-
-	// todo
-	reset(currentWorldOnly) {
-		//resets the gamemap to its default position and world. if currentWorldOnly is set, then it only resets
-		// current world's position
-		print("todo! reset!");
-	}
-
-	isGridEnabled() {
-		return this.gridEnabled;
-	}
-
-	getMapBounds() {
-		return RC.getMaxBounds();
-	}
-
-	isResourceGridEnabled() {
-		return this.getCurrentWorld().hasCellResources;
-	}
-
-	toggleCellGrid(toggle) {
-
-		this.gridEnabled = toggle;
-
-		if (toggle) {
-
-			L.canvasOverlay()
-				.params({bounds: RC.getMaxBounds(), className : "cellGrid", zoomAnimation: true})
-				.drawing(drawGrid)
-				.addTo(map);
-
-			function drawGrid(_, params) {
-
-				// set up layer
-				let ctx = params.canvas.getContext('2d');
-				ctx.clearRect(0, 0, params.size.x, params.size.y);
-
-				// set up bounds
-				let bounds = RC.getMaxBounds();
-				let minX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x;
-				let maxX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x;
-				let minY = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).y;
-				let maxY = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y;
-
-				let gridWidth = maxX - minX;
-				let gridHeight = maxY - minY;
-				print("Grid width: "+gridWidth+"px");
-				print("Grid height: "+gridHeight+"px");
-
-				function toPix(nX, nY) {
-					nY = (nY != null) ? nY : nX;
-					if (nY > 4 || nY < -4) { nY = nY / gridHeight; }
-					if (nX > 4 || nX < -4) { nX = nX / gridWidth; }
-					return new Point(minX + (nX * gridWidth), minY + (nY * gridHeight))
-				}
-
-				// work out zoom %
-				let maxZoomLevel = self.getMapState().world.maxZoomLevel - 0.03;
-				let currentZoom = self.getCurrentZoom();
-				let nZoom = currentZoom / maxZoomLevel;
-				print("nZoom is ... " +nZoom.toFixed(3));
-
-				// work out grid gap size
-				let gridSize = ((self.mapConfig.cellSize * nZoom) / gridWidth) * gridWidth;
-				print("Grid offset (gap) is: "+ gridSize.toFixed(3) +"px");
-
-				// work out how many rows and columns there should be
-				let nRows = self.getMapImageDimensions(self.getCurrentWorld()).width / self.mapConfig.cellSize;
-				let nCols = self.getMapImageDimensions(self.getCurrentWorld()).height / self.mapConfig.cellSize;
-				print (nRows);
-				print (nCols);
-
-				// draw the outline of the grid
-				ctx.beginPath();
-				ctx.rect(minX, minY, gridWidth, gridHeight);
-				ctx.strokeStyle = self.mapConfig.gridLineColour;
-				ctx.lineWidth = self.mapConfig.gridLineWidth;
-				ctx.stroke();
-
-				// do rows
-				ctx.moveTo(toPix(0).x, toPix(0).y);
-
-				let nOffset = 0;
-				for (let i = 0; i <= nRows; i++) {
-					let offset = gridHeight / nRows;
-					// draw a line
-					ctx.beginPath();
-					ctx.moveTo(toPix(nOffset).x, toPix(0).y);
-					ctx.lineTo(toPix(nOffset).x, toPix(1).y);
-					ctx.stroke();
-					nOffset += offset / gridHeight;
-				}
-
-				nOffset = 0;
-				for (let i = 0; i <= nCols; i++) {
-					let offset = gridWidth / nCols;
-					// draw a line
-					ctx.beginPath();
-					ctx.moveTo(toPix(0).x, toPix(nOffset).y);
-					ctx.lineTo(toPix(1).x, toPix(nOffset).y);
-					ctx.stroke();
-					nOffset += offset / gridWidth;
-				}
-
-				// do cell labels
-				let nYOffset = 0;
-				let nXOffset = 0;
-				if (currentZoom > self.mapConfig.gridShowLabelZoom) {
-					for (let i = 0; i <= nCols; i++) {
-						for (let j = 0; j <= nRows; j++) {
-
-							// COLS = X
-							// ROWS = Y
-							let gridStartX = self.mapConfig.gridStart[0];
-							let gridStartY = self.mapConfig.gridStart[1];
-							let colNum = j + gridStartX;
-							let rowNum = (-i) + gridStartY;
-
-							if (rowNum % 5 == 0 && colNum % 5 == 0) {
-								ctx.fillStyle = self.mapConfig.gridLabelColour;
-								ctx.font = "bold 13px Arial";
-								ctx.fillText([colNum, rowNum].join(', '), toPix(nXOffset).x, toPix(nYOffset + ((gridHeight / nRows) / gridHeight)).y);
-							}
-
-							nXOffset += (gridWidth / nCols) / gridWidth;
-						}
-						nXOffset = 0;
-						nYOffset += (gridHeight / nRows) / gridHeight;
-					}
-				}
-			};
-
-		} else {
-			//remove the cell grid
-			map.eachLayer((layer) => {
-				if (layer.options.className == "cellGrid") {
-					layer.remove();
-				}
-			});
-		}
-	}
-
-	getMapObject() {
-		return map;
-	}
-
-	hasMultipleURLParams() {
-		return (Array.from(getURLParams().values())).length >= 2;
-	}
-
-	/*================================================
-						Editing
-	================================================*/
-
-	// get if editing is enabled on this map
-	canEdit() {
-		return this.mapConfig.editingEnabled;
-	}
-
-	checkEditingPermissions() {
-
-		let queryParams = {};
-		let self = this;
-		queryParams.action = "get_perm";
-		queryParams.db = this.mapConfig.database;
-
-		if (this.mapCallbacks != null) {
-			this.mapCallbacks.setLoading("Getting permissions");
-		}
-
-		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-
-			let canEdit = false;
-
-			if (!error && data != null) {
-				canEdit = data.canEdit;
-			} else {
-				print.warn("There was an error getting permissions.")
-			}
-
-			self.mapConfig.editingEnabled = ((canEdit || isDebug) && (!self.isEmbedded() && !isMobile()));
-			if (self.mapCallbacks != null) {
-				self.mapCallbacks.onPermissionsLoaded(self.mapConfig.editingEnabled);
-			}
-		});
-
-	}
-
-	getCurrentTileLayerIndex() {
-		return parseInt(this.getMapState().layerIndex);
-	}
-
-	getNextTileLayerIndex() {
-		return (this.getCurrentTileLayerIndex() +1 == this.getCurrentWorld().layers.length) ? 0 : this.getCurrentTileLayerIndex() + 1;
-	}
-
-	getNextTileLayerName() {
-		return this.getCurrentWorld().layers[this.getNextTileLayerIndex()].name;
-	}
-
-	getCurrentTileLayerName() {
-		return this.getCurrentWorld().layers[this.getCurrentTileLayerIndex()].name;
-	}
-
-
-
-	isEmbedded() {
-		return window.self !== window.top;
-	}
-
-	// tileX, tileY, zoom, world
-	// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
-	getMapTileImageURL(world, layerIndex, root) {
-
-		if (isNaN(layerIndex)) {
-			layerIndex = this.getLayerIndexFromName(layerIndex);
-		}
-
-		let zoom = (root) ? "/zoom0/" : "/zoom{z}/";
-		let xy = (root) ? "-0-0.jpg" : "-{x}-{y}.jpg";
-		print(world);
-		print(world.layers);
-		print(layerIndex);
-		return this.mapConfig.tileURL + world.name + "/leaflet/" + world.layers[layerIndex].name + zoom + world.name + xy;
-	}
-
-	getCurrentZoom() {
-		return (map != null) ? map.getZoom() : 0;
-	}
-
-	getMaxZoom() {
-		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().maxZoomLevel : 5;
-	}
-
-	getMinZoom() {
-		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().minZoomLevel : 0;
-	}
-
-
-	/*================================================
-						  Utils
-	================================================*/
-
-	/** Get current map config object.
-	 * @returns {Object} mapConfig - Object that controls the configuration of the map.
-	 */
-	getMapConfig() {
-		return this.mapConfig;
-	}
-
-	/** Get wiki link for the current map world.
-	 * @returns {String} URL on the wiki for the current map world.
-	 */
-	getArticleLink() {
-
-		if (!(this.currentWorldID in this.mapWorlds)) {
-			return "";
-		}
-
-		let wikiPage = this.mapWorlds[this.currentWorldID].wikiPage;
-		if (wikiPage == null || wikiPage == '') wikiPage = this.mapWorlds[this.currentWorldID].displayName;
-
-		let namespace = '';
-		if (this.mapConfig.wikiNamespace != null && this.mapConfig.wikiNamespace != '') namespace = this.mapConfig.wikiNamespace + ':';
-
-		wikiPage = encodeURIComponent(wikiPage);
-
-		return this.mapConfig.wikiURL + namespace + wikiPage;
-	}
-
-
-	getLayerIndexFromName(layerName, layersObj) {
-		let layers = (layersObj != null) ? layersObj : this.getCurrentWorld().layers;
-		for (let [key, value] of Object.entries(layers)) {
-			if (layers[key].name == layerName) {
-				return parseInt(key);
-			}
-		}
-		return 0;
-	}
-
-	hasMultipleMapLayers() {
-		return this.getCurrentWorld().layers.length > 1;
-	}
 
 }
 
