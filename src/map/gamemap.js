@@ -76,7 +76,7 @@ export default class Gamemap {
 			this.gridEnabled = false;
 
 			// check user editing permission
-			this.checkPermissions();
+			this.checkEditingPermissions();
 
 			// get world data for this mapConfig
 			this.getWorlds(mapConfig);
@@ -114,11 +114,9 @@ export default class Gamemap {
 
 		// create inital mapState object
 		let mapState = new MapState();
-		mapState.zoomLevel = mapConfig.defaultZoomLevel;
 		mapState.world = this.getWorldFromID(mapConfig.defaultWorldID || 0);
-		mapState.coords = [mapConfig.defaultXPos, mapConfig.defaultYPos];
 
-		if (this.hasCenterOnURLParam()) { // check if URL has "centeron" param
+		if (getURLParams().has("centeron")) { // check if URL has "centeron" param
 			// TODO: find location and centre on it
 		} else if (this.hasMultipleURLParams()) { // else check if has multiple url params
 			// load state from URL
@@ -135,6 +133,13 @@ export default class Gamemap {
 	/*================================================
 						  State
 	================================================*/
+
+	/** Get current map state object.
+	 * @returns {Object} mapState - Object that controls the state and view of the map.
+	 */
+	getMapState() {
+		return this.currentMapState;
+	}
 
 	/** Override mapState to provided map state (use to load from URL or from saved state).
 	 * @param {Object} mapState - Object that controls the state and view of the map.
@@ -189,7 +194,11 @@ export default class Gamemap {
 		tileLayer.addTo(map);
 
 		// set map view
-		map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel, {animate: true});
+		if(mapState.coords == null || mapState.zoomLevel == null) {
+			map.fitBounds(RC.getMaxBounds(), {animate: true})
+		} else {
+			map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel, {animate: true});
+		}
 
 		// update world
 		this.currentWorldID = mapState.world.id;
@@ -218,20 +227,6 @@ export default class Gamemap {
 
 		// set grid if available
 		this.toggleCellGrid(mapState.showGrid);
-	}
-
-	/** Get current map state object.
-	 * @returns {Object} mapState - Object that controls the state and view of the map.
-	 */
-	getMapState() {
-		return this.currentMapState;
-	}
-
-	/** Get current map config object.
-	 * @returns {Object} mapConfig - Object that controls the configuration of the map.
-	 */
-	getMapConfig() {
-		return this.mapConfig;
 	}
 
 	/** Gets map state object from URL params (XY coords, world etc).
@@ -278,20 +273,6 @@ export default class Gamemap {
 		}
 
 		return mapState;
-	}
-
-	getLayerIndexFromName(layerName, layersObj) {
-		let layers = (layersObj != null) ? layersObj : this.getCurrentWorld().layers;
-		for (let [key, value] of Object.entries(layers)) {
-			if (layers[key].name == layerName) {
-				return parseInt(key);
-			}
-		}
-		return 0;
-	}
-
-	hasMultipleMapLayers() {
-		return this.getCurrentWorld().layers.length > 1;
 	}
 
 	updateMapState(mapState) {
@@ -343,47 +324,6 @@ export default class Gamemap {
 						  Worlds
 	================================================*/
 
-	/** Gets the current world ID (0 by default).
-	 * @returns {int} worldID - ID that represents a world in the database.
-	 */
-	getCurrentWorldID() {
-		return (this.currentWorldID != null) ? this.currentWorldID : getCurrentWorld().id;
-	}
-
-	getCurrentWorld() {
-		return ( !isNull(this.getMapState()) && !isNull(this.getMapState().world) != null) ? self.getMapState().world : this.getWorldFromID( (this.currentWorldID != null) ? this.currentWorldID : this.mapConfig.defaultWorldID);
-	}
-
-	/** Gets the world object associated to a given worldID.
-	 * @param {int} worldID - ID that represents a world in the database.
-	 * @returns {Object} world - A world object that contains map info for the gamemap.
-	 */
-	getWorldFromID(worldID) {
-		return this.mapWorlds[worldID];
-	}
-
-	getWorldNameFromID(worldID) {
-		if (this.getWorldFromID(worldID) != null) return this.getWorldFromID(worldID).name; else return null;
-	}
-
-	getWorldDisplayNameFromID(worldID) {
-
-		if (this.getWorldFromID(worldID) == null) {
-			return null;
-		} else {
-			return this.getWorldFromID(worldID).displayName || null;
-		}
-
-	}
-
-	getWorldFromName(worldName){
-		return this.mapWorlds[mapWorldNameIndex[worldName]];
-	}
-
-	getWorldFromDisplayName(worldDisplayName){
-		return this.mapWorlds[mapWorldDisplayNameIndex[worldDisplayName]];
-	}
-
 	/** Get world data for this game's mapConfig. If no mapConfig param provided, returns current list of worlds
 	 * @see initialiseMap()
 	 */
@@ -394,10 +334,6 @@ export default class Gamemap {
 			let queryParams = {};
 			queryParams.action = "get_worlds";
 			queryParams.db = mapConfig.database;
-
-			if (this.isHiddenLocsShown()) {
-				queryParams.showhidden = 1;
-			}
 
 			if (self.mapCallbacks != null) {
 				self.mapCallbacks.setLoading("Loading world");
@@ -442,6 +378,48 @@ export default class Gamemap {
 		}
 	}
 
+	getCurrentWorld() {
+		return ( !isNull(this.getMapState()) && !isNull(this.getMapState().world) != null) ? self.getMapState().world : this.getWorldFromID( (this.currentWorldID != null) ? this.currentWorldID : this.mapConfig.defaultWorldID);
+	}
+
+	/** Gets the current world ID (0 by default).
+	 * @returns {int} worldID - ID that represents a world in the database.
+	 */
+	getCurrentWorldID() {
+		return (this.currentWorldID != null) ? this.currentWorldID : getCurrentWorld().id;
+	}
+
+
+	/** Gets the world object associated to a given worldID.
+	 * @param {int} worldID - ID that represents a world in the database.
+	 * @returns {Object} world - A world object that contains map info for the gamemap.
+	 */
+	getWorldFromID(worldID) {
+		return this.mapWorlds[worldID];
+	}
+
+	getWorldNameFromID(worldID) {
+		if (this.getWorldFromID(worldID) != null) return this.getWorldFromID(worldID).name; else return null;
+	}
+
+	getWorldDisplayNameFromID(worldID) {
+
+		if (this.getWorldFromID(worldID) == null) {
+			return null;
+		} else {
+			return this.getWorldFromID(worldID).displayName || null;
+		}
+
+	}
+
+	getWorldFromName(worldName){
+		return this.mapWorlds[mapWorldNameIndex[worldName]];
+	}
+
+	getWorldFromDisplayName(worldDisplayName){
+		return this.mapWorlds[mapWorldDisplayNameIndex[worldDisplayName]];
+	}
+
 	/** Simple function that does stuffblah blah fill this in later
 	 * @returns {Boolean} - A boolean whether or not the current mapConfig contains multiple worlds.
 	 */
@@ -460,7 +438,6 @@ export default class Gamemap {
 	gotoWorld(destID, coords, zoom) {
 
 		zoom = (zoom != null) ? zoom : this.mapConfig.defaultZoomLevel;
-		coords = (coords != null) ? coords : [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
 
 		if (destID > 0) { // is this destination a world?
 			let worldID = destID;
@@ -508,11 +485,6 @@ export default class Gamemap {
 		this.gotoWorld(destID);
 	}
 
-	// TODO
-	centreOn(locationID, openPopup) {
-
-	}
-
 	/*================================================
 						Locations
 	================================================*/
@@ -539,7 +511,6 @@ export default class Gamemap {
 		queryParams.action = "get_locs";
 		queryParams.world  = world.id;
 		queryParams.db = this.mapConfig.database;
-		if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
 
 		// make api query
 		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
@@ -573,7 +544,6 @@ export default class Gamemap {
 			queryParams.action = "get_loc";
 			queryParams.locid  = locationID;
 			queryParams.db = this.mapConfig.database;
-			if (this.isHiddenLocsShown()) { queryParams.showhidden = 1; }
 
 			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 
@@ -835,12 +805,16 @@ export default class Gamemap {
 	}
 
 	/*================================================
+						 Layers
+	================================================*/
+
+	/*================================================
 						  Utility
 	================================================*/
 
 	/**
 	 * Gets width and height of the full map image.
-	 * @param world -
+	 * @param world - The world object.
 	 * @returns mapImageDimens - The width/height of the map image as an object
 	 * @example print(getMapImageDimensions().width);
 	 */
@@ -906,10 +880,6 @@ export default class Gamemap {
 		coord.x = Math.trunc(world.minX + (world.maxX - world.minX) * nX);
 		coord.y = Math.trunc(world.minY + (world.maxY - world.minY) * nY);
 		return coord;
-	}
-
-	toCoords(coords) {
-
 	}
 
 	/**
@@ -1087,7 +1057,7 @@ export default class Gamemap {
 			}
 		} else {
 			if (shift) { // if shift pressed, and can edit, show edit menu
-				this.openPopup(marker, this.isMapEditingEnabled());
+				this.openPopup(marker, this.canEdit());
 			}
 		}
 
@@ -1244,6 +1214,10 @@ export default class Gamemap {
 		return this.gridEnabled;
 	}
 
+	getMapBounds() {
+		return RC.getMaxBounds();
+	}
+
 	isResourceGridEnabled() {
 		return this.getCurrentWorld().hasCellResources;
 	}
@@ -1370,37 +1344,6 @@ export default class Gamemap {
 		}
 	}
 
-	isHiddenLocsShown() {
-		if (getURLParams().get("showhidden") === "true") {
-			return true;
-		} else {
-			return false;
-		}
-
-	}
-
-	hasCenterOnURLParam(){
-		return getURLParams().get("centeron") != null && getURLParams().get("centeron") !== '';
-	}
-
-	getArticleLink() {
-
-		if (!(this.currentWorldID in this.mapWorlds)) {
-			return "";
-		}
-
-		let wikiPage = this.mapWorlds[this.currentWorldID].wikiPage;
-		if (wikiPage == null || wikiPage == '') wikiPage = this.mapWorlds[this.currentWorldID].displayName;
-
-		let namespace = '';
-		if (this.mapConfig.wikiNamespace != null && this.mapConfig.wikiNamespace != '') namespace = this.mapConfig.wikiNamespace + ':';
-
-		wikiPage = encodeURIComponent(wikiPage);
-
-		return this.mapConfig.wikiURL + namespace + wikiPage;
-
-	}
-
 	getMapObject() {
 		return map;
 	}
@@ -1414,28 +1357,11 @@ export default class Gamemap {
 	================================================*/
 
 	// get if editing is enabled on this map
-	isMapEditingEnabled() {
+	canEdit() {
 		return this.mapConfig.editingEnabled;
 	}
 
-	getCurrentTileLayerIndex() {
-		return parseInt(this.getMapState().layerIndex);
-	}
-
-	getNextTileLayerIndex() {
-		return (this.getCurrentTileLayerIndex() +1 == this.getCurrentWorld().layers.length) ? 0 : this.getCurrentTileLayerIndex() + 1;
-	}
-
-	getNextTileLayerName() {
-		return this.getCurrentWorld().layers[this.getNextTileLayerIndex()].name;
-	}
-
-	getCurrentTileLayerName() {
-		return this.getCurrentWorld().layers[this.getCurrentTileLayerIndex()].name;
-	}
-
-	// check if user has editing permissions
-	checkPermissions() {
+	checkEditingPermissions() {
 
 		let queryParams = {};
 		let self = this;
@@ -1463,6 +1389,24 @@ export default class Gamemap {
 		});
 
 	}
+
+	getCurrentTileLayerIndex() {
+		return parseInt(this.getMapState().layerIndex);
+	}
+
+	getNextTileLayerIndex() {
+		return (this.getCurrentTileLayerIndex() +1 == this.getCurrentWorld().layers.length) ? 0 : this.getCurrentTileLayerIndex() + 1;
+	}
+
+	getNextTileLayerName() {
+		return this.getCurrentWorld().layers[this.getNextTileLayerIndex()].name;
+	}
+
+	getCurrentTileLayerName() {
+		return this.getCurrentWorld().layers[this.getCurrentTileLayerIndex()].name;
+	}
+
+
 
 	isEmbedded() {
 		return window.self !== window.top;
@@ -1492,7 +1436,79 @@ export default class Gamemap {
 		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().maxZoomLevel : 5;
 	}
 
+	getMinZoom() {
+		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().minZoomLevel : 0;
+	}
+
+
+	/*================================================
+						  Utils
+	================================================*/
+
+	/** Get current map config object.
+	 * @returns {Object} mapConfig - Object that controls the configuration of the map.
+	 */
+	getMapConfig() {
+		return this.mapConfig;
+	}
+
+	/** Get wiki link for the current map world.
+	 * @returns {String} URL on the wiki for the current map world.
+	 */
+	getArticleLink() {
+
+		if (!(this.currentWorldID in this.mapWorlds)) {
+			return "";
+		}
+
+		let wikiPage = this.mapWorlds[this.currentWorldID].wikiPage;
+		if (wikiPage == null || wikiPage == '') wikiPage = this.mapWorlds[this.currentWorldID].displayName;
+
+		let namespace = '';
+		if (this.mapConfig.wikiNamespace != null && this.mapConfig.wikiNamespace != '') namespace = this.mapConfig.wikiNamespace + ':';
+
+		wikiPage = encodeURIComponent(wikiPage);
+
+		return this.mapConfig.wikiURL + namespace + wikiPage;
+	}
+
+
+	getLayerIndexFromName(layerName, layersObj) {
+		let layers = (layersObj != null) ? layersObj : this.getCurrentWorld().layers;
+		for (let [key, value] of Object.entries(layers)) {
+			if (layers[key].name == layerName) {
+				return parseInt(key);
+			}
+		}
+		return 0;
+	}
+
+	hasMultipleMapLayers() {
+		return this.getCurrentWorld().layers.length > 1;
+	}
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1596,16 +1612,6 @@ export default class Gamemap {
 
 
 
-// uesp.gamemap.Map.prototype.onJumpToDestinationLoad = function (eventData)
-// {
-// 	if (eventData.destId == null) return;
-// 	this.jumpToDestination(eventData.destId, eventData.openPopup, eventData.useEditPopup);
-// }
-
-
-
-
-
 // findLocationAt(pageX, pageY) {
 // 	// Look for icons first
 // 	for (let key in this.locations) {
@@ -1641,41 +1647,6 @@ export default class Gamemap {
 
 // 	return null;
 // }
-
-// uesp.gamemap.Map.prototype.jumpToDestination = function (destId, openPopup, useEditPopup)
-// {
-// 	if (destId == null || destId == 0) return;
-
-// 	if (destId < 0)
-// 	{
-// 		return this.jumpToWorld(-destId);
-// 	}
-
-// 	if (!this.hasLocation(destId))
-// 	{
-// 		uesp.printDebug(uesp.print_LEVEL_ERROR, "Don't have data for destination location #" + destId + "!");
-// 		this.retrieveLocation(destId, this.onJumpToDestinationLoad, { destId: destId, openPopup:openPopup, useEditPoup:useEditPopup });
-// 		return;
-// 	}
-
-// 	var newState = new uesp.gamemap.MapState;
-// 	var destLoc  = this.locations[destId];
-
-// 	newState.worldID = destLoc.worldID;
-// 	newState.gamePos.x = destLoc.x;
-// 	newState.gamePos.y = destLoc.y;
-
-// 	newState.zoomLevel = this.zoomLevel;
-// 	if (newState.zoomLevel < destLoc.displayLevel) newState.zoomLevel = destLoc.displayLevel;
-
-
-// 	if (openPopup === true || (this.openPopupOnJump && (destLoc.displayData.labelPos != 0 || destLoc.iconType != 0)))
-// 	{
-// 		if (useEditPopup === true) destLoc.useEditPopup = true;
-// 		destLoc.showPopup();
-// 	}
-// }
-
 
 // uesp.gamemap.Map.prototype.onFinishEditMode = function(event)
 // {
@@ -1823,26 +1794,6 @@ export default class Gamemap {
 // 	location.showPopup();
 
 // 	return location;
-// }
-
-
-// uesp.gamemap.Map.prototype.onDragLocationClick = function(event)
-// {
-// 	event.preventDefault();
-// 	if (this.currentEditLocation == null) return false;
-
-// 	gamePos = this.convertWindowPixelToGamePos(event.pageX, event.pageY);
-// 	this.currentEditLocation.x = gamePos.x;
-// 	this.currentEditLocation.y = gamePos.y;
-// 	this.currentEditLocation.displayData.points[0] = gamePos.x;
-// 	this.currentEditLocation.displayData.points[1] = gamePos.y;
-
-// 	this.currentEditLocation.computeOffset();
-// 	this.currentEditLocation.update();
-
-// 	this.redrawCanvas(true);
-
-// 	return true;
 // }
 
 
@@ -2166,14 +2117,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.enableWorldPopupEditButtons = function (enable)
-// {
-// 	if (this.worldEditPopup == null) return;
-// 	this.worldEditPopup.find('input[type="button"]').attr('disabled', enable ? null : 'disabled');
-// }
-
-
-
 // uesp.gamemap.Map.prototype.setWorldPopupEditNotice = function (Msg, MsgType)
 // {
 // 	if (this.worldEditPopup == null) return;
@@ -2195,34 +2138,6 @@ export default class Gamemap {
 // 		$status.addClass('gmMapEditPopupStatusWarning');
 // 	else if (MsgType === 'error')
 // 		$status.addClass('gmMapEditPopupStatusError');
-// }
-
-
-// uesp.gamemap.Map.prototype.onCloseWorldEditPopup = function(event)
-// {
-// 	this.hideWorldEditForm();
-// 	this.removeEditClickWall();
-// 	this.currentEditMode = '';
-// 	this.currentEditWorld = null;
-// 	return true;
-// }
-
-
-// uesp.gamemap.Map.prototype.onSaveWorldEditPopup = function(event)
-// {
-// 	if (!this.canEdit()) return false;
-// 	if (this.worldEditPopup == null) return false;
-
-// 	this.setWorldPopupEditNotice('Saving world...');
-// 	this.enableWorldPopupEditButtons(false);
-
-// 	this.getWorldFormData();
-
-// 	//this.update();
-
-// 	this.doWorldSaveQuery(this.currentEditWorld);
-
-// 	return true;
 // }
 
 
@@ -2271,194 +2186,6 @@ export default class Gamemap {
 // 	this.currentEditWorld = null;
 
 // 	return true;
-// }
-
-
-// uesp.gamemap.Map.prototype.getWorldFormData = function()
-// {
-// 	if (!this.canEdit()) return false;
-
-// 	form = this.worldEditPopup.find('form');
-// 	if (form == null) return false;
-
-// 	formValues = uesp.getFormData(form)
-
-// 	formValues.parentId = parseInt(formValues.parentId);
-// 	formValues.minZoom = parseInt(formValues.minZoom);
-// 	formValues.maxZoom = parseInt(formValues.maxZoom);
-// 	formValues.zoomOffset = parseInt(formValues.zoomOffset);
-// 	formValues.posLeft = parseInt(formValues.posLeft);
-// 	formValues.posRight = parseInt(formValues.posRight);
-// 	formValues.posTop = parseInt(formValues.posTop);
-// 	formValues.posLeft = parseInt(formValues.posLeft);
-
-// 	if (formValues.enabled == null)
-// 		formValues.enabled = false;
-// 	else
-// 		formValues.enabled = parseInt(formValues.enabled) != 0;
-
-// 	uesp.gamemap.mergeObjects(this.currentEditWorld, formValues);
-
-// 	this.currentEditWorld.updateOptions();
-// 	return true;
-// }
-
-// uesp.gamemap.Map.prototype.createHelpBlockElement = function()
-// {
-// 	var self = this;
-
-// 	if (this.mapConfig.isOffline)
-// 	{
-// 		this.helpBlockElement = $(".gmHelpBlock");
-
-// 		self.helpBlockElement.find('.gmHelpCloseButton').bind("touchstart click", function(event) {
-// 			self.hideHelpBlock();
-// 			return false;
-// 		});
-
-// 		$(document).mousedown(function(e){
-// 			var container = self.helpBlockElement;
-
-// 			if (!container.is(e.target) && container.has(e.target).length === 0)
-// 			{
-// 				self.hideHelpBlock();
-// 			}
-// 		});
-
-// 		return;
-// 	}
-
-// 	this.helpBlockElement = $('<div />')
-// 				.addClass('gmHelpBlock')
-// 				.html("Loading...")
-// 				.appendTo(this.mapContainer);
-
-// 	$.get( this.mapConfig.helpTemplate, function( data ) {
-// 		self.helpBlockContents = data;
-// 		uesp.printDebug(uesp.print_LEVEL_WARNING, 'Received help block contents!', data);
-// 		$('.gmHelpBlock').html(data);
-
-// 		self.helpBlockElement.find('.gmHelpCloseButton').bind("touchstart click", function(event) {
-// 			self.hideHelpBlock();
-// 			return false;
-// 		});
-
-// 		$(document).mousedown(function(e){
-// 			var container = self.helpBlockElement;
-
-// 			if (!container.is(e.target) && container.has(e.target).length === 0)
-// 			{
-// 				self.hideHelpBlock();
-// 			}
-// 		});
-// 	});
-
-// }
-
-
-// uesp.gamemap.Map.prototype.showHelpBlock = function()
-// {
-// 	if (this.currentEditMode != '') return false;
-
-// 	this.addEditClickWall('default');
-// 	this.setEditClickWallBackground('rgba(0,0,0,0.5)');
-// 	this.currentEditMode = 'showhelpblock';
-
-// 	if (this.helpBlockElement == null) this.createHelpBlockElement();
-// 	this.helpBlockElement.show();
-// }
-
-
-
-// uesp.gamemap.Map.prototype.showMapKey = function()
-// {
-// 	if (this.currentEditMode != '') return false;
-
-// 	this.addEditClickWall('default');
-// 	this.setEditClickWallBackground('rgba(0,0,0,0.5)');
-// 	this.currentEditMode = 'showmapkey';
-
-// 	if (this.mapKeyElement == null) this.createMapKey();
-// 	this.mapKeyElement.show();
-// }
-
-
-// uesp.gamemap.Map.prototype.createMapKey = function()
-// {
-// 	var self = this;
-// 	var MapKeyContent = "<div class='gmMapKeyTitle'>Map Key</div>" +
-// 						"<button class='gmMapKeyCloseButton'>Close</button>" +
-// 						this.createMapKeyContent() +
-// 						"";
-
-// 	this.mapKeyElement = $('<div />')
-// 			.addClass('gmMapKey')
-// 			.html(MapKeyContent)
-// 			.appendTo(this.mapContainer);
-
-// 	this.mapKeyElement.find('.gmMapKeyCloseButton').bind("touchstart click", function(event) {
-// 		self.hideMapKey();
-// 		return false;
-// 	});
-
-// 	$(document).mousedown(function(e){
-// 		var container = self.mapKeyElement;
-
-// 		if (!container.is(e.target) && container.has(e.target).length === 0)
-// 		{
-// 			self.hideMapKey();
-// 		}
-// 	});
-
-// }
-
-
-// uesp.gamemap.Map.prototype.createMapKeyContent = function()
-// {
-// 	if (this.mapConfig.iconTypeMap == null) return 'No Map Icons Available';
-
-// 	var reverseIconTypeMap = { };
-// 	var sortedIconTypeArray = [ ];
-
-// 	for (key in this.mapConfig.iconTypeMap)
-// 	{
-// 		var keyValue = this.mapConfig.iconTypeMap[key];
-
-// 			// Only permit unique icon names to display
-// 			// TODO: Check for different icon images?
-// 		if (reverseIconTypeMap[keyValue] == null) sortedIconTypeArray.push(keyValue);
-
-// 		reverseIconTypeMap[keyValue] = key;
-// 	}
-
-// 	sortedIconTypeArray.sort();
-
-// 	var output = "<div class='gmMapKeyContainer'><div class='gmMapKeyColumn'>";
-// 	var numColumns = this.mapKeyNumColumns;
-// 	var itemsPerColumn = sortedIconTypeArray.length / numColumns;
-// 	var itemCount = 0;
-
-// 	for (key in sortedIconTypeArray)
-// 	{
-// 		iconTypeLabel = sortedIconTypeArray[key];
-// 		iconType = reverseIconTypeMap[iconTypeLabel];
-
-// 		output += "<div class='gmMapKeyItem'>";
-// 		output += "<div class='gmMapKeyImageImage'><img src='" + this.mapConfig.iconPath + iconType + ".png' /></div>";
-// 		output += "<div class='gmMapKeyItemLabel'>"+ iconTypeLabel + "</div>";
-// 		output += "</div><br />";
-
-// 		++itemCount;
-
-// 		if (itemCount > itemsPerColumn)
-// 		{
-// 			output += "</div><div class='gmMapKeyColumn'>";
-// 			itemCount = 0;
-// 		}
-// 	}
-
-// 	output += "</div></div>"
-// 	return output;
 // }
 
 

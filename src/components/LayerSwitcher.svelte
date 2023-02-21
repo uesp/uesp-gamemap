@@ -87,13 +87,6 @@
                     <LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked={gridEnabled} on:onClick={(event) => (gamemap.toggleCellGrid(event.detail))}/>
                 {/if}
 
-                <!-- svelte-ignore missing-declaration -->
-                {#if world.hasCellResources()}
-                    <LayerButton label="Resources" tooltip="Toggle resource grid" icon="local_florist" checked={resourceGridEnabled}/>
-                {/if}
-
-                <!-- <Divider direction="vertical"></Divider>
-                <LayerButton label="Map Key" tooltip="Show map key" icon="view_list"/> -->
             </div>
         {/if}
     </div>

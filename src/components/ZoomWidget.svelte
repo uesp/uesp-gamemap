@@ -20,7 +20,7 @@
     const dispatch = createEventDispatcher();
 
     $: canZoomIn = currentZoom < (gamemap.getMaxZoom() - 0.03);
-    $: canZoomOut = currentZoom > 0;
+    $: canZoomOut = currentZoom > gamemap.getMinZoom();
 
     // long press listener
     document.addEventListener('long-press', function(e) {

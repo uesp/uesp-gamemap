@@ -230,7 +230,7 @@
                     <!-- svelte-ignore missing-declaration -->
                     {#each groupedWorldList as group,i}
                         {@const worldID = group.id}
-                        {@const name = (worldID < 0) ? (worldID == -1) ? "Orphaned Maps" : "Beta maps" : gamemap.getWorldDisplayNameFromID(worldID)}
+                        {@const name = (worldID < 0) ? (worldID == -1) ? "Orphaned Maps" : "Beta Maps" : gamemap.getWorldDisplayNameFromID(worldID)}
                         <LocationCollapsible data={group} expanded={i==0} title={name}/>
                     {/each}
                 </div>

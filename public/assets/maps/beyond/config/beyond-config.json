@@ -4,7 +4,7 @@
     "wikiNamespace": "Beyond_Skyrim",
     "database" : "beyond",
     "tileURLName" : "bsmap",
-    "bgColor" : "#2f2d20",
+    "bgColor" : "#284358",
 
     // Map options
     "defaultZoomLevel" : 2,

@@ -1,39 +1,11 @@
 ## last week:
 
-- Got full screen option working
-- Rewrote help menu to be relevant to be vality
-- got rest of the maps working
-- ported location switcher to svelte
-
-## Polish
-- location list is now dynamically centred to dropdown button (wasnt before)
-- location list has dynamic animation depending on mobile or desktop (comes out from button)
-- location list only shows group (categories) tab when there are lots of worlds
-- location list's group tab now auto expands the first section by default
-- improve location switcher animation, more springy
-
-## Misc / Technical
-- gamemap now creates its own gamemap element if none provided
-- added MD (markdown) parser for help menu instead of html from txt
-- location list no longer displays the full list, only whats visible, better performance
-
-## Bug Fixes
-- fixed copy link button not working on mobile
-- fixed fullscreen button not being synced to actual fullscreen state
-- fixed layer switcher not updating between worlds
-- fixed location list not selecting the current world properly
-- fixed location list tabs not being selected properly (and removed poor hack with timeout to force them to be selected)
 
 
-## remind dave:
-
-- beyond skyrim's tile bg colours either need to be the same blue as the world bg, or the world bg needs to be changed to #2f2d20
-
+fix: map view not being centred properly on world load (most noticeable on eso map)
 
 
 ## todo
-
-- get location list menu working
 
 - optimise grid code
 - do cell resource grid for skyrim
