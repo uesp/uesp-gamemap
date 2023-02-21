@@ -14,7 +14,8 @@
     import Divider from "./Divider.svelte";
     import LayerButton from "./LayerButton.svelte";
     import LayerOptionsContainer from './LayerOptionsContainer.svelte';
-  import Switch from './Switch.svelte';
+    import Switch from './Switch.svelte';
+    import DropdownMenu from './DropdownMenu.svelte';
 
     // state vars
     export let world = gamemap.getCurrentWorld();
@@ -108,14 +109,7 @@
             <div class="cell_grid_options">
                 <b>Grid Options</b>
                 <Switch label="Show Cell Labels" enabled={true}></Switch>
-
-                <label for="form-select-6">Cell Resources</label>
-                <select id="form-select-6" class="browser-default">
-                  <option value="" disabled selected>None</option>
-                  <option value="1">Option 1</option>
-                  <option value="2">Option 2</option>
-                  <option value="3">Option 3</option>
-                </select>
+                <DropdownMenu label="Cell Resources"></DropdownMenu>
             </div>
         </LayerOptionsContainer>
     {/if}
@@ -221,6 +215,7 @@
         margin: 0 auto;
         color:black;
         border-radius: var(--padding_medium) !important;
+        padding-bottom: 0px;
     }
 
 </style>

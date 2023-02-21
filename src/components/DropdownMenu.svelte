@@ -1,0 +1,80 @@
+
+<!-- @component
+### Description
+ Dropdown menu component for the UESP gamemap.
+
+### Author(s)
+- Thal-J <thal-j@uesp.net> (21st Feb, 2023) -->
+
+<script>
+
+    // import svelte stuff
+    import { onMount } from 'svelte';
+
+    export let label;
+
+    // initiate dropdown menu
+    onMount(async () => {
+        var elems = document.querySelectorAll('select');
+        var instances = M.FormSelect.init(elems, {
+        // specify options here
+        });
+    });
+
+</script>
+
+<markup>
+    <div class="input-field col s12">
+        <label class="label" for="form-select-1">{label}</label>
+        <select id="form-select-1">
+            <option value="" disabled selected>Select resource...</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+        </select>
+      </div>
+</markup>
+
+<style>
+
+    .label {
+        color: var(--text_low_emphasis);
+        font-size: 1rem;
+    }
+
+    .input-field.col label {
+        left: 0px;
+    }
+
+    .input-field {
+        display: inline-block;
+        width: 100%;
+        margin-top: 2px;
+    margin-bottom: 2px;
+    }
+
+</style>

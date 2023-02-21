@@ -335,7 +335,8 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	font-weight: bold;
 	width: fit-content !important;
 	height: fit-content !important;
-	box-shadow: 0px 1.5px 4px 2px var(--shadow) !important
+	box-shadow: 0px 1.5px 4px 2px var(--shadow) !important;
+	max-height: 55vh;
 }
 
 .dropdown-content li > a, .dropdown-content li > span {
@@ -359,6 +360,15 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 
 .dropdown-content li:active {
 	background: var(--divider) !important;
+}
+
+.select-wrapper {
+	width: 45% !important;
+	float: right !important;
+}
+
+.select-wrapper input.select-dropdown {
+	border-bottom: 1px solid var(--divider) !important;
 }
 
 /* modals */
