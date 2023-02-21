@@ -312,6 +312,19 @@ div[class^="icon_bar"] > * > *{
 	user-select: none;
 }
 
+/* switches */
+.switch label input[type="checkbox"]:checked + .lever::after {
+	background-color: var(--secondary) !important;
+}
+.switch label input[type="checkbox"]:checked + .lever {
+	background-color: var(--selection) !important;
+}
+input[type=checkbox]:checked:not(:disabled) ~ .lever:active::before,
+input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
+  background-color: var(--selection) !important;
+}
+
+
 /* dropdown menus */
 .dropdown-content {
 	pointer-events: visible;

@@ -1,0 +1,44 @@
+<!-- @component
+### Description
+ Switch component  for the UESP gamemap.
+
+### Author(s)
+- Thal-J <thal-j@uesp.net> (21st Feb, 2023) -->
+
+<script>
+    export let label;
+    export let enabled = false;
+</script>
+
+<markup>
+    <div class="switch">
+        <label>
+          <p class="label">{label}</p>
+          <input type="checkbox" checked={enabled}>
+          <span class="lever"></span>
+        </label>
+    </div>
+</markup>
+
+
+<style>
+
+    .switch {
+        text-align: justify;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    .label {
+        display: inline;
+        font-size: 1rem;
+        color: var(--text_low_emphasis);
+        width: 66%;
+    }
+
+    .lever {
+        float: right;
+    }
+
+</style>
+
