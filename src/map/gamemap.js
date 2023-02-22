@@ -1059,22 +1059,21 @@ export default class Gamemap {
 		return this.getCurrentWorld().hasCellResources;
 	}
 
-	toggleCellGrid(toggle, labels, resource) {
+	toggleCellGrid(toggle, cellLabels, cellResource) {
 
+		// get grid info
 		this.gridEnabled = toggle;
+		cellResource = (cellResource != null) ? (cellResource == "None") ? null : cellResource : cellResource;
+		if ((cellLabels != null || cellResource != null) && this.gridEnabled) { removeGrid(); }
 
-		if (toggle) {
-
-			L.canvasOverlay()
-				.params({bounds: RC.getMaxBounds(), className : "cellGrid", zoomAnimation: true})
-				.drawing(drawGrid)
-				.addTo(map);
-
+		if (toggle) { // if draw grid == true
 			function drawGrid(_, params) {
 
 				// set up layer
 				let ctx = params.canvas.getContext('2d');
 				ctx.clearRect(0, 0, params.size.x, params.size.y);
+
+				print(cellResource);
 
 				// set up bounds
 				let bounds = RC.getMaxBounds();
@@ -1103,6 +1102,7 @@ export default class Gamemap {
 
 				// work out grid gap size
 				let gridSize = ((self.mapConfig.cellSize * nZoom) / gridWidth) * gridWidth;
+
 				print("Grid offset (gap) is: "+ gridSize.toFixed(3) +"px");
 
 				// work out how many rows and columns there should be
@@ -1144,34 +1144,39 @@ export default class Gamemap {
 				}
 
 				// do cell labels
-				let nYOffset = 0;
-				let nXOffset = 0;
-				if (currentZoom > self.mapConfig.gridShowLabelZoom) {
-					for (let i = 0; i <= nCols; i++) {
-						for (let j = 0; j <= nRows; j++) {
+				if (cellLabels) {
+					let nYOffset = 0;
+					let nXOffset = 0;
+					if (currentZoom > self.mapConfig.gridShowLabelZoom) {
+						for (let i = 0; i <= nCols; i++) {
+							for (let j = 0; j <= nRows; j++) {
 
-							// COLS = X
-							// ROWS = Y
-							let gridStartX = self.mapConfig.gridStart[0];
-							let gridStartY = self.mapConfig.gridStart[1];
-							let colNum = j + gridStartX;
-							let rowNum = (-i) + gridStartY;
+								// COLS = X
+								// ROWS = Y
+								let gridStartX = self.mapConfig.gridStart[0];
+								let gridStartY = self.mapConfig.gridStart[1];
+								let colNum = j + gridStartX;
+								let rowNum = (-i) + gridStartY;
 
-							if (rowNum % 5 == 0 && colNum % 5 == 0) {
-								ctx.fillStyle = self.mapConfig.gridLabelColour;
-								ctx.font = "bold 13px Arial";
-								ctx.fillText([colNum, rowNum].join(', '), toPix(nXOffset).x, toPix(nYOffset + ((gridHeight / nRows) / gridHeight)).y);
+								if (rowNum % 5 == 0 && colNum % 5 == 0) {
+									ctx.fillStyle = self.mapConfig.gridLabelColour;
+									ctx.font = "bold 13px Arial";
+									ctx.fillText([colNum, rowNum].join(', '), toPix(nXOffset).x, toPix(nYOffset + ((gridHeight / nRows) / gridHeight)).y);
+								}
+
+								nXOffset += (gridWidth / nCols) / gridWidth;
 							}
-
-							nXOffset += (gridWidth / nCols) / gridWidth;
+							nXOffset = 0;
+							nYOffset += (gridHeight / nRows) / gridHeight;
 						}
-						nXOffset = 0;
-						nYOffset += (gridHeight / nRows) / gridHeight;
 					}
 				}
-			};
 
-		} else {
+			};
+			L.canvasOverlay().params({bounds: RC.getMaxBounds(), className : "cellGrid", zoomAnimation: true}).drawing(drawGrid).addTo(map);
+		} else { removeGrid(); }
+
+		function removeGrid() {
 			//remove the cell grid
 			map.eachLayer((layer) => {
 				if (layer.options.className == "cellGrid") {

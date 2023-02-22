@@ -95,6 +95,7 @@
         "200": "World Encounter"
     },
 
+    // cell resource info
     "cellResources": {
         "None" : "None",
         "NordicBarnacleCluster01" : "Barnacle",

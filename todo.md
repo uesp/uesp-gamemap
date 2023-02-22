@@ -2,6 +2,9 @@
 
 
 
+feat: added new grid options menu, which contains cell resource on valid maps
+feat: allow turning off cell coord labels
+
 fix: map view not being centred properly on world load (most noticeable on eso map)
 
 

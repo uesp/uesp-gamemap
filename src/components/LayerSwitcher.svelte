@@ -31,6 +31,8 @@
     let isHovered = false;
     let resourceGridEnabled = world.hasCellResources();
     let expandGridOptions = getPrefs("expandgridoptions", true);
+    let currentCellResource = "None";
+    let doCellLabels = gamemap.getMapConfig().gridShowLabels;
 
     // event listeners
     function onMouseEnter() {
@@ -64,7 +66,7 @@
     function onGridChecked(event) {
         gridEnabled = event.detail;
         isHovered = false;
-        gamemap.toggleCellGrid(event.detail)
+        gamemap.toggleCellGrid(event.detail, doCellLabels, currentCellResource);
         dispatch("gridChecked", event.detail);
     }
 
@@ -118,15 +120,16 @@
                 <b class="waves-effect" title="Click to show/hide grid options" on:click={() => {setPrefs("expandgridoptions", !getPrefs("expandgridoptions")); expandGridOptions = getPrefs("expandgridoptions");}}>Grid Options <Icon name={(expandGridOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b>
 
                 {#if expandGridOptions}
-                    <Switch label="Show Cell Labels" enabled={true}></Switch>
+                    <Switch label="Show Cell Labels" enabled={doCellLabels} on:change={(e) => {doCellLabels = e.detail; onGridChecked({detail: true})}}></Switch>
 
                     <!-- Cell resource dropdown -->
                     {#if world.hasCellResources()}
-                        <DropdownMenu label="Show Resource" hint="Select resource...">
+                        <!-- svelte-ignore missing-declaration -->
+                        <DropdownMenu label="Show Resource" hint="Select resource..." on:change={(e) => {currentCellResource = e.detail; onGridChecked({detail: true})}}>
                             {@const keys = Object.keys(gamemap.getMapConfig().cellResources)}
                             {@const names = Object.values(gamemap.getMapConfig().cellResources)}
                                 {#each keys as value, i}
-                                    <option value={value} selected={0}>{names[i]}</option>
+                                    <option value={value} selected={currentCellResource == value}>{names[i]}</option>
                                 {/each}
                         </DropdownMenu>
 

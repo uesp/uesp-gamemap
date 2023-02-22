@@ -7,12 +7,15 @@
 - Thal-J <thal-j@uesp.net> (21st Feb, 2023) -->
 
 <script>
-
     // import svelte stuff
     import { onMount } from 'svelte';
+    import { createEventDispatcher } from "svelte";
 
+    // state vars
     export let label;
     export let hint;
+
+    const dispatch = createEventDispatcher();
 
     // initiate dropdown menu
     onMount(async () => {
@@ -21,12 +24,16 @@
         });
     });
 
+    function onChanged(event) {
+        dispatch("change", event.target.value);
+    }
+
 </script>
 
 <markup>
     <div class="input-field col s12">
         <label class="label truncate" for="form-select-1">{label}</label>
-        <select id="form-select-1">
+        <select id="form-select-1" on:change={onChanged}>
             <!-- Hint -->
             {#if hint != null}<option value="" disabled>{hint}</option>{/if}
             <slot>
