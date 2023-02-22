@@ -28,6 +28,7 @@ iconButton element:
     export let noMobile;
     export let dropdown;
     export let menu;
+    export let size;
 
     checked = (checked != null) ? JSON.parse(checked) : null;
     hasBackground = (hasBackground != null) ? JSON.parse(hasBackground) : null;
@@ -65,7 +66,7 @@ iconButton element:
 
 <markup>
     <button class='btn_icon_button waves-effect' title={tooltip} on:click={onClicked} class:checked={checked} class:hasBackground={hasBackground} class:bgless={!hasBackground} class:nomobile={noMobile} class:dropdown={dropdown} class:dropdown-trigger={menu != null} data-target={menu}>
-        {#if icon}<Icon name={icon}/>{/if}
+        {#if icon}<Icon name={icon} size={size}/>{/if}
         {#if label}<b class="icon_btn_label nomobile">{label}</b>{/if}
         {#if dropdown}<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>{/if}
     </button>

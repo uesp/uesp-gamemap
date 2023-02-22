@@ -10,12 +10,7 @@ fix: map view not being centred properly on world load (most noticeable on eso m
 - optimise grid code
 - do cell resource grid for skyrim
 
-"Grid Options"
-- dont do separare button for cell resource, if grid is enabled, and has cell resource, then show cell resource menu
-
-"show labels"
-"Highlight cell resources: (iron ore)"
-
+- add close button to grid options (along with turning off grid)
 
 - add allow long clicking on mobile to open popups
 - fix requesting /null in layerbutton

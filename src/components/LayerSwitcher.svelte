@@ -109,6 +109,9 @@
     {#if gridEnabled}
         <LayerOptionsContainer>
             <div class="cell_grid_options">
+                <!-- svelte-ignore missing-declaration -->
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <div id="close_button" class="waves-effect" title="Close" on:click={() => onGridChecked({detail: false})}><Icon name="close" size="tiny"></Icon></div>
 
                 <!-- svelte-ignore missing-declaration -->
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -119,7 +122,22 @@
 
                     <!-- Cell resource dropdown -->
                     {#if world.hasCellResources()}
-                        <DropdownMenu label="Cell Resources" hint="Select resource..."></DropdownMenu>
+                        <DropdownMenu label="Show Resource" hint="Select resource...">
+                            {@const keys = Object.keys(gamemap.getMapConfig().cellResources)}
+                            {@const names = Object.values(gamemap.getMapConfig().cellResources)}
+                                {#each keys as value, i}
+                                    <option value={value} selected={0}>{names[i]}</option>
+                                {/each}
+                        </DropdownMenu>
+
+                        <!-- <div id="gmCellResourceGuide" style="display: none;">
+                            <div class="gmCRGuideBox1">1-2</div>
+                            <div class="gmCRGuideBox2">3-5</div>
+                            <div class="gmCRGuideBox3">6-10</div>
+                            <div class="gmCRGuideBox4">11-20</div>
+                            <div class="gmCRGuideBox5">21-50</div>
+                            <div class="gmCRGuideBox6">+51</div>
+                        </div> -->
                     {/if}
                 {/if}
             </div>
@@ -222,10 +240,16 @@
         background-color: var(--primary);
         padding: var(--padding_small);
         width: auto;
+        min-width: 240px;
         box-shadow: 0px 0px 10px 6px var(--shadow) !important;
         margin: 0 auto;
         color:black;
         border-radius: var(--padding_medium) !important;
+    }
+
+    #close_button {
+        display: block;
+        float: right;
     }
 
 </style>

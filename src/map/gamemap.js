@@ -1059,13 +1059,7 @@ export default class Gamemap {
 		return this.getCurrentWorld().hasCellResources;
 	}
 
-	toggleCellGrid(toggle, options) {
-
-		// initiate options
-		options = (options == null) ? null : {
-			showLabels : this.mapConfig.gridShowLabels,
-			resource : null,
-		};
+	toggleCellGrid(toggle, labels, resource) {
 
 		this.gridEnabled = toggle;
 

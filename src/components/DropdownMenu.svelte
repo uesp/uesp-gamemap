@@ -29,35 +29,9 @@
         <select id="form-select-1">
             <!-- Hint -->
             {#if hint != null}<option value="" disabled>{hint}</option>{/if}
-
-            <!-- Options -->
-            <option value="1" selected>None</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
+            <slot>
+                <!-- Menu items go here -->
+            </slot>
         </select>
       </div>
 </markup>
