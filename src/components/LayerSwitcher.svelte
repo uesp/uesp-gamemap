@@ -217,7 +217,6 @@
         background-color: var(--surface_dark);
     }
     .cell_grid_options {
-        min-width: 35%;
         pointer-events: visible;
         display: inline-block;
         background-color: var(--primary);
