@@ -106,10 +106,14 @@
 
     {#if gridEnabled}
         <LayerOptionsContainer>
-            <div class="cell_grid_options">
+            <div class="cell_grid_options" class:hasCellResources={world.hasCellResources()}>
                 <b>Grid Options</b>
                 <Switch label="Show Cell Labels" enabled={true}></Switch>
-                <DropdownMenu label="Cell Resources"></DropdownMenu>
+
+                <!-- Cell resource dropdown -->
+                {#if world.hasCellResources()}
+                    <DropdownMenu label="Cell Resources" hint="Select resource..."></DropdownMenu>
+                {/if}
             </div>
         </LayerOptionsContainer>
     {/if}
@@ -215,6 +219,9 @@
         margin: 0 auto;
         color:black;
         border-radius: var(--padding_medium) !important;
+    }
+
+    .cell_grid_options.hasCellResources {
         padding-bottom: 0px;
     }
 

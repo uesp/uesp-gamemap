@@ -12,6 +12,7 @@
     import { onMount } from 'svelte';
 
     export let label;
+    export let hint;
 
     // initiate dropdown menu
     onMount(async () => {
@@ -24,10 +25,13 @@
 
 <markup>
     <div class="input-field col s12">
-        <label class="label" for="form-select-1">{label}</label>
+        <label class="label truncate" for="form-select-1">{label}</label>
         <select id="form-select-1">
-            <option value="" disabled selected>Select resource...</option>
-            <option value="1">Option 1</option>
+            <!-- Hint -->
+            {#if hint != null}<option value="" disabled>{hint}</option>{/if}
+
+            <!-- Options -->
+            <option value="1" selected>None</option>
             <option value="2">Option 2</option>
             <option value="3">Option 3</option>
             <option value="1">Option 1</option>

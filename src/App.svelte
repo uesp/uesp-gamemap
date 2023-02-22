@@ -37,7 +37,7 @@
 	import LayerSwitcher from './components/LayerSwitcher.svelte';
 	import Watermark from './components/Watermark.svelte';
 	import MapChooser from './components/MapChooser.svelte';
-	import Search from './components/SearchPane.svelte';
+	import SearchPane from './components/SearchPane.svelte';
 	import LayerOptionsContainer from './components/LayerOptionsContainer.svelte';
 	import IconButton from './components/IconButton.svelte';
 	import LocationList from './components/LocationList.svelte';
@@ -308,7 +308,7 @@
 				{#if !gamemap.isEmbedded()}
 
 					<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom}/>
-					<Search/>
+					<SearchPane/>
 
 					<!-- show layer switcher when available -->
 					{#if showLayerSwitcher}

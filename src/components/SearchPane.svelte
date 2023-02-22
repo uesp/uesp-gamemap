@@ -75,10 +75,6 @@
         queryParams.search = encodeURIComponent(searchQuery);
         print("search query: " + queryParams.search + ", search in map: " + currentMapOnly);
 
-        if (gamemap.isHiddenLocsShown()) {
-            queryParams.showhidden = 1;
-        }
-
         if (currentMapOnly == true) {
             queryParams.world = gamemap.getCurrentWorldID();
         }
