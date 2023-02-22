@@ -1059,12 +1059,20 @@ export default class Gamemap {
 		return this.getCurrentWorld().hasCellResources;
 	}
 
-	toggleCellGrid(toggle, cellLabels, cellResource) {
+	toggleCellGrid(toggle, cellLabels, cellResources) {
 
 		// get grid info
 		this.gridEnabled = toggle;
-		cellResource = (cellResource != null) ? (cellResource == "None") ? null : cellResource : cellResource;
-		if ((cellLabels != null || cellResource != null) && this.gridEnabled) { removeGrid(); }
+		cellResources = (cellResources != null) ? (cellResources == "None") ? null : cellResources : cellResources;
+		if ((cellLabels != null || cellResources != null) && this.gridEnabled) { removeGrid(); }
+
+		// if cellResource is a string, then get cellResource array data and call ourselves again
+		if (cellResources != null && !Array.isArray(cellResources)) {
+			function loadCellResources(array) {
+				self.toggleCellGrid(toggle, cellLabels, array);
+			}
+			this.getCellResourceData(cellResources, loadCellResources);
+		}
 
 		if (toggle) { // if draw grid == true
 			function drawGrid(_, params) {
@@ -1072,8 +1080,6 @@ export default class Gamemap {
 				// set up layer
 				let ctx = params.canvas.getContext('2d');
 				ctx.clearRect(0, 0, params.size.x, params.size.y);
-
-				print(cellResource);
 
 				// set up bounds
 				let bounds = RC.getMaxBounds();
@@ -1181,6 +1187,24 @@ export default class Gamemap {
 			map.eachLayer((layer) => {
 				if (layer.options.className == "cellGrid") {
 					layer.remove();
+				}
+			});
+		}
+	}
+
+	getCellResourceData(resourceID, callback) {
+
+		if (resourceID != null || resourceID != "") {
+
+			var queryParams = {};
+			queryParams.action = "get_cellresource";
+			queryParams.db = this.mapConfig.database;
+			queryParams.worldid = this.getCurrentWorldID();
+			queryParams.editorid = resourceID;
+
+			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+				if (!error && data != null) {
+					callback(data.resources[0].data);
 				}
 			});
 		}
@@ -1500,11 +1524,89 @@ export default class Gamemap {
 		return latLng;
 	}
 
-
 }
 
 
 
+
+// uesp.gamemap.Map.prototype.drawCellResourcesCanvas = function()
+// {
+// 	var startX = this.mapOptions.cellResourceStartX;
+// 	var startY = this.mapOptions.cellResourceStartY;
+// 	var endX = this.mapOptions.cellResourceStopX;
+// 	var endY = this.mapOptions.cellResourceStopY;
+// 	var color = "white";
+// 	var x1, y1, x2, y2;
+// 	var zoomDiff = this.zoomLevel - this.mapOptions.minZoomLevel
+// 	var gridOffsetY = this.mapOptions.gridOffsetY;
+
+// 	for (var z = 1; z <= zoomDiff; ++z)
+// 	{
+// 		gridOffsetY += Math.pow(2, z + this.mapOptions.gridOffsetPowerY)
+// 	}
+
+// 	if (!this.isDrawGrid) this.clearMapGridCanvas();
+
+// 	for (var x = startX; x <= endX; x++)
+// 	{
+// 		let xData = this.cellResourceData.data[x - startX];
+// 		if (xData == null) continue;
+
+// 		for (var y = startY; y <= endY; y++)
+// 		{
+// 			resourceCount = xData[y - startY];
+// 			if (resourceCount == null) continue;
+
+
+// 			if (resourceCount == 0)
+// 			{
+// 				continue;	//do nothing
+// 			}
+// 			else if (resourceCount <= 2)
+// 			{
+// 				color = "rgba(255,0,255,0.5)";		//TODO: No hardcode colors?
+// 			}
+// 			else if (resourceCount <= 5)
+// 			{
+// 				color = "rgba(0,0,255,0.5)";
+// 			}
+// 			else if (resourceCount <= 10)
+// 			{
+// 				color = "rgba(0,255,0,0.5)";
+// 			}
+// 			else if (resourceCount <= 20)
+// 			{
+// 				color = "rgba(255,255,0,0.5)";
+// 			}
+// 			else if (resourceCount <= 50)
+// 			{
+// 				color = "rgba(255,102,51,0.5)";
+// 			}
+// 			else
+// 			{
+// 				color = "rgba(255,0,0,0.5)";
+// 			}
+
+// 			x1 = x * this.mapOptions.cellResourceDeltaX;
+// 			y1 = y * this.mapOptions.cellResourceDeltaY;
+// 			x2 = (x + 1) * this.mapOptions.cellResourceDeltaX;
+// 			y2 = (y + 1) * this.mapOptions.cellResourceDeltaY;
+
+// 			var pos1 = this.convertGameToPixelPos(x1, y2);
+// 			var pos2 = this.convertGameToPixelPos(x2, y1);
+
+// 			pos1.x -= this.mapTransformX;
+// 			pos1.y -= this.mapTransformY + gridOffsetY;
+// 			pos2.x -= this.mapTransformX;
+// 			pos2.y -= this.mapTransformY + gridOffsetY;
+
+// 			this.mapContextGrid.fillStyle = color;
+// 			this.mapContextGrid.fillRect(pos1.x + 1, pos1.y + 1, pos2.x - pos1.x - 2, pos2.y - pos1.y - 2);
+// 		}
+
+// 	}
+
+// }
 
 
 
