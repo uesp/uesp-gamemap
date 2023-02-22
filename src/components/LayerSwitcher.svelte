@@ -16,6 +16,7 @@
     import LayerOptionsContainer from './LayerOptionsContainer.svelte';
     import Switch from './Switch.svelte';
     import DropdownMenu from './DropdownMenu.svelte';
+    import Icon from './Icon.svelte';
 
     // state vars
     export let world = gamemap.getCurrentWorld();
@@ -29,6 +30,7 @@
 
     let isHovered = false;
     let resourceGridEnabled = world.hasCellResources();
+    let expandGridOptions = getPrefs("expandgridoptions", true);
 
     // event listeners
     function onMouseEnter() {
@@ -106,13 +108,19 @@
 
     {#if gridEnabled}
         <LayerOptionsContainer>
-            <div class="cell_grid_options" class:hasCellResources={world.hasCellResources()}>
-                <b>Grid Options</b>
-                <Switch label="Show Cell Labels" enabled={true}></Switch>
+            <div class="cell_grid_options">
 
-                <!-- Cell resource dropdown -->
-                {#if world.hasCellResources()}
-                    <DropdownMenu label="Cell Resources" hint="Select resource..."></DropdownMenu>
+                <!-- svelte-ignore missing-declaration -->
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <b class="waves-effect" title="Click to show/hide grid options" on:click={() => {setPrefs("expandgridoptions", !getPrefs("expandgridoptions")); expandGridOptions = getPrefs("expandgridoptions");}}>Grid Options <Icon name={(expandGridOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b>
+
+                {#if expandGridOptions}
+                    <Switch label="Show Cell Labels" enabled={true}></Switch>
+
+                    <!-- Cell resource dropdown -->
+                    {#if world.hasCellResources()}
+                        <DropdownMenu label="Cell Resources" hint="Select resource..."></DropdownMenu>
+                    {/if}
                 {/if}
             </div>
         </LayerOptionsContainer>
@@ -219,10 +227,6 @@
         margin: 0 auto;
         color:black;
         border-radius: var(--padding_medium) !important;
-    }
-
-    .cell_grid_options.hasCellResources {
-        padding-bottom: 0px;
     }
 
 </style>

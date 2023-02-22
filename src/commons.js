@@ -325,12 +325,16 @@ window.setPrefs = function setPrefs(key, value) {
  * @param {String} key - The shared preference key to search for
  * @returns {Object} value - whatever the shared preference was set to, or false if none was found
  */
-window.getPrefs = function getPrefs(key) {
+window.getPrefs = function getPrefs(key, defaultValue) {
+
+	// set default value
+	defaultValue = (defaultValue != null) ? defaultValue : false;
+
 	// take preference over URL parms over cookies
 	if (getURLParams().has(key)){
 		return getURLParams().get(key);
 	} else {
-		let value = (getCookie(key) != null && getCookie(key) != "") ? getCookie(key) : false;
+		let value = (getCookie(key) != null && getCookie(key) != "") ? getCookie(key) : defaultValue;
 
 		if ((typeof value === 'string' || value instanceof String) && (value.toLowerCase() == "true" || value.toLowerCase() == "false")) {
 			return JSON.parse(value);

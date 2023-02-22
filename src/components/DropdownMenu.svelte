@@ -71,13 +71,14 @@
 
     .input-field.col label {
         left: 0px;
+        top: 2.5px;
     }
 
     .input-field {
         display: inline-block;
         width: 100%;
         margin-top: 2px;
-    margin-bottom: 2px;
+        margin-bottom: -10px;
     }
 
 </style>

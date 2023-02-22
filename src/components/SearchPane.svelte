@@ -248,7 +248,7 @@
                     <div id="search_options" class:fullPane={showSearchPane}>
                         <!-- svelte-ignore a11y-click-events-have-key-events -->
                         <!-- svelte-ignore missing-declaration -->
-                        <b style="font-size: 1.0rem;" class="waves-effect" title="Click to show/hide search options" on:click={() => {setPrefs("expandsearchoptions", !getPrefs("expandsearchoptions")); expandOptions = getPrefs("expandsearchoptions");}}>Search options <Icon name={(expandOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b><br>
+                        <b style="font-size: 1.0rem;" class="waves-effect" title="Click to show/hide search options" on:click={() => {setPrefs("expandsearchoptions", !getPrefs("expandsearchoptions")); expandOptions = getPrefs("expandsearchoptions");}}>Search Options <Icon name={(expandOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b><br>
                         {#if doPinSearch && showSearchPane}<div id="search_pin_status" title="Search is pinned"><Icon name="push_pin" size="tiny"></Icon></div>{/if}
 
                         {#if expandOptions}
