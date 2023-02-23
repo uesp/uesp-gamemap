@@ -164,7 +164,7 @@ export default class Gamemap {
 		}
 
 		// set full image width & height
-		let mapImageDimens = this.getMapImageDimensions(mapState.world);
+		let mapImageDimens = mapState.world.getWorldDimensions();
 		this.mapImage = {
 			width : mapImageDimens.width,  // original width of image
 			height: mapImageDimens.height, // original height of image
@@ -1081,6 +1081,8 @@ export default class Gamemap {
 				let ctx = params.canvas.getContext('2d');
 				ctx.clearRect(0, 0, params.size.x, params.size.y);
 
+				print(cellResources);
+
 				// set up bounds
 				let bounds = RC.getMaxBounds();
 				let minX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x;
@@ -1107,13 +1109,24 @@ export default class Gamemap {
 				print("nZoom is ... " +nZoom.toFixed(3));
 
 				// work out grid gap size
-				let gridSize = ((self.mapConfig.cellSize * nZoom) / gridWidth) * gridWidth;
 
-				print("Grid offset (gap) is: "+ gridSize.toFixed(3) +"px");
+				// work out cell size at max zoom in pixels
+				let world = self.getCurrentWorld();
+				let cellSize = Math.round(self.mapConfig.tileSize * Math.pow(2, Math.round(world.maxZoomLevel)) / ((world.maxX - world.minX) / world.cellSize));
+
+
+				// get size of grid square at current zoom level based on cell size
+				print(maxZoomLevel);
+				let gridSize = cellSize / Math.pow(2, Math.round(maxZoomLevel) - currentZoom);
+				//let gridSize = ((cellSize * nZoom) / gridWidth) * gridWidth;
+
+
+				print("cell size: " +cellSize);
+				print("Grid size (gap) is: "+ gridSize.toFixed(3) +"px");
 
 				// work out how many rows and columns there should be
-				let nRows = self.getMapImageDimensions(self.getCurrentWorld()).width / self.mapConfig.cellSize;
-				let nCols = self.getMapImageDimensions(self.getCurrentWorld()).height / self.mapConfig.cellSize;
+				let nRows = world.getWorldDimensions().width / cellSize;
+				let nCols = world.getWorldDimensions().height / cellSize;
 				print (nRows);
 				print (nCols);
 
@@ -1159,8 +1172,8 @@ export default class Gamemap {
 
 								// COLS = X
 								// ROWS = Y
-								let gridStartX = self.mapConfig.gridStart[0];
-								let gridStartY = self.mapConfig.gridStart[1];
+								let gridStartX = world.displayData.gridStart[0];
+								let gridStartY = world.displayData.gridStart[1];
 								let colNum = j + gridStartX;
 								let rowNum = (-i) + gridStartY;
 
@@ -1190,6 +1203,17 @@ export default class Gamemap {
 				}
 			});
 		}
+	}
+
+	convertGameToPixelSize(width, height) {
+		let pWidth = 0;
+		let pHeight = 0;
+		let maxTiles = Math.pow(2, this.getCurrentWorld().maxZoomLevel);
+
+		pWidth = Math.round(width  * maxTiles / Math.abs(this.getCurrentWorld().maxX - this.getCurrentWorld().minX) * this.mapConfig.tileSize);
+		pHeight = Math.round(height * maxTiles / Math.abs(this.getCurrentWorld().maxY - this.getCurrentWorld().minY) * this.mapConfig.tileSize);
+
+		return new Point(pWidth, pHeight);
 	}
 
 	getCellResourceData(resourceID, callback) {
@@ -1263,9 +1287,6 @@ export default class Gamemap {
 	}
 
 
-
-
-
 	/*================================================
 						  Utils
 	================================================*/
@@ -1329,32 +1350,6 @@ export default class Gamemap {
 	 */
 	hasMultipleWorlds() {
 		return Object.keys(this.mapWorlds).length > 1;
-	}
-
-	/**
-	 * Gets width and height of the full map image.
-	 * @param world - The world object.
-	 * @returns mapImageDimens - The width/height of the map image as an object
-	 * @example print(getMapImageDimensions().width);
-	 */
-	getMapImageDimensions(world) {
-
-		let dimens = {};
-		let width = null;
-		let height = null;
-
-		// check if this world has a number of tiles set
-		if (world.numTilesX != null && world.numTilesY != null) {
-			width = (world.numTilesX * this.mapConfig.tileSize) * Math.pow(2, 0);
-			height = (world.numTilesY * this.mapConfig.tileSize) * Math.pow(2, 0);
-		} else {
-			throw new Error("No map tile dimensions were provided!");
-		}
-
-		dimens.width = width;
-		dimens.height = height;
-
-		return dimens;
 	}
 
 	/**
@@ -1641,18 +1636,6 @@ export default class Gamemap {
 // 	gameY = Math.round(tileY / maxTiles * (this.mapConfig.maxY - this.mapConfig.minY) + this.mapConfig.minY);
 
 // 	return new Position(gameX, gameY);
-// }
-
-// uesp.gamemap.Map.prototype.convertGameToPixelSize = function(width, height)
-// {
-// 	let pixelW = 0;
-// 	let pixelH = 0;
-// 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
-
-// 	pixelW = Math.round(width  * maxTiles / Math.abs(this.mapConfig.gamePosX2 - this.mapConfig.gamePosX1) * this.mapConfig.tileSize);
-// 	pixelH = Math.round(height * maxTiles / Math.abs(this.mapConfig.gamePosY2 - this.mapConfig.gamePosY1) * this.mapConfig.tileSize);
-
-// 	return new uesp.gamemap.Position(pixelW, pixelH);
 // }
 
 

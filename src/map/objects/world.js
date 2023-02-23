@@ -21,7 +21,7 @@ export default class World {
 
 			this.zoomOffset = (mapConfig.zoomOffset != null) ? mapConfig.zoomOffset : world.zoomOffset;
 
-			this.maxZoomLevel = (world.maxZoom - this.zoomOffset) + 0.03; // add 0.03 to fix leaflet bug of only going up to x.97 zoom
+			this.maxZoomLevel = (world.maxZoom - this.zoomOffset);
 			this.minZoomLevel = (world.minZoom - this.zoomOffset) || 0;
 
 			this.minX = (mapConfig.minX != null) ? mapConfig.minX : world.posLeft;
@@ -29,8 +29,7 @@ export default class World {
 			this.minY = (mapConfig.minY != null) ? mapConfig.minY : world.posBottom;
 			this.maxY = (mapConfig.maxY != null) ? mapConfig.maxY : world.posTop;
 
-			this.numTilesX = world.tilesX;
-			this.numTilesY = world.tilesY;
+			this.numTiles = Math.pow(2, this.maxZoomLevel); //number of tiles in both directions
 
 			this.locations = null; // locations are loaded async after the world is created
 			this.legacy = world; // legacy attributes from server
@@ -53,6 +52,27 @@ export default class World {
 
 	hasMultipleLayers() {
 		return this.layers.length > 1;
+	}
+
+	//Gets width and height of the full world image in pixels
+	getWorldDimensions() {
+
+		let dimens = {};
+		let width = null;
+		let height = null;
+
+		// check if this world has a number of tiles set
+		if (this.numTiles != null) {
+			width = (this.numTiles * gamemap.getMapConfig().tileSize);
+			height = (this.numTiles * gamemap.getMapConfig().tileSize);
+		} else {
+			throw new Error("No map tile dimensions were provided!");
+		}
+
+		dimens.width = width;
+		dimens.height = height;
+
+		return dimens;
 	}
 
 }

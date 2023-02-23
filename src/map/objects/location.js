@@ -28,7 +28,7 @@ export default class Location {
 
 		config = mapConfig;
 		currentWorld = world;
-		numTiles = world.numTilesX;
+		numTiles = world.numTiles;
 
 		// set location type
 		this.locType = location.locType || LOCTYPES.NONE;

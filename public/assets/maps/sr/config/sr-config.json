@@ -96,6 +96,7 @@
     },
 
     // cell resource info
+    "gridShowLabelZoom" : 3.80,
     "cellResources": {
         "None" : "None",
         "NordicBarnacleCluster01" : "Barnacle",
