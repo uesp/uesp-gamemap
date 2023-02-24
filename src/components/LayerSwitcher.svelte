@@ -7,7 +7,7 @@
 
 <script>
     // import core svelte stuff
-    import { fade, fly } from 'svelte/transition';
+    import { fade, fly, slide, crossfade } from 'svelte/transition';
     import { createEventDispatcher } from "svelte";
 
     // import ui components
@@ -120,30 +120,32 @@
                 <b class="waves-effect" title="Click to show/hide grid options" on:click={() => {setPrefs("expandgridoptions", !getPrefs("expandgridoptions")); expandGridOptions = getPrefs("expandgridoptions");}}>Grid Options <Icon name={(expandGridOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b>
 
                 {#if expandGridOptions}
-                    <Switch label="Show Cell Labels" enabled={doCellLabels} on:change={(e) => {doCellLabels = e.detail; onGridChecked({detail: true})}}></Switch>
+                    <div in:slide out:slide>
+                        <Switch label="Show Cell Labels" enabled={doCellLabels} on:change={(e) => {doCellLabels = e.detail; onGridChecked({detail: true})}}></Switch>
 
-                    <!-- Cell resource dropdown -->
-                    {#if world.hasCellResources()}
-                        <!-- svelte-ignore missing-declaration -->
-                        <DropdownMenu label="Show Resource" hint="Select resource..." on:change={(e) => {currentCellResource = e.detail; onGridChecked({detail: true})}}>
-                            {@const keys = Object.keys(gamemap.getMapConfig().cellResources)}
-                            {@const names = Object.values(gamemap.getMapConfig().cellResources)}
-                                {#each keys as value, i}
-                                    <option value={value} selected={currentCellResource == value}>{names[i]}</option>
-                                {/each}
-                        </DropdownMenu>
+                        <!-- Cell resource dropdown -->
+                        {#if world.hasCellResources()}
+                            <!-- svelte-ignore missing-declaration -->
+                            <DropdownMenu label="Show Resource" hint="Select resource..." on:change={(e) => {currentCellResource = e.detail; onGridChecked({detail: true})}}>
+                                {@const keys = Object.keys(gamemap.getMapConfig().cellResources)}
+                                {@const names = Object.values(gamemap.getMapConfig().cellResources)}
+                                    {#each keys as value, i}
+                                        <option value={value} selected={currentCellResource == value}>{names[i]}</option>
+                                    {/each}
+                            </DropdownMenu>
 
-                        {#if currentCellResource != "None"}
-                            <div id="cell_resource_key">
-                                <b style="display: flex; padding-right: 4px;" title="Cell resource count key">Key:</b>
-                                <!-- svelte-ignore missing-declaration -->
-                                {#each gamemap.getMapConfig().cellResourceColours as style,i}
-                                    {@const cellResourceKeyList = ["<2", "~5", "~10", "~20", "~40", "50+"]}
-                                    <div class="cell_resource_key_item" style="background-color:{style};">{cellResourceKeyList[i]}</div>
-                                {/each}
-                            </div>
+                            {#if currentCellResource != "None"}
+                                <div id="cell_resource_key" in:fly={{ y: +5, duration: 250 }} out:fade={{duration: 125 }}>
+                                    <b style="display: flex; padding-right: 4px;" title="Cell resource count key">Key:</b>
+                                    <!-- svelte-ignore missing-declaration -->
+                                    {#each gamemap.getMapConfig().cellResourceColours as style,i}
+                                        {@const cellResourceKeyList = ["<2", "~5", "~10", "~20", "~40", "50+"]}
+                                        <div class="cell_resource_key_item" style="background-color:{style};">{cellResourceKeyList[i]}</div>
+                                    {/each}
+                                </div>
+                            {/if}
                         {/if}
-                    {/if}
+                    </div>
                 {/if}
             </div>
         </LayerOptionsContainer>

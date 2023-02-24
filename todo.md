@@ -13,6 +13,8 @@ feat: allow turning off cell coord labels
 >>> allows both cell resource and grid to be toggled off/on with one click
 >>> has expando so doesnt get in the way
 
+- shows key menu when selected a resource, just like live
+
 - improved grid styling slightly
 
 - added indicator to show cells that are 5 % 2 == 0
