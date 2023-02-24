@@ -15,6 +15,8 @@ feat: allow turning off cell coord labels
 
 - shows key menu when selected a resource, just like live
 
+- grid menu remembers what cell resource was selected when closed
+
 - improved grid styling slightly
 
 - added indicator to show cells that are 5 % 2 == 0

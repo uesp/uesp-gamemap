@@ -13,6 +13,7 @@
     // state vars
     export let label;
     export let enabled = false;
+    export let tooltip;
 
     const dispatch = createEventDispatcher();
 
@@ -25,7 +26,7 @@
 <markup>
     <div class="switch">
         <label>
-          <p class="label">{label}</p>
+          <p class="label" title={tooltip}>{label}</p>
           <input type="checkbox" checked={enabled} on:change={onChanged}>
           <span class="lever"></span>
         </label>

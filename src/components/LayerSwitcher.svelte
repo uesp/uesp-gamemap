@@ -117,16 +117,16 @@
 
                 <!-- svelte-ignore missing-declaration -->
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <b class="waves-effect" title="Click to show/hide grid options" on:click={() => {setPrefs("expandgridoptions", !getPrefs("expandgridoptions")); expandGridOptions = getPrefs("expandgridoptions");}}>Grid Options <Icon name={(expandGridOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b>
+                <b class="waves-effect" title="Click to show/hide grid options" style="display: -webkit-box; width: fit-content;" on:click={() => {setPrefs("expandgridoptions", !getPrefs("expandgridoptions")); expandGridOptions = getPrefs("expandgridoptions");}}>Grid Options <Icon name={(expandGridOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b>
 
                 {#if expandGridOptions}
                     <div in:slide out:slide>
-                        <Switch label="Show Cell Labels" enabled={doCellLabels} on:change={(e) => {doCellLabels = e.detail; onGridChecked({detail: true})}}></Switch>
+                        <Switch label="Show Cell Labels" tooltip="Toggle cell coordinates" enabled={doCellLabels} on:change={(e) => {doCellLabels = e.detail; onGridChecked({detail: true})}}></Switch>
 
                         <!-- Cell resource dropdown -->
                         {#if world.hasCellResources()}
                             <!-- svelte-ignore missing-declaration -->
-                            <DropdownMenu label="Show Resource" hint="Select resource..." on:change={(e) => {currentCellResource = e.detail; onGridChecked({detail: true})}}>
+                            <DropdownMenu label="Show Resource" hint="Select resource..." tooltip="Select cell resource" on:change={(e) => {currentCellResource = e.detail; onGridChecked({detail: true})}}>
                                 {@const keys = Object.keys(gamemap.getMapConfig().cellResources)}
                                 {@const names = Object.values(gamemap.getMapConfig().cellResources)}
                                     {#each keys as value, i}
@@ -134,16 +134,14 @@
                                     {/each}
                             </DropdownMenu>
 
-                            {#if currentCellResource != "None"}
-                                <div id="cell_resource_key" in:fly={{ y: +5, duration: 250 }} out:fade={{duration: 125 }}>
-                                    <b style="display: flex; padding-right: 4px;" title="Cell resource count key">Key:</b>
-                                    <!-- svelte-ignore missing-declaration -->
-                                    {#each gamemap.getMapConfig().cellResourceColours as style,i}
-                                        {@const cellResourceKeyList = ["<2", "~5", "~10", "~20", "~40", "50+"]}
-                                        <div class="cell_resource_key_item" style="background-color:{style};">{cellResourceKeyList[i]}</div>
-                                    {/each}
-                                </div>
-                            {/if}
+                            <div id="cell_resource_key">
+                                <b style="display: flex; padding-right: 4px;" title="Cell resource count">Key:</b>
+                                <!-- svelte-ignore missing-declaration -->
+                                {#each gamemap.getMapConfig().cellResourceColours as style,i}
+                                    {@const cellResourceKeyList = ["<2", "~5", "~10", "~20", "~40", "50+"]}
+                                    <div class="cell_resource_key_item" style="background-color:{style};">{cellResourceKeyList[i]}</div>
+                                {/each}
+                            </div>
                         {/if}
                     </div>
                 {/if}

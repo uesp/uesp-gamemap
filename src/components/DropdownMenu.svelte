@@ -14,6 +14,7 @@
     // state vars
     export let label;
     export let hint;
+    export let tooltip;
 
     const dispatch = createEventDispatcher();
 
@@ -32,7 +33,7 @@
 
 <markup>
     <div class="input-field col s12">
-        <label class="label truncate" for="form-select-1">{label}</label>
+        <label class="label truncate" title={tooltip} for="form-select-1">{label}</label>
         <select id="form-select-1" on:change={onChanged}>
             <!-- Hint -->
             {#if hint != null}<option value="" disabled>{hint}</option>{/if}
