@@ -1,34 +1,31 @@
 ## last week:
 
+did cell resource stuff, some bug fixes and polish
 
+## main stuff
+
+- added cell resource stuff and grid options menu
+>>> merged cell resource & grid into one menu
+>>> options menu can be collapsed/expanded to get out of the way
+>>> can turn off cell labels
+>>> grid menu remembers what options were selected when closed, one click toggle on/off
+
+## polish/bug fixes
+
+- tweak: cells with labels on them now are filled in/lined up
+>>> this is customisable in the mapConfig, by default its light grey, but for skyrim its half-black because snow
+- misc: can press esc to dismiss location switcher
+- fixed: map view not being centred properly on world load (most noticeable on eso map)
+- fixed: grid being removed when locations load in
+
+## techinical stuff
 
 - rewrote and optimised grid code
-- optimised grid code (only renders what's visible on canvas)
+>>> grid now only renders what's visible on canvas
 
-feat: added new grid options menu, which contains cell resource on valid maps
-feat: allow turning off cell coord labels
+- grid & cell resource colours are now customisable via mapconfig
+
 - made all maps request tile number of maxZoom^2
-
-- added grid options menu, which contains cell resources
->>> allows both cell resource and grid to be toggled off/on with one click
->>> has expando so doesnt get in the way
-
-- shows key menu when selected a resource, just like live
-
-- grid menu remembers what cell resource was selected when closed
-
-
-
-misc: can press esc to dismiss location switcher
-
-- improved grid styling slightly
-
-- added indicator to show cells that are 5 % 2 == 0
->>> this is customisable in the mapConfig, by default its light grey, but for skyrim its half-black because snow
-
-fix: map view not being centred properly on world load (most noticeable on eso map)
-fix: grid being removed when locations load in
-
 
 ## ask dave:
 
@@ -38,6 +35,7 @@ fix: grid being removed when locations load in
 [19:11]
 So probably better to add 2 new columns to the world DB if we wanted to (assuming that would be useful from your end at least"
 
+- tamriel rebuilt cells no longer line up now
 
 other fields to add to world:
 
@@ -49,7 +47,6 @@ other fields to add to world:
 ## todo
 
 - do cell resource grid for skyrim
-
 
 - add allow long clicking on mobile to open popups
 - make grid options text right aligned

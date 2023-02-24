@@ -1124,33 +1124,35 @@ export default class Gamemap {
 
 							if (cellResources != null && Array.isArray(cellResources)) {
 								let row = (i < cellResources.length) ? cellResources[i] : [];
-								let col = (j < row.length) ? cellResources[i][j] : 0;
+								let col = (j < row.length) ? cellResources[i][j] : null;
 
-								if (col > 0 && col <= 2) {
-									fillCell(self.mapConfig.cellResourceColours[0]);
-								} else if (col > 2 && col <= 5) {
-									fillCell(self.mapConfig.cellResourceColours[1]);
-								} else if (col > 5 && col <= 10) {
-									fillCell(self.mapConfig.cellResourceColours[2]);
-								} else if (col > 10 && col <= 20) {
-									fillCell(self.mapConfig.cellResourceColours[3]);
-								} else if (col > 20 && col <= 50) {
-									fillCell(self.mapConfig.cellResourceColours[4]);
-								} else if (col > 50) {
-									fillCell(self.mapConfig.cellResourceColours[5]);
+								if (col != null) {
+									if (col > 0 && col <= 2) {
+										fillCell(self.mapConfig.cellResourceColours[0]);
+									} else if (col > 2 && col <= 5) {
+										fillCell(self.mapConfig.cellResourceColours[1]);
+									} else if (col > 5 && col <= 10) {
+										fillCell(self.mapConfig.cellResourceColours[2]);
+									} else if (col > 10 && col <= 20) {
+										fillCell(self.mapConfig.cellResourceColours[3]);
+									} else if (col > 20 && col <= 50) {
+										fillCell(self.mapConfig.cellResourceColours[4]);
+									} else if (col > 50) {
+										fillCell(self.mapConfig.cellResourceColours[5]);
+									}
 								}
-
 							}
 
 							if (cellLabels && currentZoom > self.mapConfig.gridShowLabelZoom) {
 
 								let gridStartX = world.gridStart[0];
 								let gridStartY = world.gridStart[1];
-								let colNum = j + gridStartX;
-								let rowNum = (-i) + gridStartY;
+								let colNum = i + gridStartX;
+								let rowNum = (-j) + gridStartY;
 
 								if (rowNum % 5 == 0 || colNum % 5 == 0) {
 
+									// draw background behind cell labels
 									fillCell(self.mapConfig.gridLabelCellBgColour);
 
 									if (rowNum % 5 == 0 && colNum % 5 == 0) {
@@ -1162,6 +1164,7 @@ export default class Gamemap {
 							}
 						}
 
+						// fill grid cell function
 						function fillCell(style) {
 							ctx.fillStyle = style;
 							ctx.beginPath();
@@ -1174,8 +1177,6 @@ export default class Gamemap {
 						}
 					}
 				}
-
-
 
 				// normalised values to canvas pixels function
 				function toPx(nX, nY) {
