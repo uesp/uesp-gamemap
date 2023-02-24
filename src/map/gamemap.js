@@ -1126,7 +1126,7 @@ export default class Gamemap {
 							ctx.stroke();
 						}
 
-						let isVisible = toPx(nX).x >= 0 && toPx(nY).y >= 0 && toPx(nX).x <= window.innerWidth && toPx(nY).y <= window.innerHeight;
+						let isVisible = ((toPx(nX).x >= 0 || (toPx(nX).x < 0 && toPx(nX + nGridSize).x >= 0))) && (toPx(nY).y >= 0 || (toPx(nY).y < 0 && toPx(nY + nGridSize).y >= 0)) && toPx(nX).x <= window.innerWidth && toPx(nY).y <= window.innerHeight;
 
 						if (isVisible) {
 

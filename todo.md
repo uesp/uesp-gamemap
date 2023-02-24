@@ -12,6 +12,7 @@ feat: allow turning off cell coord labels
 - added indicator to show cells that are 5 % 2 == 0
 
 fix: map view not being centred properly on world load (most noticeable on eso map)
+fix: grid being removed when locations load in
 
 
 ## ask dave:
@@ -57,6 +58,8 @@ other fields to add to world:
 - import materialise buttons into svelte components
 - fix popups having the wrong coord type on them
 - add way to show popups on centreon, optional param
+- fix losing grid on resize
+- fix losing grid on layer switch
 - fix all markers showing up at initial load on highest zoom level
 - fix polygons disappearing when outer points are not viewable (consider centre point as well)
 
