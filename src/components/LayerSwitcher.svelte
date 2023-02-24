@@ -66,7 +66,7 @@
     function onGridChecked(event) {
         gridEnabled = event.detail;
         isHovered = false;
-        gamemap.toggleCellGrid(event.detail, doCellLabels, currentCellResource);
+        gamemap.toggleGrid(event.detail, doCellLabels, currentCellResource);
         dispatch("gridChecked", event.detail);
     }
 
@@ -133,14 +133,16 @@
                                 {/each}
                         </DropdownMenu>
 
-                        <!-- <div id="gmCellResourceGuide" style="display: none;">
-                            <div class="gmCRGuideBox1">1-2</div>
-                            <div class="gmCRGuideBox2">3-5</div>
-                            <div class="gmCRGuideBox3">6-10</div>
-                            <div class="gmCRGuideBox4">11-20</div>
-                            <div class="gmCRGuideBox5">21-50</div>
-                            <div class="gmCRGuideBox6">+51</div>
-                        </div> -->
+                        {#if currentCellResource != "None"}
+                            <div id="cell_resource_key">
+                                <b style="display: flex; padding-right: 4px;" title="Cell resource count key">Key:</b>
+                                <!-- svelte-ignore missing-declaration -->
+                                {#each gamemap.getMapConfig().cellResourceColours as style,i}
+                                    {@const cellResourceKeyList = ["<2", "~5", "~10", "~20", "~40", "50+"]}
+                                    <div class="cell_resource_key_item" style="background-color:{style};">{cellResourceKeyList[i]}</div>
+                                {/each}
+                            </div>
+                        {/if}
                     {/if}
                 {/if}
             </div>
@@ -253,6 +255,20 @@
     #close_button {
         display: block;
         float: right;
+    }
+
+    #cell_resource_key {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .cell_resource_key_item {
+        padding-left: 2px;
+        padding-right: 2px;
+        border-style: solid;
+        border-width: 1.5px;
+        border-color: var(--divider);
+        border-radius: 6px;
     }
 
 </style>

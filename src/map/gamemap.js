@@ -226,7 +226,7 @@ export default class Gamemap {
 		this.updateMapState(mapState);
 
 		// set grid if available
-		this.toggleCellGrid(mapState.showGrid);
+		this.toggleGrid(mapState.showGrid);
 	}
 
 	/** Gets map state object from URL params (XY coords, world etc).
@@ -1055,7 +1055,7 @@ export default class Gamemap {
 		return RC.getMaxBounds();
 	}
 
-	toggleCellGrid(toggle, cellLabels, cellResources) {
+	toggleGrid(toggle, cellLabels, cellResources) {
 
 		// get grid info
 		this.gridEnabled = toggle;
@@ -1065,7 +1065,7 @@ export default class Gamemap {
 		// if cellResource is a string, then get cellResource array data and call ourselves again
 		if (cellResources != null && !Array.isArray(cellResources)) {
 			function loadCellResources(array) {
-				self.toggleCellGrid(toggle, cellLabels, array);
+				self.toggleGrid(toggle, cellLabels, array);
 			}
 			this.getCellResourceData(cellResources, loadCellResources);
 		}
@@ -1128,6 +1128,35 @@ export default class Gamemap {
 						}
 
 						if (isVisible) {
+
+							if (cellResources != null && Array.isArray(cellResources)) {
+								let row = (i < cellResources.length) ? cellResources[i] : [];
+								let col = (j < row.length) ? cellResources[i][j] : 0;
+
+								if (col > 0) {
+									fillCell(self.mapConfig.cellResourceColours[1]);
+								}
+								// switch (col) {
+								// 	case col <= 2:
+								// 		fillCell(self.mapConfig.cellResourceColours[0]);
+								// 		break;
+								// 	case col <= 5:
+								// 		fillCell(self.mapConfig.cellResourceColours[1]);
+								// 		break;
+								// 	case col <= 10:
+								// 		fillCell(self.mapConfig.cellResourceColours[2]);
+								// 		break;
+								// 	case col <= 20:
+								// 		fillCell(self.mapConfig.cellResourceColours[3]);
+								// 		break;
+								// 	case col <= 50:
+								// 		fillCell(self.mapConfig.cellResourceColours[4]);
+								// 		break;
+								// 	case col > 50:
+								// 		fillCell(self.mapConfig.cellResourceColours[5]);
+								// 		break;
+								// }
+							}
 
 							if (cellLabels && currentZoom > self.mapConfig.gridShowLabelZoom) {
 
@@ -1500,91 +1529,6 @@ export default class Gamemap {
 	}
 
 }
-
-
-
-
-// uesp.gamemap.Map.prototype.drawCellResourcesCanvas = function()
-// {
-// 	var startX = this.mapOptions.cellResourceStartX;
-// 	var startY = this.mapOptions.cellResourceStartY;
-// 	var endX = this.mapOptions.cellResourceStopX;
-// 	var endY = this.mapOptions.cellResourceStopY;
-// 	var color = "white";
-// 	var x1, y1, x2, y2;
-// 	var zoomDiff = this.zoomLevel - this.mapOptions.minZoomLevel
-// 	var gridOffsetY = this.mapOptions.gridOffsetY;
-
-// 	for (var z = 1; z <= zoomDiff; ++z)
-// 	{
-// 		gridOffsetY += Math.pow(2, z + this.mapOptions.gridOffsetPowerY)
-// 	}
-
-// 	if (!this.isDrawGrid) this.clearMapGridCanvas();
-
-// 	for (var x = startX; x <= endX; x++)
-// 	{
-// 		let xData = this.cellResourceData.data[x - startX];
-// 		if (xData == null) continue;
-
-// 		for (var y = startY; y <= endY; y++)
-// 		{
-// 			resourceCount = xData[y - startY];
-// 			if (resourceCount == null) continue;
-
-
-// 			if (resourceCount == 0)
-// 			{
-// 				continue;	//do nothing
-// 			}
-// 			else if (resourceCount <= 2)
-// 			{
-// 				color = "rgba(255,0,255,0.5)";		//TODO: No hardcode colors?
-// 			}
-// 			else if (resourceCount <= 5)
-// 			{
-// 				color = "rgba(0,0,255,0.5)";
-// 			}
-// 			else if (resourceCount <= 10)
-// 			{
-// 				color = "rgba(0,255,0,0.5)";
-// 			}
-// 			else if (resourceCount <= 20)
-// 			{
-// 				color = "rgba(255,255,0,0.5)";
-// 			}
-// 			else if (resourceCount <= 50)
-// 			{
-// 				color = "rgba(255,102,51,0.5)";
-// 			}
-// 			else
-// 			{
-// 				color = "rgba(255,0,0,0.5)";
-// 			}
-
-// 			x1 = x * this.mapOptions.cellResourceDeltaX;
-// 			y1 = y * this.mapOptions.cellResourceDeltaY;
-// 			x2 = (x + 1) * this.mapOptions.cellResourceDeltaX;
-// 			y2 = (y + 1) * this.mapOptions.cellResourceDeltaY;
-
-// 			var pos1 = this.convertGameToPixelPos(x1, y2);
-// 			var pos2 = this.convertGameToPixelPos(x2, y1);
-
-// 			pos1.x -= this.mapTransformX;
-// 			pos1.y -= this.mapTransformY + gridOffsetY;
-// 			pos2.x -= this.mapTransformX;
-// 			pos2.y -= this.mapTransformY + gridOffsetY;
-
-// 			this.mapContextGrid.fillStyle = color;
-// 			this.mapContextGrid.fillRect(pos1.x + 1, pos1.y + 1, pos2.x - pos1.x - 2, pos2.y - pos1.y - 2);
-// 		}
-
-// 	}
-
-// }
-
-
-
 
 
 

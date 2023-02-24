@@ -39,6 +39,16 @@
     "gridLabelCellBgColour" : "rgba(164, 163, 163, 0.30)",
     "gridShowLabelZoom" : 3,
 
+    // Cell resource colours
+    "cellResourceColours" : [
+        "rgba(255,0,255,0.5)",
+        "rgba(0,0,255,0.5)",
+        "rgba(0,255,0,0.5)",
+        "rgba(255,255,0,0.5)",
+        "rgba(255,102,51,0.5)",
+        "rgba(255,0,0,0.5)"
+    ],
+
     // core
     "tileSize" : 256, // size of tiles in pixels
     "baseTileURL" : "//maps.uesp.net/",
