@@ -205,6 +205,13 @@
         dispatch("tabChange", currentTab);
     }
 
+    // dismiss popup on esc pressed
+    function onKeyPressed(event) {
+        if (event.key == "Escape" || event.keyCode == 27) {
+            dismiss();
+        }
+    }
+
     // dismiss the popup
     function dismiss() {dispatch("dismiss", "dismissed"); }
 
@@ -320,4 +327,4 @@
 </style>
 
 <!-- Global event listeners -->
-<svelte:window on:mousedown={e => onMouseDown(e)} on:resize={reposition} />
+<svelte:window on:mousedown={e => onMouseDown(e)} on:resize={reposition} on:keydown={onKeyPressed} />

@@ -17,6 +17,10 @@ feat: allow turning off cell coord labels
 
 - grid menu remembers what cell resource was selected when closed
 
+
+
+misc: can press esc to dismiss location switcher
+
 - improved grid styling slightly
 
 - added indicator to show cells that are 5 % 2 == 0

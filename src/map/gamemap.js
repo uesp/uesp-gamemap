@@ -1082,27 +1082,20 @@ export default class Gamemap {
 				let bounds = RC.getMaxBounds();
 				let [minX, maxX, minY, maxY] = [map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).y, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y];
 				let [gridWidth, gridHeight] = [maxX - minX, maxY - minY]
-				print("Grid width: "+gridWidth+"px");
-				print("Grid height: "+gridHeight+"px");
 
 				// work out normalised zoom
 				let world = self.getCurrentWorld();
 				let currentZoom = self.getCurrentZoom();
 				let maxZoomLevel = world.maxZoomLevel - 0.03;
 				let nZoom = currentZoom / maxZoomLevel;
-				print("nZoom is ... " +nZoom.toFixed(3));
 
 				// work out normalised grid cell sizes
 				let cellSize = Math.round(self.mapConfig.tileSize * Math.pow(2, Math.round(world.maxZoomLevel)) / ((world.maxX - world.minX) / world.cellSize));
 				let nGridSize = cellSize / Math.pow(2, Math.round(maxZoomLevel) - currentZoom) / gridHeight;
-				print("full cell size: " +cellSize+"px");
-				print("normalised grid cell size: "+ nGridSize);
 
 				// work out how many rows and columns there should be
 				let nRows = world.getWorldDimensions().width / cellSize;
 				let nCols = world.getWorldDimensions().height / cellSize;
-				print ("rows: "+nRows);
-				print ("columns: "+nCols);
 
 				// draw grid
 				for (let i = 0; i <= nRows; i++) {
@@ -1133,29 +1126,20 @@ export default class Gamemap {
 								let row = (i < cellResources.length) ? cellResources[i] : [];
 								let col = (j < row.length) ? cellResources[i][j] : 0;
 
-								if (col > 0) {
+								if (col > 0 && col <= 2) {
+									fillCell(self.mapConfig.cellResourceColours[0]);
+								} else if (col > 2 && col <= 5) {
 									fillCell(self.mapConfig.cellResourceColours[1]);
+								} else if (col > 5 && col <= 10) {
+									fillCell(self.mapConfig.cellResourceColours[2]);
+								} else if (col > 10 && col <= 20) {
+									fillCell(self.mapConfig.cellResourceColours[3]);
+								} else if (col > 20 && col <= 50) {
+									fillCell(self.mapConfig.cellResourceColours[4]);
+								} else if (col > 50) {
+									fillCell(self.mapConfig.cellResourceColours[5]);
 								}
-								// switch (col) {
-								// 	case col <= 2:
-								// 		fillCell(self.mapConfig.cellResourceColours[0]);
-								// 		break;
-								// 	case col <= 5:
-								// 		fillCell(self.mapConfig.cellResourceColours[1]);
-								// 		break;
-								// 	case col <= 10:
-								// 		fillCell(self.mapConfig.cellResourceColours[2]);
-								// 		break;
-								// 	case col <= 20:
-								// 		fillCell(self.mapConfig.cellResourceColours[3]);
-								// 		break;
-								// 	case col <= 50:
-								// 		fillCell(self.mapConfig.cellResourceColours[4]);
-								// 		break;
-								// 	case col > 50:
-								// 		fillCell(self.mapConfig.cellResourceColours[5]);
-								// 		break;
-								// }
+
 							}
 
 							if (cellLabels && currentZoom > self.mapConfig.gridShowLabelZoom) {
