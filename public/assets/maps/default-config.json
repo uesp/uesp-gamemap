@@ -36,6 +36,7 @@
     "gridLineColour" : "rgba(255, 165, 0, 0.50)",
     "gridLabelColour" : "cyan",
     "gridShowLabels" : true,
+    "gridLabelCellBgColour" : "rgba(164, 163, 163, 0.30)",
     "gridShowLabelZoom" : 3,
 
     // core

@@ -94,6 +94,7 @@
 
     // cell resource info
     "gridShowLabelZoom" : 3,
+    "gridLabelCellBgColour" : "rgba(0, 0, 0, 0.35)",
     "cellResources": {
         "None" : "None",
         "NordicBarnacleCluster01" : "Barnacle",

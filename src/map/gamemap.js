@@ -1111,6 +1111,7 @@ export default class Gamemap {
 						// get normalised coordinates
 						let nX = i * nGridSize;
 						let nY = j * nGridSize;
+						let isVisible = ((toPx(nX).x >= 0 || (toPx(nX).x < 0 && toPx(nX + nGridSize).x >= 0))) && (toPx(nY).y >= 0 || (toPx(nY).y < 0 && toPx(nY + nGridSize).y >= 0)) && toPx(nX).x <= window.innerWidth && toPx(nY).y <= window.innerHeight;
 
 						// draw grid lines
 						if (i == j) {
@@ -1126,8 +1127,6 @@ export default class Gamemap {
 							ctx.stroke();
 						}
 
-						let isVisible = ((toPx(nX).x >= 0 || (toPx(nX).x < 0 && toPx(nX + nGridSize).x >= 0))) && (toPx(nY).y >= 0 || (toPx(nY).y < 0 && toPx(nY + nGridSize).y >= 0)) && toPx(nX).x <= window.innerWidth && toPx(nY).y <= window.innerHeight;
-
 						if (isVisible) {
 
 							if (cellLabels && currentZoom > self.mapConfig.gridShowLabelZoom) {
@@ -1139,14 +1138,7 @@ export default class Gamemap {
 
 								if (rowNum % 5 == 0 || colNum % 5 == 0) {
 
-									ctx.fillStyle = 'rgba(164, 163, 163, 0.30)';
-									ctx.beginPath();
-									ctx.moveTo(toPx(nX).x, toPx(nY).y);
-									ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY).y);
-									ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY + nGridSize).y);
-									ctx.lineTo(toPx(nX).x, toPx(nY + nGridSize).y);
-									ctx.closePath();
-									ctx.fill();
+									fillCell(self.mapConfig.gridLabelCellBgColour);
 
 									if (rowNum % 5 == 0 && colNum % 5 == 0) {
 										ctx.fillStyle = self.mapConfig.gridLabelColour;
@@ -1155,6 +1147,17 @@ export default class Gamemap {
 									}
 								}
 							}
+						}
+
+						function fillCell(style) {
+							ctx.fillStyle = style;
+							ctx.beginPath();
+							ctx.moveTo(toPx(nX).x, toPx(nY).y);
+							ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY).y);
+							ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY + nGridSize).y);
+							ctx.lineTo(toPx(nX).x, toPx(nY + nGridSize).y);
+							ctx.closePath();
+							ctx.fill();
 						}
 					}
 				}
