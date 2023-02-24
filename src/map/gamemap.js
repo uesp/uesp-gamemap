@@ -637,7 +637,7 @@ export default class Gamemap {
 		}
 
 		map.eachLayer((layer) => {
-			if (layer._tiles == null) { //remove anything that is not a tile
+			if (layer._tiles == null && layer.options.className != "cellGrid" ) { //remove anything that is not a tile
 				layer.off('resize move zoom');
 				layer.remove();
 			}
@@ -1105,7 +1105,6 @@ export default class Gamemap {
 				print ("columns: "+nCols);
 
 				// draw grid
-				ctx.beginPath();
 				for (let i = 0; i <= nRows; i++) {
 					for (let j = 0; j <= nCols; j++) {
 
@@ -1115,12 +1114,16 @@ export default class Gamemap {
 
 						// draw grid lines
 						if (i == j) {
+							ctx.beginPath();
 							// rows
 							ctx.moveTo(toPx(0).x, toPx(nY).y);
 							ctx.lineTo(toPx(1).x, toPx(nY).y);
 							// columns
 							ctx.moveTo(toPx(nX).x, toPx(0).y);
 							ctx.lineTo(toPx(nX).x, toPx(1).y);
+							ctx.strokeStyle = ctx.strokeStyle = self.mapConfig.gridLineColour;
+							ctx.lineWidth = self.mapConfig.gridLineWidth;
+							ctx.stroke();
 						}
 
 						let isVisible = toPx(nX).x >= 0 && toPx(nY).y >= 0 && toPx(nX).x <= window.innerWidth && toPx(nY).y <= window.innerHeight;
@@ -1156,9 +1159,7 @@ export default class Gamemap {
 					}
 				}
 
-				ctx.strokeStyle = ctx.strokeStyle = self.mapConfig.gridLineColour;
-				ctx.lineWidth = self.mapConfig.gridLineWidth;
-				ctx.stroke();
+
 
 				// normalised values to canvas pixels function
 				function toPx(nX, nY) {

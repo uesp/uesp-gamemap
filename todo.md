@@ -7,6 +7,8 @@ feat: added new grid options menu, which contains cell resource on valid maps
 feat: allow turning off cell coord labels
 - made all maps request tile number of maxZoom^2
 
+- improved grid styling slightly
+
 - added indicator to show cells that are 5 % 2 == 0
 
 fix: map view not being centred properly on world load (most noticeable on eso map)
