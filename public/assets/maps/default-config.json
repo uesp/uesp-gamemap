@@ -33,7 +33,7 @@
     // Map grid info
     "gridStart" : [0, 0], //cell coords of the top leftmost point (default: 0 , 0);
     "gridLineWidth" : 2,
-    "gridLineColour" : "orange",
+    "gridLineColour" : "rgba(255, 165, 0, 0.50)",
     "gridLabelColour" : "cyan",
     "gridShowLabels" : true,
     "gridShowLabelZoom" : 3,

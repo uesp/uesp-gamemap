@@ -1145,7 +1145,6 @@ export default class Gamemap {
 									ctx.closePath();
 									ctx.fill();
 
-
 									if (rowNum % 5 == 0 && colNum % 5 == 0) {
 										ctx.fillStyle = self.mapConfig.gridLabelColour;
 										ctx.font = "bold 13px Arial";

@@ -638,10 +638,6 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	user-select: none !important;
 }
 
-.cellGrid {
-	opacity: 0.45;
-}
-
 /*================================================
 				 	 Pop-ups
 ================================================*/
