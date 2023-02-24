@@ -1055,10 +1055,6 @@ export default class Gamemap {
 		return RC.getMaxBounds();
 	}
 
-	isResourceGridEnabled() {
-		return this.getCurrentWorld().hasCellResources;
-	}
-
 	toggleCellGrid(toggle, cellLabels, cellResources) {
 
 		// get grid info
@@ -1077,120 +1073,101 @@ export default class Gamemap {
 		if (toggle) { // if draw grid == true
 			function drawGrid(_, params) {
 
-				// set up layer
+				// set up canvas layer
 				let ctx = params.canvas.getContext('2d');
-				ctx.clearRect(0, 0, params.size.x, params.size.y);
+				ctx.clearRect(0, 0, params.size.x, params.size.y); //clear canvas
+				// params.canvas.width = params.canvas.width; //clear canvas
 
-				print(cellResources);
-
-				// set up bounds
+				// set up canvas bounds
 				let bounds = RC.getMaxBounds();
-				let minX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x;
-				let maxX = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x;
-				let minY = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).y;
-				let maxY = map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y;
-
-				let gridWidth = maxX - minX;
-				let gridHeight = maxY - minY;
+				let [minX, maxX, minY, maxY] = [map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).y, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y];
+				let [gridWidth, gridHeight] = [maxX - minX, maxY - minY]
 				print("Grid width: "+gridWidth+"px");
 				print("Grid height: "+gridHeight+"px");
 
-				function toPix(nX, nY) {
+				// work out normalised zoom
+				let world = self.getCurrentWorld();
+				let currentZoom = self.getCurrentZoom();
+				let maxZoomLevel = world.maxZoomLevel - 0.03;
+				let nZoom = currentZoom / maxZoomLevel;
+				print("nZoom is ... " +nZoom.toFixed(3));
+
+				// work out normalised grid cell sizes
+				let cellSize = Math.round(self.mapConfig.tileSize * Math.pow(2, Math.round(world.maxZoomLevel)) / ((world.maxX - world.minX) / world.cellSize));
+				let nGridSize = cellSize / Math.pow(2, Math.round(maxZoomLevel) - currentZoom) / gridHeight;
+				print("full cell size: " +cellSize+"px");
+				print("normalised grid cell size: "+ nGridSize);
+
+				// work out how many rows and columns there should be
+				let nRows = world.getWorldDimensions().width / cellSize;
+				let nCols = world.getWorldDimensions().height / cellSize;
+				print ("rows: "+nRows);
+				print ("columns: "+nCols);
+
+				// draw grid
+				ctx.beginPath();
+				for (let i = 0; i <= nRows; i++) {
+					for (let j = 0; j <= nCols; j++) {
+
+						// get normalised coordinates
+						let nX = i * nGridSize;
+						let nY = j * nGridSize;
+
+						// draw grid lines
+						if (i == j) {
+							// rows
+							ctx.moveTo(toPx(0).x, toPx(nY).y);
+							ctx.lineTo(toPx(1).x, toPx(nY).y);
+							// columns
+							ctx.moveTo(toPx(nX).x, toPx(0).y);
+							ctx.lineTo(toPx(nX).x, toPx(1).y);
+						}
+
+						let isVisible = toPx(nX).x >= 0 && toPx(nY).y >= 0 && toPx(nX).x <= window.innerWidth && toPx(nY).y <= window.innerHeight;
+
+						if (isVisible) {
+
+							if (cellLabels && currentZoom > self.mapConfig.gridShowLabelZoom) {
+
+								let gridStartX = world.gridStart[0];
+								let gridStartY = world.gridStart[1];
+								let colNum = j + gridStartX;
+								let rowNum = (-i) + gridStartY;
+
+								if (rowNum % 5 == 0 || colNum % 5 == 0) {
+
+									ctx.fillStyle = 'rgba(164, 163, 163, 0.30)';
+									ctx.beginPath();
+									ctx.moveTo(toPx(nX).x, toPx(nY).y);
+									ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY).y);
+									ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY + nGridSize).y);
+									ctx.lineTo(toPx(nX).x, toPx(nY + nGridSize).y);
+									ctx.closePath();
+									ctx.fill();
+
+
+									if (rowNum % 5 == 0 && colNum % 5 == 0) {
+										ctx.fillStyle = self.mapConfig.gridLabelColour;
+										ctx.font = "bold 13px Arial";
+										ctx.fillText([colNum, rowNum].join(', '), toPx(nX).x, toPx(nY + nGridSize).y);
+									}
+								}
+							}
+						}
+					}
+				}
+
+				ctx.strokeStyle = ctx.strokeStyle = self.mapConfig.gridLineColour;
+				ctx.lineWidth = self.mapConfig.gridLineWidth;
+				ctx.stroke();
+
+				// normalised values to canvas pixels function
+				function toPx(nX, nY) {
 					nY = (nY != null) ? nY : nX;
 					if (nY > 4 || nY < -4) { nY = nY / gridHeight; }
 					if (nX > 4 || nX < -4) { nX = nX / gridWidth; }
 					return new Point(minX + (nX * gridWidth), minY + (nY * gridHeight))
 				}
-
-				// work out zoom %
-				let maxZoomLevel = self.getMapState().world.maxZoomLevel - 0.03;
-				let currentZoom = self.getCurrentZoom();
-				let nZoom = currentZoom / maxZoomLevel;
-				print("nZoom is ... " +nZoom.toFixed(3));
-
-				// work out grid gap size
-
-				// work out cell size at max zoom in pixels
-				let world = self.getCurrentWorld();
-				let cellSize = Math.round(self.mapConfig.tileSize * Math.pow(2, Math.round(world.maxZoomLevel)) / ((world.maxX - world.minX) / world.cellSize));
-
-
-				// get size of grid square at current zoom level based on cell size
-				print(maxZoomLevel);
-				let gridSize = cellSize / Math.pow(2, Math.round(maxZoomLevel) - currentZoom);
-				//let gridSize = ((cellSize * nZoom) / gridWidth) * gridWidth;
-
-
-				print("cell size: " +cellSize);
-				print("Grid size (gap) is: "+ gridSize.toFixed(3) +"px");
-
-				// work out how many rows and columns there should be
-				let nRows = world.getWorldDimensions().width / cellSize;
-				let nCols = world.getWorldDimensions().height / cellSize;
-				print (nRows);
-				print (nCols);
-
-				// draw the outline of the grid
-				ctx.beginPath();
-				ctx.rect(minX, minY, gridWidth, gridHeight);
-				ctx.strokeStyle = self.mapConfig.gridLineColour;
-				ctx.lineWidth = self.mapConfig.gridLineWidth;
-				ctx.stroke();
-
-				// do rows
-				ctx.moveTo(toPix(0).x, toPix(0).y);
-
-				let nOffset = 0;
-				for (let i = 0; i <= nRows; i++) {
-					let offset = gridHeight / nRows;
-					// draw a line
-					ctx.beginPath();
-					ctx.moveTo(toPix(nOffset).x, toPix(0).y);
-					ctx.lineTo(toPix(nOffset).x, toPix(1).y);
-					ctx.stroke();
-					nOffset += offset / gridHeight;
-				}
-
-				nOffset = 0;
-				for (let i = 0; i <= nCols; i++) {
-					let offset = gridWidth / nCols;
-					// draw a line
-					ctx.beginPath();
-					ctx.moveTo(toPix(0).x, toPix(nOffset).y);
-					ctx.lineTo(toPix(1).x, toPix(nOffset).y);
-					ctx.stroke();
-					nOffset += offset / gridWidth;
-				}
-
-				// do cell labels
-				if (cellLabels) {
-					let nYOffset = 0;
-					let nXOffset = 0;
-					if (currentZoom > self.mapConfig.gridShowLabelZoom) {
-						for (let i = 0; i <= nCols; i++) {
-							for (let j = 0; j <= nRows; j++) {
-
-								// COLS = X
-								// ROWS = Y
-								let gridStartX = world.displayData.gridStart[0];
-								let gridStartY = world.displayData.gridStart[1];
-								let colNum = j + gridStartX;
-								let rowNum = (-i) + gridStartY;
-
-								if (rowNum % 5 == 0 && colNum % 5 == 0) {
-									ctx.fillStyle = self.mapConfig.gridLabelColour;
-									ctx.font = "bold 13px Arial";
-									ctx.fillText([colNum, rowNum].join(', '), toPix(nXOffset).x, toPix(nYOffset + ((gridHeight / nRows) / gridHeight)).y);
-								}
-
-								nXOffset += (gridWidth / nCols) / gridWidth;
-							}
-							nXOffset = 0;
-							nYOffset += (gridHeight / nRows) / gridHeight;
-						}
-					}
-				}
-
 			};
 			L.canvasOverlay().params({bounds: RC.getMaxBounds(), className : "cellGrid", zoomAnimation: true}).drawing(drawGrid).addTo(map);
 		} else { removeGrid(); }

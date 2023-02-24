@@ -6,9 +6,6 @@
     "bgColor" : "#284358",
 
     // Map options
-    "defaultZoomLevel" : 2,
-    "defaultXPos" : 5000,
-    "defaultYPos" : 5000,
     "hasCustomCSS" : true,
 
     // Map coordinate system info
@@ -96,7 +93,7 @@
     },
 
     // cell resource info
-    "gridShowLabelZoom" : 3.80,
+    "gridShowLabelZoom" : 3,
     "cellResources": {
         "None" : "None",
         "NordicBarnacleCluster01" : "Barnacle",

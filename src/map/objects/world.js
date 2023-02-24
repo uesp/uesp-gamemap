@@ -37,6 +37,7 @@ export default class World {
 			// world display data (grids and layers)
 			this.displayData = JSON.parse(world.displayData);
 			this.layers = (this.displayData.layers != null) ? this.displayData.layers : mapConfig.layers;
+			this.gridStart = (this.displayData.gridStart != null) ? this.displayData.gridStart : null;
 		} else {
 			throw new Error("World cannot be null!");
 		}

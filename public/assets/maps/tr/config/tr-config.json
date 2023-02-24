@@ -9,9 +9,6 @@
     "hasCustomFavIcon" : true,
     "hasCustomCSS" : true,
     "hasCellGrid" : true,
-    "defaultZoomLevel" : 2,
-    "defaultXPos" : 60000,
-    "defaultYPos" : -125000,
     "zoomOffset" : 9,
 
     // Map coordinate system info
@@ -26,8 +23,6 @@
     "maxWorldID" : 20000,
 
     // Map grid info
-    "cellSize" : 128, // size of a cell at full zoom on the map, in pixels
-    "gridStart" : [-46, 37], //cell coords of the top leftmost point (default: 0 , 0);
     "gridShowLabelZoom" : 3.5,
 
     // Map icon info

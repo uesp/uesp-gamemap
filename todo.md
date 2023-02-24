@@ -1,12 +1,32 @@
 ## last week:
 
 
+- optimised grid code (only renders what's visible on canvas)
 
 feat: added new grid options menu, which contains cell resource on valid maps
 feat: allow turning off cell coord labels
+- made all maps request tile number of maxZoom^2
+
+- added indicator to show cells that are 5 % 2 == 0
 
 fix: map view not being centred properly on world load (most noticeable on eso map)
 
+
+## ask dave:
+
+- SR icons 32px (like eso) instead of 16? i think they should be bigger
+
+"Was thinking of updating tilesX/Y in the db to be the max tile count but that would mess up some existing ESO stuff that uses it
+[19:11]
+So probably better to add 2 new columns to the world DB if we wanted to (assuming that would be useful from your end at least"
+
+
+other fields to add to world:
+
+- defaultZoom : int
+- resourceStart : [] (for cell resource offsets)
+    "gridShowLabels" : true,
+    "gridShowLabelZoom" : 3,
 
 ## todo
 
@@ -20,7 +40,6 @@ fix: map view not being centred properly on world load (most noticeable on eso m
 - fix polylines not respecting zoom levels
 - gamemap not loading after initial full load (gamemap.net/ob/....) results in null latlngs -- happening shivering and solstheim
 - fix grid disappearing when switching layers
-- refactor GetMapImageDimensions(world) into world
 - make loading bar show as soon as gotoDest is called
 - make leaflet popup wikilinks turn black if there's no href
 - for grid, fill in the cells up//along every 5 cells with slightly transparent rect, to add more contrast
