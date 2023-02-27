@@ -184,6 +184,7 @@ class GameMap
 					`cellSize` INTEGER NOT NULL,
 					`minZoom` INTEGER NOT NULL,
 					`maxZoom` INTEGER NOT NULL,
+					`defaultZoom` INTEGER NOT NULL,
 					`zoomOffset` INTEGER NOT NULL,
 					`posLeft` INTEGER NOT NULL,
 					`posTop` INTEGER NOT NULL,
@@ -214,6 +215,7 @@ class GameMap
 					cellSize INTEGER NOT NULL,
 					minZoom INTEGER NOT NULL,
 					maxZoom INTEGER NOT NULL,
+					defaultZoom INTEGER NOT NULL,
 					zoomOffset INTEGER NOT NULL,
 					posLeft INTEGER NOT NULL,
 					posTop INTEGER NOT NULL,
@@ -425,8 +427,8 @@ class GameMap
 	{
 		if ($this->worldId == 0) return $this->reportError("Cannot copy empty world record to history!");
 		
-		$query = "INSERT INTO world_history(worldId, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled, displayData, tilesX, tilesY, maxTilesX, maxTilesY)
-					SELECT id, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled, displayData, tilesX, tilesY, maxTilesX, maxTilesY
+		$query = "INSERT INTO world_history(worldId, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, defaultZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled, displayData, tilesX, tilesY, maxTilesX, maxTilesY)
+					SELECT id, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, defaultZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled, displayData, tilesX, tilesY, maxTilesX, maxTilesY
 					FROM world WHERE id={$this->worldId};";
 		
 		$result = $this->db->query($query);
@@ -570,6 +572,7 @@ class GameMap
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
+			settype($row['defaultZoom'], "integer");
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
 			settype($row['tilesY'], "integer");
@@ -623,6 +626,7 @@ class GameMap
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
+			settype($row['defaultZoom'], "integer");
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
 			settype($row['tilesY'], "integer");
@@ -1005,7 +1009,7 @@ class GameMap
 		$query .= "posTop={$this->worldPosTop}, ";
 		$query .= "posBottom={$this->worldPosBottom}, ";
 		$query .= "enabled={$this->worldEnabled} ";
-			//TODO: tilesX/Y, maxTilesX/Y
+			//TODO: tilesX/Y, maxTilesX/Y, defaultZoom
 		
 			// Should enable this when editing for it is added on the client side
 		//if ($this->worldDisplayData) $query .= ", displayData='{$this->worldDisplayData}' ";
@@ -1196,6 +1200,7 @@ class GameMap
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
+			settype($row['defaultZoom'], "integer");
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
 			settype($row['tilesY'], "integer");
@@ -1252,6 +1257,7 @@ class GameMap
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
+			settype($row['defaultZoom'], "integer");
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
 			settype($row['tilesY'], "integer");
