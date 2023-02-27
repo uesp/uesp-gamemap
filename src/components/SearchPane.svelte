@@ -161,7 +161,7 @@
         if (searchFocused && showSearchPane && searchResults != null && searchResults.length > 0) {
 
             if (event.key == "Enter" || event.keyCode == 13) {
-                gotoDest(searchResults[currentlySelectedResult].destinationID);
+                goto(searchResults[currentlySelectedResult].destinationID);
                 selectSearchResult(currentlySelectedResult);
                 event.preventDefault();
             }
@@ -210,7 +210,7 @@
 
     // callbacks
     function clearSearch() { searchBox.value = ""; updateSearch("", false) }
-    function gotoDest(destinationID) {gamemap.gotoDest(destinationID); if (!doPinSearch){ searchFocused = false; } }
+    function goto(destinationID) {gamemap.goto(destinationID); if (!doPinSearch){ searchFocused = false; } }
 </script>
 
 <markup>
@@ -276,7 +276,7 @@
                                 {#if searchResults.length > 0}
                                     {#each searchResults as result}
                                         <!-- svelte-ignore missing-declaration -->
-                                        <ListItem title={result.name} description={result.description} icon={result.icon} destinationID={result.destinationID} on:click={(e) => {gotoDest(e.detail)}}/>
+                                        <ListItem title={result.name} description={result.description} icon={result.icon} destinationID={result.destinationID} on:click={(e) => {goto(e.detail)}}/>
                                     {/each}
                                      <!-- search results go here-->
                                 {:else}

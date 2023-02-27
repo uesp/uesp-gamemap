@@ -455,9 +455,6 @@ export default class Gamemap {
 				} else { // else load up the new world
 					print("Going to world... " + worldID);
 					print(this.getWorldFromID(worldID));
-					if (this.mapCallbacks != null) {
-						this.mapCallbacks.setLoading(true);
-					}
 					this.clearLocations();
 					mapState.world = this.getWorldFromID(worldID);
 					this.setMapState(mapState);
@@ -482,11 +479,34 @@ export default class Gamemap {
 	}
 
 	// convenience method to jump to destination
-	gotoDest(destID) {
-		this.gotoWorld(destID);
-	}
+	goto(place, coords, openPopup) {
+		// set loading
+		this.mapCallbacks.setLoading(true);
 
-	goto(place, openPopup) {
+		// get place
+		place = (place != null) ? place : this.getCurrentWorldID();
+
+		if (place > 0) { // is destination a world?
+
+			if (this.isWorldValid(place)) {
+
+			}
+		} else { // it is a location
+
+		}
+
+		if (isString(place)) {
+
+		} else {
+
+		}
+
+
+		// check if place is string, then convert to number
+		// if it is number, if it is positive, then it is world
+		// if negative, then location
+
+
 
 	}
 
@@ -546,9 +566,6 @@ export default class Gamemap {
 
 		let zoom = (root) ? "/zoom0/" : "/zoom{z}/";
 		let xy = (root) ? "-0-0.jpg" : "-{x}-{y}.jpg";
-		print(world);
-		print(world.layers);
-		print(layerIndex);
 		return this.mapConfig.tileURL + world.name + "/leaflet/" + world.layers[layerIndex].name + zoom + world.name + xy;
 	}
 
@@ -1072,7 +1089,9 @@ export default class Gamemap {
 		// if cellResource is a string, then get cellResource array data and call ourselves again
 		if (cellResources != null && !Array.isArray(cellResources)) {
 			function loadCellResources(array) {
-				self.toggleGrid(toggle, cellBounds, array);
+				if (self.isGridEnabled()) {
+					self.toggleGrid(self.isGridEnabled(), cellBounds, array);
+				}
 			}
 			this.getCellResourceData(cellResources, loadCellResources);
 		}

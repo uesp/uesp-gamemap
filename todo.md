@@ -4,7 +4,7 @@
 - added option to turn off grid for cell resources
 - fixed TR cell sizes being too small
 - fixed: grid disappearing on layer switch (dark/day)
-
+- fix: grid menu still being shown between worlds
 
 ## Polish
 - made grid=true as a URL param
@@ -14,20 +14,11 @@
 
 ## todo
 
-- write copy for whats new
-
-- cell resource label being cropped
-
-
-
-- fix grid disappearing when switching layers
 - add allow long clicking on mobile to open popups
-- make grid options text right aligned
 - fix requesting /null in layerbutton
 - fix game worldspace XY conversion
 - fix polylines not respecting zoom levels
 - gamemap not loading after initial full load (gamemap.net/ob/....) results in null latlngs -- happening shivering and solstheim
-- make loading bar show as soon as gotoDest is called
 - make leaflet popup wikilinks turn black if there's no href
 - add permalink option in location popups
 - redesign location popups
@@ -38,6 +29,7 @@
 - make embeded map watermark actually open in new tab
 - fix tooltip text: wikilink and detail not being put on separate lines
 - make labels clickable
+- write copy for whats new
 - fix layer widget pip/triangle being messed up
 - edit
 - import materialise buttons into svelte components

@@ -343,3 +343,11 @@ window.getPrefs = function getPrefs(key, defaultValue) {
 		}
 	}
 }
+
+/** Function that gets whether a provided value is a string
+ * @param {String} str - The value to compare
+ * @returns - whether the provided value was a string or not
+ */
+window.isString = function isString(str) {
+	return (typeof str === 'string' || str instanceof String)
+}

@@ -9,6 +9,7 @@ export default class Point {
     constructor(x, y) {
         this.x = (typeof x !== 'undefined') ? x : 0;
         this.y = (typeof y !== 'undefined') ? y : 0;
+        this.zoom = (typeof z !== 'undefined') ? z : 0;
         this.coordType = null;
     }
 
