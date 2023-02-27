@@ -433,7 +433,7 @@ uesp.gamemap.Map.prototype.convertGameToTilePos = function(gameX, gameY)
 {
 	var maxTiles = Math.pow(2, this.zoomLevel - this.mapOptions.zoomOffset);
 	var tileX = 0;
-	var tileY = 0;	
+	var tileY = 0;
 	
 	tileX = (gameX - this.mapOptions.gamePosX1) * maxTiles / (this.mapOptions.gamePosX2 - this.mapOptions.gamePosX1);
 	tileY = (gameY - this.mapOptions.gamePosY1) * maxTiles / (this.mapOptions.gamePosY2 - this.mapOptions.gamePosY1);
