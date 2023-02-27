@@ -483,7 +483,7 @@ export default class Gamemap {
 		this.gotoWorld(destID);
 	}
 
-	goto(id, coords, zoom) {
+	goto(place, openPopup) {
 
 	}
 
@@ -1040,25 +1040,29 @@ export default class Gamemap {
 						  General
 	================================================*/
 
-	// todo
+	// reset map
 	reset(currentWorldOnly) {
-		//resets the gamemap to its default position and world. if currentWorldOnly is set, then it only resets
-		// current world's position
-		print("todo! reset!");
-	}
-
-	isGridEnabled() {
-		return this.gridEnabled;
+		if (!this.hasMultipleWorlds() || currentWorldOnly) {
+			map.fitBounds(RC.getMaxBounds(), {animate: true});
+		} else {
+			this.goto(this.mapConfig.defaultWorldID);
+		}
 	}
 
 	getMapBounds() {
 		return RC.getMaxBounds();
 	}
 
+	isGridEnabled() {
+		return this.getMapState().showGrid;
+	}
+
 	toggleGrid(toggle, cellBounds, cellResources) {
 
-		// get grid info
-		this.gridEnabled = toggle;
+		// set grid info
+		let mapState = this.getMapState();
+		mapState.showGrid = toggle;
+		this.updateMapState(mapState);
 		cellResources = (cellResources != null) ? (cellResources == "None") ? null : cellResources : cellResources;
 		if ((cellBounds != null || cellResources != null) && this.gridEnabled) { removeGrid(); }
 

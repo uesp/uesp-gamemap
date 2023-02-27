@@ -2,6 +2,7 @@
 
 - fixed cell resource y flip
 - added option to turn off grid for cell resources
+- fixed TR cell sizes being too small
 
 
 
@@ -9,10 +10,9 @@
 
 ## todo
 
-- tamriel rebuilt cells no longer line up now
 - write copy for whats new
 
-- show resource label being cropped
+- cell resource label being cropped
 
 
 
@@ -30,6 +30,7 @@
 - fix polygons disappearing when outer points are not viewable (consider centre point as well)
 - make map reset use zoomtoBounds or equivalent from leaflet docs
 - fix icons randomly disappearng from listItem
+- hook up world defaultZoom to actually make worlds zoom to that level
 - make embeded map watermark actually open in new tab
 - fix tooltip text: wikilink and detail not being put on separate lines
 - make labels clickable

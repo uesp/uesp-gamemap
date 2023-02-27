@@ -34,6 +34,8 @@ export default class World {
 			this.locations = null; // locations are loaded async after the world is created
 			this.legacy = world; // legacy attributes from server
 
+			this.defaultZoom = world.defaultZoom - this.zoomOffset;
+
 			// world display data (grids and layers)
 			this.displayData = JSON.parse(world.displayData);
 			this.layers = (this.displayData.layers != null) ? this.displayData.layers : mapConfig.layers;
