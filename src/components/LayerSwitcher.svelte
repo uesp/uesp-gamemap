@@ -32,7 +32,6 @@
     let resourceGridEnabled = world.hasCellResources();
     let expandGridOptions = getPrefs("expandgridoptions", true);
     let currentCellResource = "None";
-    let doCellLabels = gamemap.getMapConfig().gridShowLabels;
     let doCellGrid = true;
 
     // event listeners
@@ -67,7 +66,7 @@
     function onGridChecked(event) {
         gridEnabled = event.detail;
         isHovered = false;
-        gamemap.toggleGrid(event.detail, doCellLabels, currentCellResource);
+        gamemap.toggleGrid(event.detail, doCellGrid, currentCellResource);
         dispatch("gridChecked", event.detail);
     }
 
@@ -122,12 +121,10 @@
 
                 {#if expandGridOptions}
                     <div in:slide out:slide>
-                        <Switch label="Show Cell Labels" tooltip="Toggle cell coordinates" enabled={doCellLabels} on:change={(e) => {doCellLabels = e.detail; onGridChecked({detail: true})}}></Switch>
+                        <Switch label="Show Cell Bounds" tooltip="Toggle cell grid" enabled={doCellGrid} on:change={(e) => {doCellGrid = e.detail; onGridChecked({detail: true})}}></Switch>
 
                         <!-- Cell resource dropdown -->
                         {#if world.hasCellResources()}
-
-                        <Switch label="Show Cell Grid" tooltip="Toggle cell boundaries" enabled={doCellGrid} on:change={(e) => {doCellGrid = e.detail; onGridChecked({detail: true})}}></Switch>
                             <!-- svelte-ignore missing-declaration -->
                             <DropdownMenu label="Show Resource" hint="Select resource..." tooltip="Select cell resource" on:change={(e) => {currentCellResource = e.detail; onGridChecked({detail: true})}}>
                                 {@const keys = Object.keys(gamemap.getMapConfig().cellResources)}

@@ -1055,17 +1055,17 @@ export default class Gamemap {
 		return RC.getMaxBounds();
 	}
 
-	toggleGrid(toggle, cellLabels, cellResources) {
+	toggleGrid(toggle, cellBounds, cellResources) {
 
 		// get grid info
 		this.gridEnabled = toggle;
 		cellResources = (cellResources != null) ? (cellResources == "None") ? null : cellResources : cellResources;
-		if ((cellLabels != null || cellResources != null) && this.gridEnabled) { removeGrid(); }
+		if ((cellBounds != null || cellResources != null) && this.gridEnabled) { removeGrid(); }
 
 		// if cellResource is a string, then get cellResource array data and call ourselves again
 		if (cellResources != null && !Array.isArray(cellResources)) {
 			function loadCellResources(array) {
-				self.toggleGrid(toggle, cellLabels, array);
+				self.toggleGrid(toggle, cellBounds, array);
 			}
 			this.getCellResourceData(cellResources, loadCellResources);
 		}
@@ -1106,7 +1106,7 @@ export default class Gamemap {
 						let isVisible = ((toPx(nX).x >= 0 || (toPx(nX).x < 0 && toPx(nX + nGridSize).x >= 0))) && (toPx(nY).y >= 0 || (toPx(nY).y < 0 && toPx(nY + nGridSize).y >= 0)) && toPx(nX).x <= window.innerWidth && toPx(nY).y <= window.innerHeight;
 
 						// draw grid lines
-						if (i == j) {
+						if (cellBounds && i == j) {
 							ctx.beginPath();
 							// rows
 							ctx.moveTo(toPx(0).x, toPx(nY).y);
@@ -1142,7 +1142,7 @@ export default class Gamemap {
 								}
 							}
 
-							if (cellLabels && currentZoom > self.mapConfig.gridShowLabelZoom) {
+							if (cellBounds && currentZoom > self.mapConfig.gridShowLabelZoom) {
 
 								let gridStartX = world.gridStart[0];
 								let gridStartY = world.gridStart[1];
@@ -1211,6 +1211,7 @@ export default class Gamemap {
 			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 				if (!error && data != null) {
 
+					// y flip
 					let array = data.resources[0].data;
 					for (let i in array) {
 						array[i] = array[i].reverse();
