@@ -202,10 +202,8 @@ export default class Gamemap {
 
 		// update world
 		this.currentWorldID = mapState.world.id;
-		if (this.mapCallbacks != null) {
-			this.mapCallbacks.onWorldChanged(this.mapWorlds[this.currentWorldID])
-		}
 
+		// set background colour
 		if (mapState.world.layers[mapState.layerIndex].bg_color != null) { this.mapRoot.style.backgroundColor = mapState.world.layers[mapState.layerIndex].bg_color; }
 
 		if (!onlyUpdateTiles) {
@@ -226,7 +224,7 @@ export default class Gamemap {
 		this.updateMapState(mapState);
 
 		// set grid if available
-		this.toggleGrid(mapState.showGrid);
+		this.toggleGrid(mapState.showGrid, (mapState.showGrid) ? mapState.showGrid : null);
 	}
 
 	/** Gets map state object from URL params (XY coords, world etc).
@@ -317,6 +315,11 @@ export default class Gamemap {
 
 		if (newMapState.showGrid) {
 			mapLink += '&grid=' + newMapState.showGrid;
+		}
+
+		// callback
+		if (self.mapCallbacks != null) {
+			self.mapCallbacks.onMapStateChanged(newMapState);
 		}
 
 		// update url with new state
@@ -886,7 +889,7 @@ export default class Gamemap {
 			}
 		})
 
-		map.on("zoom", function(e) {
+		map.on("zoom", function() {
 			if (self.mapCallbacks != null) {
 				self.mapCallbacks.onZoom(map.getZoom());
 			}
@@ -1064,7 +1067,7 @@ export default class Gamemap {
 		mapState.showGrid = toggle;
 		this.updateMapState(mapState);
 		cellResources = (cellResources != null) ? (cellResources == "None") ? null : cellResources : cellResources;
-		if ((cellBounds != null || cellResources != null) && this.gridEnabled) { removeGrid(); }
+		if ((cellBounds != null || cellResources != null) && this.isGridEnabled()) { removeGrid(); }
 
 		// if cellResource is a string, then get cellResource array data and call ourselves again
 		if (cellResources != null && !Array.isArray(cellResources)) {

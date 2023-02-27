@@ -20,9 +20,9 @@
 
     // state vars
     export let world = gamemap.getCurrentWorld();
+    export let gridEnabled = gamemap.isGridEnabled();
     $: hasMultipleLayers = world.hasMultipleLayers();
     $: layers = world.layers;
-    $: gridEnabled = gamemap.isGridEnabled();
     $: layerName = gamemap.getNextTileLayerName();
     $: layerImage = (hasMultipleLayers) ? gamemap.getMapTileImageURL(world, layerName, true) : null;
 

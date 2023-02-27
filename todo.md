@@ -3,7 +3,11 @@
 - fixed cell resource y flip
 - added option to turn off grid for cell resources
 - fixed TR cell sizes being too small
+- fixed: grid disappearing on layer switch (dark/day)
 
+
+## Polish
+- made grid=true as a URL param
 
 
 

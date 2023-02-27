@@ -209,7 +209,7 @@
 		let mapCallbacks = {
 			onWorldsLoaded,
 			onPermissionsLoaded,
-			onWorldChanged,
+			onMapStateChanged,
 			onZoom,
 			onMapLoaded,
 			setLoading,
@@ -246,12 +246,15 @@
 		setLoading(false); // hide loading spinner
 	}
 
-	function onWorldChanged(world) {
-		setWindowTitle(world.displayName);
+	function onMapStateChanged(mapState) {
+		let world = mapState.world;
 		currentWorld = world;
+		setWindowTitle(world.displayName);
 		isLoaded = true;
 		showLocationList = false;
-		showLayerSwitcher = (currentWorld.layers.length > 1 || currentWorld.hasGrid());
+		showLayerSwitcher = (world.layers.length > 1 || world.hasGrid());
+		onZoom(mapState.zoomLevel);
+		gridEnabled = mapState.showGrid;
 	}
 
 	function onZoom(data) {
@@ -312,7 +315,7 @@
 
 					<!-- show layer switcher when available -->
 					{#if showLayerSwitcher}
-						<LayerSwitcher world={currentWorld} on:gridChecked={(e) => gridEnabled = e.detail}/>
+						<LayerSwitcher world={currentWorld} gridEnabled={gridEnabled} on:gridChecked={(e) => gridEnabled = e.detail}/>
 					{/if}
 
 					<IconBar>
