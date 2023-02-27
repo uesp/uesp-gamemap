@@ -6,6 +6,7 @@
 - fixed TR cell sizes being too small
 - fixed: grid disappearing on layer switch (dark/day)
 - fix: grid menu still being shown when navigating between worlds
+- fixed reset map feature not working (was broken before)
 
 ## Polish
 - when navigating to any location, loading bar appears instantly

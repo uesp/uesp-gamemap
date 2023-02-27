@@ -472,10 +472,10 @@ export default class Gamemap {
 				if (worldID == self.getCurrentWorldID()) {
 					if (coords != null) {
 						map.setView(this.toLatLng(coords), coords.zoom);
-						this.mapCallbacks.setLoading(false);
+						self.mapCallbacks.setLoading(false);
 					} else {
 						self.reset(true);
-						this.mapCallbacks.setLoading(false);
+						self.mapCallbacks.setLoading(false);
 					}
 				} else { // else load up the new world
 					let mapState = new MapState();
@@ -2277,3 +2277,27 @@ export default class Gamemap {
 
 // 	return true;
 // }
+
+// uesp.gamemap.Location.prototype.setPopupEditNotice = function (Msg, MsgType)
+// {
+// 	if (this.popupElement == null) return;
+
+// 	$status = $('#' + this.popupId + ' .gmMapEditPopupStatus');
+// 	if ($status == null) return;
+
+// 	$status.html(Msg);
+// 	$status.removeClass('gmMapEditPopupStatusOk');
+// 	$status.removeClass('gmMapEditPopupStatusNote');
+// 	$status.removeClass('gmMapEditPopupStatusWarning');
+// 	$status.removeClass('gmMapEditPopupStatusError');
+
+// 	if (MsgType == null || MsgType === 'ok')
+// 		$status.addClass('gmMapEditPopupStatusOk');
+// 	else if (MsgType === 'note')
+// 		$status.addClass('gmMapEditPopupStatusNote');
+// 	else if (MsgType === 'warning')
+// 		$status.addClass('gmMapEditPopupStatusWarning');
+// 	else if (MsgType === 'error')
+// 		$status.addClass('gmMapEditPopupStatusError');
+// }
+
