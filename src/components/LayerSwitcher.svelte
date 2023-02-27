@@ -33,6 +33,7 @@
     let expandGridOptions = getPrefs("expandgridoptions", true);
     let currentCellResource = "None";
     let doCellLabels = gamemap.getMapConfig().gridShowLabels;
+    let doCellGrid = true;
 
     // event listeners
     function onMouseEnter() {
@@ -125,6 +126,8 @@
 
                         <!-- Cell resource dropdown -->
                         {#if world.hasCellResources()}
+
+                        <Switch label="Show Cell Grid" tooltip="Toggle cell boundaries" enabled={doCellGrid} on:change={(e) => {doCellGrid = e.detail; onGridChecked({detail: true})}}></Switch>
                             <!-- svelte-ignore missing-declaration -->
                             <DropdownMenu label="Show Resource" hint="Select resource..." tooltip="Select cell resource" on:change={(e) => {currentCellResource = e.detail; onGridChecked({detail: true})}}>
                                 {@const keys = Object.keys(gamemap.getMapConfig().cellResources)}

@@ -1083,11 +1083,10 @@ export default class Gamemap {
 				let [minX, maxX, minY, maxY] = [map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).y, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y];
 				let [gridWidth, gridHeight] = [maxX - minX, maxY - minY]
 
-				// work out normalised zoom
+				// get zoom info
 				let world = self.getCurrentWorld();
 				let currentZoom = self.getCurrentZoom();
 				let maxZoomLevel = world.maxZoomLevel - 0.03;
-				let nZoom = currentZoom / maxZoomLevel;
 
 				// work out normalised grid cell sizes
 				let cellSize = Math.round(self.mapConfig.tileSize * Math.pow(2, Math.round(world.maxZoomLevel)) / ((world.maxX - world.minX) / world.cellSize));
@@ -1124,9 +1123,9 @@ export default class Gamemap {
 
 							if (cellResources != null && Array.isArray(cellResources)) {
 								let row = (i < cellResources.length) ? cellResources[i] : [];
-								let col = (j < row.length) ? cellResources[i][j] : null;
+								let col = (j < row.length) ? cellResources[i][j] : 0;
 
-								if (col != null) {
+								if (col != 0) {
 									if (col > 0 && col <= 2) {
 										fillCell(self.mapConfig.cellResourceColours[0]);
 									} else if (col > 2 && col <= 5) {
@@ -1199,17 +1198,6 @@ export default class Gamemap {
 		}
 	}
 
-	convertGameToPixelSize(width, height) {
-		let pWidth = 0;
-		let pHeight = 0;
-		let maxTiles = Math.pow(2, this.getCurrentWorld().maxZoomLevel);
-
-		pWidth = Math.round(width  * maxTiles / Math.abs(this.getCurrentWorld().maxX - this.getCurrentWorld().minX) * this.mapConfig.tileSize);
-		pHeight = Math.round(height * maxTiles / Math.abs(this.getCurrentWorld().maxY - this.getCurrentWorld().minY) * this.mapConfig.tileSize);
-
-		return new Point(pWidth, pHeight);
-	}
-
 	getCellResourceData(resourceID, callback) {
 
 		if (resourceID != null || resourceID != "") {
@@ -1222,10 +1210,26 @@ export default class Gamemap {
 
 			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 				if (!error && data != null) {
-					callback(data.resources[0].data);
+
+					let array = data.resources[0].data;
+					for (let i in array) {
+						array[i] = array[i].reverse();
+					}
+					callback(array);
 				}
 			});
 		}
+	}
+
+	convertGameToPixelSize(width, height) {
+		let pWidth = 0;
+		let pHeight = 0;
+		let maxTiles = Math.pow(2, this.getCurrentWorld().maxZoomLevel);
+
+		pWidth = Math.round(width  * maxTiles / Math.abs(this.getCurrentWorld().maxX - this.getCurrentWorld().minX) * this.mapConfig.tileSize);
+		pHeight = Math.round(height * maxTiles / Math.abs(this.getCurrentWorld().maxY - this.getCurrentWorld().minY) * this.mapConfig.tileSize);
+
+		return new Point(pWidth, pHeight);
 	}
 
 	getMapObject() {
@@ -1274,12 +1278,9 @@ export default class Gamemap {
 
 	}
 
-
-
 	isEmbedded() {
 		return window.self !== window.top;
 	}
-
 
 	/*================================================
 						  Utils
@@ -1367,7 +1368,6 @@ export default class Gamemap {
 		coord.y = Math.trunc(nY * world.totalHeight);
 		return coord;
 	}
-
 
 	/**
 	 * Convert leaflet XY pixel coordinates to creation kit game worldspace ones.
