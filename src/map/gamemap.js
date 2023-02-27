@@ -1089,7 +1089,7 @@ export default class Gamemap {
 				let maxZoomLevel = world.maxZoomLevel - 0.03;
 
 				// work out normalised grid cell sizes
-				let cellSize = Math.round(self.mapConfig.tileSize * Math.pow(2, Math.round(world.maxZoomLevel)) / ((world.maxX - world.minX) / world.cellSize));
+				let cellSize = (self.mapConfig.cellSize != null) ? self.mapConfig.cellSize : Math.round(self.mapConfig.tileSize * Math.pow(2, Math.round(world.maxZoomLevel)) / ((world.maxX - world.minX) / world.cellSize));
 				let nGridSize = cellSize / Math.pow(2, Math.round(maxZoomLevel) - currentZoom) / gridHeight;
 
 				// work out how many rows and columns there should be

@@ -10,6 +10,7 @@
     "hasCustomCSS" : true,
     "hasCellGrid" : true,
     "zoomOffset" : 9,
+    "cellSize" : 512,
 
     // Map coordinate system info
     // 0: XY (Default)
