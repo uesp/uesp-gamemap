@@ -197,7 +197,7 @@ export default class Gamemap {
 		if(mapState.coords == null || mapState.zoomLevel == null) {
 			map.fitBounds(RC.getMaxBounds(), {animate: true})
 		} else {
-			map.setView(this.toLatLng(mapState.coords), mapState.zoomLevel, {animate: true});
+			map.setView(this.toLatLngs(mapState.coords), mapState.zoomLevel, {animate: true});
 		}
 
 		// update world
@@ -249,8 +249,6 @@ export default class Gamemap {
 
 		if (getURLParams().has("x") && getURLParams().has("y")) {
 			mapState.coords = [getURLParams().get("x"), getURLParams().get("y")];
-		} else {
-			mapState.coords = [this.mapConfig.defaultXPos, this.mapConfig.defaultYPos];
 		}
 
 		if (getURLParams().has("grid")) {
@@ -287,7 +285,7 @@ export default class Gamemap {
 		}
 
 		// update map state
-		newMapState.coords = [Number(this.toXY(map.getCenter()).x).toFixed(3), Number(this.toXY(map.getCenter()).y).toFixed(3)];
+		newMapState.coords = [Number(this.toCoords(map.getCenter()).x).toFixed(3), Number(this.toCoords(map.getCenter()).y).toFixed(3)];
 		newMapState.zoomLevel = parseFloat(map.getZoom().toFixed(3));
 		newMapState.world = this.getWorldFromID(this.currentWorldID);
 		this.currentMapState = newMapState;
@@ -589,7 +587,7 @@ export default class Gamemap {
 					let location = locations[key];
 
 					if (location.id != null) {
-						parsedLocations[location.id] = new Location(self.mapConfig, location, world);
+						parsedLocations[location.id] = new Location(location, world);
 					}
 				}
 
@@ -621,7 +619,7 @@ export default class Gamemap {
 					if (!(onLoadFunction == null) ) {
 						let world = self.getWorldFromID(data.locations[0].worldId);
 						print(data.locations[0]);
-						let location = new Location(self.mapConfig, data.locations[0], world)
+						let location = new Location(data.locations[0], world)
 						onLoadFunction.call(null, location);
 					}
 				} else {
@@ -769,7 +767,7 @@ export default class Gamemap {
 		// get coordinates of location
 		let coords = [];
 		for (let i = 0; i < location.coords.length; i++) {
-			coords.push(this.toLatLng(location.coords[i]));
+			coords.push(this.toLatLngs(location.coords[i]));
 		}
 
 		// make a generic fallback marker
@@ -1400,10 +1398,10 @@ export default class Gamemap {
 	}
 
 	/**
-	 * Convert leaflet LatLngs to XY / normalised coordinates.
+	 * Convert leaflet LatLngs to human readable map coordinates coordinates.
 	 * @param {Object} latLng - the leaflet coordinate object
 	 */
-	toXY(latLng, debug) {
+	toCoords(latLng, debug) {
 
 		var coords;
 
@@ -1442,40 +1440,46 @@ export default class Gamemap {
 	}
 
 	/**
-	 * Convert XY coordinates to leaflet's  LatLongs.
-	 * @param {Object} coords - the XY coordinate object
+	 * Convert XY coordinates to leaflet's LatLongs.
+	 * @param {Object} coords - the coordinate/point object
 	 */
-	toLatLng(coords) {
+	toLatLngs(coords) {
 
-		let latLng;
+		let isPoint = coords instanceof Point;
 
-		// are we being given a coord object?
-		if (coords.x != null) {
+		if (isPoint) {
+			switch (coords.coordType) {
+				default:
+				case COORD_TYPES.XY:
+					return RC.unproject([coords.x , coords.y]);
+				case COORD_TYPES.NORMALISED:
+					let x = (coords.x * this.getCurrentWorld().totalWidth);
+					let y = (coords.y * this.getCurrentWorld().totalHeight);
+					return RC.unproject([x , y]);
+				case COORD_TYPES.WORLDSPACE:
 
+					let xN = coords.x;
+					let yN = coords.y;
 
-			// are we using a normalised coordinate scheme?
-			if (this.mapConfig.coordType == COORD_TYPES.NORMALISED) {
+					// get max range of x and y, assure it is a positive number
+					let maxRangeX = Math.abs(this.getCurrentWorld().maxX - this.getCurrentWorld().minX);
+					let maxRangeY = Math.abs(this.getCurrentWorld().maxY - this.getCurrentWorld().minY);
 
-				// multiply the normalised coords by the map image dimensions
-				// to get the XY coordinates
+					// get normalised value of x and y in range
+					xN = (xN - this.getCurrentWorld().minX) / maxRangeX;
+					yN = Math.abs((yN - this.getCurrentWorld().maxY) / maxRangeY); // flip y around
 
-				let x = (coords.x * this.mapImage.width);
-				let y = (coords.y * this.mapImage.height);
-				let point = new Point(x, y);
-
-				latLng = RC.unproject(point);
-			} else {
-				latLng = RC.unproject(coords);
+					return this.toLatLngs(new Point(xN, yN, null, COORD_TYPES.NORMALISED));
 			}
-		}
 
-		// are we being given an array of coords?
-		if (coords[0] != null) {
+		} else if (Array.isArray(coords)) {
+
+			print("booba");
 
 			if (coords[0].x != null) { // are we given an array of coord objects?
 
 				if (coords.length == 1) { // are we given a single coord object? (marker, point)
-					return this.toLatLng(coords[0]);
+					return this.toLatLngs(coords[0]);
 				} else { // else we are given a polygon, calculate the middle coordinate
 
 					let xs = [];
@@ -1494,7 +1498,7 @@ export default class Gamemap {
 						finalY = finalY + parseFloat(ys[i]);
 					}
 
-					return this.toLatLng(new Point(finalX / xs.length, finalY / ys.length));
+					return this.toLatLngs(new Point(finalX / xs.length, finalY / ys.length));
 				}
 
 			} else if (coords.length > 1) { // else we are just given an array of coords
@@ -1509,17 +1513,17 @@ export default class Gamemap {
 					tempCoords[0] = (tempCoords[0] * this.mapImage.width);
 					tempCoords[1] = (tempCoords[1] * this.mapImage.height);
 
-					latLng = RC.unproject(tempCoords);
+					return RC.unproject(tempCoords);
 				} else if (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) {
 					print("coords");
 					print(coords);
 					print(this.gameToPixelCoords(new Point(coords[0], coords[1])));
-					latLng = RC.unproject(this.gameToPixelCoords(new Point(coords[0], coords[1])));
+					return RC.unproject(this.gameToPixelCoords(new Point(coords[0], coords[1])));
 				}
 			}
 
 		}
-		return latLng;
+
 	}
 
 }

@@ -6,17 +6,11 @@
 
 import Point from "./point.js";
 
-let config;
-let numTiles;
+let mapConfig;
 let currentWorld;
 
 export default class Location {
-	constructor(mapConfig, location, world) {
-
-		// make sure we have a map config
-		if (mapConfig == null) {
-			mapConfig = DEFAULT_MAP_CONFIG;
-		}
+	constructor(location, world) {
 
 		if (location == null) {
 			throw new Error("Location cannot be null!")
@@ -26,9 +20,8 @@ export default class Location {
 			throw new Error("World cannot be null!")
 		}
 
-		config = mapConfig;
+		mapConfig = gamemap.getMapConfig() || DEFAULT_MAP_CONFIG;
 		currentWorld = world;
-		numTiles = world.numTiles;
 
 		// set location type
 		this.locType = location.locType || LOCTYPES.NONE;
@@ -70,11 +63,11 @@ export default class Location {
 			// push joined coords into coord array
 			for (let i = 0; i < y.length; i++ ) {
 				let coord = [x[i], y[i]];
-				this.coords.push(this.getPoint(coord));
+				this.coords.push(this.makePoint(coord));
 			}
 
 		} else {
-			this.coords.push(this.getPoint([location.x, location.y]));
+			this.coords.push(this.makePoint([location.x, location.y]));
 		}
 
 		// set up label info
@@ -118,11 +111,13 @@ export default class Location {
 
 	}
 
-	getPoint(coords) {
+	makePoint(coords) {
+
 		let x = coords[0];
 		let y = coords[1];
 
-		if (config.coordType != COORD_TYPES.XY) {
+		// convert eso coordinates to normalised
+		if (mapConfig.coordType == COORD_TYPES.NORMALISED) {
 
 			// get max range of x and y, assure it is a positive number
 			let maxRangeX = Math.abs(currentWorld.maxX - currentWorld.minX);
@@ -132,19 +127,14 @@ export default class Location {
             x = (x - currentWorld.minX) / maxRangeX;
 			y = Math.abs((y - currentWorld.maxY) / maxRangeY); // flip y around
 
-			if (config.coordType == COORD_TYPES.NORMALISED) {
+			if (mapConfig.coordType == COORD_TYPES.NORMALISED) {
 				// transform coords to better fit power of two numbers of tiles
-				x = (x * nextPowerOfTwo(numTiles) / numTiles).toFixed(3);
-				y = (y * nextPowerOfTwo(numTiles) / numTiles).toFixed(3);
-			} else if (config.coordType == COORD_TYPES.WORLDSPACE) {
-				//log(currentWorld);
-				x = x * currentWorld.totalWidth;
-				y = y * currentWorld.totalHeight;
+				x = (x * nextPowerOfTwo(currentWorld.numTiles) / currentWorld.numTiles).toFixed(3);
+				y = (y * nextPowerOfTwo(currentWorld.numTiles) / currentWorld.numTiles).toFixed(3);
 			}
-
 		}
 
-		return new Point(x, y, currentWorld.maxZoomLevel);
+		return new Point(x, y, currentWorld.maxZoomLevel, mapConfig.coordType);
 	}
 
 	getTooltipContent() {
@@ -172,14 +162,14 @@ export default class Location {
 							"<div class='popupInfo'><b>Internal ID:</b> " + this.id + "</div>";
 
 		if (this.coords.length == 1 ) {
-			popupContent += "<div class='popupInfo'><b>Coords: </b> " + this.coords[0].x + ", " + this.coords[0].y + "</div>";
+			popupContent += "<div class='popupInfo'><b>Coords: </b> X: " + this.coords[0].x + ", Y: " + this.coords[0].y + "</div>";
 		}
 
 		if (this.destinationID != null) {
 			popupContent += "<div class='popupInfo'><b>Destination ID:</b> " + this.destinationID + "</div>";
 		}
 
-		if (config.editingEnabled) {
+		if (mapConfig.editingEnabled) {
 			popupContent += "<hr/> <a style='text-align: center; height: unset; margin-bottom: -8px; width: inherit; line-height: 26px;' class='btn-flat waves-effect'>Edit</a>";
 		}
 
@@ -215,17 +205,17 @@ export default class Location {
 
 		let wikiLink = "";
 
-		if (config.wikiNamespace != null && config.wikiNamespace.length > 0) {
+		if (mapConfig.wikiNamespace != null && mapConfig.wikiNamespace.length > 0) {
 
 			if (this.wikiPage != "") {
 				if (this.wikiPage.indexOf(":") >= 0) {
-					wikiLink = config.wikiURL + encodeURIComponent(this.wikiPage).replace("%3A", ":").replace("%2F", "/");;
+					wikiLink = mapConfig.wikiURL + encodeURIComponent(this.wikiPage).replace("%3A", ":").replace("%2F", "/");;
 				} else {
-					wikiLink = config.wikiURL + config.wikiNamespace + ':' + encodeURIComponent(this.wikiPage);
+					wikiLink = mapConfig.wikiURL + mapConfig.wikiNamespace + ':' + encodeURIComponent(this.wikiPage);
 				}
 			}
 		} else {
-			wikiLink = config.wikiURL + encodeURIComponent(this.wikiPage);
+			wikiLink = mapConfig.wikiURL + encodeURIComponent(this.wikiPage);
 		}
 
 		if (wikiLink != "") {
