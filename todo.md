@@ -1,13 +1,16 @@
 ## last week:
 
+
+## Bug fixes:
 - fixed cell resource y flip
-- added option to turn off grid for cell resources
 - fixed TR cell sizes being too small
 - fixed: grid disappearing on layer switch (dark/day)
-- fix: grid menu still being shown between worlds
+- fix: grid menu still being shown when navigating between worlds
 
 ## Polish
-- made grid=true as a URL param
+- when navigating to any location, loading bar appears instantly
+- added option to turn off grid for cell resources
+- grid state now shows in url (grid=true) and is read accordingly (grid state can be shared as link)
 
 
 
@@ -23,7 +26,6 @@
 - add permalink option in location popups
 - redesign location popups
 - fix polygons disappearing when outer points are not viewable (consider centre point as well)
-- make map reset use zoomtoBounds or equivalent from leaflet docs
 - fix icons randomly disappearng from listItem
 - hook up world defaultZoom to actually make worlds zoom to that level
 - make embeded map watermark actually open in new tab
@@ -31,13 +33,13 @@
 - make labels clickable
 - write copy for whats new
 - fix layer widget pip/triangle being messed up
-- edit
 - import materialise buttons into svelte components
 - add continuous zoom, markers popup on zoom rather than zoomend
 - fix popups having the wrong coord type on them
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
 - fix all markers showing up at initial load on highest zoom level
+- edit
 
 ## todo (future)
 - wiki features

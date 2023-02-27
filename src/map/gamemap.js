@@ -436,78 +436,60 @@ export default class Gamemap {
 		return (worldID != null && worldID >= 0 && worldID in this.mapWorlds);
 	}
 
-	gotoWorld(destID, coords, zoom) {
+	// convenience method to jump to destination
+	goto(place, coords) {
+		// figure out what data we're being passed
+		this.mapCallbacks.setLoading(true);
+		place = (place != null) ? (isString(place)) ? parseInt(place) : place : this.getCurrentWorldID();
+		let isWorld = place instanceof World || place.numTiles;
+		let isID = !isNaN(place);
+		let isLocation = place instanceof Location || place.coords;
 
-		zoom = (zoom != null) ? zoom : this.mapConfig.defaultZoomLevel;
+		if (isWorld) {
+			gotoWorld(place.id, coords);
+		} else if (isLocation) {
+			gotoWorld(location.worldID, location.coords);
 
-		if (destID > 0) { // is this destination a world?
-			let worldID = destID;
-			print(worldID);
-			if (this.isWorldValid(worldID)) {
+			//openPopup(location); //TODO
 
-				let mapState = new MapState();
-				mapState.zoomLevel = zoom;
-				mapState.coords = coords;
+		} else if (isID) {
+			if (place > 0) { // is destination a worldID?
+				gotoWorld(place);
+			} else { // it is a locationID
+				let locationID = Math.abs(place);
+				print("going to location");
+				this.getLocation(locationID, onGetLocation);
+				function onGetLocation(location) {
+					print(location);
+					self.goto(location);
+				}
+			}
+		}
 
-				// if we are in the same world, just pan to the provided location (or pan to default)
-				if (worldID == this.getCurrentWorldID()) {
-					map.setView(this.toLatLng(coords), zoom);
+		function gotoWorld(worldID, coords) {
+			if (self.isWorldValid(worldID)) {
+				// if we are in the same world, just pan to the provided location (or just reset map)
+				if (worldID == self.getCurrentWorldID()) {
+					if (coords != null) {
+						map.setView(this.toLatLng(coords), coords.zoom);
+						this.mapCallbacks.setLoading(false);
+					} else {
+						self.reset(true);
+						this.mapCallbacks.setLoading(false);
+					}
 				} else { // else load up the new world
-					print("Going to world... " + worldID);
-					print(this.getWorldFromID(worldID));
-					this.clearLocations();
-					mapState.world = this.getWorldFromID(worldID);
-					this.setMapState(mapState);
+					let mapState = new MapState();
+					let world = self.getWorldFromID(worldID);
+					print("Going to world... " + world.displayName + " (" + world.id + ").");
+					print(world);
+					mapState.world = world;
+					self.setMapState(mapState);
 				}
 
 			} else {
-				throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
+				throw new Error('Gamemap attempted to navigate to invalid world ID: ' + world.id);
 			}
-		} else { // this must be a location, centre on that location
-
-			let locationID = Math.abs(destID); // get positive locationID from input
-
-			function onGetLocation(location) {
-				print(location);
-				self.gotoWorld(location.worldID, location.coords, self.getWorldFromID(location.worldID).maxZoomLevel)
-			}
-
-			this.getLocation(locationID, onGetLocation);
-
-			print("going to location");
 		}
-	}
-
-	// convenience method to jump to destination
-	goto(place, coords, openPopup) {
-		// set loading
-		this.mapCallbacks.setLoading(true);
-
-		// get place
-		place = (place != null) ? place : this.getCurrentWorldID();
-
-		if (place > 0) { // is destination a world?
-
-			if (this.isWorldValid(place)) {
-
-			}
-		} else { // it is a location
-
-		}
-
-		if (isString(place)) {
-
-		} else {
-
-		}
-
-
-		// check if place is string, then convert to number
-		// if it is number, if it is positive, then it is world
-		// if negative, then location
-
-
-
 	}
 
 	/*================================================
@@ -902,7 +884,7 @@ export default class Gamemap {
 		map.on("contextmenu", function(e){
 			if (self.getMapState().world.parentID != null && self.getMapState().world.parentID != -1 ) {
 				let parentID = self.getMapState().world.parentID;
-				self.gotoWorld(parentID);
+				self.goto(parentID);
 			}
 		})
 
@@ -929,10 +911,10 @@ export default class Gamemap {
 			let location = marker.location;
 			if (location != null){
 				if (location.destinationID < 0) { // is location destination a worldID
-					this.gotoWorld(Math.abs(location.destinationID));
+					this.goto(Math.abs(location.destinationID));
 				} else { // it is a location ID
 					function onGetLocation(location) {
-						self.gotoWorld(location.worldID);
+						self.goto(location.worldID);
 					}
 					this.getLocation(location.destinationID, onGetLocation);
 				}

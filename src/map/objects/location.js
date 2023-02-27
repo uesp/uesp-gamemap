@@ -48,7 +48,7 @@ export default class Location {
 
 		// set location icon info
 		this.icon = location.iconType || null;
-		this.iconSize = mapConfig.iconSize; // todo
+		this.iconSize = mapConfig.iconSize;
 
 		// set coords
 		this.coords = [];
@@ -144,7 +144,7 @@ export default class Location {
 
 		}
 
-		return new Point(x, y);
+		return new Point(x, y, currentWorld.maxZoomLevel);
 	}
 
 	getTooltipContent() {
