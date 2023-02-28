@@ -6,6 +6,7 @@
 - fixed TR cell sizes being too small
 - fixed: grid disappearing on layer switch (dark/day)
 - fix: grid menu still being shown when navigating between worlds
+- fix map changing location on layer switch
 - fixed reset map feature not working (was broken before)
 - truncated leading decimals when using worldspace-based maps (decimals should only show for normalised)
 
@@ -14,12 +15,8 @@
 - added option to turn off grid for cell resources
 - grid state now shows in url (grid=true) and is read accordingly (grid state can be shared as link)
 
-
-
-
 ## todo
 
-- truncate XY in worldspace coordinates in url
 - do get centre of polygon to count towards isvisible
 - add allow long clicking on mobile to open popups
 - fix requesting /null in layerbutton

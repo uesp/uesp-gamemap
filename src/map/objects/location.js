@@ -134,7 +134,7 @@ export default class Location {
 			}
 		}
 
-		return new Point(x, y, currentWorld.maxZoomLevel, mapConfig.coordType);
+		return new Point(x, y, mapConfig.coordType, currentWorld.maxZoomLevel);
 	}
 
 	getTooltipContent() {

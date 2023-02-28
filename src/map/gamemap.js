@@ -193,15 +193,16 @@ export default class Gamemap {
 		}
 		tileLayer.addTo(map);
 
+		// update world
+		this.currentWorldID = mapState.world.id;
+
 		// set map view
+		print(mapState.coords);
 		if(mapState.coords == null || mapState.zoomLevel == null) {
 			map.fitBounds(RC.getMaxBounds(), {animate: true})
 		} else {
 			map.setView(this.toLatLngs(mapState.coords), mapState.zoomLevel, {animate: true});
 		}
-
-		// update world
-		this.currentWorldID = mapState.world.id;
 
 		// set background colour
 		if (mapState.world.layers[mapState.layerIndex].bg_color != null) { this.mapRoot.style.backgroundColor = mapState.world.layers[mapState.layerIndex].bg_color; }
@@ -345,40 +346,43 @@ export default class Gamemap {
 				self.mapCallbacks.setLoading("Loading world");
 			}
 
-			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-				if (!error && data != null) {
+			if (Object.keys(this.mapWorlds).length === 0) {
+				getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 
-					if (data.worlds == null) {
-						throw new Error("World data was null.");
-					}
+					if (!error && data != null) {
 
-					for (var key in data.worlds) {
-						let world = data.worlds[key];
-
-						if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name != null) {
-
-							self.mapWorlds[world.id] = new World(world, mapConfig);
-							mapWorldNameIndex[world.name] = world.id;
-
-							if (world.displayName != null) {
-								mapWorldDisplayNameIndex[world.displayName] = world.id;
-							} else {
-								mapWorldDisplayNameIndex[world.name] = world.id;
-							}
-
+						if (data.worlds == null) {
+							throw new Error("World data was null.");
 						}
-					}
-					if (self.mapCallbacks != null) {
-						self.mapCallbacks.onWorldsLoaded(self.mapWorlds);
 
-						// load map
-						self.initialiseMap(mapConfig);
-					}
+						for (var key in data.worlds) {
+							let world = data.worlds[key];
 
-				} else {
-					throw new Error("Could not retrieve world data.");
-				}
-			});
+							if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name != null) {
+
+								self.mapWorlds[world.id] = new World(world, mapConfig);
+								mapWorldNameIndex[world.name] = world.id;
+
+								if (world.displayName != null) {
+									mapWorldDisplayNameIndex[world.displayName] = world.id;
+								} else {
+									mapWorldDisplayNameIndex[world.name] = world.id;
+								}
+
+							}
+						}
+						if (self.mapCallbacks != null) {
+							self.mapCallbacks.onWorldsLoaded(self.mapWorlds);
+
+							// load map
+							self.initialiseMap(mapConfig);
+						}
+
+					} else {
+						throw new Error("Could not retrieve world data.");
+					}
+				});
+			}
 		} else {
 			return this.mapWorlds;
 		}
@@ -1232,17 +1236,6 @@ export default class Gamemap {
 		}
 	}
 
-	convertGameToPixelSize(width, height) {
-		let pWidth = 0;
-		let pHeight = 0;
-		let maxTiles = Math.pow(2, this.getCurrentWorld().maxZoomLevel);
-
-		pWidth = Math.round(width  * maxTiles / Math.abs(this.getCurrentWorld().maxX - this.getCurrentWorld().minX) * this.mapConfig.tileSize);
-		pHeight = Math.round(height * maxTiles / Math.abs(this.getCurrentWorld().maxY - this.getCurrentWorld().minY) * this.mapConfig.tileSize);
-
-		return new Point(pWidth, pHeight);
-	}
-
 	getMapObject() {
 		return map;
 	}
@@ -1412,6 +1405,10 @@ export default class Gamemap {
 					return RC.unproject([x , y]);
 				case COORD_TYPES.WORLDSPACE:
 
+
+					print("boobaX");
+					print(this.getCurrentWorld());
+
 					let xN = coords.x;
 					let yN = coords.y;
 
@@ -1423,7 +1420,7 @@ export default class Gamemap {
 					xN = (xN - this.getCurrentWorld().minX) / maxRangeX;
 					yN = Math.abs((yN - this.getCurrentWorld().maxY) / maxRangeY); // flip y around
 
-					return this.toLatLngs(new Point(xN, yN, null, COORD_TYPES.NORMALISED));
+					return this.toLatLngs(new Point(xN, yN, COORD_TYPES.NORMALISED));
 			}
 
 		} else if (Array.isArray(coords)) {
@@ -1437,7 +1434,8 @@ export default class Gamemap {
 				}
 
 			} else if (coords.length > 1) { // else we are just given a coord array [x, y]
-				return this.toLatLngs(new Point(coords[0], coords[1], null, this.mapConfig.coordType));
+				print("booba");
+				return this.toLatLngs(new Point(coords[0], coords[1], this.mapConfig.coordType));
 			}
 		}
 	}
