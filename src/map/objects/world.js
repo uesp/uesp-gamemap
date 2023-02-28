@@ -29,7 +29,8 @@ export default class World {
 			this.minY = (mapConfig.minY != null) ? mapConfig.minY : world.posBottom;
 			this.maxY = (mapConfig.maxY != null) ? mapConfig.maxY : world.posTop;
 
-			this.numTiles = Math.pow(2, this.maxZoomLevel); //number of tiles in both directions
+			this.numTilesX = world.maxTilesX; //number of tiles at full zoom in the Y direction
+			this.numTilesY = world.maxTilesY; // number of tiles at full zoom in the Y direction
 
 			this.locations = null; // locations are loaded async after the world is created
 			this.legacy = world; // legacy attributes from server
@@ -65,9 +66,9 @@ export default class World {
 		let height = null;
 
 		// check if this world has a number of tiles set
-		if (this.numTiles != null) {
-			width = (this.numTiles * gamemap.getMapConfig().tileSize);
-			height = (this.numTiles * gamemap.getMapConfig().tileSize);
+		if (this.numTilesX != null && this.numTilesY != null) {
+			width = (this.numTilesX * gamemap.getMapConfig().tileSize);
+			height = (this.numTilesY * gamemap.getMapConfig().tileSize);
 		} else {
 			throw new Error("No map tile dimensions were provided!");
 		}

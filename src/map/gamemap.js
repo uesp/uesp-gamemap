@@ -445,7 +445,7 @@ export default class Gamemap {
 		// figure out what data we're being passed
 		this.mapCallbacks.setLoading(true);
 		place = (place != null) ? (isString(place)) ? parseInt(place) : place : this.getCurrentWorldID();
-		let isWorld = place instanceof World || place.numTiles;
+		let isWorld = place instanceof World || place.numTilesX;
 		let isID = !isNaN(place);
 		let isLocation = place instanceof Location || place.coords;
 
@@ -1394,20 +1394,20 @@ export default class Gamemap {
 	 */
 	toLatLngs(coords) {
 
+		var latLngs;
+
 		if (coords instanceof Point) {
 			switch (coords.coordType) {
 				default:
 				case COORD_TYPES.XY || null:
-					return RC.unproject([coords.x , coords.y]);
+					latLngs = RC.unproject([coords.x , coords.y]);
+					return latLngs;
 				case COORD_TYPES.NORMALISED:
 					let x = (coords.x * this.getCurrentWorld().totalWidth);
 					let y = (coords.y * this.getCurrentWorld().totalHeight);
-					return RC.unproject([x , y]);
+					latLngs = RC.unproject([x , y]);
+					return latLngs;
 				case COORD_TYPES.WORLDSPACE:
-
-
-					print("boobaX");
-					print(this.getCurrentWorld());
 
 					let xN = coords.x;
 					let yN = coords.y;
@@ -1420,7 +1420,8 @@ export default class Gamemap {
 					xN = (xN - this.getCurrentWorld().minX) / maxRangeX;
 					yN = Math.abs((yN - this.getCurrentWorld().maxY) / maxRangeY); // flip y around
 
-					return this.toLatLngs(new Point(xN, yN, COORD_TYPES.NORMALISED));
+					latLngs = this.toLatLngs(new Point(xN, yN, COORD_TYPES.NORMALISED));
+					return latLngs;
 			}
 
 		} else if (Array.isArray(coords)) {
@@ -1428,14 +1429,16 @@ export default class Gamemap {
 			if (coords[0].x != null) { // are we given an array of coord objects?
 
 				if (coords.length == 1) { // are we given a single coord object? (marker, point)
-					return this.toLatLngs(coords[0]);
+					latLngs = this.toLatLngs(coords[0]);
+					return latLngs;
 				} else { // else we are given a polygon, get the middle coordinate
-					return this.toLatLngs(getAverageCoord(coords));
+					latLngs = this.toLatLngs(getAverageCoord(coords));
+					return latLngs;
 				}
 
 			} else if (coords.length > 1) { // else we are just given a coord array [x, y]
-				print("booba");
-				return this.toLatLngs(new Point(coords[0], coords[1], this.mapConfig.coordType));
+				latLngs = this.toLatLngs(new Point(coords[0], coords[1], this.mapConfig.coordType));
+				return latLngs;
 			}
 		}
 	}

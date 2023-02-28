@@ -129,8 +129,8 @@ export default class Location {
 
 			if (mapConfig.coordType == COORD_TYPES.NORMALISED) {
 				// transform coords to better fit power of two numbers of tiles
-				x = (x * nextPowerOfTwo(currentWorld.numTiles) / currentWorld.numTiles).toFixed(3);
-				y = (y * nextPowerOfTwo(currentWorld.numTiles) / currentWorld.numTiles).toFixed(3);
+				x = (x * nextPowerOfTwo(currentWorld.numTilesX) / currentWorld.numTilesX).toFixed(3);
+				y = (y * nextPowerOfTwo(currentWorld.numTilesY) / currentWorld.numTilesY).toFixed(3);
 			}
 		}
 

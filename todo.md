@@ -9,6 +9,7 @@
 - fix map changing location on layer switch
 - fixed reset map feature not working (was broken before)
 - truncated leading decimals when using worldspace-based maps (decimals should only show for normalised)
+- fix solstheim and shivering not loading on reload (was a race condition)
 
 ## Polish
 - when navigating to any location, loading bar appears instantly
