@@ -285,7 +285,9 @@ export default class Gamemap {
 		}
 
 		// update map state
-		newMapState.coords = [Number(this.toCoords(map.getCenter()).x).toFixed(3), Number(this.toCoords(map.getCenter()).y).toFixed(3)];
+		let x = Number(this.toCoords(map.getCenter()).x, this.mapConfig.coordType).toFixed(3);
+		let y = Number(this.toCoords(map.getCenter()).y, this.mapConfig.coordType).toFixed(3);
+		newMapState.coords = (this.mapConfig.coordType == COORD_TYPES.NORMALISED) ? [x, y] : [Math.floor(x), Math.floor(y)];
 		newMapState.zoomLevel = parseFloat(map.getZoom().toFixed(3));
 		newMapState.world = this.getWorldFromID(this.currentWorldID);
 		this.currentMapState = newMapState;
@@ -652,6 +654,8 @@ export default class Gamemap {
 			latlngs = [marker.getLatLng()];
 		} else {
 			latlngs = marker.getLatLngs()[0];
+			// latlngs = array.push(this.toLatLngs(getAverageCoord(array)));
+			// todo: do averagecoord here
 		}
 
 		let isInsideViewport;
@@ -1355,62 +1359,36 @@ export default class Gamemap {
 	}
 
 	/**
-	 * Convert leaflet XY pixel coordinates to creation kit game worldspace ones.
-	 * @param {Point} coord - the XY coordinate pair to be converted
-	 */
-	pixelToGameCoords(coord) {
-
-		if (coord == null || coord.x == null) {
-			throw new Error("Tried to convert an invalid/null coord object.");
-		}
-
-		// get current map world pixel position values
-		let world = this.getCurrentWorld();
-		let nX = coord.x / world.totalWidth;
-		let nY = 1 - (coord.y / world.totalHeight);
-
-		// reproject pixel values to worldspace
-		coord.x = Math.trunc(world.minX + (world.maxX - world.minX) * nX);
-		coord.y = Math.trunc(world.minY + (world.maxY - world.minY) * nY);
-		return coord;
-	}
-
-	/**
 	 * Convert leaflet LatLngs to human readable map coordinates coordinates.
 	 * @param {Object} latLng - the leaflet coordinate object
 	 */
-	toCoords(latLng, debug) {
+	toCoords(latLng, coordType) {
 
 		var coords;
+		coordType = (coordType != null) ? coordType : (latLng instanceof Point) ? latLng.coordType : this.mapConfig.coordType;
 
-		// are we given a debug flag to always output the leaflet XY coords?
-		if (debug) {
-			return RC.project(latLng);
-		}
-
-		// are we being given a latLng object from leaflet?
+		// convert latlng to XY coords;
 		if (latLng.lat != null) {
 			coords = RC.project(latLng);
 		}
 
-		// are we being given a point (coord) object instead?
-		if (latLng.x != null) {
-			coords = latLng;
-		}
+		if (coordType != COORD_TYPES.XY) {
+			if (coordType == COORD_TYPES.NORMALISED) {
+				if (coords.x > 1.5 || coords.y > 1.5) { // make sure to only convert non-normalised coordinates
+					// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
+					coords.x = (coords.x / this.mapImage.width).toFixed(3);
+					coords.y = (coords.y / this.mapImage.height).toFixed(3);
+				}
+			} else if (coordType == COORD_TYPES.WORLDSPACE) {
+				// get current map world pixel position values
+				let world = this.getCurrentWorld();
+				let nX = coords.x / world.totalWidth;
+				let nY = 1 - (coords.y / world.totalHeight);
 
-		// is the current map using a normalised coordinate scheme?
-		if (this.mapConfig.coordType == COORD_TYPES.NORMALISED) {
-
-			if (coords.x > 1.5 || coords.y > 1.5) { // make sure to only convert non-normalised coordinates
-				// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
-				coords.x = (coords.x / this.mapImage.width).toFixed(3);
-				coords.y = (coords.y / this.mapImage.height).toFixed(3);
+				// reproject pixel values to worldspace
+				coords.x = Math.trunc(world.minX + (world.maxX - world.minX) * nX);
+				coords.y = Math.trunc(world.minY + (world.maxY - world.minY) * nY);
 			}
-
-		}
-
-		if (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) {
-			coords = this.pixelToGameCoords(coords);
 		}
 
 		// return point object for coords
@@ -1418,17 +1396,15 @@ export default class Gamemap {
 	}
 
 	/**
-	 * Convert XY coordinates to leaflet's LatLongs.
+	 * Convert XY/Worldspace coordinates to leaflet's LatLongs.
 	 * @param {Object} coords - the coordinate/point object
 	 */
 	toLatLngs(coords) {
 
-		let isPoint = coords instanceof Point;
-
-		if (isPoint) {
+		if (coords instanceof Point) {
 			switch (coords.coordType) {
 				default:
-				case COORD_TYPES.XY:
+				case COORD_TYPES.XY || null:
 					return RC.unproject([coords.x , coords.y]);
 				case COORD_TYPES.NORMALISED:
 					let x = (coords.x * this.getCurrentWorld().totalWidth);
@@ -1454,180 +1430,22 @@ export default class Gamemap {
 
 			if (coords[0].x != null) { // are we given an array of coord objects?
 
-				print(coords[0]);
-
 				if (coords.length == 1) { // are we given a single coord object? (marker, point)
 					return this.toLatLngs(coords[0]);
-				} else { // else we are given a polygon, calculate the middle coordinate
-
-					let xs = [];
-					let ys = [];
-
-					for (let i in coords) {
-						xs.push(coords[i].x);
-						ys.push(coords[i].y);
-					}
-
-					let finalX = 0;
-					let finalY = 0;
-
-					for (let i in xs) {
-						finalX = finalX + parseFloat(xs[i]);
-						finalY = finalY + parseFloat(ys[i]);
-					}
-
-					return this.toLatLngs(new Point(finalX / xs.length, finalY / ys.length));
+				} else { // else we are given a polygon, get the middle coordinate
+					return this.toLatLngs(getAverageCoord(coords));
 				}
 
 			} else if (coords.length > 1) { // else we are just given a coord array [x, y]
 				return this.toLatLngs(new Point(coords[0], coords[1], null, this.mapConfig.coordType));
 			}
-
 		}
-
 	}
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// convertTileToGamePos(tileX, tileY) {
-
-// 	let maxTiles = Math.pow(2, this.zoomLevel - this.mapConfig.zoomOffset);
-// 	let gameX = 0;
-// 	let gameY = 0;
-
-// 	gameX = Math.round(tileX / maxTiles * (this.mapConfig.maxX - this.mapConfig.minX) + this.mapConfig.minX);
-// 	gameY = Math.round(tileY / maxTiles * (this.mapConfig.maxY - this.mapConfig.minY) + this.mapConfig.minY);
-
-// 	return new Position(gameX, gameY);
-// }
-
-
-// uesp.gamemap.Map.prototype.convertPixelToGamePos = function(pixelX, pixelY)
-// {
-// 	mapOffset = this.mapRoot.offset();
-
-// 	if (this.USE_CANVAS_DRAW)
-// 	{
-// 		tileX = (pixelX - this.mapTransformX) / this.mapConfig.tileSize + this.startTileX;
-// 		tileY = (pixelY - this.mapTransformY) / this.mapConfig.tileSize + this.startTileY;
-// 	}
-// 	else
-// 	{
-// 		tileX = (pixelX - mapOffset.left) / this.mapConfig.tileSize + this.startTileX;
-// 		tileY = (pixelY - mapOffset.top)  / this.mapConfig.tileSize + this.startTileY;
-// 	}
-
-// 	return this.convertTileToGamePos(tileX, tileY);
-// }
-
-
-// uesp.gamemap.Map.prototype.convertWindowPixelToGamePos = function(pixelX, pixelY)
-// {
-// 	mapOffset = this.mapRoot.offset();
-
-// 	if (this.USE_CANVAS_DRAW)
-// 	{
-// 		tileX = (pixelX - this.mapTransformX - mapOffset.left) / this.mapConfig.tileSize + this.startTileX;
-// 		tileY = (pixelY - this.mapTransformY - mapOffset.top) / this.mapConfig.tileSize + this.startTileY;
-// 	}
-// 	else
-// 	{
-// 		tileX = (pixelX - mapOffset.left) / this.mapConfig.tileSize + this.startTileX;
-// 		tileY = (pixelY - mapOffset.top)  / this.mapConfig.tileSize + this.startTileY;
-// 	}
-
-// 	return this.convertTileToGamePos(tileX, tileY);
-// }
-
 
 // uesp.gamemap.Map.prototype.hasLocation = function(locId)
 // {
 // 	return locId in this.locations;
-// }
-
-
-
-// uesp.gamemap.Map.prototype.isGamePosInBounds = function(gamePos)
-// {
-// 	if (uesp.gamemap.isNullorUndefined(gamePos.x) || uesp.gamemap.isNullorUndefined(gamePos.y)) return false;
-
-// 	if (this.mapConfig.gamePosX1 < this.mapConfig.gamePosX2)
-// 	{
-// 		if (gamePos.x < this.mapConfig.gamePosX1 || gamePos.x > this.mapConfig.gamePosX2) return false;
-// 	}
-// 	else
-// 	{
-// 		if (gamePos.x > this.mapConfig.gamePosX1 || gamePos.x < this.mapConfig.gamePosX2) return false;
-// 	}
-
-// 	if (this.mapConfig.gamePosY1 < this.mapConfig.gamePosY2)
-// 	{
-// 		if (gamePos.y < this.mapConfig.gamePosY1 || gamePos.y > this.mapConfig.gamePosY2) return false;
-// 	}
-// 	else
-// 	{
-// 		if (gamePos.y > this.mapConfig.gamePosY1 || gamePos.y < this.mapConfig.gamePosY2) return false;
-// 	}
-
-// 	return true;
-// }
-
-
-
-// findLocationAt(pageX, pageY) {
-// 	// Look for icons first
-// 	for (let key in this.locations) {
-// 		var location = this.locations[key];
-
-// 		if (location.locType >= Constants.LOCTYPE_PATH) continue;
-// 		if (location.worldID != this.currentWorldID) continue;
-// 		if (!location.visible && !this.isHiddenLocsShown()) continue;
-// 		if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
-
-// 		const rect = this.mapCanvas.getBoundingClientRect();
-// 		const x = pageX - rect.left;
-// 		const y = pageY - rect.top;
-
-// 		if (location.isMouseHoverCanvas(x, y)) return location;
-// 	}
-
-// 	// Check paths/areas next
-// 	for (let key in this.locations) {
-// 		var location = this.locations[key];
-
-// 		if (location.locType < Constants.LOCTYPE_PATH) continue;
-// 		if (location.worldID != this.currentWorldID) continue;
-// 		if (!location.visible && !this.isHiddenLocsShown()) continue;
-// 		if (location.displayLevel > this.zoomLevel || (this.isHiddenLocsShown() && this.zoomLevel == this.mapConfig.maxZoomLevel)) continue;
-
-// 		const rect = this.mapCanvas.getBoundingClientRect();
-// 		const x = pageX - rect.left;
-// 		const y = pageY - rect.top;
-
-// 		if (location.isMouseHoverCanvas(x, y)) return location;
-// 	}
-
-// 	return null;
 // }
 
 // uesp.gamemap.Map.prototype.onFinishEditMode = function(event)

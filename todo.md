@@ -7,6 +7,7 @@
 - fixed: grid disappearing on layer switch (dark/day)
 - fix: grid menu still being shown when navigating between worlds
 - fixed reset map feature not working (was broken before)
+- truncated leading decimals when using worldspace-based maps (decimals should only show for normalised)
 
 ## Polish
 - when navigating to any location, loading bar appears instantly
@@ -18,6 +19,8 @@
 
 ## todo
 
+- truncate XY in worldspace coordinates in url
+- do get centre of polygon to count towards isvisible
 - add allow long clicking on mobile to open popups
 - fix requesting /null in layerbutton
 - fix game worldspace XY conversion
