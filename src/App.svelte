@@ -243,7 +243,6 @@
 	function onWorldsLoaded(mapWorlds) {
 		print("Worlds loaded!");
 		print(mapWorlds);
-		setLoading(false); // hide loading spinner
 	}
 
 	function onMapStateChanged(mapState) {
@@ -379,7 +378,7 @@
 	{/if}
 
 	<!-- Preloading components -->
-	{#if isLoading && loadingReason != ""}
+	{#if !isLoaded && loadingReason != ""}
 		<LoadingBox reason={loadingReason+"..."}/>
 	{:else if isError}
 		<ErrorBox reason={errorReason}/>

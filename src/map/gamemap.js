@@ -1409,6 +1409,8 @@ export default class Gamemap {
 					return latLngs;
 				case COORD_TYPES.WORLDSPACE:
 
+
+
 					let xN = coords.x;
 					let yN = coords.y;
 
@@ -1419,6 +1421,9 @@ export default class Gamemap {
 					// get normalised value of x and y in range
 					xN = (xN - this.getCurrentWorld().minX) / maxRangeX;
 					yN = Math.abs((yN - this.getCurrentWorld().maxY) / maxRangeY); // flip y around
+
+					xN = (xN * nextPowerOfTwo(this.getCurrentWorld().numTilesX) / this.getCurrentWorld().numTilesX).toFixed(3);
+					yN = (yN * nextPowerOfTwo(this.getCurrentWorld().numTilesY) / this.getCurrentWorld().numTilesY).toFixed(3);
 
 					latLngs = this.toLatLngs(new Point(xN, yN, COORD_TYPES.NORMALISED));
 					return latLngs;
