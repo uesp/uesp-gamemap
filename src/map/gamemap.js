@@ -1358,28 +1358,6 @@ export default class Gamemap {
 	 * Convert leaflet XY pixel coordinates to creation kit game worldspace ones.
 	 * @param {Point} coord - the XY coordinate pair to be converted
 	 */
-	gameToPixelCoords(coord) {
-
-		if (coord == null || coord.x == null) {
-			throw new Error("Tried to convert an invalid/null coord object.");
-		}
-
-		let world = this.getCurrentWorld();
-
-		// get the current worldspace values in normalised form
-		let nX = coord.x / world.maxX;
-		let nY = 1 - (coord.y / world.maxY);
-
-		// project normalised worldspace values to pixel values
-		coord.x = Math.trunc(nX * world.totalWidth);
-		coord.y = Math.trunc(nY * world.totalHeight);
-		return coord;
-	}
-
-	/**
-	 * Convert leaflet XY pixel coordinates to creation kit game worldspace ones.
-	 * @param {Point} coord - the XY coordinate pair to be converted
-	 */
 	pixelToGameCoords(coord) {
 
 		if (coord == null || coord.x == null) {
@@ -1474,9 +1452,9 @@ export default class Gamemap {
 
 		} else if (Array.isArray(coords)) {
 
-			print("booba");
-
 			if (coords[0].x != null) { // are we given an array of coord objects?
+
+				print(coords[0]);
 
 				if (coords.length == 1) { // are we given a single coord object? (marker, point)
 					return this.toLatLngs(coords[0]);
@@ -1501,25 +1479,8 @@ export default class Gamemap {
 					return this.toLatLngs(new Point(finalX / xs.length, finalY / ys.length));
 				}
 
-			} else if (coords.length > 1) { // else we are just given an array of coords
-
-				let tempCoords = coords;
-
-				// are we using a normalised coordinate scheme?
-				if (this.mapConfig.coordType == COORD_TYPES.NORMALISED) {
-
-					// multiply the normalised coords by the map image dimensions
-					// to get the XY coordinates
-					tempCoords[0] = (tempCoords[0] * this.mapImage.width);
-					tempCoords[1] = (tempCoords[1] * this.mapImage.height);
-
-					return RC.unproject(tempCoords);
-				} else if (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) {
-					print("coords");
-					print(coords);
-					print(this.gameToPixelCoords(new Point(coords[0], coords[1])));
-					return RC.unproject(this.gameToPixelCoords(new Point(coords[0], coords[1])));
-				}
+			} else if (coords.length > 1) { // else we are just given a coord array [x, y]
+				return this.toLatLngs(new Point(coords[0], coords[1], null, this.mapConfig.coordType));
 			}
 
 		}
