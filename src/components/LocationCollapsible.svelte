@@ -19,7 +19,7 @@
     let isArray = Array.isArray(data);
 
     function onLocationClicked(id) {
-        gamemap.gotoDest(id);
+        gamemap.goto(id);
     }
 
 </script>

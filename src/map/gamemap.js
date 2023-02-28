@@ -163,6 +163,9 @@ export default class Gamemap {
 			throw new Error("Map was provided an invalid/null world!");
 		}
 
+		// update world
+		this.currentWorldID = mapState.world.id;
+
 		// set full image width & height
 		let mapImageDimens = mapState.world.getWorldDimensions();
 		this.mapImage = {
@@ -192,9 +195,6 @@ export default class Gamemap {
 			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, mapState.layerIndex), tileOptions);
 		}
 		tileLayer.addTo(map);
-
-		// update world
-		this.currentWorldID = mapState.world.id;
 
 		// set map view
 		print(mapState.coords);
@@ -452,6 +452,7 @@ export default class Gamemap {
 		if (isWorld) {
 			gotoWorld(place.id, coords);
 		} else if (isLocation) {
+			let location = place;
 			gotoWorld(location.worldID, location.coords);
 
 			//openPopup(location); //TODO
@@ -471,27 +472,30 @@ export default class Gamemap {
 		}
 
 		function gotoWorld(worldID, coords) {
+			coords = (coords != null && coords[0] != null) ? coords[0] : coords;
+			print(worldID);
 			if (self.isWorldValid(worldID)) {
 				// if we are in the same world, just pan to the provided location (or just reset map)
 				if (worldID == self.getCurrentWorldID()) {
 					if (coords != null) {
-						map.setView(this.toLatLng(coords), coords.zoom);
+						map.setView(self.toLatLngs(coords), coords.zoom);
 						self.mapCallbacks.setLoading(false);
 					} else {
 						self.reset(true);
 						self.mapCallbacks.setLoading(false);
 					}
 				} else { // else load up the new world
-					let mapState = new MapState();
+					let mapState = new MapState(coords);
 					let world = self.getWorldFromID(worldID);
 					print("Going to world... " + world.displayName + " (" + world.id + ").");
 					print(world);
 					mapState.world = world;
+					print(coords);
 					self.setMapState(mapState);
 				}
 
 			} else {
-				throw new Error('Gamemap attempted to navigate to invalid world ID: ' + world.id);
+				throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
 			}
 		}
 	}
@@ -618,6 +622,8 @@ export default class Gamemap {
 			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 
 				print("Getting info for locationID: "+ locationID);
+
+				print(data);
 
 				if (!error && data != null && data.locations[0] != null) {
 					print("Got location info!");
@@ -1403,13 +1409,15 @@ export default class Gamemap {
 					latLngs = RC.unproject([coords.x , coords.y]);
 					return latLngs;
 				case COORD_TYPES.NORMALISED:
-					let x = (coords.x * this.getCurrentWorld().totalWidth);
-					let y = (coords.y * this.getCurrentWorld().totalHeight);
+					let x = (coords.x * this.mapImage.width);
+					let y = (coords.y * this.mapImage.height);
+
+					// this fixes marker positions on the map but makes them inaccurate?
+					// x = (x * nextPowerOfTwo(this.getCurrentWorld().numTilesX) / this.getCurrentWorld().numTilesX).toFixed(3);
+					// y = (y * nextPowerOfTwo(this.getCurrentWorld().numTilesY) / this.getCurrentWorld().numTilesY).toFixed(3);
 					latLngs = RC.unproject([x , y]);
 					return latLngs;
 				case COORD_TYPES.WORLDSPACE:
-
-
 
 					let xN = coords.x;
 					let yN = coords.y;
@@ -1421,9 +1429,6 @@ export default class Gamemap {
 					// get normalised value of x and y in range
 					xN = (xN - this.getCurrentWorld().minX) / maxRangeX;
 					yN = Math.abs((yN - this.getCurrentWorld().maxY) / maxRangeY); // flip y around
-
-					xN = (xN * nextPowerOfTwo(this.getCurrentWorld().numTilesX) / this.getCurrentWorld().numTilesX).toFixed(3);
-					yN = (yN * nextPowerOfTwo(this.getCurrentWorld().numTilesY) / this.getCurrentWorld().numTilesY).toFixed(3);
 
 					latLngs = this.toLatLngs(new Point(xN, yN, COORD_TYPES.NORMALISED));
 					return latLngs;

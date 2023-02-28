@@ -1,3 +1,27 @@
+
+
+## problems
+
+- skyrim map, locations at max zoom (8) arent reachable. need to be 7.5 instead
+
+- can get locations to match up to map with power of two stuff, but then map view positioning is off (demonstrate with layer switcher)
+
+- can leave coordinates as they are, and map view positioning works, but locations are off
+
+- because tileX/Y aren't pow 2, and arent a square, grid is messing up and looks weird. grid should always be a square
+
+- also solstheim is squished horizontally
+
+all of the above doesnt happen when using square, pow 2 maptiles
+
+
+
+expected questions: "where's gametopixels" combined into toCoords/toLatLngs methods
+
+instead of many methods for different conversions, its now two method for many conversions
+
+
+
 ## last week:
 
 

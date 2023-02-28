@@ -67,8 +67,8 @@ export default class World {
 
 		// check if this world has a number of tiles set
 		if (this.numTilesX != null && this.numTilesY != null) {
-			width = (this.numTilesX * gamemap.getMapConfig().tileSize);
-			height = (this.numTilesY * gamemap.getMapConfig().tileSize);
+			width = (this.numTilesX * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
+			height = (this.numTilesY * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
 		} else {
 			throw new Error("No map tile dimensions were provided!");
 		}

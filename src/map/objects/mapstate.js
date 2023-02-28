@@ -5,10 +5,10 @@
  */
 
  export default class MapState {
-    constructor() {
+    constructor(coords) {
         //set default state
-        this.zoomLevel = DEFAULT_MAP_CONFIG.zoomLevel;
-        this.coords = null;
+		this.coords = (coords != null) ? coords : null;
+        this.zoomLevel = (coords != null && coords.zoom != null) ? coords.zoom : DEFAULT_MAP_CONFIG.zoomLevel;
         this.world = null;
         this.showGrid = false;
         this.cellResource = "";
