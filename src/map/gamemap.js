@@ -91,10 +91,9 @@ export default class Gamemap {
 	================================================*/
 
 	/** Initialise default map state and variables.
-	 * @param {Object} mapConfig - Object that controls the default/imported settings of the map.
+	 * @param {Object} mapConfig - Object that controls the default settings of the map.
 	 */
 	initialiseMap(mapConfig) {
-
 		// set global map options
 		var mapOptions = {
 			crs: L.CRS.Simple, // CRS: coordinate reference system
@@ -313,7 +312,6 @@ export default class Gamemap {
 		mapLink += 'x=' + newMapState.coords[0];
 		mapLink += '&y=' + newMapState.coords[1];
 		mapLink += '&zoom=' + newMapState.zoomLevel;
-
 		if (newMapState.showGrid) {
 			mapLink += '&grid=' + newMapState.showGrid;
 		}
@@ -388,6 +386,14 @@ export default class Gamemap {
 		}
 	}
 
+	/** Function to check whether a world object or a worldID is valid (exists, is within bounds)
+	 * @param {String} world - Either a worldID or a world object
+	 * @returns {Boolean} Whether or not the provided world is valid or not
+	 */
+	isWorldValid(world) {
+		return (world != null && world >= 0 && world in this.mapWorlds);
+	}
+
 	/** Get the current world object
 	 * @returns {Object} world - An object that represents the current map world.
 	 */
@@ -418,29 +424,49 @@ export default class Gamemap {
 		if (this.getWorldFromID(worldID) != null) return this.getWorldFromID(worldID).name; else return null;
 	}
 
+	/** Get world display name from a given worldID
+	 * @param {Int} worldID - A world ID.
+	 * @returns {String} displayName - The user facing display name of the world.
+	 */
 	getWorldDisplayNameFromID(worldID) {
-
 		if (this.getWorldFromID(worldID) == null) {
 			return null;
 		} else {
 			return this.getWorldFromID(worldID).displayName || null;
 		}
-
 	}
 
+	/** Get world object from internal world name
+	 * @param {String} worldName - An internal worldName as a string.
+	 * @returns {Object} world - A world object.
+	 */
 	getWorldFromName(worldName){
 		return this.mapWorlds[mapWorldNameIndex[worldName]];
 	}
 
+	/** Get world object from user facing display name
+	 * @param {String} worldDisplayName - A world's display name.
+	 * @returns {Object} world - A world object.
+	 */
 	getWorldFromDisplayName(worldDisplayName){
 		return this.mapWorlds[mapWorldDisplayNameIndex[worldDisplayName]];
 	}
 
-	isWorldValid(worldID) {
-		return (worldID != null && worldID >= 0 && worldID in this.mapWorlds);
+	/** Simple function that returns whether the current gamemap has multiple worlds.
+	 * @returns {Boolean} - A boolean whether or not the current gamemap contains multiple worlds.
+	 */
+	hasMultipleWorlds() {
+		return Object.keys(this.mapWorlds).length > 1;
 	}
 
-	// convenience method to jump to destination
+	/*================================================
+						Navigation
+	================================================*/
+
+	/** Convenience method to quickly "goto" a location, world, or certain coordinates.
+	 * @param {Object} place - Either a World, Location, or ID of one of those two.
+	 * @param {Object} coords - Coord object (can also contain zoom)
+	 */
 	goto(place, coords) {
 		// figure out what data we're being passed
 		this.mapCallbacks.setLoading(true);
@@ -454,7 +480,6 @@ export default class Gamemap {
 		} else if (isLocation) {
 			let location = place;
 			gotoWorld(location.worldID, location.coords);
-
 			//openPopup(location); //TODO
 
 		} else if (isID) {
@@ -498,6 +523,106 @@ export default class Gamemap {
 				throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
 			}
 		}
+	}
+
+	/**
+	 * Convert leaflet LatLngs to human readable map coordinates coordinates.
+	 * @param {Object} latLng - the leaflet coordinate object
+	 */
+	toCoords(latLng, coordType) {
+
+		var coords;
+		coordType = (coordType != null) ? coordType : (latLng instanceof Point) ? latLng.coordType : this.mapConfig.coordType;
+
+		// convert latlng to XY coords;
+		if (latLng.lat != null) {
+			coords = RC.project(latLng);
+		}
+
+		if (coordType != COORD_TYPES.XY) {
+			if (coordType == COORD_TYPES.NORMALISED) {
+				if (coords.x > 1.5 || coords.y > 1.5) { // make sure to only convert non-normalised coordinates
+					// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
+					coords.x = (coords.x / this.mapImage.width).toFixed(3);
+					coords.y = (coords.y / this.mapImage.height).toFixed(3);
+				}
+			} else if (coordType == COORD_TYPES.WORLDSPACE) {
+				// get current map world pixel position values
+				let world = this.getCurrentWorld();
+				let nX = coords.x / world.totalWidth;
+				let nY = 1 - (coords.y / world.totalHeight);
+
+				// reproject pixel values to worldspace
+				coords.x = Math.trunc(world.minX + (world.maxX - world.minX) * nX);
+				coords.y = Math.trunc(world.minY + (world.maxY - world.minY) * nY);
+			}
+		}
+
+		// return point object for coords
+		return coords;
+	}
+
+	/**
+	 * Convert XY/Worldspace coordinates to leaflet's LatLongs.
+	 * @param {Object} coords - the coordinate/point object
+	 */
+	toLatLngs(coords) {
+
+		var latLngs;
+
+		if (coords instanceof Point) {
+			switch (coords.coordType) {
+				default:
+				case COORD_TYPES.XY || null:
+					latLngs = RC.unproject([coords.x , coords.y]);
+					return latLngs;
+				case COORD_TYPES.NORMALISED:
+					let x = (coords.x * this.mapImage.width);
+					let y = (coords.y * this.mapImage.height);
+
+					// this fixes marker positions on the map but makes them inaccurate?
+					// x = (x * nextPowerOfTwo(this.getCurrentWorld().numTilesX) / this.getCurrentWorld().numTilesX).toFixed(3);
+					// y = (y * nextPowerOfTwo(this.getCurrentWorld().numTilesY) / this.getCurrentWorld().numTilesY).toFixed(3);
+					latLngs = RC.unproject([x , y]);
+					return latLngs;
+				case COORD_TYPES.WORLDSPACE:
+
+					let xN = coords.x;
+					let yN = coords.y;
+
+					// get max range of x and y, assure it is a positive number
+					let maxRangeX = Math.abs(this.getCurrentWorld().maxX - this.getCurrentWorld().minX);
+					let maxRangeY = Math.abs(this.getCurrentWorld().maxY - this.getCurrentWorld().minY);
+
+					// get normalised value of x and y in range
+					xN = (xN - this.getCurrentWorld().minX) / maxRangeX;
+					yN = Math.abs((yN - this.getCurrentWorld().maxY) / maxRangeY); // flip y around
+
+					latLngs = this.toLatLngs(new Point(xN, yN, COORD_TYPES.NORMALISED));
+					return latLngs;
+			}
+
+		} else if (Array.isArray(coords)) {
+
+			if (coords[0].x != null) { // are we given an array of coord objects?
+
+				if (coords.length == 1) { // are we given a single coord object? (marker, point)
+					latLngs = this.toLatLngs(coords[0]);
+					return latLngs;
+				} else { // else we are given a polygon, get the middle coordinate
+					latLngs = this.toLatLngs(getAverageCoord(coords));
+					return latLngs;
+				}
+
+			} else if (coords.length > 1) { // else we are just given a coord array [x, y]
+				latLngs = this.toLatLngs(new Point(coords[0], coords[1], this.mapConfig.coordType));
+				return latLngs;
+			}
+		}
+	}
+
+	getMaxBoundsZoom() {
+		return map.getBoundsZoom(this.getMapBounds());
 	}
 
 	/*================================================
@@ -1293,7 +1418,7 @@ export default class Gamemap {
 	}
 
 	/*================================================
-						  Utils
+						  Utility
 	================================================*/
 
 	/** Get current map config object.
@@ -1350,108 +1475,6 @@ export default class Gamemap {
 		return this.getCurrentWorld().layers.length > 1;
 	}
 
-	/** Simple function that returns whether the current gamemap has multiple worlds.
-	 * @returns {Boolean} - A boolean whether or not the current gamemap contains multiple worlds.
-	 */
-	hasMultipleWorlds() {
-		return Object.keys(this.mapWorlds).length > 1;
-	}
-
-	/**
-	 * Convert leaflet LatLngs to human readable map coordinates coordinates.
-	 * @param {Object} latLng - the leaflet coordinate object
-	 */
-	toCoords(latLng, coordType) {
-
-		var coords;
-		coordType = (coordType != null) ? coordType : (latLng instanceof Point) ? latLng.coordType : this.mapConfig.coordType;
-
-		// convert latlng to XY coords;
-		if (latLng.lat != null) {
-			coords = RC.project(latLng);
-		}
-
-		if (coordType != COORD_TYPES.XY) {
-			if (coordType == COORD_TYPES.NORMALISED) {
-				if (coords.x > 1.5 || coords.y > 1.5) { // make sure to only convert non-normalised coordinates
-					// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
-					coords.x = (coords.x / this.mapImage.width).toFixed(3);
-					coords.y = (coords.y / this.mapImage.height).toFixed(3);
-				}
-			} else if (coordType == COORD_TYPES.WORLDSPACE) {
-				// get current map world pixel position values
-				let world = this.getCurrentWorld();
-				let nX = coords.x / world.totalWidth;
-				let nY = 1 - (coords.y / world.totalHeight);
-
-				// reproject pixel values to worldspace
-				coords.x = Math.trunc(world.minX + (world.maxX - world.minX) * nX);
-				coords.y = Math.trunc(world.minY + (world.maxY - world.minY) * nY);
-			}
-		}
-
-		// return point object for coords
-		return coords;
-	}
-
-	/**
-	 * Convert XY/Worldspace coordinates to leaflet's LatLongs.
-	 * @param {Object} coords - the coordinate/point object
-	 */
-	toLatLngs(coords) {
-
-		var latLngs;
-
-		if (coords instanceof Point) {
-			switch (coords.coordType) {
-				default:
-				case COORD_TYPES.XY || null:
-					latLngs = RC.unproject([coords.x , coords.y]);
-					return latLngs;
-				case COORD_TYPES.NORMALISED:
-					let x = (coords.x * this.mapImage.width);
-					let y = (coords.y * this.mapImage.height);
-
-					// this fixes marker positions on the map but makes them inaccurate?
-					// x = (x * nextPowerOfTwo(this.getCurrentWorld().numTilesX) / this.getCurrentWorld().numTilesX).toFixed(3);
-					// y = (y * nextPowerOfTwo(this.getCurrentWorld().numTilesY) / this.getCurrentWorld().numTilesY).toFixed(3);
-					latLngs = RC.unproject([x , y]);
-					return latLngs;
-				case COORD_TYPES.WORLDSPACE:
-
-					let xN = coords.x;
-					let yN = coords.y;
-
-					// get max range of x and y, assure it is a positive number
-					let maxRangeX = Math.abs(this.getCurrentWorld().maxX - this.getCurrentWorld().minX);
-					let maxRangeY = Math.abs(this.getCurrentWorld().maxY - this.getCurrentWorld().minY);
-
-					// get normalised value of x and y in range
-					xN = (xN - this.getCurrentWorld().minX) / maxRangeX;
-					yN = Math.abs((yN - this.getCurrentWorld().maxY) / maxRangeY); // flip y around
-
-					latLngs = this.toLatLngs(new Point(xN, yN, COORD_TYPES.NORMALISED));
-					return latLngs;
-			}
-
-		} else if (Array.isArray(coords)) {
-
-			if (coords[0].x != null) { // are we given an array of coord objects?
-
-				if (coords.length == 1) { // are we given a single coord object? (marker, point)
-					latLngs = this.toLatLngs(coords[0]);
-					return latLngs;
-				} else { // else we are given a polygon, get the middle coordinate
-					latLngs = this.toLatLngs(getAverageCoord(coords));
-					return latLngs;
-				}
-
-			} else if (coords.length > 1) { // else we are just given a coord array [x, y]
-				latLngs = this.toLatLngs(new Point(coords[0], coords[1], this.mapConfig.coordType));
-				return latLngs;
-			}
-		}
-	}
 }
 
 // uesp.gamemap.Map.prototype.hasLocation = function(locId)

@@ -34,19 +34,37 @@
     function zoom(amount) {
 
         let zoomAmount;
+        let doReportZoom = true;
 
         if (typeof amount === "string") {
-            zoomAmount = (amount == "in") ? gamemap.getMaxZoom() : 0;
 
-            // if > defaultzoomlevel, and longpress zoom out, then
-            // do gamemap.reset(false) where the boolean determines whether
-            // just reset the current map view or go back to default map
-            // if < default zoomlevel, then just zoomamount 0
+            if (amount == "out") {
+
+                if (gamemap.getCurrentZoom() > gamemap.getMaxBoundsZoom()) {
+                    doReportZoom = false;
+                    gamemap.reset(true);
+                } else {
+                    zoomAmount = gamemap.getMinZoom();
+                }
+            } else if (amount == "in") {
+
+                if (gamemap.getCurrentZoom() < gamemap.getMaxBoundsZoom()) {
+                    doReportZoom = false;
+                    gamemap.reset(true);
+                } else {
+                    zoomAmount = gamemap.getMaxZoom();
+                }
+
+            }
+
         } else {
             zoomAmount = gamemap.getCurrentZoom() + amount;
         }
 
-        dispatch("zoomclicked", zoomAmount);
+        if (doReportZoom) {
+            dispatch("zoomclicked", zoomAmount);
+        }
+
     }
 
 </script>
