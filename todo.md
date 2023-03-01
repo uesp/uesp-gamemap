@@ -40,6 +40,9 @@ instead of many methods for different conversions, its now two method for many c
 - added option to turn off grid for cell resources
 - grid state now shows in url (grid=true) and is read accordingly (grid state can be shared as link)
 
+
+feat: more intelligent zoom: long pressing zoom buttons will recentre the map, pressing it again will zoom all the way in/out
+
 ## todo
 
 - do get centre of polygon to count towards isvisible

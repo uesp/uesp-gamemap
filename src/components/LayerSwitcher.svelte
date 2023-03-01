@@ -20,7 +20,7 @@
 
     // state vars
     export let world = gamemap.getCurrentWorld();
-    export let gridEnabled = gamemap.isGridEnabled();
+    export let gridEnabled = gamemap.isGridShown();
     $: hasMultipleLayers = world.hasMultipleLayers();
     $: layers = world.layers;
     $: layerName = gamemap.getNextTileLayerName();
@@ -40,12 +40,12 @@
             world = gamemap.getCurrentWorld();
         }
         isHovered = true;
-        gridEnabled = gamemap.isGridEnabled();
+        gridEnabled = gamemap.isGridShown();
         resourceGridEnabled = world.hasCellResources();
     }
     function onMouseExit() {
         isHovered = false;
-        gridEnabled = gamemap.isGridEnabled();
+        gridEnabled = gamemap.isGridShown();
         resourceGridEnabled = world.hasCellResources();
     }
 

@@ -305,7 +305,7 @@ export default class Gamemap {
 			mapLink += 'world=' + newMapState.world.name;
 			mapLink += '&';
 		}
-		if (this.hasMultipleMapLayers()) {
+		if (newMapState.world.hasMultipleLayers()) {
 			mapLink += 'layer=' + newMapState.world.layers[newMapState.layerIndex].name;
 			mapLink += '&';
 		}
@@ -464,7 +464,7 @@ export default class Gamemap {
 	================================================*/
 
 	/** Convenience method to quickly "goto" a location, world, or certain coordinates.
-	 * @param {Object} place - Either a World, Location, or ID of one of those two.
+	 * @param {Object} place - Either a world, a location, or ID of one of those two.
 	 * @param {Object} coords - Coord object (can also contain zoom)
 	 */
 	goto(place, coords) {
@@ -497,13 +497,12 @@ export default class Gamemap {
 		}
 
 		function gotoWorld(worldID, coords) {
-			coords = (coords != null && coords[0] != null) ? coords[0] : coords;
 			print(worldID);
 			if (self.isWorldValid(worldID)) {
 				// if we are in the same world, just pan to the provided location (or just reset map)
 				if (worldID == self.getCurrentWorldID()) {
 					if (coords != null) {
-						map.setView(self.toLatLngs(coords), coords.zoom);
+						map.setView(self.toLatLngs(coords), (coords[0].zoom != null) ? coords[0].zoom : coords.zoom);
 						self.mapCallbacks.setLoading(false);
 					} else {
 						self.reset(true);
@@ -513,9 +512,7 @@ export default class Gamemap {
 					let mapState = new MapState(coords);
 					let world = self.getWorldFromID(worldID);
 					print("Going to world... " + world.displayName + " (" + world.id + ").");
-					print(world);
 					mapState.world = world;
-					print(coords);
 					self.setMapState(mapState);
 				}
 
@@ -570,7 +567,8 @@ export default class Gamemap {
 
 		var latLngs;
 
-		if (coords instanceof Point) {
+		if (coords instanceof Point && !Array.isArray(coords)) {
+
 			switch (coords.coordType) {
 				default:
 				case COORD_TYPES.XY || null:
@@ -610,7 +608,8 @@ export default class Gamemap {
 					latLngs = this.toLatLngs(coords[0]);
 					return latLngs;
 				} else { // else we are given a polygon, get the middle coordinate
-					latLngs = this.toLatLngs(getAverageCoord(coords));
+					let centreCoord = getAverageCoord(coords);
+					latLngs = this.toLatLngs(new Point(centreCoord.x, centreCoord.y, this.mapConfig.coordType));
 					return latLngs;
 				}
 
@@ -621,13 +620,184 @@ export default class Gamemap {
 		}
 	}
 
-	getMaxBoundsZoom() {
-		return map.getBoundsZoom(this.getMapBounds());
-	}
-
 	/*================================================
 						 Layers
 	================================================*/
+
+	toggleGrid(toggle, cellBounds, cellResources) {
+
+		// set grid info
+		let mapState = this.getMapState();
+		mapState.showGrid = toggle;
+		this.updateMapState(mapState);
+		cellResources = (cellResources != null) ? (cellResources == "None") ? null : cellResources : cellResources;
+		if ((cellBounds != null || cellResources != null) && this.isGridShown()) { removeGrid(); }
+
+		// if cellResource is a string, then get cellResource array data and call ourselves again
+		if (cellResources != null && !Array.isArray(cellResources)) {
+			function loadCellResources(array) {
+				if (self.isGridShown()) {
+					self.toggleGrid(self.isGridShown(), cellBounds, array);
+				}
+			}
+			this.getCellResourceData(cellResources, loadCellResources);
+		}
+
+		if (toggle) { // if draw grid == true
+			function drawGrid(_, params) {
+
+				// set up canvas layer
+				let ctx = params.canvas.getContext('2d');
+				ctx.clearRect(0, 0, params.size.x, params.size.y); //clear canvas
+				// params.canvas.width = params.canvas.width; //clear canvas
+
+				// set up canvas bounds
+				let bounds = RC.getMaxBounds();
+				let [minX, maxX, minY, maxY] = [map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).y, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y];
+				let [gridWidth, gridHeight] = [maxX - minX, maxY - minY]
+
+				// get zoom info
+				let world = self.getCurrentWorld();
+				let currentZoom = self.getCurrentZoom();
+				let maxZoomLevel = world.maxZoomLevel - 0.03;
+
+				// work out normalised grid cell sizes
+				let cellSize = (self.mapConfig.cellSize != null) ? self.mapConfig.cellSize : Math.round(self.mapConfig.tileSize * Math.pow(2, Math.round(world.maxZoomLevel)) / ((world.maxX - world.minX) / world.cellSize));
+				let nGridSize = cellSize / Math.pow(2, Math.round(maxZoomLevel) - currentZoom) / gridHeight;
+
+				// work out how many rows and columns there should be
+				let nRows = world.getWorldDimensions().width / cellSize;
+				let nCols = world.getWorldDimensions().height / cellSize;
+
+				// draw grid
+				for (let i = 0; i <= nRows; i++) {
+					for (let j = 0; j <= nCols; j++) {
+
+						// get normalised coordinates
+						let nX = i * nGridSize;
+						let nY = j * nGridSize;
+						let isVisible = ((toPx(nX).x >= 0 || (toPx(nX).x < 0 && toPx(nX + nGridSize).x >= 0))) && (toPx(nY).y >= 0 || (toPx(nY).y < 0 && toPx(nY + nGridSize).y >= 0)) && toPx(nX).x <= window.innerWidth && toPx(nY).y <= window.innerHeight;
+
+						// draw grid lines
+						if (cellBounds && i == j) {
+							ctx.beginPath();
+							// rows
+							ctx.moveTo(toPx(0).x, toPx(nY).y);
+							ctx.lineTo(toPx(1).x, toPx(nY).y);
+							// columns
+							ctx.moveTo(toPx(nX).x, toPx(0).y);
+							ctx.lineTo(toPx(nX).x, toPx(1).y);
+							ctx.strokeStyle = ctx.strokeStyle = self.mapConfig.gridLineColour;
+							ctx.lineWidth = self.mapConfig.gridLineWidth;
+							ctx.stroke();
+						}
+
+						if (isVisible) {
+
+							if (cellResources != null && Array.isArray(cellResources)) {
+								let row = (i < cellResources.length) ? cellResources[i] : [];
+								let col = (j < row.length) ? cellResources[i][j] : 0;
+
+								if (col != 0) {
+									if (col > 0 && col <= 2) {
+										fillCell(self.mapConfig.cellResourceColours[0]);
+									} else if (col > 2 && col <= 5) {
+										fillCell(self.mapConfig.cellResourceColours[1]);
+									} else if (col > 5 && col <= 10) {
+										fillCell(self.mapConfig.cellResourceColours[2]);
+									} else if (col > 10 && col <= 20) {
+										fillCell(self.mapConfig.cellResourceColours[3]);
+									} else if (col > 20 && col <= 50) {
+										fillCell(self.mapConfig.cellResourceColours[4]);
+									} else if (col > 50) {
+										fillCell(self.mapConfig.cellResourceColours[5]);
+									}
+								}
+							}
+
+							if (cellBounds && currentZoom > self.mapConfig.gridShowLabelZoom) {
+
+								let gridStartX = world.gridStart[0];
+								let gridStartY = world.gridStart[1];
+								let colNum = i + gridStartX;
+								let rowNum = (-j) + gridStartY;
+
+								if (rowNum % 5 == 0 || colNum % 5 == 0) {
+
+									// draw background behind cell labels
+									fillCell(self.mapConfig.gridLabelCellBgColour);
+
+									if (rowNum % 5 == 0 && colNum % 5 == 0) {
+										ctx.fillStyle = self.mapConfig.gridLabelColour;
+										ctx.font = "bold 13px Arial";
+										ctx.fillText([colNum, rowNum].join(', '), toPx(nX).x, toPx(nY + nGridSize).y);
+									}
+								}
+							}
+						}
+
+						// fill grid cell function
+						function fillCell(style) {
+							ctx.fillStyle = style;
+							ctx.beginPath();
+							ctx.moveTo(toPx(nX).x, toPx(nY).y);
+							ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY).y);
+							ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY + nGridSize).y);
+							ctx.lineTo(toPx(nX).x, toPx(nY + nGridSize).y);
+							ctx.closePath();
+							ctx.fill();
+						}
+					}
+				}
+
+				// normalised values to canvas pixels function
+				function toPx(nX, nY) {
+					nY = (nY != null) ? nY : nX;
+					if (nY > 4 || nY < -4) { nY = nY / gridHeight; }
+					if (nX > 4 || nX < -4) { nX = nX / gridWidth; }
+					return new Point(minX + (nX * gridWidth), minY + (nY * gridHeight))
+				}
+			};
+			L.canvasOverlay().params({bounds: RC.getMaxBounds(), className : "cellGrid", zoomAnimation: true}).drawing(drawGrid).addTo(map);
+		} else { removeGrid(); }
+
+		function removeGrid() {
+			//remove the cell grid
+			map.eachLayer((layer) => {
+				if (layer.options.className == "cellGrid") {
+					layer.remove();
+				}
+			});
+		}
+	}
+
+	isGridShown() {
+		return this.getMapState().showGrid;
+	}
+
+	getCellResourceData(resourceID, callback) {
+
+		if (resourceID != null || resourceID != "") {
+
+			var queryParams = {};
+			queryParams.action = "get_cellresource";
+			queryParams.db = this.mapConfig.database;
+			queryParams.worldid = this.getCurrentWorldID();
+			queryParams.editorid = resourceID;
+
+			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+				if (!error && data != null) {
+
+					// y flip
+					let array = data.resources[0].data;
+					for (let i in array) {
+						array[i] = array[i].reverse();
+					}
+					callback(array);
+				}
+			});
+		}
+	}
 
 	setTileLayerTo(layer) {
 
@@ -670,8 +840,6 @@ export default class Gamemap {
 		return this.getCurrentWorld().layers[this.getCurrentTileLayerIndex()].name;
 	}
 
-
-	// tileX, tileY, zoom, world
 	// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
 	getMapTileImageURL(world, layerIndex, root) {
 
@@ -1192,188 +1360,13 @@ export default class Gamemap {
 		return RC.getMaxBounds();
 	}
 
-	isGridEnabled() {
-		return this.getMapState().showGrid;
+	getMaxBoundsZoom() {
+		return map.getBoundsZoom(this.getMapBounds());
 	}
 
-	toggleGrid(toggle, cellBounds, cellResources) {
 
-		// set grid info
-		let mapState = this.getMapState();
-		mapState.showGrid = toggle;
-		this.updateMapState(mapState);
-		cellResources = (cellResources != null) ? (cellResources == "None") ? null : cellResources : cellResources;
-		if ((cellBounds != null || cellResources != null) && this.isGridEnabled()) { removeGrid(); }
 
-		// if cellResource is a string, then get cellResource array data and call ourselves again
-		if (cellResources != null && !Array.isArray(cellResources)) {
-			function loadCellResources(array) {
-				if (self.isGridEnabled()) {
-					self.toggleGrid(self.isGridEnabled(), cellBounds, array);
-				}
-			}
-			this.getCellResourceData(cellResources, loadCellResources);
-		}
 
-		if (toggle) { // if draw grid == true
-			function drawGrid(_, params) {
-
-				// set up canvas layer
-				let ctx = params.canvas.getContext('2d');
-				ctx.clearRect(0, 0, params.size.x, params.size.y); //clear canvas
-				// params.canvas.width = params.canvas.width; //clear canvas
-
-				// set up canvas bounds
-				let bounds = RC.getMaxBounds();
-				let [minX, maxX, minY, maxY] = [map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).y, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y];
-				let [gridWidth, gridHeight] = [maxX - minX, maxY - minY]
-
-				// get zoom info
-				let world = self.getCurrentWorld();
-				let currentZoom = self.getCurrentZoom();
-				let maxZoomLevel = world.maxZoomLevel - 0.03;
-
-				// work out normalised grid cell sizes
-				let cellSize = (self.mapConfig.cellSize != null) ? self.mapConfig.cellSize : Math.round(self.mapConfig.tileSize * Math.pow(2, Math.round(world.maxZoomLevel)) / ((world.maxX - world.minX) / world.cellSize));
-				let nGridSize = cellSize / Math.pow(2, Math.round(maxZoomLevel) - currentZoom) / gridHeight;
-
-				// work out how many rows and columns there should be
-				let nRows = world.getWorldDimensions().width / cellSize;
-				let nCols = world.getWorldDimensions().height / cellSize;
-
-				// draw grid
-				for (let i = 0; i <= nRows; i++) {
-					for (let j = 0; j <= nCols; j++) {
-
-						// get normalised coordinates
-						let nX = i * nGridSize;
-						let nY = j * nGridSize;
-						let isVisible = ((toPx(nX).x >= 0 || (toPx(nX).x < 0 && toPx(nX + nGridSize).x >= 0))) && (toPx(nY).y >= 0 || (toPx(nY).y < 0 && toPx(nY + nGridSize).y >= 0)) && toPx(nX).x <= window.innerWidth && toPx(nY).y <= window.innerHeight;
-
-						// draw grid lines
-						if (cellBounds && i == j) {
-							ctx.beginPath();
-							// rows
-							ctx.moveTo(toPx(0).x, toPx(nY).y);
-							ctx.lineTo(toPx(1).x, toPx(nY).y);
-							// columns
-							ctx.moveTo(toPx(nX).x, toPx(0).y);
-							ctx.lineTo(toPx(nX).x, toPx(1).y);
-							ctx.strokeStyle = ctx.strokeStyle = self.mapConfig.gridLineColour;
-							ctx.lineWidth = self.mapConfig.gridLineWidth;
-							ctx.stroke();
-						}
-
-						if (isVisible) {
-
-							if (cellResources != null && Array.isArray(cellResources)) {
-								let row = (i < cellResources.length) ? cellResources[i] : [];
-								let col = (j < row.length) ? cellResources[i][j] : 0;
-
-								if (col != 0) {
-									if (col > 0 && col <= 2) {
-										fillCell(self.mapConfig.cellResourceColours[0]);
-									} else if (col > 2 && col <= 5) {
-										fillCell(self.mapConfig.cellResourceColours[1]);
-									} else if (col > 5 && col <= 10) {
-										fillCell(self.mapConfig.cellResourceColours[2]);
-									} else if (col > 10 && col <= 20) {
-										fillCell(self.mapConfig.cellResourceColours[3]);
-									} else if (col > 20 && col <= 50) {
-										fillCell(self.mapConfig.cellResourceColours[4]);
-									} else if (col > 50) {
-										fillCell(self.mapConfig.cellResourceColours[5]);
-									}
-								}
-							}
-
-							if (cellBounds && currentZoom > self.mapConfig.gridShowLabelZoom) {
-
-								let gridStartX = world.gridStart[0];
-								let gridStartY = world.gridStart[1];
-								let colNum = i + gridStartX;
-								let rowNum = (-j) + gridStartY;
-
-								if (rowNum % 5 == 0 || colNum % 5 == 0) {
-
-									// draw background behind cell labels
-									fillCell(self.mapConfig.gridLabelCellBgColour);
-
-									if (rowNum % 5 == 0 && colNum % 5 == 0) {
-										ctx.fillStyle = self.mapConfig.gridLabelColour;
-										ctx.font = "bold 13px Arial";
-										ctx.fillText([colNum, rowNum].join(', '), toPx(nX).x, toPx(nY + nGridSize).y);
-									}
-								}
-							}
-						}
-
-						// fill grid cell function
-						function fillCell(style) {
-							ctx.fillStyle = style;
-							ctx.beginPath();
-							ctx.moveTo(toPx(nX).x, toPx(nY).y);
-							ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY).y);
-							ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY + nGridSize).y);
-							ctx.lineTo(toPx(nX).x, toPx(nY + nGridSize).y);
-							ctx.closePath();
-							ctx.fill();
-						}
-					}
-				}
-
-				// normalised values to canvas pixels function
-				function toPx(nX, nY) {
-					nY = (nY != null) ? nY : nX;
-					if (nY > 4 || nY < -4) { nY = nY / gridHeight; }
-					if (nX > 4 || nX < -4) { nX = nX / gridWidth; }
-					return new Point(minX + (nX * gridWidth), minY + (nY * gridHeight))
-				}
-			};
-			L.canvasOverlay().params({bounds: RC.getMaxBounds(), className : "cellGrid", zoomAnimation: true}).drawing(drawGrid).addTo(map);
-		} else { removeGrid(); }
-
-		function removeGrid() {
-			//remove the cell grid
-			map.eachLayer((layer) => {
-				if (layer.options.className == "cellGrid") {
-					layer.remove();
-				}
-			});
-		}
-	}
-
-	getCellResourceData(resourceID, callback) {
-
-		if (resourceID != null || resourceID != "") {
-
-			var queryParams = {};
-			queryParams.action = "get_cellresource";
-			queryParams.db = this.mapConfig.database;
-			queryParams.worldid = this.getCurrentWorldID();
-			queryParams.editorid = resourceID;
-
-			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-				if (!error && data != null) {
-
-					// y flip
-					let array = data.resources[0].data;
-					for (let i in array) {
-						array[i] = array[i].reverse();
-					}
-					callback(array);
-				}
-			});
-		}
-	}
-
-	getMapObject() {
-		return map;
-	}
-
-	hasMultipleURLParams() {
-		return (Array.from(getURLParams().values())).length >= 2;
-	}
 
 	/*================================================
 						Editing
@@ -1460,7 +1453,6 @@ export default class Gamemap {
 		return this.mapConfig.wikiURL + namespace + wikiPage;
 	}
 
-
 	getLayerIndexFromName(layerName, layersObj) {
 		let layers = (layersObj != null) ? layersObj : this.getCurrentWorld().layers;
 		for (let [key, value] of Object.entries(layers)) {
@@ -1471,10 +1463,13 @@ export default class Gamemap {
 		return 0;
 	}
 
-	hasMultipleMapLayers() {
-		return this.getCurrentWorld().layers.length > 1;
+	getMapObject() {
+		return map;
 	}
 
+	hasMultipleURLParams() {
+		return (Array.from(getURLParams().values())).length >= 2;
+	}
 }
 
 // uesp.gamemap.Map.prototype.hasLocation = function(locId)
