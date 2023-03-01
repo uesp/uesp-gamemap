@@ -29,8 +29,14 @@ export default class World {
 			this.minY = (mapConfig.minY != null) ? mapConfig.minY : world.posBottom;
 			this.maxY = (mapConfig.maxY != null) ? mapConfig.maxY : world.posTop;
 
-			this.numTilesX = world.maxTilesX; //number of tiles at full zoom in the Y direction
-			this.numTilesY = world.maxTilesY; // number of tiles at full zoom in the Y direction
+			// this.numTilesX = world.maxTilesX;
+			// this.numTilesY = world.maxTilesY; // number of tiles at full zoom in the Y direction
+
+			this.numTilesX = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the X direction
+			this.numTilesY = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the Y direction
+
+			this.dbNumTilesX = world.maxTilesX; //actual number of tiles in the X direction
+			this.dbNumTilesY = world.maxTilesY; //actual number of tiles in the Y direction
 
 			this.locations = null; // locations are loaded async after the world is created
 			this.legacy = world; // legacy attributes from server
@@ -62,16 +68,9 @@ export default class World {
 	getWorldDimensions() {
 
 		let dimens = {};
-		let width = null;
-		let height = null;
 
-		// check if this world has a number of tiles set
-		if (this.numTilesX != null && this.numTilesY != null) {
-			width = (this.numTilesX * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
-			height = (this.numTilesY * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
-		} else {
-			throw new Error("No map tile dimensions were provided!");
-		}
+		let width = ((gamemap.getMapConfig().database == "eso") ? this.dbNumTilesX : this.numTilesX * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
+		let height = ((gamemap.getMapConfig().database == "eso") ? this.dbNumTilesY : this.numTilesY * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
 
 		dimens.width = width;
 		dimens.height = height;

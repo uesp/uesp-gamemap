@@ -4,24 +4,6 @@
 
 - skyrim map, locations at max zoom (8) arent reachable. need to be 7.5 instead
 
-- can get locations to match up to map with power of two stuff, but then map view positioning is off (demonstrate with layer switcher)
-
-- can leave coordinates as they are, and map view positioning works, but locations are off
-
-- because tileX/Y aren't pow 2, and arent a square, grid is messing up and looks weird. grid should always be a square
-
-- also solstheim is squished horizontally
-
-all of the above doesnt happen when using square, pow 2 maptiles
-
-
-
-expected questions: "where's gametopixels" combined into toCoords/toLatLngs methods
-
-instead of many methods for different conversions, its now two method for many conversions
-
-
-
 ## last week:
 
 
@@ -42,6 +24,83 @@ instead of many methods for different conversions, its now two method for many c
 
 
 feat: more intelligent zoom: long pressing zoom buttons will recentre the map, pressing it again will zoom all the way in/out
+
+
+
+
+## what's new
+
+the new map is a close-to-ground-up rework of the map system, focusing on performance and mobile friendliness.
+
+General:
+
+        Smooth scrolling and zooming
+        Improved mobile UI
+        Better performance
+        Map shows current location name in the browser tab
+
+Search improvements:
+
+        Search is now "live", typing will instantly begin to search, no pressing enter needed
+        Icon searching "type:wayshrine", "type:chest" to search for that specific type of icon in a map (note: doesn't currently respect the "only search this map" setting)
+
+Map Switcher:
+
+        Made more intuitive
+        Now automatically updates with new locations (previously was manual)
+        The alphabetical list (ABC) will now scroll down to your current location in the list
+
+Keyboard Shortcuts:
+
+        Ctrl + F to bring up search
+        Arrow keys to move the map around
+        Shift + arrow key pan the map more
+        Ctrl + clicking a location always opens a popup
+        Shift + clicking a location will edit that location
+
+Miscellaneous/Technical:
+
+        Map tiles now load faster, no longer get "stuck"
+        Locations that have a map associated with them now have an added icon on tooltips to indicate you can click into them (zones, dungeons)
+        URL now updates automatically as you navigate the map, making it easier to share the exact location to someone
+        Map client now supports all other UESP maps, in future will be able to change the game in the url "eso" > "mw" to go to that map
+        ESO's map now uses a normalized coordinate scheme, (0.x .. 1.0) better representing the game
+
+Feedback we're looking for (in addition to any bug reports):
+
+        Do you like the new interface? (anything you dislike?)
+        Does the map on mobile feel intuitive and easy to use? (is it an improvement over the old map?)
+        Does the new UI feel right on desktop?
+        Anything not working right or out of place? (if so, please screenshot and say what device and browser)
+        How is the performance of the new map compared to the old one? (how fast things are, any lag etc)
+
+
+
+**what's new since last beta:**
+
+- all uesp maps have been implemented
+
+
+- morrowind,
+
+gridmap
+cell resources for skyrim
+
+layers (day/night)
+
+also sharable in URL
+
+help, map key, full screen options
+
+
+rewrote UI and performance optimisations
+
+Search:
+- now has "pin" option
+
+
+**Technical**
+
 
 ## todo
 

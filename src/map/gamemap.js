@@ -168,8 +168,8 @@ export default class Gamemap {
 		// set full image width & height
 		let mapImageDimens = mapState.world.getWorldDimensions();
 		this.mapImage = {
-			width : mapImageDimens.width,  // original width of image
-			height: mapImageDimens.height, // original height of image
+			width: mapImageDimens.width,  // original full width of image
+			height: mapImageDimens.height, // original full height of image
 		}
 		mapState.world.totalWidth = this.mapImage.width;
 		mapState.world.totalHeight = this.mapImage.height;
@@ -503,11 +503,11 @@ export default class Gamemap {
 				if (worldID == self.getCurrentWorldID()) {
 					if (coords != null) {
 						map.setView(self.toLatLngs(coords), (coords[0].zoom != null) ? coords[0].zoom : coords.zoom);
-						self.mapCallbacks.setLoading(false);
+
 					} else {
 						self.reset(true);
-						self.mapCallbacks.setLoading(false);
 					}
+					self.mapCallbacks.setLoading(false);
 				} else { // else load up the new world
 					let mapState = new MapState(coords);
 					let world = self.getWorldFromID(worldID);
@@ -524,7 +524,7 @@ export default class Gamemap {
 
 	/**
 	 * Convert leaflet LatLngs to human readable map coordinates coordinates.
-	 * @param {Object} latLng - the leaflet coordinate object
+	 * @param {Object} latLng - the leaflet latLng coordinate object
 	 */
 	toCoords(latLng, coordType) {
 
@@ -578,9 +578,6 @@ export default class Gamemap {
 					let x = (coords.x * this.mapImage.width);
 					let y = (coords.y * this.mapImage.height);
 
-					// this fixes marker positions on the map but makes them inaccurate?
-					// x = (x * nextPowerOfTwo(this.getCurrentWorld().numTilesX) / this.getCurrentWorld().numTilesX).toFixed(3);
-					// y = (y * nextPowerOfTwo(this.getCurrentWorld().numTilesY) / this.getCurrentWorld().numTilesY).toFixed(3);
 					latLngs = RC.unproject([x , y]);
 					return latLngs;
 				case COORD_TYPES.WORLDSPACE:
@@ -1070,21 +1067,22 @@ export default class Gamemap {
 
 		let markers = [];
 		let polygonIcon = null;
-
-		// get coordinates of location
-		let coords = [];
-		for (let i = 0; i < location.coords.length; i++) {
-			coords.push(this.toLatLngs(location.coords[i]));
-		}
+		let coords = location.coords;
 
 		// make a generic fallback marker
-		let marker = new L.marker(coords[0]);
+		let marker = new L.marker(this.toLatLngs(coords[0]));
 		L.Marker.prototype.options.icon = L.icon({
 			iconUrl: IMAGES_DIR + "transparent.png",
 		});
 
 		// create specific marker type
 		if (location.isPolygon()) { // is location polygonal? (polyline or polygon)
+
+			// get coordinates of location
+			coords = [];
+			for (let i = 0; i < location.coords.length; i++) {
+				coords.push(this.toLatLngs(location.coords[i]));
+			}
 
 			let options = {
 				noClip: true,
@@ -1115,7 +1113,7 @@ export default class Gamemap {
 		} else { // if no, then it must be a single point (icon, label)
 
 			if (location.hasIcon()) {
-				marker = this.makeMarker(location, coords[0]);
+				marker = this.makeMarker(location, this.toLatLngs(coords[0]));
 			}
 
 		}

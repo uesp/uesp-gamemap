@@ -121,7 +121,7 @@
 
                 {#if expandGridOptions}
                     <div in:slide out:slide>
-                        <Switch label="Show Cell Bounds" tooltip="Toggle cell grid" enabled={doCellGrid} on:change={(e) => {doCellGrid = e.detail; onGridChecked({detail: true})}}></Switch>
+                        <Switch label="Show Cell Grid" tooltip="Toggle cell grid" enabled={doCellGrid} on:change={(e) => {doCellGrid = e.detail; onGridChecked({detail: true})}}></Switch>
 
                         <!-- Cell resource dropdown -->
                         {#if world.hasCellResources()}
