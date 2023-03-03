@@ -198,9 +198,9 @@ export default class Gamemap {
 		// set map view
 		print(mapState.coords);
 		if(mapState.coords == null || mapState.zoomLevel == null) {
-			map.fitBounds(RC.getMaxBounds(), {animate: true})
+			map.fitBounds(RC.getMaxBounds(), {animate: false})
 		} else {
-			map.setView(this.toLatLngs(mapState.coords), mapState.zoomLevel, {animate: true});
+			map.setView(this.toLatLngs(mapState.coords), mapState.zoomLevel, {animate: false});
 		}
 
 		// set background colour

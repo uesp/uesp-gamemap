@@ -1,5 +1,11 @@
 
 
+- bagel
+- vality copy
+- zero stuff
+
+
+
 ## problems
 
 - skyrim map, locations at max zoom (8) arent reachable. need to be 7.5 instead
@@ -74,7 +80,7 @@ Feedback we're looking for (in addition to any bug reports):
         Anything not working right or out of place? (if so, please screenshot and say what device and browser)
         How is the performance of the new map compared to the old one? (how fast things are, any lag etc)
 
-
+https://docs.google.com/spreadsheets/d/1DkR-pVMRExdIBHU_qlz1sVc5PZv6BuS6DPXm4uYxLdA/edit#gid=0
 
 **what's new since last beta:**
 
@@ -82,6 +88,9 @@ Feedback we're looking for (in addition to any bug reports):
 
 
 - morrowind,
+
+- Solstheim in the skyrim map
+- Shivering isles in the oblivion map
 
 gridmap
 cell resources for skyrim
@@ -91,6 +100,9 @@ layers (day/night)
 also sharable in URL
 
 help, map key, full screen options
+
+technical:
+
 
 
 rewrote UI and performance optimisations
