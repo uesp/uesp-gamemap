@@ -3,7 +3,7 @@
  UESP gamemap edit panel.
 
 ### Author(s)
-- Thal-J <thal-j@uesp.net> (21st Feb, 2023) -->
+- Thal-J <thal-j@uesp.net> (6th March, 2023) -->
 
 <script>
 
@@ -11,35 +11,31 @@
     import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
     import { tweened } from 'svelte/motion';
-	import { cubicOut } from 'svelte/easing';
+	import { cubicInOut } from 'svelte/easing';
+  import AppBar from './AppBar.svelte';
 
-    const progress = tweened(0, {
-		duration: 400,
-		easing: cubicOut,
-	});
-
+    // state vars and constants
     let editPanel;
-    const PANEL_WIDTH = 500;
+    const PANEL_WIDTH = 480;
     const ANIMATION_DURATION = 350;
+    const TWEEN = tweened(0, {duration: ANIMATION_DURATION, easing: cubicInOut });
+    TWEEN.set(1);
 
-	onMount(async() => {
-
-
-        progress.set(1);
-
-        print($progress);
-
-    });
-
+    // slide out animation
+    function slideOut() { TWEEN.set(0);
+        return { ANIMATION_DURATION, css: () => `width: ${$TWEEN * PANEL_WIDTH}`};
+    }
 </script>
 
 
 <markup>
-    <aside id="edit-panel" bind:this={editPanel} in:fade={{duration: ANIMATION_DURATION}} style="width: {$progress * PANEL_WIDTH}px;">
+    <aside id="edit-panel" bind:this={editPanel} style="width: {$TWEEN * PANEL_WIDTH}px;" out:slideOut>
+        <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}}>
 
-        <b>{$progress}</b>
+            <AppBar title="Edit"></AppBar>
+            <b>stuff coming here soon</b>
 
-
+        </div>
     </aside>
 </markup>
 
