@@ -49,24 +49,14 @@
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
 
+	// initialise app
 	print("Initialising app...");
 	document.getElementById('app').addEventListener('DOMSubtreeModified', function () {
-			// prevent events in svelte elements propagating to gamemap
+			// prevent scroll events in svelte components propagating to gamemap
 			let svelteElements = document.querySelectorAll("[class*='svelte']");
 			for (let i = 0; i < svelteElements.length; i++) {
 				let element = svelteElements[i];
-
-				// element.addEventListener('mouseover', function () {
-        		// 	gamemap.getMapObject().dragging.disable();
-    			// });
-
-				// // Re-enable dragging when user's cursor leaves the element
-				// element.addEventListener('mouseout', function () {
-				// 	gamemap.getMapObject().dragging.enable();
-				// });
-
 				L.DomEvent.disableScrollPropagation(element);
-				// L.DomEvent.disableClickPropagation(element);
 			}
 	}, false);
 
@@ -94,7 +84,7 @@
 	$: gridEnabled = false;
 
 	// on document load
-	onMount(async () => {
+	onMount(async() => {
 
 		// remove noscript message
 		var element = document.getElementsByTagName("noscript");

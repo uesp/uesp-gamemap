@@ -299,7 +299,7 @@
         height: 100%;
         z-index: 100;
         font-size: 12px;
-        z-index: 10;
+        z-index: 999;
         pointer-events: none;
     }
 

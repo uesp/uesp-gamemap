@@ -3,6 +3,18 @@
 ## last week:
 
 
+- added edit sidebar
+
+
+
+technical:
+
+doesnt look like a lot, but had to do a lot of jiggery pokery to get the edit panel to work
+1. had to move all ui elements into the same div as gamemap
+2. turns out leaflet disables right click, lets you scroll/pan for all elements in gamemap
+3. had to override that for all elements with "svelte" in the classname in gamemap.js (ex: search list was scrolling map instead of search results)
+4. because all ui elements are in gamemap div now, had to redo all z-indexes
+
 ## Bug fixes:
 - fixed OB, SR and BS not having favicon
 
@@ -21,6 +33,7 @@
 - fix polygons disappearing when outer points are not viewable (consider centre point as well)
 - fix icons randomly disappearng from listItem
 - make embeded map watermark actually open in new tab
+- fix maps not being centred properly on load
 - fix tooltip text: wikilink and detail not being put on separate lines
 - make labels clickable
 - import materialise buttons into svelte components

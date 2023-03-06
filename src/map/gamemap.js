@@ -1192,6 +1192,7 @@ export default class Gamemap {
 		})
 
 		map.on("zoom", function() {
+
 			if (self.mapCallbacks != null) {
 				self.mapCallbacks.onZoom(map.getZoom());
 			}
@@ -1202,7 +1203,8 @@ export default class Gamemap {
 		})
 
 		map.on("mousemove", function(event) {
-			if (event.originalEvent.explicitOriginalTarget != self.mapRoot) {
+			let target = event.originalEvent.explicitOriginalTarget;
+			if (target != self.mapRoot && target.classList != null && !target.classList.contains("leaflet-interactive")) {
 				map.dragging.disable();
 			} else {
 				map.dragging.enable();
@@ -1211,6 +1213,16 @@ export default class Gamemap {
 
 		map.on("contextmenu", function (event) {
 			print(event);
+			let target = event.originalEvent.explicitOriginalTarget;
+
+			print(target);
+			if (target != self.mapRoot && target.classList != null && !target.classList.contains("leaflet-interactive")) {
+
+				target.oncontextmenu = null;
+				//preventDefault(event);
+			} else {
+
+			}
 		});
 
 	}
