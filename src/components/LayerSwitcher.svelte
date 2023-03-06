@@ -159,6 +159,8 @@
         width: fit-content;
         max-width: var(--search_pane_width);
         display: flex;
+        pointer-events: visible;
+        cursor: auto;
     }
 
     .layer_widget_options {

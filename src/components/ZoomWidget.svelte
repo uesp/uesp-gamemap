@@ -81,6 +81,7 @@
 
 <style>
     #zoom_widget {
+        cursor: auto;
         position: absolute;
         background: var(--primary_variant_light);
         border-radius: 64px;

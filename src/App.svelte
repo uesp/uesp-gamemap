@@ -44,11 +44,31 @@
 	import IconBar from './components/IconBar.svelte';
 	import Icon from './components/Icon.svelte';
 	import Modal from './components/Modal.svelte';
+	import EditPane from './components/EditPane.svelte';
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
 
 	print("Initialising app...");
+	document.getElementById('app').addEventListener('DOMSubtreeModified', function () {
+			// prevent events in svelte elements propagating to gamemap
+			let svelteElements = document.querySelectorAll("[class*='svelte']");
+			for (let i = 0; i < svelteElements.length; i++) {
+				let element = svelteElements[i];
+
+				// element.addEventListener('mouseover', function () {
+        		// 	gamemap.getMapObject().dragging.disable();
+    			// });
+
+				// // Re-enable dragging when user's cursor leaves the element
+				// element.addEventListener('mouseout', function () {
+				// 	gamemap.getMapObject().dragging.enable();
+				// });
+
+				L.DomEvent.disableScrollPropagation(element);
+				// L.DomEvent.disableClickPropagation(element);
+			}
+	}, false);
 
 	// set up state variables
 	let isLoading = true;
@@ -59,6 +79,7 @@
 	let errorReason = "";
 	let mapConfig = null;
 	let gamemap = null;
+	let gamemapContainer = null;
 	let canEdit = false;
 	let currentZoom = getURLParams().has("zoom") ? getURLParams().get("zoom") : 0;
 	$: currentWorld = null;
@@ -215,8 +236,9 @@
 			setLoading,
 		};
 
-		window.gamemap = new Gamemap(null, mapConfig, mapCallbacks);
+		window.gamemap = new Gamemap(gamemapContainer, mapConfig, mapCallbacks);
 		gamemap = window.gamemap;
+
 	}
 
 	function setWindowTitle(worldName) {
@@ -265,7 +287,6 @@
         } else {
 			gamemap.setZoomTo(data.detail)
 		}
-
 	}
 
 	function onPermissionsLoaded(enableEditing) {
@@ -293,88 +314,90 @@
 
 <!-- App markup -->
 <markup>
+
 	<!-- Gamemap container -->
-	{#if gamemap}
+	<div id="gamemap" bind:this={gamemapContainer}>
+		{#if gamemap}
+			<!-- only show ui when ui is enabled -->
+			{#if showUI}
 
-		<!-- only show ui when ui is enabled -->
-		{#if showUI}
-
-			<!-- only show loading bar when map is loading -->
-			{#if isLoading}
-				<ProgressBar/>
-			{/if}
-
-			<!-- otherwise, show these elements when fully loaded -->
-			{#if isLoaded}
-				<!-- only show these elements when not being embedded -->
-				{#if !gamemap.isEmbedded()}
-
-					<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom}/>
-					<SearchPane/>
-
-					<!-- show layer switcher when available -->
-					{#if showLayerSwitcher}
-						<LayerSwitcher world={currentWorld} gridEnabled={gridEnabled} on:gridChecked={(e) => gridEnabled = e.detail}/>
-					{/if}
-
-					<IconBar>
-						<slot:template slot="primary">
-							{#if canEdit}<IconButton icon="edit" tooltip="Toggle edit pane" noMobile="true" checked="false" on:checked={() => (print("not implemented"))}/>{/if}
-							<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu'>
-								<!-- Menu Items -->
-								<ul id='overflow-menu' class='dropdown-content'>
-									<li class="waves-effect"><a class="modal-trigger" title="See help info" href="#help_modal" on:click={() => (showHelp = true)}><Icon name="help_outline"/>Help</a></li>
-									<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>
-									<li class="waves-effect"><a class="modal-trigger" title="Show map key" href="#map_key_modal" on:click={() => (showMapKey = true)}><Icon name="list"/>Map Key</a></li>
-									<!-- svelte-ignore a11y-click-events-have-key-events -->
-									<li class="waves-effect"><a on:click={toggleFullscreen} id="fullscreen-toggle" title="Toggle fullscreen mode"><Icon name={(!isFullscreen) ? "fullscreen" : "fullscreen_exit"}/>{(!isFullscreen) ? "Fullscreen" : "Exit"}</a></li>
-								</ul>
-							</IconButton>
-						</slot:template>
-
-						<slot:template slot="secondary">
-
-							{#if gamemap.hasMultipleWorlds()}
-								<IconButton icon="explore" label={currentWorld.displayName} tooltip="Show location list" dropdown="true" checked={showLocationList} on:checked={(e) => (showLocationList = e.detail)}/>
-								<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" on:click={() => {
-									print("Getting article link...");
-									let link = gamemap.getArticleLink();
-									if (link != null && link != "") {
-										window.open(link);
-									}
-								}}/>
-							{/if}
-
-							<!-- svelte-ignore missing-declaration -->
-							<IconButton icon="link" label="Copy Link" tooltip="Copy link to this location" on:click={() => {
-								print("Copying link to clipboard...");
-								M.toast({html: 'Map link copied to clipboard!'});
-								navigator.clipboard.writeText(window.location);
-							}}/>
-
-						</slot:template>
-					</IconBar>
-
-					{#if showLocationList}
-						 <LocationList on:dismiss={() => (showLocationList = false)} currentTab={locationListTab} on:tabChange={(e) => (locationListTab = e.detail)}/>
-					{/if}
-
+				<!-- only show loading bar when map is loading -->
+				{#if isLoading}
+					<ProgressBar/>
 				{/if}
-			{/if}
 
-			<!-- Watermark -->
-			{#if !gridEnabled}
-				<LayerOptionsContainer>
-					<Watermark mapName = {mapConfig.mapTitle} embedded = {gamemap.isEmbedded()}/>
-				</LayerOptionsContainer>
-			{/if}
+				<!-- otherwise, show these elements when fully loaded -->
+				{#if isLoaded}
+					<!-- only show these elements when not being embedded -->
+					{#if !gamemap.isEmbedded()}
 
-			<!-- Show debug tag in top right corner if app is in dev mode -->
-			<!-- svelte-ignore missing-declaration -->
-			{#if isDebug}
-				<DebugBadge/>
+						<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom}/>
+						<SearchPane/>
+
+						<!-- show layer switcher when available -->
+						{#if showLayerSwitcher}
+							<LayerSwitcher world={currentWorld} gridEnabled={gridEnabled} on:gridChecked={(e) => gridEnabled = e.detail}/>
+						{/if}
+
+						<IconBar>
+							<slot:template slot="primary">
+								{#if canEdit}<IconButton icon="edit" tooltip="Toggle edit pane" noMobile="true" checked="false" on:checked={(e) => editMode = e.detail}/>{/if}
+								<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu'>
+									<!-- Menu Items -->
+									<ul id='overflow-menu' class='dropdown-content'>
+										<li class="waves-effect"><a class="modal-trigger" title="See help info" href="#help_modal" on:click={() => (showHelp = true)}><Icon name="help_outline"/>Help</a></li>
+										<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>
+										<li class="waves-effect"><a class="modal-trigger" title="Show map key" href="#map_key_modal" on:click={() => (showMapKey = true)}><Icon name="list"/>Map Key</a></li>
+										<!-- svelte-ignore a11y-click-events-have-key-events -->
+										<li class="waves-effect"><a on:click={toggleFullscreen} id="fullscreen-toggle" title="Toggle fullscreen mode"><Icon name={(!isFullscreen) ? "fullscreen" : "fullscreen_exit"}/>{(!isFullscreen) ? "Fullscreen" : "Exit"}</a></li>
+									</ul>
+								</IconButton>
+							</slot:template>
+
+							<slot:template slot="secondary">
+
+								{#if gamemap.hasMultipleWorlds()}
+									<IconButton icon="explore" label={currentWorld.displayName} tooltip="Show location list" dropdown="true" checked={showLocationList} on:checked={(e) => (showLocationList = e.detail)}/>
+									<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" on:click={() => {
+										print("Getting article link...");
+										let link = gamemap.getArticleLink();
+										if (link != null && link != "") {
+											window.open(link);
+										}
+									}}/>
+								{/if}
+
+								<!-- svelte-ignore missing-declaration -->
+								<IconButton icon="link" label="Copy Link" tooltip="Copy link to this location" on:click={() => {
+									print("Copying link to clipboard...");
+									M.toast({html: 'Map link copied to clipboard!'});
+									navigator.clipboard.writeText(window.location);
+								}}/>
+
+							</slot:template>
+						</IconBar>
+
+						{#if showLocationList}
+							<LocationList on:dismiss={() => (showLocationList = false)} currentTab={locationListTab} on:tabChange={(e) => (locationListTab = e.detail)}/>
+						{/if}
+
+					{/if}
+				{/if}
+
+				<!-- Watermark -->
+				{#if !gridEnabled}
+					<LayerOptionsContainer>
+						<Watermark mapName = {mapConfig.mapTitle} embedded = {gamemap.isEmbedded()}/>
+					</LayerOptionsContainer>
+				{/if}
+
 			{/if}
 		{/if}
+	</div>
+
+	<!-- Edit panel -->
+	{#if editMode}
+		<EditPane/>
 	{/if}
 
 	<!-- Preloading components -->
@@ -418,6 +441,12 @@
 	<!-- Map selection menu -->
 	{#if showMaps}
 		<MapChooser/>
+	{/if}
+
+	<!-- Show debug tag in top right corner if app is in dev mode -->
+	<!-- svelte-ignore missing-declaration -->
+	{#if isDebug}
+		<DebugBadge/>
 	{/if}
 
 </markup>

@@ -46,6 +46,7 @@
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+        cursor: auto;
     }
 
     #watermark:hover {

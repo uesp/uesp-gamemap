@@ -58,6 +58,7 @@
         pointer-events: none;
         display: inline;
         top: var(--padding_minimum);
+        z-index: 1000;
     }
 
     .icon_bar_primary {
@@ -68,6 +69,7 @@
         width: fit-content;
         max-height: calc(var(--appbar_dimen) + var(--padding_small));
         overflow-y: hidden;
+        z-index: 900 !important;
     }
 
 </style>

@@ -1201,6 +1201,18 @@ export default class Gamemap {
 			map.panTo(event.latlng, {animate: true});
 		})
 
+		map.on("mousemove", function(event) {
+			if (event.originalEvent.explicitOriginalTarget != self.mapRoot) {
+				map.dragging.disable();
+			} else {
+				map.dragging.enable();
+			}
+		});
+
+		map.on("contextmenu", function (event) {
+			print(event);
+		});
+
 	}
 
 	onMarkerClicked(marker, shift, ctrl) {

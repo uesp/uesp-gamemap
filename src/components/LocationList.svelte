@@ -279,6 +279,7 @@
         z-index: 100000;
         border-radius: var(--padding_medium);
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
+        cursor: auto;
     }
 
     #location_list_content {
