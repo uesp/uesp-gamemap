@@ -215,6 +215,12 @@
     #actions-container {
         padding-top: 4px;
         padding-bottom: 6px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    #actions-container * {
+        flex-grow: 1;
     }
 
 </style>

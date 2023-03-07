@@ -450,6 +450,10 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	background-color: var(--selection) !important;
 }
 
+#actions-container >* {
+	flex-grow: 1;
+}
+
 /* map key dialog */
 #map_key_container {
 	width: 100%;
