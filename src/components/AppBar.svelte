@@ -20,6 +20,9 @@
     <div class="appbar">
         <IconButton icon={icon} hasBackground="false"></IconButton>
         <b class="appbar-title">{title}</b>
+
+
+
     </div>
 
 </markup>

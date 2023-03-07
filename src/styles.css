@@ -572,6 +572,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	line-height: 1.5;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
 	font-weight: normal;
+	font-size: 14px;
 	color: rgba(0, 0, 0, 0.87);
 }
 

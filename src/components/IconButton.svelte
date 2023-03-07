@@ -47,6 +47,7 @@ iconButton element:
             M.Dropdown.init(elems, {
                 constrainWidth: false,
                 closeOnClick: true,
+                alignment: "right",
             });
         }
     });

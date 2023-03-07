@@ -331,7 +331,7 @@
 
 						<IconBar>
 							<slot:template slot="primary">
-								{#if canEdit}<IconButton icon="edit" tooltip="Toggle edit pane" noMobile="true" checked="false" on:checked={(e) => editMode = e.detail}/>{/if}
+								{#if canEdit}<IconButton icon="edit" tooltip="Toggle map editor" noMobile="true" checked="false" on:checked={(e) => editMode = e.detail}/>{/if}
 								<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu'>
 									<!-- Menu Items -->
 									<ul id='overflow-menu' class='dropdown-content'>
