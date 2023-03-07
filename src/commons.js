@@ -58,6 +58,13 @@ window.COORD_TYPES = {
     WORLDSPACE : 2,
 }
 
+const MINUTE = 60;
+const HOUR = MINUTE * 60;
+const DAY = HOUR * 24;
+const WEEK = DAY * 7;
+const MONTH = DAY * 30;
+const YEAR = DAY * 365;
+
 /*================================================
 					Functions
 ================================================*/
@@ -386,4 +393,36 @@ window.getAverageCoord = function getAverageCoord(coords) {
 	}
 
 	return new Point(finalX / xs.length, finalY / ys.length, null, gamemap.getMapConfig().coordType);
+}
+
+/** Function turns a date object into a relative string (4 days ago)
+ * @param {Date} date - The date object to parse
+ * @returns {String} timeAgo - How long ago it was
+ */
+window.getTimeAgo = function getTimeAgo(date) {
+  const secondsAgo = Math.round((Date.now() - Number(date)) / 1000);
+
+  if (secondsAgo < MINUTE) {
+    return secondsAgo + ` second${secondsAgo !== 1 ? "s" : ""} ago`;
+  }
+
+  let divisor;
+  let unit = "";
+
+  if (secondsAgo < HOUR) {
+    [divisor, unit] = [MINUTE, "minute"];
+  } else if (secondsAgo < DAY) {
+    [divisor, unit] = [HOUR, "hour"];
+  } else if (secondsAgo < WEEK) {
+    [divisor, unit] = [DAY, "day"];
+  } else if (secondsAgo < MONTH) {
+    [divisor, unit] = [WEEK, "week"];
+  } else if (secondsAgo < YEAR) {
+    [divisor, unit] = [MONTH, "month"];
+  } else {
+    [divisor, unit] = [YEAR, "year"];
+  }
+
+  const count = Math.floor(secondsAgo / divisor);
+  return `${count} ${unit}${count > 1 ? "s" : ""} ago`;
 }

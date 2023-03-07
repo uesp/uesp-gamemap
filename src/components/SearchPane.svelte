@@ -276,7 +276,7 @@
                                 {#if searchResults.length > 0}
                                     {#each searchResults as result}
                                         <!-- svelte-ignore missing-declaration -->
-                                        <ListItem title={result.name} description={result.description} icon={result.icon} destinationID={result.destinationID} on:click={(e) => {goto(e.detail)}}/>
+                                        <ListItem title={result.name} hasIcon={true} description={result.description} icon={result.icon} destinationID={result.destinationID} on:click={(e) => {goto(e.detail)}}/>
                                     {/each}
                                      <!-- search results go here-->
                                 {:else}

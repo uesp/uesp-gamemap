@@ -1713,9 +1713,6 @@ export default class Gamemap {
 // 	return true;
 // }
 
-
-
-
 // uesp.gamemap.Map.prototype.onReceiveCenterOnLocationData = function (data)
 // {
 // 	uesp.printDebug(uesp.print_LEVEL_INFO, "Received centeron location data");
@@ -2061,57 +2058,6 @@ export default class Gamemap {
 // 	return false;
 // }
 
-
-// uesp.gamemap.Map.prototype.updateRecentChanges = function ()
-// {
-// 	var self = this;
-
-// 	var queryParams = {};
-// 	queryParams.action = "get_rc";
-// 	queryParams.db = this.mapConfig.dbPrefix;
-
-// 	if (this.mapConfig.isOffline)
-// 	{
-// 		// Do nothing
-// 	}
-// 	else
-// 	{
-// 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
-// 			self.onReceiveRecentChanges(data);
-// 		});
-// 	}
-// }
-
-
-// uesp.gamemap.Map.prototype.onReceiveRecentChanges = function (data)
-// {
-
-// 	if (data == null || data.recentChanges == null)
-// 	{
-// 		this.clearRecentChanges();
-// 		return false;
-// 	}
-
-// 	var output = "";
-
-// 	for (key in data.recentChanges)
-// 	{
-// 		recentChange = data.recentChanges[key];
-
-// 		let imageURL = this.mapConfig.iconPath + recentChange.iconType + ".png";
-
-// 		output += "<div class='gmMapRCItem' onclick='g_GameMap.jumpToDestination(" + recentChange.locationId + ", true, true);'>";
-// 		output += "<img src='" + imageURL + "' class='gmMapRCItemIcon' />";
-// 		output += "<div class='gmMapRCItemName'>" + recentChange.locationName  + "</div>";
-// 		output += " <div class='gmMapRCItemSmall'>(" + recentChange.worldDisplayName + ") -- " + recentChange.editTimestamp + "</div>";
-// 		output += "</div>";
-// 	}
-
-// 	this.recentChangesRoot.html(output);
-
-// 	return true;
-// }
-
 // uesp.gamemap.Location.prototype.setPopupEditNotice = function (Msg, MsgType)
 // {
 // 	if (this.popupElement == null) return;
@@ -2134,4 +2080,3 @@ export default class Gamemap {
 // 	else if (MsgType === 'error')
 // 		$status.addClass('gmMapEditPopupStatusError');
 // }
-

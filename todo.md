@@ -19,6 +19,13 @@ doesnt look like a lot, but had to do a lot of jiggery pokery to get the edit pa
 - fixed OB, SR and BS not having favicon
 
 
+update RC api to have action
+
+(small icons to denote action (added / edited / deleted)? + / some arrows or gear idk / x for example)
+
+on actions - could also colour-code it, give that circle green tint for create, none for edit, red for delete, hmmm.
+
+
 ## todo
 
 
