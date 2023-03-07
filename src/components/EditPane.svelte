@@ -13,33 +13,58 @@
     import { tweened } from 'svelte/motion';
 	import { cubicInOut } from 'svelte/easing';
 
-
     // import ui components
     import AppBar from './AppBar.svelte';
     import Button from './Button.svelte';
 
-    // state vars and constants
-    let editPanel;
+    // constants
+    const PAGE = { HOME : 0, EDIT_WORLD : 1, EDIT_LOCATION : 2 }
+    const OVERLAY = { NONE : 0, LOCATION : 2, PATH : 3, AREA : 4}
     const PANEL_WIDTH = 480;
     const ANIMATION_DURATION = 350;
     const TWEEN = tweened(0, {duration: ANIMATION_DURATION, easing: cubicInOut } );
-    TWEEN.set(1);
 
-    // on added to DOM
+    // state vars
+    let editPanel;
+    $: currentPage = PAGE.HOME;
+    $: currentOverlays  = OVERLAY.NONE;
+    export let isShown = true;
+    let unsavedChanges = false;
+
+    // initiate
+    TWEEN.set(1);
     onMount(async () => {
         // call resize event whenever edit panel is resized
         const resizeObserver = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
         resizeObserver.observe(editPanel);
     });
 
+    export function dismiss() {
+        isShown = false;
+    }
+
+    function onBackPressed() {
+
+        switch (currentPage) {
+            default:
+            case PAGE.HOME && !unsavedChanges:
+                dismiss();
+                break;
+            case PAGE.EDIT_LOCATION && !unsavedChanges:
+                currentPage = PAGE.HOME;
+                break;
+            case PAGE.EDIT_WORLD && !unsavedChanges:
+                currentPage = PAGE.HOME;
+                break;
+        }
+
+    }
+
     // slide out animation
     function slideOut() { TWEEN.set(0);
         gamemap.getMapObject().invalidateSize();
         return { ANIMATION_DURATION, css: () => `width: ${$TWEEN * PANEL_WIDTH}`};
     }
-
-
-
 </script>
 
 
@@ -48,8 +73,7 @@
 
         <div id="edit-overlay"></div>
 
-        <AppBar title="Map Editor"></AppBar>
-
+        <AppBar title="Map Editor" icon={currentPage != PAGE.HOME ? "arrow_back" : "close"} on:backClicked={onBackPressed}/>
 
         <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}}>
 
@@ -58,7 +82,7 @@
                 <Button text="Edit World" icon="public"></Button>
                 <Button text="Add Location" icon="add_location_alt"></Button>
                 <Button text="Add Path" icon="polyline"></Button>
-                <Button text="Add Area" icon="select"></Button>
+                <Button text="Add Area" icon="rectangle"></Button>
             </div>
             <b>Recent Changes</b>
         </div>

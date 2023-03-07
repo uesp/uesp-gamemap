@@ -8,17 +8,27 @@
 
 
 <script>
+    // import svelte stuff
+    import { createEventDispatcher } from "svelte";
+
+    // import ui components
     import IconButton from "./IconButton.svelte";
 
-    export let icon = "close";
+    export let icon = "arrow_back";
     export let title = "This is an appbar."
     export let subtitle;
+
+    const dispatch = createEventDispatcher();
+
+    function onBackClicked() {
+        dispatch("backClicked", "clicked");
+    }
 
 </script>
 
 <markup>
     <div class="appbar">
-        <IconButton icon={icon} hasBackground="false"></IconButton>
+        <IconButton icon={icon} hasBackground="false" on:click={onBackClicked}></IconButton>
         <div class="title-container">
             <b class="appbar-title">{title}</b>
             {#if subtitle != null}
@@ -32,6 +42,7 @@
 
     .appbar-title {
         font-size: 1.1rem;
+        margin-left: 6px;
     }
 
     .appbar {
