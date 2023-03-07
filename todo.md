@@ -4,7 +4,10 @@
 
 
 - added edit sidebar
-
+- added refresh button to recent changes
+- added username as well as relative date (5 days ago) to recent changes
+- can still hover over the date to get the real date
+- got recent changes and edit sidebar working
 
 
 technical:
@@ -25,6 +28,8 @@ update RC api to have action
 
 on actions - could also colour-code it, give that circle green tint for create, none for edit, red for delete, hmmm.
 
+
+RC doesnt show world edits?
 
 ## todo
 

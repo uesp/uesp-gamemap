@@ -19,6 +19,7 @@
     import Button from './Button.svelte';
     import LoadingSpinner from './LoadingSpinner.svelte';
     import ListItem from './ListItem.svelte';
+    import Icon from './Icon.svelte';
 
     // constants
     const PAGE = { HOME : 0, EDIT_WORLD : 1, EDIT_LOCATION : 2 }
@@ -74,6 +75,7 @@
     function getRecentChanges() {
 
         print("getting recent changes...")
+        recentChanges = [];
     	let queryParams = {};
     	queryParams.action = "get_rc";
     	queryParams.db = gamemap.getMapConfig().database;
@@ -149,6 +151,8 @@
                 <Button text="Add Area" icon="rectangle"></Button>
             </div>
             <b>Recent Changes</b>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <div id="refresh-button" title="Refresh the Recent Changes list" class="waves-effect" on:click={getRecentChanges}><Icon name="refresh"/></div>
             <div id="recent-changes-container">
                 {#if recentChanges.length > 0}
                     <VirtualList
@@ -219,8 +223,8 @@
         flex-wrap: wrap;
     }
 
-    #actions-container * {
-        flex-grow: 1;
+    #refresh-button {
+        float: right;
     }
 
 </style>
