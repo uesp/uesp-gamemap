@@ -126,4 +126,4 @@ Long pressing the **Zoom Out** ( - ) button will reset the map view and centre i
 
 ##### Map Editing
 
-Certain users of the UESPWiki are able to edit, modify the map world, and its locations. If you are one of these users, and are logged in, a button to enable to the Edit Pane ( <i class="material-icons tiny">edit</i> ) should appear next to the **Overflow Menu** button ( <i class="material-icons tiny">more_vert</i> ) in the top right. This will allow you to modify the current map world, and its locations in any way you see fit. To quickly edit a location, you can shift-click on it.
+Certain users of the UESPWiki are able to edit, modify the map world, and its locations. If you are one of these users, and are logged in, a button to show to the Map Editor ( <i class="material-icons tiny">edit</i> ) should appear next to the **Overflow Menu** button ( <i class="material-icons tiny">more_vert</i> ) in the top right of the screen. This will allow you to modify the current map world, and its locations in any way you see fit. To quickly edit a location, you can shift-click on it.

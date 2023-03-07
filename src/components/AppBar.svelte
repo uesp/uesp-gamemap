@@ -12,22 +12,21 @@
 
     export let icon = "close";
     export let title = "This is an appbar."
+    export let subtitle;
 
 </script>
 
 <markup>
-
     <div class="appbar">
         <IconButton icon={icon} hasBackground="false"></IconButton>
-        <b class="appbar-title">{title}</b>
-
-
-
+        <div class="title-container">
+            <b class="appbar-title">{title}</b>
+            {#if subtitle != null}
+                <small>{subtitle}</small>
+            {/if}
+        </div>
     </div>
-
 </markup>
-
-
 
 <style>
 
@@ -44,6 +43,15 @@
         padding-left: 4px;
         padding-right: var(--padding_minimum);
         align-items: center;
+        display: inline-flex;
+    }
+
+    .title-container {
+        display: inline-grid;
+    }
+
+    small {
+        color: var(--text_low_emphasis);
     }
 
 </style>

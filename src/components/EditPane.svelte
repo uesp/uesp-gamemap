@@ -16,6 +16,7 @@
 
     // import ui components
     import AppBar from './AppBar.svelte';
+    import Button from './Button.svelte';
 
     // state vars and constants
     let editPanel;
@@ -45,22 +46,21 @@
 <markup>
     <aside id="edit-panel" bind:this={editPanel} style="width: {$TWEEN * PANEL_WIDTH}px;" out:slideOut>
 
-
         <div id="edit-overlay"></div>
-
 
         <AppBar title="Map Editor"></AppBar>
 
 
         <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}}>
 
-
-            <b>stuff coming here soon</b>
-
-
-
-
-
+            <b>Actions</b><br/>
+            <div id="actions-container">
+                <Button text="Edit World" icon="public"></Button>
+                <Button text="Add Location" icon="add_location_alt"></Button>
+                <Button text="Add Path" icon="polyline"></Button>
+                <Button text="Add Area" icon="select"></Button>
+            </div>
+            <b>Recent Changes</b>
         </div>
     </aside>
 </markup>
@@ -77,12 +77,26 @@
     }
 
     #edit-overlay {
-        background-color: rgba(0, 0, 0, 0.60);
+        background-color: rgba(0, 0, 0, 0.65);
         width: 100%;
         height: 100%;
         position: absolute;
         pointer-events: all;
         z-index: 5;
+        display: none;
+    }
+
+    #edit-panel-content {
+        padding: var(--padding_minimum);
+    }
+
+    b {
+        font-size: 16px;
+    }
+
+    #actions-container {
+        padding-top: 4px;
+        padding-bottom: 6px;
     }
 
 </style>
