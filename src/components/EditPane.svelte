@@ -88,7 +88,7 @@
                 // recent changes item object
                 let RecentChangesItem = class {
                     constructor(icon, editID, user, timestamp, locationName, destinationID, worldID, worldName, description) {
-                        this.icon = icon //iconType || null;
+                        this.icon = (icon != 0) ? icon : null //iconType || null;
                         this.editID = editID; //id
                         this.user = user //editUserText;
                         this.timestamp = timestamp //editTimestamp;
@@ -161,29 +161,19 @@
                         width="100%"
                         height={window.innerHeight - recentChangesContainer.offsetTop}
                         itemCount={recentChanges.length}
-                        itemSize={50}>
+                        itemSize={60}>
                         <div slot="item" let:index let:style {style}>
                             {@const RCItem = recentChanges[index]}
-                            <ListItem title={RCItem.locationName} description={RCItem.worldName} destinationID={RCItem.destinationID} compact={true}
-                             icon={RCItem.icon} hasIcon={true} user={RCItem.user} timestamp={RCItem.timestamp}></ListItem>
+                            {@const isWorld = RCItem.destinationID > 0}
+                            <!-- svelte-ignore missing-declaration -->
+                            <ListItem title={RCItem.locationName} subtitle={RCItem.worldName} destinationID={RCItem.destinationID} compact={true} bold={isWorld}
+                             icon={(RCItem.icon != null) ? gamemap.getMapConfig().iconPath + RCItem.icon + ".png" : (isWorld) ? "public" : "location_on"} user={RCItem.user} timestamp={RCItem.timestamp}></ListItem>
                         </div>
                     </VirtualList>
                 {:else}
                     <LoadingSpinner/>
                 {/if}
             </div>
-
-            <!-- // for (key in data.recentChanges) {
-                //     recentChange = data.recentChanges[key];
-
-                //     let imageURL = this.mapConfig.iconPath + recentChange.iconType + ".png";
-
-                //     output += "<div class='gmMapRCItem' onclick='g_GameMap.jumpToDestination(" + recentChange.locationId + ", true, true);'>";
-                //     output += "<img src='" + imageURL + "' class='gmMapRCItemIcon' />";
-                //     output += "<div class='gmMapRCItemName'>" + recentChange.locationName  + "</div>";
-                //     output += " <div class='gmMapRCItemSmall'>(" + recentChange.worldDisplayName + ") -- " + recentChange.editTimestamp + "</div>";
-                //     output += "</div>";
-                // } -->
 
         </div>
     </aside>

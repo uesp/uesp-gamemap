@@ -276,9 +276,9 @@
                                 {#if searchResults.length > 0}
                                     {#each searchResults as result}
                                         <!-- svelte-ignore missing-declaration -->
-                                        <ListItem title={result.name} hasIcon={true} description={result.description} icon={result.icon} destinationID={result.destinationID} on:click={(e) => {goto(e.detail)}}/>
+                                        {@const isWorld = result.destinationID > 0}
+                                        <ListItem title={result.name} subtitle={(!isWorld && gamemap.hasMultipleWorlds()) ? result.description : null} icon={(result.icon != null) ? gamemap.getMapConfig().iconPath + result.icon + ".png" : (isWorld) ? "public" : "location_on"} destinationID={result.destinationID} bold={isWorld} on:click={(e) => {goto(e.detail)}}/>
                                     {/each}
-                                     <!-- search results go here-->
                                 {:else}
                                     <b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small);'>No results found.</b>
                                 {/if}
