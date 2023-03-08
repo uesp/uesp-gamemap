@@ -31,6 +31,9 @@ on actions - could also colour-code it, give that circle green tint for create, 
 
 RC doesnt show world edits?
 
+problems/suggestions:
+RC timestamp not in UTC?
+
 ## todo
 
 

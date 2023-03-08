@@ -30,6 +30,8 @@
 
     // state vars
     let editPanel;
+    let recentChangesContainer;
+    let appBar;
     $: currentPage = PAGE.HOME;
     $: currentOverlay  = OVERLAY.NONE;
     export let isShown = true;
@@ -137,7 +139,7 @@
         {/if}
 
         <!-- edit panel appbar -->
-        <AppBar title="Map Editor" icon={currentPage != PAGE.HOME ? "arrow_back" : "close"} on:backClicked={onBackPressed}/>
+        <AppBar title="Map Editor" icon={currentPage != PAGE.HOME ? "arrow_back" : "close"} on:backClicked={onBackPressed} bind:this={appBar}/>
 
         <!-- edit panel content -->
         <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}}>
@@ -147,17 +149,17 @@
                 <!-- svelte-ignore missing-declaration -->
                 <Button text="Edit World" icon="public" on:click={() => (gotoPage(PAGE.EDIT_WORLD, gamemap.getCurrentWorld()))}></Button>
                 <Button text="Add Location" icon="add_location_alt"></Button>
-                <Button text="Add Path" icon="polyline"></Button>
-                <Button text="Add Area" icon="rectangle"></Button>
+                <Button text="Add Path" icon="timeline"></Button>
+                <Button text="Add Area" icon="local_hospital"></Button>
             </div>
             <b>Recent Changes</b>
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div id="refresh-button" title="Refresh the Recent Changes list" class="waves-effect" on:click={getRecentChanges}><Icon name="refresh"/></div>
-            <div id="recent-changes-container">
+            <div id="recent-changes-container" bind:this={recentChangesContainer}>
                 {#if recentChanges.length > 0}
                     <VirtualList
                         width="100%"
-                        height={500}
+                        height={window.innerHeight - recentChangesContainer.offsetTop}
                         itemCount={recentChanges.length}
                         itemSize={50}>
                         <div slot="item" let:index let:style {style}>
@@ -210,6 +212,7 @@
 
     #edit-panel-content {
         padding: var(--padding_minimum);
+        height: 100%;
     }
 
     b {
@@ -225,6 +228,12 @@
 
     #refresh-button {
         float: right;
+    }
+
+    #recent-changes-container {
+        height: 100%;
+        display: inline-block;
+        width: 100%;
     }
 
 </style>

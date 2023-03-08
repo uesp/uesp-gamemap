@@ -68,7 +68,7 @@
     <div class='collection' class:selected={selected}>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-missing-attribute -->
-        <a class='collection-item waves-effect list-item' class:avatar={hasIcon} on:click={onClick} title={(isWorld) ? "Click to visit this map" : (isLocation) ? "Click to centre on this location" : null} class:compact={compact}>
+        <a class='collection-item waves-effect list-item' class:avatar={hasIcon} on:click={onClick} class:compact={compact}>
             {#if hasIcon}
                 {#if iconIsURL}
                     <!-- svelte-ignore missing-declaration -->
