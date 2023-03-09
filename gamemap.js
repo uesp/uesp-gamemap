@@ -4828,13 +4828,23 @@ uesp.gamemap.Map.prototype.onReceiveRecentChanges = function (data)
 	{
 		recentChange = data.recentChanges[key];
 		
-		let imageURL = this.mapOptions.iconPath + recentChange.iconType + ".png";
-		
-		output += "<div class='gmMapRCItem' onclick='g_GameMap.jumpToDestination(" + recentChange.locationId + ", true, true);'>";
-		output += "<img src='" + imageURL + "' class='gmMapRCItemIcon' />";
-		output += "<div class='gmMapRCItemName'>" + recentChange.locationName  + "</div>";
-		output += " <div class='gmMapRCItemSmall'>(" + recentChange.worldDisplayName + ") -- " + recentChange.editTimestamp + "</div>";
-		output += "</div>";
+		if (recentChange.iconType == null)
+		{
+			output += "<div class='gmMapRCItem' onclick='g_GameMap.jumpToWorld(" + recentChange.worldId + ");'>";
+			output += "<div class='gmMapRCItemName'><b>" + recentChange.worldDisplayName + "</b></div>";
+			output += " <div class='gmMapRCItemSmall'> -- " + recentChange.editTimestamp + "</div>";
+			output += "</div>";
+		}
+		else
+		{
+			let imageURL = this.mapOptions.iconPath + recentChange.iconType + ".png";
+			
+			output += "<div class='gmMapRCItem' onclick='g_GameMap.jumpToDestination(" + recentChange.locationId + ", true, true);'>";
+			output += "<img src='" + imageURL + "' class='gmMapRCItemIcon' />";
+			output += "<div class='gmMapRCItemName'>" + recentChange.locationName  + "</div>";
+			output += " <div class='gmMapRCItemSmall'>(" + recentChange.worldDisplayName + ") -- " + recentChange.editTimestamp + "</div>";
+			output += "</div>";
+		}
 	}
 	
 	this.recentChangesRoot.html(output);

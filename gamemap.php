@@ -291,6 +291,7 @@ class GameMap
 					editUserId BIGINT NOT NULL,
 					editUserText TEXT NOT NULL,
 					editTimestamp TIMESTAMP NOT NULL,
+					editAction TINYTEXT NOT NULL,
 					editComment TEXT NOT NULL,
 					patrolled TINYINT NOT NULL,
 					PRIMARY KEY (id)
@@ -378,7 +379,7 @@ class GameMap
 	}
 	
 	
-	public function addRevision ()
+	public function addRevision ($editAction, $oldRecord = null, $newRecord = null)
 	{
 		$userName = $_SERVER["REMOTE_ADDR"];
 		$userId = 0;
@@ -396,7 +397,7 @@ class GameMap
 		if ($this->locationId > 0) $query .= "locationId, ";
 		if ($this->worldHistoryId    > 0) $query .= "worldHistoryId, ";
 		if ($this->locationHistoryId > 0) $query .= "locationHistoryId,";
-		$query .= "editUserId, editUserText, editComment, editTimestamp, patrolled) VALUES(";
+		$query .= "editUserId, editUserText, editAction, editComment, editTimestamp, patrolled) VALUES(";
 		$query .= "{$this->revisionId}, ";			//parentId
 		if ($this->worldId > 0)    $query .= "{$this->worldId}, ";
 		if ($this->locationId > 0) $query .= "{$this->locationId}, ";
@@ -404,7 +405,14 @@ class GameMap
 		if ($this->locationHistoryId > 0) $query .= "{$this->locationHistoryId}, ";
 		$query .= "$userId, ";						//editUserId
 		$query .= "'$userName', ";					//editUserText
-		$query .= "'', ";							//editComment
+		
+		$editAction = $this->db->real_escape_string($editAction);
+		$query .= "'$editAction', ";				//editAction
+		
+		$editComment = $this->MakeEditComment($editAction, $oldRecord, $newRecord);
+		$editComment = $this->db->real_escape_string($editComment);
+		$query .= "'$editComment', ";				//editComment
+		
 		$query .= "UTC_TIMESTAMP(), ";				//editTimestamp
 		$query .= "0 ";								//patrolled
 		$query .= ");";
@@ -421,6 +429,24 @@ class GameMap
 		
 		$this->newRevisionId = $revisionId;
 		return true;
+	}
+	
+	
+	public function MakeEditComment($editAction, $oldRecord, $newRecord)
+	{
+		$comments = [];
+		
+		if ($oldRecord == null || $newRecord == null) return '';
+		
+		foreach ($oldRecord as $key => $oldValue)
+		{
+			$newValue = $newRecord[$key];
+			if ($newValue != $oldValue) $comments[] = $key;
+		}
+		
+		if (count($comments) == 0) return "Changed nothing";
+		$comment = 'Changed ' . implode(', ', $comments);
+		return $comment;
 	}
 	
 	
@@ -901,7 +927,7 @@ class GameMap
 		if (!$this->initDatabase()) return false;
 		
 		//select * from revision join location on location.id=revision.locationId join world on world.id=revision.worldId limit 10;
-		$query  = "SELECT revision.*, world.name as worldName, world.displayName as worldDisplayName, location.iconType as iconType, location.name as locationName from revision JOIN location ON location.id=revision.locationId JOIN world ON world.id=revision.worldId ORDER BY editTimestamp DESC LIMIT {$this->limitCount};";
+		$query  = "SELECT revision.*, world.name as worldName, world.displayName as worldDisplayName, location.iconType as iconType, location.name as locationName from revision LEFT JOIN location ON location.id=revision.locationId LEFT JOIN world ON world.id=revision.worldId ORDER BY editTimestamp DESC LIMIT {$this->limitCount};";
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve recent changes data!");
 		
@@ -977,7 +1003,7 @@ class GameMap
 		
 		$this->locationId = $this->db->insert_id;
 		
-		if (!$this->addRevision()) return false;
+		if (!$this->addRevision('add location')) return false;
 		if (!$this->updateLocationRevision($this->locationId)) return false;
 		if (!$this->copyToLocationHistory()) return false;
 		if (!$this->updateRevisionLocationHistory($this->newRevisionId)) return false;
@@ -994,6 +1020,11 @@ class GameMap
 		if (!$this->initDatabaseWrite()) return false;
 		
 		if (!$this->CanViewWorldId($this->worldId)) return false;
+		
+		$query = "SELECT * FROM world WHERE id='{$this->worldId}'";
+		$result = $this->db->query($query);
+		$oldWorld = null;
+		if ($result) $oldWorld = $result->fetch_assoc();
 		
 		$query  = "UPDATE world SET ";
 		$query .= "name='{$this->locName}', ";
@@ -1018,14 +1049,22 @@ class GameMap
 		$query .= " WHERE id={$this->worldId};";
 		
 		$result = $this->db->query($query);
-	
+		
 		if ($result === FALSE) {
 			error_log($query);
 			error_log($this->db->error);
 			return $this->reportError("Failed to save world data!");
 		}
 		
-		if (!$this->addRevision()) return false;
+		$query = "SELECT * FROM world WHERE id='{$this->worldId}'";
+		$result = $this->db->query($query);
+		$newWorld = null;
+		if ($result) $newWorld = $result->fetch_assoc();
+		
+		$editAction = "edit world";
+		if ($this->worldEnabled == 0) $editAction = "delete world";
+		
+		if (!$this->addRevision($editAction, $oldWorld, $newWorld)) return false;
 		if (!$this->updateWorldRevision($this->worldId)) return false;
 		if (!$this->copyToWorldHistory()) return false;
 		if (!$this->updateRevisionWorldHistory($this->newRevisionId)) return false;
@@ -1087,6 +1126,11 @@ class GameMap
 		
 		if (!$this->CanViewWorldId($this->worldId)) return false;
 		
+		$query = "SELECT * FROM location WHERE id='{$this->locationId}';";
+		$result = $this->db->query($query);
+		$oldLocation = null;
+		if ($result) $oldLocation = $result->fetch_assoc();
+		
 		$query  = "UPDATE location SET ";
 		$query .= "worldId={$this->worldId}, ";
 		$query .= "locType={$this->locType}, ";
@@ -1112,7 +1156,15 @@ class GameMap
 			return $this->reportError("Failed to save location data!");
 		}
 		
-		if (!$this->addRevision()) return false;
+		$query = "SELECT * FROM location WHERE id='{$this->locationId}';";
+		$result = $this->db->query($query);
+		$newLocation = null;
+		if ($result) $newLocation = $result->fetch_assoc();
+		
+		$editAction = "edit location";
+		if ($this->locVisible == 0) $editAction = "delete location";
+		
+		if (!$this->addRevision($editAction, $oldLocation, $newLocation)) return false;
 		if (!$this->updateLocationRevision($this->locationId)) return false;
 		if (!$this->copyToLocationHistory()) return false;
 		if (!$this->updateRevisionLocationHistory($this->newRevisionId)) return false;
