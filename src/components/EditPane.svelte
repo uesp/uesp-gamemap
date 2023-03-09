@@ -168,7 +168,8 @@
                             {@const isWorld = RCItem.destinationID > 0}
                             <!-- svelte-ignore missing-declaration -->
                             <ListItem title={(isWorld) ? RCItem.worldName : RCItem.locationName} subtitle={(!isWorld) ? RCItem.worldName : null} destinationID={RCItem.destinationID} compact={true} bold={isWorld}
-                             icon={(RCItem.icon != null) ? gamemap.getMapConfig().iconPath + RCItem.icon + ".png" : (isWorld) ? "public" : "location_on"} user={RCItem.user} timestamp={RCItem.timestamp}></ListItem>
+                             icon={(RCItem.icon != null) ? gamemap.getMapConfig().iconPath + RCItem.icon + ".png" : (isWorld) ? "public" : "location_on"} user={RCItem.user} timestamp={RCItem.timestamp}
+                             on:click={() => gamemap.goto(RCItem.destinationID)}></ListItem>
                         </div>
                     </VirtualList>
                 {:else}

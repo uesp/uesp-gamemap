@@ -490,8 +490,13 @@ export default class Gamemap {
 				print("going to location");
 				this.getLocation(locationID, onGetLocation);
 				function onGetLocation(location) {
-					print(location);
-					self.goto(location);
+					if (location != null) {
+						print(location);
+						self.goto(location);
+					} else {
+						M.toast({html: "That location doesn't exist!"});
+						self.mapCallbacks.setLoading(false);
+					}
 				}
 			}
 		}
@@ -926,6 +931,7 @@ export default class Gamemap {
 					}
 				} else {
 					print("LocationID " + locationID + " was invalid.");
+					onLoadFunction.call(null);
 				}
 			});
 		}
