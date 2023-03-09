@@ -161,6 +161,7 @@
                         width="100%"
                         height={window.innerHeight - recentChangesContainer.offsetTop}
                         itemCount={recentChanges.length}
+                        scrollToIndex={1}
                         itemSize={60}>
                         <div slot="item" let:index let:style {style}>
                             {@const RCItem = recentChanges[index]}

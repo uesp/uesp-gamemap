@@ -10,6 +10,8 @@
 - got recent changes and edit sidebar working
 
 
+
+
 technical:
 
 doesnt look like a lot, but had to do a lot of jiggery pokery to get the edit panel to work
@@ -20,6 +22,7 @@ doesnt look like a lot, but had to do a lot of jiggery pokery to get the edit pa
 
 ## Bug fixes:
 - fixed OB, SR and BS not having favicon
+fix: listitem icons (search result, RC) icons disappearing randomly
 
 
 update RC api to have action

@@ -403,7 +403,7 @@ window.getTimeAgo = function getTimeAgo(date) {
   const secondsAgo = Math.round((Date.now() - Number(date)) / 1000);
 
   if (secondsAgo < MINUTE) {
-    return secondsAgo + ` second${secondsAgo !== 1 ? "s" : ""} ago`;
+    return "Just now";
   }
 
   let divisor;
