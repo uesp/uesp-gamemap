@@ -24,6 +24,8 @@
     // create event dispatcher
     const dispatch = createEventDispatcher();
 
+    print(destinationID);
+
     function onClick() {
         dispatch("click", destinationID);
     }
@@ -56,8 +58,8 @@
                     {/if}
                 </div>
                 <div class="subtitle">
-                    {#if subtitle}
-                        <small class="list_subtitle" style='color: var(--text_low_emphasis);'>{subtitle}</small>
+                    {#if subtitle || user}
+                        <small class="list_subtitle" style='color: var(--text_low_emphasis);'>{(user && !subtitle) ? "" : subtitle}</small>
                     {/if}
                     {#if user}
                         <small class="author">
@@ -94,12 +96,10 @@
         min-height: 50px;
         max-height: 50px;
         padding: 8px 8px !important;
-        padding-left: 57px !important;
+        padding-left: 56.5px !important;
     }
 
     .compact .circle {
-        width: 40px !important;
-        height: 40px !important;
         left: 6px !important;
     }
 

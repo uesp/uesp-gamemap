@@ -913,7 +913,7 @@ class GameMap
 		if (!$this->initDatabase()) return false;
 
 		//select * from revision join location on location.id=revision.locationId join world on world.id=revision.worldId limit 10;
-		$query  = "SELECT revision.*, world.name as worldName, world.displayName as worldDisplayName, location.iconType as iconType, location.name as locationName from revision JOIN location ON location.id=revision.locationId JOIN world ON world.id=revision.worldId ORDER BY editTimestamp DESC LIMIT {$this->limitCount};";
+		$query  = "SELECT revision.*, world.name as worldName, world.displayName as worldDisplayName, location.iconType as iconType, location.name as locationName from revision LEFT JOIN location ON location.id=revision.locationId LEFT JOIN world ON world.id=revision.worldId ORDER BY editTimestamp DESC LIMIT {$this->limitCount};";
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve recent changes data!");
 

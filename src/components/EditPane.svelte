@@ -167,7 +167,7 @@
                             {@const RCItem = recentChanges[index]}
                             {@const isWorld = RCItem.destinationID > 0}
                             <!-- svelte-ignore missing-declaration -->
-                            <ListItem title={RCItem.locationName} subtitle={RCItem.worldName} destinationID={RCItem.destinationID} compact={true} bold={isWorld}
+                            <ListItem title={(isWorld) ? RCItem.worldName : RCItem.locationName} subtitle={(!isWorld) ? RCItem.worldName : null} destinationID={RCItem.destinationID} compact={true} bold={isWorld}
                              icon={(RCItem.icon != null) ? gamemap.getMapConfig().iconPath + RCItem.icon + ".png" : (isWorld) ? "public" : "location_on"} user={RCItem.user} timestamp={RCItem.timestamp}></ListItem>
                         </div>
                     </VirtualList>
