@@ -396,7 +396,7 @@ class GameMap
 		if ($this->locationId > 0) $query .= "locationId, ";
 		if ($this->worldHistoryId    > 0) $query .= "worldHistoryId, ";
 		if ($this->locationHistoryId > 0) $query .= "locationHistoryId,";
-		$query .= "editUserId, editUserText, editComment, patrolled) VALUES(";
+		$query .= "editUserId, editUserText, editComment, editTimestamp, patrolled) VALUES(";
 		$query .= "{$this->revisionId}, ";			//parentId
 		if ($this->worldId > 0)    $query .= "{$this->worldId}, ";
 		if ($this->locationId > 0) $query .= "{$this->locationId}, ";
@@ -405,6 +405,7 @@ class GameMap
 		$query .= "$userId, ";						//editUserId
 		$query .= "'$userName', ";					//editUserText
 		$query .= "'', ";							//editComment
+		$query .= "UTC_TIMESTAMP(), ";				//editTimestamp
 		$query .= "0 ";								//patrolled
 		$query .= ");";
 		
