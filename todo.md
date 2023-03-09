@@ -10,6 +10,12 @@
 - got recent changes and edit sidebar working
 
 
+- RC is fully responsive, text gets cropped, buttons reposition depending on size
+
+
+- aldo added edit overlay when doing area or line, but not shown currently
+
+
 
 
 technical:
@@ -49,12 +55,10 @@ RC timestamp not in UTC?
 - add permalink option in location popups
 - redesign location popups
 - fix polygons disappearing when outer points are not viewable (consider centre point as well)
-- fix icons randomly disappearng from listItem
 - make embeded map watermark actually open in new tab
 - fix maps not being centred properly on load
 - fix tooltip text: wikilink and detail not being put on separate lines
 - make labels clickable
-- import materialise buttons into svelte components
 - add continuous zoom, markers popup on zoom rather than zoomend
 - add way to show popups on centreon, optional param
 - fix losing grid on resize

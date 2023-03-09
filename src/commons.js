@@ -426,3 +426,23 @@ window.getTimeAgo = function getTimeAgo(date) {
   const count = Math.floor(secondsAgo / divisor);
   return `${count} ${unit}${count > 1 ? "s" : ""} ago`;
 }
+
+/** Get client locale function
+ * @returns {String} localeString - the user's locale string
+ */
+window.getClientLocale = function getClientLocale() {
+	if (typeof Intl !== 'undefined') {
+	  try {
+		return Intl.NumberFormat().resolvedOptions().locale;
+	  } catch (err) {
+		console.error("Cannot get locale from Intl")
+	  }
+	}
+}
+
+/** Convert UTC date to local date
+ * @returns {Date} date - a localised date object
+ */
+window.UTCtoLocalDate = function UTCtoLocalDate(date) {
+	return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
+}

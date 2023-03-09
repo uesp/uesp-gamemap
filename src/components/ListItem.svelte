@@ -50,7 +50,9 @@
                 <div class="title">
                     <b class="list_title" class:bold={bold} title={title}>{title}</b>
                     {#if timestamp}
-                        <small class="timestamp" title={timestamp}>{getTimeAgo(Date.parse(timestamp))}</small>
+                        {@const UTCDate = new Date(Date.parse(timestamp))}
+                        {@const localDate = UTCtoLocalDate(UTCDate)}
+                        <small class="timestamp" title={localDate}>{getTimeAgo(Date.parse(localDate))}</small>
                     {/if}
                 </div>
                 <div class="subtitle">
