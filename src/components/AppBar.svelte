@@ -46,7 +46,6 @@
     }
 
     .appbar {
-        /* height: var(--appbar_dimen); */
         width: 100%;
         background-color: var(--primary_variant_light);
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
@@ -59,6 +58,8 @@
 
     .title-container {
         display: inline-grid;
+        top: -1px;
+        position: relative;
     }
 
     small {

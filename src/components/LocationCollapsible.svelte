@@ -92,7 +92,7 @@
         box-sizing: border-box;
         border-bottom: 2px solid var(--divider);
         box-shadow: inset 0px 11px 8px -10px var(--shadow), inset 0px -11px 8px -10px var(--shadow);
-        padding-top: var(--padding_small);
+        padding-top: var(--padding_minimum);
         padding-right: 0px;
         padding-bottom: 0px;
         padding-left: 0px;

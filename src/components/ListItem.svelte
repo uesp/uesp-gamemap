@@ -48,7 +48,7 @@
             <div class="text">
                 <!-- svelte-ignore missing-declaration -->
                 <div class="title">
-                    <b class="list_title" class:bold={bold}>{title}</b>
+                    <b class="list_title" class:bold={bold} title={title}>{title}</b>
                     {#if timestamp}
                         <small class="timestamp" title={timestamp}>{getTimeAgo(Date.parse(timestamp))}</small>
                     {/if}
@@ -91,7 +91,8 @@
     .compact {
         min-height: 50px;
         max-height: 50px;
-        padding-left: 58px;
+        padding: 8px 8px !important;
+        padding-left: 57px !important;
     }
 
     .compact .circle {

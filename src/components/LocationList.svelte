@@ -258,7 +258,7 @@
                             <!-- svelte-ignore missing-declaration -->
                             <div slot="item" let:index let:style {style}>
                                 {@const world = gamemap.getWorldFromDisplayName(abcWorldList[index])}
-                                <ListItem title={world.displayName} destinationID={world.id} icon={false} selected={gamemap.getCurrentWorld().displayName == abcWorldList[index]} on:click={(e) => {gamemap.goto(e.detail); dismiss()}}></ListItem>
+                                <ListItem title={world.displayName} destinationID={world.id} selected={gamemap.getCurrentWorld().displayName == abcWorldList[index]} on:click={(e) => {gamemap.goto(e.detail); dismiss()}}></ListItem>
                             </div>
                         </VirtualList>
                     </div>
