@@ -20,11 +20,16 @@
     export let timestamp;
     export let compact;
     export let user;
+    export let action;
+    export let comment;
+    comment = (comment == "Changed visible") ? "Deleted" : comment;
+
+    print(action);
+    print(comment);
+    print(destinationID);
 
     // create event dispatcher
     const dispatch = createEventDispatcher();
-
-    print(destinationID);
 
     function onClick() {
         dispatch("click", destinationID);
@@ -45,6 +50,12 @@
                     <img class='circle' src={icon} width={gamemap.getMapConfig().iconSize} height={gamemap.getMapConfig().iconSize} title={iconTooltip}/>
                 {:else}
                     <i class="material-icons circle" title={iconTooltip}>{icon}</i>
+                {/if}
+                {#if action}
+                    {@const icon = (action.includes("edit") ? "edit" : action.includes("delete") ? "delete_forever" : "add")}
+                    <div title={comment} class="action" class:add={action.includes("add")} class:delete={action.includes("delete")} class:edit={action.includes("edit")}>
+                        <Icon name={icon} size=13></Icon>
+                    </div>
                 {/if}
             {/if}
             <div class="text">
@@ -123,10 +134,35 @@
 
     .list_title, .list_subtitle {
         flex-grow: 1;
-        width: 70%;
+        width: 60%;
         padding-right: 12px;
         white-space: nowrap;
         overflow: clip;
         text-overflow: ellipsis;
+    }
+
+    .action {
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        background-color: var(--selection);
+        position: absolute;
+        bottom: 8px;
+        left: 30px;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+    }
+
+    .action.delete {
+        background-color: var(--delete);
+    }
+
+    .action.edit {
+        background-color: var(--highlight_light);
+    }
+
+    .action.add {
+        background-color: var(--add);
     }
 </style>

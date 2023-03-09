@@ -87,7 +87,8 @@
 
                 // recent changes item object
                 let RecentChangesItem = class {
-                    constructor(icon, editID, user, timestamp, locationName, destinationID, worldID, worldName, description) {
+                    constructor(icon, editID, user, timestamp, locationName, destinationID, worldID,
+                                worldName, comment, action) {
                         this.icon = (icon != 0) ? icon : null //iconType || null;
                         this.editID = editID; //id
                         this.user = user //editUserText;
@@ -96,7 +97,8 @@
                         this.destinationID = destinationID //worldHistoryId != 0 ? worldId : -locationId;
                         this.worldID = worldID //worldId;
                         this.worldName = worldName //worldDisplayName;
-                        this.description = description // editComment;
+                        this.comment = comment // editComment;
+                        this.action = action // editAction;
                     }
                 };
 
@@ -105,8 +107,10 @@
                 for (let i = 0; i < data.recentChanges.length; i++) {
                     let change = data.recentChanges[i];
                     let destinationID = (change.worldHistoryId != 0) ? change.worldId : -change.locationId;
-                    // print(change);
-                    let changeItem = new RecentChangesItem(change.iconType, change.id, change.editUserText, change.editTimestamp, change.locationName, destinationID, change.worldId, change.worldDisplayName, change.editComment);
+                    let changeItem = new RecentChangesItem(change.iconType, change.id, change.editUserText,
+                                                           change.editTimestamp, change.locationName, destinationID,
+                                                           change.worldId, change.worldDisplayName, change.editComment,
+                                                           change.editAction);
                     tempList.push(changeItem);
                 }
                 recentChanges = tempList;
@@ -169,7 +173,7 @@
                             <!-- svelte-ignore missing-declaration -->
                             <ListItem title={(isWorld) ? RCItem.worldName : RCItem.locationName} subtitle={(!isWorld) ? RCItem.worldName : null} destinationID={RCItem.destinationID} compact={true} bold={isWorld}
                              icon={(RCItem.icon != null) ? gamemap.getMapConfig().iconPath + RCItem.icon + ".png" : (isWorld) ? "public" : "location_on"} user={RCItem.user} timestamp={RCItem.timestamp}
-                             on:click={() => gamemap.goto(RCItem.destinationID)}></ListItem>
+                             on:click={() => gamemap.goto(RCItem.destinationID)} action={RCItem.action} comment={RCItem.comment}/>
                         </div>
                     </VirtualList>
                 {:else}
