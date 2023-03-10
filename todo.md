@@ -46,6 +46,8 @@ RC timestamp not in UTC?
 ## todo
 
 
+- alphabeticise map key ui
+
 - cell resource state from url
 - do get centre of polygon to count towards isvisible
 - add allow long clicking on mobile to open popups
