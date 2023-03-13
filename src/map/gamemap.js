@@ -1284,7 +1284,9 @@ export default class Gamemap {
 			print("making popup");
 			L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
 		} else {
-			M.toast({html: "TODO: Editing not done yet."});
+			if (this.mapCallbacks != null) {
+				this.mapCallbacks.edit(marker.location);
+			}
 		}
 	}
 
@@ -2042,27 +2044,6 @@ export default class Gamemap {
 // 	return true;
 // }
 
-
-// uesp.gamemap.Map.prototype.onRecentChanges = function (element)
-// {
-// 	this.isShowingRecentChanges = !this.isShowingRecentChanges;
-
-// 	if (this.isShowingRecentChanges)
-// 	{
-// 		$(element).addClass('gmToggleButtonDown');
-// 		this.recentChangesRoot.width('340px');
-// 		this.mapContainer.css('right', '350px');
-
-// 		this.updateRecentChanges();
-// 	}
-// 	else
-// 	{
-// 		$(element).removeClass('gmToggleButtonDown');
-// 		this.recentChangesRoot.width('0px');
-// 		this.mapContainer.css('right', '0px');
-// 	}
-// 	return false;
-// }
 
 // uesp.gamemap.Location.prototype.setPopupEditNotice = function (Msg, MsgType)
 // {

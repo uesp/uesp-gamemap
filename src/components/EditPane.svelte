@@ -30,27 +30,46 @@
 
     // state vars
     let editPanel;
-    let recentChangesContainer;
     let appBar;
     $: currentPage = PAGE.HOME;
     $: currentOverlay  = OVERLAY.NONE;
-    export let isShown = true;
+    export let isShown = false;
     let unsavedChanges = false;
     let recentChanges = [];
+    const resizeObserver = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
 
-    // initiate
-    TWEEN.set(1);
-    onMount(async () => {
-        // call resize event whenever edit panel is resized
-        const resizeObserver = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
-        resizeObserver.observe(editPanel);
+    // public function to show/hide the panel, or edit an object
+    export function show(data) {
 
-        getRecentChanges();
-    });
+        data = (data == null) ? true : data;
 
-    export function dismiss() {
-        isShown = false;
+        if (data) {
+            isShown = true;
+
+            setTimeout(function() {
+                resizeObserver.observe(editPanel);
+                TWEEN.set(1);
+                if (recentChanges.length == 0) {
+                    getRecentChanges();
+                }
+		    }, 1);
+
+            // call resize event whenever edit panel is resized
+
+
+            // if (object instanceof Location) {
+
+            // } else if (object instanceof World) {
+
+            // }
+
+        } else {
+            isShown = false;
+        }
+
     }
+    export function edit(object) { show(object) }
+    export function dismiss() { show(false) }
 
     function gotoPage(page, data) {
         currentPage = page;
@@ -72,6 +91,7 @@
         }
 
     }
+
 
 
     function getRecentChanges() {
@@ -131,58 +151,60 @@
 
 
 <markup>
-    <aside id="edit-panel" bind:this={editPanel} style="width: {$TWEEN * PANEL_WIDTH}px;" out:slideOut>
+    {#if isShown}
+         <aside id="edit-panel" bind:this={editPanel} style="width: {$TWEEN * PANEL_WIDTH}px;" out:slideOut>
 
-        <!-- editing overlays (for adding paths, areas etc) -->
-        {#if currentOverlay != OVERLAY.NONE}
-            <div id="edit-overlay">
+             <!-- editing overlays (for adding paths, areas etc) -->
+             {#if currentOverlay != OVERLAY.NONE}
+                 <div id="edit-overlay">
 
 
 
-            </div>
-        {/if}
+                 </div>
+             {/if}
 
-        <!-- edit panel appbar -->
-        <AppBar title="Map Editor" icon={currentPage != PAGE.HOME ? "arrow_back" : "close"} on:backClicked={onBackPressed} bind:this={appBar}/>
+             <!-- edit panel appbar -->
+             <AppBar title="Map Editor" icon={currentPage != PAGE.HOME ? "arrow_back" : "close"} on:backClicked={onBackPressed} bind:this={appBar}/>
 
-        <!-- edit panel content -->
-        <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}}>
+             <!-- edit panel content -->
+             <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}}>
 
-            <b>Actions</b><br/>
-            <div id="actions-container">
-                <!-- svelte-ignore missing-declaration -->
-                <Button text="Edit World" icon="public" on:click={() => (gotoPage(PAGE.EDIT_WORLD, gamemap.getCurrentWorld()))}></Button>
-                <Button text="Add Location" icon="add_location_alt"></Button>
-                <Button text="Add Path" icon="timeline"></Button>
-                <Button text="Add Area" icon="local_hospital"></Button>
-            </div>
-            <b>Recent Changes</b>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div id="refresh-button" title="Refresh the Recent Changes list" class="waves-effect" on:click={getRecentChanges}><Icon name="refresh"/></div>
-            <div id="recent-changes-container" bind:this={recentChangesContainer}>
-                {#if recentChanges.length > 0}
-                    <VirtualList
-                        width="100%"
-                        height={window.innerHeight - recentChangesContainer.offsetTop}
-                        itemCount={recentChanges.length}
-                        scrollToIndex={1}
-                        itemSize={60}>
-                        <div slot="item" let:index let:style {style}>
-                            {@const RCItem = recentChanges[index]}
-                            {@const isWorld = RCItem.destinationID > 0}
-                            <!-- svelte-ignore missing-declaration -->
-                            <ListItem title={(isWorld) ? RCItem.worldName : RCItem.locationName} subtitle={(!isWorld) ? RCItem.worldName : null} destinationID={RCItem.destinationID} compact={true} bold={isWorld}
-                             icon={(RCItem.icon != null) ? gamemap.getMapConfig().iconPath + RCItem.icon + ".png" : (isWorld) ? "public" : "location_on"} user={RCItem.user} timestamp={RCItem.timestamp}
-                             on:click={() => gamemap.goto(RCItem.destinationID)} action={RCItem.action} comment={RCItem.comment}/>
-                        </div>
-                    </VirtualList>
-                {:else}
-                    <LoadingSpinner/>
-                {/if}
-            </div>
+                 <b>Actions</b><br/>
+                 <div id="actions-container">
+                     <!-- svelte-ignore missing-declaration -->
+                     <Button text="Edit World" icon="public" on:click={() => (gotoPage(PAGE.EDIT_WORLD, gamemap.getCurrentWorld()))}></Button>
+                     <Button text="Add Location" icon="add_location_alt"></Button>
+                     <Button text="Add Path" icon="timeline"></Button>
+                     <Button text="Add Area" icon="local_hospital"></Button>
+                 </div>
+                 <b>Recent Changes</b>
+                 <!-- svelte-ignore a11y-click-events-have-key-events -->
+                 <div id="refresh-button" title="Refresh the Recent Changes list" class="waves-effect" on:click={getRecentChanges}><Icon name="refresh"/></div>
+                 <div id="recent-changes-container">
+                     {#if recentChanges.length > 0}
+                         <VirtualList
+                             width="100%"
+                             height={window.innerHeight - 60}
+                             itemCount={recentChanges.length}
+                             scrollToIndex={1}
+                             itemSize={60}>
+                             <div slot="item" let:index let:style {style}>
+                                 {@const RCItem = recentChanges[index]}
+                                 {@const isWorld = RCItem.destinationID > 0}
+                                 <!-- svelte-ignore missing-declaration -->
+                                 <ListItem title={(isWorld) ? RCItem.worldName : RCItem.locationName} subtitle={(!isWorld) ? RCItem.worldName : null} destinationID={RCItem.destinationID} compact={true} bold={isWorld}
+                                  icon={(RCItem.icon != null) ? gamemap.getMapConfig().iconPath + RCItem.icon + ".png" : (isWorld) ? "public" : "location_on"} user={RCItem.user} timestamp={RCItem.timestamp}
+                                  on:click={() => gamemap.goto(RCItem.destinationID)} action={RCItem.action} comment={RCItem.comment}/>
+                             </div>
+                         </VirtualList>
+                     {:else}
+                         <LoadingSpinner/>
+                     {/if}
+                 </div>
 
-        </div>
-    </aside>
+             </div>
+         </aside>
+    {/if}
 </markup>
 
 
@@ -233,3 +255,4 @@
     }
 
 </style>
+<svelte:options accessors/>

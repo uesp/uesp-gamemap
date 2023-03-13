@@ -61,7 +61,6 @@ export default {
 				// enable run-time checks when not in production
 				dev: !production
 			},
-
 			preprocess: sveltePreprocess({ markupTagName : "markup" }),
 		}),
 		replace({

@@ -2,51 +2,42 @@
 
 ## last week:
 
+- finished RC, fixed some bugs
 
-- added edit sidebar
-- added refresh button to recent changes
-- added username as well as relative date (5 days ago) to recent changes
-- can still hover over the date to get the real date
-- got recent changes and edit sidebar working
+## stuff:
 
 
-- RC is fully responsive, text gets cropped, buttons reposition depending on size
-
-
-- aldo added edit overlay when doing area or line, but not shown currently
+- fixed RC refreshing each time you opened it
 
 
 
-
-technical:
-
-doesnt look like a lot, but had to do a lot of jiggery pokery to get the edit panel to work
-1. had to move all ui elements into the same div as gamemap
-2. turns out leaflet disables right click, lets you scroll/pan for all elements in gamemap
-3. had to override that for all elements with "svelte" in the classname in gamemap.js (ex: search list was scrolling map instead of search results)
-4. because all ui elements are in gamemap div now, had to redo all z-indexes
-
-## Bug fixes:
-- fixed OB, SR and BS not having favicon
-fix: listitem icons (search result, RC) icons disappearing randomly
+## stuff for dave:
+- dcsg asked for dawnstar maps (give tiles)
+- 1 tile per pixel
+- show image that shows how they are laid out
+- might have to set up old map for editing
+- the maps are quite small (20px) - upscale or just use one tile?
+- use normalised scheme, 1 area per world
+- also get dscg editing perms
+- would also allow a safe place to mess around with editing
 
 
-update RC api to have action
+- dawnstar (ds) map for testing
+>> probably using normalised coords?
+>> 1 tile per pixel
+- better getMapList() api for gamemap,php (db, name, isofficial/modded)
+- dcsg asked for map editing perms ("they're stingy about giving away editing rights for whatever reason IIRC")
 
-(small icons to denote action (added / edited / deleted)? + / some arrows or gear idk / x for example)
 
-on actions - could also colour-code it, give that circle green tint for create, none for edit, red for delete, hmmm.
-
-
-RC doesnt show world edits?
-
-problems/suggestions:
-RC timestamp not in UTC?
-
+- people asked to separate modded maps from official ones, would probably need help on the php
 ## todo
 
+wednesday afternoon (your time) remind dave:
+dave maps server stuff
+dave dawnstar maps setup (next week)
 
 - alphabeticise map key ui
+- hamburger for search bar to show other maps
 
 - cell resource state from url
 - do get centre of polygon to count towards isvisible
@@ -67,6 +58,9 @@ RC timestamp not in UTC?
 - sr icons higher res
 - fix all markers showing up at initial load on highest zoom level
 - edit
+- button to go to the map menu
+- separate mods from offical maps
+- make maps in game release order
 
 ## todo (future)
 - wiki features
