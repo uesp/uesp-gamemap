@@ -18,8 +18,21 @@
 - might have to set up old map for editing
 - the maps are quite small (20px) - upscale or just use one tile?
 - use normalised scheme, 1 area per world
-- also get dscg editing perms
-- would also allow a safe place to mess around with editing
+- make skyrim icons 32px
+
+
+feedback:
+- map key alphabetical
+- map key not nearest neighbour
+- divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)
+- cave interior maps for skyrim, ob, mw
+- some kind of tutorial on first non-cookie load to tell user how to use ui
+- search world internal names in searchbox like "name:blah"
+- an undo button for deleting/editing locations and worlds
+
+
+- search by location/world internal name (either name is included in search, or add name:whatever like type:cave)
+- type:cave doesnt respect "search in this map" setting
 
 
 - dawnstar (ds) map for testing

@@ -24,8 +24,8 @@
 	import './commons.js';
 
 	// import material UI
-	import "materialize-css";
-	import 'materialize-css/dist/css/materialize.min.css';
+	import '@materializecss/materialize';
+	import '@materializecss/materialize/dist/css/materialize.min.css';
 	import 'material-design-icons-iconfont';
 
 	// import UI components
