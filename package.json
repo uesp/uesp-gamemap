@@ -23,8 +23,8 @@
     "svelte-preprocess": "^5.0.0"
   },
   "dependencies": {
-    "@materializecss/materialize": "^1.2.2",
     "material-design-icons-iconfont": "^6.7.0",
+    "materialize-css": "^1.0.0",
     "leaflet": "^1.9.3",
     "long-press-event": "^2.4.4",
     "marked": "^4.2.12",

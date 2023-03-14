@@ -22,17 +22,16 @@
     export let user;
     export let action;
     export let comment;
-    comment = (comment == "Changed visible") ? "Deleted" : comment;
-
-    print(action);
-    print(comment);
-    print(destinationID);
 
     // create event dispatcher
     const dispatch = createEventDispatcher();
 
-    function onClick() {
-        dispatch("click", destinationID);
+    function onClicked(event) {
+        if (event.shiftKey) {
+            dispatch("shiftClick", destinationID);
+        } else {
+            dispatch("click", destinationID);
+        }
     }
 
 </script>
@@ -41,7 +40,7 @@
     <div class='collection' class:selected={selected}>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-missing-attribute -->
-        <a class='collection-item waves-effect list-item' class:avatar={icon != null} on:click={onClick} class:compact={compact}>
+        <a class='collection-item waves-effect mdc-ripple-surface list-item' class:avatar={icon != null} on:click={onClicked} class:compact={compact}>
             <!-- svelte-ignore missing-declaration -->
             {#if icon}
                 {@const iconTooltip = (icon.includes("/")) ? gamemap.getMapConfig().icons[icon.replace(/\D/g, "")] : (destinationID > 0) ? "World" : "Location"}
@@ -119,6 +118,7 @@
         display: flex;
         align-items: center;
         color: var(--text_low_emphasis);
+        white-space: nowrap;
     }
 
     .timestamp {

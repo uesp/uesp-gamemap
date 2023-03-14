@@ -66,7 +66,7 @@ iconButton element:
 </script>
 
 <markup>
-    <button class='btn_icon_button waves-effect' title={tooltip} on:click={onClicked} class:checked={checked} class:hasBackground={hasBackground} class:bgless={!hasBackground} class:nomobile={noMobile} class:dropdown={dropdown} class:dropdown-trigger={menu != null} data-target={menu}>
+    <button class='btn_icon_button waves-effect mdc-ripple-surface' title={tooltip} on:click={onClicked} class:checked={checked} class:hasBackground={hasBackground} class:bgless={!hasBackground} class:nomobile={noMobile} class:dropdown={dropdown} class:dropdown-trigger={menu != null} data-target={menu}>
         {#if icon}<Icon name={icon} size={size}/>{/if}
         {#if label}<b class="icon_btn_label nomobile">{label}</b>{/if}
         {#if dropdown}<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>{/if}

@@ -6,10 +6,8 @@
 - Thal-J <thal-j@uesp.net> (6th March, 2023) -->
 
 <script>
-
     // import svelte core stuff
     import { fade } from 'svelte/transition';
-	import { onMount } from 'svelte';
     import { tweened } from 'svelte/motion';
 	import { cubicInOut } from 'svelte/easing';
     import VirtualList from 'svelte-tiny-virtual-list';
@@ -20,9 +18,13 @@
     import LoadingSpinner from './LoadingSpinner.svelte';
     import ListItem from './ListItem.svelte';
     import Icon from './Icon.svelte';
+    import EditorComponent from './EditorComponent.svelte';
+
+    // import data classes
+    import World from "../map/objects/world";
+    import Location from "../map/objects/location"
 
     // constants
-    const PAGE = { HOME : 0, EDIT_WORLD : 1, EDIT_LOCATION : 2 }
     const OVERLAY = { NONE : 0, LOCATION : 2, PATH : 3, AREA : 4}
     const PANEL_WIDTH = 480;
     const ANIMATION_DURATION = 350;
@@ -31,12 +33,13 @@
     // state vars
     let editPanel;
     let appBar;
-    $: currentPage = PAGE.HOME;
-    $: currentOverlay  = OVERLAY.NONE;
     export let isShown = false;
-    let unsavedChanges = false;
     let recentChanges = [];
     const resizeObserver = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
+    $: currentOverlay  = OVERLAY.NONE;
+    $: editObject = null;
+    $: isEditing = editObject != null && (editObject instanceof Location) || (editObject instanceof World);
+    //getRecentChanges();
 
     // public function to show/hide the panel, or edit an object
     export function show(data) {
@@ -45,6 +48,7 @@
 
         if (data) {
             isShown = true;
+            editObject = data;
 
             setTimeout(function() {
                 resizeObserver.observe(editPanel);
@@ -54,14 +58,6 @@
                 }
 		    }, 1);
 
-            // call resize event whenever edit panel is resized
-
-
-            // if (object instanceof Location) {
-
-            // } else if (object instanceof World) {
-
-            // }
 
         } else {
             isShown = false;
@@ -71,25 +67,13 @@
     export function edit(object) { show(object) }
     export function dismiss() { show(false) }
 
-    function gotoPage(page, data) {
-        currentPage = page;
-    }
-
     function onBackPressed() {
 
-        switch (currentPage) {
-            default:
-            case PAGE.HOME && !unsavedChanges:
-                dismiss();
-                break;
-            case PAGE.EDIT_LOCATION && !unsavedChanges:
-                currentPage = PAGE.HOME;
-                break;
-            case PAGE.EDIT_WORLD && !unsavedChanges:
-                currentPage = PAGE.HOME;
-                break;
+        if (isEditing) {
+            editObject = null;
+        } else {
+            dismiss();
         }
-
     }
 
 
@@ -164,44 +148,47 @@
              {/if}
 
              <!-- edit panel appbar -->
-             <AppBar title="Map Editor" icon={currentPage != PAGE.HOME ? "arrow_back" : "close"} on:backClicked={onBackPressed} bind:this={appBar}/>
+             <AppBar title="Map Editor" icon={isEditing ? "arrow_back" : "close"} on:backClicked={onBackPressed} bind:this={appBar}/>
 
              <!-- edit panel content -->
              <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}}>
 
-                 <b>Actions</b><br/>
-                 <div id="actions-container">
-                     <!-- svelte-ignore missing-declaration -->
-                     <Button text="Edit World" icon="public" on:click={() => (gotoPage(PAGE.EDIT_WORLD, gamemap.getCurrentWorld()))}></Button>
-                     <Button text="Add Location" icon="add_location_alt"></Button>
-                     <Button text="Add Path" icon="timeline"></Button>
-                     <Button text="Add Area" icon="local_hospital"></Button>
-                 </div>
-                 <b>Recent Changes</b>
-                 <!-- svelte-ignore a11y-click-events-have-key-events -->
-                 <div id="refresh-button" title="Refresh the Recent Changes list" class="waves-effect" on:click={getRecentChanges}><Icon name="refresh"/></div>
-                 <div id="recent-changes-container">
-                     {#if recentChanges.length > 0}
-                         <VirtualList
-                             width="100%"
-                             height={window.innerHeight - 60}
-                             itemCount={recentChanges.length}
-                             scrollToIndex={1}
-                             itemSize={60}>
-                             <div slot="item" let:index let:style {style}>
-                                 {@const RCItem = recentChanges[index]}
-                                 {@const isWorld = RCItem.destinationID > 0}
-                                 <!-- svelte-ignore missing-declaration -->
-                                 <ListItem title={(isWorld) ? RCItem.worldName : RCItem.locationName} subtitle={(!isWorld) ? RCItem.worldName : null} destinationID={RCItem.destinationID} compact={true} bold={isWorld}
-                                  icon={(RCItem.icon != null) ? gamemap.getMapConfig().iconPath + RCItem.icon + ".png" : (isWorld) ? "public" : "location_on"} user={RCItem.user} timestamp={RCItem.timestamp}
-                                  on:click={() => gamemap.goto(RCItem.destinationID)} action={RCItem.action} comment={RCItem.comment}/>
-                             </div>
-                         </VirtualList>
-                     {:else}
-                         <LoadingSpinner/>
-                     {/if}
-                 </div>
-
+                {#if !isEditing}
+                     <b>Actions</b><br/>
+                     <div id="actions-container">
+                         <!-- svelte-ignore missing-declaration -->
+                         <Button text="Edit World" icon="public" on:click={() => (edit(gamemap.getCurrentWorld()))}></Button>
+                         <Button text="Add Location" icon="add_location_alt"></Button>
+                         <Button text="Add Path" icon="timeline"></Button>
+                         <Button text="Add Area" icon="local_hospital"></Button>
+                     </div>
+                     <b>Recent Changes</b>
+                     <!-- svelte-ignore a11y-click-events-have-key-events -->
+                     <div id="refresh-button" title="Refresh the Recent Changes list" class="waves-effect" on:click={getRecentChanges}><Icon name="refresh"/></div>
+                     <div id="recent-changes-container">
+                         {#if recentChanges.length > 0}
+                             <VirtualList
+                                 width="100%"
+                                 height={window.innerHeight - 60}
+                                 itemCount={recentChanges.length}
+                                 scrollToIndex={1}
+                                 itemSize={60}>
+                                 <div slot="item" let:index let:style {style}>
+                                     {@const RCItem = recentChanges[index]}
+                                     {@const isWorld = RCItem.destinationID > 0}
+                                     <!-- svelte-ignore missing-declaration -->
+                                     <ListItem title={(isWorld) ? RCItem.worldName : RCItem.locationName} subtitle={(!isWorld) ? RCItem.worldName : null} destinationID={RCItem.destinationID} compact={true} bold={isWorld}
+                                      icon={(RCItem.icon != null) ? gamemap.getMapConfig().iconPath + RCItem.icon + ".png" : (isWorld) ? "public" : "location_on"} user={RCItem.user} timestamp={RCItem.timestamp}
+                                      on:click={() => gamemap.goto(RCItem.destinationID)} action={RCItem.action} comment={RCItem.comment}/>
+                                 </div>
+                             </VirtualList>
+                         {:else}
+                             <LoadingSpinner/>
+                         {/if}
+                     </div>
+                {:else}
+                     <EditorComponent object={editObject}></EditorComponent>
+                {/if}
              </div>
          </aside>
     {/if}
