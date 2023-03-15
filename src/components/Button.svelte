@@ -9,6 +9,7 @@
 <script>
     // import svelte stuff
     import { createEventDispatcher } from "svelte";
+  import LoadingSpinner from "./LoadingSpinner.svelte";
 
     export let icon;
     export let iconDirection = "left";
@@ -27,9 +28,13 @@
 <markup>
     <!-- svelte-ignore a11y-missing-attribute -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <a class="waves-effect waves-light btn{flat != null ? "-flat" : ""}{size != null ? "-"+{size} : ""}" class:disabled={disabled} on:click={onClicked}>
+    <a class="waves-effect waves-light btn{flat != null ? "-flat" : ""}{size != null ? "-"+{size} : ""}" class:disabled={disabled} on:click={onClicked} class:loadingButton={icon == "loading"}>
         {#if icon}
-            <i class="material-icons {iconDirection}">{icon}</i>
+            {#if icon != "loading"}
+                 <i class="material-icons {iconDirection}">{icon}</i>
+            {:else}
+                <div class="spinner"><LoadingSpinner size=36px/></div>
+            {/if}
         {/if}
         {text}
     </a>
@@ -50,6 +55,20 @@
 
     a:hover {
         background-color: var(--secondary_light);
+    }
+
+    .spinner {
+        width: 32px;
+        height: 100%;
+        display: inline-block;
+        margin-right: var(--padding_minimum);
+        filter: brightness(10);
+    }
+
+    .loadingButton {
+        align-content: center;
+        align-items: center;
+        display: flex;
     }
 
 </style>

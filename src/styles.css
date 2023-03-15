@@ -445,6 +445,10 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	flex-grow: 1;
 }
 
+.footer-buttons > * {
+	flex-grow: 1;
+}
+
 /* map key dialog */
 #map_key_container {
 	width: 100%;

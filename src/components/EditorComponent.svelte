@@ -7,23 +7,74 @@
 
 <script>
 
+    // import data classes
+    import World from "../map/objects/world";
+    import Location from "../map/objects/location"
+  import Button from "./Button.svelte";
     export let object;
     export let unsavedChanges = false;
+    let isLocation = object instanceof Location;
+    let isWorld = object instanceof World;
 
     print(object);
+
+
+    function initiate() {
+
+        if (isWorld && object.id == gamemap.getCurrentWorld().id) {
+            gamemap.reset(true);
+            gamemap.setZoomTo(gamemap.getMaxBoundsZoom() - 0.2)
+            gamemap.mapRoot.classList.add("editing-world");
+        }
+
+    }
+
+
+    function cleanUp() {
+        let glowElements = document.querySelectorAll("[class*='editing']");
+        Array.from(glowElements).forEach(element => {
+            element.classList.remove("editing");
+            element.classList.remove("editing-world");
+        })
+
+        if (isWorld) {
+            gamemap.reset(true);
+        }
+
+        // remove editlock from gamemap here too
+
+    }
 
 </script>
 
 
 <markup>
 
+    <div id="editor" in:initiate out:cleanUp>
+
+        {#if isWorld}
+             <!-- world editor here -->
+        {:else if isLocation}
+             <!-- location editor here -->
+        {/if}
+
+        <div class="footer-buttons">
 
 
+            <Button text="Cancel" icon="close"></Button>
+            <Button text="Save" icon="save"></Button>
+
+        </div>
+    </div>
 </markup>
 
 <style>
 
-
+    .footer-buttons {
+        padding-top: var(--padding_medium);
+        display: flex;
+        width: 100%;
+    }
 
 </style>
 
