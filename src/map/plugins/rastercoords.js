@@ -64,20 +64,20 @@ export default class RasterCoords {
 	}
 
 	/**
-     * get the max bounds of the image with some additional padding
+     * get the max bounds of the image with some provided padding
     */
-	getMaxBoundsWithPadding(){
+	getMaxBoundsWithPadding(padding){
+
+		padding = (padding != null) ? padding : 130;
 
 		let bounds = this.getMaxBounds();
 		let southWest = bounds._southWest;
 		let northEast = bounds._northEast;
 
-		const PADDING = 130;
-
-		southWest.lng = southWest.lng - PADDING;
-		southWest.lat = southWest.lat - PADDING;
-		northEast.lng = northEast.lng + PADDING;
-		northEast.lat = northEast.lat + PADDING;
+		southWest.lng = southWest.lng - padding;
+		southWest.lat = southWest.lat - padding;
+		northEast.lng = northEast.lng + padding;
+		northEast.lat = northEast.lat + padding;
 
 		return new L.LatLngBounds(southWest, northEast);
 	}

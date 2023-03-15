@@ -1064,7 +1064,7 @@ export default class Gamemap {
 		// callback to show map fully loaded
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.onMapLoaded(true);
-			this.mapRoot.style.animation = "none";
+			this.mapRoot.style.animation = "none"; // fix flash bug when editing worlds
 		}
 
 	}
@@ -1379,9 +1379,13 @@ export default class Gamemap {
 	================================================*/
 
 	// reset map
-	reset(currentWorldOnly) {
+	reset(currentWorldOnly, withPadding) {
 		if (!this.hasMultipleWorlds() || currentWorldOnly) {
-			map.fitBounds(RC.getMaxBounds(), {animate: true});
+			if (withPadding) {
+				map.fitBounds(RC.getMaxBoundsWithPadding(), {animate: true});
+			} else {
+				map.fitBounds(RC.getMaxBounds(), {animate: true});
+			}
 		} else {
 			this.goto(this.mapConfig.defaultWorldID);
 		}

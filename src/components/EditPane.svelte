@@ -192,7 +192,7 @@
                          {/if}
                      </div>
                 {:else}
-                     <EditorComponent object={editObject}></EditorComponent>
+                     <EditorComponent object={editObject} on:cancel={() => editObject = null} />
                 {/if}
              </div>
          </aside>

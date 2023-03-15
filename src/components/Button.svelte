@@ -9,8 +9,11 @@
 <script>
     // import svelte stuff
     import { createEventDispatcher } from "svelte";
-  import LoadingSpinner from "./LoadingSpinner.svelte";
 
+    // import ui components
+    import LoadingSpinner from "./LoadingSpinner.svelte";
+
+    // state vars
     export let icon;
     export let iconDirection = "left";
     export let text = "button";
