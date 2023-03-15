@@ -37,7 +37,7 @@
     function initiate() {
 
         if (isWorld && object.id == gamemap.getCurrentWorld().id) {
-            gamemap.reset(true, true);
+            gamemap.reset(true, 30);
             gamemap.mapRoot.classList.add("editing-world");
         }
 

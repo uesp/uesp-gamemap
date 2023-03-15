@@ -199,6 +199,9 @@ export default class Gamemap {
 		print(mapState.coords);
 		if(mapState.coords == null || mapState.zoomLevel == null) {
 			map.fitBounds(RC.getMaxBounds(), {animate: false})
+			setTimeout(function() {
+				map.fitBounds(RC.getMaxBounds(), {animate: true})
+            }, 1);
 		} else {
 			map.setView(this.toLatLngs(mapState.coords), mapState.zoomLevel, {animate: false});
 		}
@@ -1379,10 +1382,10 @@ export default class Gamemap {
 	================================================*/
 
 	// reset map
-	reset(currentWorldOnly, withPadding) {
+	reset(currentWorldOnly, customPadding) {
 		if (!this.hasMultipleWorlds() || currentWorldOnly) {
-			if (withPadding) {
-				map.fitBounds(RC.getMaxBoundsWithPadding(), {animate: true});
+			if (customPadding) {
+				map.fitBounds(RC.getMaxBoundsWithPadding(customPadding), {animate: true});
 			} else {
 				map.fitBounds(RC.getMaxBounds(), {animate: true});
 			}
