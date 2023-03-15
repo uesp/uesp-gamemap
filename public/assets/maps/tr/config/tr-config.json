@@ -1,0 +1,99 @@
+{
+    // General map info
+    "mapTitle": "Tamriel Rebuilt Map",
+    "wikiNamespace": "Morrowind",
+    "database" : "tr",
+    "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Morrowind_Map_Design",
+
+    // Map options
+    "hasCustomFavIcon" : true,
+    "hasCustomCSS" : true,
+    "hasCellGrid" : true,
+    "zoomOffset" : 9,
+    "cellSize" : 512,
+
+    // Map coordinate system info
+    // 0: XY (Default)
+    // 1: Normalised
+    // 2: Worldspace
+    "coordType" : 2,
+
+    // Map world info
+    "defaultWorldID" : 1,
+    "minWorldID" : 0,
+    "maxWorldID" : 20000,
+
+    // Map grid info
+    "gridShowLabelZoom" : 3.5,
+
+    // Map icon info
+    "iconSize" : 16,
+    "icons": {
+        "0": "None",
+        "1": "City",
+        "2": "Town",
+        "3": "Village",
+        "4": "Settlement",
+        "5": "Citadel",
+        "6": "House",
+        "7": "Ashlander Camp",
+        "8": "Imperial Fort",
+        "9": "Dunmer Stronghold",
+        "10": "Daedric Shrine",
+        "11": "Dwemer Ruin",
+        "12": "Ancestral Tomb",
+        "13": "Nordic Barrow",
+        "14": "Velothi Tower",
+        "15": "Grotto",
+        "16": "Landmark",
+        "17": "Outpost",
+        "18": "Telvanni Tower",
+        "19": "Temple Shrine",
+        "20": "Temple",
+        "30": "Cave",
+        "31": "Mine",
+        "32": "Diamond Mine",
+        "33": "Ebony Mine",
+        "34": "Egg Mine",
+        "35": "Glass Mine",
+        "40": "Guilds",
+        "41": "Fighters Guild",
+        "42": "Mages Guild",
+        "43": "Imperial Cult",
+        "44": "Morag Tong",
+        "45": "Thieves Guild",
+        "50": "House Hlaalu",
+        "51": "House Redoran",
+        "52": "House Telvanni",
+        "60": "Shop",
+        "61": "Alchemist",
+        "62": "Bookseller",
+        "63": "Clothier",
+        "64": "Enchanter",
+        "65": "Healer",
+        "66": "Pawnbroker",
+        "67": "Smith",
+        "68": "Spellmaker",
+        "69": "Slave Market",
+        "70": "Tavern",
+        "71": "Trader",
+        "80": "Transportation",
+        "81": "Gondolier",
+        "82": "Ship",
+        "83": "Silt-Strider",
+        "100": "Miscellaneous",
+        "101": "Blank",
+        "102": "Corpse",
+        "103": "Creature",
+        "104": "Door",
+        "105": "Geographical",
+        "106": "Guard-Tower",
+        "107": "Loot",
+        "108": "Monument",
+        "109": "NPC",
+        "110": "Plant",
+        "111": "Propylon",
+        "112": "Ruins"
+    }
+}
+
