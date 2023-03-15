@@ -17,6 +17,8 @@
     export let flat;
     export let size;
     export let disabled;
+    export let type;
+    export let bold;
 
     const dispatch = createEventDispatcher();
 
@@ -28,7 +30,8 @@
 <markup>
     <!-- svelte-ignore a11y-missing-attribute -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <a class="waves-effect waves-light btn{flat != null ? "-flat" : ""}{size != null ? "-"+{size} : ""}" class:disabled={disabled} on:click={onClicked} class:loadingButton={icon == "loading"}>
+    <a class="waves-effect waves-light btn{flat != null ? "-flat" : ""}{size != null ? "-"+{size} : ""}" class:disabled={disabled}
+    on:click={onClicked} class:loadingButton={icon == "loading"} class:deleteButton={type == "delete"} class:saveButton={type=="save"} class:bold={bold}>
         {#if icon}
             {#if icon != "loading"}
                  <i class="material-icons {iconDirection}">{icon}</i>
@@ -69,6 +72,26 @@
         align-content: center;
         align-items: center;
         display: flex;
+    }
+
+    .saveButton {
+        background-color: var(--save);
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+
+    .saveButton:hover {
+        background-color: var(--save_light);
+    }
+
+    .deleteButton {
+        background-color: var(--delete);
+    }
+
+    .deleteButton:hover {
+        background-color: var(--delete_light);
     }
 
 </style>

@@ -155,7 +155,7 @@
     }
 
     .action.delete {
-        background-color: var(--delete);
+        background-color: var(--delete_pastel);
     }
 
     .action.edit {

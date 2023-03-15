@@ -1064,6 +1064,7 @@ export default class Gamemap {
 		// callback to show map fully loaded
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.onMapLoaded(true);
+			this.mapRoot.style.animation = "none";
 		}
 
 	}
@@ -1393,8 +1394,6 @@ export default class Gamemap {
 	getMaxBoundsZoom() {
 		return map.getBoundsZoom(this.getMapBounds());
 	}
-
-
 
 
 

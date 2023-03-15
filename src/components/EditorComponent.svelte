@@ -10,14 +10,16 @@
     // import data classes
     import World from "../map/objects/world";
     import Location from "../map/objects/location"
-  import Button from "./Button.svelte";
+    import Button from "./Button.svelte";
+
     export let object;
     export let unsavedChanges = false;
     let isLocation = object instanceof Location;
     let isWorld = object instanceof World;
 
-    print(object);
 
+    print(object);
+    print(unsavedChanges);
 
     function initiate() {
 
@@ -60,9 +62,9 @@
 
         <div class="footer-buttons">
 
-
             <Button text="Cancel" icon="close"></Button>
-            <Button text="Save" icon="save"></Button>
+            <Button text="Delete" icon="delete" type="delete"></Button>
+            <Button text="Save" icon="save" type="save" bold="true"></Button>
 
         </div>
     </div>
