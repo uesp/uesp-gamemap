@@ -824,23 +824,60 @@ class GameMap
 	}
 	
 	
-	public function doGetMaps() {
-		$path = '../assets/maps';
+	public function doGetMaps()
+	{
+			//TODO: Change for svelte path
+		//$path = '../assets/maps';
+		$path = './public/assets/maps';
 		
 		$dirs = array();
+		$mapInfos = array();
 		
-		// directory handle
-		$dir = dir($path);
+		$it = new FilesystemIterator($path);
 		
-		while (false !== ($entry = $dir->read())) {
-			if ($entry != '.' && $entry != '..') {
-				if (is_dir($path . '/' .$entry)) {
-					$dirs[] = $entry;
+		foreach ($it as $fileInfo)
+		{
+			if ($fileInfo->isDir()) 
+			{
+				$map = $fileInfo->getFilename();
+				$dirs[] = $map;
+				$jsonFile = $path . "/$map/config/$map-config.json";
+				$jsonContents = file_get_contents($jsonFile);
+				
+				if (!$jsonContents)
+				{
+					error_log("Error loading JSON file $jsonFile!");
+					continue;
 				}
+				
+					//Remove simple // comments on a line or at the end of line
+				$jsonContents = preg_replace('#[ \t]+//[^"]*#', "", $jsonContents);
+				
+				$json = json_decode($jsonContents, JSON_OBJECT_AS_ARRAY);
+				
+				if (!$json)
+				{
+					error_log("Error parsing JSON file $jsonFile! " . json_last_error_msg());
+					continue;
+				}
+				
+				$mapInfo = [];
+				$mapInfo['mapTitle'] = $json['mapTitle'];
+				$mapInfo['wikiNamespace'] = $json['wikiNamespace'];
+				$mapInfo['database'] = $json['database'];
+				
+				$mapInfo['bgColor'] = $json['bgColor'];
+				if ($mapInfo['bgColor'] === null) $mapInfo['bgColor'] = "";
+				
+				$mapInfo['isModded'] = $json['isModded'];
+				if ($mapInfo['isModded'] === null) $mapInfo['isModded'] = 0;
+				
+				$mapInfos[$map] = $mapInfo;
 			}
 		}
 		
 		$this->addOutputItem("maps", $dirs);
+		$this->addOutputItem("mapInfos", $mapInfos);
 		return true;
 	}
 	
