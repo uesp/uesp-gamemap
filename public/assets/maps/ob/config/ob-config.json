@@ -1,55 +1,56 @@
 {
-    // General map info
-    "mapTitle": "Oblivion Gamemap",
-    "wikiNamespace": "Oblivion",
-    "database" : "ob",
-    "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Oblivion_Map_Design",
-    "bgColor" : "#615f46",
-    "releaseDate" : "24/03/2006", // for sorting games by release date in the map menu
-
-    // Map options
-    "hasCustomCSS" : true,
-    "hasCustomFavIcon" : true,
-
-    // Map coordinate system info
-    // 0: XY (Default)
-    // 1: Normalised
-    // 2: Worldspace
-    "coordType" : 2,
-
-    // Map icon info
-    "iconSize" : 16,
-    "labelOffset" : 8,
-    "icons": {
-        "1": "Camp",
-        "2": "Cave",
-        "3": "City",
-        "4": "Ayleid Ruin",
-        "5": "Fort Ruin",
-        "6": "Mine",
-        "7": "Landmark",
-        "9": "Settlement",
-        "10": "Daedric Shrine",
-        "11": "Oblivion Gate",
-        "12": "Elven Ruin",
-        "13": "Sewer Entrance / Exit",
-        "20": "Ayleid Well",
-        "21": "Doom Stone",
-        "22": "Rune Stone",
-        "23": "Wayshrine",
-        "25": "Obelisk of Order",
-        "30": "Nirnroot",
-        "40": "Door",
-        "41": "House",
-        "42": "Shop",
-        "43": "Chapel",
-        "44": "Tavern",
-        "46": "Castle",
-        "47": "A Strange Door",
-        "48": "Farmstead",
-        "49": "Stables",
-        "50": "Docks",
-        "100": "Other"
+        // General map info
+        "mapTitle": "Oblivion Gamemap",
+        "wikiNamespace": "Oblivion",
+        "database" : "ob",
+        "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Oblivion_Map_Design",
+        "bgColor" : "#615f46",
+        "releaseDate" : "24/03/2006", // for sorting games by release date in the map menu
+    
+        // Map options
+        "hasCustomCSS" : true,
+        "hasCustomFavIcon" : true,
+    
+        // Map coordinate system info
+        // 0: XY (Default)
+        // 1: Normalised
+        // 2: Worldspace
+        "coordType" : 2,
+    
+        // Map icon info
+        "iconSize" : 16,
+        "labelOffset" : 8,
+        "icons": {
+            "1": "Camp",
+            "2": "Cave",
+            "3": "City",
+            "4": "Ayleid Ruin",
+            "5": "Fort Ruin",
+            "6": "Mine",
+            "7": "Landmark",
+            "9": "Settlement",
+            "10": "Daedric Shrine",
+            "11": "Oblivion Gate",
+            "12": "Elven Ruin",
+            "13": "Sewer Entrance / Exit",
+            "20": "Ayleid Well",
+            "21": "Doom Stone",
+            "22": "Rune Stone",
+            "23": "Wayshrine",
+            "25": "Obelisk of Order",
+            "30": "Nirnroot",
+            "40": "Door",
+            "41": "House",
+            "42": "Shop",
+            "43": "Chapel",
+            "44": "Tavern",
+            "46": "Castle",
+            "47": "A Strange Door",
+            "48": "Farmstead",
+            "49": "Stables",
+            "50": "Docks",
+            "100": "Other"
+        }
     }
-}
-
+    
+    
