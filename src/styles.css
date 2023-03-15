@@ -47,6 +47,7 @@
 	--error_dark: #DD8A5B;
 	--delete: #d95c5c;
 	--add: #a0ca76;
+	--editing: #3e68ff;
 }
 
 /*================================================
@@ -91,18 +92,6 @@ body {
 
 .wikiTitle{
 	font-family: 'wikiType', Arial, sans-serif;
-}
-
-/*================================================
-					Accessibility
-================================================*/
-
-/* disable animations for browsers requesting reduced motion */
-@media (prefers-reduced-motion) {
-	* {
-		transition: none 0ms !important;
-		animation: none !important;
-	}
 }
 
 /*================================================
@@ -574,7 +563,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	right: 0px;
 	background-color: var(--background_dark);
 	transition: background-color ease 100ms;
-	animation: fade-in 0.9s !important;
+	animation: fade-in 0.9s;
 	z-index: 0;
 	line-height: 1.5;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
@@ -725,4 +714,45 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 
 .popupEditButton:active {
 	background: var(--bubble_selection);
+}
+
+
+.editing-world {
+	animation: throb-inner 2.5s infinite !important;
+}
+
+@keyframes throb-inner {
+	0% {
+		box-shadow: none;
+	}
+
+	50% {
+		box-shadow: inset 0 0px 40px 8px var(--editing);
+	}
+
+	100% {
+		box-shadow: none;
+	}
+}
+
+.editing {
+	animation: throb 2.5s infinite !important;
+}
+
+@keyframes throb {
+	0% {
+	  filter: drop-shadow(none);
+	}
+
+	50% {
+	  filter:
+		drop-shadow(-2px -2px 0px var(--editing))
+		drop-shadow(2px -1px 0px var(--editing))
+		drop-shadow(2px 2px 0px var(--editing))
+		drop-shadow(-1px 2px 0px var(--editing));
+	}
+
+	100% {
+	  filter: drop-shadow(none);
+	}
 }

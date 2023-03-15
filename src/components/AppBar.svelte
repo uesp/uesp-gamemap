@@ -42,7 +42,6 @@
 
     .appbar-title {
         font-size: 1.1rem;
-        margin-left: 6px;
     }
 
     .appbar {
@@ -60,6 +59,7 @@
         display: inline-grid;
         top: -1px;
         position: relative;
+        margin-left: 6px;
     }
 
     small {

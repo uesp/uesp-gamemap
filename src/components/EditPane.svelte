@@ -28,14 +28,14 @@
     const OVERLAY = { NONE : 0, LOCATION : 2, PATH : 3, AREA : 4}
     const PANEL_WIDTH = 480;
     const ANIMATION_DURATION = 350;
+    const RESIZE_OBSERVER = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
     const TWEEN = tweened(0, {duration: ANIMATION_DURATION, easing: cubicInOut } );
 
     // state vars
+    export let isShown = false;
     let editPanel;
     let appBar;
-    export let isShown = false;
     let recentChanges = [];
-    const resizeObserver = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
     $: currentOverlay  = OVERLAY.NONE;
     $: editObject = null;
     $: isEditing = editObject != null && (editObject instanceof Location) || (editObject instanceof World);
@@ -48,16 +48,21 @@
 
         if (data) {
             isShown = true;
-            editObject = data;
-
             setTimeout(function() {
-                resizeObserver.observe(editPanel);
+                RESIZE_OBSERVER.observe(editPanel);
                 TWEEN.set(1);
                 if (recentChanges.length == 0) {
                     getRecentChanges();
                 }
-		    }, 1);
+            }, 1);
 
+            // check if current edit object is null
+            if (editObject == null) {
+                editObject = data;
+            } else {
+                // are you sure you want to lose progress?
+                editObject = data;
+            }
 
         } else {
             isShown = false;
@@ -148,7 +153,7 @@
              {/if}
 
              <!-- edit panel appbar -->
-             <AppBar title="Map Editor" icon={isEditing ? "arrow_back" : "close"} on:backClicked={onBackPressed} bind:this={appBar}/>
+             <AppBar title={!isEditing ? "Map Editor" : "Editing " + ((editObject instanceof World) ? "World" : "Location")} subtitle={isEditing ? (editObject instanceof World) ? editObject.displayName + " ("+editObject.name+")" : editObject.name : null} icon={isEditing ? "arrow_back" : "close"} on:backClicked={onBackPressed} bind:this={appBar}/>
 
              <!-- edit panel content -->
              <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}}>
