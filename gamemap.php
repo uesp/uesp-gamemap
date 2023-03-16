@@ -137,7 +137,7 @@ class GameMap
 		if ($dbPrefix == "" || $dbPrefix == "eso") return $this->canEditESO;
 		if ($dbPrefix == "tr") return $this->canEditTR;
 		
-		if ($dbPrefix == "sr" || $dbPrefix == "si" || $dbPrefix == "mw" || $dbPrefix == "ob" || $dbPrefix == "si" || $dbPrefix == "db" || $dbPrefix == "ptmw" || $dbPrefix == "test")
+		if ($dbPrefix == "sr" || $dbPrefix == "si" || $dbPrefix == "mw" || $dbPrefix == "ob" || $dbPrefix == "si" || $dbPrefix == "db" || $dbPrefix == "ptmw" || $dbPrefix == "test" || $dbPrefix == "beyond" || $dbPrefix == "dg")
 		{
 			return $this->canEditOther;
 		}
@@ -191,10 +191,10 @@ class GameMap
 					`posRight` INTEGER NOT NULL,
 					`posBottom` INTEGER NOT NULL,
 					`enabled` TINYINT NOT NULL,
-					`tilesX` INTEGER NOT NULL
-					`tilesY` INTEGER NOT NULL
-					`maxTilesX` INTEGER NOT NULL
-					`maxTilesY` INTEGER NOT NULL
+					`tilesX` INTEGER NOT NULL,
+					`tilesY` INTEGER NOT NULL,
+					`maxTilesX` INTEGER NOT NULL,
+					`maxTilesY` INTEGER NOT NULL,
 					`displayData` TEXT NOT NULL,
 					PRIMARY KEY ( id ),
 					FULLTEXT(displayName, description, wikiPage)
@@ -222,12 +222,12 @@ class GameMap
 					posRight INTEGER NOT NULL,
 					posBottom INTEGER NOT NULL,
 					enabled TINYINT NOT NULL,
-					`tilesX` INTEGER NOT NULL
-					`tilesY` INTEGER NOT NULL
-					`maxTilesX` INTEGER NOT NULL
-					`maxTilesY` INTEGER NOT NULL
+					`tilesX` INTEGER NOT NULL,
+					`tilesY` INTEGER NOT NULL,
+					`maxTilesX` INTEGER NOT NULL,
+					`maxTilesY` INTEGER NOT NULL,
 					displayData TEXT NOT NULL,
-					PRIMARY KEY ( id ),
+					PRIMARY KEY ( id )
 				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
@@ -251,7 +251,7 @@ class GameMap
 					displayLevel FLOAT NOT NULL,
 					visible TINYINT NOT NULL,
 					PRIMARY KEY ( id ),
-					FULLTEXT(name, description, wikiPage)
+					FULLTEXT (name, description, wikiPage)
 				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
@@ -275,7 +275,7 @@ class GameMap
 					wikiPage TEXT NOT NULL,
 					displayLevel FLOAT NOT NULL,
 					visible TINYINT NOT NULL,
-					PRIMARY KEY ( id ),
+					PRIMARY KEY ( id )
 				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
@@ -364,10 +364,10 @@ class GameMap
 	public function doCreateTables ()
 	{
 		$result = $this->initDatabaseWrite();
-		if (!$result) return false;
+		if (!$result) return $this->reportError("Failed to initialize database!");
 		
 		$result = $this->createTables();
-		if (!$result) return false;
+		if (!$result) return $this->reportError("Failed to create tables!");
 		
 		$this->addOutputItem("result", "Successfully created tables!");
 		return true;
@@ -1657,7 +1657,8 @@ class GameMap
 		$this->addOutputItem("errorMsg", $errorMsg);
 		
 		error_log("Error: " . $errorMsg);
-		if ($this->db->error) error_log($this->db->error); 
+		if ($this->db->error) error_log($this->db->error);
+		
 		return false;
 	}
 	
