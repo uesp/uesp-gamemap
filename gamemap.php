@@ -1498,6 +1498,9 @@ class GameMap
 				case 'test':
 					$this->dbPrefix = "test";
 					break;
+				case 'dg':
+					$this->dbPrefix = "dg";
+					break;
 			}
 		}
 		
