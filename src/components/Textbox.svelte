@@ -10,19 +10,21 @@
 
     export let label;
     export let hint = "Enter text...";
-    export let inline;
+    export let block = false;
     export let validate = false;
+    export let subtext;
 
     let id = Math.random();
 
 </script>
 
 <markup>
-    <div class="textbox" class:inline={inline}>
+    <div class="textbox" class:inline={!block}>
         {#if label}<p class="label">{label}</p>{/if}
-        <div class="input-field" class:inline={inline}>
+        <div class="input-field" class:inline={!block}>
             <input id={id} type="text" class:validate={validate}>
             <label for={id}>{hint}</label>
+            {#if subtext}<span class="supporting-text subtext">{subtext}</span>{/if}
         </div>
     </div>
 </markup>
@@ -31,8 +33,9 @@
 <style>
 
     .input-field {
-        margin-top: var(--padding_minimum);
-        margin-bottom: var(--padding_minimum);
+        margin-top: 3px;
+        margin-bottom: 3px;
+        margin-left: var(--padding_minimum);
     }
 
     .input-field > label {
@@ -47,6 +50,9 @@
 
     .label {
         display:contents;
+        margin: 0;
+        margin-right: var(--padding_medium);
+        white-space: nowrap;
     }
 
     .textbox.inline .label {
@@ -54,6 +60,10 @@
         display: inline-flex;
     }
 
+    .subtext {
+        color: var(--text_low_emphasis);
+        font-size: small;
+    }
 
     .textbox.inline input {
         flex-grow: 1;
@@ -73,6 +83,11 @@
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
         background-color: var(--surface_variant_dark);
+    }
+
+    input[type="text"] {
+        padding-left: 8px;
+        margin-left: -8px;
     }
 
     input:focus {

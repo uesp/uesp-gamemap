@@ -169,7 +169,7 @@
                      </div>
                      <b>Recent Changes</b>
                      <!-- svelte-ignore a11y-click-events-have-key-events -->
-                     <div id="refresh-button" title="Refresh the Recent Changes list" class="waves-effect" on:click={getRecentChanges}><Icon name="refresh"/></div>
+                     <div id="refresh-button" title="Refresh the Recent Changes list" class="waves-effect" on:click={getRecentChanges}><Icon name="refresh" size=20/></div>
                      <div id="recent-changes-container">
                          {#if recentChanges.length > 0}
                              <VirtualList
@@ -226,7 +226,7 @@
     }
 
     b {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     #actions-container {

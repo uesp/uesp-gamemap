@@ -78,9 +78,21 @@
         {/if}
 
 
-        <Textbox hint="test" label="testststs"></Textbox>
+        <b>General</b>
+        <Textbox label="Name"/>
+        <Textbox label="Display name"/>
+        <Textbox label="Parent World ID" subtext="Please use a worldID"/>
+        <Textbox label="Wiki page"/>
+        <Textbox label="Description" block={true}/>
 
-        <Textbox hint="test" label="testststs" inline={true}></Textbox>
+        <b>Zoom levels</b>
+        <Textbox label="Max zoom"/> <Textbox label="Min zoom"/>
+
+        <b>World bounds</b>
+        <Textbox hint="Minimum X"></Textbox>
+        <Textbox hint="Maximum X"></Textbox>
+        <Textbox hint="Minimum Y"></Textbox>
+        <Textbox hint="Maximum Y"></Textbox>
 
         <div class="footer-buttons">
 
@@ -98,6 +110,10 @@
         padding-top: var(--padding_medium);
         display: flex;
         width: 100%;
+    }
+
+    b {
+        font-size: 15px;
     }
 </style>
 
