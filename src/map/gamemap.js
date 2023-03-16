@@ -74,6 +74,7 @@ export default class Gamemap {
 			// set the default map world info
 			this.mapWorlds = {};
 			this.gridEnabled = false;
+			this.editLock = false;
 
 			// check user editing permission
 			this.checkEditingPermissions();
@@ -198,10 +199,10 @@ export default class Gamemap {
 		// set map view
 		print(mapState.coords);
 		if(mapState.coords == null || mapState.zoomLevel == null) {
-			map.fitBounds(RC.getMaxBounds(), {animate: false})
-			setTimeout(function() {
-				map.fitBounds(RC.getMaxBounds(), {animate: true})
-            }, 1);
+			// reset map to fill world bounds
+			map.fitBounds(RC.getMaxBounds(), {animate: false});
+			// now actually reset it
+			setTimeout(function() { map.fitBounds(RC.getMaxBounds(), {animate: true}) }, 1);
 		} else {
 			map.setView(this.toLatLngs(mapState.coords), mapState.zoomLevel, {animate: false});
 		}
@@ -829,6 +830,13 @@ export default class Gamemap {
 		}
 	}
 
+	setEditLock(doEditLock) {
+
+		this.editLock = doEditLock;
+
+		// also do callback to main app
+	}
+
 	getCurrentTileLayerIndex() {
 		return parseInt(this.getMapState().layerIndex);
 	}
@@ -1196,11 +1204,29 @@ export default class Gamemap {
 
 		map.on("contextmenu", function(e){
 			if (self.getMapState().world.parentID != null && self.getMapState().world.parentID != -1 ) {
-				let parentID = self.getMapState().world.parentID;
-				self.goto(parentID);
+				if (!self.editLock) {
+					let parentID = self.getMapState().world.parentID;
+					self.goto(parentID);
+				} else {
+					M.toast({html: "Map is locked!"});
+				}
 			}
 		})
 
+
+		map.on("contextmenu", function (event) {
+			print(event);
+			let target = event.originalEvent.explicitOriginalTarget;
+
+			print(target);
+			if (target != self.mapRoot && target.classList != null && !target.classList.contains("leaflet-interactive")) {
+
+				target.oncontextmenu = null;
+				//preventDefault(event);
+			} else {
+
+			}
+		});
 		map.on("zoom", function() {
 
 			if (self.mapCallbacks != null) {
@@ -1221,19 +1247,6 @@ export default class Gamemap {
 			}
 		});
 
-		map.on("contextmenu", function (event) {
-			print(event);
-			let target = event.originalEvent.explicitOriginalTarget;
-
-			print(target);
-			if (target != self.mapRoot && target.classList != null && !target.classList.contains("leaflet-interactive")) {
-
-				target.oncontextmenu = null;
-				//preventDefault(event);
-			} else {
-
-			}
-		});
 
 	}
 
@@ -1288,9 +1301,7 @@ export default class Gamemap {
 			print("making popup");
 			L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
 		} else {
-			if (this.mapCallbacks != null) {
-				this.mapCallbacks.edit(marker.location);
-			}
+			this.edit(marker.location);
 		}
 	}
 
@@ -1408,6 +1419,11 @@ export default class Gamemap {
 						Editing
 	================================================*/
 
+	edit(object) {
+		if (this.mapCallbacks != null) {
+			this.mapCallbacks.edit(object);
+		}
+	}
 	// get if editing is enabled on this map
 	canEdit() {
 		return this.mapConfig.editingEnabled;

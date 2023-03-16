@@ -9,6 +9,10 @@
 - added throbbing "editing" animation when editing a world or location
 - fixed RC refreshing each time you opened it
 
+
+## bug fixes:
+- fixed maps not being centred on load (noticeable with eso)
+
 ## stuff for dave:
 
 

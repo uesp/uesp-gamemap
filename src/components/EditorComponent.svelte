@@ -16,6 +16,7 @@
     import World from "../map/objects/world";
     import Location from "../map/objects/location"
     import Button from "./Button.svelte";
+  import Textbox from "./Textbox.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -36,10 +37,14 @@
 
     function initiate() {
 
+
+        gamemap.edit(object);
         if (isWorld && object.id == gamemap.getCurrentWorld().id) {
             gamemap.reset(true, 30);
             gamemap.mapRoot.classList.add("editing-world");
         }
+
+        gamemap.setEditLock(true);
 
     }
 
@@ -55,8 +60,8 @@
             gamemap.reset(true);
         }
 
-        // remove editlock from gamemap here too
-
+        // remove editlock from gamemap
+        gamemap.setEditLock(false);
     }
 
 </script>
@@ -71,6 +76,11 @@
         {:else if isLocation}
              <!-- location editor here -->
         {/if}
+
+
+        <Textbox hint="test" label="testststs"></Textbox>
+
+        <Textbox hint="test" label="testststs" inline={true}></Textbox>
 
         <div class="footer-buttons">
 

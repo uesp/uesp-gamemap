@@ -72,6 +72,7 @@
 	let gamemapContainer = null;
 	let canEdit = false;
 	let editPane;
+	let editing = false;
 	let currentZoom = getURLParams().has("zoom") ? getURLParams().get("zoom") : 0;
 	$: currentWorld = null;
 	let showUI = true;
@@ -226,6 +227,7 @@
 			setLoading,
 			edit : function(object) {
 				editPane.edit(object);
+				editing = (object) ? true : (object == null || !object) ? false : false;
 			},
 		};
 
@@ -324,7 +326,7 @@
 					<!-- only show these elements when not being embedded -->
 					{#if !gamemap.isEmbedded()}
 
-						<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom}/>
+						<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom} disabled={editing}/>
 						<SearchPane/>
 
 						<!-- show layer switcher when available -->
