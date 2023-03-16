@@ -13,6 +13,11 @@
 ## bug fixes:
 - fixed maps not being centred on load (noticeable with eso)
 
+
+
+put map lock status in map watermark (partially, fully)
+also rename watermark to info bar since it does a lot more
+
 ## stuff for dave:
 
 

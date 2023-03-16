@@ -1,6 +1,6 @@
 <!-- @component
 ### Description
- Watermark component for the UESP gamemap.
+ Infobar component for the UESP gamemap.
 
 ### Author(s)
 - Thal-J <thal-j@uesp.net> (24th Jan, 2023) -->

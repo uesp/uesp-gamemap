@@ -35,7 +35,7 @@
 	import ZoomWidget from "./components/ZoomWidget.svelte";
 	import DebugBadge from "./components/DebugBadge.svelte";
 	import LayerSwitcher from './components/LayerSwitcher.svelte';
-	import Watermark from './components/Watermark.svelte';
+	import Infobar from './components/Infobar.svelte';
 	import MapChooser from './components/MapChooser.svelte';
 	import SearchPane from './components/SearchPane.svelte';
 	import LayerOptionsContainer from './components/LayerOptionsContainer.svelte';
@@ -379,10 +379,10 @@
 					{/if}
 				{/if}
 
-				<!-- Watermark -->
+				<!-- Infobar / Layer options -->
 				{#if !gridEnabled}
 					<LayerOptionsContainer>
-						<Watermark mapName = {mapConfig.mapTitle} embedded = {gamemap.isEmbedded()}/>
+						<Infobar mapName = {mapConfig.mapTitle} embedded = {gamemap.isEmbedded()}/>
 					</LayerOptionsContainer>
 				{/if}
 

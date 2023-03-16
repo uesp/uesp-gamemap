@@ -69,7 +69,6 @@
 
 
 <markup>
-
     <div id="editor" in:initiate out:cleanUp>
 
         {#if isWorld}
