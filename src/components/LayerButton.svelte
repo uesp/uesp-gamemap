@@ -16,6 +16,7 @@
     export let image = null;
     export let checked;
     export let dark = false;
+    export let big;
 
     const dispatch = createEventDispatcher();
 
@@ -36,7 +37,7 @@
 
 <markup>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div id="btn_toggle_grid" class='btn_layer_toggle layer-button waves-effect' title={tooltip} class:hasImage={!hasIcon} class:dark={dark} class:isChecked={checked} style="background-image: url({image});" on:click={onClick}>
+    <div id="btn_toggle_grid" class='btn_layer_toggle layer-button waves-effect' title={tooltip} class:hasImage={!hasIcon} class:dark={dark} class:isChecked={checked} style="background-image: url({image});" on:click={onClick} class:big={big}>
         {#if hasIcon}
             {#if iconIsURL}
                 <div style="width:100%; height:100%;">
@@ -61,6 +62,9 @@
         position: absolute;
         width: 100%;
         bottom: -9px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     .layer-button {
@@ -83,6 +87,12 @@
     .dark {
         color: var(--text_on_secondary);
         background: var(--divider);
+    }
+
+    .big {
+        height: clamp(70px, 10vw, 90px) !important;
+        width: clamp(70px, 10vw, 90px) !important;
+        margin-bottom: var(--padding_minimum);
     }
 
     .dark:hover {

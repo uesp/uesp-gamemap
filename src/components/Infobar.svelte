@@ -11,17 +11,23 @@
 
     export let mapName = "Gamemap";
     export let embedded = false;
+    export let lock;
 
 </script>
 
 <markup>
-    <div id="watermark" class:watermark={!embedded}>
+    <div id="watermark" class:watermark={!embedded && !lock}>
         {#if !embedded}
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <!-- svelte-ignore missing-declaration -->
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-invalid-attribute -->
-            <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home" target='_top'>UESP</a></span> • <a title="Reset this map" href="javascript:void(0);" onclick="gamemap.reset();">{mapName}</a></b>
+            {#if lock == "full"}
+                <Icon name = "lock" size={16}/>
+                <b title="Map is locked while editing worlds">Map locked</b>
+            {:else if lock == "partial"}
+                <Icon name = "lock_open" size={16}/>
+                <b title="Map is partially locked while editing locations">Map partially locked</b>
+            {:else}
+                <!-- svelte-ignore a11y-invalid-attribute -->
+                <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home" target='_top'>UESP</a></span> • <a title="Reset this map" href="javascript:void(0);" onclick="gamemap.reset();">{mapName}</a></b>
+            {/if}
         {:else}
             <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home" target='_top'>UESP</a></span> • View larger map <Icon name="open_in_new" size="tiny"/></b>
         {/if}
@@ -69,12 +75,3 @@
     }
 
 </style>
-
-
-<!--
-let coords = (isDebug && this.getCurrentWorld().totalWidth != null ) ? this.toXY(map.getCenter(), true) : null;
-map.attributionControl.setPrefix('<a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home">);
-map.attributionControl.addAttribution("<span id='mapAttribution'></span>");
-document.querySelector('#mapAttribution').innerHTML = '<a id="mapNameLink" onclick="resetMap()" href="javascript:void(0);"
-title="Reset the map view">'+ mapConfig.mapTitle +'</a>  |  ' + ((coords != null) ? "XY: " + Math.trunc(coords.x) + ", " + Math.trunc(coords.y)  + "  |  " : "") + '
-<a id="mapFeedbackLink" href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Give feedback about this map">Send Feedback</a>'; -->

@@ -38,14 +38,14 @@
 
     function initiate() {
 
-
         gamemap.edit(object);
         if (isWorld && object.id == gamemap.getCurrentWorld().id) {
             gamemap.reset(true, 30);
             gamemap.mapRoot.classList.add("editing-world");
+            gamemap.setMapLock("full");
+        } else if (isLocation) {
+            gamemap.setMapLock("partial");
         }
-
-        gamemap.setEditLock(true);
 
     }
 
@@ -61,8 +61,8 @@
             gamemap.reset(true);
         }
 
-        // remove editlock from gamemap
-        gamemap.setEditLock(false);
+        // remove map lock from gamemap
+        gamemap.setMapLock(false);
     }
 
 </script>

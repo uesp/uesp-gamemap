@@ -5,6 +5,7 @@
     "database" : "beyond",
     "tileURLName" : "bsmap",
     "bgColor" : "#284358",
+    "isModded" : true,
 
     // Map options
     "hasCustomCSS" : true,

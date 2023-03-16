@@ -4,6 +4,7 @@
     "wikiNamespace": "Morrowind",
     "database" : "tr",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Morrowind_Map_Design",
+    "isModded" : true,
 
     // Map options
     "hasCustomFavIcon" : true,

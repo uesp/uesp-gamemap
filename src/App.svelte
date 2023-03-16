@@ -9,7 +9,6 @@
 - Dave Humphrey <dave@uesp.net> (21st Jan 2014)
 - Thal-J <thal-j@uesp.net> (16th Aug 2022)-->
 
-<!-- App -->
 <script>
 
 	/*================================================
@@ -60,7 +59,7 @@
 			}
 	}, false);
 
-	// set up state variables
+	// state variables
 	let isLoading = true;
 	let loadingReason = "";
 	let isLoaded = false;
@@ -72,7 +71,7 @@
 	let gamemapContainer = null;
 	let canEdit = false;
 	let editPane;
-	let editing = false;
+	let mapLock = null;
 	let currentZoom = getURLParams().has("zoom") ? getURLParams().get("zoom") : 0;
 	$: currentWorld = null;
 	let showUI = true;
@@ -84,7 +83,7 @@
 	let showMapKey = false;
 	$: gridEnabled = false;
 
-	// on document load
+	// on app start
 	onMount(async() => {
 
 		// remove noscript message
@@ -132,7 +131,7 @@
 							// set up map config assets
 							mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
 							mapConfig.iconPath = mapConfig.assetsPath + "icons/";
-							// note: sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this.
+							// sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this
 							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/";
 
 							print("Completed merged map config:")
@@ -151,6 +150,63 @@
 			showMaps = true;
 		}
 	});
+
+	/*================================================
+						  Gamemap
+	================================================*/
+
+	// init gamemap
+	function loadGamemap(mapConfig) {
+
+		// define callbacks
+		let mapCallbacks = {
+			onWorldsLoaded : function (worlds) {
+				print("Worlds loaded!");
+				print(worlds);
+			},
+			onPermissionsLoaded : function(enableEditing) {
+				print("Editing permissions: " + enableEditing);
+				canEdit = enableEditing;
+			},
+			onMapLoaded : function() {
+				setLoading(false);
+				currentZoom = gamemap.getCurrentZoom();
+			},
+			onMapLockChanged : function(string) {
+				mapLock = string;
+			},
+			edit : function(object) {
+				editPane.edit(object);
+			},
+			onMapStateChanged,
+			onZoom,
+			setLoading,
+		};
+
+		// load up gamemap
+		window.gamemap = new Gamemap(gamemapContainer, mapConfig, mapCallbacks);
+		gamemap = window.gamemap;
+	}
+
+	function onMapStateChanged(mapState) {
+		let world = mapState.world;
+		currentWorld = world;
+		setWindowTitle(world.displayName);
+		isLoaded = true;
+		showLocationList = false;
+		showLayerSwitcher = (world.layers.length > 1 || world.hasGrid());
+		onZoom(mapState.zoomLevel);
+		gridEnabled = mapState.showGrid;
+	}
+
+	function onZoom(data) {
+		// if data an int, then update zoom level. if its an event, then send zoom back to gamemap
+		if (!isNaN(data)) {
+			currentZoom = data;
+		} else {
+			gamemap.setZoomTo(data.detail)
+		}
+	}
 
 	/*================================================
 						General
@@ -182,6 +238,20 @@
 		}
 	}
 
+	// rename browser tab function
+	function setWindowTitle(worldName) {
+
+		// get current map title
+		document.title = mapConfig.mapTitle;
+
+		// show current world in tab title if available
+		if (gamemap.hasMultipleWorlds()) {
+			document.title = worldName + " | " + document.title;
+		}
+
+		document.title = document.title + (" (UESP)");
+	}
+
 	// handle keypresses
 	function onKeyPressed(key) {
 
@@ -211,89 +281,10 @@
 	}
 
 	/*================================================
-						  Gamemap
-	================================================*/
-
-	// init gamemap
-	function loadGamemap(mapConfig) {
-
-		// define callbacks
-		let mapCallbacks = {
-			onWorldsLoaded,
-			onPermissionsLoaded,
-			onMapStateChanged,
-			onZoom,
-			onMapLoaded,
-			setLoading,
-			edit : function(object) {
-				editPane.edit(object);
-				editing = (object) ? true : (object == null || !object) ? false : false;
-			},
-		};
-
-		window.gamemap = new Gamemap(gamemapContainer, mapConfig, mapCallbacks);
-		gamemap = window.gamemap;
-
-	}
-
-	function setWindowTitle(worldName) {
-
-		// default dynamic map title
-		document.title = mapConfig.mapTitle;
-
-		if (gamemap.hasMultipleWorlds()) { // show map world in title if there is one
-			document.title = worldName + " | " + document.title;
-		}
-
-		document.title = document.title + (" (UESP)");
-	}
-
-	/*================================================
-						Callbacks
-	================================================*/
-
-	function onMapLoaded() {
-		setLoading(false);
-		currentZoom = gamemap.getCurrentZoom();
-	}
-
-	function onWorldsLoaded(mapWorlds) {
-		print("Worlds loaded!");
-		print(mapWorlds);
-	}
-
-	function onMapStateChanged(mapState) {
-		let world = mapState.world;
-		currentWorld = world;
-		setWindowTitle(world.displayName);
-		isLoaded = true;
-		showLocationList = false;
-		showLayerSwitcher = (world.layers.length > 1 || world.hasGrid());
-		onZoom(mapState.zoomLevel);
-		gridEnabled = mapState.showGrid;
-	}
-
-	function onZoom(data) {
-
-		// if data an int, then update zoom level
-		// however, if its an event, then send zoom back to gamemap
-		if (!isNaN(data)) {
-            currentZoom = data;
-        } else {
-			gamemap.setZoomTo(data.detail)
-		}
-	}
-
-	function onPermissionsLoaded(enableEditing) {
-		print("Editing permissions loaded, editing is: " + enableEditing);
-		canEdit = enableEditing;
-	}
-
-	/*================================================
 						Analytics
 	================================================*/
 
-	// Enable google analytics on release mode
+	// Enable google analytics on release builds
 	if (isRelease) {
 		let _gaq = [];
 		_gaq.push(['_setAccount', 'UA-1386039-6']);
@@ -307,8 +298,13 @@
 	}
 </script>
 
-<!-- App markup -->
+<!-- Markup -->
 <markup>
+
+	<!-- Map selector -->
+	{#if showMaps}
+		<MapChooser/>
+	{/if}
 
 	<!-- Gamemap container -->
 	<div id="gamemap" bind:this={gamemapContainer}>
@@ -326,7 +322,7 @@
 					<!-- only show these elements when not being embedded -->
 					{#if !gamemap.isEmbedded()}
 
-						<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom} disabled={editing}/>
+						<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom}/>
 						<SearchPane/>
 
 						<!-- show layer switcher when available -->
@@ -382,24 +378,23 @@
 				<!-- Infobar / Layer options -->
 				{#if !gridEnabled}
 					<LayerOptionsContainer>
-						<Infobar mapName = {mapConfig.mapTitle} embedded = {gamemap.isEmbedded()}/>
+						<Infobar mapName={mapConfig.mapTitle} embedded={gamemap.isEmbedded()} lock={mapLock}/>
 					</LayerOptionsContainer>
 				{/if}
-
 			{/if}
 		{/if}
 	</div>
 
-	<!-- Edit panel -->
-	{#if canEdit}
-		<EditPane bind:this={editPane}/>
-	{/if}
-
-	<!-- Preloading components -->
+	<!-- Preloader components -->
 	{#if !isLoaded && loadingReason != ""}
 		<LoadingBox reason={loadingReason+"..."}/>
 	{:else if isError}
 		<ErrorBox reason={errorReason}/>
+	{/if}
+
+	<!-- Map editor panel -->
+	{#if canEdit}
+		<EditPane bind:this={editPane}/>
 	{/if}
 
 	<!-- Help dialog -->
@@ -433,12 +428,7 @@
 		</Modal>
 	{/if}
 
-	<!-- Map selection menu -->
-	{#if showMaps}
-		<MapChooser/>
-	{/if}
-
-	<!-- Show debug tag in top right corner if app is in dev mode -->
+	<!-- Show debug tag in top right corner if dev build -->
 	<!-- svelte-ignore missing-declaration -->
 	{#if isDebug}
 		<DebugBadge/>
@@ -446,8 +436,8 @@
 
 </markup>
 
-<!-- App stylesheet -->
+<!-- Stylesheet -->
 <style global src="./styles.css"></style>
 
-<!-- Global key listener -->
+<!-- Global event listeners -->
 <svelte:window on:keydown={onKeyPressed} on:fullscreenchange={toggleFullscreen}/>

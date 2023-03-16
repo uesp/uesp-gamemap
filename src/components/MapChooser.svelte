@@ -14,7 +14,7 @@
     import PreloadBox from "./PreloadBox.svelte";
     import LayerButton from "./LayerButton.svelte";
 
-    $: maps = null;
+    let maps = null;
 
     // get list of games to show
     print("Getting available maps...");
@@ -22,10 +22,30 @@
 	queryParams.action = "get_maps";
     getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
         if (!error && data != null) {
-            print(data.maps);
 
-            // sort alphabetical order
-            maps = data.maps.sort((a, b) => a.localeCompare(b));
+            // sort data in alphabetical order
+            const sortObject = o => Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {})
+            let mapInfos = sortObject(data.mapInfos);
+
+            // define map list object
+            let mapList = {
+                official : [],
+                mods : [],
+            };
+
+            for (let [key, object] of Object.entries(mapInfos)) {
+                let map = {};
+                map.database = key;
+                map.name = object.mapTitle.replace('Gamemap', '').replace('Map', '').trim();
+
+                if (!object.isModded) {
+                    mapList.official.push(map);
+                } else {
+                    mapList.mods.push(map);
+                }
+            }
+            maps = mapList;
+            print(maps);
         }
     });
 
@@ -46,11 +66,23 @@
 
         {#if maps != null}
             <p/>
-            <div id="options_container">
-                {#each maps as map}
-                    <LayerButton label={map.toUpperCase()} icon="assets/maps/{map}/icons/favicon.png" dark="true" on:onClick={() => (location.pathname = map)}/>
-                {/each}
-            </div>
+            <b>Official:</b><p/>
+            {#if maps.official.length > 0}
+                <div class="options_container">
+                    {#each maps.official as map}
+                        <LayerButton label={map.name} icon="assets/maps/{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)}/>
+                    {/each}
+                </div>
+            {/if}<p/>
+
+            <b>Mods:</b><p/>
+            {#if maps.mods.length > 0}
+                <div class="options_container">
+                    {#each maps.mods as map}
+                        <LayerButton label={map.name} icon="assets/maps/{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)}/>
+                    {/each}
+                </div>
+            {/if}
         {:else}
             <LoadingSpinner/>
         {/if}
@@ -59,7 +91,6 @@
 </markup>
 
 <style>
-
     .info_title {
         color: var(--secondary_variant_light);
         vertical-align: middle;

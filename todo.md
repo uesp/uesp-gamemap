@@ -10,6 +10,11 @@
 - fixed RC refreshing each time you opened it
 
 
+
+- implemented better map chooser
+
+- fixed padding in map chooser
+
 ## bug fixes:
 - fixed maps not being centred on load (noticeable with eso)
 
