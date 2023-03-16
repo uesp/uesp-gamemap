@@ -8,6 +8,7 @@
 <script>
     // import svelte stuff
     import { createEventDispatcher } from "svelte";
+    import { fade, fly } from 'svelte/transition';
 
     // import UI components
     import Modal from "./Modal.svelte";
@@ -16,7 +17,7 @@
     import World from "../map/objects/world";
     import Location from "../map/objects/location"
     import Button from "./Button.svelte";
-  import Textbox from "./Textbox.svelte";
+    import Textbox from "./Textbox.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -79,9 +80,9 @@
 
 
         <b>General</b>
-        <Textbox label="Name"/>
-        <Textbox label="Display name"/>
-        <Textbox label="Parent World ID" subtext="Please use a worldID"/>
+        <Textbox label="Display name" subtext="User facing name"/>
+        <Textbox label="Name" subtext="Internal name"/>
+        <Textbox label="Parent ID" subtext="Parent world ID"/>
         <Textbox label="Wiki page"/>
         <Textbox label="Description" block={true}/>
 
@@ -94,24 +95,35 @@
         <Textbox hint="Minimum Y"></Textbox>
         <Textbox hint="Maximum Y"></Textbox>
 
-        <div class="footer-buttons">
-
-            <Button text="Cancel" icon="close" on:click={cancel}></Button>
-            <Button text="Delete" icon="delete" type="delete"></Button>
-            <Button text="Save" icon="save" type="save" bold="true"></Button>
-
+        <div id="footer" in:fly={{ y: 10, duration: 250 }}>
+            <div class="footer-buttons">
+                <Button text="Save" icon="save" type="save" bold="true"></Button>
+            </div>
+            <div class="footer-buttons">
+                <Button text="Cancel" icon="close" on:click={cancel}></Button>
+                <Button text="Delete" icon="delete" type="delete"></Button>
+            </div>
         </div>
     </div>
 
 </markup>
 
 <style>
+
+    #footer {
+        box-shadow: 0px 1.5px 4px 4px var(--shadow);
+        background-color: var(--surface_variant);
+        position: absolute;
+        bottom: 0px;
+        left: 0;
+        width: -moz-available;
+        padding: var(--padding_minimum);
+    }
+
     .footer-buttons {
-        padding-top: var(--padding_medium);
         display: flex;
         width: 100%;
     }
-
     b {
         font-size: 15px;
     }
