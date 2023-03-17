@@ -1447,7 +1447,7 @@ class GameMap
 		}
 		
 		$database = $uespGameMapDatabase;
-		if ($this->dbPrefix != "") $database = $uespGameMapDatabase . "_" . $this->dbPrefix; 
+		if ($this->dbPrefix != "") $database = $uespGameMapDatabase . "_" . $this->dbPrefix;
 		
 		$this->db = new mysqli($uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW, $database);
 		if ($this->db->connect_error) return $this->reportError("Could not connect to mysql database!");

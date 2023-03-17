@@ -102,13 +102,13 @@
 				missingMapTile:  "//maps.uesp.net/images/troutofrange_black.jpg",
 				iconPath: "sricons/",
 				iconTypeMap: dgIconMap,
-				gamePosX1: -40960,
-				gamePosX2: 163840,
-				gamePosY1: 122880,
-				gamePosY2: -40960,
-				initialGamePosX : 66000,
-				initialGamePosY : 58000,
-				initialZoom : 13,
+				gamePosX1: 0,
+				gamePosX2: 1000000,
+				gamePosY1: 1000000,
+				gamePosY2: 0,
+				initialGamePosX : 500000,
+				initialGamePosY : 500000,
+				initialZoom : 1,
 				tileCountX : 11,
 				tileCountY : 9,
 				mapLinkElement : '#gmMapLink',
@@ -143,14 +143,14 @@
 		
 		function getDefaultMapTile(xPos, yPos, zoom, worldName, displayState)
 		{
-			return "//maps.uesp.net/dgmap/" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
+			return "//maps.uesp.net/dgmap/" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + ".jpg";
 		}
 				
 				
 		function getDefaultMapTile_Offline(xPos, yPos, zoom, worldName)
 		{
 				//TODO
-			return "/" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + "-" + zoom + ".jpg";
+			return "/" + worldName + "/zoom" + zoom + "/" + worldName + "-" + xPos + "-" + yPos + ".jpg";
 		}
 
 		
@@ -161,7 +161,7 @@
 			defaultMapState = new uesp.gamemap.MapState();
 			
 			defaultMapState.worldId = 1;
-			defaultMapState.zoomLevel = 13;
+			defaultMapState.zoomLevel = 2;
 			defaultMapState.gamePos.x = 66000;
 			defaultMapState.gamePos.y = 58000;
 			defaultMapState.grid = false;
