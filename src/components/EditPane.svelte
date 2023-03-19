@@ -208,6 +208,8 @@
         z-index: 100;
         position: relative;
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
+        display: flex;
+        flex-direction: column;
     }
 
     #edit-overlay {
@@ -221,6 +223,9 @@
     }
 
     #edit-panel-content {
+        /* padding-top: var(--padding_minimum);
+        padding-left: var(--padding_minimum);
+        padding-right: var(--padding_minimum); */
         padding: var(--padding_minimum);
         height: 100%;
     }

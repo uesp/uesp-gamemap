@@ -65,8 +65,6 @@
         Please choose a game from the options below.
 
         {#if maps != null}
-            <p/>
-            <b>Official:</b><p/>
             {#if maps.official.length > 0}
                 <div class="options_container">
                     {#each maps.official as map}
@@ -75,7 +73,7 @@
                 </div>
             {/if}<p/>
 
-            <b>Mods:</b><p/>
+            <b>Unofficial:</b><p/>
             {#if maps.mods.length > 0}
                 <div class="options_container">
                     {#each maps.mods as map}
