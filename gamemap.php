@@ -533,11 +533,69 @@ class GameMap
 	}
 	
 	
+	public function doNameSearch ()
+	{
+		$query = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") ." AND name LIKE '%{$this->searchName}%' ORDER BY name LIMIT {$this->searchLimitCount};";
+		
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed searching for worlds by name!");
+		
+		$locations = Array();
+		$count = 0;
+		$result->data_seek(0);
+		
+		while ( ($row = $result->fetch_assoc()) )
+		{
+			if (!$this->CanViewWorldId($row['id'])) continue;
+			
+			settype($row['id'], "integer");
+			settype($row['parentId'], "integer");
+			settype($row['revisionId'], "integer");
+			settype($row['enabled'], "integer");
+			settype($row['posRight'], "integer");
+			settype($row['posLeft'], "integer");
+			settype($row['posTop'], "integer");
+			settype($row['posBottom'], "integer");
+			settype($row['cellSize'], "integer");
+			settype($row['minZoom'], "integer");
+			settype($row['maxZoom'], "integer");
+			settype($row['defaultZoom'], "integer");
+			settype($row['zoomOffset'], "float");
+			settype($row['tilesX'], "integer");
+			settype($row['tilesY'], "integer");
+			settype($row['maxTilesX'], "integer");
+			settype($row['maxTilesY'], "integer");
+			
+			$worlds[] = $row;
+			$count += 1;
+		}
+		
+		if ($count == 0)
+		{
+			$this->safeSearchWordWildcard = $this->searchName;
+			$this->safeSearchWord = $this->searchName;
+			
+			$worldCount = $this->doWorldSearch(false);
+			
+			return;
+		}
+		
+		$this->addOutputItem("worlds", $worlds);
+		$this->addOutputItem("worldCount", $count);
+		
+		return true;
+	}
+	
+	
 	public function doSearch ()
 	{
 		if ($this->searchType > 0)
 		{
 			return $this->doTypeSearch();
+		}
+		else if ($this->searchName != '')
+		{
+			return $this->doNameSearch();
 		}
 		
 		$matches = array();
@@ -1600,6 +1658,12 @@ class GameMap
 		{
 			$this->unsafeSearchType = urldecode($this->inputParams['searchtype']);
 			$this->searchType = intval($this->unsafeSearchType);
+		}
+		
+		if (array_key_exists('searchname',  $this->inputParams))
+		{
+			$this->unsafeSearchName = urldecode($this->inputParams['searchname']);
+			$this->searchName = $this->db->real_escape_string($this->unsafeSearchName);
 		}
 		
 		if (array_key_exists('centeron',  $this->inputParams)) $this->locCenterOn = $this->inputParams['centeron'];
