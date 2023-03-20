@@ -33,11 +33,16 @@ class CMakeTileSymLinks
 					'prefix' => 'vvardenfell',
 					'newPrefix' => 'morrowind',
 			],*/
+			/*
 			'dbmap' => [
 					'prefix' => 'db',
 					'newPrefix' => 'solstheim',
 					'minZoom' => 10,
-			],/*
+			], */
+			'dgmap' => [
+					'prefix' => 'dg',
+					'minZoom' => 0,
+			], /*
 			'simap' => [
 					'prefix' => 'seworld',
 					'newPrefix' => 'shiveringisles',
