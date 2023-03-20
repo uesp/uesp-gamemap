@@ -488,6 +488,10 @@ class GameMap
 	
 	public function doTypeSearch ()
 	{
+		if ($this->worldId > 0)
+			$this->searchWorldId = $this->worldId;
+		else
+			$this->searchWorldId = $this->FindWorld($this->world, false);
 		
 		if ($this->searchWorldId != 0)
 			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId={$this->searchWorldId} AND iconType={$this->searchType} ORDER BY name, worldId LIMIT {$this->searchLimitCount};";
