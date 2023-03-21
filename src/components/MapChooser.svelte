@@ -61,9 +61,8 @@
         <p/>
         <Divider direction="horizontal"/>
         <p/>
-
         Please choose a game from the options below.
-
+        <p/>
         {#if maps != null}
             {#if maps.official.length > 0}
                 <div class="options_container">
@@ -71,8 +70,7 @@
                         <LayerButton label={map.name} icon="assets/maps/{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)}/>
                     {/each}
                 </div>
-            {/if}<p/>
-
+            {/if}
             <b>Unofficial:</b><p/>
             {#if maps.mods.length > 0}
                 <div class="options_container">

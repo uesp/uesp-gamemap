@@ -291,7 +291,7 @@ export default class Gamemap {
 		// update map state
 		let x = Number(this.toCoords(map.getCenter()).x, this.mapConfig.coordType).toFixed(3);
 		let y = Number(this.toCoords(map.getCenter()).y, this.mapConfig.coordType).toFixed(3);
-		newMapState.coords = (this.mapConfig.coordType == COORD_TYPES.NORMALISED) ? [x, y] : [Math.floor(x), Math.floor(y)];
+		newMapState.coords = (this.mapConfig.coordType == COORD_TYPES.NORMALISED || this.mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? [x, y] : [Math.floor(x), Math.floor(y)];
 		newMapState.zoomLevel = parseFloat(map.getZoom().toFixed(3));
 		newMapState.world = this.getWorldFromID(this.currentWorldID);
 		this.currentMapState = newMapState;

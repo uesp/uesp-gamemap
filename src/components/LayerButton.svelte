@@ -95,6 +95,10 @@
         margin-bottom: var(--padding_minimum);
     }
 
+    .big .layer-name {
+        font-size: 0.80rem;
+    }
+
     .dark:hover {
         color: var(--text_on_secondary);
         background: var(--surface_dark_variant);

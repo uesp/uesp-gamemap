@@ -13,7 +13,7 @@
     // 1: Normalised
     // 2: Worldspace
     // 3: Pseudo-Normalised
-    "coordType" : 3,
+    "coordType" : 1,
 
     // Map world info
     "defaultWorldID" : 668,
