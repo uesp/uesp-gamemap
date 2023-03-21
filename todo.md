@@ -2,62 +2,60 @@
 
 ## last week:
 
-- finished RC, fixed some bugs
+began adding world/location editing, fixed bugs
 
-## stuff:
+## editing:
+- got edit sidebar ui working (not linked up to server yet)
+- shift+click on locations to edit
+- editing a location will cause it to glow blue (for worlds, makes whole view glow)
+>>> reasoning:
+>>> - since editing is now in a sidebar instead of a popup it could be easy to lose track of whatever you're editing in the sea of icons
+>>> - differenciate between editing world (the whole window) or a location (just the location)
+>>> - could also be used to indicate unsaved changes in future? (maybe different colour?)
 
-- added throbbing "editing" animation when editing a world or location
+## map chooser
+- implemented better map chooser using new api
+- cleaned up design a bit
+
+
+- show off mobile (dave asked last week)
+## bugs:
 - fixed RC refreshing each time you opened it
-
-
-
-- implemented better map chooser
-
-- fixed padding in map chooser
-
-## bug fixes:
 - fixed maps not being centred on load (noticeable with eso)
 
+## dave stuff:
 
+immediate
 
-put map lock status in map watermark (partially, fully)
-also rename watermark to info bar since it does a lot more
+- dawnstar leaflet tiles
+- tj database access
 
-## stuff for dave:
+nonpriority
 
-
-things you asked me to remind you about today:
-- better getMapList() api for gamemap,php (db, name, isofficial/modded)
-- make skyrim icons 32px
-- dcsg dawnstar maps
->>> 1 tile per pixel
->>> normalised coord scheme
-- search world internal names in searchbox like "name:blah"
+- 32px skyrim skyrim icons
 - type:cave doesnt respect "search in this map" setting
+- search world internal names in searchbox like "name:blah"
+- cave interior maps for skyrim, ob, mw
+- skyrim minecraft thing
 
 
-- dcsh also asked for skyrim minecraft map
 
 
 feedback:
 - map key alphabetical
 - map key not nearest neighbour
 - divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)
-- cave interior maps for skyrim, ob, mw
 - some kind of tutorial on first non-cookie load to tell user how to use ui
 - an undo button for deleting/editing locations and worlds
 
-
-
-
-- dawnstar (ds) map for testing
->> probably using normalised coords?
->> 1 tile per pixel
-
-- people asked to separate modded maps from official ones, would probably need help on the php
 ## todo
 
+- skyrim minecraft map
+- convert eso and dawnstar to psueodo normalised in mapconfig
 
+
+
+- make eso only one with custom css as the rest use yellow anyway
 
 
 

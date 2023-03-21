@@ -546,7 +546,7 @@ export default class Gamemap {
 		}
 
 		if (coordType != COORD_TYPES.XY) {
-			if (coordType == COORD_TYPES.NORMALISED) {
+			if (coordType == COORD_TYPES.NORMALISED || coordType == COORD_TYPES.PSEUDO_NORMALISED) {
 				if (coords.x > 1.5 || coords.y > 1.5) { // make sure to only convert non-normalised coordinates
 					// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
 					coords.x = (coords.x / this.mapImage.width).toFixed(3);
@@ -583,7 +583,7 @@ export default class Gamemap {
 				case COORD_TYPES.XY || null:
 					latLngs = RC.unproject([coords.x , coords.y]);
 					return latLngs;
-				case COORD_TYPES.NORMALISED:
+				case COORD_TYPES.NORMALISED || COORD_TYPES.PSEUDO_NORMALISED:
 					let x = (coords.x * this.mapImage.width);
 					let y = (coords.y * this.mapImage.height);
 

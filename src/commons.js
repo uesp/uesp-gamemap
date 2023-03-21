@@ -56,6 +56,7 @@ window.COORD_TYPES = {
     XY : 0,
     NORMALISED : 1,
     WORLDSPACE : 2,
+	PSEUDO_NORMALISED : 3,
 }
 
 const MINUTE = 60;

@@ -63,6 +63,8 @@ To search for locations, or maps, use the search bar in the upper-left corner (o
 
 To only search for specific _types_ of locations (i.e, caves), you can do ``type: cave`` in the search field. See the map key for all available location types. (<i class="material-icons tiny">more_vert</i> > <i class="material-icons tiny">list</i> Map Key)
 
+To search for specific worlds, you can do ``world: skyrim`` in the search field.
+
 **Options**
 
 To pin the search window above the map, expand the search options, and enable "Pin search pane". A pin icon ( <i class="material-icons tiny">push_pin</i> ) will appear to indicate whether the search window is pinned or not.

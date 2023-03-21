@@ -29,9 +29,6 @@ export default class World {
 			this.minY = (mapConfig.minY != null) ? mapConfig.minY : world.posBottom;
 			this.maxY = (mapConfig.maxY != null) ? mapConfig.maxY : world.posTop;
 
-			// this.numTilesX = world.maxTilesX;
-			// this.numTilesY = world.maxTilesY; // number of tiles at full zoom in the Y direction
-
 			this.numTilesX = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the X direction
 			this.numTilesY = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the Y direction
 
@@ -44,16 +41,16 @@ export default class World {
 			this.defaultZoom = world.defaultZoom - this.zoomOffset;
 
 			// world display data (grids and layers)
-			this.displayData = JSON.parse(world.displayData);
-			this.layers = (this.displayData.layers != null) ? this.displayData.layers : mapConfig.layers;
-			this.gridStart = (this.displayData.gridStart != null) ? this.displayData.gridStart : null;
+			this.displayData = (world.displayData != null && world.displayData != "") ? JSON.parse(world.displayData) : null;
+			this.layers = (this.displayData != null && this.displayData.layers != null) ? this.displayData.layers : mapConfig.layers;
+			this.gridStart = (this.displayData != null && this.displayData.gridStart != null) ? this.displayData.gridStart : null;
 		} else {
 			throw new Error("World cannot be null!");
 		}
 	}
 
 	hasGrid() {
-		return (this.displayData.hasGrid != null && this.displayData.gridStart != null) ? this.displayData.hasGrid : false;
+		return (this.displayData != null && this.displayData.hasGrid != null && this.displayData.gridStart != null) ? this.displayData.hasGrid : false;
 	}
 
 	hasCellResources() {
@@ -69,8 +66,8 @@ export default class World {
 
 		let dimens = {};
 
-		let width = ((gamemap.getMapConfig().database == "eso") ? this.dbNumTilesX : this.numTilesX * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
-		let height = ((gamemap.getMapConfig().database == "eso") ? this.dbNumTilesY : this.numTilesY * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
+		let width = ((gamemap.getMapConfig().coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.dbNumTilesX : this.numTilesX * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
+		let height = ((gamemap.getMapConfig().coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.dbNumTilesY : this.numTilesY * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
 
 		dimens.width = width;
 		dimens.height = height;

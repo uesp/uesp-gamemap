@@ -1,10 +1,8 @@
 {
     // General map info
-    "mapTitle": "Morrowind Gamemap",
-    "wikiNamespace": "Morrowind",
-    "database" : "mw",
-    "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Morrowind_Map_Design",
-    "bgColor" : "#7076AA",
+    "mapTitle": "Dawnstar Gamemap",
+    "wikiNamespace": "Dawnstar",
+    "database" : "ds",
 
     // Map options
     "hasCustomFavIcon" : true,
@@ -15,16 +13,10 @@
     // 1: Normalised
     // 2: Worldspace
     // 3: Pseudo-Normalised
-    "coordType" : 2,
-
-
-    // Map world info
-    "defaultWorldID" : 1,
-    "minWorldID" : 0,
-    "maxWorldID" : 20000,
+    "coordType" : 3,
 
     // Map icon info
-    "iconSize" : 16,
+    "iconSize" : 64,
     "icons": {
         "0": "None",
         "1": "City",

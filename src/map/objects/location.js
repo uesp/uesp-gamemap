@@ -117,7 +117,7 @@ export default class Location {
 		let y = coords[1];
 
 		// convert eso coordinates to normalised
-		if (mapConfig.coordType == COORD_TYPES.NORMALISED && mapConfig.database == "eso") {
+		if (mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) {
 
 			// get max range of x and y, assure it is a positive number
 			let maxRangeX = Math.abs(currentWorld.maxX - currentWorld.minX);
@@ -127,13 +127,9 @@ export default class Location {
             x = (x - currentWorld.minX) / maxRangeX;
 			y = Math.abs((y - currentWorld.maxY) / maxRangeY); // flip y around
 
-
-			if (mapConfig.coordType == COORD_TYPES.NORMALISED) {
-
-				// transform coords to better fit power of two numbers of tiles
-				x = (x * nextPowerOfTwo(currentWorld.dbNumTilesX) / currentWorld.dbNumTilesX).toFixed(3);
-				y = (y * nextPowerOfTwo(currentWorld.dbNumTilesY) / currentWorld.dbNumTilesY).toFixed(3);
-			}
+			// transform coords to better fit power of two numbers of tiles
+			x = (x * nextPowerOfTwo(currentWorld.dbNumTilesX) / currentWorld.dbNumTilesX).toFixed(3);
+			y = (y * nextPowerOfTwo(currentWorld.dbNumTilesY) / currentWorld.dbNumTilesY).toFixed(3);
 		}
 
 		return new Point(x, y, mapConfig.coordType, currentWorld.maxZoomLevel);

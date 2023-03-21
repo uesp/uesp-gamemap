@@ -145,7 +145,7 @@ class GameMap
 		if ($dbPrefix == "" || $dbPrefix == "eso") return $this->canEditESO;
 		if ($dbPrefix == "tr") return $this->canEditTR;
 
-		if ($dbPrefix == "sr" || $dbPrefix == "si" || $dbPrefix == "mw" || $dbPrefix == "ob" || $dbPrefix == "si" || $dbPrefix == "db" || $dbPrefix == "ptmw" || $dbPrefix == "test")
+		if ($dbPrefix == "sr" || $dbPrefix == "si" || $dbPrefix == "mw" || $dbPrefix == "ob" || $dbPrefix == "si" || $dbPrefix == "db" || $dbPrefix == "ptmw" || $dbPrefix == "test" || $dbPrefix == "beyond" || $dbPrefix == "ds")
 		{
 			return $this->canEditOther;
 		}
@@ -459,6 +459,11 @@ class GameMap
 	public function doTypeSearch ()
 	{
 
+		if ($this->worldId > 0)
+			$this->searchWorldId = $this->worldId;
+		else
+			$this->searchWorldId = $this->FindWorld($this->world, false);
+
 		if ($this->searchWorldId != 0)
 			$query = "SELECT * from location WHERE " . $this->getEnabledQueryParam("visible") ." AND worldId={$this->searchWorldId} AND iconType={$this->searchType} ORDER BY name, worldId LIMIT {$this->searchLimitCount};";
 		else
@@ -504,6 +509,9 @@ class GameMap
 		if ($this->searchType > 0)
 		{
 			return $this->doTypeSearch();
+		} else if ($this->searchName != '')
+		{
+			return $this->doNameSearch();
 		}
 
 		$matches = array();
@@ -531,6 +539,58 @@ class GameMap
 		return true;
 	}
 
+	public function doNameSearch ()
+	{
+		$query = "SELECT * from world WHERE " . $this->getEnabledQueryParam("enabled") ." AND name LIKE '%{$this->searchName}%' ORDER BY name LIMIT {$this->searchLimitCount};";
+
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed searching for worlds by name!");
+
+		$locations = Array();
+		$count = 0;
+		$result->data_seek(0);
+
+		while ( ($row = $result->fetch_assoc()) )
+		{
+			if (!$this->CanViewWorldId($row['id'])) continue;
+
+			settype($row['id'], "integer");
+			settype($row['parentId'], "integer");
+			settype($row['revisionId'], "integer");
+			settype($row['enabled'], "integer");
+			settype($row['posRight'], "integer");
+			settype($row['posLeft'], "integer");
+			settype($row['posTop'], "integer");
+			settype($row['posBottom'], "integer");
+			settype($row['cellSize'], "integer");
+			settype($row['minZoom'], "integer");
+			settype($row['maxZoom'], "integer");
+			settype($row['defaultZoom'], "integer");
+			settype($row['zoomOffset'], "float");
+			settype($row['tilesX'], "integer");
+			settype($row['tilesY'], "integer");
+			settype($row['maxTilesX'], "integer");
+			settype($row['maxTilesY'], "integer");
+
+			$worlds[] = $row;
+			$count += 1;
+		}
+
+		if ($count == 0)
+		{
+			$this->safeSearchWordWildcard = $this->searchName;
+			$this->safeSearchWord = $this->searchName;
+
+			$worldCount = $this->doWorldSearch(false);
+
+			return;
+		}
+
+		$this->addOutputItem("worlds", $worlds);
+		$this->addOutputItem("worldCount", $count);
+
+		return true;
+	}
 
 	public function doWorldSearch ($doExactSearch)
 	{
@@ -1420,6 +1480,9 @@ class GameMap
 				case 'si':
 					$this->dbPrefix = "si";
 					break;
+				case 'ds':
+					$this->dbPrefix = "ds";
+					break;
 				case 'test':
 					$this->dbPrefix = "test";
 					break;
@@ -1512,6 +1575,12 @@ class GameMap
 		{
 			$this->unsafeSearchType = urldecode($this->inputParams['searchtype']);
 			$this->searchType = intval($this->unsafeSearchType);
+		}
+
+		if (array_key_exists('searchname',  $this->inputParams))
+		{
+			$this->unsafeSearchName = urldecode($this->inputParams['searchname']);
+			$this->searchName = $this->db->real_escape_string($this->unsafeSearchName);
 		}
 
 		if (array_key_exists('centeron',  $this->inputParams)) $this->locCenterOn = $this->inputParams['centeron'];

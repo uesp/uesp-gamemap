@@ -12,7 +12,8 @@
     // 0: XY (Default)
     // 1: Normalised
     // 2: Worldspace
-    "coordType" : 1,
+    // 3: Pseudo-Normalised
+    "coordType" : 3,
 
     // Map world info
     "defaultWorldID" : 668,

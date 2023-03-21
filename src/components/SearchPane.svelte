@@ -86,7 +86,13 @@
             if (locType != null) {
                 queryParams.searchtype = locType;
             }
-        }
+        } else if (searchText.substring(0, 5) === "name:") {
+            var name = searchText.substring(5).trim();
+            if (name != null && name != '') queryParams.searchname = name;
+	    } else if (searchText.substring(0, 6) === "world:") {
+            var name = searchText.substring(6).trim();
+            if (name != null && name != '') queryParams.searchname = name;
+	    }
 
         getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 
