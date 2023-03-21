@@ -13,6 +13,8 @@
     export let block = false;
     export let validate = false;
     export let subtext;
+    export let text = "";
+    export let value = text;
 
     let id = Math.random();
 
@@ -22,8 +24,8 @@
     <div class="textbox" class:inline={!block}>
         {#if label}<p class="label">{label}</p>{/if}
         <div class="input-field" class:inline={!block}>
-            <input id={id} type="text" class:validate={validate}>
-            <label for={id}>{hint}</label>
+            <input id={id} type="text" class:validate={validate} bind:value={value}>
+            <label for={id} class:active={value.length > 0}>{hint}</label>
             {#if subtext}<span class="supporting-text subtext">{subtext}</span>{/if}
         </div>
     </div>

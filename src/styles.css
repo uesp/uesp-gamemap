@@ -753,7 +753,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 }
 
 
-.editing-world {
+.leaflet-container.editing {
 	animation: throb-inner 2.5s infinite !important;
 }
 
@@ -771,7 +771,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	}
 }
 
-.editing {
+.editing:not(.leaflet-container) {
 	animation: throb 2.5s infinite !important;
 }
 

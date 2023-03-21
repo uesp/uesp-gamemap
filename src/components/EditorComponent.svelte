@@ -41,7 +41,7 @@
         gamemap.edit(object);
         if (isWorld && object.id == gamemap.getCurrentWorld().id) {
             gamemap.reset(true, 30);
-            gamemap.mapRoot.classList.add("editing-world");
+            gamemap.mapRoot.classList.add("editing");
             gamemap.setMapLock("full");
         } else if (isLocation) {
             gamemap.setMapLock("partial");
@@ -54,7 +54,6 @@
         let glowElements = document.querySelectorAll("[class*='editing']");
         Array.from(glowElements).forEach(element => {
             element.classList.remove("editing");
-            element.classList.remove("editing-world");
         })
 
         if (isWorld) {
@@ -79,7 +78,7 @@
             {/if}
 
             <b>General</b>
-            <Textbox label="Display name" subtext="User facing name"/>
+            <Textbox label="Display name" subtext="User facing name" text="ligma"/>
             <Textbox label="Name" subtext="Internal name"/>
             <Textbox label="Parent ID" subtext="Parent world ID"/>
             <Textbox label="Wiki page"/>
