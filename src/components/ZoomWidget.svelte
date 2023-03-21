@@ -16,6 +16,7 @@
     import Divider from "./Divider.svelte";
 
     export let currentZoom;
+    export let lock;
 
     const dispatch = createEventDispatcher();
 
@@ -70,7 +71,7 @@
 </script>
 
 <markup>
-    <div id="zoom_widget" in:fly="{{ x: 5, duration: 250 }}" out:fade="{{duration: 75}}">
+    <div id="zoom_widget" in:fly="{{ x: 5, duration: 250 }}" out:fade="{{duration: 75}}" class:lock={lock == "full"} class:disabled={lock == "full"}>
         <!-- svelte-ignore missing-declaration -->
         <button on:click={() => zoom(gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect long-press" id="btn_zoom_in" tabindex="-1" title="Zoom in" disabled={!canZoomIn} data-long-press-delay="600"><Icon name="add"/></button>
         <Divider/>
@@ -94,6 +95,11 @@
         flex-direction: column;
         flex: auto;
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
+    }
+
+    .lock {
+        opacity: 0.5;
+        pointer-events: none;
     }
 
     .btn_zoom {

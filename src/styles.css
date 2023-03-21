@@ -752,9 +752,9 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	background: var(--bubble_selection);
 }
 
-
 .leaflet-container.editing {
 	animation: throb-inner 2.5s infinite !important;
+	pointer-events: none !important;
 }
 
 @keyframes throb-inner {

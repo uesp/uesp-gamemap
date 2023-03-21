@@ -49,7 +49,6 @@
 
     }
 
-
     function cleanUp() {
         let glowElements = document.querySelectorAll("[class*='editing']");
         Array.from(glowElements).forEach(element => {
@@ -65,7 +64,6 @@
     }
 
 </script>
-
 
 <markup>
     <div id="editor" in:initiate out:cleanUp>

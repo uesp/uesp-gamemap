@@ -7,7 +7,7 @@
 
 <script>
     // import core svelte stuff
-    import { fade, fly, slide, crossfade } from 'svelte/transition';
+    import { fade, fly, slide } from 'svelte/transition';
     import { createEventDispatcher } from "svelte";
 
     // import ui components
@@ -21,6 +21,7 @@
     // state vars
     export let world = gamemap.getCurrentWorld();
     export let gridEnabled = gamemap.isGridShown();
+    export let lock;
     $: hasMultipleLayers = world.hasMultipleLayers();
     $: layers = world.layers;
     $: layerName = gamemap.getNextTileLayerName();
@@ -74,7 +75,7 @@
 
 <markup>
     <!-- Layer switcher Widget -->
-    <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit} in:fly="{{ x: -5, duration: 250 }}" out:fade="{{duration: 75}}">
+    <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit} in:fly="{{ x: -5, duration: 250 }}" out:fade="{{duration: 75}}" class:lock={lock}>
 
         <!-- Primary layer switcher button -->
         <button id="btn_layer_widget_switcher" class:hasLayerImage={hasMultipleLayers} class="waves-effect" on:click={onLayerClicked} style="background-image: url({layerImage});">
@@ -272,5 +273,11 @@
         border-color: var(--divider);
         border-radius: 6px;
     }
+
+    .lock {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
 
 </style>

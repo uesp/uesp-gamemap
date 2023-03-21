@@ -18,6 +18,7 @@
     import ListItem from "./ListItem.svelte";
 
     // declare state vars
+    export let lock;
     let searchBox = null;
     let isLoading = false;
     let searchCurrentMap = false;
@@ -26,7 +27,7 @@
     $: searchQuery = "";
     $: searchResults = null;
     $: searchFocused = null;
-    $: showSearchPane = (searchQuery.length > 0 && searchQuery != "" && searchFocused && searchBox.value != "");
+    $: showSearchPane = (searchQuery.length > 0 && searchQuery != "" && searchFocused && searchBox.value != "") && !lock;
     let currentlySelectedResult = 0;
 
     // search result object
@@ -86,11 +87,11 @@
             if (locType != null) {
                 queryParams.searchtype = locType;
             }
-        } else if (searchText.substring(0, 5) === "name:") {
-            var name = searchText.substring(5).trim();
+        } else if (searchQuery.substring(0, 5) === "name:") {
+            var name = searchQuery.substring(5).trim();
             if (name != null && name != '') queryParams.searchname = name;
-	    } else if (searchText.substring(0, 6) === "world:") {
-            var name = searchText.substring(6).trim();
+	    } else if (searchQuery.substring(0, 6) === "world:") {
+            var name = searchQuery.substring(6).trim();
             if (name != null && name != '') queryParams.searchname = name;
 	    }
 
@@ -220,11 +221,11 @@
 </script>
 
 <markup>
-    <div id="search_pane" in:fly="{{ x: -5, duration: 250 }}" out:fade="{{duration: 75}}">
+    <div id="search_pane" in:fly="{{ x: -5, duration: 250 }}" out:fade="{{duration: 75}}" class:lock={lock}>
         <div id="search_container">
             <!-- Search bar -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div id='searchbar' title="Type here to search" class="waves-effect" class:fullPane={showSearchPane} on:click={() => (searchBox.focus())}>
+            <div id='searchbar' title="Type here to search" class="waves-effect" class:fullPane={showSearchPane} on:click={() => (searchBox.focus())} class:lock={lock}>
 
                 <!-- Magnifying glass icon -->
                 <div id="search_icon">
@@ -399,6 +400,12 @@
         overflow: auto;
         height: 100%;
     }
+
+    .lock {
+        opacity: 0.5;
+        pointer-events: none  !important;
+    }
+
 </style>
 
 <!-- Global event listeners -->

@@ -71,7 +71,7 @@
 	let gamemapContainer = null;
 	let canEdit = false;
 	let editPane;
-	let mapLock = null;
+	$: mapLock = null;
 	let currentZoom = getURLParams().has("zoom") ? getURLParams().get("zoom") : 0;
 	$: currentWorld = null;
 	let showUI = true;
@@ -322,18 +322,18 @@
 					<!-- only show these elements when not being embedded -->
 					{#if !gamemap.isEmbedded()}
 
-						<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom}/>
-						<SearchPane/>
+						<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom} lock={mapLock}/>
+						<SearchPane lock={mapLock}/>
 
 						<!-- show layer switcher when available -->
 						{#if showLayerSwitcher}
-							<LayerSwitcher world={currentWorld} gridEnabled={gridEnabled} on:gridChecked={(e) => gridEnabled = e.detail}/>
+							<LayerSwitcher world={currentWorld} lock={mapLock} gridEnabled={gridEnabled} on:gridChecked={(e) => gridEnabled = e.detail}/>
 						{/if}
 
 						<IconBar>
 							<slot:template slot="primary">
 								{#if canEdit}<IconButton icon="edit" tooltip="Toggle map editor" noMobile="true" checked={editPane.isShown} on:checked={(e) => { editPane.show(e.detail)}}/>{/if}
-								<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu'>
+								<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu' lock={mapLock}>
 									<!-- Menu Items -->
 									<ul id='overflow-menu' class='dropdown-content'>
 										<li class="waves-effect"><a class="modal-trigger" title="See help info" href="#help_modal" on:click={() => (showHelp = true)}><Icon name="help_outline"/>Help</a></li>
@@ -348,8 +348,8 @@
 							<slot:template slot="secondary">
 
 								{#if gamemap.hasMultipleWorlds()}
-									<IconButton icon="explore" label={currentWorld.displayName} tooltip="Show location list" dropdown="true" checked={showLocationList} on:checked={(e) => (showLocationList = e.detail)}/>
-									<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" on:click={() => {
+									<IconButton icon="explore" label={currentWorld.displayName} tooltip="Show location list" dropdown="true"  lock={mapLock} checked={showLocationList} on:checked={(e) => (showLocationList = e.detail)}/>
+									<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" lock={mapLock} on:click={() => {
 										print("Getting article link...");
 										let link = gamemap.getArticleLink();
 										if (link != null && link != "") {
@@ -359,7 +359,7 @@
 								{/if}
 
 								<!-- svelte-ignore missing-declaration -->
-								<IconButton icon="link" label="Copy Link" tooltip="Copy link to this location" on:click={() => {
+								<IconButton icon="link" label="Copy Link" lock={mapLock} tooltip="Copy link to this location" on:click={() => {
 									print("Copying link to clipboard...");
 									M.toast({html: 'Map link copied to clipboard!'});
 									navigator.clipboard.writeText(window.location);
