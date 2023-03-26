@@ -97,6 +97,7 @@
                 <Button text="Save" icon="save" type="save" bold="true"></Button>
             </div>
             <div class="footer-buttons">
+                <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
                 <Button text="Cancel" icon="close" on:click={cancel}></Button>
                 <Button text="Delete" icon="delete" type="delete"></Button>
             </div>

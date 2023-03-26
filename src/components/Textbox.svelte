@@ -8,6 +8,7 @@
 
 <script>
 
+    // state vars
     export let label;
     export let hint = "Enter text...";
     export let block = false;
@@ -16,6 +17,7 @@
     export let text = "";
     export let value = text;
 
+    let textbox;
     let id = Math.random();
 
 </script>
@@ -24,8 +26,8 @@
     <div class="textbox" class:inline={!block}>
         {#if label}<p class="label">{label}</p>{/if}
         <div class="input-field" class:inline={!block}>
-            <input id={id} type="text" class:validate={validate} bind:value={value}>
-            <label for={id} class:active={value.length > 0}>{hint}</label>
+            <input id={id} type="text" class:validate={validate} bind:value={value} bind:this={textbox}>
+            <label for={id} class:active={value.length > 0 || (textbox != null && textbox === document.activeElement)}>{hint}</label>
             {#if subtext}<span class="supporting-text subtext">{subtext}</span>{/if}
         </div>
     </div>
