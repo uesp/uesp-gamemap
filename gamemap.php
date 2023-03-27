@@ -186,10 +186,10 @@ class GameMap
 					`maxZoom` INTEGER NOT NULL,
 					`defaultZoom` INTEGER NOT NULL,
 					`zoomOffset` INTEGER NOT NULL,
-					`posLeft` INTEGER NOT NULL,
-					`posTop` INTEGER NOT NULL,
-					`posRight` INTEGER NOT NULL,
-					`posBottom` INTEGER NOT NULL,
+					`posLeft` FLOAT NOT NULL,
+					`posTop` FLOAT NOT NULL,
+					`posRight` FLOAT NOT NULL,
+					`posBottom` FLOAT NOT NULL,
 					`enabled` TINYINT NOT NULL,
 					`tilesX` INTEGER NOT NULL,
 					`tilesY` INTEGER NOT NULL,
@@ -217,10 +217,10 @@ class GameMap
 					maxZoom INTEGER NOT NULL,
 					defaultZoom INTEGER NOT NULL,
 					zoomOffset INTEGER NOT NULL,
-					posLeft INTEGER NOT NULL,
-					posTop INTEGER NOT NULL,
-					posRight INTEGER NOT NULL,
-					posBottom INTEGER NOT NULL,
+					posLeft FLOAT NOT NULL,
+					posTop FLOAT NOT NULL,
+					posRight FLOAT NOT NULL,
+					posBottom FLOAT NOT NULL,
 					enabled TINYINT NOT NULL,
 					`tilesX` INTEGER NOT NULL,
 					`tilesY` INTEGER NOT NULL,
@@ -239,10 +239,10 @@ class GameMap
 					revisionId BIGINT NOT NULL,
 					destinationId BIGINT NOT NULL,
 					locType TINYINT NOT NULL,
-					x INTEGER NOT NULL,
-					y INTEGER NOT NULL,
-					width INTEGER NOT NULL,
-					height INTEGER NOT NULL,
+					x FLOAT NOT NULL,
+					y FLOAT NOT NULL,
+					width FLOAT NOT NULL,
+					height FLOAT NOT NULL,
 					name TINYTEXT NOT NULL,
 					description TEXT NOT NULL,
 					iconType TINYINT NOT NULL,
@@ -264,10 +264,10 @@ class GameMap
 					worldId BIGINT NOT NULL,
 					destinationId BIGINT NOT NULL,
 					locType TINYINT NOT NULL,
-					x INTEGER NOT NULL,
-					y INTEGER NOT NULL,
-					width INTEGER NOT NULL,
-					height INTEGER NOT NULL,
+					x FLOAT NOT NULL,
+					y FLOAT NOT NULL,
+					width FLOAT NOT NULL,
+					height FLOAT NOT NULL,
 					name TINYTEXT NOT NULL,
 					description TEXT NOT NULL,
 					iconType TINYINT NOT NULL,
@@ -515,10 +515,10 @@ class GameMap
 			settype($row['destinationId'], "integer");
 			settype($row['locType'], "integer");
 			settype($row['iconType'], "integer");
-			settype($row['x'], "integer");
-			settype($row['y'], "integer");
-			settype($row['width'], "integer");
-			settype($row['height'], "integer");
+			settype($row['x'], "float");
+			settype($row['y'], "float");
+			settype($row['width'], "float");
+			settype($row['height'], "float");
 			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 		
@@ -552,10 +552,10 @@ class GameMap
 			settype($row['parentId'], "integer");
 			settype($row['revisionId'], "integer");
 			settype($row['enabled'], "integer");
-			settype($row['posRight'], "integer");
-			settype($row['posLeft'], "integer");
-			settype($row['posTop'], "integer");
-			settype($row['posBottom'], "integer");
+			settype($row['posRight'], "float");
+			settype($row['posLeft'], "float");
+			settype($row['posTop'], "float");
+			settype($row['posBottom'], "float");
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
@@ -659,10 +659,10 @@ class GameMap
 			settype($row['posRight'], "integer");
 			settype($row['posLeft'], "integer");
 			settype($row['posTop'], "integer");
-			settype($row['posBottom'], "integer");
-			settype($row['cellSize'], "integer");
-			settype($row['minZoom'], "integer");
-			settype($row['maxZoom'], "integer");
+			settype($row['posBottom'], "float");
+			settype($row['cellSize'], "float");
+			settype($row['minZoom'], "float");
+			settype($row['maxZoom'], "float");
 			settype($row['defaultZoom'], "integer");
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
@@ -713,10 +713,10 @@ class GameMap
 			settype($row['posRight'], "integer");
 			settype($row['posLeft'], "integer");
 			settype($row['posTop'], "integer");
-			settype($row['posBottom'], "integer");
-			settype($row['cellSize'], "integer");
-			settype($row['minZoom'], "integer");
-			settype($row['maxZoom'], "integer");
+			settype($row['posBottom'], "float");
+			settype($row['cellSize'], "float");
+			settype($row['minZoom'], "float");
+			settype($row['maxZoom'], "float");
 			settype($row['defaultZoom'], "integer");
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
@@ -769,10 +769,10 @@ class GameMap
 			settype($row['destinationId'], "integer");
 			settype($row['locType'], "integer");
 			settype($row['iconType'], "integer");
-			settype($row['x'], "integer");
-			settype($row['y'], "integer");
-			settype($row['width'], "integer");
-			settype($row['height'], "integer");
+			settype($row['x'], "float");
+			settype($row['y'], "float");
+			settype($row['width'], "float");
+			settype($row['height'], "float");
 			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 			
@@ -833,10 +833,10 @@ class GameMap
 			settype($row['destinationId'], "integer");
 			settype($row['locType'], "integer");
 			settype($row['iconType'], "integer");
-			settype($row['x'], "integer");
-			settype($row['y'], "integer");
-			settype($row['width'], "integer");
-			settype($row['height'], "integer");
+			settype($row['x'], "float");
+			settype($row['y'], "float");
+			settype($row['width'], "float");
+			settype($row['height'], "float");
 			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 	
@@ -1025,10 +1025,10 @@ class GameMap
 			settype($row['destinationId'], "integer");
 			settype($row['locType'], "integer");
 			settype($row['iconType'], "integer");
-			settype($row['x'], "integer");
-			settype($row['y'], "integer");
-			settype($row['width'], "integer");
-			settype($row['height'], "integer");
+			settype($row['x'], "float");
+			settype($row['y'], "float");
+			settype($row['width'], "float");
+			settype($row['height'], "float");
 			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 			
@@ -1322,10 +1322,10 @@ class GameMap
 			settype($row['revisionId'], "integer");
 			settype($row['locType'], "integer");
 			settype($row['iconType'], "integer");
-			settype($row['x'], "integer");
-			settype($row['y'], "integer");
-			settype($row['width'], "integer");
-			settype($row['height'], "integer");
+			settype($row['x'], "float");
+			settype($row['y'], "float");
+			settype($row['width'], "float");
+			settype($row['height'], "float");
 			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 				
@@ -1368,10 +1368,10 @@ class GameMap
 			settype($row['parentId'], "integer");
 			settype($row['revisionId'], "integer");
 			settype($row['enabled'], "integer");
-			settype($row['posRight'], "integer");
-			settype($row['posLeft'], "integer");
-			settype($row['posTop'], "integer");
-			settype($row['posBottom'], "integer");
+			settype($row['posRight'], "float");
+			settype($row['posLeft'], "float");
+			settype($row['posTop'], "float");
+			settype($row['posBottom'], "float");
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
@@ -1425,10 +1425,10 @@ class GameMap
 			settype($row['parentId'], "integer");
 			settype($row['revisionId'], "integer");
 			settype($row['enabled'], "integer");
-			settype($row['posRight'], "integer");
-			settype($row['posLeft'], "integer");
-			settype($row['posTop'], "integer");
-			settype($row['posBottom'], "integer");
+			settype($row['posRight'], "float");
+			settype($row['posLeft'], "float");
+			settype($row['posTop'], "float");
+			settype($row['posBottom'], "float");
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
@@ -1619,10 +1619,10 @@ class GameMap
 		
 		if (array_key_exists('visible',  $this->inputParams)) $this->locVisible = intval($this->inputParams['visible']);
 		if (array_key_exists('destid',  $this->inputParams)) $this->locDestId = intval($this->inputParams['destid']);
-		if (array_key_exists('x',  $this->inputParams)) $this->locX = intval($this->inputParams['x']);
-		if (array_key_exists('y',  $this->inputParams)) $this->locY = intval($this->inputParams['y']);
-		if (array_key_exists('locwidth',  $this->inputParams)) $this->locWidth = intval($this->inputParams['locwidth']);
-		if (array_key_exists('locheight',  $this->inputParams)) $this->locHeight = intval($this->inputParams['locheight']);
+		if (array_key_exists('x',  $this->inputParams)) $this->locX = floatval($this->inputParams['x']);
+		if (array_key_exists('y',  $this->inputParams)) $this->locY = floatval($this->inputParams['y']);
+		if (array_key_exists('locwidth',  $this->inputParams)) $this->locWidth = floatval($this->inputParams['locwidth']);
+		if (array_key_exists('locheight',  $this->inputParams)) $this->locHeight = floatval($this->inputParams['locheight']);
 		if (array_key_exists('loctype',  $this->inputParams)) $this->locType = intval($this->inputParams['loctype']);
 		if (array_key_exists('icontype',  $this->inputParams)) $this->locIconType = intval($this->inputParams['icontype']);
 		if (array_key_exists('name', $this->inputParams)) $this->locName = $this->db->real_escape_string($this->inputParams['name']);
@@ -1641,10 +1641,10 @@ class GameMap
 		if (array_key_exists('minzoom',  $this->inputParams)) $this->worldMinZoom = intval($this->inputParams['minzoom']);
 		if (array_key_exists('maxzoom',  $this->inputParams)) $this->worldMaxZoom = intval($this->inputParams['maxzoom']);
 		if (array_key_exists('zoomoffset',  $this->inputParams)) $this->worldZoomOffset = intval($this->inputParams['zoomoffset']);
-		if (array_key_exists('posleft',  $this->inputParams)) $this->worldPosLeft = intval($this->inputParams['posleft']);
-		if (array_key_exists('posright',  $this->inputParams)) $this->worldPosRight = intval($this->inputParams['posright']);
-		if (array_key_exists('postop',  $this->inputParams)) $this->worldPosTop = intval($this->inputParams['postop']);
-		if (array_key_exists('posbottom',  $this->inputParams)) $this->worldPosBottom = intval($this->inputParams['posbottom']);
+		if (array_key_exists('posleft',  $this->inputParams)) $this->worldPosLeft = floatval($this->inputParams['posleft']);
+		if (array_key_exists('posright',  $this->inputParams)) $this->worldPosRight = floatval($this->inputParams['posright']);
+		if (array_key_exists('postop',  $this->inputParams)) $this->worldPosTop = floatval($this->inputParams['postop']);
+		if (array_key_exists('posbottom',  $this->inputParams)) $this->worldPosBottom = floatval($this->inputParams['posbottom']);
 		if (array_key_exists('parentid',  $this->inputParams)) $this->worldParentId = intval($this->inputParams['parentid']);
 		if (array_key_exists('revisionid',  $this->inputParams)) $this->revisionId = intval($this->inputParams['revisionid']);
 		
