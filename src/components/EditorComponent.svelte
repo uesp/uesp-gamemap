@@ -123,6 +123,10 @@
         position: relative;
     }
 
+    #editor_pane {
+        padding-bottom: var(--padding_minimum);
+    }
+
     #footer {
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
         background-color: var(--surface_variant);
@@ -130,7 +134,7 @@
         left: -8px;
         padding: var(--padding_minimum);
         position: relative;
-        width: calc(100% + 16px);
+        width: calc(100% + 8px);
     }
 
     .footer-buttons {

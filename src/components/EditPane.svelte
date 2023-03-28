@@ -156,7 +156,7 @@
              <AppBar title={!isEditing ? "Map Editor" : "Editing " + ((editObject instanceof World) ? "World" : "Location")} subtitle={isEditing ? (editObject instanceof World) ? editObject.displayName + " ("+editObject.name+")" : editObject.name : null} icon={isEditing ? "arrow_back" : "close"} on:backClicked={onBackPressed}/>
 
              <!-- edit panel content -->
-             <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}} bind:this={editPanelContent}>
+             <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}} bind:this={editPanelContent} class:isEditing={isEditing}>
 
                 {#if !isEditing}
                      <b>Actions</b><br/>
@@ -223,11 +223,12 @@
     }
 
     #edit-panel-content {
-        /* padding-top: var(--padding_minimum);
-        padding-left: var(--padding_minimum);
-        padding-right: var(--padding_minimum); */
         padding: var(--padding_minimum);
         height: 100%;
+    }
+
+    #edit-panel-content.isEditing {
+        padding-right: 0;
     }
 
     b {
