@@ -21,6 +21,7 @@
 
     const dispatch = createEventDispatcher();
 
+
     // state vars
     export let object;
     export let unsavedChanges = false;
@@ -67,29 +68,33 @@
 
 <markup>
     <div id="editor" in:initiate out:cleanUp>
-        <div id="editor_window">
+        <div class="editor_window">
+            <div id="editor_pane">
+                <!-- Your scrollable content goes here -->
 
-            {#if isWorld}
-                <!-- world editor here -->
-            {:else if isLocation}
-                <!-- location editor here -->
-            {/if}
+                {#if isWorld}
+                    <!-- world editor here -->
+                {:else if isLocation}
+                    <!-- location editor here -->
+                {/if}
 
-            <b>General</b>
-            <Textbox label="Display name" subtext="User facing name" text="ligma"/>
-            <Textbox label="Name" subtext="Internal name"/>
-            <Textbox label="Parent ID" subtext="Parent world ID"/>
-            <Textbox label="Wiki page"/>
-            <Textbox label="Description" block={true}/>
+                <b>General</b>
+                <Textbox label="Display name" subtext="User facing name" text="ligma"/>
+                <Textbox label="Name" subtext="Internal name"/>
+                <Textbox label="Parent ID" subtext="Parent world ID"/>
+                <Textbox label="Wiki page"/>
+                <Textbox label="Description" block={true}/>
 
-            <b>Zoom levels</b>
-            <Textbox label="Max zoom"/> <Textbox label="Min zoom"/>
+                <b>Zoom levels</b>
+                <Textbox label="Max zoom"/> <Textbox label="Min zoom"/>
 
-            <b>World bounds</b>
-            <Textbox hint="Minimum X"></Textbox>
-            <Textbox hint="Maximum X"></Textbox>
-            <Textbox hint="Minimum Y"></Textbox>
-            <Textbox hint="Maximum Y"></Textbox>
+                <b>World bounds</b>
+                <Textbox hint="Minimum X"></Textbox>
+                <Textbox hint="Maximum X"></Textbox>
+                <Textbox hint="Minimum Y"></Textbox>
+                <Textbox hint="Maximum Y"></Textbox>
+            </div>
+
         </div>
 
         <footer id="footer" in:fly={{ y: 10, duration: 250 }}>
@@ -112,17 +117,23 @@
     #editor {
         display: flex;
         flex-flow: column;
-        max-height: 723.2px;
+        max-height: 556.2px;;
+    }
+
+    .editor_window {
+        flex: 1;
+        overflow-y: auto;
+        position: relative;
     }
 
     #footer {
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
         background-color: var(--surface_variant);
-        position: absolute;
-        bottom: 0px;
-        left: 0;
-        width: -moz-available;
+        bottom: 0;
+        left: -8px;
         padding: var(--padding_minimum);
+        position: relative;
+        width: calc(100% + 16px);
     }
 
     .footer-buttons {
