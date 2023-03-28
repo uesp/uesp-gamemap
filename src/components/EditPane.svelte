@@ -230,6 +230,7 @@
     #edit-panel-content.isEditing {
         padding-top: 0;
         padding-right: 0;
+        padding-left: 0;
     }
 
     b {

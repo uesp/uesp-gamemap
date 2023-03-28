@@ -40,7 +40,6 @@
         margin-top: 3px;
         margin-bottom: 3px;
         margin-left: var(--padding_minimum);
-        margin-right: var(--padding_minimum);
     }
 
     .input-field > label {

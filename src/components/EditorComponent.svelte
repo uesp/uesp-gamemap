@@ -19,6 +19,8 @@
     import Location from "../map/objects/location"
     import Button from "./Button.svelte";
     import Textbox from "./Textbox.svelte";
+    import FormGroup from "./FormGroup.svelte";
+
 
     const dispatch = createEventDispatcher();
 
@@ -71,18 +73,16 @@
         <div class="editor_window">
             <div id="editor_pane">
 
-                {#if isWorld}
-                    <!-- world editor here -->
-                {:else if isLocation}
-                    <!-- location editor here -->
-                {/if}
 
-                <b>General</b>
-                <Textbox label="Display name" subtext="User facing name" text="ligma"/>
-                <Textbox label="Name" subtext="Internal name"/>
-                <Textbox label="Parent ID" subtext="Parent world ID"/>
-                <Textbox label="Wiki page"/>
-                <Textbox label="Description" block={true}/>
+                <FormGroup title="General">
+                    <Textbox label="Display name" subtext="User facing name" text="ligma"/>
+                    <Textbox label="Name" subtext="Internal name"/>
+                    <Textbox label="Parent ID" subtext="Parent world ID"/>
+                    <Textbox label="Wiki page"/>
+                    <Textbox label="Description" block={true}/>
+                </FormGroup>
+
+                <!-- <b>General</b> -->
 
                 <b>Zoom levels</b>
                 <Textbox label="Max zoom"/> <Textbox label="Min zoom"/>
@@ -92,6 +92,14 @@
                 <Textbox hint="Maximum X"></Textbox>
                 <Textbox hint="Minimum Y"></Textbox>
                 <Textbox hint="Maximum Y"></Textbox>
+
+
+                <b>Stats</b>
+                {#if isWorld}
+                    <!-- world editor here -->
+                {:else if isLocation}
+                    <!-- location editor here -->
+                {/if}
             </div>
 
         </div>
@@ -132,10 +140,9 @@
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
         background-color: var(--surface_variant);
         bottom: 0;
-        left: -8px;
         padding: var(--padding_minimum);
         position: relative;
-        width: calc(100% + 8px);
+        width: 100%;
     }
 
     .footer-buttons {
