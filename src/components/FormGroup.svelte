@@ -7,13 +7,22 @@
 
 
 <script>
+    import Icon from "./Icon.svelte";
+
     export let title = "Form group";
+    export let icon;
 </script>
 
 <markup>
 
     <div class="group">
-        <b>{title}</b>
+        <span class="title">
+            {#if icon}
+                <Icon name={icon} size=16/>
+            {/if}
+            <b>{title}</b>
+        </span>
+
         <slot>
             <!-- forms go here -->
         </slot>
@@ -23,6 +32,16 @@
 
 <style>
 
+    .title {
+        top: -13px;
+        font-size: 15px;
+        position: absolute;
+        background-color: var(--surface);
+        padding: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
     .group {
         margin: var(--padding_minimum);
         margin-bottom: var(--padding_small);
@@ -31,15 +50,12 @@
         border-width: 3px;
         border-style: solid;
         border-radius: var(--padding_minimum);
+        position: relative;
     }
 
-    b {
-        top: 4px;
-        font-size: 15px;
-        position: absolute;
-        background-color: var(--surface);
-        padding: 2px;
-        padding-left: 4px;
-        padding-right: 4px;
+    .title {
+        align-items: center;
+        display: flex;
+        gap: 4px;
     }
 </style>

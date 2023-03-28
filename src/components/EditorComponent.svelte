@@ -20,6 +20,7 @@
     import Button from "./Button.svelte";
     import Textbox from "./Textbox.svelte";
     import FormGroup from "./FormGroup.svelte";
+  import InfoTextPair from "./InfoTextPair.svelte";
 
 
     const dispatch = createEventDispatcher();
@@ -74,15 +75,13 @@
             <div id="editor_pane">
 
 
-                <FormGroup title="General">
+                <FormGroup title="General" icon="description">
                     <Textbox label="Display name" subtext="User facing name" text="ligma"/>
                     <Textbox label="Name" subtext="Internal name"/>
                     <Textbox label="Parent ID" subtext="Parent world ID"/>
                     <Textbox label="Wiki page"/>
                     <Textbox label="Description" block={true}/>
                 </FormGroup>
-
-                <!-- <b>General</b> -->
 
                 <b>Zoom levels</b>
                 <Textbox label="Max zoom"/> <Textbox label="Min zoom"/>
@@ -93,13 +92,18 @@
                 <Textbox hint="Minimum Y"></Textbox>
                 <Textbox hint="Maximum Y"></Textbox>
 
+                <FormGroup title="About" icon="info">
 
-                <b>Stats</b>
-                {#if isWorld}
-                    <!-- world editor here -->
-                {:else if isLocation}
-                    <!-- location editor here -->
-                {/if}
+                    <InfoTextPair name="World ID" value="5343"></InfoTextPair>
+                    <InfoTextPair name="Revision ID" value="9999"></InfoTextPair>
+
+                    {#if isWorld}
+                        <!-- world editor here -->
+                    {:else if isLocation}
+                        <!-- location editor here -->
+                    {/if}
+
+                </FormGroup>
             </div>
 
         </div>
