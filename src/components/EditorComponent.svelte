@@ -9,6 +9,7 @@
     // import svelte stuff
     import { createEventDispatcher } from "svelte";
     import { fade, fly } from 'svelte/transition';
+    import { onMount } from 'svelte';
 
     // import UI components
     import Modal from "./Modal.svelte";
@@ -21,25 +22,22 @@
 
     const dispatch = createEventDispatcher();
 
-
     // state vars
     export let object;
-    export let unsavedChanges = false;
     let isLocation = object instanceof Location;
     let isWorld = object instanceof World;
+    let editor;
 
-    let discardChangesDialog;
+    // on editor load
+	onMount(async() => {
+        // fix footer height
+        editor.style.height = (editor.parentElement.clientHeight - 8) + "px";
 
-    print(object);
-    print(unsavedChanges);
-
-    function cancel() {
-        dispatch("cancel", "cancelled");
-    }
-
-    function initiate() {
-
+        // begin editing provided object
+        print(object);
         gamemap.edit(object);
+
+        // do state changes
         if (isWorld && object.id == gamemap.getCurrentWorld().id) {
             gamemap.reset(true, 30);
             gamemap.mapRoot.classList.add("editing");
@@ -47,8 +45,8 @@
         } else if (isLocation) {
             gamemap.setMapLock("partial");
         }
+    });
 
-    }
 
     function cleanUp() {
         let glowElements = document.querySelectorAll("[class*='editing']");
@@ -64,13 +62,14 @@
         gamemap.setMapLock(false);
     }
 
+    function cancel() { dispatch("cancel", "cancelled"); }
+
 </script>
 
 <markup>
-    <div id="editor" in:initiate out:cleanUp>
+    <div id="editor" out:cleanUp bind:this={editor}>
         <div class="editor_window">
             <div id="editor_pane">
-                <!-- Your scrollable content goes here -->
 
                 {#if isWorld}
                     <!-- world editor here -->
@@ -113,11 +112,9 @@
 
 <style>
 
-
     #editor {
         display: flex;
         flex-flow: column;
-        max-height: 556.2px;;
     }
 
     .editor_window {
@@ -145,4 +142,4 @@
     }
 </style>
 
-
+<svelte:window on:resize={() => {editor.style.height = (editor.parentElement.clientHeight - 8) + "px"; }}/>

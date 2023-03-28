@@ -33,8 +33,8 @@
 
     // state vars
     export let isShown = false;
+    let editPanelContent;
     let editPanel;
-    let appBar;
     let recentChanges = [];
     $: currentOverlay  = OVERLAY.NONE;
     $: editObject = null;
@@ -153,10 +153,10 @@
              {/if}
 
              <!-- edit panel appbar -->
-             <AppBar title={!isEditing ? "Map Editor" : "Editing " + ((editObject instanceof World) ? "World" : "Location")} subtitle={isEditing ? (editObject instanceof World) ? editObject.displayName + " ("+editObject.name+")" : editObject.name : null} icon={isEditing ? "arrow_back" : "close"} on:backClicked={onBackPressed} bind:this={appBar}/>
+             <AppBar title={!isEditing ? "Map Editor" : "Editing " + ((editObject instanceof World) ? "World" : "Location")} subtitle={isEditing ? (editObject instanceof World) ? editObject.displayName + " ("+editObject.name+")" : editObject.name : null} icon={isEditing ? "arrow_back" : "close"} on:backClicked={onBackPressed}/>
 
              <!-- edit panel content -->
-             <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}}>
+             <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}} bind:this={editPanelContent}>
 
                 {#if !isEditing}
                      <b>Actions</b><br/>
@@ -253,3 +253,4 @@
 
 </style>
 <svelte:options accessors/>
+<svelte:window on:resize={() => { if (editPanel != null) { editPanelContent.style.height = (editPanel.clientHeight - document.querySelector('.appbar').clientHeight) + "px"; }}}/>
