@@ -31,7 +31,7 @@
     // on editor load
 	onMount(async() => {
         // fix footer height
-        editor.style.height = (editor.parentElement.clientHeight - 8) + "px";
+        editor.style.height = (editor.parentElement.clientHeight) + "px";
 
         // begin editing provided object
         print(object);
@@ -124,6 +124,7 @@
     }
 
     #editor_pane {
+        padding-top: var(--padding_minimum);
         padding-bottom: var(--padding_minimum);
     }
 
@@ -146,4 +147,4 @@
     }
 </style>
 
-<svelte:window on:resize={() => {editor.style.height = (editor.parentElement.clientHeight - 8) + "px"; }}/>
+<svelte:window on:resize={() => {editor.style.height = (editor.parentElement.clientHeight) + "px"; }}/>

@@ -53,6 +53,7 @@
         padding-right: var(--padding_minimum);
         align-items: center;
         display: inline-flex;
+        z-index: 99;
     }
 
     .title-container {

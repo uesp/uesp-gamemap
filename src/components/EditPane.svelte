@@ -228,6 +228,7 @@
     }
 
     #edit-panel-content.isEditing {
+        padding-top: 0;
         padding-right: 0;
     }
 
