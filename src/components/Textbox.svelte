@@ -8,6 +8,9 @@
 
 <script>
 
+    // import svelte stuff
+    import { onMount } from 'svelte';
+
     // state vars
     export let label;
     export let hint = "Enter text...";
@@ -15,7 +18,7 @@
     export let block = false;
     export let validate = false;
     export let subtext;
-    export let text = "";
+    export let text;
     export let value = text;
     export let textArea;
     export let tooltip;
@@ -36,7 +39,7 @@
                 <input id={id} placeholder={(placeholder != null) ? placeholder : null} type="text" class:validate={validate} bind:value={value} bind:this={textbox} class="input">
             {/if}
             {#if !placeholder}
-                 <label for={id} class:active={value.length > 0 || (textbox != null && textbox === document.activeElement)}>{hint}</label>
+                 <label for={id} class:active={value != null || (textbox != null && textbox === document.activeElement)}>{hint}</label>
             {/if}
             {#if subtext}<span class="supporting-text subtext">{subtext}</span>{/if}
         </div>

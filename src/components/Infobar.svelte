@@ -20,10 +20,10 @@
         {#if !embedded}
             {#if lock == "full"}
                 <Icon name = "lock" size={16}/>
-                <b title="Map is locked while editing worlds">Map locked</b>
+                <b title="Map is locked while editing worlds">Locked</b>
             {:else if lock == "partial"}
                 <Icon name = "lock_open" size={16}/>
-                <b title="Map is partially locked while editing locations">Map partially locked</b>
+                <b title="Map is partially locked while editing locations">Partially locked</b>
             {:else}
                 <!-- svelte-ignore a11y-invalid-attribute -->
                 <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home" target='_top'>UESP</a></span> • <a title="Reset this map" href="javascript:void(0);" onclick="gamemap.reset();">{mapName}</a></b>

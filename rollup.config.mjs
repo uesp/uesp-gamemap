@@ -59,7 +59,8 @@ export default {
 			},
 			compilerOptions: {
 				// enable run-time checks when not in production
-				dev: !production
+				dev: !production,
+				accessors: true,
 			},
 			preprocess: sveltePreprocess({ markupTagName : "markup" }),
 		}),

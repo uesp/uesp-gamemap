@@ -970,7 +970,7 @@ export default class Gamemap {
 		}
 
 		map.eachLayer((layer) => {
-			if (layer._tiles == null && layer.options.className != "cellGrid" ) { //remove anything that is not a tile
+			if (layer._tiles == null && layer.options.className != "cellGrid" ) { //remove anything that is not a tile or cell grid
 				layer.off('resize move zoom');
 				layer.remove();
 			}

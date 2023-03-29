@@ -4,6 +4,15 @@
 
 
 
+- prettified world edit screen
+- added data loading, parity with live
+
+
+
+QoL:
+- world parent ID now shows name of that world under the field
+- party trick: with svelte reactivity, it updates automagically even as you're typing
+
 
 
 

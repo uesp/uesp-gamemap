@@ -29,6 +29,7 @@
     let isLocation = object instanceof Location;
     let isWorld = object instanceof World;
     let editor;
+    let saveButton;
 
     // world data
     let worldName = object.name;
@@ -39,9 +40,6 @@
     let [worldMinX, worldMaxX, worldMinY, worldMaxY] = [object.minX, object.maxX, object.minY, object.maxY];
 
     // location data
-    if (isLocation) {
-
-    }
 
     // on editor load
 	onMount(async() => {
@@ -62,6 +60,31 @@
         }
     });
 
+    function save(uriString) {
+        saveButton.$set({
+            text: "Saving...",
+            icon: "loading",
+        });
+
+
+        setTimeout(function() {
+
+            saveButton.$set({
+                text: "Done!",
+                icon: "done",
+            });
+
+            setTimeout(function() {
+                if (saveButton.icon == "done") {
+                    saveButton.$set({
+                        text: "Save",
+                        icon: "save",
+                    });
+                }
+            }, 1500);
+        }, 1000);
+
+    }
 
     function cleanUp() {
         let glowElements = document.querySelectorAll("[class*='editing']");
@@ -87,52 +110,67 @@
             <div id="editor_pane">
 
                 <FormGroup title="General" icon="description">
-                    <Textbox label="Name" placeholder="Enter name..." tooltip="Internal world name"/>
-                    <Textbox label="Display name" text={object.displayName} placeholder="Enter display name..." tooltip="User facing name"/>
-                    <Textbox label="Parent ID" placeholder="Enter parent world ID..." tooltip="Parent world ID"/>
-                    <Textbox label="Wiki page" placeholder="Enter wiki page..." tooltip="Wiki article"/>
-                </FormGroup>
-
-                <FormGroup title="Zoom" icon="zoom_in">
-                    <div class="row">
-                        <Textbox hint="Min Zoom"></Textbox>
-                        <Textbox hint="Max Zoom"></Textbox>
-                    </div>
-                </FormGroup>
-
-                <FormGroup title="Bounds" icon="crop_free">
-                    <div class="row">
-                        <Textbox hint="Minimum X"></Textbox>
-                        <Textbox hint="Maximum X"></Textbox>
-                    </div>
-                    <div class="row">
-                        <Textbox hint="Minimum Y"></Textbox>
-                        <Textbox hint="Maximum Y"></Textbox>
-                    </div>
-                </FormGroup>
-
-                <FormGroup title="About" icon="info">
                     {#if isWorld}
-                        <InfoTextPair name="World ID" value={object.id} tooltip="This world's worldID"></InfoTextPair>
-                        <InfoTextPair name="Revision ID" value={object.revisionID} tooltip="Revision ID as of last edit"></InfoTextPair>
-                        <InfoTextPair name="Tiles" value={object.dbNumTilesX + " x " + object.dbNumTilesY} tooltip="Number of tiles at full zoom"></InfoTextPair>
+                        <Textbox label="Name" text={worldName} placeholder="Enter name..." tooltip="Internal world name"/>
+                        <Textbox label="Display name" text={worldDisplayName} placeholder="Enter display name..." tooltip="User facing world name"/>
+                        <!-- svelte-ignore missing-declaration -->
+                        <Textbox label="Parent ID" text={worldParentID} placeholder="Enter parent world ID..." tooltip="Parent world ID" bind:value={worldParentID}
+                            subtext={(worldParentID && !isNaN(worldParentID)) ? gamemap.getWorldDisplayNameFromID(worldParentID) : null}/>
+                        <Textbox label="Wiki page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL"/>
                     {:else if isLocation}
-                        <!-- location editor here -->
+                        <!-- location info here -->
                     {/if}
 
                 </FormGroup>
+
+                {#if isWorld}
+                     <FormGroup title="Zoom" icon="zoom_in">
+                         <div class="row">
+                             <Textbox text={worldMinZoom} hint="Min Zoom" tooltip="Minimum zoom level for this world"/>
+                             <Textbox text={worldMaxZoom} hint="Max Zoom" tooltip="Maximum zoom level for this world"/>
+                         </div>
+                     </FormGroup>
+
+                     <FormGroup title="Bounds" icon="crop_free">
+                         <div class="row">
+                             <Textbox text={worldMinX} hint="Minimum X"/>
+                             <Textbox text={worldMaxX} hint="Maximum X"/>
+                         </div>
+                         <div class="row">
+                             <Textbox text={worldMinY} hint="Minimum Y"/>
+                             <Textbox text={worldMaxY} hint="Maximum Y"/>
+                         </div>
+                     </FormGroup>
+                {/if}
+
+                {#if object.id > 0}
+                    <FormGroup title="Info" icon="info">
+                        {#if isWorld}
+                            <InfoTextPair name="World ID" value={object.id} tooltip="This world's worldID"/>
+                            <InfoTextPair name="Revision ID" value={object.revisionID} tooltip="Current revision ID"/>
+                            <InfoTextPair name="Tiles" value={object.dbNumTilesX + " x " + object.dbNumTilesY} tooltip="Number of tiles at full zoom"/>
+                        {:else if isLocation}
+                            <InfoTextPair name="Location ID" value={object.id} tooltip="This location's ID"/>
+                            <InfoTextPair name="Revision ID" value={object.revisionID} tooltip="Current revision ID"/>
+                            <!-- svelte-ignore missing-declaration -->
+                            <InfoTextPair name="World ID" value={object.worldID + " (" + gamemap.getWorldNameFromID(object.worldID) +")"} tooltip="WorldID of the world this location is in"/>
+                            <!-- svelte-ignore missing-declaration -->
+                            <InfoTextPair name="Location Type" value={object.locType + " ("+Object.keys(LOCTYPES)[object.locType].toLowerCase()+")"} tooltip="Location type"/>
+                        {/if}
+                    </FormGroup>
+                {/if}
             </div>
 
         </div>
 
         <footer id="footer" in:fly={{ y: 10, duration: 250 }}>
             <div class="footer-buttons">
-                <Button text="Save" icon="save" type="save" bold="true"></Button>
+                <Button text="Save" icon="save" type="save" bold="true" bind:this={saveButton} on:click={() => save((isWorld) ? "world" : "location")}/>
             </div>
             <div class="footer-buttons">
                 <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
-                <Button text="Cancel" icon="close" on:click={cancel}></Button>
-                <Button text="Delete" icon="delete" type="delete"></Button>
+                <Button text="Cancel" icon="close" on:click={cancel}/>
+                <Button text="Delete" icon="delete" type="delete"/>
             </div>
         </footer>
     </div>
@@ -179,4 +217,5 @@
     }
 </style>
 
+<svelte:options accessors/>
 <svelte:window on:resize={() => {editor.style.height = (editor.parentElement.clientHeight) + "px"; }}/>
