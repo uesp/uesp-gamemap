@@ -54,6 +54,7 @@
 
     .input-field > label {
         color: var(--text_low_emphasis);
+        opacity: 0.75;
     }
 
     .textbox.inline {
@@ -97,6 +98,11 @@
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
         background-color: var(--surface_variant_dark);
+        font-size: 1rem;
+    }
+
+    input::placeholder {
+        font-size: 1rem;
     }
 
     .input[type="text"] {

@@ -48,7 +48,7 @@
 
     .group {
         margin: var(--padding_minimum);
-        margin-bottom: var(--padding_small);
+        margin-bottom: var(--padding_medium);
         padding: var(--padding_minimum);
         border-color: var(--divider);
         border-width: 3px;

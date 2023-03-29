@@ -87,10 +87,10 @@
             <div id="editor_pane">
 
                 <FormGroup title="General" icon="description">
-                    <Textbox label="Name" subtext="Internal name" placeholder="ligma"/>
-                    <Textbox label="Display name" subtext="User facing name" text={object.displayName}/>
-                    <Textbox label="Parent ID" subtext="Parent world ID"/>
-                    <Textbox label="Wiki page"/>
+                    <Textbox label="Name" placeholder="Enter name..." tooltip="Internal world name"/>
+                    <Textbox label="Display name" text={object.displayName} placeholder="Enter display name..." tooltip="User facing name"/>
+                    <Textbox label="Parent ID" placeholder="Enter parent world ID..." tooltip="Parent world ID"/>
+                    <Textbox label="Wiki page" placeholder="Enter wiki page..." tooltip="Wiki article"/>
                 </FormGroup>
 
                 <FormGroup title="Zoom" icon="zoom_in">

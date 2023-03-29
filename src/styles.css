@@ -142,6 +142,7 @@ html, body, main {
 
 ::placeholder {
 	color: var(--text_low_emphasis) !important;
+	opacity: 0.75 !important;
 }
 
 h6 {
@@ -190,12 +191,13 @@ button {
 
 /* textboxes */
 .input-field > label:not(.label-icon).active {
-	transform: translateY(-1px) scale(0.65) !important;
+	transform: translateY(1px) scale(0.65) !important;
 	transform-origin: 0 0;
 }
 
 label .active {
 	color: var(--secondary) !important;
+	opacity: 1 !important;
 }
 
 input:not([type]):focus:not([readonly]) + label,
@@ -212,6 +214,7 @@ input[type=number]:not(.browser-default):focus:not([readonly]) + label,
 input[type=search]:not(.browser-default):focus:not([readonly]) + label,
 textarea.materialize-textarea:focus:not([readonly]) + label {
 	color: var(--secondary) !important;
+	opacity: 1 !important;
 }
 
 /* rows */
