@@ -17,6 +17,8 @@
 
 ## todo
 
+- allow editor panel to be resized, and save size in prefs
+
 - skyrim minecraft map
 - convert eso and dawnstar to psueodo normalised in mapconfig
 

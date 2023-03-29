@@ -22,7 +22,6 @@
     import FormGroup from "./FormGroup.svelte";
     import InfoTextPair from "./InfoTextPair.svelte";
 
-
     const dispatch = createEventDispatcher();
 
     // state vars
@@ -30,6 +29,19 @@
     let isLocation = object instanceof Location;
     let isWorld = object instanceof World;
     let editor;
+
+    // world data
+    let worldName = object.name;
+    let worldDisplayName = object.displayName;
+    let worldWikiPage = object.wikiPage;
+    let worldParentID = object.parentID;
+    let [worldMinZoom, worldMaxZoom] = [object.minZoomLevel, object.maxZoomLevel];
+    let [worldMinX, worldMaxX, worldMinY, worldMaxY] = [object.minX, object.maxX, object.minY, object.maxY];
+
+    // location data
+    if (isLocation) {
+
+    }
 
     // on editor load
 	onMount(async() => {
@@ -74,31 +86,35 @@
         <div class="editor_window">
             <div id="editor_pane">
 
-
                 <FormGroup title="General" icon="description">
-                    <Textbox label="Display name" subtext="User facing name" text="ligma"/>
-                    <Textbox label="Name" subtext="Internal name"/>
+                    <Textbox label="Name" subtext="Internal name" placeholder="ligma"/>
+                    <Textbox label="Display name" subtext="User facing name" text={object.displayName}/>
                     <Textbox label="Parent ID" subtext="Parent world ID"/>
                     <Textbox label="Wiki page"/>
-                    <Textbox label="Description" block={true}/>
                 </FormGroup>
 
-                <b>Zoom levels</b>
-                <Textbox label="Max zoom"/>
-                <Textbox label="Min zoom"/>
+                <FormGroup title="Zoom" icon="zoom_in">
+                    <div class="row">
+                        <Textbox hint="Min Zoom"></Textbox>
+                        <Textbox hint="Max Zoom"></Textbox>
+                    </div>
+                </FormGroup>
 
-                <b>World bounds</b>
-                <Textbox hint="Minimum X"></Textbox>
-                <Textbox hint="Maximum X"></Textbox>
-                <Textbox hint="Minimum Y"></Textbox>
-                <Textbox hint="Maximum Y"></Textbox>
+                <FormGroup title="Bounds" icon="crop_free">
+                    <div class="row">
+                        <Textbox hint="Minimum X"></Textbox>
+                        <Textbox hint="Maximum X"></Textbox>
+                    </div>
+                    <div class="row">
+                        <Textbox hint="Minimum Y"></Textbox>
+                        <Textbox hint="Maximum Y"></Textbox>
+                    </div>
+                </FormGroup>
 
                 <FormGroup title="About" icon="info">
-
                     {#if isWorld}
                         <InfoTextPair name="World ID" value={object.id} tooltip="This world's worldID"></InfoTextPair>
                         <InfoTextPair name="Revision ID" value={object.revisionID} tooltip="Revision ID as of last edit"></InfoTextPair>
-                        <InfoTextPair name="Resolution" value={object.totalHeight + " x " + object.totalWidth} tooltip="Resolution of the full map image, in pixels"></InfoTextPair>
                         <InfoTextPair name="Tiles" value={object.dbNumTilesX + " x " + object.dbNumTilesY} tooltip="Number of tiles at full zoom"></InfoTextPair>
                     {:else if isLocation}
                         <!-- location editor here -->
@@ -154,8 +170,12 @@
         display: flex;
         width: 100%;
     }
-    b {
-        font-size: 15px;
+
+    .row {
+        margin-bottom: 0;
+        margin-right: -8px;
+        display: inline-flex;
+        gap: 8px;
     }
 </style>
 
