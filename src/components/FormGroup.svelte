@@ -40,6 +40,10 @@
         padding: 2px;
         padding-left: 4px;
         padding-right: 4px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
 
     .group {

@@ -235,6 +235,10 @@
 
     b {
         font-size: 15px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
 
     #actions-container {

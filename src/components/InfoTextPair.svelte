@@ -8,10 +8,11 @@
 <script>
     export let name = "Info:";
     export let value = "Value";
+    export let tooltip;
 </script>
 
 <markup>
-    <div>
+    <div title={tooltip}>
         <span class="key">
             <b>{name}:</b>
         </span>

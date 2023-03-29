@@ -20,7 +20,7 @@
     import Button from "./Button.svelte";
     import Textbox from "./Textbox.svelte";
     import FormGroup from "./FormGroup.svelte";
-  import InfoTextPair from "./InfoTextPair.svelte";
+    import InfoTextPair from "./InfoTextPair.svelte";
 
 
     const dispatch = createEventDispatcher();
@@ -84,7 +84,8 @@
                 </FormGroup>
 
                 <b>Zoom levels</b>
-                <Textbox label="Max zoom"/> <Textbox label="Min zoom"/>
+                <Textbox label="Max zoom"/>
+                <Textbox label="Min zoom"/>
 
                 <b>World bounds</b>
                 <Textbox hint="Minimum X"></Textbox>
@@ -94,11 +95,11 @@
 
                 <FormGroup title="About" icon="info">
 
-                    <InfoTextPair name="World ID" value="5343"></InfoTextPair>
-                    <InfoTextPair name="Revision ID" value="9999"></InfoTextPair>
-
                     {#if isWorld}
-                        <!-- world editor here -->
+                        <InfoTextPair name="World ID" value={object.id} tooltip="This world's worldID"></InfoTextPair>
+                        <InfoTextPair name="Revision ID" value={object.revisionID} tooltip="Revision ID as of last edit"></InfoTextPair>
+                        <InfoTextPair name="Resolution" value={object.totalHeight + " x " + object.totalWidth} tooltip="Resolution of the full map image, in pixels"></InfoTextPair>
+                        <InfoTextPair name="Tiles" value={object.dbNumTilesX + " x " + object.dbNumTilesY} tooltip="Number of tiles at full zoom"></InfoTextPair>
                     {:else if isLocation}
                         <!-- location editor here -->
                     {/if}

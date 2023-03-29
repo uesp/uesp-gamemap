@@ -42,6 +42,10 @@
 
     .appbar-title {
         font-size: 1.1rem;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
 
     .appbar {
