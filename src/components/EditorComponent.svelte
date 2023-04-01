@@ -34,8 +34,9 @@
     // world data
     let worldName = object.name;
     let worldDisplayName = object.displayName;
-    let worldWikiPage = object.wikiPage;
     let worldParentID = object.parentID;
+    let worldWikiPage = object.wikiPage;
+    let worldDescription = object.description;
     let [worldMinZoom, worldMaxZoom] = [object.minZoomLevel, object.maxZoomLevel];
     let [worldMinX, worldMaxX, worldMinY, worldMaxY] = [object.minX, object.maxX, object.minY, object.maxY];
 
@@ -66,7 +67,6 @@
             icon: "loading",
         });
 
-
         setTimeout(function() {
 
             saveButton.$set({
@@ -84,6 +84,31 @@
             }, 1500);
         }, 1000);
 
+    }
+
+    function doSaveWorld(world) {
+
+        let queryParams = world.createSaveQuery();
+        queryParams.db = this.mapConfig.dbPrefix;
+
+
+        getJSON(GAME_DATA_SCRIPT, queryParams, function(data) {
+
+            // merge current world with saved stuff
+            // make saved changes false
+            // then update revision ID with new one
+            // also change world name around ui and stuff
+
+            if (!(data.isError == null) || data.success === false)
+            {
+                this.setWorldPopupEditNotice('Error saving world data!', 'error');
+                this.enableWorldPopupEditButtons(true);
+                return false;
+            }
+
+            if (data.newRevisionId != null) this.currentEditWorld.revisionId = data.newRevisionId;
+
+        });
     }
 
     function cleanUp() {
@@ -112,11 +137,12 @@
                 <FormGroup title="General" icon="description">
                     {#if isWorld}
                         <Textbox label="Name" text={worldName} placeholder="Enter name..." tooltip="Internal world name"/>
-                        <Textbox label="Display name" text={worldDisplayName} placeholder="Enter display name..." tooltip="User facing world name"/>
+                        <Textbox label="Display Name" text={worldDisplayName} placeholder="Enter display name..." tooltip="User facing world name"/>
                         <!-- svelte-ignore missing-declaration -->
                         <Textbox label="Parent ID" text={worldParentID} placeholder="Enter parent world ID..." tooltip="Parent world ID" bind:value={worldParentID}
                             subtext={(worldParentID && !isNaN(worldParentID)) ? gamemap.getWorldDisplayNameFromID(worldParentID) : null}/>
-                        <Textbox label="Wiki page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL"/>
+                        <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL"/>
+                        <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true"/>
                     {:else if isLocation}
                         <!-- location info here -->
                     {/if}

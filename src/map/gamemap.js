@@ -1873,7 +1873,6 @@ export default class Gamemap {
 // 	return true;
 // }
 
-
 // uesp.gamemap.Map.prototype.onEditPathHandlesStart = function (location)
 // {
 // 	this.currentEditMode = 'edithandles';
@@ -1892,7 +1891,6 @@ export default class Gamemap {
 // 	this.displayLocation(this.currentEditLocation);
 // 	this.redrawCanvas();
 // }
-
 
 // uesp.gamemap.Map.prototype.onFinishedEditHandles = function()
 // {
@@ -1917,173 +1915,6 @@ export default class Gamemap {
 
 // 	return true;
 // }
-
-
-// uesp.gamemap.Map.prototype.onEditWorld = function()
-// {
-// 	if (!this.canEdit()) return false;
-// 	if (this.currentEditMode != '') return false;
-
-// 	this.addEditClickWall('default');
-// 	this.setEditClickWallBackground('rgba(0,0,0,0.5)');
-// 	this.currentEditMode = 'editworld';
-
-// 	this.currentEditWorld = this.mapWorlds[this.currentWorldID];
-// 	this.showWorldEditForm();
-
-// 	return true;
-// }
-
-
-// uesp.gamemap.Map.prototype.showWorldEditForm = function()
-// {
-// 	if (this.currentEditWorld == null) return false;
-
-
-// 	var worldEditForm =	"<form onsubmit='return false;'>" +
-// 						"<div class='gmMapEditPopupTitle'>Editing World</div>" +
-// 						"<div class='gmMapPopupClose'><img src='images/cancelicon.png' width='12' height='12' /></div><br />" +
-// 						"<div class='gmMapEditPopupLabel'>Name</div>" +
-// 							"<input type='text' class='gmMapEditPopupInput' name='name' value=\"{name}\" size='24' maxlength='100' readonly /> <br />" +
-// 						"<div class='gmMapEditPopupLabel'>Enabled</div>" +
-// 							"<input type='checkbox' class='gmMapEditPopupInput' name='enabled' value='1' /> <br />" +
-// 						"<div class='gmMapEditPopupLabel'>Parent World ID</div>" +
-// 							"<input type='text' class='gmMapEditPopupInput' name='parentId' value='{parentId}' size='8'  maxlength='10' /> &nbsp; &nbsp; use a worldID<br />" +
-// 						"<div class='gmMapEditPopupLabel'>Display Name</div>" +
-// 							"<input type='text' class='gmMapEditPopupInput' name=\"displayName\" value=\"{displayName}\" size='24'  maxlength='100' /> <br />" +
-// 						"<div class='gmMapEditPopupLabel'>Wiki Page</div>" +
-// 							"<input type='text' class='gmMapEditPopupInput' name=\"wikiPage\" value=\"{wikiPage}\" size='24'  maxlength='100' /> <br />" +
-// 						"<div class='gmMapEditPopupLabel'>Description</div>" +
-// 							"<input type='text' class='gmMapEditPopupInput' name=\"description\" value=\"{description}\" size='24'  maxlength='500' /> <br />" +
-// 						"<div class='gmMapEditPopupLabel'>Missing Tile</div>" +
-// 							"<input type='text' class='gmMapEditPopupInput' name=\"missingMapTile\" value=\"{missingMapTile}\" size='24'  maxlength='100' readonly /> <br />" +
-// 						"<div class='gmMapEditPopupLabel'>Zoom Min/Max</div>" +
-// 							"<input type='text' class='gmMapEditPopupInput' name='minZoom' value='{minZoom}' size='8'  maxlength='10' /> &nbsp; " +
-// 							"<input type='text' class='gmMapEditPopupInput' name='maxZoom' value='{maxZoom}' size='8'  maxlength='10' /> <br />" +
-// 						"<div class='gmMapEditPopupLabel'>Zoom Offset</div>" +
-// 							"<input type='text' class='gmMapEditPopupInput' name='zoomOffset' value='{zoomOffset}' size='8'  maxlength='10' /> " +
-// 							"<div class='gmMapEditPopupCurrentZoom'>Current Zoom = </div> <br />" +
-// 						"<div class='gmMapEditPopupLabel'>Game Pos -- Left</div>" +
-// 							"<input type='text' class='gmMapEditPopupInput' name='posLeft' value='{posLeft}' size='8'  maxlength='10' /> &nbsp; " +
-// 							"&nbsp;&nbsp; Right <input type='text' class='gmMapEditPopupInput' name='posRight' value='{posRight}' size='8'  maxlength='10' /> <br />" +
-// 						"<div class='gmMapEditPopupLabel'>Top</div>" +
-// 							"<input type='text' class='gmMapEditPopupInput' name='posTop' value='{posTop}' size='8'  maxlength='10' /> &nbsp; " +
-// 							"Bottom <input type='text' class='gmMapEditPopupInput' name='posBottom' value='{posBottom}' size='8'  maxlength='10' /> <br />" +
-// 						"<div class='gmMapEditPopupLabel'>worldID</div>" +
-// 							"<div class='gmMapEditPopupInput'>{id}</div> &nbsp; " +
-// 							" &nbsp;  &nbsp; Revision<div class='gmMapEditPopupInput'>{revisionId}</div> &nbsp; <br />" +
-// 						"<div class='gmMapEditPopupStatus'></div>" +
-// 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonSave' value='Save' />" +
-// 						"<input type='button' class='gmMapEditPopupButtons gmMapEditPopupButtonClose' value='Cancel' />" +
-// 						"</form>";
-
-// 	if (this.worldEditPopup == null)
-// 	{
-// 		this.worldEditPopup = $('<div />')
-// 				.attr('id', 'gmMapWorldEdit')
-// 				.appendTo(this.mapContainer);
-// 	}
-
-// 	popupHtml = uesp.template(worldEditForm, this.currentEditWorld);
-// 	this.worldEditPopup.html(popupHtml);
-
-// 	this.worldEditPopup.find('input[name=enabled]').prop('checked', this.currentEditWorld.enabled);
-// 	this.worldEditPopup.find('.gmMapEditPopupCurrentZoom').text('Current Zoom = ' + this.zoomLevel);
-
-// 	var self = this;
-
-// 	this.worldEditPopup.find('input[name=name]').focus();
-
-// 	this.worldEditPopup.find('.gmMapPopupClose').bind("touchstart click", function(event) {
-// 		self.onCloseWorldEditPopup(event);
-// 		return false;
-// 	});
-
-// 	this.worldEditPopup.find('.gmMapEditPopupButtonClose').bind("touchstart click", function(event) {
-// 		self.onCloseWorldEditPopup(event);
-// 		return false;
-// 	});
-
-// 	this.worldEditPopup.find('.gmMapEditPopupButtonSave').bind("touchstart click", function(event) {
-// 		self.onSaveWorldEditPopup(event);
-// 		return false;
-// 	});
-
-// 	this.worldEditPopup.show();
-// }
-
-
-// uesp.gamemap.Map.prototype.setWorldPopupEditNotice = function (Msg, MsgType)
-// {
-// 	if (this.worldEditPopup == null) return;
-
-// 	$status =this.worldEditPopup.find('.gmMapEditPopupStatus');
-// 	if ($status == null) return;
-
-// 	$status.html(Msg);
-// 	$status.removeClass('gmMapEditPopupStatusOk');
-// 	$status.removeClass('gmMapEditPopupStatusNote');
-// 	$status.removeClass('gmMapEditPopupStatusWarning');
-// 	$status.removeClass('gmMapEditPopupStatusError');
-
-// 	if (MsgType == null || MsgType === 'ok')
-// 		$status.addClass('gmMapEditPopupStatusOk');
-// 	else if (MsgType === 'note')
-// 		$status.addClass('gmMapEditPopupStatusNote');
-// 	else if (MsgType === 'warning')
-// 		$status.addClass('gmMapEditPopupStatusWarning');
-// 	else if (MsgType === 'error')
-// 		$status.addClass('gmMapEditPopupStatusError');
-// }
-
-
-// uesp.gamemap.Map.prototype.doWorldSaveQuery = function(world)
-// {
-// 	var self = this;
-
-// 	queryParams = world.createSaveQuery();
-// 	queryParams.db = this.mapConfig.dbPrefix;
-
-// 	if (this.mapConfig.isOffline)
-// 	{
-// 		// Do nothing
-// 	}
-// 	else
-// 	{
-// 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) {
-// 			self.onSavedWorld(data);
-// 		});
-// 	}
-
-// 	return true;
-// }
-
-
-// uesp.gamemap.Map.prototype.onSavedWorld = function (data)
-// {
-// 	uesp.printDebug(uesp.print_LEVEL_WARNING, "Received onSavedWorld data");
-// 	uesp.printDebug(uesp.print_LEVEL_WARNING, data);
-
-// 	if (!(data.isError == null) || data.success === false)
-// 	{
-// 		this.setWorldPopupEditNotice('Error saving world data!', 'error');
-// 		this.enableWorldPopupEditButtons(true);
-// 		return false;
-// 	}
-
-// 	if (data.newRevisionId != null) this.currentEditWorld.revisionId = data.newRevisionId;
-
-// 	this.setWorldPopupEditNotice('Successfully saved location!');
-// 	this.enableWorldPopupEditButtons(true);
-
-// 	this.hideWorldEditForm();
-// 	this.removeEditClickWall();
-// 	this.currentEditMode = '';
-// 	this.currentEditWorld = null;
-
-// 	return true;
-// }
-
 
 // uesp.gamemap.Location.prototype.setPopupEditNotice = function (Msg, MsgType)
 // {

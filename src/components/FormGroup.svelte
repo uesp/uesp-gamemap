@@ -33,7 +33,7 @@
 <style>
 
     .title {
-        top: -13px;
+        top: -16px;
         font-size: 15px;
         position: absolute;
         background-color: var(--surface);

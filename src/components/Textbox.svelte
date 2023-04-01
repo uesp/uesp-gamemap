@@ -34,7 +34,7 @@
         {#if label}<p class="label">{label}</p>{/if}
         <div class="input-field" class:inline={!block}>
             {#if textArea}
-                <textarea id={id} class="materialize-textarea input" bind:value={value} bind:this={textbox} style="margin-left: -8px; padding-left: 8px; width: calc(100% + 8px);"/>
+                <textarea id={id} placeholder={(placeholder != null) ? placeholder : null} class="materialize-textarea input" bind:value={value} bind:this={textbox} style="margin-left: -8px; padding-left: 8px; width: calc(100%);"/>
             {:else}
                 <input id={id} placeholder={(placeholder != null) ? placeholder : null} type="text" class:validate={validate} bind:value={value} bind:this={textbox} class="input">
             {/if}

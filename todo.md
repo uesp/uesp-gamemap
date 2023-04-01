@@ -1,17 +1,26 @@
-
-
 ## last week:
 
+did some ui work on editor, began hooking up network connections
 
-
+## QoL:
 - prettified world edit screen
-- added data loading, parity with live
-
-
-
-QoL:
+- most/all fields have tooltips that describe what they do
 - world parent ID now shows name of that world under the field
-- party trick: with svelte reactivity, it updates automagically even as you're typing
+- party trick: with last week's refactoring + svelte reactivity, parent world ID text box
+updates automagically with the name of the world even as you're typing
+
+## technical
+- added data loading into edit boxes, parity with live
+- allowed animated placeholders and static ones in textboxes
+- this is to have textboxes that have label + placeholder, or just placeholder (and have that used as label)
+- refactored textbox to allow for multiple lines (used for description)
+- began hooking up world editor to network, placeholder ui for now (success/error states)
+- svelte magic: all form fields are autoupdated into variables, which can be passed into network request
+
+## bug fixes:
+- fixed not being able to select text in edit panel
+- fixed editor scrolling issues
+
 
 
 
