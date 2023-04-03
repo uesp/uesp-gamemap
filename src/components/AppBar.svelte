@@ -69,6 +69,10 @@
 
     small {
         color: var(--text_low_emphasis);
+        white-space: nowrap;
+        max-width: 25vw;
+        text-overflow: ellipsis;
+        overflow: clip;
     }
 
 </style>

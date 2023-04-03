@@ -67,10 +67,11 @@
     }
 
     .label {
-        display:contents;
+        display: contents;
         margin: 0;
         margin-right: var(--padding_medium);
         white-space: nowrap;
+        width: 50%;
     }
 
     .textbox.inline .label {

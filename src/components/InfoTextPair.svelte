@@ -43,7 +43,7 @@
         place-self: end;
         align-content: end;
         margin-left: auto;
-        min-width: 40%;
+        min-width: 47%;
     }
 
 </style>

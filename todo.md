@@ -1,13 +1,5 @@
+
 ## last week:
-
-did some ui work on editor, began hooking up network connections
-
-## QoL:
-- prettified world edit screen
-- most/all fields have tooltips that describe what they do
-- world parent ID now shows name of that world under the field
-- party trick: with last week's refactoring + svelte reactivity, parent world ID text box
-updates automagically with the name of the world even as you're typing
 
 ## technical
 - added data loading into edit boxes, parity with live
@@ -26,6 +18,8 @@ updates automagically with the name of the world even as you're typing
 
 
 
+
+
 ## dave stuff:
 
 - 32px skyrim skyrim icons
@@ -34,6 +28,10 @@ updates automagically with the name of the world even as you're typing
 
 
 ## todo
+
+
+- world name must be read only
+- move to info
 
 - allow editor panel to be resized, and save size in prefs
 
@@ -78,6 +76,14 @@ feedback:
 - divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)
 - some kind of tutorial on first non-cookie load to tell user how to use ui
 - an undo button for deleting/editing locations and worlds
+
+
+- localisations for maps (local json and server database)
+
+&lang=en
+&lang=fr
+
+
 ## todo (future)
 - wiki features
 - email thing

@@ -32,7 +32,6 @@
     let saveButton;
 
     // world data
-    let worldName = object.name;
     let worldDisplayName = object.displayName;
     let worldParentID = object.parentID;
     let worldWikiPage = object.wikiPage;
@@ -136,8 +135,7 @@
 
                 <FormGroup title="General" icon="description">
                     {#if isWorld}
-                        <Textbox label="Name" text={worldName} placeholder="Enter name..." tooltip="Internal world name"/>
-                        <Textbox label="Display Name" text={worldDisplayName} placeholder="Enter display name..." tooltip="User facing world name"/>
+                        <Textbox label="Name" text={worldDisplayName} placeholder="Enter display name..." tooltip="User facing world name"/>
                         <!-- svelte-ignore missing-declaration -->
                         <Textbox label="Parent ID" text={worldParentID} placeholder="Enter parent world ID..." tooltip="Parent world ID" bind:value={worldParentID}
                             subtext={(worldParentID && !isNaN(worldParentID)) ? gamemap.getWorldDisplayNameFromID(worldParentID) : null}/>
@@ -172,6 +170,7 @@
                 {#if object.id > 0}
                     <FormGroup title="Info" icon="info">
                         {#if isWorld}
+                            <InfoTextPair name="World Name" value={object.name} tooltip="This world's internal name"/>
                             <InfoTextPair name="World ID" value={object.id} tooltip="This world's worldID"/>
                             <InfoTextPair name="Revision ID" value={object.revisionID} tooltip="Current revision ID"/>
                             <InfoTextPair name="Tiles" value={object.dbNumTilesX + " x " + object.dbNumTilesY} tooltip="Number of tiles at full zoom"/>
