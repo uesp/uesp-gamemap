@@ -1,23 +1,6 @@
 
 ## last week:
 
-## technical
-- added data loading into edit boxes, parity with live
-- allowed animated placeholders and static ones in textboxes
-- this is to have textboxes that have label + placeholder, or just placeholder (and have that used as label)
-- refactored textbox to allow for multiple lines (used for description)
-- began hooking up world editor to network, placeholder ui for now (success/error states)
-- svelte magic: all form fields are autoupdated into variables, which can be passed into network request
-
-## bug fixes:
-- fixed not being able to select text in edit panel
-- fixed editor scrolling issues
-
-
-
-
-
-
 
 
 ## dave stuff:
@@ -28,6 +11,10 @@
 
 
 ## todo
+
+
+
+error state for save button (turn red and shake like "no")
 
 
 - world name must be read only

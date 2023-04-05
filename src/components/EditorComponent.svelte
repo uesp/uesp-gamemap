@@ -60,7 +60,7 @@
         }
     });
 
-    function save(uriString) {
+    function save(type) {
         saveButton.$set({
             text: "Saving...",
             icon: "loading",
@@ -83,13 +83,23 @@
             }, 1500);
         }, 1000);
 
+        if (isWorld) {
+            doSaveWorld(object);
+        }
+
     }
 
-    function doSaveWorld(world) {
+    function doSaveWorld(world, doDelete) {
 
-        let queryParams = world.createSaveQuery();
-        queryParams.db = this.mapConfig.dbPrefix;
+        world.displayName = worldDisplayName;
+        world.parentID = worldParentID;
+        world.wikiPage =  worldWikiPage;
+        world.description = worldDescription;
+        [world.minZoomLevel, world.maxZoomLevel] = [worldMinZoom, worldMaxZoom];
+        [world.minX, world.maxX, world.minY, world.maxY] = [worldMinX, worldMaxX, worldMinY, worldMaxY];
 
+        let queryParams = world.getSaveQuery(doDelete);
+        queryParams.db = gamemap.getMapConfig().database;
 
         getJSON(GAME_DATA_SCRIPT, queryParams, function(data) {
 
@@ -135,7 +145,7 @@
 
                 <FormGroup title="General" icon="description">
                     {#if isWorld}
-                        <Textbox label="Name" text={worldDisplayName} placeholder="Enter display name..." tooltip="User facing world name"/>
+                        <Textbox label="Display Name" text={worldDisplayName} placeholder="Enter display name..." tooltip="User facing world name"/>
                         <!-- svelte-ignore missing-declaration -->
                         <Textbox label="Parent ID" text={worldParentID} placeholder="Enter parent world ID..." tooltip="Parent world ID" bind:value={worldParentID}
                             subtext={(worldParentID && !isNaN(worldParentID)) ? gamemap.getWorldDisplayNameFromID(worldParentID) : null}/>
@@ -144,7 +154,6 @@
                     {:else if isLocation}
                         <!-- location info here -->
                     {/if}
-
                 </FormGroup>
 
                 {#if isWorld}
