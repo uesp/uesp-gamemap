@@ -286,6 +286,28 @@ window.queryify = function queryify(object) {
 	return query;
 }
 
+/** Convert query string into javascript object
+ * @param {String} query - The string to be objectified
+ * @returns {Object} object - The resulting javascript object
+ */
+window.objectify = function objectify(query) {
+
+	const params = new URLSearchParams(query)
+
+	const obj = {}
+	for (const key of params.keys()) {
+	if (params.getAll(key).length > 1) {
+		obj[key] = params.getAll(key)
+	} else {
+		obj[key] = params.get(key)
+	}
+	}
+
+	console.log(obj)
+
+	return obj;
+}
+
 /** Set browser cookie function
  * @param {String} key - The unique key of the cookie to set
  * @param {Object} value - The unique key of the cookie to set

@@ -75,29 +75,24 @@ export default class World {
 		return dimens;
 	}
 
-	getSaveQuery(doDelete) {
+	getSaveQuery() {
 		var query = 'action=set_world';
 
 		query += '&worldid=' + this.id;
 		query += '&db=' + gamemap.getMapConfig().database;
-
-		if (!doDelete) {
-			query += '&parentid=' + this.parentID;
-			query += '&revisionid=' + this.revisionID;
-			query += '&name=' + encodeURIComponent(this.name);
-			query += '&displayname=' + encodeURIComponent(this.displayName);
-			query += '&description=' + encodeURIComponent(this.description);
-			query += '&wikipage=' + encodeURIComponent(this.wikiPage);
-			query += '&minzoom=' + this.minZoomLevel;
-			query += '&maxzoom=' + this.maxZoomLevel;
-			query += '&posleft=' + this.minX;
-			query += '&posright=' + this.maxX;
-			query += '&postop=' + this.minY;
-			query += '&posbottom=' + this.maxY;
-			query += '&zoomoffset=' + this.zoomOffset;
-		} else {
-			query += '&enabled=0';
-		}
+		query += '&parentid=' + this.parentID;
+		query += '&revisionid=' + this.revisionID;
+		query += '&name=' + encodeURIComponent(this.name);
+		query += '&displayname=' + encodeURIComponent(this.displayName);
+		query += '&description=' + encodeURIComponent(this.description);
+		query += '&wikipage=' + encodeURIComponent(this.wikiPage);
+		query += '&minzoom=' + this.minZoomLevel;
+		query += '&maxzoom=' + this.maxZoomLevel;
+		query += '&posleft=' + this.minX;
+		query += '&posright=' + this.maxX;
+		query += '&postop=' + this.maxY;
+		query += '&posbottom=' + this.minY;
+		query += '&zoomoffset=' + this.zoomOffset;
 
 		return query;
 	}

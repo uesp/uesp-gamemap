@@ -61,63 +61,96 @@
     });
 
     function save(type) {
-        saveButton.$set({
-            text: "Saving...",
-            icon: "loading",
-        });
 
-        setTimeout(function() {
 
-            saveButton.$set({
-                text: "Done!",
-                icon: "done",
-            });
+        function onCallback(error, test) {
+
+            print(test);
+            print(error);
+
+            if (error == null) {
+                saveButton.$set({
+                    text: "Done!",
+                    icon: "done",
+                });
+            } else {
+                saveButton.$set({
+                    text: error,
+                    icon: "warning",
+                });
+            }
 
             setTimeout(function() {
-                if (saveButton.icon == "done") {
+                if (saveButton.icon == "done" || saveButton.icon == "warning") {
                     saveButton.$set({
                         text: "Save",
                         icon: "save",
                     });
                 }
-            }, 1500);
-        }, 1000);
+            }, (!error) ? 1500 : 2500);
 
-        if (isWorld) {
-            doSaveWorld(object);
         }
+
+        saveButton.$set({
+            text: "Saving...",
+            icon: "loading",
+        });
+
+        doSaveObject(object, onCallback);
 
     }
 
-    function doSaveWorld(world, doDelete) {
+    function doSaveObject(editObject, callback) {
 
-        world.displayName = worldDisplayName;
-        world.parentID = worldParentID;
-        world.wikiPage =  worldWikiPage;
-        world.description = worldDescription;
-        [world.minZoomLevel, world.maxZoomLevel] = [worldMinZoom, worldMaxZoom];
-        [world.minX, world.maxX, world.minY, world.maxY] = [worldMinX, worldMaxX, worldMinY, worldMaxY];
+        if (isWorld) {
+            editObject.displayName = worldDisplayName;
+            editObject.parentID = worldParentID;
+            editObject.wikiPage =  worldWikiPage;
+            editObject.description = worldDescription;
+            [editObject.minZoomLevel, editObject.maxZoomLevel] = [worldMinZoom, worldMaxZoom];
+            [editObject.minX, editObject.maxX, editObject.minY, editObject.maxY] = [worldMinX, worldMaxX, worldMinY, worldMaxY];
+        } else if (isLocation) {
+            editObject.blah = "blah";
+        }
 
-        let queryParams = world.getSaveQuery(doDelete);
+        let queryParams = objectify(editObject.getSaveQuery());
         queryParams.db = gamemap.getMapConfig().database;
 
-        getJSON(GAME_DATA_SCRIPT, queryParams, function(data) {
+        getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+            print("saving...");
 
-            // merge current world with saved stuff
-            // make saved changes false
-            // then update revision ID with new one
-            // also change world name around ui and stuff
+            if (!error && data != null) {
 
-            if (!(data.isError == null) || data.success === false)
-            {
-                this.setWorldPopupEditNotice('Error saving world data!', 'error');
-                this.enableWorldPopupEditButtons(true);
-                return false;
+                if (data.isError) {
+                    callback((data.errorMsg.includes("permissions")) ? "Invalid permissions!" : data.errorMsg);
+                } else {
+
+                    print(data);
+
+                    // merge current world with saved stuff
+                    // make saved changes false
+                    // then update revision ID with new one
+                    // also change world name around ui and stuff
+
+                    print(callback);
+
+
+                    // if (!(data.isError == null) || data.success === false)
+                    // {
+                    //     this.setWorldPopupEditNotice('Error saving world data!', 'error');
+                    //     this.enableWorldPopupEditButtons(true);
+                    //     return false;
+                    // }
+
+                    // if (data.newRevisionId != null) this.currentEditWorld.revisionId = data.newRevisionId;
+
+                }
+
+            } else {
+                callback("Error!");
             }
-
-            if (data.newRevisionId != null) this.currentEditWorld.revisionId = data.newRevisionId;
-
         });
+
     }
 
     function cleanUp() {
