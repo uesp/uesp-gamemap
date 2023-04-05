@@ -3,6 +3,14 @@
 
 
 
+
+
+- broke stormhaven test
+- how do the edit reason/type
+- get loc delete done
+
+
+
 ## dave stuff:
 
 - 32px skyrim skyrim icons

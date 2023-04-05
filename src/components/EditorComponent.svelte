@@ -127,6 +127,9 @@
 
                     print(data);
 
+
+                    callback();
+
                     // merge current world with saved stuff
                     // make saved changes false
                     // then update revision ID with new one

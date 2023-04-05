@@ -521,6 +521,7 @@ export default class Gamemap {
 					let mapState = new MapState(coords);
 					let world = self.getWorldFromID(worldID);
 					print("Going to world... " + world.displayName + " (" + world.id + ").");
+					print(world);
 					mapState.world = world;
 					self.setMapState(mapState);
 				}
