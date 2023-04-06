@@ -4,7 +4,7 @@
 
 
 
-
+- getting invalid permissions error on localhost
 - broke stormhaven test
 - how do the edit reason/type
 - get loc delete done

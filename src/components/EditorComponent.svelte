@@ -101,6 +101,7 @@
     }
 
     function doSaveObject(editObject, callback) {
+        print("saving...");
 
         if (isWorld) {
             editObject.displayName = worldDisplayName;
@@ -117,7 +118,6 @@
         queryParams.db = gamemap.getMapConfig().database;
 
         getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-            print("saving...");
 
             if (!error && data != null) {
 
