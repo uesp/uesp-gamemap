@@ -333,6 +333,10 @@ class GameMap
 				return $this->doGetLocation();
 			case 'set_loc':
 				return $this->doSetLocation();
+			case 'enable_world':
+				return $this->doEnableWorld();
+			case 'enable_loc':
+				return $this->doEnableLocation();
 			case 'add_loc':
 				return $this->doAddLocation();
 			case 'set_world':
@@ -1115,6 +1119,48 @@ class GameMap
 		return true;
 	}
 
+	public function doEnableWorld ()
+	{
+		if ($this->worldId <= 0) return $this->reportError("Cannot create worlds yet!");
+		if (!$this->initDatabaseWrite()) return false;
+
+		if (!$this->CanViewWorldId($this->worldId)) return false;
+
+		$query = "SELECT * FROM world WHERE id='{$this->worldId}'";
+		$result = $this->db->query($query);
+		$oldWorld = null;
+		if ($result) $oldWorld = $result->fetch_assoc();
+
+		$query  = "UPDATE world SET ";
+		$query .= "enabled='{$this->worldEnabled}' ";
+		$query .= " WHERE id='{$this->worldId}';";
+
+		$result = $this->db->query($query);
+
+		if ($result === FALSE) {
+			error_log($query);
+			error_log($this->db->error);
+			return $this->reportError("Failed to save world data!");
+		}
+
+		$query = "SELECT * FROM world WHERE id='{$this->worldId}'";
+		$result = $this->db->query($query);
+		$newWorld = null;
+		if ($result) $newWorld = $result->fetch_assoc();
+
+		$editAction = "undelete world";
+		if ($this->worldEnabled == 0) $editAction = "delete world";
+
+		if (!$this->addRevision($editAction, $oldWorld, $newWorld)) return false;
+		if (!$this->updateWorldRevision($this->worldId)) return false;
+		if (!$this->copyToWorldHistory()) return false;
+		if (!$this->updateRevisionWorldHistory($this->newRevisionId)) return false;
+
+		$this->addOutputItem('success', True);
+		$this->addOutputItem('worldId', $this->worldId);
+		return true;
+	}
+
 
 	public function doSetWorld ()
 	{
@@ -1212,6 +1258,48 @@ class GameMap
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to update the revision location history ID!");
 
+		return true;
+	}
+
+	public function doEnableLocation ()
+	{
+		if ($this->locationId <= 0) return $this->doAddLocation();
+		if (!$this->initDatabaseWrite()) return false;
+
+		if (!$this->CanViewWorldId($this->worldId)) return false;
+
+		$query = "SELECT * FROM location WHERE id='{$this->locationId}';";
+		$result = $this->db->query($query);
+		$oldLocation = null;
+		if ($result) $oldLocation = $result->fetch_assoc();
+
+		$query  = "UPDATE location SET ";
+		$query .= "visible='{$this->locVisible}' ";
+		$query .= " WHERE id='{$this->locationId}';";
+
+		$result = $this->db->query($query);
+
+		if ($result === FALSE) {
+			error_log($query);
+			error_log($this->db->error);
+			return $this->reportError("Failed to enable location data!");
+		}
+
+		$query = "SELECT * FROM location WHERE id='{$this->locationId}';";
+		$result = $this->db->query($query);
+		$newLocation = null;
+		if ($result) $newLocation = $result->fetch_assoc();
+
+		$editAction = "undelete location";
+		if ($this->locVisible == 0) $editAction = "delete location";
+
+		if (!$this->addRevision($editAction, $oldLocation, $newLocation)) return false;
+		if (!$this->updateLocationRevision($this->locationId)) return false;
+		if (!$this->copyToLocationHistory()) return false;
+		if (!$this->updateRevisionLocationHistory($this->newRevisionId)) return false;
+
+		$this->addOutputItem('success', True);
+		$this->addOutputItem('locationId', $this->locationId);
 		return true;
 	}
 
