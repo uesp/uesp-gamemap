@@ -103,6 +103,8 @@
     function doSaveObject(editObject, callback) {
         print("saving...");
 
+        print(worldDisplayName);
+
         if (isWorld) {
             editObject.displayName = worldDisplayName;
             editObject.parentID = worldParentID;
@@ -128,6 +130,7 @@
                     print(data);
 
 
+                    // tell save function that we're done saving
                     callback();
 
                     // merge current world with saved stuff
@@ -135,25 +138,14 @@
                     // then update revision ID with new one
                     // also change world name around ui and stuff
 
-                    print(callback);
-
-
-                    // if (!(data.isError == null) || data.success === false)
-                    // {
-                    //     this.setWorldPopupEditNotice('Error saving world data!', 'error');
-                    //     this.enableWorldPopupEditButtons(true);
-                    //     return false;
-                    // }
-
                     // if (data.newRevisionId != null) this.currentEditWorld.revisionId = data.newRevisionId;
 
                 }
 
             } else {
-                callback("Error!");
+                callback("Error saving "+(isWorld) ? "world" : "location" + "!");
             }
         });
-
     }
 
     function cleanUp() {
@@ -181,12 +173,12 @@
 
                 <FormGroup title="General" icon="description">
                     {#if isWorld}
-                        <Textbox label="Display Name" text={worldDisplayName} placeholder="Enter display name..." tooltip="User facing world name"/>
+                        <Textbox label="Display Name" text={worldDisplayName} placeholder="Enter display name..." tooltip="User facing world name" bind:value={worldDisplayName}/>
                         <!-- svelte-ignore missing-declaration -->
                         <Textbox label="Parent ID" text={worldParentID} placeholder="Enter parent world ID..." tooltip="Parent world ID" bind:value={worldParentID}
                             subtext={(worldParentID && !isNaN(worldParentID)) ? gamemap.getWorldDisplayNameFromID(worldParentID) : null}/>
-                        <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL"/>
-                        <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true"/>
+                        <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL" bind:value={worldWikiPage}/>
+                        <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/>
                     {:else if isLocation}
                         <!-- location info here -->
                     {/if}
@@ -195,19 +187,19 @@
                 {#if isWorld}
                      <FormGroup title="Zoom" icon="zoom_in">
                          <div class="row">
-                             <Textbox text={worldMinZoom} hint="Min Zoom" tooltip="Minimum zoom level for this world"/>
-                             <Textbox text={worldMaxZoom} hint="Max Zoom" tooltip="Maximum zoom level for this world"/>
+                             <Textbox text={worldMinZoom} hint="Min Zoom" tooltip="Minimum zoom level for this world" bind:value={worldMinZoom}/>
+                             <Textbox text={worldMaxZoom} hint="Max Zoom" tooltip="Maximum zoom level for this world" bind:value={worldMaxZoom}/>
                          </div>
                      </FormGroup>
 
                      <FormGroup title="Bounds" icon="crop_free">
                          <div class="row">
-                             <Textbox text={worldMinX} hint="Minimum X"/>
-                             <Textbox text={worldMaxX} hint="Maximum X"/>
+                             <Textbox text={worldMinX} hint="Minimum X" bind:value={worldMinX}/>
+                             <Textbox text={worldMaxX} hint="Maximum X" bind:value={worldMaxX}/>
                          </div>
                          <div class="row">
-                             <Textbox text={worldMinY} hint="Minimum Y"/>
-                             <Textbox text={worldMaxY} hint="Maximum Y"/>
+                             <Textbox text={worldMinY} hint="Minimum Y" bind:value={worldMinY}/>
+                             <Textbox text={worldMaxY} hint="Maximum Y" bind:value={worldMaxY}/>
                          </div>
                      </FormGroup>
                 {/if}

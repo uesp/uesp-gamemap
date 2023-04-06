@@ -86,8 +86,8 @@ export default class World {
 		query += '&displayname=' + encodeURIComponent(this.displayName);
 		query += '&description=' + encodeURIComponent(this.description);
 		query += '&wikipage=' + encodeURIComponent(this.wikiPage);
-		query += '&minzoom=' + this.minZoomLevel + this.zoomOffset;
-		query += '&maxzoom=' + this.maxZoomLevel + this.zoomOffset;
+		query += '&minzoom=' + (+this.minZoomLevel + +this.zoomOffset); //unary black magic
+		query += '&maxzoom=' + (+this.maxZoomLevel + +this.zoomOffset); //unary black magic
 		query += '&posleft=' + this.minX;
 		query += '&posright=' + this.maxX;
 		query += '&postop=' + this.maxY;

@@ -477,7 +477,11 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	background-color: var(--selection) !important;
 }
 
-#actions-container >* {
+#actions-container > * {
+	flex-grow: 1;
+}
+
+.header-buttons > * {
 	flex-grow: 1;
 }
 
