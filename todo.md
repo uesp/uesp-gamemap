@@ -1,9 +1,10 @@
 
 ## last week:
 
+- world editing done
+- error state for save button (shakes "no" when error and turns orange)
 
-
-
+## problems:
 - getting invalid permissions error on localhost
 - broke stormhaven test
 - how do the edit reason/type
@@ -20,6 +21,8 @@
 
 ## todo
 
+
+- make description box that has some text in it simulate focus and left arrow press to expand box, then defocus
 
 
 error state for save button (turn red and shake like "no")

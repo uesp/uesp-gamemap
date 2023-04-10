@@ -23,9 +23,34 @@
     export let textArea;
     export let tooltip;
 
+
     let textbox;
     let id = Math.random();
     block = (textArea != null) ? true : block;
+
+    // on editor load
+	onMount(async() => {
+
+        // if textbox is a text area, and contains text, force expand the textbox
+        if (textArea && text.length > 0) {
+            textbox.focus();
+            print("hello world");
+
+            setTimeout(function() {
+                var evt = document.createEvent("KeyboardEvent");
+                evt.initEvent("keypress", false, true);
+                // adding this created a magic and passes it as if keypressed
+                textbox.dispatchEvent(evt);
+                print("expand");
+
+                window.dispatchEvent(new KeyboardEvent('keydown', {
+                    'key': 'a'
+                }));
+            }, 1000);
+
+        }
+
+    });
 
 </script>
 

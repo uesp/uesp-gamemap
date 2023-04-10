@@ -161,11 +161,11 @@
                 {#if !isEditing}
                      <b>Actions</b><br/>
                      <div id="actions-container">
-                         <!-- svelte-ignore missing-declaration -->
-                         <Button text="Edit World" icon="public" on:click={() => (edit(gamemap.getCurrentWorld()))}></Button>
                          <Button text="Add Location" icon="add_location_alt"></Button>
                          <Button text="Add Path" icon="timeline"></Button>
                          <Button text="Add Area" icon="local_hospital"></Button>
+                         <!-- svelte-ignore missing-declaration -->
+                         <Button text="Edit World" icon="public" on:click={() => (edit(gamemap.getCurrentWorld()))}></Button>
                      </div>
                      <b>Recent Changes</b>
                      <!-- svelte-ignore a11y-click-events-have-key-events -->

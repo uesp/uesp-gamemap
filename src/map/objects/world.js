@@ -75,6 +75,7 @@ export default class World {
 		return dimens;
 	}
 
+	// get query for saving this world
 	getSaveQuery() {
 		var query = 'action=set_world';
 
@@ -95,6 +96,19 @@ export default class World {
 		query += '&zoomoffset=' + this.zoomOffset;
 
 		return query;
+	}
+
+	// get query for deleting this world
+	getDeleteQuery() {
+
+		var query = 'action=enable_world';
+
+		query += '&worldid=' + this.id;
+		query += '&db=' + gamemap.getMapConfig().database;
+		query += '&enabled=0';
+
+		return query;
+
 	}
 
 }
