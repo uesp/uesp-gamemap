@@ -627,10 +627,6 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	cursor: auto;
 }
 
-/* [class*='svelte'] {
-	cursor: auto;
-} */
-
 .location-label {
 	border-radius: var(--padding_large) !important;
 	position: absolute !important;
@@ -762,8 +758,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 
 .leaflet-container.editing {
 	animation: throb-inner 2.5s infinite !important;
-	pointer-events: none !important;
-	cursor: no-drop !important;
+	cursor: not-allowed !important;
 }
 
 @keyframes throb-inner {

@@ -26,7 +26,7 @@
 
     // constants
     const OVERLAY = { NONE : 0, LOCATION : 2, PATH : 3, AREA : 4}
-    const PANEL_WIDTH = 480;
+    const PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     const ANIMATION_DURATION = 350;
     const RESIZE_OBSERVER = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
     const TWEEN = tweened(0, {duration: ANIMATION_DURATION, easing: cubicInOut } );
@@ -136,6 +136,16 @@
         gamemap.getMapObject().invalidateSize();
         return { ANIMATION_DURATION, css: () => `width: ${$TWEEN * PANEL_WIDTH}`};
     }
+
+
+    function onResizerDrag(e) {
+        let width = (window.innerWidth - e.pageX + 150);
+        editPanel.style.width = width + "px";
+        print(width);
+        setPrefs("editpanelwidth", width);
+    }
+    function onResizerDown(e) { document.addEventListener('mousemove', onResizerDrag);}
+    function onResizerUp(e) { document.removeEventListener('mousemove', onResizerDrag); }
 </script>
 
 
@@ -151,6 +161,9 @@
 
                  </div>
              {/if}
+
+             <!-- resize dragger for resizing window -->
+             <div id="window-resizer" on:mousedown={onResizerDown}/>
 
              <!-- edit panel appbar -->
              <AppBar title={!isEditing ? "Map Editor" : "Editing " + ((editObject instanceof World) ? "World" : "Location")} subtitle={isEditing ? (editObject instanceof World) ? editObject.displayName + " ("+editObject.name+")" : editObject.name : null} icon={isEditing ? "arrow_back" : "close"} on:backClicked={onBackPressed}/>
@@ -258,6 +271,19 @@
         width: 100%;
     }
 
+    #window-resizer {
+        position: absolute;
+        width: 5px;
+        height: 100%;
+        cursor: ew-resize;
+        z-index: 999;
+        transition: background-color ease 150ms;
+    }
+
+    #window-resizer:hover {
+        background-color: var(--shadow);
+    }
+
 </style>
 <svelte:options accessors/>
-<svelte:window on:resize={() => { if (editPanel != null) { editPanelContent.style.height = (editPanel.clientHeight - document.querySelector('.appbar').clientHeight) + "px"; }}}/>
+<svelte:window on:resize={() => { if (editPanel != null) { editPanelContent.style.height = (editPanel.clientHeight - document.querySelector('.appbar').clientHeight) + "px"; }}} on:mouseup={onResizerUp}/>

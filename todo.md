@@ -3,6 +3,7 @@
 
 - world editing done
 - error state for save button (shakes "no" when error and turns orange)
+- added delete queries
 
 ## problems:
 - getting invalid permissions error on localhost
@@ -10,6 +11,10 @@
 - how do the edit reason/type
 - get loc delete done
 
+
+- change cursor to "not allowed" when editing world to indicate world cannot be used
+- allow edit pane to be resized
+- users chosen size gets saved
 
 
 ## dave stuff:
