@@ -12,15 +12,16 @@
     import { onMount } from 'svelte';
 
     // import UI components
+    import Button from "./Button.svelte";
+    import Textbox from "./Textbox.svelte";
+    import FormGroup from "./FormGroup.svelte";
+    import InfoTextPair from "./InfoTextPair.svelte";
+    import Checkbox from "./Checkbox.svelte";
     import Modal from "./Modal.svelte";
 
     // import data classes
     import World from "../map/objects/world";
     import Location from "../map/objects/location"
-    import Button from "./Button.svelte";
-    import Textbox from "./Textbox.svelte";
-    import FormGroup from "./FormGroup.svelte";
-    import InfoTextPair from "./InfoTextPair.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -30,6 +31,7 @@
     let isWorld = object instanceof World;
     let editor;
     let saveButton;
+    let objectType = (isWorld) ? "world" : "location";
 
     // world data
     let worldDisplayName = object.displayName;
@@ -40,6 +42,7 @@
     let [worldMinX, worldMaxX, worldMinY, worldMaxY] = [object.minX, object.maxX, object.minY, object.maxY];
 
     // location data
+    let locationName = object.name;
 
     // on editor load
 	onMount(async() => {
@@ -143,7 +146,7 @@
                 }
 
             } else {
-                callback("Error saving "+(isWorld) ? "world" : "location" + "!");
+                callback(`Error saving ${objectType}!`);
             }
         });
     }
@@ -173,14 +176,17 @@
 
                 <FormGroup title="General" icon="description">
                     {#if isWorld}
-                        <Textbox label="Display Name" text={worldDisplayName} placeholder="Enter display name..." tooltip="User facing world name" bind:value={worldDisplayName}/>
+                        <Textbox label="Display Name" text={worldDisplayName} placeholder="Enter world name..." tooltip="User facing world name" bind:value={worldDisplayName}/>
                         <!-- svelte-ignore missing-declaration -->
                         <Textbox label="Parent ID" text={worldParentID} placeholder="Enter parent world ID..." tooltip="Parent world ID" bind:value={worldParentID}
                             subtext={(worldParentID && !isNaN(worldParentID)) ? gamemap.getWorldDisplayNameFromID(worldParentID) : null}/>
                         <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL" bind:value={worldWikiPage}/>
                         <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/>
                     {:else if isLocation}
-                        <!-- location info here -->
+                        <Textbox label="Name" text={locationName} placeholder="Enter location name..." tooltip="Location name" bind:value={locationName}/>
+                        <Checkbox label="Area?"></Checkbox>
+                        <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL" bind:value={worldWikiPage}/>
+                        <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/>
                     {/if}
                 </FormGroup>
 
@@ -204,6 +210,23 @@
                      </FormGroup>
                 {/if}
 
+                {#if isLocation}
+                    <FormGroup title="Coordinates" icon="location_on">
+                        <p>Using coordinate system: Normalised</p>
+                        <div class="row">
+                            <Textbox text={worldMinZoom} hint="X" tooltip="Minimum zoom level for this world" bind:value={worldMinZoom}/>
+                            <Textbox text={worldMaxZoom} hint="Y" tooltip="Maximum zoom level for this world" bind:value={worldMaxZoom}/>
+                        </div>
+                        <Button text="Set Position" icon="pin_drop"/>
+                    </FormGroup>
+
+                    <FormGroup title="Display" icon="light_mode">
+                        <!-- svelte-ignore missing-declaration -->
+                        <Textbox label="Display Level" text={worldParentID} placeholder="Enter display level..." tooltip="Parent world ID" bind:value={worldParentID}
+                        subtext={"Current zoom is "+ gamemap.getCurrentZoom().toFixed(3)}/>
+                    </FormGroup>
+                {/if}
+
                 {#if object.id > 0}
                     <FormGroup title="Info" icon="info">
                         {#if isWorld}
@@ -219,6 +242,8 @@
                             <!-- svelte-ignore missing-declaration -->
                             <InfoTextPair name="Location Type" value={object.locType + " ("+Object.keys(LOCTYPES)[object.locType].toLowerCase()+")"} tooltip="Location type"/>
                         {/if}
+                        <!-- svelte-ignore missing-declaration -->
+                        <InfoTextPair name="Coordinate Type" value={gamemap.getMapConfig().coordType + " ("+Object.keys(COORD_TYPES)[gamemap.getMapConfig().coordType].toLowerCase()+")"} tooltip="Coordinate system that this {objectType} is using"/>
                     </FormGroup>
                 {/if}
             </div>

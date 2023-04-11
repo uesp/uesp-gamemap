@@ -1,20 +1,29 @@
-
 ## last week:
 
-- world editing done
+- got world editing done, began on locations ui, other misc stuff
+
+## world editing:
+- all fields work and display on live correctly when saved
+>> there were some issues before (like stormhaven) but fixed now
+>> makes use of svelte live magic, save a world, exit out of it, and the name updates
+>> doesn't update the world name live as you're editing, although it could
+
+## misc:
 - error state for save button (shakes "no" when error and turns orange)
-- added delete queries
+- added delete queries (dont work yet)
+- change cursor to "not allowed" when editing world to indicate world cannot be used
+- allow edit pane to be resized (from original figma concept)
+- aligned all text boxes to be the same width to look better
+>> users chosen size gets saved
+- began working on location edit ui
 
 ## problems:
-- getting invalid permissions error on localhost
-- broke stormhaven test
-- how do the edit reason/type
-- get loc delete done
+- need help fixing permissions error on localhost
+- should all locations have an "area" checkbox?
 
 
-- change cursor to "not allowed" when editing world to indicate world cannot be used
-- allow edit pane to be resized
-- users chosen size gets saved
+
+
 
 
 ## dave stuff:
@@ -28,28 +37,11 @@
 
 
 - make description box that has some text in it simulate focus and left arrow press to expand box, then defocus
-
-
-error state for save button (turn red and shake like "no")
-
-
-- world name must be read only
-- move to info
-
-- allow editor panel to be resized, and save size in prefs
-
-- skyrim minecraft map
 - convert eso and dawnstar to psueodo normalised in mapconfig
-
-
-
 - make eso only one with custom css as the rest use yellow anyway
-
-
 
 - alphabeticise map key ui
 - hamburger for search bar to show other maps
-
 - cell resource state from url
 - do get centre of polygon to count towards isvisible
 - add allow long clicking on mobile to open popups
@@ -68,7 +60,6 @@ error state for save button (turn red and shake like "no")
 - fix losing grid on resize
 - sr icons higher res
 - fix all markers showing up at initial load on highest zoom level
-- edit
 - button to go to the map menu
 - separate mods from offical maps
 - make maps in game release order
@@ -82,10 +73,6 @@ feedback:
 
 
 - localisations for maps (local json and server database)
-
-&lang=en
-&lang=fr
-
 
 ## todo (future)
 - wiki features

@@ -138,8 +138,10 @@
     }
 
 
+    // handle resizing the edit pane
     function onResizerDrag(e) {
         let width = (window.innerWidth - e.pageX + 150);
+        width = (width < 350) ? 350 : width;
         editPanel.style.width = width + "px";
         print(width);
         setPrefs("editpanelwidth", width);
