@@ -350,23 +350,30 @@ function getCookie(c_name) {
  * @param {Object} value - The desired value to set
  */
 window.setPrefs = function setPrefs(key, value) {
+	print(value);
 	setCookie(key, value);
 }
 
 /** Function that gets browser shared preference value from a key
  * @param {String} key - The shared preference key to search for
+ * @param {Object} defaultValue - The default value of this key, if it doesn't exist already
  * @returns {Object} value - whatever the shared preference was set to, or false if none was found
  */
 window.getPrefs = function getPrefs(key, defaultValue) {
+
+	print(key);
+	print(defaultValue);
 
 	// set default value
 	defaultValue = (defaultValue != null) ? defaultValue : false;
 
 	// take preference over URL parms over cookies
 	if (getURLParams().has(key)){
+		print("should be called")
 		return getURLParams().get(key);
 	} else {
 		let value = (getCookie(key) != null && getCookie(key) != "") ? getCookie(key) : defaultValue;
+		setPrefs(key, value);
 
 		if ((typeof value === 'string' || value instanceof String) && (value.toLowerCase() == "true" || value.toLowerCase() == "false")) {
 			return JSON.parse(value);

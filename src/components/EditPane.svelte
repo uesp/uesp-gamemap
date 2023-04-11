@@ -26,7 +26,7 @@
 
     // constants
     const OVERLAY = { NONE : 0, LOCATION : 2, PATH : 3, AREA : 4}
-    const PANEL_WIDTH = getPrefs("editpanelwidth", 480);
+    let PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     const ANIMATION_DURATION = 350;
     const RESIZE_OBSERVER = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
     const TWEEN = tweened(0, {duration: ANIMATION_DURATION, easing: cubicInOut } );
@@ -143,6 +143,7 @@
         editPanel.style.width = width + "px";
         print(width);
         setPrefs("editpanelwidth", width);
+        PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     }
     function onResizerDown(e) { document.addEventListener('mousemove', onResizerDrag);}
     function onResizerUp(e) { document.removeEventListener('mousemove', onResizerDrag); }
