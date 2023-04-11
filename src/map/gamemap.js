@@ -327,6 +327,7 @@ export default class Gamemap {
 
 		// update url with new state
 		window.history.replaceState(newMapState, document.title, mapLink);
+  		window.dispatchEvent(new PopStateEvent('popstate'));
 	}
 
 	/*================================================

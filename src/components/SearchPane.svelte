@@ -225,7 +225,7 @@
         <div id="search_container">
             <!-- Search bar -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div id='searchbar' title="Type here to search" class="waves-effect" class:fullPane={showSearchPane} on:click={() => (searchBox.focus())} class:lock={lock}>
+            <div id='searchbar' title="Type here to search" class="waves-effect" class:fullPane={showSearchPane} on:click={() => (searchBox.focus())} class:lockNoFade={lock}>
 
                 <!-- Magnifying glass icon -->
                 <div id="search_icon">
@@ -403,7 +403,11 @@
 
     .lock {
         opacity: 0.5;
-        pointer-events: none  !important;
+        pointer-events: none !important;
+    }
+
+    .lockNoFade {
+        pointer-events: none !important;
     }
 
 </style>

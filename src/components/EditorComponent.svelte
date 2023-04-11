@@ -32,6 +32,7 @@
     let editor;
     let saveButton;
     let objectType = (isWorld) ? "world" : "location";
+    let currentZoom = gamemap.getCurrentZoom();
 
     // world data
     let worldDisplayName = object.displayName;
@@ -48,6 +49,9 @@
 	onMount(async() => {
         // fix footer height
         editor.style.height = (editor.parentElement.clientHeight) + "px";
+
+        // refresh zoom on url change
+        window.onpopstate = () => currentZoom = gamemap.getCurrentZoom();
 
         // begin editing provided object
         print(object);
@@ -167,6 +171,11 @@
 
     function cancel() { dispatch("cancel", "cancelled"); }
 
+
+    window.onpopstate = function(event) {
+        print("Location: " + document.location.href);
+    };
+
 </script>
 
 <markup>
@@ -223,7 +232,7 @@
                     <FormGroup title="Display" icon="light_mode">
                         <!-- svelte-ignore missing-declaration -->
                         <Textbox label="Display Level" text={worldParentID} placeholder="Enter display level..." tooltip="Parent world ID" bind:value={worldParentID}
-                        subtext={"Current zoom is "+ gamemap.getCurrentZoom().toFixed(3)}/>
+                        subtext={"Current zoom is "+currentZoom}/>
                     </FormGroup>
                 {/if}
 
