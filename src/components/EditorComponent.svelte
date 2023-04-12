@@ -32,7 +32,7 @@
     let editor;
     let saveButton;
     let objectType = (isWorld) ? "world" : "location";
-    let currentZoom = gamemap.getCurrentZoom();
+    let currentZoom = gamemap.getCurrentZoom().toFixed(3);
 
     // world data
     let worldDisplayName = object.displayName;
@@ -51,7 +51,7 @@
         editor.style.height = (editor.parentElement.clientHeight) + "px";
 
         // refresh zoom on url change
-        window.onpopstate = () => currentZoom = gamemap.getCurrentZoom();
+        window.onpopstate = () => currentZoom = gamemap.getCurrentZoom().toFixed(3);
 
         // begin editing provided object
         print(object);
@@ -59,11 +59,20 @@
 
         // do state changes
         if (isWorld && object.id == gamemap.getCurrentWorld().id) {
-            gamemap.reset(true, 30);
-            gamemap.mapRoot.classList.add("editing");
-            gamemap.setMapLock("full");
+            gamemap.reset(true, 30); // zoom out world map
+            gamemap.setMapLock("full"); // lock it
+            gamemap.mapRoot.classList.add("editing"); // add editing effect
         } else if (isLocation) {
-            gamemap.setMapLock("partial");
+            gamemap.setMapLock("partial"); // set map lock to partial
+
+            // add editing effect to marker and tooltip (if available)
+            let marker = gamemap.getMarkerFromLocation(object);
+            print(marker);
+            marker.element.classList.add("editing");
+            if (marker.element.getAttribute('aria-describedby')) {
+                print(document.getElementById(marker.element.getAttribute('aria-describedby')));
+                document.getElementById(marker.element.getAttribute('aria-describedby')).classList.add("editing"); // add editing effect
+            }
         }
     });
 
@@ -252,7 +261,7 @@
                             <InfoTextPair name="Location Type" value={object.locType + " ("+Object.keys(LOCTYPES)[object.locType].toLowerCase()+")"} tooltip="Location type"/>
                         {/if}
                         <!-- svelte-ignore missing-declaration -->
-                        <InfoTextPair name="Coord Type" value={gamemap.getMapConfig().coordType + " ("+Object.keys(COORD_TYPES)[gamemap.getMapConfig().coordType].toLowerCase()+")"} tooltip="Coordinate system that this {objectType} is using"/>
+                        <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES)[gamemap.getMapConfig().coordType].toLowerCase()} tooltip="Coordinate system that this {objectType} is using"/>
                     </FormGroup>
                 {/if}
             </div>

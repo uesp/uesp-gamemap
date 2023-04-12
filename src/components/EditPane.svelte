@@ -39,11 +39,15 @@
     $: currentOverlay  = OVERLAY.NONE;
     $: editObject = null;
     $: isEditing = editObject != null && (editObject instanceof Location) || (editObject instanceof World);
+    let directEdit = false;
 
     // public function to show/hide the panel, or edit an object
     export function show(data) {
 
         data = (data == null) ? true : data;
+
+        // determine we are directly editing a location, or editing from edit pane
+        directEdit = data && directEdit == false;
 
         if (data) {
             isShown = true;
@@ -65,6 +69,7 @@
 
         } else {
             isShown = false;
+            directEdit = false;
         }
 
     }
@@ -72,9 +77,17 @@
     export function dismiss() { show(false) }
 
     function onBackPressed() {
+        if (directEdit) {
+            print("ligma");
+        }
 
         if (isEditing) {
-            editObject = null;
+            if (directEdit) {
+                print("should be being dismissed")
+                dismiss();
+            } else {
+                editObject = null;
+            }
         } else {
             dismiss();
         }

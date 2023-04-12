@@ -74,7 +74,7 @@
                     {#if user}
                         <small class="author">
                             <Icon name={user.toLowerCase() == "bot" ? "smart_toy" : "person"} size="tiny"/>
-                            {user}
+                            {(user.toLowerCase() == "bot") ? " "+ user : user}
                         </small>
                     {/if}
                 </div>

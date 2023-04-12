@@ -1438,6 +1438,20 @@ export default class Gamemap {
 						Editing
 	================================================*/
 
+	getMarkerFromLocation(location) {
+		let marker = null;
+		map.eachLayer((layer) => {
+			if (layer.location != null) {
+				if (layer.location == location) {
+					layer.element = layer._icon || layer._path;
+					print(layer);
+					marker = layer;
+				}
+			}
+		});
+		return marker;
+	}
+
 	edit(object) {
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.edit(object);

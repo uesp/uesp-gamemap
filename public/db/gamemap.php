@@ -401,7 +401,7 @@ class GameMap
 		if ($userId == null) $userId = 0;
 		if ($userName == null) $userName = $_SERVER["REMOTE_ADDR"];
 		//Special case for local edits or for dev/testing
-		if ($userName == "127.0.0.1") $userName = "Bot";
+		if ($isLocalhost) $userName = "Bot";
 
 		$userName = $this->db->real_escape_string($userName);
 
