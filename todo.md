@@ -1,39 +1,7 @@
 ## last week:
 
-- got world editing done, began on locations ui, other misc stuff
-
-## world editing:
-- all fields work and display on live correctly when saved
->> there were some issues before (like stormhaven) but fixed now
->> makes use of svelte live magic, save a world, exit out of it, and the name updates
->> doesn't update the world name live as you're editing, although it could
-
-## misc:
-- error state for save button (shakes "no" when error and turns orange)
-- added delete queries (dont work yet)
-- change cursor to "not allowed" when editing world to indicate world cannot be used
-- allow edit pane to be resized (from original figma concept)
-- aligned all text boxes to be the same width to look better
->> users chosen size gets saved
-- began working on location edit ui
-- "current zoom" field in location display level updates automatically with current zoom, doesn't on live
-
-## problems:
-- need help fixing permissions error on localhost
-- should all locations have an "area" checkbox?
-
-ask proventus student position uesp
-
-``Could you ask dave about me?``
-``say im interested in learning it and stuff``
-
-``Just mention about Proventus/Imperialbattlespire being curious about the job, and that I'm willing to learn starting next month, and how I'll have the whole summer to focus on it``
-``Like so I can proper grind at it``
-
-# on taking holiday next two weeks:
-
-rita will be working from home so i think the plan is i will too
-
+- got localhost editing working
+- added location edit effect
 
 
 

@@ -67,11 +67,15 @@
 
             // add editing effect to marker and tooltip (if available)
             let marker = gamemap.getMarkerFromLocation(object);
+            let label = document.getElementById(marker.element.getAttribute('aria-describedby'));
             print(marker);
             marker.element.classList.add("editing");
-            if (marker.element.getAttribute('aria-describedby')) {
-                print(document.getElementById(marker.element.getAttribute('aria-describedby')));
-                document.getElementById(marker.element.getAttribute('aria-describedby')).classList.add("editing"); // add editing effect
+            if (label) {
+                print(label);
+                setTimeout(function() {
+                    document.getElementById(marker.element.getAttribute('aria-describedby')).classList.add("editing"); // add editing effect
+                }, (100));
+
             }
         }
     });
