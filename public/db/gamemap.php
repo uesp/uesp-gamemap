@@ -31,6 +31,8 @@ class GameMap
 
 	public $inputParams = array();
 
+	public $isLocalhost;
+
 	public $action = 'default';
 	public $worldId = 0;
 	public $worldName = '';
@@ -108,6 +110,10 @@ class GameMap
 	{
 		if (self::USE_MEMCACHED_SESSIONS) UespMemcachedSession::install();
 
+
+		// determine if localhost or hosted
+		$this->isLocalhost = in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1', "localhost"));
+
 		$this->setInputParams();
 		$this->parseInputParams();
 
@@ -138,6 +144,9 @@ class GameMap
 
 	public function canEditMap($dbPrefix)
 	{
+
+		if ($isLocalhost) return true;
+
 		if ($dbPrefix === null) return false;
 
 		if ($this->canEdit) return true;
@@ -391,6 +400,8 @@ class GameMap
 		$userName = UespMemcachedSession::readKey('wsUserName');
 		if ($userId == null) $userId = 0;
 		if ($userName == null) $userName = $_SERVER["REMOTE_ADDR"];
+		//Special case for local edits or for dev/testing
+		if ($userName == "127.0.0.1") $userName = "Bot";
 
 		$userName = $this->db->real_escape_string($userName);
 

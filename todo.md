@@ -16,10 +16,23 @@
 - aligned all text boxes to be the same width to look better
 >> users chosen size gets saved
 - began working on location edit ui
+- "current zoom" field in location display level updates automatically with current zoom, doesn't on live
 
 ## problems:
 - need help fixing permissions error on localhost
 - should all locations have an "area" checkbox?
+
+ask proventus student position uesp
+
+``Could you ask dave about me?``
+``say im interested in learning it and stuff``
+
+``Just mention about Proventus/Imperialbattlespire being curious about the job, and that I'm willing to learn starting next month, and how I'll have the whole summer to focus on it``
+``Like so I can proper grind at it``
+
+# on taking holiday next two weeks:
+
+rita will be working from home so i think the plan is i will too
 
 
 

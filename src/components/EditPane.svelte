@@ -39,7 +39,6 @@
     $: currentOverlay  = OVERLAY.NONE;
     $: editObject = null;
     $: isEditing = editObject != null && (editObject instanceof Location) || (editObject instanceof World);
-    //getRecentChanges();
 
     // public function to show/hide the panel, or edit an object
     export function show(data) {
@@ -160,8 +159,6 @@
              {#if currentOverlay != OVERLAY.NONE}
                  <div id="edit-overlay">
 
-
-
                  </div>
              {/if}
 
@@ -198,9 +195,17 @@
                                      {@const RCItem = recentChanges[index]}
                                      {@const isWorld = RCItem.destinationID > 0}
                                      <!-- svelte-ignore missing-declaration -->
-                                     <ListItem title={(isWorld) ? RCItem.worldName : RCItem.locationName} subtitle={(!isWorld) ? RCItem.worldName : null} destinationID={RCItem.destinationID} compact={true} bold={isWorld}
-                                      icon={(RCItem.icon != null) ? gamemap.getMapConfig().iconPath + RCItem.icon + ".png" : (isWorld) ? "public" : "location_on"} user={RCItem.user} timestamp={RCItem.timestamp}
-                                      on:click={() => gamemap.goto(RCItem.destinationID)} action={RCItem.action} comment={RCItem.comment}/>
+                                     <ListItem title={(isWorld) ? RCItem.worldName : RCItem.locationName}
+                                               subtitle={(!isWorld) ? RCItem.worldName : null}
+                                               destinationID={RCItem.destinationID}
+                                               compact={true}
+                                               bold={isWorld}
+                                               icon={(RCItem.icon != null) ? gamemap.getMapConfig().iconPath + RCItem.icon + ".png" : (isWorld) ? "public" : "location_on"}
+                                               user={RCItem.user}
+                                               timestamp={RCItem.timestamp}
+                                               action={RCItem.action}
+                                               comment={RCItem.comment}
+                                      on:click={() => gamemap.goto(RCItem.destinationID)} />
                                  </div>
                              </VirtualList>
                          {:else}

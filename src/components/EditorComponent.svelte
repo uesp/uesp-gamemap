@@ -252,7 +252,7 @@
                             <InfoTextPair name="Location Type" value={object.locType + " ("+Object.keys(LOCTYPES)[object.locType].toLowerCase()+")"} tooltip="Location type"/>
                         {/if}
                         <!-- svelte-ignore missing-declaration -->
-                        <InfoTextPair name="Coordinate Type" value={gamemap.getMapConfig().coordType + " ("+Object.keys(COORD_TYPES)[gamemap.getMapConfig().coordType].toLowerCase()+")"} tooltip="Coordinate system that this {objectType} is using"/>
+                        <InfoTextPair name="Coord Type" value={gamemap.getMapConfig().coordType + " ("+Object.keys(COORD_TYPES)[gamemap.getMapConfig().coordType].toLowerCase()+")"} tooltip="Coordinate system that this {objectType} is using"/>
                     </FormGroup>
                 {/if}
             </div>
