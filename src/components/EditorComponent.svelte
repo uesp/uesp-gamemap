@@ -57,25 +57,24 @@
         print(object);
         gamemap.edit(object);
 
-        // do state changes
+        // do state changes to edit object
         if (isWorld && object.id == gamemap.getCurrentWorld().id) {
             gamemap.reset(true, 30); // zoom out world map
-            gamemap.setMapLock("full"); // lock it
+            gamemap.setMapLock("full"); // lock the world map
             gamemap.mapRoot.classList.add("editing"); // add editing effect
         } else if (isLocation) {
             gamemap.setMapLock("partial"); // set map lock to partial
 
-            // add editing effect to marker and tooltip (if available)
+            // add editing effect to marker
             let marker = gamemap.getMarkerFromLocation(object);
-            let label = document.getElementById(marker.element.getAttribute('aria-describedby'));
             print(marker);
             marker.element.classList.add("editing");
-            if (label) {
-                print(label);
+
+            // and editing effect to label (if available)
+            if (marker._tooltip) {
                 setTimeout(function() {
                     document.getElementById(marker.element.getAttribute('aria-describedby')).classList.add("editing"); // add editing effect
-                }, (100));
-
+                }, 100); // fix label not being given edit effect on first load
             }
         }
     });

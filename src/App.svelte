@@ -71,6 +71,7 @@
 	let gamemapContainer = null;
 	let canEdit = false;
 	let editPane;
+	let isEditing;
 	$: mapLock = null;
 	let currentZoom = getURLParams().has("zoom") ? getURLParams().get("zoom") : 0;
 	$: currentWorld = null;
@@ -332,7 +333,7 @@
 
 						<IconBar>
 							<slot:template slot="primary">
-								{#if canEdit}<IconButton icon="edit" tooltip="Toggle map editor" noMobile="true" checked={editPane.isShown} on:checked={(e) => { editPane.show(e.detail)}}/>{/if}
+								{#if canEdit}<IconButton icon="edit" tooltip="Toggle map editor" noMobile="true" checked={isEditing} on:checked={(e) => { editPane.show(e.detail)}}/>{/if}
 								<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu' lock={mapLock}>
 									<!-- Menu Items -->
 									<ul id='overflow-menu' class='dropdown-content'>
@@ -394,7 +395,7 @@
 
 	<!-- Map editor panel -->
 	{#if canEdit}
-		<EditPane bind:this={editPane}/>
+		<EditPane bind:this={editPane} bind:isShown={isEditing}/>
 	{/if}
 
 	<!-- Help dialog -->

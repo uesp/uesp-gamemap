@@ -2,6 +2,10 @@
 
 - got localhost editing working
 - added location edit effect
+- tweaked behaviour of edit sidebar:
+>> if editing directly, clicking close will close the sidebar
+>> if editing from RC UI, clicking back will go back to RC screen
+>> before, all cases would go back to the RC screen
 
 
 

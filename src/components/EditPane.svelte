@@ -38,18 +38,30 @@
     let recentChanges = [];
     $: currentOverlay  = OVERLAY.NONE;
     $: editObject = null;
+    let directEdit = null;
+    let unsavedChanges = true;
     $: isEditing = editObject != null && (editObject instanceof Location) || (editObject instanceof World);
-    let directEdit = false;
 
     // public function to show/hide the panel, or edit an object
     export function show(data) {
 
+        // set edit data
         data = (data == null) ? true : data;
 
-        // determine we are directly editing a location, or editing from edit pane
-        directEdit = data && directEdit == false;
-
         if (data) {
+
+            // determine whether we are directly editing an object, or just editing from RC
+            if (directEdit == null) {
+                if (!isShown && data) {
+                    if (data == true) {
+                        directEdit = false;
+                    } else if (data != true) {
+                        directEdit = true;
+                    }
+                }
+                print("direct edit is: "+directEdit);
+            }
+
             isShown = true;
             setTimeout(function() {
                 RESIZE_OBSERVER.observe(editPanel);
@@ -69,7 +81,8 @@
 
         } else {
             isShown = false;
-            directEdit = false;
+            directEdit = null;
+            editObject = null;
         }
 
     }
@@ -92,8 +105,6 @@
             dismiss();
         }
     }
-
-
 
     function getRecentChanges() {
 
@@ -144,8 +155,10 @@
     }
 
     // slide out animation
-    function slideOut() { TWEEN.set(0);
+    function slideOut() {
+        TWEEN.set(0);
         gamemap.getMapObject().invalidateSize();
+        print($TWEEN);
         return { ANIMATION_DURATION, css: () => `width: ${$TWEEN * PANEL_WIDTH}`};
     }
 
@@ -179,7 +192,7 @@
              <div id="window-resizer" on:mousedown={onResizerDown}/>
 
              <!-- edit panel appbar -->
-             <AppBar title={!isEditing ? "Map Editor" : "Editing " + ((editObject instanceof World) ? "World" : "Location")} subtitle={isEditing ? (editObject instanceof World) ? editObject.displayName + " ("+editObject.name+")" : editObject.name : null} icon={isEditing ? "arrow_back" : "close"} on:backClicked={onBackPressed}/>
+             <AppBar title={!isEditing ? "Map Editor" : "Editing " + ((editObject instanceof World) ? "World" : "Location")} subtitle={isEditing ? (editObject instanceof World) ? editObject.displayName + " ("+editObject.name+")" : editObject.name : null} icon={isEditing && !directEdit ? "arrow_back" : "close"} on:backClicked={onBackPressed}/>
 
              <!-- edit panel content -->
              <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}} bind:this={editPanelContent} class:isEditing={isEditing}>
