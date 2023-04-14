@@ -11,6 +11,7 @@
 - fixed edit button showing wrong edit state (was highlighted when not editing)
 - fixed dropdown box not having its background (made consistent with textboxes)
 - added elipses to dropdown box text (cell resource text overflowing)
+- fixed right clicking on UI causing map to go up a level (bug ever since edit panel)
 
 
 
