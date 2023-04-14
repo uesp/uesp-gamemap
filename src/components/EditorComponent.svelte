@@ -16,14 +16,14 @@
     import Textbox from "./Textbox.svelte";
     import FormGroup from "./FormGroup.svelte";
     import InfoTextPair from "./InfoTextPair.svelte";
+    import DropdownMenu from "./DropdownMenu.svelte";
+    import SegmentedButton from "./SegmentedButton.svelte";
     import Checkbox from "./Checkbox.svelte";
     import Modal from "./Modal.svelte";
 
     // import data classes
     import World from "../map/objects/world";
     import Location from "../map/objects/location"
-  import DropdownMenu from "./DropdownMenu.svelte";
-  import SegmentedButton from "./SegmentedButton.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -211,7 +211,12 @@
                         <!-- LOCATION -->
                         <Textbox label="Name" text={locationName} placeholder="Enter location name..." tooltip="Location name" bind:value={locationName}/>
                         <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL" bind:value={worldWikiPage}/>
-                        <SegmentedButton label="Location Type"></SegmentedButton>
+                        <SegmentedButton label="Location Type" entries={{
+                            POINT : 1,
+                            PATH : 2,
+                            AREA : 3,
+                            LABEL : 4,
+                        }} tooltip="Location type (marker or area)"></SegmentedButton>
                         <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/>
                     {/if}
                 </FormGroup>

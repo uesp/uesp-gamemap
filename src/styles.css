@@ -428,11 +428,15 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	padding-left: var(--padding_minimum) !important;
 	padding-right: -8px !important;
 	margin-right: -8px !important;
+	overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
 }
 
 .select-wrapper .caret {
 	pointer-events: none !important;
 	top: -6px !important;
+	right: 4px !important;
 }
 
 .cell_grid_options div .input-field .select-wrapper input {

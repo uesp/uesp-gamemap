@@ -6,10 +6,35 @@
 - Thal-J <thal-j@uesp.net> (13th April, 2023) -->
 
 <script>
-  import Divider from "./Divider.svelte";
+    // import svelte stuff
+    import { createEventDispatcher } from "svelte";
 
+    // import ui components
+    import Divider from "./Divider.svelte";
+
+    // state vars
     export let label;
+    export let entries;
+    export let selected = 0;
+    const MAXIMUM_ENTRIES = 4;
+    let slider;
+    let segmentedButton;
+    selected = (selected > MAXIMUM_ENTRIES) ? MAXIMUM_ENTRIES : selected;
 
+    window.LOCTYPES = {
+        NONE : 0,
+        POINT : 1,
+        PATH : 2,
+        AREA : 3,
+        LABEL : 4,
+    }
+
+    function onEntrySelected(event, entry) {
+        let target = event.target;
+        print(event);
+        print(entry);
+        selected = entry;
+    }
 
 
 </script>
@@ -18,23 +43,28 @@
 
     {#if label}<p class="label">{label}</p>{/if}
 
-    <div class="container">
+    <div class="container" bind:this={segmentedButton}>
 
-        <b class="item waves-effect">thing</b>
-        <Divider direction="vertical"></Divider>
-        <b class="item">thing</b>
-        <Divider direction="vertical"></Divider>
-        <b class="item">thing</b>
+        {#if entries && Object.keys(entries).length <= MAXIMUM_ENTRIES}
+            {@const key = Object.keys(entries)}
 
-        <div class="slider waves-effect">
-            <b class="slider-label">Name</b>
-        </div>
-
+            {#each key as name, i}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <b class="item waves-effect" name={i} class:selected={i == selected} on:click={(e) => onEntrySelected(e, i)}>{name.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())}</b>
+                {#if i == 0 || i != Object.keys(entries).length - 1}
+                    <Divider direction="vertical"></Divider>
+                {/if}
+            {/each}
+        {:else}
+            <div class="error">
+                {#if !entries}
+                    <b>No entries!</b>
+                {:else}
+                    <b>Over 4 entries! Use dropdown instead.</b>
+                {/if}
+            </div>
+        {/if}
     </div>
-
-
-
-
 </markup>
 
 <style>
@@ -54,20 +84,27 @@
         width: 100%;
         height: 100%;
         line-height: 36px;
+        position: relative;
     }
-
-    .item.active {
-        font-weight: bold;
-        color: var(--text_on_primary);
-        pointer-events: none;
-    }
-
     .item:hover {
         background-color: var(--selection);
     }
 
+    .item.selected {
+        font-weight: bold;
+        color: var(--text_on_primary);
+        background-color: var(--secondary_variant_light);
+        box-shadow: 0px 1px 4px 0 var(--shadow);
+        border-radius: 32px;
+        color: var(--background);
+    }
+
+    .item.selected:hover {
+        background-color: var(--secondary_variant);
+    }
+
     .container {
-        margin-top: 4px;
+        margin-top: 8px;
         margin-bottom: 4px;
         background-color: var(--surface_variant_dark);
         width: 100%;
@@ -83,26 +120,10 @@
         overflow: clip;
     }
 
-    .slider {
+    .error {
+        background-color: var(--delete_light);
         height: 35px;
-        width: 30%;
-        background-color: var(--secondary_variant_light);
-        border-radius: 32px;
-        position: absolute;
-        box-shadow: 0px 1px 4px 0 var(--shadow);
-        display: flex;
-        align-content: center;
-        align-items: center;
-        flex-flow: column;
-    }
-
-    .slider:hover {
-        background-color: var(--secondary_variant);
-    }
-
-    .slider-label {
-        margin-top: auto;
-        margin-bottom: auto;
+        padding: 6px;
     }
 
 </style>
