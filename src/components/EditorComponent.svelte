@@ -188,11 +188,6 @@
 
     function cancel() { dispatch("cancel", "cancelled"); }
 
-
-    window.onpopstate = function(event) {
-        print("Location: " + document.location.href);
-    };
-
 </script>
 
 <markup>
@@ -211,7 +206,7 @@
                     {:else if isLocation}
                         <!-- LOCATION -->
                         <Textbox label="Name" text={locationName} placeholder="Enter location name..." tooltip="Location name" bind:value={locationName}/>
-                        <Switch label="Use Name as Wiki Link" tooltip="If toggled, use this locations' name to link to its wiki page"></Switch>
+                        <Switch label="Use Name as Wiki Page" tooltip="Use this locations' name as its wiki page"></Switch>
                         <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article name" bind:value={worldWikiPage}/><!-- svelte-ignore missing-declaration -->
                         <SegmentedButton label="Location Type" entries={LOCTYPES} tooltip="Location type (marker or area)"></SegmentedButton>
                         <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/>

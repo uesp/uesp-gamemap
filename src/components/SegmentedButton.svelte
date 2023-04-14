@@ -8,30 +8,39 @@
 <script>
     // import svelte stuff
     import { createEventDispatcher } from "svelte";
+    import { onMount } from 'svelte';
 
     // import ui components
     import Divider from "./Divider.svelte";
-
-    const dispatch = createEventDispatcher();
 
     // state vars
     export let label;
     export let entries;
     export let selected = 0;
     export let tooltip;
+
     const MAXIMUM_ENTRIES = 4;
+    const RESIZE_OBSERVER = new ResizeObserver(() => {animate = false; onEntrySelected(document.getElementById("label"+selected), selected)});
+    const dispatch = createEventDispatcher();
+
     let slider;
+    let animate = false;
     let segmentedButton;
     selected = (selected > MAXIMUM_ENTRIES) ? MAXIMUM_ENTRIES : selected;
 
+    onMount(async() => {
+        RESIZE_OBSERVER.observe(segmentedButton);
+    });
+
     function onEntrySelected(e, i) {
+        let target = (e.target != null) ? e.target : e;
         selected = i;
-        let target = e.target;
-        print(target);
-        slider.style.top = "0px";
-        slider.style.height = target.clientHeight + "px";
-        slider.style.left = target.offsetLeft + "px";
-        slider.style.width = target.clientWidth + "px";
+        setTimeout(() => {
+            slider.style.height = target.clientHeight + "px";
+            slider.style.left = target.offsetLeft + "px";
+            slider.style.width = target.clientWidth + "px";
+        }, 1);
+
         dispatch("onChange", Object.values(entries)[i]);
     };
 
@@ -40,16 +49,14 @@
 <markup>
 
     {#if label}<p class="label" title={tooltip}>{label}</p>{/if}
-
     <div class="container" bind:this={segmentedButton}>
-
         {#if entries && Object.keys(entries).length <= MAXIMUM_ENTRIES}
             {@const key = Object.keys(entries)}
-            <div id="slider" bind:this={slider}/>
+            <div id="slider" bind:this={slider} class:animate={animate}/>
             {#each key as name, i}
                 <input type="radio" id="opt{i}" name="grp">
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <label id="label{i}" for="opt{i}" on:click={(e) => onEntrySelected(e, i)} class="item waves-effect" class:selected={i == selected}>
+                <label id="label{i}" for="opt{i}" on:click={(e) => {animate = true; onEntrySelected(e, i);}} class="item waves-effect" class:selected={i == selected}>
                     {name.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())}
                 </label>
                 {#if i == 0 || i != Object.keys(entries).length - 1}
@@ -124,12 +131,16 @@
     }
 
     #slider {
+        top: 0px;
         position: absolute;
-        transition: all 0.25s ease-in-out;
         border-radius: var(--padding_large);
         z-index: 0;
         background-color: var(--secondary_variant_light);
         box-shadow: 0px 1px 4px 0 var(--shadow);
+    }
+
+    #slider.animate {
+        transition: all 0.25s ease-in-out !important;
     }
 
     input[type="radio"] { display: none; }
