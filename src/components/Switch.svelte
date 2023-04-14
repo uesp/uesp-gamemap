@@ -44,7 +44,7 @@
     .label {
         display: inline;
         font-size: 1rem;
-        color: var(--text_low_emphasis);
+        color: rgba(0, 0, 0, 0.87);
         width: 66%;
     }
 

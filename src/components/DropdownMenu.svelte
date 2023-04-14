@@ -15,6 +15,7 @@
     export let label;
     export let hint;
     export let tooltip;
+    let id = Math.random();
 
     const dispatch = createEventDispatcher();
 
@@ -33,13 +34,11 @@
 
 <markup>
     <div class="input-field col s12">
-        <label class="label truncate" title={tooltip} for="form-select-1">{label}</label>
-        <select id="form-select-1" on:change={onChanged}>
+        <label class="label truncate" title={tooltip} for="form-select-{id}">{label}</label>
+        <select id="form-select-{id}" on:change={onChanged}>
             <!-- Hint -->
             {#if hint != null}<option value="" disabled>{hint}</option>{/if}
-            <slot>
-                <!-- Menu items go here -->
-            </slot>
+            <slot> <!-- Menu items go here --> </slot>
         </select>
       </div>
 </markup>
@@ -47,7 +46,7 @@
 <style>
 
     .label {
-        color: var(--text_low_emphasis);
+        color: rgba(0, 0, 0, 0.87);
         font-size: 1rem;
     }
 

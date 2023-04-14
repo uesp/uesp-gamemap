@@ -32,6 +32,6 @@
 
 <style>
     span {
-        color: var(--text_low_emphasis);
+        color: rgba(0, 0, 0, 0.87);
     }
 </style>

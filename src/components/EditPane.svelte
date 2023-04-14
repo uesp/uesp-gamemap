@@ -239,7 +239,7 @@
                          {/if}
                      </div>
                 {:else}
-                     <EditorComponent object={editObject} on:cancel={() => editObject = null} />
+                     <EditorComponent object={editObject} on:cancel={onBackPressed} />
                 {/if}
              </div>
          </aside>

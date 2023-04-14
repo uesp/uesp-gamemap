@@ -1438,18 +1438,19 @@ export default class Gamemap {
 						Editing
 	================================================*/
 
-	getMarkerFromLocation(location) {
-		let marker = null;
+	getMarkersFromLocation(location) {
+		let markers = []; //sometimes locations can have multiple markers
 		map.eachLayer((layer) => {
 			if (layer.location != null) {
 				if (layer.location == location) {
 					layer.element = layer._icon || layer._path;
 					print(layer);
-					marker = layer;
+					markers.push(layer);
 				}
 			}
 		});
-		return marker;
+		print(markers);
+		return markers;
 	}
 
 	edit(object) {

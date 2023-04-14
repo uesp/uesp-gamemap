@@ -22,6 +22,8 @@
     // import data classes
     import World from "../map/objects/world";
     import Location from "../map/objects/location"
+  import DropdownMenu from "./DropdownMenu.svelte";
+  import SegmentedButton from "./SegmentedButton.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -65,17 +67,19 @@
         } else if (isLocation) {
             gamemap.setMapLock("partial"); // set map lock to partial
 
-            // add editing effect to marker
-            let marker = gamemap.getMarkerFromLocation(object);
-            print(marker);
-            marker.element.classList.add("editing");
+            // add editing effect to marker(s)
+            let markers = gamemap.getMarkersFromLocation(object);
+            markers.forEach((marker) => {
+                print(marker);
+                marker.element.classList.add("editing");
 
-            // and editing effect to label (if available)
-            if (marker._tooltip) {
-                setTimeout(function() {
-                    document.getElementById(marker.element.getAttribute('aria-describedby')).classList.add("editing"); // add editing effect
-                }, 100); // fix label not being given edit effect on first load
-            }
+                // and editing effect to label (if available)
+                if (marker._tooltip) {
+                    setTimeout(function() {
+                        document.getElementById(marker.element.getAttribute('aria-describedby')).classList.add("editing"); // add editing effect
+                    }, 100); // fix label not being given edit effect on first load
+                }
+            });
         }
     });
 
@@ -197,16 +201,18 @@
 
                 <FormGroup title="General" icon="description">
                     {#if isWorld}
-                        <Textbox label="Display Name" text={worldDisplayName} placeholder="Enter world name..." tooltip="User facing world name" bind:value={worldDisplayName}/>
-                        <!-- svelte-ignore missing-declaration -->
+                        <!-- WORLD -->
+                        <Textbox label="Display Name" text={worldDisplayName} placeholder="Enter world name..." tooltip="User facing world name" bind:value={worldDisplayName}/><!-- svelte-ignore missing-declaration -->
                         <Textbox label="Parent ID" text={worldParentID} placeholder="Enter parent world ID..." tooltip="Parent world ID" bind:value={worldParentID}
                             subtext={(worldParentID && !isNaN(worldParentID)) ? gamemap.getWorldDisplayNameFromID(worldParentID) : null}/>
                         <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL" bind:value={worldWikiPage}/>
                         <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/>
                     {:else if isLocation}
+                        <!-- LOCATION -->
                         <Textbox label="Name" text={locationName} placeholder="Enter location name..." tooltip="Location name" bind:value={locationName}/>
-                        <Checkbox label="Area?"></Checkbox>
                         <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL" bind:value={worldWikiPage}/>
+                        <SegmentedButton label="Location Type"></SegmentedButton>
+                        <Checkbox label="Area?"></Checkbox>
                         <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/>
                     {/if}
                 </FormGroup>
@@ -245,9 +251,19 @@
                         <!-- svelte-ignore missing-declaration -->
                         <Textbox label="Display Level" text={worldParentID} placeholder="Enter display level..." tooltip="Parent world ID" bind:value={worldParentID}
                         subtext={"Current zoom is "+currentZoom}/>
+
+                        <DropdownMenu label="Icon">
+                            <option value={"ligma"} data-icon="https://media.discordapp.net/attachments/725183270697828412/1096158382458671169/20230413204157_1.jpg?width=1206&height=678">helo</option>
+                        </DropdownMenu>
+
+                        <DropdownMenu label="Label Direction">
+                            <option value={"ligma"} data-icon="https://media.discordapp.net/attachments/725183270697828412/1096158382458671169/20230413204157_1.jpg?width=1206&height=678">helo</option>
+                        </DropdownMenu>
                     </FormGroup>
                 {/if}
 
+
+                <!-- generic location/world info -->
                 {#if object.id > 0}
                     <FormGroup title="Info" icon="info">
                         {#if isWorld}

@@ -7,11 +7,16 @@
 >> if editing from RC UI, clicking back will go back to RC screen
 >> before, all cases would go back to the RC screen
 
+# bug fixes:
+- fixed edit button showing wrong edit state (was highlighted when not editing)
+
 
 
 
 
 ## dave stuff:
+
+- do I have a uesp email? (thal-j@uesp.net)
 
 - 32px skyrim skyrim icons
 - cave interior maps for skyrim, ob, mw
