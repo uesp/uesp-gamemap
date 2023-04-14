@@ -418,6 +418,23 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	border-bottom: 1px solid var(--divider) !important;
 }
 
+.select-wrapper input {
+	background-color: var(--surface_variant_dark) !important;
+	z-index: 0 !important;
+	margin: 0 0 8px -8px !important;
+}
+
+.select-wrapper input[type="text"] {
+	padding-left: var(--padding_minimum) !important;
+	padding-right: -8px !important;
+	margin-right: -8px !important;
+}
+
+.select-wrapper .caret {
+	pointer-events: none !important;
+	top: -6px !important;
+}
+
 /* modals */
 .modal {
 	border-radius: var(--padding_medium) !important;
