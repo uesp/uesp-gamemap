@@ -435,6 +435,10 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	top: -6px !important;
 }
 
+.cell_grid_options div .input-field .select-wrapper input {
+	background-color: var(--primary_variant) !important;
+}
+
 /* modals */
 .modal {
 	border-radius: var(--padding_medium) !important;

@@ -212,7 +212,6 @@
                         <Textbox label="Name" text={locationName} placeholder="Enter location name..." tooltip="Location name" bind:value={locationName}/>
                         <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL" bind:value={worldWikiPage}/>
                         <SegmentedButton label="Location Type"></SegmentedButton>
-                        <Checkbox label="Area?"></Checkbox>
                         <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/>
                     {/if}
                 </FormGroup>

@@ -9,6 +9,7 @@
 
 # bug fixes:
 - fixed edit button showing wrong edit state (was highlighted when not editing)
+- fixed dropdown box not having its background (made consistent with textboxes)
 
 
 

@@ -262,6 +262,7 @@
 
     #cell_resource_key {
         display: flex;
+        margin-top: 8px;
         justify-content: space-between;
     }
 
