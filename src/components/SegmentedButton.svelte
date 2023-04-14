@@ -24,19 +24,16 @@
     let segmentedButton;
     selected = (selected > MAXIMUM_ENTRIES) ? MAXIMUM_ENTRIES : selected;
 
-    window.LOCTYPES = {
-        NONE : 0,
-        POINT : 1,
-        PATH : 2,
-        AREA : 3,
-        LABEL : 4,
-    }
-
-    function onEntrySelected(entry) {
-        selected = entry;
-        dispatch("onChange", Object.values(entries)[entry]);
-    }
-
+    function onEntrySelected(e, i) {
+        selected = i;
+        let target = e.target;
+        print(target);
+        slider.style.top = "0px";
+        slider.style.height = target.clientHeight + "px";
+        slider.style.left = target.offsetLeft + "px";
+        slider.style.width = target.clientWidth + "px";
+        dispatch("onChange", Object.values(entries)[i]);
+    };
 
 </script>
 
@@ -48,10 +45,13 @@
 
         {#if entries && Object.keys(entries).length <= MAXIMUM_ENTRIES}
             {@const key = Object.keys(entries)}
-
+            <div id="slider" bind:this={slider}/>
             {#each key as name, i}
+                <input type="radio" id="opt{i}" name="grp">
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <b class="item waves-effect" name={i} class:selected={i == selected} on:click={() => onEntrySelected(i)}>{name.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())}</b>
+                <label id="label{i}" for="opt{i}" on:click={(e) => onEntrySelected(e, i)} class="item waves-effect" class:selected={i == selected}>
+                    {name.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())}
+                </label>
                 {#if i == 0 || i != Object.keys(entries).length - 1}
                     <Divider direction="vertical"></Divider>
                 {/if}
@@ -77,31 +77,26 @@
     }
 
     .item {
-        text-align: center;
-        pointer-events: visible;
-        border-radius: var(--padding_large);
         color: rgba(0, 0, 0, 0.87);
         font-weight: normal;
-        width: 100%;
-        height: 100%;
-        line-height: 38px;
+        pointer-events: visible;
         position: relative;
+        font-size: 1rem;
+        height: 100%;
+        border-radius: var(--padding_large);
+        z-index: 1;
+        width: 100%;
+        text-align: center;
+        cursor: pointer;
+        line-height: 38px;
     }
     .item:hover {
         background-color: var(--divider);
     }
 
-    .item.selected {
+    .selected {
         font-weight: bold;
         color: var(--text_on_primary);
-        background-color: var(--secondary_variant_light);
-        box-shadow: 0px 1px 4px 0 var(--shadow);
-        border-radius: 32px;
-        color: var(--background);
-    }
-
-    .item.selected:hover {
-        background-color: var(--secondary_variant);
     }
 
     .container {
@@ -118,6 +113,7 @@
         justify-content: space-evenly;
         align-items: center;
         flex-flow: row;
+        position: relative;
         overflow: clip;
     }
 
@@ -126,5 +122,17 @@
         height: 35px;
         padding: 6px;
     }
+
+    #slider {
+        position: absolute;
+        transition: all 0.25s ease-in-out;
+        border-radius: var(--padding_large);
+        z-index: 0;
+        background-color: var(--secondary_variant_light);
+        box-shadow: 0px 1px 4px 0 var(--shadow);
+    }
+
+    input[type="radio"] { display: none; }
+    input[type="radio"]+label { display: inline-block; }
 
 </style>

@@ -39,6 +39,8 @@
         text-align: justify;
         padding-top: 4px;
         padding-bottom: 2px;
+        margin-top: 8px;
+        margin-bottom: 8px;
     }
 
     .label {

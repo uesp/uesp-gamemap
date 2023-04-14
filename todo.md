@@ -12,6 +12,7 @@
 - fixed dropdown box not having its background (made consistent with textboxes)
 - added elipses to dropdown box text (cell resource text overflowing)
 - fixed right clicking on UI causing map to go up a level (bug ever since edit panel)
+- fixed cell grid eating mouse events and preventing map panning
 
 
 
