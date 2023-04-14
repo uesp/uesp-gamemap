@@ -67,7 +67,7 @@ iconButton element:
 </script>
 
 <markup>
-    <button class='btn_icon_button waves-effect mdc-ripple-surface' title={tooltip} on:click={onClicked} class:lock={lock} class:checked={checked} class:hasBackground={hasBackground} class:bgless={!hasBackground} class:nomobile={noMobile} class:dropdown={dropdown} class:dropdown-trigger={menu != null} data-target={menu}>
+    <button class='btn_icon_button waves-effect mdc-ripple-surface' title={tooltip} on:click={onClicked} class:lock={lock} class:checked={checked} class:hasBackground={hasBackground} class:bgless={!hasBackground} class:nomobile={noMobile} class:dropdown={dropdown} class:dropdown-trigger={menu != null} data-target={menu} on:contextmenu={(e) => e.stopPropagation()}>
         {#if icon}<Icon name={icon} size={size}/>{/if}
         {#if label}<b class="icon_btn_label nomobile">{label}</b>{/if}
         {#if dropdown}<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>{/if}
@@ -124,7 +124,7 @@ iconButton element:
         max-width: 15ch;
         display: inline-block;
         padding-bottom: 5px;
-        margin-bottom: 10px;
+        margin-bottom: 9px;
         top: 9px;
     }
 

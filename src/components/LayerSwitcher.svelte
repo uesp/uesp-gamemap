@@ -75,7 +75,7 @@
 
 <markup>
     <!-- Layer switcher Widget -->
-    <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit} in:fly="{{ x: -5, duration: 250 }}" out:fade="{{duration: 75}}" class:lock={lock}>
+    <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit} in:fly="{{ x: -5, duration: 250 }}" out:fade="{{duration: 75}}" class:lock={lock} on:contextmenu={(e) => e.stopPropagation()}>
 
         <!-- Primary layer switcher button -->
         <button id="btn_layer_widget_switcher" class:hasLayerImage={hasMultipleLayers} class="waves-effect" on:click={onLayerClicked} style="background-image: url({layerImage});">
@@ -111,7 +111,7 @@
 
     {#if gridEnabled}
         <LayerOptionsContainer>
-            <div class="cell_grid_options">
+            <div class="cell_grid_options" on:contextmenu={(e) => e.stopPropagation()}>
                 <!-- svelte-ignore missing-declaration -->
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <div id="close_button" class="waves-effect" title="Close" on:click={() => onGridChecked({detail: false})}><Icon name="close" size="tiny"></Icon></div>

@@ -27,11 +27,10 @@ window.DEFAULT_MAP_CONFIG_DIR = MAP_ASSETS_DIR + "default-" + MAP_CONFIG_FILENAM
 window.GAME_DATA_SCRIPT = (isRelease) ? "db/gamemap.php" : "http://localhost:2500/db/gamemap.php"
 
 window.LOCTYPES = {
-    NONE : 0,
-    POINT : 1,
-    PATH : 2,
-    AREA : 3,
-    LABEL : 4,
+	MARKER : 1,
+	LABEL: 4,
+	AREA : 3,
+	PATH : 2,
 }
 
 window.PLACETYPES = {

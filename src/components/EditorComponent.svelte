@@ -210,13 +210,8 @@
                     {:else if isLocation}
                         <!-- LOCATION -->
                         <Textbox label="Name" text={locationName} placeholder="Enter location name..." tooltip="Location name" bind:value={locationName}/>
-                        <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL" bind:value={worldWikiPage}/>
-                        <SegmentedButton label="Location Type" entries={{
-                            POINT : 1,
-                            PATH : 2,
-                            AREA : 3,
-                            LABEL : 4,
-                        }} tooltip="Location type (marker or area)"></SegmentedButton>
+                        <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL" bind:value={worldWikiPage}/><!-- svelte-ignore missing-declaration -->
+                        <SegmentedButton label="Location Type" entries={LOCTYPES} tooltip="Location type (marker or area)"></SegmentedButton>
                         <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/>
                     {/if}
                 </FormGroup>

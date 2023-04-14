@@ -16,7 +16,7 @@
 </script>
 
 <markup>
-    <div id="watermark" class:watermark={!embedded && !lock}>
+    <div id="watermark" class:watermark={!embedded && !lock} on:contextmenu={(e) => e.stopPropagation()}>
         {#if !embedded}
             {#if lock == "full"}
                 <Icon name = "lock" size={16}/>

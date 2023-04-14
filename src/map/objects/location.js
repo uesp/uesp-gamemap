@@ -24,7 +24,7 @@ export default class Location {
 		currentWorld = world;
 
 		// set location type
-		this.locType = location.locType || LOCTYPES.NONE;
+		this.locType = location.locType || LOCTYPES.MARKER;
 
 		// set basic location info
 		this.id = location.id || 0;

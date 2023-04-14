@@ -12,10 +12,13 @@
     // import ui components
     import Divider from "./Divider.svelte";
 
+    const dispatch = createEventDispatcher();
+
     // state vars
     export let label;
     export let entries;
     export let selected = 0;
+    export let tooltip;
     const MAXIMUM_ENTRIES = 4;
     let slider;
     let segmentedButton;
@@ -29,11 +32,9 @@
         LABEL : 4,
     }
 
-    function onEntrySelected(event, entry) {
-        let target = event.target;
-        print(event);
-        print(entry);
+    function onEntrySelected(entry) {
         selected = entry;
+        dispatch("onChange", Object.values(entries)[entry]);
     }
 
 
@@ -41,7 +42,7 @@
 
 <markup>
 
-    {#if label}<p class="label">{label}</p>{/if}
+    {#if label}<p class="label" title={tooltip}>{label}</p>{/if}
 
     <div class="container" bind:this={segmentedButton}>
 
@@ -50,7 +51,7 @@
 
             {#each key as name, i}
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <b class="item waves-effect" name={i} class:selected={i == selected} on:click={(e) => onEntrySelected(e, i)}>{name.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())}</b>
+                <b class="item waves-effect" name={i} class:selected={i == selected} on:click={() => onEntrySelected(i)}>{name.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())}</b>
                 {#if i == 0 || i != Object.keys(entries).length - 1}
                     <Divider direction="vertical"></Divider>
                 {/if}
@@ -83,11 +84,11 @@
         font-weight: normal;
         width: 100%;
         height: 100%;
-        line-height: 36px;
+        line-height: 38px;
         position: relative;
     }
     .item:hover {
-        background-color: var(--selection);
+        background-color: var(--divider);
     }
 
     .item.selected {

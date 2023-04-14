@@ -218,10 +218,11 @@
     // callbacks
     function clearSearch() { searchBox.value = ""; updateSearch("", false) }
     function goto(destinationID) {gamemap.goto(destinationID); if (!doPinSearch){ searchFocused = false; } }
+
 </script>
 
 <markup>
-    <div id="search_pane" in:fly="{{ x: -5, duration: 250 }}" out:fade="{{duration: 75}}" class:lock={lock}>
+    <div id="search_pane" in:fly="{{ x: -5, duration: 250 }}" out:fade="{{duration: 75}}" class:lock={lock} on:contextmenu={(e) => e.stopPropagation()}>
         <div id="search_container">
             <!-- Search bar -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -362,7 +363,7 @@
     #search_icon {
         color: var(--text_low_emphasis);
         margin-top: auto;
-        margin-bottom: 8px;
+        margin-bottom: 7px;
         margin-left: 12px;
         margin-right: 4px;
     }
