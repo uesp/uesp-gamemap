@@ -10,6 +10,7 @@
 
     // import svelte stuff
     import { onMount } from 'svelte';
+    import { createEventDispatcher } from "svelte";
 
     // state vars
     export let label;
@@ -23,10 +24,15 @@
     export let textArea;
     export let tooltip;
 
+    const dispatch = createEventDispatcher();
 
     let textbox;
     let id = Math.random();
     block = (textArea != null) ? true : block;
+
+    $: {
+        dispatch("change", value);
+    };
 
     // on editor load
 	onMount(async() => {

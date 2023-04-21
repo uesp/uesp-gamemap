@@ -82,6 +82,11 @@ window.isFirefox = function isFirefox() {
 /** Debug print function,disabled on release */
 if (isDebug || location.toString().includes("localhost") || location.toString().includes("devgame")) {
 	// override print function to be custom console log
+
+	window.addEventListener('beforeprint', function(event) {
+		// Prevent the default print action from occurring
+		event.preventDefault();
+	});
 	let print = {};
 	print = function(){};
 	window.print = print;

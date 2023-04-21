@@ -1,31 +1,20 @@
 ## last week:
 
-- got localhost editing working
-- added location edit effect
-- tweaked behaviour of edit sidebar:
->> if editing directly, clicking close will close the sidebar
->> if editing from RC UI, clicking back will go back to RC screen
->> before, all cases would go back to the RC screen
-
-# bug fixes:
-- fixed edit button showing wrong edit state (was highlighted when not editing)
-- fixed dropdown box not having its background (made consistent with textboxes)
-- added elipses to dropdown box text (cell resource text overflowing)
-- fixed right clicking on UI causing map to go up a level (bug ever since edit panel)
-- fixed cell grid eating mouse events and preventing map panning
+mostly technical stuff with rita arriving, but important for live editing later
 
 
 
 
+
+- began working on unsavedchanges stuff
+- refactored the way objects are saved to save memory and make unsaved changes work
+- merged location and world editing into one, before was using different fields for world v location, same now
 
 ## dave stuff:
-
-- do I have a uesp email? (thal-j@uesp.net)
 
 - 32px skyrim skyrim icons
 - cave interior maps for skyrim, ob, mw
 - skyrim minecraft thing
-
 
 ## todo
 

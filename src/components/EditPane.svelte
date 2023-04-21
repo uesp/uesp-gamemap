@@ -39,7 +39,7 @@
     $: currentOverlay  = OVERLAY.NONE;
     $: editObject = null;
     let directEdit = null;
-    let unsavedChanges = true;
+    let unsavedChanges = false;
     $: isEditing = editObject != null && (editObject instanceof Location) || (editObject instanceof World);
 
     // public function to show/hide the panel, or edit an object
@@ -239,7 +239,7 @@
                          {/if}
                      </div>
                 {:else}
-                     <EditorComponent object={editObject} on:cancel={onBackPressed} />
+                     <EditorComponent data={editObject} bind:unsavedChanges={unsavedChanges} on:cancel={onBackPressed}/>
                 {/if}
              </div>
          </aside>

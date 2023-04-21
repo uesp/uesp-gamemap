@@ -20,33 +20,29 @@
     import SegmentedButton from "./SegmentedButton.svelte";
     import Checkbox from "./Checkbox.svelte";
     import Modal from "./Modal.svelte";
+    import Switch from "./Switch.svelte";
 
     // import data classes
     import World from "../map/objects/world";
     import Location from "../map/objects/location"
-  import Switch from "./Switch.svelte";
 
     const dispatch = createEventDispatcher();
 
     // state vars
-    export let object;
-    let isLocation = object instanceof Location;
-    let isWorld = object instanceof World;
+    export let data;
+    export let unsavedChanges = false;
+    let currentObject = data;
+    let isLocation = currentObject instanceof Location;
+    let isWorld = currentObject instanceof World;
+    let editObject = { ...currentObject };
     let editor;
     let saveButton;
     let objectType = (isWorld) ? "world" : "location";
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
 
     // world data
-    let worldDisplayName = object.displayName;
-    let worldParentID = object.parentID;
-    let worldWikiPage = object.wikiPage;
-    let worldDescription = object.description;
-    let [worldMinZoom, worldMaxZoom] = [object.minZoomLevel, object.maxZoomLevel];
-    let [worldMinX, worldMaxX, worldMinY, worldMaxY] = [object.minX, object.maxX, object.minY, object.maxY];
-
-    // location data
-    let locationName = object.name;
+    // let [worldMinZoom, worldMaxZoom] = [object.minZoomLevel, object.maxZoomLevel];
+    // let [worldMinX, worldMaxX, worldMinY, worldMaxY] = [object.minX, object.maxX, object.minY, object.maxY];
 
     // on editor load
 	onMount(async() => {
@@ -56,12 +52,12 @@
         // refresh zoom on url change
         window.onpopstate = () => currentZoom = gamemap.getCurrentZoom().toFixed(3);
 
-        // begin editing provided object
-        print(object);
-        gamemap.edit(object);
+        // begin editing provided data
+        gamemap.edit(data);
+        print(data);
 
         // do state changes to edit object
-        if (isWorld && object.id == gamemap.getCurrentWorld().id) {
+        if (isWorld && data.id == gamemap.getCurrentWorld().id) {
             gamemap.reset(true, 30); // zoom out world map
             gamemap.setMapLock("full"); // lock the world map
             gamemap.mapRoot.classList.add("editing"); // add editing effect
@@ -69,7 +65,7 @@
             gamemap.setMapLock("partial"); // set map lock to partial
 
             // add editing effect to marker(s)
-            let markers = gamemap.getMarkersFromLocation(object);
+            let markers = gamemap.getMarkersFromLocation(data);
             markers.forEach((marker) => {
                 print(marker);
                 marker.element.classList.add("editing");
@@ -86,10 +82,8 @@
 
     function save(type) {
 
+        function onCallback(error) {
 
-        function onCallback(error, test) {
-
-            print(test);
             print(error);
 
             if (error == null) {
@@ -120,8 +114,18 @@
             icon: "loading",
         });
 
-        doSaveObject(object, onCallback);
+        doSaveObject(editObject, onCallback);
 
+    }
+
+    function modify(property, value) {
+        editObject[property] = value;
+
+        // cause svelte reactivity
+        editObject = editObject;
+
+        unsavedChanges = !(JSON.stringify(editObject) === JSON.stringify(currentObject));
+        print(unsavedChanges);
     }
 
     function doSaveObject(editObject, callback) {
@@ -148,7 +152,8 @@
             if (!error && data != null) {
 
                 if (data.isError) {
-                    callback((data.errorMsg.includes("permissions")) ? "Invalid permissions!" : data.errorMsg);
+                    print(data.errorMsg);
+                    callback((data.errorMsg.includes("permissions")) ? "Insufficient permissions!" : data.errorMsg);
                 } else {
 
                     print(data);
@@ -196,40 +201,50 @@
             <div id="editor_pane">
 
                 <FormGroup title="General" icon="description">
+
+                    <!-- Name -->
+                    <Textbox label="Display Name" text={editObject.displayName} placeholder="Enter world name..." tooltip="User facing world name" on:change={(e) => modify("displayName", e.detail)}/><!-- svelte-ignore missing-declaration -->
+
+                    <!-- Parent ID (for World) -->
+
+
+<!--
+                    <Textbox label="Parent ID" text={editObject.parentID} placeholder="Enter parent world ID..." tooltip="Parent world ID" bind:value={worldParentID}
+                        subtext={(editObject.parentID && !isNaN(editObject.parentID)) ? gamemap.getWorldDisplayNameFromID(editObject.parentID) : null}/>
+                    <Textbox label="Wiki Page" text={editObject.wikiPage} placeholder="Enter wiki page..." tooltip="Wiki page name" bind:value={worldWikiPage}/>
+                    <Textbox label="Description" text={editObject.description} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/> -->
+
+
+
                     {#if isWorld}
                         <!-- WORLD -->
-                        <Textbox label="Display Name" text={worldDisplayName} placeholder="Enter world name..." tooltip="User facing world name" bind:value={worldDisplayName}/><!-- svelte-ignore missing-declaration -->
-                        <Textbox label="Parent ID" text={worldParentID} placeholder="Enter parent world ID..." tooltip="Parent world ID" bind:value={worldParentID}
-                            subtext={(worldParentID && !isNaN(worldParentID)) ? gamemap.getWorldDisplayNameFromID(worldParentID) : null}/>
-                        <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article URL" bind:value={worldWikiPage}/>
-                        <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/>
                     {:else if isLocation}
                         <!-- LOCATION -->
-                        <Textbox label="Name" text={locationName} placeholder="Enter location name..." tooltip="Location name" bind:value={locationName}/>
+                        <Textbox label="Name" text={locationName} placeholder="Enter location name..." tooltip="Location name"/>
                         <Switch label="Use Name as Wiki Page" tooltip="Use this locations' name as its wiki page"></Switch>
-                        <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki article name" bind:value={worldWikiPage}/><!-- svelte-ignore missing-declaration -->
+                        <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki page name"/><!-- svelte-ignore missing-declaration -->
                         <SegmentedButton label="Location Type" entries={LOCTYPES} tooltip="Location type (marker or area)"></SegmentedButton>
-                        <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/>
+                        <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" />
                     {/if}
                 </FormGroup>
 
                 {#if isWorld}
                      <FormGroup title="Zoom" icon="zoom_in">
                          <div class="row">
-                             <Textbox text={worldMinZoom} hint="Min Zoom" tooltip="Minimum zoom level for this world" bind:value={worldMinZoom}/>
-                             <Textbox text={worldMaxZoom} hint="Max Zoom" tooltip="Maximum zoom level for this world" bind:value={worldMaxZoom}/>
+                             <!-- <Textbox text={worldMinZoom} hint="Min Zoom" tooltip="Minimum zoom level for this world" bind:value={worldMinZoom}/>
+                             <Textbox text={worldMaxZoom} hint="Max Zoom" tooltip="Maximum zoom level for this world" bind:value={worldMaxZoom}/> -->
                          </div>
                      </FormGroup>
 
                      <FormGroup title="Bounds" icon="crop_free">
-                         <div class="row">
+                         <!-- <div class="row">
                              <Textbox text={worldMinX} hint="Minimum X" bind:value={worldMinX}/>
                              <Textbox text={worldMaxX} hint="Maximum X" bind:value={worldMaxX}/>
                          </div>
                          <div class="row">
                              <Textbox text={worldMinY} hint="Minimum Y" bind:value={worldMinY}/>
                              <Textbox text={worldMaxY} hint="Maximum Y" bind:value={worldMaxY}/>
-                         </div>
+                         </div> -->
                      </FormGroup>
                 {/if}
 
@@ -237,15 +252,15 @@
                     <FormGroup title="Coordinates" icon="location_on">
                         <p>Using coordinate system: Normalised</p>
                         <div class="row">
-                            <Textbox text={worldMinZoom} hint="X" tooltip="Minimum zoom level for this world" bind:value={worldMinZoom}/>
-                            <Textbox text={worldMaxZoom} hint="Y" tooltip="Maximum zoom level for this world" bind:value={worldMaxZoom}/>
+                            <!-- <Textbox text={worldMinZoom} hint="X" tooltip="Minimum zoom level for this world" bind:value={worldMinZoom}/>
+                            <Textbox text={worldMaxZoom} hint="Y" tooltip="Maximum zoom level for this world" bind:value={worldMaxZoom}/> -->
                         </div>
                         <Button text="Set Position" icon="pin_drop"/>
                     </FormGroup>
 
                     <FormGroup title="Display" icon="light_mode">
                         <!-- svelte-ignore missing-declaration -->
-                        <Textbox label="Display Level" text={worldParentID} placeholder="Enter display level..." tooltip="Parent world ID" bind:value={worldParentID}
+                        <Textbox label="Display Level" text={worldParentID} placeholder="Enter display level..." tooltip="Parent world ID"
                         subtext={"Current zoom is "+currentZoom}/>
 
                         <DropdownMenu label="Icon">
@@ -260,20 +275,20 @@
 
 
                 <!-- generic location/world info -->
-                {#if object.id > 0}
+                {#if editObject.id > 0}
                     <FormGroup title="Info" icon="info">
                         {#if isWorld}
-                            <InfoTextPair name="World Name" value={object.name} tooltip="This world's internal name"/>
-                            <InfoTextPair name="World ID" value={object.id} tooltip="This world's worldID"/>
-                            <InfoTextPair name="Revision ID" value={object.revisionID} tooltip="Current revision ID"/>
-                            <InfoTextPair name="Tiles" value={object.dbNumTilesX + " x " + object.dbNumTilesY} tooltip="Number of tiles at full zoom"/>
+                            <InfoTextPair name="World Name" value={editObject.name} tooltip="This world's internal name"/>
+                            <InfoTextPair name="World ID" value={editObject.id} tooltip="This world's worldID"/>
+                            <InfoTextPair name="Revision ID" value={editObject.revisionID} tooltip="Current revision ID"/>
+                            <InfoTextPair name="Tiles" value={editObject.dbNumTilesX + " x " + editObject.dbNumTilesY} tooltip="Number of tiles at full zoom"/>
                         {:else if isLocation}
-                            <InfoTextPair name="Location ID" value={object.id} tooltip="This location's ID"/>
-                            <InfoTextPair name="Revision ID" value={object.revisionID} tooltip="Current revision ID"/>
+                            <InfoTextPair name="Location ID" value={editObject.id} tooltip="This location's ID"/>
+                            <InfoTextPair name="Revision ID" value={editObject.revisionID} tooltip="Current revision ID"/>
                             <!-- svelte-ignore missing-declaration -->
-                            <InfoTextPair name="World ID" value={object.worldID + " (" + gamemap.getWorldNameFromID(object.worldID) +")"} tooltip="WorldID of the world this location is in"/>
+                            <InfoTextPair name="World ID" value={editObject.worldID + " (" + gamemap.getWorldNameFromID(editObject.worldID) +")"} tooltip="WorldID of the world this location is in"/>
                             <!-- svelte-ignore missing-declaration -->
-                            <InfoTextPair name="Location Type" value={object.locType + " ("+Object.keys(LOCTYPES)[object.locType].toLowerCase()+")"} tooltip="Location type"/>
+                            <InfoTextPair name="Location Type" value={editObject.locType + " ("+Object.keys(LOCTYPES)[editObject.locType].toLowerCase()+")"} tooltip="Location type"/>
                         {/if}
                         <!-- svelte-ignore missing-declaration -->
                         <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES)[gamemap.getMapConfig().coordType].toLowerCase()} tooltip="Coordinate system that this {objectType} is using"/>
