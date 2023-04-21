@@ -192,7 +192,7 @@
              <div id="window-resizer" on:mousedown={onResizerDown}/>
 
              <!-- edit panel appbar -->
-             <AppBar title={!isEditing ? "Map Editor" : "Editing " + ((editObject instanceof World) ? "World" : "Location")} subtitle={isEditing ? (editObject instanceof World) ? editObject.displayName + " ("+editObject.name+")" : editObject.name : null} icon={isEditing && !directEdit ? "arrow_back" : "close"} on:backClicked={onBackPressed}/>
+             <AppBar title={!isEditing ? "Map Editor" : ((unsavedChanges) ? "* " : "") + "Editing " + ((editObject instanceof World) ? "World" : "Location")} subtitle={isEditing ? (editObject instanceof World) ? editObject.displayName + " ("+editObject.name+")" : editObject.name : null} icon={isEditing && !directEdit ? "arrow_back" : "close"} on:backClicked={onBackPressed}/>
 
              <!-- edit panel content -->
              <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}} bind:this={editPanelContent} class:isEditing={isEditing}>
