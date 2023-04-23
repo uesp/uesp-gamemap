@@ -37,6 +37,7 @@
     let editObject = { ...currentObject };
     let editor;
     let saveButton;
+    let haveSaved = false;
     let objectType = (isWorld) ? "world" : "location";
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
 
@@ -55,6 +56,7 @@
         // begin editing provided data
         gamemap.edit(data);
         print(data);
+        unsavedChanges = false;
 
         // do state changes to edit object
         if (isWorld && data.id == gamemap.getCurrentWorld().id) {
@@ -87,6 +89,7 @@
             print(error);
 
             if (error == null) {
+                haveSaved = true;
                 saveButton.$set({
                     text: "Done!",
                     icon: "done",
@@ -123,6 +126,9 @@
 
         // cause svelte reactivity
         editObject = editObject;
+
+        print(currentObject);
+        print(editObject);
 
         unsavedChanges = !(JSON.stringify(editObject) === JSON.stringify(currentObject));
         print(unsavedChanges);
@@ -201,19 +207,37 @@
             <div id="editor_pane">
 
                 <FormGroup title="General" icon="description">
-
                     <!-- Name -->
-                    <Textbox label="Display Name" text={editObject.displayName} placeholder="Enter world name..." tooltip="User facing world name" on:change={(e) => modify("displayName", e.detail)}/><!-- svelte-ignore missing-declaration -->
+                    <Textbox label={(isWorld ? "Display " : "") + "Name"}
+                             text={editObject.displayName}
+                             placeholder="Enter {objectType} name..."
+                             tooltip="User facing {objectType} name"
+                             on:change={(e) => modify(isWorld ? "displayName" : "name", e.detail)}/>
 
                     <!-- Parent ID (for World) -->
+                    {#if isWorld}
+                        <!-- svelte-ignore missing-declaration -->
+                        <Textbox label="Parent ID"
+                                 text={editObject.parentID}
+                                 placeholder="Enter parent world ID..."
+                                 tooltip="Parent world ID"
+                                 type="number"
+                                 subtext={(editObject.parentID && !isNaN(editObject.parentID)) ? gamemap.getWorldDisplayNameFromID(editObject.parentID) : null}
+                                 on:change={(e) => modify("parentID", e.detail)}/>
+
+                        <Textbox label="Parent ID"
+                            text={editObject.parentID}
+                            placeholder="Enter parent world ID..."
+                            tooltip="Parent world ID"
+                            type="float"
+                            subtext={(editObject.parentID && !isNaN(editObject.parentID)) ? gamemap.getWorldDisplayNameFromID(editObject.parentID) : null}
+                            on:change={(e) => modify("parentID", e.detail)}/>
+                    {/if}
 
 
-<!--
-                    <Textbox label="Parent ID" text={editObject.parentID} placeholder="Enter parent world ID..." tooltip="Parent world ID" bind:value={worldParentID}
-                        subtext={(editObject.parentID && !isNaN(editObject.parentID)) ? gamemap.getWorldDisplayNameFromID(editObject.parentID) : null}/>
+                    <!--
                     <Textbox label="Wiki Page" text={editObject.wikiPage} placeholder="Enter wiki page..." tooltip="Wiki page name" bind:value={worldWikiPage}/>
                     <Textbox label="Description" text={editObject.description} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/> -->
-
 
 
                     {#if isWorld}
@@ -304,7 +328,7 @@
             </div>
             <div class="footer-buttons">
                 <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
-                <Button text="Cancel" icon="close" on:click={cancel}/>
+                <Button text={haveSaved && !unsavedChanges ? "Done" : "Cancel"} icon="close" on:click={cancel}/>
                 <Button text="Delete" icon="delete" type="delete"/>
             </div>
         </footer>

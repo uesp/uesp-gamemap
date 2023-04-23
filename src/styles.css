@@ -196,6 +196,23 @@ button {
 	transform-origin: 0 0;
 }
 
+.hideSpinner input[type=number]::-webkit-inner-spin-button,
+.hideSpinner input[type=number]::-webkit-outer-spin-button {
+	-webkit-appearance: none !important;
+	margin: 0 !important;
+}
+
+input[type=number].hideSpinner {
+	appearance: textfield !important;
+}
+
+.input-field input[type=number] {
+	padding-left: 8px !important;
+	padding-right: 8px !important;
+	width: calc(100% - 16px) !important;
+
+}
+
 label .active {
 	color: var(--secondary) !important;
 	opacity: 1 !important;
@@ -349,6 +366,23 @@ div[class^="icon_bar"] > * > *{
 input[type=checkbox]:checked:not(:disabled) ~ .lever:active::before,
 input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
   background-color: var(--selection) !important;
+}
+
+
+input:not([type]),
+input[type="text"]:not(.browser-default),
+input[type="password"]:not(.browser-default),
+input[type="email"]:not(.browser-default),
+input[type="url"]:not(.browser-default),
+input[type="time"]:not(.browser-default),
+input[type="date"]:not(.browser-default),
+input[type="datetime"]:not(.browser-default),
+input[type="datetime-local"]:not(.browser-default),
+input[type="tel"]:not(.browser-default),
+input[type="number"]:not(.browser-default),
+input[type="search"]:not(.browser-default),
+textarea.materialize-textarea {
+	border-bottom: 1px solid var(--divider) !important;
 }
 
 .switch label input[type="checkbox"]:checked + .lever::after {
@@ -534,7 +568,6 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	padding: 2px;
 	text-align: center;
 	max-width: 200px;
-	/* min-width: 150px; */
 	-webkit-column-break-inside: avoid; /* Chrome, Safari, Opera */
           page-break-inside: avoid; /* Firefox */
                break-inside: avoid; /* IE 10+ */

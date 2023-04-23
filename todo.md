@@ -3,15 +3,14 @@
 mostly technical stuff with rita arriving, but important for live editing later
 
 
-
-
-
 - began working on unsavedchanges stuff
 - refactored the way objects are saved to save memory and make unsaved changes work
 - merged location and world editing into one, before was using different fields for world v location, same now
+- add unsaved changes indicator
+- add number validation to parentID fields and other
+- number (integer) fields have the html5 number dropdown
 
 ## dave stuff:
-
 - 32px skyrim skyrim icons
 - cave interior maps for skyrim, ob, mw
 - skyrim minecraft thing

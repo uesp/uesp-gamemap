@@ -17,6 +17,7 @@
     export let icon = "arrow_back";
     export let title = "This is an appbar."
     export let subtitle;
+    export let tooltip;
 
     const dispatch = createEventDispatcher();
 
@@ -30,7 +31,7 @@
     <div class="appbar">
         <IconButton icon={icon} hasBackground="false" on:click={onBackClicked}></IconButton>
         <div class="title-container">
-            <b class="appbar-title">{title}</b>
+            <b class="appbar-title" title={tooltip}>{title}</b>
             {#if subtitle != null}
                 <small>{subtitle}</small>
             {/if}

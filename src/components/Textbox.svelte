@@ -23,6 +23,9 @@
     export let value = text;
     export let textArea;
     export let tooltip;
+    export let type = "text";
+    export let hideSpinner = type == "float";
+    type = (type == "float") ? "number" : type;
 
     const dispatch = createEventDispatcher();
 
@@ -31,11 +34,27 @@
     block = (textArea != null) ? true : block;
 
     $: {
-        dispatch("change", value);
+        if (type == "number") {
+            let sanitised = value;
+            // sanitised = sanitised.replace(/[^-.0-9]/g, '');
+            // // Remove non-leading minus signs
+            // sanitised = sanitised.replace(/(.)-+/g, '$1');
+            // // Remove the first point if there is more than one
+            // sanitised = sanitised.replace(/\.(?=.*\.)/g, '');
+            // value = "ligma";
+            dispatch("change", Number(value));
+        } else {
+            dispatch("change", value);
+        }
+
     };
 
     // on editor load
 	onMount(async() => {
+
+        if (hideSpinner) {
+            textbox.setAttribute("-moz-appearance", "textfield !important;")
+        }
 
         // if textbox is a text area, and contains text, force expand the textbox
         if (textArea && text.length > 0) {
@@ -58,6 +77,10 @@
 
     });
 
+    function typeAction(node) {
+        node.type = type;
+    }
+
 </script>
 
 <markup>
@@ -67,7 +90,7 @@
             {#if textArea}
                 <textarea id={id} placeholder={(placeholder != null) ? placeholder : null} class="materialize-textarea input" bind:value={value} bind:this={textbox} style="margin-left: -8px; padding-left: 8px; width: calc(100%);"/>
             {:else}
-                <input id={id} placeholder={(placeholder != null) ? placeholder : null} type="text" class:validate={validate} bind:value={value} bind:this={textbox} class="input">
+                <input id={id} placeholder={(placeholder != null) ? placeholder : null} type="text" use:typeAction class:validate={validate} bind:value={value} bind:this={textbox} class="input" class:hideSpinner={hideSpinner}>
             {/if}
             {#if !placeholder}
                  <label for={id} class:active={value != null || (textbox != null && textbox === document.activeElement)}>{hint}</label>
