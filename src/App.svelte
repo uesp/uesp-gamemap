@@ -98,7 +98,6 @@
 			document.firstElementChild.style.zoom = "reset";
 			let viewportmeta = document.querySelector('meta[name="viewport"]');
 			viewportmeta.content = 'user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0';
-			print("App zoom disabled.");
 		}, (location.toString().includes("dev") ? 10000 : 0)); // wait 10s on dev to bypass google lighthouse accessibility check
 
 		// get game name from URL

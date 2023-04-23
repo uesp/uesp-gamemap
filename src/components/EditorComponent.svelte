@@ -208,49 +208,72 @@
 
                 <FormGroup title="General" icon="description">
                     <!-- Name -->
-                    <Textbox label={(isWorld ? "Display " : "") + "Name"}
-                             text={editObject.displayName}
-                             placeholder="Enter {objectType} name..."
-                             tooltip="User facing {objectType} name"
-                             on:change={(e) => modify(isWorld ? "displayName" : "name", e.detail)}/>
+                    <Textbox
+                        label={(isWorld ? "Display " : "") + "Name"}
+                        text={editObject.displayName}
+                        placeholder="Enter {objectType} name..."
+                        tooltip="User facing {objectType} name"
+                        on:change={(e) => modify(isWorld ? "displayName" : "name", e.detail)}>
+                    </Textbox>
 
                     <!-- Parent ID (for World) -->
                     {#if isWorld}
                         <!-- svelte-ignore missing-declaration -->
-                        <Textbox label="Parent ID"
-                                 text={editObject.parentID}
-                                 placeholder="Enter parent world ID..."
-                                 tooltip="Parent world ID"
-                                 type="number"
-                                 subtext={(editObject.parentID && !isNaN(editObject.parentID)) ? gamemap.getWorldDisplayNameFromID(editObject.parentID) : null}
-                                 on:change={(e) => modify("parentID", e.detail)}/>
+                        <Textbox
+                            label="Parent ID"
+                            text={editObject.parentID}
+                            placeholder="Enter parent world ID..."
+                            tooltip="Parent world ID"
+                            type="number"
+                            subtext={(editObject.parentID && !isNaN(editObject.parentID)) ? gamemap.getWorldDisplayNameFromID(editObject.parentID) : null}
+                            on:change={(e) => modify("parentID", e.detail)}>
+                        </Textbox>
 
-                        <Textbox label="Parent ID"
+                        <!-- svelte-ignore missing-declaration -->
+                        <Textbox
+                            label="Parent ID"
                             text={editObject.parentID}
                             placeholder="Enter parent world ID..."
                             tooltip="Parent world ID"
                             type="float"
                             subtext={(editObject.parentID && !isNaN(editObject.parentID)) ? gamemap.getWorldDisplayNameFromID(editObject.parentID) : null}
-                            on:change={(e) => modify("parentID", e.detail)}/>
+                            on:change={(e) => modify("parentID", e.detail)}>
+                        </Textbox>
                     {/if}
 
+                    <!-- Wiki Page -->
+                    <Switch
+                        label={"Use " + (isWorld ? "Display Name" : "Name") + " as Wiki Page"}
+                        tooltip={`Use this ${objectType}'s ${(isWorld ? "display name" : "name")} as its wiki page`}>
+                    </Switch>
+                    <!-- <Textbox label="Wiki Page" text={editObject.wikiPage} placeholder="Enter wiki page..." tooltip="Wiki page name" bind:value={worldWikiPage}/> -->
+
+                    <!-- Description -->
+                    <Textbox label="Description"
+                             text={editObject.description}
+                             placeholder="Enter description..."
+                             tooltip="Description of this {objectType}"
+                             textArea="true"
+                             on:change={(e) => modify("description", e.detail)}>
+                    </Textbox>
+
+
+                </FormGroup>
 
                     <!--
                     <Textbox label="Wiki Page" text={editObject.wikiPage} placeholder="Enter wiki page..." tooltip="Wiki page name" bind:value={worldWikiPage}/>
-                    <Textbox label="Description" text={editObject.description} placeholder="Enter description..." tooltip="Description of this world" textArea="true" bind:value={worldDescription}/> -->
+
 
 
                     {#if isWorld}
-                        <!-- WORLD -->
-                    {:else if isLocation}
-                        <!-- LOCATION -->
+                    WORLD -->
+                    <!-- {:else if isLocation}
+                        LOCATION
                         <Textbox label="Name" text={locationName} placeholder="Enter location name..." tooltip="Location name"/>
-                        <Switch label="Use Name as Wiki Page" tooltip="Use this locations' name as its wiki page"></Switch>
-                        <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki page name"/><!-- svelte-ignore missing-declaration -->
+                        <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki page name"/>svelte-ignore missing-declaration
                         <SegmentedButton label="Location Type" entries={LOCTYPES} tooltip="Location type (marker or area)"></SegmentedButton>
                         <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" />
-                    {/if}
-                </FormGroup>
+                    {/if} -->
 
                 {#if isWorld}
                      <FormGroup title="Zoom" icon="zoom_in">

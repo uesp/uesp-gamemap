@@ -5,7 +5,6 @@
 ### Author(s)
 - Thal-J <thal-j@uesp.net> (15th March, 2023) -->
 
-
 <script>
 
     // import svelte stuff
@@ -25,6 +24,8 @@
     export let tooltip;
     export let type = "text";
     export let hideSpinner = type == "float";
+    export let min;
+    export let max;
     type = (type == "float") ? "number" : type;
 
     const dispatch = createEventDispatcher();
@@ -52,26 +53,32 @@
     // on editor load
 	onMount(async() => {
 
-        if (hideSpinner) {
-            textbox.setAttribute("-moz-appearance", "textfield !important;")
-        }
-
         // if textbox is a text area, and contains text, force expand the textbox
         if (textArea && text.length > 0) {
             textbox.focus();
             print("hello world");
 
             setTimeout(function() {
-                var evt = document.createEvent("KeyboardEvent");
-                evt.initEvent("keypress", false, true);
-                // adding this created a magic and passes it as if keypressed
-                textbox.dispatchEvent(evt);
-                print("expand");
 
-                window.dispatchEvent(new KeyboardEvent('keydown', {
-                    'key': 'a'
-                }));
-            }, 1000);
+                // simulate keypress event to expand the textarea
+                var keyboardEvent = document.createEvent('KeyboardEvent');
+                var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? 'initKeyboardEvent' : 'initKeyEvent';
+
+                keyboardEvent[initMethod](
+                    'keydown', // event type: keydown, keyup, keypress
+                    true, // bubbles
+                    true, // cancelable
+                    window, // view: should be window
+                    false, // ctrlKey
+                    false, // altKey
+                    false, // shiftKey
+                    false, // metaKey
+                    40, // keyCode: unsigned long - the virtual key code, else 0
+                    0, // charCode: unsigned long - the Unicode character associated with the depressed key, else 0
+                );
+                textbox.dispatchEvent(keyboardEvent);
+                document.activeElement.blur();
+            }, 1);
 
         }
 
@@ -86,11 +93,20 @@
 <markup>
     <div class="textbox" class:inline={!block} title={tooltip}>
         {#if label}<p class="label">{label}</p>{/if}
-        <div class="input-field" class:inline={!block}>
+        <div class="input-field" class:inline={!block} class:isNumber={type == "number"}>
             {#if textArea}
                 <textarea id={id} placeholder={(placeholder != null) ? placeholder : null} class="materialize-textarea input" bind:value={value} bind:this={textbox} style="margin-left: -8px; padding-left: 8px; width: calc(100%);"/>
             {:else}
-                <input id={id} placeholder={(placeholder != null) ? placeholder : null} type="text" use:typeAction class:validate={validate} bind:value={value} bind:this={textbox} class="input" class:hideSpinner={hideSpinner}>
+                <input id={id}
+                    placeholder={(placeholder != null) ? placeholder : null}
+                    type="text"
+                    use:typeAction
+                    class:validate={validate}
+                    bind:value={value} bind:this={textbox}
+                    class="input"
+                    min={min}
+                    max={max}
+                    class:hideSpinner={hideSpinner}>
             {/if}
             {#if !placeholder}
                  <label for={id} class:active={value != null || (textbox != null && textbox === document.activeElement)}>{hint}</label>
@@ -170,6 +186,10 @@
 
     .input:focus {
         box-shadow: 0 1px 0 0 var(--secondary) !important;
+    }
+
+    .isNumber {
+        margin-left: -4px;
     }
 
 </style>
