@@ -66,25 +66,5 @@
         margin-right: 2px !important;
     }
 
-    .optional-component {
-        padding-left: var(--padding_medium);
-    }
-
-    .optional-component {
-        padding-left: var(--padding_medium);
-        position: relative;
-    }
-
-    .optional-component::before {
-        content: '‎';
-        border-left: solid 3px var(--divider);
-        display: block;
-        height: 100%;
-        position: absolute;
-        left: 6px;
-
-    }
-
-
 </style>
 

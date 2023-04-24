@@ -18,7 +18,6 @@
     import InfoTextPair from "./InfoTextPair.svelte";
     import DropdownMenu from "./DropdownMenu.svelte";
     import SegmentedButton from "./SegmentedButton.svelte";
-    import Checkbox from "./Checkbox.svelte";
     import Modal from "./Modal.svelte";
     import Switch from "./Switch.svelte";
 
@@ -34,17 +33,13 @@
     let currentObject = data;
     let isLocation = currentObject instanceof Location;
     let isWorld = currentObject instanceof World;
-    let editObject = { ...currentObject };
+    let editObject = Object.assign(Object.create(Object.getPrototypeOf(data)), data)
     let editor;
     let saveButton;
     let haveSaved = false;
     let objectType = (isWorld) ? "world" : "location";
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
-    $: linkWikiPage = editObject.wikiPage == editObject.name || editObject.wikiPage == editObject.displayName;
-
-    // world data
-    // let [worldMinZoom, worldMaxZoom] = [object.minZoomLevel, object.maxZoomLevel];
-    // let [worldMinX, worldMaxX, worldMinY, worldMaxY] = [object.minX, object.maxX, object.minY, object.maxY];
+    let linkWikiPage = editObject.wikiPage == editObject.name || editObject.wikiPage == editObject.displayName;
 
     // on editor load
 	onMount(async() => {
@@ -83,42 +78,57 @@
         }
     });
 
-    function save(type) {
+    function save() {
 
-        function onCallback(error) {
+        print(data)
+        print(editObject)
 
-            print(error);
+        print("saving...");
+        saveButton.$set({ text: "Saving...", icon: "loading" });
+
+        let queryParams = objectify(editObject.getSaveQuery());
+        queryParams.db = gamemap.getMapConfig().database;
+
+        getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+
+            if (!error && data != null) {
+
+                if (data.isError) {
+                    print(data.errorMsg);
+                    callback((data.errorMsg.includes("permissions")) ? "Insufficient permissions!" : data.errorMsg);
+                } else {
+                    print(data);
+
+                    // tell save function that we're done saving
+                    callback();
+                    modify("revisionID", data.newRevisionId);
+                    data = editObject;
+
+                    //edit editObject to have new revision id, then make data = editobject
+                    // if (data.newRevisionId != null) this.currentEditWorld.revisionId = ;
+                }
+
+            } else {
+                callback(`Error saving ${objectType}!`);
+            }
+        });
+
+        function callback(error) {
 
             if (error == null) {
                 haveSaved = true;
-                saveButton.$set({
-                    text: "Done!",
-                    icon: "done",
-                });
+                saveButton.$set({ text: "Done!", icon: "done" });
             } else {
-                saveButton.$set({
-                    text: error,
-                    icon: "warning",
-                });
+                saveButton.$set({ text: error, icon: "warning" });
             }
 
             setTimeout(function() {
                 if (saveButton.icon == "done" || saveButton.icon == "warning") {
-                    saveButton.$set({
-                        text: "Save",
-                        icon: "save",
-                    });
+                    saveButton.$set({ text: "Save", icon: "save" });
                 }
             }, (!error) ? 1500 : 2500);
 
         }
-
-        saveButton.$set({
-            text: "Saving...",
-            icon: "loading",
-        });
-
-        doSaveObject(editObject, onCallback);
 
     }
 
@@ -133,55 +143,6 @@
 
         unsavedChanges = !(JSON.stringify(editObject) === JSON.stringify(currentObject));
         print(unsavedChanges);
-    }
-
-    function doSaveObject(editObject, callback) {
-        print("saving...");
-
-        print(worldDisplayName);
-
-        if (isWorld) {
-            editObject.displayName = worldDisplayName;
-            editObject.parentID = worldParentID;
-            editObject.wikiPage =  worldWikiPage;
-            editObject.description = worldDescription;
-            [editObject.minZoomLevel, editObject.maxZoomLevel] = [worldMinZoom, worldMaxZoom];
-            [editObject.minX, editObject.maxX, editObject.minY, editObject.maxY] = [worldMinX, worldMaxX, worldMinY, worldMaxY];
-        } else if (isLocation) {
-            editObject.blah = "blah";
-        }
-
-        let queryParams = objectify(editObject.getSaveQuery());
-        queryParams.db = gamemap.getMapConfig().database;
-
-        getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-
-            if (!error && data != null) {
-
-                if (data.isError) {
-                    print(data.errorMsg);
-                    callback((data.errorMsg.includes("permissions")) ? "Insufficient permissions!" : data.errorMsg);
-                } else {
-
-                    print(data);
-
-
-                    // tell save function that we're done saving
-                    callback();
-
-                    // merge current world with saved stuff
-                    // make saved changes false
-                    // then update revision ID with new one
-                    // also change world name around ui and stuff
-
-                    // if (data.newRevisionId != null) this.currentEditWorld.revisionId = data.newRevisionId;
-
-                }
-
-            } else {
-                callback(`Error saving ${objectType}!`);
-            }
-        });
     }
 
     function cleanUp() {
@@ -214,7 +175,12 @@
                         text={editObject.displayName}
                         placeholder="Enter {objectType} name..."
                         tooltip="User facing {objectType} name"
-                        on:change={(e) => modify(isWorld ? "displayName" : "name", e.detail)}>
+                        on:change={(e) => {
+                            if (linkWikiPage) {
+                                modify("wikiPage", e.detail)
+                            }
+                            modify(isWorld ? "displayName" : "name", e.detail)
+                        }}>
                     </Textbox>
 
                     <!-- Wiki Page -->
@@ -284,12 +250,12 @@
                 {#if isWorld}
                      <FormGroup title="Bounds" icon="crop_free">
                          <div class="row">
-                             <Textbox text={editObject.minX} hint="Minimum X" type="number" hideSpinner={true}/>
-                             <Textbox text={editObject.maxX} hint="Maximum X" type="number" hideSpinner={true}/>
+                             <Textbox text={editObject.minX} hint="Minimum X" type="number" hideSpinner={true} on:change={(e) => modify("minX", e.detail)}/>
+                             <Textbox text={editObject.maxX} hint="Maximum X" type="number" hideSpinner={true} on:change={(e) => modify("maxY", e.detail)}/>
                          </div>
                          <div class="row">
-                             <Textbox text={editObject.minY} hint="Minimum Y" type="number" hideSpinner={true}/>
-                             <Textbox text={editObject.maxY} hint="Maximum Y" type="number" hideSpinner={true}/>
+                             <Textbox text={editObject.minY} hint="Minimum Y" type="number" hideSpinner={true} on:change={(e) => modify("minY", e.detail)}/>
+                             <Textbox text={editObject.maxY} hint="Maximum Y" type="number" hideSpinner={true} on:change={(e) => modify("maxY", e.detail)}/>
                          </div>
                      </FormGroup>
                 {/if}

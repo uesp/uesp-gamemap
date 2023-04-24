@@ -36,18 +36,10 @@
 
     $: {
         if (type == "number") {
-            let sanitised = value;
-            // sanitised = sanitised.replace(/[^-.0-9]/g, '');
-            // // Remove non-leading minus signs
-            // sanitised = sanitised.replace(/(.)-+/g, '$1');
-            // // Remove the first point if there is more than one
-            // sanitised = sanitised.replace(/\.(?=.*\.)/g, '');
-            // value = "ligma";
             dispatch("change", Number(value));
         } else {
             dispatch("change", value);
         }
-
     };
 
     // on editor load
@@ -82,7 +74,7 @@
         {#if label}<p class="label">{label}</p>{/if}
         <div class="input-field" class:inline={!block} class:isNumber={type == "number"} class:compact={!label && type == "number"}>
             {#if textArea}
-                <textarea id={id} placeholder={(placeholder != null) ? placeholder : null} class="materialize-textarea input" bind:value={value} bind:this={textbox} style="margin-left: -8px; padding-left: 8px; width: calc(100%);"/>
+                <textarea id={id} placeholder={(placeholder != null) ? placeholder : null} class="materialize-textarea input" bind:value={value} bind:this={textbox} style="margin-left: -8px; padding-left: 8px; width: calc(100%); padding-right: 8px;"/>
             {:else}
                 <input id={id}
                     placeholder={(placeholder != null) ? placeholder : null}

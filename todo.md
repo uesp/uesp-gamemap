@@ -1,10 +1,5 @@
 ## last week:
 
-
-
-
-
-
 - parentID shows "invalid world" for invalid worlds
 - parentID field world name now truncates to stop ui overflow
 - zoom levels now have minimum of 0
