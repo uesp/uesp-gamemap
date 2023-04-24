@@ -16,8 +16,6 @@
 
 ## todo
 
-
-- make description box that has some text in it simulate focus and left arrow press to expand box, then defocus
 - convert eso and dawnstar to psueodo normalised in mapconfig
 - make eso only one with custom css as the rest use yellow anyway
 
@@ -33,15 +31,14 @@
 - redesign location popups
 - fix polygons disappearing when outer points are not viewable (consider centre point as well)
 - make embeded map watermark actually open in new tab
-- fix maps not being centred properly on load
 - fix tooltip text: wikilink and detail not being put on separate lines
 - make labels clickable
 - add continuous zoom, markers popup on zoom rather than zoomend
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
-- sr icons higher res
 - fix all markers showing up at initial load on highest zoom level
 - button to go to the map menu
+- button to go up a map, right click isnt intuitive
 - separate mods from offical maps
 - make maps in game release order
 

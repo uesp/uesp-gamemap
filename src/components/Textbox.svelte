@@ -80,7 +80,7 @@
 <markup>
     <div class="textbox" class:inline={!block} title={tooltip}>
         {#if label}<p class="label">{label}</p>{/if}
-        <div class="input-field" class:inline={!block} class:isNumber={type == "number"}>
+        <div class="input-field" class:inline={!block} class:isNumber={type == "number"} class:compact={!label && type == "number"}>
             {#if textArea}
                 <textarea id={id} placeholder={(placeholder != null) ? placeholder : null} class="materialize-textarea input" bind:value={value} bind:this={textbox} style="margin-left: -8px; padding-left: 8px; width: calc(100%);"/>
             {:else}
@@ -188,7 +188,7 @@
         margin-left: -4px;
     }
 
-    .inline.isNumber {
+    .compact {
         margin-left: 0px;
     }
 

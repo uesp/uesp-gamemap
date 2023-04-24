@@ -284,12 +284,12 @@
                 {#if isWorld}
                      <FormGroup title="Bounds" icon="crop_free">
                          <div class="row">
-                             <Textbox text={editObject.minX} hint="Minimum X" />
-                             <Textbox text={editObject.maxX} hint="Maximum X" />
+                             <Textbox text={editObject.minX} hint="Minimum X" type="number" hideSpinner={true}/>
+                             <Textbox text={editObject.maxX} hint="Maximum X" type="number" hideSpinner={true}/>
                          </div>
                          <div class="row">
-                             <Textbox text={editObject.minY} hint="Minimum Y" />
-                             <Textbox text={editObject.maxY} hint="Maximum Y" />
+                             <Textbox text={editObject.minY} hint="Minimum Y" type="number" hideSpinner={true}/>
+                             <Textbox text={editObject.maxY} hint="Maximum Y" type="number" hideSpinner={true}/>
                          </div>
                      </FormGroup>
                 {/if}

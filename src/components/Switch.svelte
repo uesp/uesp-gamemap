@@ -39,10 +39,7 @@
     <!-- optional child UI component if togged -->
     {#if (expand != null && expand == true || expand == null && enabled)}
         <div class="optional-component" in:slide out:slide>
-            <div>
-                <Divider direction="vertical"></Divider>
-                <slot/>
-            </div>
+            <slot/>
         </div>
     {/if}
 </markup>
@@ -68,6 +65,26 @@
         float: right;
         margin-right: 2px !important;
     }
+
+    .optional-component {
+        padding-left: var(--padding_medium);
+    }
+
+    .optional-component {
+        padding-left: var(--padding_medium);
+        position: relative;
+    }
+
+    .optional-component::before {
+        content: '‎';
+        border-left: solid 3px var(--divider);
+        display: block;
+        height: 100%;
+        position: absolute;
+        left: 6px;
+
+    }
+
 
 </style>
 
