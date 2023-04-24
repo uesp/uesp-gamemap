@@ -43,6 +43,7 @@
 
     // on editor load
 	onMount(async() => {
+
         // fix footer height
         editor.style.height = (editor.parentElement.clientHeight) + "px";
 
@@ -133,16 +134,15 @@
     }
 
     function modify(property, value) {
-        editObject[property] = value;
 
-        // cause svelte reactivity
+        // update svelte reactivity
+        editObject[property] = value;
         editObject = editObject;
 
         print(currentObject);
         print(editObject);
 
         unsavedChanges = !(JSON.stringify(editObject) === JSON.stringify(currentObject));
-        print(unsavedChanges);
     }
 
     function cleanUp() {
@@ -172,7 +172,7 @@
                     <!-- Name -->
                     <Textbox
                         label={(isWorld ? "Display " : "") + "Name"}
-                        text={editObject.displayName}
+                        text={isWorld ? editObject.displayName : editObject.name }
                         placeholder="Enter {objectType} name..."
                         tooltip="User facing {objectType} name"
                         on:change={(e) => {
@@ -222,7 +222,13 @@
                     <!-- Location Type (for Locations) -->
                     {#if isLocation}
                         <!-- svelte-ignore missing-declaration -->
-                        <SegmentedButton label="Location Type" entries={LOCTYPES} tooltip="Location type (marker or area)"></SegmentedButton>
+                        <SegmentedButton
+                            label="Location Type"
+                            entries={LOCTYPES}
+                            tooltip="Location type (marker or area)"
+                            selected={Object.values(LOCTYPES).indexOf(editObject.locType)}
+                            on:change={(e) => {modify("locType", e.detail) /* also add change loctype method to location*/}}>
+                        </SegmentedButton>
                     {/if}
 
                     <!-- Description -->
@@ -260,54 +266,45 @@
                      </FormGroup>
                 {/if}
 
-                {#if isLocation}
-                    <FormGroup title="Coordinates" icon="location_on">
-                        <p>Using coordinate system: Normalised</p>
-                        <div class="row">
-                            <!-- <Textbox text={worldMinZoom} hint="X" tooltip="Minimum zoom level for this world" bind:value={worldMinZoom}/>
-                            <Textbox text={worldMaxZoom} hint="Y" tooltip="Maximum zoom level for this world" bind:value={worldMaxZoom}/> -->
-                        </div>
-                        <Button text="Set Position" icon="pin_drop"/>
-                    </FormGroup>
+                <!-- Position (for Locations) -->
+                <FormGroup title="Position" icon="location_on">
+                    <p>Using coordinate system: Normalised</p>
+                    <div class="row">
+                        <!-- <Textbox text={worldMinZoom} hint="X" tooltip="Minimum zoom level for this world" bind:value={worldMinZoom}/>
+                        <Textbox text={worldMaxZoom} hint="Y" tooltip="Maximum zoom level for this world" bind:value={worldMaxZoom}/> -->
+                    </div>
+                    <Button text="Set Position" icon="pin_drop"/>
+                </FormGroup>
 
-                    <FormGroup title="Display" icon="light_mode">
-                        <!-- svelte-ignore missing-declaration -->
-                        <Textbox label="Display Level" text={worldParentID} placeholder="Enter display level..." tooltip="Parent world ID"
-                        subtext={"Current zoom is "+currentZoom}/>
+                <!-- Display Data (for Locations) -->
+                <FormGroup title="Display" icon="light_mode">
 
-                        <DropdownMenu label="Icon">
-                            <option value={"ligma"} data-icon="https://media.discordapp.net/attachments/725183270697828412/1096158382458671169/20230413204157_1.jpg?width=1206&height=678">helo</option>
-                        </DropdownMenu>
+                    <!-- <Textbox label="Display Level" text={worldParentID} placeholder="Enter display level..." tooltip="Parent world ID"
+                    subtext={"Current zoom is "+currentZoom}/>
 
-                        <DropdownMenu label="Label Direction">
-                            <option value={"ligma"} data-icon="https://media.discordapp.net/attachments/725183270697828412/1096158382458671169/20230413204157_1.jpg?width=1206&height=678">helo</option>
-                        </DropdownMenu>
-                    </FormGroup>
-                {/if}
+                    <DropdownMenu label="Icon">
+                        <option value={"ligma"} data-icon="https://media.discordapp.net/attachments/725183270697828412/1096158382458671169/20230413204157_1.jpg?width=1206&height=678">helo</option>
+                    </DropdownMenu>
 
+                    <DropdownMenu label="Label Direction">
+                        <option value={"ligma"} data-icon="https://media.discordapp.net/attachments/725183270697828412/1096158382458671169/20230413204157_1.jpg?width=1206&height=678">helo</option>
+                    </DropdownMenu> -->
+                </FormGroup>
 
-                <!-- generic location/world info -->
+                <!-- Generic info -->
                 {#if editObject.id > 0}
                     <FormGroup title="Info" icon="info">
-                        {#if isWorld}
-                            <InfoTextPair name="World Name" value={editObject.name} tooltip="This world's internal name"/>
-                            <InfoTextPair name="World ID" value={editObject.id} tooltip="This world's worldID"/>
-                            <InfoTextPair name="Revision ID" value={editObject.revisionID} tooltip="Current revision ID"/>
-                            <InfoTextPair name="Tiles" value={editObject.dbNumTilesX + " x " + editObject.dbNumTilesY} tooltip="Number of tiles at full zoom"/>
-                        {:else if isLocation}
-                            <InfoTextPair name="Location ID" value={editObject.id} tooltip="This location's ID"/>
-                            <InfoTextPair name="Revision ID" value={editObject.revisionID} tooltip="Current revision ID"/>
-                            <!-- svelte-ignore missing-declaration -->
-                            <InfoTextPair name="World ID" value={editObject.worldID + " (" + gamemap.getWorldNameFromID(editObject.worldID) +")"} tooltip="WorldID of the world this location is in"/>
-                            <!-- svelte-ignore missing-declaration -->
-                            <InfoTextPair name="Location Type" value={editObject.locType + " ("+Object.keys(LOCTYPES)[editObject.locType].toLowerCase()+")"} tooltip="Location type"/>
-                        {/if}
+                        <InfoTextPair name="{objectType.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} ID" value={editObject.id} tooltip="This {objectType}'s ID"/>
+                        {#if isWorld}<InfoTextPair name="World Name" value={editObject.name} tooltip="This world's internal name"/>{/if}
+                        {#if isWorld}<InfoTextPair name="Tiles" value={editObject.dbNumTilesX + " x " + editObject.dbNumTilesY} tooltip="Number of tiles at full zoom"/>{/if}
+                        <!-- svelte-ignore missing-declaration -->
+                        {#if isLocation}<InfoTextPair name="In World" value={gamemap.getWorldNameFromID(editObject.worldID)} tooltip="The world this location is in"/>{/if}
                         <!-- svelte-ignore missing-declaration -->
                         <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES)[gamemap.getMapConfig().coordType].toLowerCase()} tooltip="Coordinate system that this {objectType} is using"/>
+                        <InfoTextPair name="Revision ID" value={editObject.revisionID} tooltip="Current revision ID"/>
                     </FormGroup>
                 {/if}
             </div>
-
         </div>
 
         <footer id="footer" in:fly={{ y: 10, duration: 250 }}>

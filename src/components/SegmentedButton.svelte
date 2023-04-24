@@ -33,7 +33,7 @@
     });
 
     function onEntrySelected(e, i) {
-        let target = (e.target != null) ? e.target : e;
+        let target = (e != null && e.target != null) ? e.target : e;
         selected = i;
         setTimeout(() => {
             slider.style.height = target.clientHeight + "px";
@@ -41,7 +41,7 @@
             slider.style.width = target.clientWidth + "px";
         }, 1);
 
-        dispatch("onChange", Object.values(entries)[i]);
+        dispatch("change", Object.values(entries)[i]);
     };
 
 </script>
