@@ -8,7 +8,7 @@
 <script>
     // import svelte stuff
     import { createEventDispatcher } from "svelte";
-    import { fade, fly } from 'svelte/transition';
+    import { fade, fly, slide } from 'svelte/transition';
     import { onMount } from 'svelte';
 
     // import UI components
@@ -40,6 +40,7 @@
     let haveSaved = false;
     let objectType = (isWorld) ? "world" : "location";
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
+    $: linkWikiPage = editObject.wikiPage == editObject.name || editObject.wikiPage == editObject.displayName;
 
     // world data
     // let [worldMinZoom, worldMaxZoom] = [object.minZoomLevel, object.maxZoomLevel];
@@ -216,6 +217,28 @@
                         on:change={(e) => modify(isWorld ? "displayName" : "name", e.detail)}>
                     </Textbox>
 
+                    <!-- Wiki Page -->
+                    <Switch
+                        enabled={linkWikiPage}
+                        expand={!linkWikiPage}
+                        label={"Use " + (isWorld ? "Display Name" : "Name") + " as Wiki Page"}
+                        tooltip={`Use this ${objectType}'s ${(isWorld ? "display name" : "name")} as its wiki page`}
+                        on:change={(e) => {
+                             if (e.detail) {
+                                modify("wikiPage", isWorld ? editObject.displayName : editObject.name);
+                             } else {
+                                modify("wikiPage", "");
+                             }
+                             linkWikiPage = e.detail;
+                        }}>
+                        <Textbox label="Wiki Page"
+                         text={editObject.wikiPage}
+                         placeholder="Enter wiki page..."
+                         tooltip="Wiki page name"
+                         on:change={(e) => modify("wikiPage", e.detail)}>
+                        </Textbox>
+                    </Switch>
+
                     <!-- Parent ID (for World) -->
                     {#if isWorld}
                         <!-- svelte-ignore missing-declaration -->
@@ -225,28 +248,16 @@
                             placeholder="Enter parent world ID..."
                             tooltip="Parent world ID"
                             type="number"
-                            subtext={(editObject.parentID && !isNaN(editObject.parentID)) ? gamemap.getWorldDisplayNameFromID(editObject.parentID) : null}
-                            on:change={(e) => modify("parentID", e.detail)}>
-                        </Textbox>
-
-                        <!-- svelte-ignore missing-declaration -->
-                        <Textbox
-                            label="Parent ID"
-                            text={editObject.parentID}
-                            placeholder="Enter parent world ID..."
-                            tooltip="Parent world ID"
-                            type="float"
-                            subtext={(editObject.parentID && !isNaN(editObject.parentID)) ? gamemap.getWorldDisplayNameFromID(editObject.parentID) : null}
+                            subtext={(editObject.parentID && !isNaN(editObject.parentID) && gamemap.getWorldDisplayNameFromID(editObject.parentID)) ? gamemap.getWorldDisplayNameFromID(editObject.parentID) : "Invalid World ID!"}
                             on:change={(e) => modify("parentID", e.detail)}>
                         </Textbox>
                     {/if}
 
-                    <!-- Wiki Page -->
-                    <Switch
-                        label={"Use " + (isWorld ? "Display Name" : "Name") + " as Wiki Page"}
-                        tooltip={`Use this ${objectType}'s ${(isWorld ? "display name" : "name")} as its wiki page`}>
-                    </Switch>
-                    <!-- <Textbox label="Wiki Page" text={editObject.wikiPage} placeholder="Enter wiki page..." tooltip="Wiki page name" bind:value={worldWikiPage}/> -->
+                    <!-- Location Type (for Locations) -->
+                    {#if isLocation}
+                        <!-- svelte-ignore missing-declaration -->
+                        <SegmentedButton label="Location Type" entries={LOCTYPES} tooltip="Location type (marker or area)"></SegmentedButton>
+                    {/if}
 
                     <!-- Description -->
                     <Textbox label="Description"
@@ -257,41 +268,29 @@
                              on:change={(e) => modify("description", e.detail)}>
                     </Textbox>
 
-
                 </FormGroup>
 
-                    <!--
-                    <Textbox label="Wiki Page" text={editObject.wikiPage} placeholder="Enter wiki page..." tooltip="Wiki page name" bind:value={worldWikiPage}/>
-
-
-
-                    {#if isWorld}
-                    WORLD -->
-                    <!-- {:else if isLocation}
-                        LOCATION
-                        <Textbox label="Name" text={locationName} placeholder="Enter location name..." tooltip="Location name"/>
-                        <Textbox label="Wiki Page" text={worldWikiPage} placeholder="Enter wiki page..." tooltip="Wiki page name"/>svelte-ignore missing-declaration
-                        <SegmentedButton label="Location Type" entries={LOCTYPES} tooltip="Location type (marker or area)"></SegmentedButton>
-                        <Textbox label="Description" text={worldDescription} placeholder="Enter description..." tooltip="Description of this world" textArea="true" />
-                    {/if} -->
-
+                <!-- Zoom Levels (for World) -->
                 {#if isWorld}
                      <FormGroup title="Zoom" icon="zoom_in">
                          <div class="row">
-                             <!-- <Textbox text={worldMinZoom} hint="Min Zoom" tooltip="Minimum zoom level for this world" bind:value={worldMinZoom}/>
-                             <Textbox text={worldMaxZoom} hint="Max Zoom" tooltip="Maximum zoom level for this world" bind:value={worldMaxZoom}/> -->
+                             <Textbox text={editObject.minZoomLevel} type="number" hint="Min Zoom" tooltip="Minimum zoom level for this world" on:change={(e) => modify("minZoomLevel", e.detail)} min=0/>
+                             <Textbox text={editObject.maxZoomLevel} type="number" hint="Max Zoom" tooltip="Maximum zoom level for this world" on:change={(e) => modify("maxZoomLevel", e.detail)} min=0/>
                          </div>
                      </FormGroup>
+                {/if}
 
+                <!-- World Bounds (for World) -->
+                {#if isWorld}
                      <FormGroup title="Bounds" icon="crop_free">
-                         <!-- <div class="row">
-                             <Textbox text={worldMinX} hint="Minimum X" bind:value={worldMinX}/>
-                             <Textbox text={worldMaxX} hint="Maximum X" bind:value={worldMaxX}/>
+                         <div class="row">
+                             <Textbox text={editObject.minX} hint="Minimum X" />
+                             <Textbox text={editObject.maxX} hint="Maximum X" />
                          </div>
                          <div class="row">
-                             <Textbox text={worldMinY} hint="Minimum Y" bind:value={worldMinY}/>
-                             <Textbox text={worldMaxY} hint="Maximum Y" bind:value={worldMaxY}/>
-                         </div> -->
+                             <Textbox text={editObject.minY} hint="Minimum Y" />
+                             <Textbox text={editObject.maxY} hint="Maximum Y" />
+                         </div>
                      </FormGroup>
                 {/if}
 

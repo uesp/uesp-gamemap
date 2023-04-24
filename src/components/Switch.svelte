@@ -6,14 +6,18 @@
 - Thal-J <thal-j@uesp.net> (21st Feb, 2023) -->
 
 <script>
-
     // import core svelte stuff
     import { createEventDispatcher } from "svelte";
+    import { fade, slide } from 'svelte/transition';
+
+    // import ui compontents
+    import Divider from "./Divider.svelte";
 
     // state vars
     export let label;
     export let enabled = false;
     export let tooltip;
+    export let expand;
 
     const dispatch = createEventDispatcher();
 
@@ -31,6 +35,16 @@
           <span class="lever"></span>
         </label>
     </div>
+
+    <!-- optional child UI component if togged -->
+    {#if (expand != null && expand == true || expand == null && enabled)}
+        <div class="optional-component" in:slide out:slide>
+            <div>
+                <Divider direction="vertical"></Divider>
+                <slot/>
+            </div>
+        </div>
+    {/if}
 </markup>
 
 <style>

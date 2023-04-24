@@ -1,17 +1,16 @@
 ## last week:
 
-mostly technical stuff with rita arriving, but important for live editing later
 
 
-- began working on unsavedchanges stuff
-- refactored the way objects are saved to save memory and make unsaved changes work
-- merged location and world editing into one, before was using different fields for world v location, same now
-- add unsaved changes indicator
-- add number validation to parentID fields and other
-- number (integer) fields have the html5 number dropdown
+
+
+
+- parentID shows "invalid world" for invalid worlds
+- parentID field world name now truncates to stop ui overflow
+- zoom levels now have minimum of 0
 
 ## dave stuff:
-- 32px skyrim skyrim icons
+- 32px skyrim icons
 - cave interior maps for skyrim, ob, mw
 - skyrim minecraft thing
 

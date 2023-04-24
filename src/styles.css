@@ -210,7 +210,6 @@ input[type=number].hideSpinner {
 	padding-left: 8px !important;
 	padding-right: 8px !important;
 	width: calc(100% - 16px) !important;
-
 }
 
 label .active {

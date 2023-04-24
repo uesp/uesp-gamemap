@@ -64,24 +64,11 @@
                 var keyboardEvent = document.createEvent('KeyboardEvent');
                 var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? 'initKeyboardEvent' : 'initKeyEvent';
 
-                keyboardEvent[initMethod](
-                    'keydown', // event type: keydown, keyup, keypress
-                    true, // bubbles
-                    true, // cancelable
-                    window, // view: should be window
-                    false, // ctrlKey
-                    false, // altKey
-                    false, // shiftKey
-                    false, // metaKey
-                    40, // keyCode: unsigned long - the virtual key code, else 0
-                    0, // charCode: unsigned long - the Unicode character associated with the depressed key, else 0
-                );
+                keyboardEvent[initMethod]('keydown', true, true, window, false, false, false, false, 40, 0);
                 textbox.dispatchEvent(keyboardEvent);
                 document.activeElement.blur();
             }, 1);
-
         }
-
     });
 
     function typeAction(node) {
@@ -111,7 +98,7 @@
             {#if !placeholder}
                  <label for={id} class:active={value != null || (textbox != null && textbox === document.activeElement)}>{hint}</label>
             {/if}
-            {#if subtext}<span class="supporting-text subtext">{subtext}</span>{/if}
+            {#if subtext}<span class="supporting-text subtext" title={subtext}>{subtext}</span>{/if}
         </div>
     </div>
 </markup>
@@ -144,6 +131,10 @@
         width: 50%;
     }
 
+    .inline.isNumber label {
+	    margin-left: var(--padding_minimum) !important;
+    }
+
     .textbox.inline .label {
         flex-grow: 1;
         display: inline-flex;
@@ -152,6 +143,11 @@
     .subtext {
         color: var(--text_low_emphasis);
         font-size: small;
+        white-space: nowrap;
+        display: inline-block;
+        max-width: 85%;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .textbox.inline .input {
@@ -190,6 +186,10 @@
 
     .isNumber {
         margin-left: -4px;
+    }
+
+    .inline.isNumber {
+        margin-left: 0px;
     }
 
 </style>
