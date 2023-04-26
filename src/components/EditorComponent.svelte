@@ -302,15 +302,23 @@
 
                         <!-- svelte-ignore missing-declaration -->
                         {#if place.locType == LOCTYPES.MARKER || place.locType == LOCTYPES.AREA}
-                             <DropdownMenu label="Icon">
-                                 <option value={"ligma"} data-icon="https://media.discordapp.net/attachments/725183270697828412/1096158382458671169/20230413204157_1.jpg?width=1206&height=678">helo</option>
+                            {@const iconIDs = Object.keys(gamemap.getMapConfig().icons)}
+                            {@const iconNames = Object.values(gamemap.getMapConfig().icons)}
+                             <DropdownMenu label="Icon" hint="Select location icon...">
+                                {#each iconNames as name, i}
+                                    <option value={iconIDs[i]} selected={place.icon == iconIDs[i]} data-icon={gamemap.getMapConfig().iconPath + iconIDs[i] + ".png"}>{name}</option>
+                                {/each}
                              </DropdownMenu>
                         {/if}
 
                         <!-- svelte-ignore missing-declaration -->
                         {#if place.locType != LOCTYPES.PATH}
-                            <DropdownMenu label="Label Direction">
-                                <option value={"ligma"} data-icon="https://media.discordapp.net/attachments/725183270697828412/1096158382458671169/20230413204157_1.jpg?width=1206&height=678">helo</option>
+                            {@const posIDs = Object.keys(LABEL_POSITIONS)}
+                            {@const posNames = Object.values(LABEL_POSITIONS)}
+                            <DropdownMenu label="Label Direction" hint="Select label direction...">
+                                {#each posNames as posName, i}
+                                    <option value={posIDs[i]} selected={place.labelPos == posIDs[i]}>{posName}</option>
+                                {/each}
                             </DropdownMenu>
                         {/if}
 
@@ -388,6 +396,7 @@
         padding: var(--padding_minimum);
         position: relative;
         width: 100%;
+        z-index: 99999;
     }
 
     .footer-buttons {

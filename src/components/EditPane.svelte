@@ -311,7 +311,7 @@
         width: 5px;
         height: 100%;
         cursor: ew-resize;
-        z-index: 999;
+        z-index: 9999999;
         transition: background-color ease 150ms;
     }
 

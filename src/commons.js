@@ -39,17 +39,26 @@ window.COORD_TYPES = {
 	PSEUDO_NORMALISED : 3,
 }
 
+// legacy positions:
+// 	0 : 'None',
+// 	1 : 'Top Left',
+// 	2 : 'Top Center',
+// 	3 : 'Top Right',
+// 	4 : 'Middle Left',
+// 	5 : 'Center',
+// 	6 : 'Middle Right',
+// 	7 : 'Bottom Left',
+// 	8 : 'Bottom Center',
+// 	9 : 'Bottom Right',
+
 window.LABEL_POSITIONS = {
-	0 : 'None',
-	1 : 'Top Left',
-	2 : 'Top Center',
-	3 : 'Top Right',
-	4 : 'Middle Left',
-	5 : 'Center',
-	6 : 'Middle Right',
-	7 : 'Bottom Left',
-	8 : 'Bottom Center',
-	9 : 'Bottom Right'
+	0  : 'None',
+	4  : 'Left',
+	5  : 'Center',
+	6  : 'Right',
+	2  : 'Top',
+	8  : 'Bottom',
+	10 : 'Auto',
 };
 
 const MINUTE = 60;

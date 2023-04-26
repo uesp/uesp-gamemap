@@ -236,16 +236,16 @@ export default class Location {
 
 		switch (labelPos) {
 			case 1:
-				// top right
-				this.labelDirection = "right";
+				// top left
+				this.labelDirection = "left";
 				break;
 			case 2:
 				// top
 				this.labelDirection = "top";
 				break;
 			case 3:
-				// top left
-				this.labelDirection = "left";
+				// top right
+				this.labelDirection = "right";
 			case 4:
 				// left
 				this.labelDirection = "left";

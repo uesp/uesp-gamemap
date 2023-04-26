@@ -82,7 +82,7 @@
 <style>
 
     .label {
-        margin-top: -6px;
+        margin-top: 2px;
         margin-bottom: 0;
         white-space: nowrap;
     }
