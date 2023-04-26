@@ -221,15 +221,18 @@
 
                     <!-- Destination ID (for Locations) -->
                     {#if isLocation}
-                        <Textbox
-                            label="Destination ID"
-                            text={place.destinationID}
-                            placeholder="Enter destination ID..."
-                            subtext="+ for world, - for location"
-                            tooltip="Location/world destination ID"
-                            type="number"
-                            on:change={(e) => modify("destinationID", e.detail)}>
-                        </Textbox>
+                        <!-- svelte-ignore missing-declaration -->
+                        {#if place.locType != LOCTYPES.PATH}
+                            <Textbox
+                                label="Destination ID"
+                                text={place.destinationID}
+                                placeholder="Enter destination ID..."
+                                subtext="+ for world, - for location"
+                                tooltip="Location/world destination ID"
+                                type="number"
+                                on:change={(e) => modify("destinationID", e.detail)}>
+                            </Textbox>
+                        {/if}
                     {/if}
 
                     <!-- Location Type (for Locations) -->
@@ -239,6 +242,7 @@
                             label="Location Type"
                             entries={LOCTYPES}
                             tooltip="Location type (marker or area)"
+                            hint="Caution: changing location types is lossy"
                             selected={Object.values(LOCTYPES).indexOf(place.locType)}
                             on:change={(e) => {place.setLocType(e.detail); modify("locType", e.detail)}}>
                         </SegmentedButton>
@@ -303,23 +307,26 @@
                              </DropdownMenu>
                         {/if}
 
-                        <DropdownMenu label="Label Direction">
-                            <option value={"ligma"} data-icon="https://media.discordapp.net/attachments/725183270697828412/1096158382458671169/20230413204157_1.jpg?width=1206&height=678">helo</option>
-                        </DropdownMenu>
+                        <!-- svelte-ignore missing-declaration -->
+                        {#if place.locType != LOCTYPES.PATH}
+                            <DropdownMenu label="Label Direction">
+                                <option value={"ligma"} data-icon="https://media.discordapp.net/attachments/725183270697828412/1096158382458671169/20230413204157_1.jpg?width=1206&height=678">helo</option>
+                            </DropdownMenu>
+                        {/if}
 
-                        {#if place.isPolygon()}
-                            <div style="display:inline">
-                                <b class="subheading">Points</b>
-                                <div style="text-align: center;">
-                                    <Button text="Edit Handles" icon="polyline"/>
-                                </div>
-                            </div>
-                        {:else}
+                        {#if !place.isPolygon()}
                             <b class="subheading">Position</b>
                             <div class="row">
                                 <Textbox text={place.coords[0].x} hint="X Position" tooltip="X coordinate for this location" type="float"/>
                                 <Textbox text={place.coords[0].y} hint="Y Position" tooltip="Y coordinate for this location" type="float" />
                                 <IconButton icon="my_location" hasBackground={false} tooltip="Set location position"></IconButton>
+                            </div>
+                        {:else}
+                            <div style="display:inline">
+                                <b class="subheading">Points</b>
+                                <div style="text-align: center;">
+                                    <Button text="Edit Handles" icon="polyline"/>
+                                </div>
                             </div>
                         {/if}
 

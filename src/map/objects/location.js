@@ -41,7 +41,9 @@ export default class Location {
 
 		// set location icon info
 		this.icon = location.iconType || null;
-		this.iconSize = mapConfig.iconSize;
+		if (this.icon) {
+			this.iconSize = mapConfig.iconSize;
+		}
 
 		// set coords
 		this.coords = [];
@@ -187,12 +189,10 @@ export default class Location {
 		let coord = this.coords[0];
 		this.coords = [];
 		this.coords[0] = coord;
-
-		print(this.coords);
 	}
 
 	hasIcon() {
-		return (this.icon != null)
+		return (this.icon != null);
 	}
 
 	hasLabel() {
@@ -276,19 +276,28 @@ export default class Location {
 		}
 	}
 
-
+	// modify location data upon loc type change
 	setLocType(locType) {
 
-		// if we were polyline before and now set to a marker, lose extra polygons
-		if ((this.locType == LOCTYPES.AREA || this.locType == LOCTYPES.PATH) && locType == LOCTYPES.MARKER) {
+		// if we were a polygon before and now set to a marker, lose extra coords
+		if (this.isPolygon() && locType == LOCTYPES.MARKER) {
 			this.removePolygon();
 		}
 
+		// if we were an area or a marker before and now set to a polyline, lose the icon
+		if ((this.locType == LOCTYPES.MARKER || this.locType == LOCTYPES.AREA) && locType == LOCTYPES.PATH) {
+			this.icon = null;
+			this.destinationID = null;
+			this.labelDirection = null;
+		}
 
-		this.locType = locType;
-
-		// if location is set to label or line, it loses its icon
-		// if location is set to marker from
+		// if we were a path before and are now an area or a marker, add generic icon
+		if (this.locType == LOCTYPES.PATH && (locType == LOCTYPES.MARKER || locType == LOCTYPES.AREA)) {
+			this.icon = Object.keys(gamemap.getMapConfig().icons)[0];
+			if (this.labelDirection == null) {
+				this.getLabelOffsets(1);
+			}
+		}
 
 	}
 

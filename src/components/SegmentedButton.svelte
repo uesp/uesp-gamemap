@@ -18,6 +18,7 @@
     export let entries;
     export let selected = 0;
     export let tooltip;
+    export let hint;
 
     const MAXIMUM_ENTRIES = 4;
     const RESIZE_OBSERVER = new ResizeObserver(() => {animate = false; onEntrySelected(document.getElementById("label"+selected), selected)});
@@ -73,6 +74,9 @@
             </div>
         {/if}
     </div>
+    {#if hint}
+         <small class="hint">{hint}</small>
+    {/if}
 </markup>
 
 <style>
@@ -141,6 +145,16 @@
 
     #slider.animate {
         transition: all 0.25s ease-in-out !important;
+    }
+
+    .hint {
+        color: var(--text_low_emphasis);
+        font-size: small;
+        white-space: nowrap;
+        display: inline-block;
+        max-width: 85%;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     input[type="radio"] { display: none; }
