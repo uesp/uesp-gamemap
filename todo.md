@@ -3,6 +3,7 @@
 - parentID shows "invalid world" for invalid worlds
 - parentID field world name now truncates to stop ui overflow
 - zoom levels now have minimum of 0
+- link up loc switcher to editor
 
 ## dave stuff:
 - 32px skyrim icons
@@ -35,6 +36,7 @@
 - button to go to the map menu
 - button to go up a map, right click isnt intuitive
 - separate mods from offical maps
+- disable polygon fade css effect on firefox
 - make maps in game release order
 
 feedback:

@@ -71,7 +71,7 @@
 
 <markup>
     <div class="textbox" class:inline={!block} title={tooltip}>
-        {#if label}<p class="label">{label}</p>{/if}
+        {#if label}<p class="label" class:hasSubtext={subtext}>{label}</p>{/if}
         <div class="input-field" class:inline={!block} class:isNumber={type == "number"} class:compact={!label && type == "number"}>
             {#if textArea}
                 <textarea id={id} placeholder={(placeholder != null) ? placeholder : null} class="materialize-textarea input" bind:value={value} bind:this={textbox} style="margin-left: -8px; padding-left: 8px; width: calc(100%); padding-right: 8px;"/>
@@ -182,6 +182,11 @@
 
     .compact {
         margin-left: 0px;
+    }
+
+    .hasSubtext {
+        position: relative;
+        top: -12px;
     }
 
 </style>

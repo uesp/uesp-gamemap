@@ -180,11 +180,15 @@ export default class Location {
 	}
 
 	isPolygon(){
-		return this.coords.length > 1;
+		return this.locType == LOCTYPES.AREA || this.locType == LOCTYPES.PATH || this.coords.length > 1;
 	}
 
 	removePolygon() {
-		this.coords = this.coords[0];
+		let coord = this.coords[0];
+		this.coords = [];
+		this.coords[0] = coord;
+
+		print(this.coords);
 	}
 
 	hasIcon() {
@@ -272,31 +276,47 @@ export default class Location {
 		}
 	}
 
+
+	setLocType(locType) {
+
+		// if we were polyline before and now set to a marker, lose extra polygons
+		if ((this.locType == LOCTYPES.AREA || this.locType == LOCTYPES.PATH) && locType == LOCTYPES.MARKER) {
+			this.removePolygon();
+		}
+
+
+		this.locType = locType;
+
+		// if location is set to label or line, it loses its icon
+		// if location is set to marker from
+
+	}
+
+	// get query for saving this location
+	getSaveQuery() {
+		var query = 'action=set_loc';
+
+		// displayDataJson = JSON.stringify(this.displayData);
+
+		// query += '&locid=' + this.id;
+		// query += '&worldid=' + this.worldId;
+		// query += '&revisionid=' + this.revisionId;
+		// query += '&loctype=' + this.locType;
+		// query += '&name=' + encodeURIComponent(this.name);
+		// query += '&description=' + encodeURIComponent(this.description);
+		// query += '&wikipage=' + encodeURIComponent(this.wikiPage);
+		// query += '&x=' + this.x;
+		// query += '&y=' + this.y;
+		// query += '&displaydata=' + encodeURIComponent(displayDataJson);
+		// query += '&icontype=' + encodeURIComponent(this.iconType);
+		// query += '&displaylevel=' + this.displayLevel;
+		// query += '&visible=' + (this.visible ? '1' : '0');
+		// query += '&destid=' + this.destinationId;
+		// query += '&locwidth=' + this.width;
+		// query += '&locheight=' + this.height;
+		// query += '&db=' + this.parentMap.mapOptions.dbPrefix;
+
+		// return query;
+	}
+
 }
-
-// uesp.gamemap.Location.prototype.createSaveQuery = function()
-// {
-// 	var query = 'action=set_loc';
-
-// 	displayDataJson = JSON.stringify(this.displayData);
-
-// 	query += '&locid=' + this.id;
-// 	query += '&worldid=' + this.worldId;
-// 	query += '&revisionid=' + this.revisionId;
-// 	query += '&loctype=' + this.locType;
-// 	query += '&name=' + encodeURIComponent(this.name);
-// 	query += '&description=' + encodeURIComponent(this.description);
-// 	query += '&wikipage=' + encodeURIComponent(this.wikiPage);
-// 	query += '&x=' + this.x;
-// 	query += '&y=' + this.y;
-// 	query += '&displaydata=' + encodeURIComponent(displayDataJson);
-// 	query += '&icontype=' + encodeURIComponent(this.iconType);
-// 	query += '&displaylevel=' + this.displayLevel;
-// 	query += '&visible=' + (this.visible ? '1' : '0');
-// 	query += '&destid=' + this.destinationId;
-// 	query += '&locwidth=' + this.width;
-// 	query += '&locheight=' + this.height;
-// 	query += '&db=' + this.parentMap.mapOptions.dbPrefix;
-
-// 	return query;
-// }

@@ -28,35 +28,29 @@ window.GAME_DATA_SCRIPT = (isRelease) ? "db/gamemap.php" : "http://localhost:250
 
 window.LOCTYPES = {
 	MARKER : 1,
-	LABEL: 4,
-	AREA : 3,
 	PATH : 2,
+	AREA : 3,
 }
-
-window.PLACETYPES = {
-    WORLD : 0,
-    LOCATION : 1,
-}
-
-window.LABEL_POSITIONS = {
-    0 : 'None',
-    1 : 'Top Left',
-    2 : 'Top Center',
-    3 : 'Top Right',
-    4 : 'Middle Left',
-    5 : 'Center',
-    6 : 'Middle Right',
-    7 : 'Bottom Left',
-    8 : 'Bottom Center',
-    9 : 'Bottom Right'
-};
 
 window.COORD_TYPES = {
-    XY : 0,
+	XY : 0,
     NORMALISED : 1,
     WORLDSPACE : 2,
 	PSEUDO_NORMALISED : 3,
 }
+
+window.LABEL_POSITIONS = {
+	0 : 'None',
+	1 : 'Top Left',
+	2 : 'Top Center',
+	3 : 'Top Right',
+	4 : 'Middle Left',
+	5 : 'Center',
+	6 : 'Middle Right',
+	7 : 'Bottom Left',
+	8 : 'Bottom Center',
+	9 : 'Bottom Right'
+};
 
 const MINUTE = 60;
 const HOUR = MINUTE * 60;

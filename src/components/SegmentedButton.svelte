@@ -78,9 +78,9 @@
 <style>
 
     .label {
-        margin: 0;
+        margin-top: -6px;
+        margin-bottom: 0;
         white-space: nowrap;
-        margin-top: 2px;
     }
 
     .item {
