@@ -305,6 +305,7 @@
                             {@const iconIDs = Object.keys(gamemap.getMapConfig().icons)}
                             {@const iconNames = Object.values(gamemap.getMapConfig().icons)}
                              <DropdownMenu label="Icon" hint="Select location icon...">
+                                <option value={null} selected={place.icon == null}>None</option>
                                 {#each iconNames as name, i}
                                     <option value={iconIDs[i]} selected={place.icon == iconIDs[i]} data-icon={gamemap.getMapConfig().iconPath + iconIDs[i] + ".png"}>{name}</option>
                                 {/each}

@@ -22,6 +22,12 @@
 
 - tweak: when editing a location, map automatiaclly centres to that marker
 
+- fix: clicking on markers that go to locations ids not centring on that location, instead just going to the world
+- fix going to location ids actually just going to worlds and not centreing on the locations
+- make location.js have worlds = +positive and locations = -negative
+- link up the "edit" buttons on popups to actual edit menu
+
+
 ## dave stuff:
 - 32px skyrim icons
 - cave interior maps for skyrim, ob, mw
@@ -29,16 +35,8 @@
 
 ## todo
 
-- fix going to location ids actually just going to worlds and not centreing on the locations
-- make location.js have worlds = +positive and locations = -negative
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
-- link up the "edit" buttons on popups to actual edit menu
-
-
-
-
 - convert eso and dawnstar to psueodo normalised in mapconfig
-- make eso only one with custom css as the rest use yellow anyway
 
 - alphabeticise map key ui
 - hamburger for search bar to show other maps
