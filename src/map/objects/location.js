@@ -170,7 +170,7 @@ export default class Location {
 		}
 
 		if (this.destinationID != null) {
-			popupContent += "<div class='popupInfo'><b>Destination ID:</b> " + this.destinationID + "</div>";
+			popupContent += `<div class='popupInfo'><b>Destination ID:</b> ${this.destinationID} ${(this.destinationID < 0) ? ' (Location)' : ' (World)'} </div>`;
 		}
 
 		if (mapConfig.editingEnabled) {
