@@ -321,4 +321,4 @@
 
 </style>
 <svelte:options accessors/>
-<svelte:window on:resize={() => { if (editPanel != null) { editPanelContent.style.height = (editPanel.clientHeight - document.querySelector('.appbar').clientHeight) + "px"; }}} on:mouseup={onResizerUp}/>
+<svelte:window on:resize={() => { if (editPanel != null) { editPanelContent.style.height = document.querySelector('.appbar') ? editPanel.clientHeight - document.querySelector('.appbar').clientHeight + "px" : null }}} on:mouseup={onResizerUp}/>
