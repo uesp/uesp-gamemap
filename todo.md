@@ -20,6 +20,8 @@
 >> means if you've already loaded a world, then clicking on any locations (i.e, in search) will instant jump to it,
 >> instead of doing a network request for finding every location
 
+- tweak: when editing a location, map automatiaclly centres to that marker
+
 ## dave stuff:
 - 32px skyrim icons
 - cave interior maps for skyrim, ob, mw

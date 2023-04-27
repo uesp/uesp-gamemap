@@ -488,7 +488,7 @@ export default class Gamemap {
 			//openPopup(location); //TODO
 
 		} else if (isID) {
-			if (place > 0) { // is destination a worldID?
+			if (place >= 0) { // is destination a worldID?
 				gotoWorld(place);
 			} else { // it is a locationID
 				let locationID = Math.abs(place);
@@ -935,55 +935,55 @@ export default class Gamemap {
 	}
 
 	getLocation(locationID, onLoadFunction) {
-		if (locationID > 0) {
 
-			let hasSearchedLocal = false;
-			let callback = function(location) {
-				onLoadFunction.call(null, location);
-			}
+		locationID = Math.abs(locationID);
+		let hasSearchedLocal = false;
+		let callback = function(location) {
+			onLoadFunction.call(null, location);
+		}
 
-			print("Getting info for locationID: "+ locationID);
+		print("Getting info for locationID: "+ locationID);
 
-			// iterate through local world list to see if locationID exists in them
-			Object.values(this.mapWorlds).forEach(world => {
-				if (world.locations) {
-					Object.values(this.mapWorlds).forEach(world => {
-						if (world.locations) {
-							Object.values(world.locations).forEach(location => {
-								if (location.id == locationID) {
-									callback(location);
-									hasSearchedLocal = true;
-								}
-							});
-						}
-					});
-				}
-			});
-
-			// if no local copies of that locationID exist, search the online db
-			if (!hasSearchedLocal) {
-				let queryParams = {};
-				queryParams.action = "get_loc";
-				queryParams.locid  = locationID;
-				queryParams.db = this.mapConfig.database;
-
-				getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-
-					print(data);
-
-					if (!error && data != null && data.locations[0] != null) {
-						print("Got location info!");
-						let world = self.getWorldFromID(data.locations[0].worldId);
-						print(data.locations[0]);
-						let location = new Location(data.locations[0], world)
-						callback(location);
-					} else {
-						print("LocationID " + locationID + " was invalid.");
-						callback(null);
+		// iterate through local world list to see if locationID exists in them
+		Object.values(this.mapWorlds).forEach(world => {
+			if (world.locations) {
+				Object.values(this.mapWorlds).forEach(world => {
+					if (world.locations) {
+						Object.values(world.locations).forEach(location => {
+							if (location.id == locationID) {
+								callback(location);
+								hasSearchedLocal = true;
+							}
+						});
 					}
 				});
 			}
+		});
+
+		// if no local copies of that locationID exist, search the online db
+		if (!hasSearchedLocal) {
+			let queryParams = {};
+			queryParams.action = "get_loc";
+			queryParams.locid  = locationID;
+			queryParams.db = this.mapConfig.database;
+
+			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+
+				print(data);
+
+				if (!error && data != null && data.locations[0] != null) {
+					print("Got location info!");
+					let world = self.getWorldFromID(data.locations[0].worldId);
+					print(data.locations[0]);
+					let location = new Location(data.locations[0], world)
+					callback(location);
+				} else {
+					print("LocationID " + locationID + " was invalid.");
+					callback(null);
+				}
+			});
 		}
+
 	}
 
 	clearLocations() {
@@ -1292,18 +1292,19 @@ export default class Gamemap {
 	onMarkerClicked(marker, shift, ctrl) {
 
 		print(marker.location);
+		let canJumpTo = marker.location != null && marker.location.isClickable();
 
-		let isJumpTo = marker.location != null && marker.location.isClickable();
-
-		if (isJumpTo && !shift && !ctrl) { // is location a link to a worldspace/location
+		if (canJumpTo && !shift && !ctrl) { // is location a link to a worldspace/location
 
 			let location = marker.location;
 			if (location != null) {
-				if (location.destinationID >= 0) { // is destinationID a worldID
+				if (location.destinationID > 0) { // is destinationID a worldID
 					this.goto(location.destinationID);
 				} else { // it is a location ID
+					print("ligma")
+					print(location.destinationID)
 					function onGetLocation(location) {
-						self.goto(location.worldID);
+						self.goto(-location.id);
 					}
 					this.getLocation(location.destinationID, onGetLocation);
 				}
@@ -1317,7 +1318,7 @@ export default class Gamemap {
 		// if normally clicked or pressing ctrl, show popup
 		if (!shift || ctrl ) {
 
-			if (isJumpTo && !ctrl){
+			if (canJumpTo && !ctrl){
 				// do nothing
 			} else {
 				this.openPopup(marker);
@@ -1477,10 +1478,10 @@ export default class Gamemap {
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.edit(object);
 
+			// if the passed object is a location, pan to its centre
 			if (object instanceof Location) {
-				map.flyTo(this.getMarkersFromLocation(object)[0].getLatLng())
+				map.flyTo(object.getCentre());
 			}
-
 		}
 	}
 

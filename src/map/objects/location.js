@@ -276,6 +276,10 @@ export default class Location {
 		}
 	}
 
+	getCentre() {
+		return gamemap.toLatLngs(this.coords);
+	}
+
 	// modify location data upon loc type change
 	setLocType(locType) {
 
