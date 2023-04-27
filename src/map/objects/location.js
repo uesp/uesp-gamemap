@@ -34,7 +34,7 @@ export default class Location {
 		this.isVisible = (location.visible != null && location.visible == 1 && !location.description.includes("teleport dest")) ? true : false;
 		this.displayData = JSON.parse(location.displayData) || {};
 		this.worldID = location.worldId || 0;
-		this.destinationID = location.destinationId || null;
+		this.destinationID = -(location.destinationId) || null;
 		this.revisionID = location.revisionId || 0;
 		this.displayLevel = parseFloat(location.displayLevel - world.zoomOffset || 0);
 		this.legacy = location;

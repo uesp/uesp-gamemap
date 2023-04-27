@@ -1276,9 +1276,9 @@ export default class Gamemap {
 		if (isJumpTo && !shift && !ctrl) { // is location a link to a worldspace/location
 
 			let location = marker.location;
-			if (location != null){
-				if (location.destinationID < 0) { // is location destination a worldID
-					this.goto(Math.abs(location.destinationID));
+			if (location != null) {
+				if (location.destinationID >= 0) { // is destinationID a worldID
+					this.goto(location.destinationID);
 				} else { // it is a location ID
 					function onGetLocation(location) {
 						self.goto(location.worldID);
