@@ -1476,6 +1476,11 @@ export default class Gamemap {
 	edit(object) {
 		if (this.mapCallbacks != null) {
 			this.mapCallbacks.edit(object);
+
+			if (object instanceof Location) {
+				map.flyTo(this.getMarkersFromLocation(object)[0].getLatLng())
+			}
+
 		}
 	}
 

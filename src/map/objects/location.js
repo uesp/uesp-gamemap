@@ -173,7 +173,8 @@ export default class Location {
 		}
 
 		if (mapConfig.editingEnabled) {
-			popupContent += `<hr/> <a style='text-align: center; height: unset; margin-bottom: -8px; width: inherit; line-height: 26px;' class='btn-flat waves-effect' onclick="gamemap.getLocation(${this.id}, function (location) { gamemap.edit(location); gamemap.getMapObject().closePopup() })">Edit</a>`;
+			let buttonStyle = "text-align: center; height: unset; margin-bottom: -8px; width: inherit; line-height: 26px;";
+			popupContent += `<hr/> <a style='${buttonStyle}' class='btn-flat waves-effect' onclick="gamemap.getLocation(${this.id}, function (location) { gamemap.edit(location); gamemap.getMapObject().closePopup() })">Edit</a>`;
 		}
 
 		return popupContent;
