@@ -160,13 +160,12 @@ export default class Location {
 
 	getPopupContent() {
 
-		let popupContent = "<div class='popupTitle'><a "+ this.createWikiLink() +" target='_top'>" + this.name + "</a></div>" +
-							"<div class='popupDesc'>" + this.description + "</div>" +
-							"<hr/>" +
-							"<div class='popupInfo'><b>Location ID:</b> " + this.id + "</div>";
+		let popupContent = `<div class='popupTitle'><a ${this.createWikiLink()} target='_top'> ${this.name} </a></div>
+							<div class='popupDesc'>${this.description}</div><hr/>
+							<div class='popupInfo'><b>Location ID:</b> ${this.id}</div>`;
 
 		if (this.coords.length == 1 ) {
-			popupContent += "<div class='popupInfo'><b>Coords: </b> X: " + this.coords[0].x + ", Y: " + this.coords[0].y + "</div>";
+			popupContent += `<div class='popupInfo'><b>Coords: </b> X: ${this.coords[0].x}, Y: ${this.coords[0].y} </div>`;
 		}
 
 		if (this.destinationID != null) {
@@ -174,7 +173,7 @@ export default class Location {
 		}
 
 		if (mapConfig.editingEnabled) {
-			popupContent += "<hr/> <a style='text-align: center; height: unset; margin-bottom: -8px; width: inherit; line-height: 26px;' class='btn-flat waves-effect'>Edit</a>";
+			popupContent += `<hr/> <a style='text-align: center; height: unset; margin-bottom: -8px; width: inherit; line-height: 26px;' class='btn-flat waves-effect' onclick="gamemap.getLocation(${this.id}, function (location) { gamemap.edit(location); gamemap.getMapObject().closePopup() })">Edit</a>`;
 		}
 
 		return popupContent;

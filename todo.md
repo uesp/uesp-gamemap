@@ -5,6 +5,21 @@
 - zoom levels now have minimum of 0
 - link up loc switcher to editor
 
+
+
+- refactored how popups work, make use of ${var} syntax instead of "string" + var + "string"
+- popups now show destination type next to destionation id (world / location)
+- swapped around destination ids (worlds are positive, locations are negative)
+
+- got location edit dropdowns working
+- fixed some null errors for edit pane
+- removed "label" from loctype as marker does that anyway
+- added "set pos" and "edit handles" ui
+- link up edit button on popups to edit menu
+- optimised location finding (searches for local first, then db if local doesnt exist)
+>> means if you've already loaded a world, then clicking on any locations (i.e, in search) will instant jump to it,
+>> instead of doing a network request for finding every location
+
 ## dave stuff:
 - 32px skyrim icons
 - cave interior maps for skyrim, ob, mw

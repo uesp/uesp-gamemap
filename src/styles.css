@@ -449,6 +449,7 @@ textarea.materialize-textarea {
 
 .select-wrapper input.select-dropdown {
 	border-bottom: 1px solid var(--divider) !important;
+	font-size: 1rem !important;
 }
 
 .select-wrapper input {

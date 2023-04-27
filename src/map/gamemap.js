@@ -936,31 +936,53 @@ export default class Gamemap {
 
 	getLocation(locationID, onLoadFunction) {
 		if (locationID > 0) {
-			let queryParams = {};
-			queryParams.action = "get_loc";
-			queryParams.locid  = locationID;
-			queryParams.db = this.mapConfig.database;
 
-			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+			let hasSearchedLocal = false;
+			let callback = function(location) {
+				onLoadFunction.call(null, location);
+			}
 
-				print("Getting info for locationID: "+ locationID);
+			print("Getting info for locationID: "+ locationID);
 
-				print(data);
+			// iterate through local world list to see if locationID exists in them
+			Object.values(this.mapWorlds).forEach(world => {
+				if (world.locations) {
+					Object.values(this.mapWorlds).forEach(world => {
+						if (world.locations) {
+							Object.values(world.locations).forEach(location => {
+								if (location.id == locationID) {
+									callback(location);
+									hasSearchedLocal = true;
+								}
+							});
+						}
+					});
+				}
+			});
 
-				if (!error && data != null && data.locations[0] != null) {
-					print("Got location info!");
+			// if no local copies of that locationID exist, search the online db
+			if (!hasSearchedLocal) {
+				let queryParams = {};
+				queryParams.action = "get_loc";
+				queryParams.locid  = locationID;
+				queryParams.db = this.mapConfig.database;
+
+				getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+
 					print(data);
-					if (!(onLoadFunction == null) ) {
+
+					if (!error && data != null && data.locations[0] != null) {
+						print("Got location info!");
 						let world = self.getWorldFromID(data.locations[0].worldId);
 						print(data.locations[0]);
 						let location = new Location(data.locations[0], world)
-						onLoadFunction.call(null, location);
+						callback(location);
+					} else {
+						print("LocationID " + locationID + " was invalid.");
+						callback(null);
 					}
-				} else {
-					print("LocationID " + locationID + " was invalid.");
-					onLoadFunction.call(null);
-				}
-			});
+				});
+			}
 		}
 	}
 
