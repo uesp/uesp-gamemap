@@ -163,7 +163,7 @@ export default class Location {
 		let popupContent = "<div class='popupTitle'><a "+ this.createWikiLink() +" target='_top'>" + this.name + "</a></div>" +
 							"<div class='popupDesc'>" + this.description + "</div>" +
 							"<hr/>" +
-							"<div class='popupInfo'><b>Internal ID:</b> " + this.id + "</div>";
+							"<div class='popupInfo'><b>Location ID:</b> " + this.id + "</div>";
 
 		if (this.coords.length == 1 ) {
 			popupContent += "<div class='popupInfo'><b>Coords: </b> X: " + this.coords[0].x + ", Y: " + this.coords[0].y + "</div>";

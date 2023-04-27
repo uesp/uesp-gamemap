@@ -37,9 +37,11 @@
         let target = (e != null && e.target != null) ? e.target : e;
         selected = i;
         setTimeout(() => {
-            slider.style.height = target.clientHeight + "px";
-            slider.style.left = target.offsetLeft + "px";
-            slider.style.width = target.clientWidth + "px";
+            if (slider) {
+                slider.style.height = target.clientHeight + "px";
+                slider.style.left = target.offsetLeft + "px";
+                slider.style.width = target.clientWidth + "px";
+            }
         }, 1);
 
         dispatch("change", Object.values(entries)[i]);

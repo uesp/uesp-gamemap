@@ -11,15 +11,17 @@ export default class World {
 			this.displayName = world.displayName;
 			this.name = world.name.toLowerCase();
 			this.description = world.description || "";
+			this.locations = null; // locations are loaded async after the world is created
 
 			this.id = world.id || 0;
 			this.parentID = world.parentId || -1;
 			this.revisionID = world.revisionId || 0;
 
-			this.wikiPage = world.wikiPage || "";
+			this.wikiPage = world.wikiPage || null;
 			this.cellSize = world.cellSize || -1;
 
 			this.zoomOffset = (mapConfig.zoomOffset != null) ? mapConfig.zoomOffset : world.zoomOffset;
+			this.defaultZoom = world.defaultZoom - this.zoomOffset;
 
 			this.maxZoomLevel = (world.maxZoom - this.zoomOffset);
 			this.minZoomLevel = (world.minZoom - this.zoomOffset) || 0;
@@ -31,14 +33,10 @@ export default class World {
 
 			this.numTilesX = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the X direction
 			this.numTilesY = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the Y direction
-
 			this.dbNumTilesX = world.maxTilesX; //actual number of tiles in the X direction
 			this.dbNumTilesY = world.maxTilesY; //actual number of tiles in the Y direction
 
-			this.locations = null; // locations are loaded async after the world is created
 			this.legacy = world; // legacy attributes from server
-
-			this.defaultZoom = world.defaultZoom - this.zoomOffset;
 
 			// world display data (grids and layers)
 			this.displayData = (world.displayData != null && world.displayData != "") ? JSON.parse(world.displayData) : null;

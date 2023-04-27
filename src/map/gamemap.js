@@ -1025,7 +1025,6 @@ export default class Gamemap {
 
 	}
 
-
 	getLocTypeByName(locTypeName) {
 
 		locTypeName = locTypeName.trim().toLowerCase() + "";
@@ -1040,7 +1039,6 @@ export default class Gamemap {
 			return null;
 		}
 	}
-
 
 	redrawLocations(locations) {
 

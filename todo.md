@@ -12,6 +12,14 @@
 
 ## todo
 
+- fix going to location ids actually just going to worlds and not centreing on the locations
+- make location.js have worlds = +positive and locations = -negative
+- fix centring on locations not working, use leaflet moveto marker api to ensure centred
+- link up the "edit" buttons on popups to actual edit menu
+
+
+
+
 - convert eso and dawnstar to psueodo normalised in mapconfig
 - make eso only one with custom css as the rest use yellow anyway
 
@@ -45,8 +53,6 @@ feedback:
 - divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)
 - some kind of tutorial on first non-cookie load to tell user how to use ui
 - an undo button for deleting/editing locations and worlds
-
-
 - localisations for maps (local json and server database)
 
 ## todo (future)
