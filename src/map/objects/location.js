@@ -309,27 +309,42 @@ export default class Location {
 	getSaveQuery() {
 		var query = 'action=set_loc';
 
-		// displayDataJson = JSON.stringify(this.displayData);
+		query += `&name=${encodeURIComponent(this.name)}`;
+		query += `&description=${encodeURIComponent(this.description)}`;
+		query += `&wikipage=${encodeURIComponent(this.wikiPage)}`;
 
-		// query += '&locid=' + this.id;
-		// query += '&worldid=' + this.worldId;
-		// query += '&revisionid=' + this.revisionId;
-		// query += '&loctype=' + this.locType;
-		// query += '&name=' + encodeURIComponent(this.name);
-		// query += '&description=' + encodeURIComponent(this.description);
-		// query += '&wikipage=' + encodeURIComponent(this.wikiPage);
+		query += `&locid=${this.id}`;
+		query += `&worldid=${this.worldID}`;
+		query += `&loctype=${this.locType}`;
+
+		if (this.hasIcon()) {
+			query += `&icontype=${encodeURIComponent(this.icon)}`;
+			query += `&locheight=${this.iconSize}&locwidth=${this.iconSize}`;
+		}
+
 		// query += '&x=' + this.x;
 		// query += '&y=' + this.y;
-		// query += '&displaydata=' + encodeURIComponent(displayDataJson);
-		// query += '&icontype=' + encodeURIComponent(this.iconType);
-		// query += '&displaylevel=' + this.displayLevel;
-		// query += '&visible=' + (this.visible ? '1' : '0');
-		// query += '&destid=' + this.destinationId;
-		// query += '&locwidth=' + this.width;
-		// query += '&locheight=' + this.height;
-		// query += '&db=' + this.parentMap.mapOptions.dbPrefix;
+		query += `&displaylevel=${this.displayLevel}`;
+		query += `&displaydata=${encodeURIComponent(JSON.stringify(this.displayData))}`;
 
-		// return query;
+		query += `&destid=${-(this.destinationID)}`;
+		query += `&revisionid=${this.revisionID}`;
+		query += `&db=${gamemap.getMapConfig().database}&visible=1`;
+
+		return query;
+	}
+
+	// get query for deleting this location
+	getDeleteQuery() {
+
+		var query = 'action=enable_loc';
+
+		query += `&locid=${this.id}`;
+		query += `&db=${gamemap.getMapConfig().database}&visible=1`;
+		query += '&visible=0';
+
+		return query;
+
 	}
 
 }

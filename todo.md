@@ -2,6 +2,8 @@
 
 
 - improve styling for icon dropdowns
+- show selected icon in icon dropdown
+- get location saving working
 
 
 
