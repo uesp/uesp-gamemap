@@ -30,7 +30,8 @@
     });
 
     function onChanged(event) {
-        if (event) {
+        if (event && event.type != "click") {
+            print(event);
             dispatch("change", event.target.value);
         }
 
