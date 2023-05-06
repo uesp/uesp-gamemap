@@ -16,6 +16,8 @@
     export let hint;
     export let tooltip;
     let id = Math.random();
+    let dropdown;
+    let selectedIcon;
 
     const dispatch = createEventDispatcher();
 
@@ -24,22 +26,40 @@
         M.FormSelect.init(document.querySelectorAll('select'), {
             dropdownOptions : {alignment: 'right', constrainWidth: false}
         });
+        onChanged();
     });
 
     function onChanged(event) {
-        dispatch("change", event.target.value);
+        if (event) {
+            dispatch("change", event.target.value);
+        }
+
+        // get dropdown selection icon if available
+        let selected = dropdown.querySelector('.selected');
+        if (selected && selected.querySelector("img")) {
+            let img = selected.querySelector("img");
+            selectedIcon = img.src;
+        } else {
+            selectedIcon = null;
+        }
+
     }
 
 </script>
 
 <markup>
-    <div class="input-field col s12">
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div class="input-field col s12" on:click={onChanged} bind:this={dropdown}>
         <label class="label truncate" title={tooltip} for="form-select-{id}">{label}</label>
         <select id="form-select-{id}" on:change={onChanged}>
             <!-- Hint -->
             {#if hint != null}<option value="" disabled>{hint}</option>{/if}
             <slot> <!-- Menu items go here --> </slot>
         </select>
+        {#if selectedIcon}
+             <!-- svelte-ignore a11y-missing-attribute -->
+             <img class="selected-icon" src={selectedIcon}>
+        {/if}
       </div>
 </markup>
 
@@ -60,6 +80,16 @@
         width: 100%;
         margin-top: 2px;
         margin-bottom: -10px;
+    }
+
+    .selected-icon {
+        position: absolute;
+        top: 10px;
+        bottom: 8px;
+        right: 4px;
+        pointer-events: none;
+        width: 24px;
+        height: 24px;
     }
 
 </style>
