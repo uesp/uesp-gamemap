@@ -227,7 +227,7 @@
                 <li id="group_tab" class="tab" on:click={() => selectTab(0)}><a class:active={currentTab == 0} href="#tab_categories">Groups</a></li>
             {/if}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <li id="abc_tab" class="tab" on:click={() => selectTab(1)}><a class:active={currentTab == 1} href="#tab_alphabetical">{hasGroupedList ? "ABC" : "Locations"}</a></li>
+            <li id="abc_tab" class="tab" on:click={() => selectTab(1)}><a class:active={currentTab == 1} href="#tab_alphabetical">{hasGroupedList ? "ABC" : "Worlds"}</a></li>
         </ul>
 
         <div id="location_list_content" bind:this={contentView}>

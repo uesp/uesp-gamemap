@@ -1245,7 +1245,7 @@ export default class Gamemap {
 					let parentID = self.getMapState().world.parentID;
 					self.goto(parentID);
 				} else {
-					M.toast({html: "Map is locked!"});
+					M.toast({html: "Map is locked while editing!"});
 				}
 			}
 		})

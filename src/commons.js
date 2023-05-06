@@ -416,7 +416,6 @@ window.getAverageCoord = function getAverageCoord(coords) {
 	let ys = [];
 
 	for (let i in coords) {
-		print(coords[i]);
 		xs.push(coords[i].x);
 		ys.push(coords[i].y);
 	}

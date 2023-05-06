@@ -25,6 +25,8 @@
     import Modal from "./Modal.svelte";
     import Switch from "./Switch.svelte";
     import IconButton from "./IconButton.svelte";
+    import Divider from "./Divider.svelte";
+    import Icon from "./Icon.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -299,7 +301,6 @@
                             on:change={(e) => modify("displayLevel", e.detail)}>
                         </Textbox>
 
-
                         <!-- svelte-ignore missing-declaration -->
                         {#if place.locType == LOCTYPES.MARKER || place.locType == LOCTYPES.AREA}
                             {@const iconIDs = Object.keys(gamemap.getMapConfig().icons)}
@@ -332,7 +333,9 @@
                             </div>
                         {:else}
                             <div style="display:inline">
-                                <b class="subheading">Points</b>
+                                <br/>
+                                <Divider/>
+                                <br/>
                                 <div style="text-align: center;">
                                     <Button text="Edit Handles" icon="polyline"/>
                                 </div>

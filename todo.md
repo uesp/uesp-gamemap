@@ -1,31 +1,8 @@
 ## last week:
 
-- parentID shows "invalid world" for invalid worlds
-- parentID field world name now truncates to stop ui overflow
-- zoom levels now have minimum of 0
-- link up loc switcher to editor
 
+- improve styling for icon dropdowns
 
-
-- refactored how popups work, make use of ${var} syntax instead of "string" + var + "string"
-- popups now show destination type next to destionation id (world / location)
-- swapped around destination ids (worlds are positive, locations are negative)
-
-- got location edit dropdowns working
-- fixed some null errors for edit pane
-- removed "label" from loctype as marker does that anyway
-- added "set pos" and "edit handles" ui
-- link up edit button on popups to edit menu
-- optimised location finding (searches for local first, then db if local doesnt exist)
->> means if you've already loaded a world, then clicking on any locations (i.e, in search) will instant jump to it,
->> instead of doing a network request for finding every location
-
-- tweak: when editing a location, map automatiaclly centres to that marker
-
-- fix: clicking on markers that go to locations ids not centring on that location, instead just going to the world
-- fix going to location ids actually just going to worlds and not centreing on the locations
-- make location.js have worlds = +positive and locations = -negative
-- link up the "edit" buttons on popups to actual edit menu
 
 
 ## dave stuff:

@@ -415,6 +415,26 @@ textarea.materialize-textarea {
 	white-space: nowrap;
 }
 
+.dropdown-content li img {
+	height: 32px !important;
+	width: 32px !important;
+	margin: 5px var(--padding_small) !important;
+	margin-top: auto !important;
+	margin-bottom: auto !important;
+	position: relative !important;
+	object-fit: contain;
+}
+
+.dropdown-content li {
+	display: flex !important;
+}
+
+.dropdown-content li span {
+	white-space: nowrap !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .dropdown-content li.disabled:hover {
 	background-color: var(--surface_variant) !important;
 }
