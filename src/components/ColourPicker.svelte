@@ -91,7 +91,7 @@
 		margin: var(--padding_minimum);
 		background: linear-gradient(45deg, lightgrey 25%, transparent 25%, transparent 75%, lightgrey 75%) 0 0/2em 2em,linear-gradient(45deg, lightgrey 25%, white 25%, white 75%, lightgrey 75%) 1em 1em/2em 2em;
 		border: 3px solid white;
-		border-radius: 6px;
+		border-radius: var(--padding_minimum);
 		cursor: pointer;
 		box-shadow: 0px 0px 0px 1px var(--divider);
 		overflow: hidden;
@@ -125,6 +125,12 @@
 		height: 30px;
 		width: 30px;
 		pointer-events: none;
+	}
+
+	.picker_sample {
+		border-radius: var(--padding_minimum) !important;
+		overflow: hidden !important;
+		border: 3px solid white !important;
 	}
 
 </style>

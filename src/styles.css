@@ -903,36 +903,37 @@ textarea.materialize-textarea {
 	background: var(--primary_variant_light) !important;
 }
 
-.picker_wrapper.layout_default {
-	border-radius: var(--padding_minimum) !important;
+.picker_selector {
+	border-radius: 50% !important;
+	box-shadow: 0 0 3px 1px var(--shadow) !important;
 }
 
-/* .picker_alpha, .picker_sample {
-	box-shadow: 0 0 0 1px var(--divider) !important;
-} */
+.picker_wrapper.layout_default {
+	border-radius: var(--padding_minimum) !important;
+	font-size: 10.5px !important;
+}
 
 .layout_default .picker_editor {
 	width: 10rem !important;
 }
 
-.layout_default .picker_sl {
+.layout_default {
 	border-radius: var(--padding_minimum) !important;
 }
 
-.picker_hue.picker_slider {
+.picker_sl {
+	border-radius: 4px !important;
+}
+
+.picker_alpha .picker_slider {
 	border-radius: var(--padding_medium) !important;
-}
-
-.picker_slider .picker_selector {
-	border-radius: var(--padding_minimum) !important;
 }
 
 .picker_slider, .picker_sl {
 	box-shadow: 0 0 0 1px var(--divider) !important;
 }
-
-.picker_selector {
-	box-shadow: 0 0 3px 1px var(--shadow) !important;
+.picker_slider {
+	border-radius: 4px !important;
 }
 
 .picker_done button {
@@ -974,4 +975,16 @@ textarea.materialize-textarea {
 
 .picker_alpha, .picker_sample {
 	box-shadow: 0 0 0 1px var(--divider) !important;
+}
+
+.picker_sample {
+	border-radius: var(--padding_minimum) !important;
+	overflow: hidden !important;
+	border: 3px solid white !important;
+	width: 30px !important;
+	height: 30px !important;
+	max-width: 30px !important;
+	max-height: 30px !important;
+	margin-top: auto !important;
+	margin-bottom: auto !important;
 }

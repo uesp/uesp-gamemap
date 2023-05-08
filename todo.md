@@ -5,6 +5,15 @@
 - show selected icon in icon dropdown
 - get location saving working
 
+- rewrote how colours used for polygons (i had rgb and a separately for some reason)
+- added colour picker
+
+problems: existing html5 colour picker only does RGB or hex, no alpha
+had to download a colour picker library that does RGBA since polygons are in RGBA
+- added colour picker component
+
+- themed it to fit in
+
 
 
 ## dave stuff:
