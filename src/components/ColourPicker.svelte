@@ -19,7 +19,7 @@
 	export let label;
 	export let placeholder;
 	export let showTextBox = true;
-	export let colour;
+	export let colour = "rgba(0, 0, 0, 0)";
 	let picker;
 	let colourPickerAnchor;
 	let colourPickerPreview;
@@ -45,11 +45,9 @@
 
 </script>
 
-
-
 <markup>
 
-	<div class="colour-picker-container">
+	<div class="colour-picker-container" style="position: relative;">
 		{#if showTextBox}
 			 <Textbox placeholder={placeholder} block={true} label={label} text={colour} bind:value={colour}/>
 		{/if}
@@ -107,8 +105,8 @@
 
 	.hasTextbox {
 		position: absolute;
-		bottom: 10px;
-		right: 8px;
+		bottom: -0.5px;
+		right: 0;
 	}
 
 	.colour-preview {
@@ -125,12 +123,6 @@
 		height: 30px;
 		width: 30px;
 		pointer-events: none;
-	}
-
-	.picker_sample {
-		border-radius: var(--padding_minimum) !important;
-		overflow: hidden !important;
-		border: 3px solid white !important;
 	}
 
 </style>

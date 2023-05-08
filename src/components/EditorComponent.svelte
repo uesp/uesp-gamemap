@@ -296,9 +296,16 @@
                     <FormGroup title="Style" icon="format_color_fill">
 
 
-                        <ColourPicker label="Fill colour"
+                        <ColourPicker
+                            label="Fill colour"
                             colour = {place.style.fillColour}
-                             placeholder="Select/enter fill colour...">
+                            placeholder="Select/enter fill colour...">
+                        </ColourPicker>
+
+                        <ColourPicker
+                            label="Fill colour (Hovered)"
+                            colour = {place.style.hover.fillColour}
+                            placeholder="Select/enter fill colour...">
                         </ColourPicker>
 
                     </FormGroup>

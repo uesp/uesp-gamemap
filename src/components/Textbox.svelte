@@ -45,7 +45,7 @@
 	onMount(async() => {
 
         // if textbox is a text area, and contains text, force expand the textbox
-        if (textArea && text.length > 0) {
+        if (textArea && text.length > 47) {
             textbox.focus();
             print("hello world");
 
@@ -55,9 +55,13 @@
                 var keyboardEvent = document.createEvent('KeyboardEvent');
                 var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? 'initKeyboardEvent' : 'initKeyEvent';
 
+
                 keyboardEvent[initMethod]('keydown', true, true, window, false, false, false, false, 40, 0);
                 textbox.dispatchEvent(keyboardEvent);
+
+
                 document.activeElement.blur();
+
             }, 1);
         }
     });
