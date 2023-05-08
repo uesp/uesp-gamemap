@@ -141,16 +141,13 @@ html, body, main {
 	display: none;
 }
 
-::placeholder {
-	color: var(--text_low_emphasis) !important;
-	opacity: 0.75 !important;
-}
-
+/* make h6 bigger */
 h6 {
 	font-weight: bold !important;
 	font-size: 1.25rem !important;
 }
 
+/* make strong actually strong */
 strong {
 	font-weight: bold !important;
 }
@@ -165,6 +162,7 @@ strong {
 	width: 75%;
 }
 
+/* style normal hr line divider */
 hr {
 	border: 0;
 	border-top: 3px solid var(--divider);
@@ -178,10 +176,10 @@ button {
 	user-select: none;
 }
 
+/* set highlight selection colour */
 ::selection {
 	background: var(--selection);
 }
-
 
 /* checkboxes */
 [type="checkbox"].filled-in:checked + span:not(.lever)::after {
@@ -365,23 +363,6 @@ div[class^="icon_bar"] > * > *{
 input[type=checkbox]:checked:not(:disabled) ~ .lever:active::before,
 input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
   background-color: var(--selection) !important;
-}
-
-
-input:not([type]),
-input[type="text"]:not(.browser-default),
-input[type="password"]:not(.browser-default),
-input[type="email"]:not(.browser-default),
-input[type="url"]:not(.browser-default),
-input[type="time"]:not(.browser-default),
-input[type="date"]:not(.browser-default),
-input[type="datetime"]:not(.browser-default),
-input[type="datetime-local"]:not(.browser-default),
-input[type="tel"]:not(.browser-default),
-input[type="number"]:not(.browser-default),
-input[type="search"]:not(.browser-default),
-textarea.materialize-textarea {
-	border-bottom: 1px solid var(--divider) !important;
 }
 
 .switch label input[type="checkbox"]:checked + .lever::after {
@@ -877,4 +858,38 @@ textarea.materialize-textarea {
 	100% {
 	  filter: drop-shadow(none);
 	}
+}
+
+
+/*================================================
+				  Ugly CSS Hacks
+================================================*/
+
+/* make textinput placeholder same colour as low emphasis */
+::placeholder {
+	color: var(--text_low_emphasis) !important;
+	opacity: 0.75 !important;
+}
+
+/*  force recolour the line under textinput boxes */
+input:not([type]),
+input[type="text"]:not(.browser-default),
+input[type="password"]:not(.browser-default),
+input[type="email"]:not(.browser-default),
+input[type="url"]:not(.browser-default),
+input[type="time"]:not(.browser-default),
+input[type="date"]:not(.browser-default),
+input[type="datetime"]:not(.browser-default),
+input[type="datetime-local"]:not(.browser-default),
+input[type="tel"]:not(.browser-default),
+input[type="number"]:not(.browser-default),
+input[type="search"]:not(.browser-default),
+textarea.materialize-textarea {
+	border-bottom: 1px solid var(--divider) !important;
+}
+
+
+/* fix padding overflow on colourpicker textbox */
+.colour-picker-container .textbox {
+	width: calc(100% - 8px);
 }

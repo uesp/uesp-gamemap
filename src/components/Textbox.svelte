@@ -16,7 +16,6 @@
     export let hint = "Enter text...";
     export let placeholder;
     export let block = false;
-    export let validate = false;
     export let subtext;
     export let text;
     export let value = text;
@@ -42,7 +41,7 @@
         }
     };
 
-    // on editor load
+    // on component load
 	onMount(async() => {
 
         // if textbox is a text area, and contains text, force expand the textbox
@@ -79,10 +78,9 @@
                 <input id={id}
                     placeholder={(placeholder != null) ? placeholder : null}
                     type="text"
-                    use:typeAction
-                    class:validate={validate}
-                    bind:value={value} bind:this={textbox}
                     class="input"
+                    bind:value={value} bind:this={textbox}
+                    use:typeAction
                     min={min}
                     max={max}
                     class:hideSpinner={hideSpinner}>

@@ -27,6 +27,7 @@
     import IconButton from "./IconButton.svelte";
     import Divider from "./Divider.svelte";
     import Icon from "./Icon.svelte";
+    import ColourPicker from "./ColourPicker.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -268,12 +269,12 @@
 
                 <!-- Zoom Levels (for World) -->
                 {#if isWorld}
-                     <FormGroup title="Zoom" icon="zoom_in">
-                         <div class="row">
+                    <FormGroup title="Zoom" icon="zoom_in">
+                        <div class="row">
                             <Textbox text={place.minZoomLevel} type="number" hint="Min Zoom" tooltip="Minimum zoom level for this world" on:change={(e) => modify("minZoomLevel", e.detail)} min=0/>
                             <Textbox text={place.maxZoomLevel} type="number" hint="Max Zoom" tooltip="Maximum zoom level for this world" on:change={(e) => modify("maxZoomLevel", e.detail)} min=0/>
-                         </div>
-                     </FormGroup>
+                        </div>
+                    </FormGroup>
                 {/if}
 
                 <!-- World Bounds (for World) -->
@@ -288,6 +289,16 @@
                             <Textbox text={place.maxY} hint="Maximum Y" type="number" hideSpinner={true} on:change={(e) => modify("maxY", e.detail)}/>
                          </div>
                      </FormGroup>
+                {/if}
+
+                <!-- Styles (for Polygon Locations) -->
+                {#if isLocation && place.isPolygon()}
+                    <FormGroup title="Style" icon="format_color_fill">
+
+
+                        <ColourPicker label="Fill colour" placeholder="Select/enter fill colour..."></ColourPicker>
+
+                    </FormGroup>
                 {/if}
 
                 <!-- Display Data (for Locations) -->
@@ -349,6 +360,10 @@
 
                      </FormGroup>
                 {/if}
+
+                <div style="text-align: center;">
+                    <Button text="Edit Handles" icon="polyline"/>
+                </div>
 
                 <!-- General info -->
                 {#if place.id > 0}
