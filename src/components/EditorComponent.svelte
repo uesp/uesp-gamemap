@@ -135,10 +135,15 @@
 
     }
 
-    function modify(property, value) {
+
+    function modify(property, value, isDisplayData) {
 
         // update svelte reactivity
-        place[property] = value;
+        if (isDisplayData) {
+            place.displayData[property] = value;
+        } else {
+            place[property] = value;
+        }
         place = place;
 
         print(data);
@@ -317,9 +322,9 @@
                         {#if place.locType != LOCTYPES.PATH}
                             {@const posIDs = Object.keys(LABEL_POSITIONS)}
                             {@const posNames = Object.values(LABEL_POSITIONS)}
-                            <DropdownMenu label="Label Direction" hint="Select label direction...">
+                            <DropdownMenu label="Label Direction" hint="Select label direction..." on:change={(e) => {place.getLabelOffsets(Number(e.detail)); modify("labelPos", Number(e.detail), true)}}>
                                 {#each posNames as posName, i}
-                                    <option value={posIDs[i]} selected={place.labelPos == posIDs[i]}>{posName}</option>
+                                    <option value={posIDs[i]} selected={place.displayData.labelPos == posIDs[i]}>{posName}</option>
                                 {/each}
                             </DropdownMenu>
                         {/if}
@@ -345,7 +350,7 @@
                      </FormGroup>
                 {/if}
 
-                <!-- Generic info -->
+                <!-- General info -->
                 {#if place.id > 0}
                     <FormGroup title="Info" icon="info">
                         <InfoTextPair name="{objectType.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} ID" value={place.id} tooltip="This {objectType}'s ID"/>

@@ -225,7 +225,7 @@ export default class Location {
 		}
 
 		if (wikiLink != "") {
-			wikiLink = 'href="' + wikiLink + '"';
+			wikiLink = `href="${wikiLink}"`;
 		}
 
 		return wikiLink;
