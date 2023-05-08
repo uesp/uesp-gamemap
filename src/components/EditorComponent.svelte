@@ -296,7 +296,10 @@
                     <FormGroup title="Style" icon="format_color_fill">
 
 
-                        <ColourPicker label="Fill colour" placeholder="Select/enter fill colour..."></ColourPicker>
+                        <ColourPicker label="Fill colour"
+                            colour = {place.style.fillColour}
+                             placeholder="Select/enter fill colour...">
+                        </ColourPicker>
 
                     </FormGroup>
                 {/if}

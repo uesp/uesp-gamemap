@@ -94,17 +94,13 @@ export default class Location {
 			this.style.lineWidth = this.displayData.lineWidth;
 			this.style.hover.lineWidth = this.displayData.hover.lineWidth;
 
-			this.style.fillOpacity = this.displayData.fillStyle.replace(/^.*,(.+)\)/,'$1');
-			this.style.hover.fillOpacity = this.displayData.hover.fillStyle.replace(/^.*,(.+)\)/,'$1');
+			print(this.displayData.fillStyle);
 
-			this.style.strokeOpacity = this.displayData.strokeStyle.replace(/^.*,(.+)\)/,'$1');
-			this.style.hover.strokeOpacity = this.displayData.hover.strokeStyle.replace(/^.*,(.+)\)/,'$1');
+			this.style.fillColour = this.displayData.fillStyle;
+			this.style.hover.fillColour = this.displayData.hover.fillStyle;
 
-			this.style.fillColour = RGBAtoHex(this.displayData.fillStyle);
-			this.style.hover.fillColour = RGBAtoHex(this.displayData.hover.fillStyle);
-
-			this.style.strokeColour = RGBAtoHex(this.displayData.strokeStyle);
-			this.style.hover.strokeColour = RGBAtoHex(this.displayData.hover.strokeStyle);
+			this.style.strokeColour = this.displayData.strokeStyle;
+			this.style.hover.strokeColour = this.displayData.hover.strokeStyle;
 
 			this.style.strokeWidth = this.displayData.lineWidth;
 			this.style.hover.strokeWidth = this.displayData.hover.lineWidth;

@@ -19,25 +19,28 @@
 	export let label;
 	export let placeholder;
 	export let showTextBox = true;
-	let colourPicker;
+	export let colour;
+	let picker;
+	let colourPickerAnchor;
+	let colourPickerPreview;
 
 	// on component load
 	onMount(async() => {
 
-		let picker = new Picker({
-			parent: colourPicker,
+		colourPickerPreview.style.background = colour;
+
+		picker = new Picker({
+			parent: colourPickerAnchor,
 			popup : "left",
+			editorFormat : "rgb",
+			color : colour,
 		});
 
-
 		picker.onChange = function(color) {
-			//parent.style.background = color.rgbaString;
+			colourPickerPreview.style.background = color.rgbaString;
+			colour = color.rgbaString;
 		};
-
 	});
-
-
-
 
 
 </script>
@@ -48,15 +51,15 @@
 
 	<div class="colour-picker-container">
 		{#if showTextBox}
-			 <Textbox placeholder={placeholder} block={true} label={label}/>
+			 <Textbox placeholder={placeholder} block={true} label={label} text={colour} bind:value={colour}/>
 		{/if}
 
-
-		<div class="colour-picker" class:hasTextbox={showTextBox} bind:this={colourPicker}>
-			<div class="colour-preview">
-
-			</div>
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<div class="colour-picker" class:hasTextbox={showTextBox} on:click={() => picker.show()}>
+			<div class="colour-preview" bind:this={colourPickerPreview}/>
 		</div>
+		<!-- svelte-ignore a11y-missing-content -->
+		<a id="colour-picker-anchor" bind:this={colourPickerAnchor}></a>
 	</div>
 
 
@@ -86,13 +89,12 @@
 		height: 30px;
 		width: 30px;
 		margin: var(--padding_minimum);
-		background-image: conic-gradient(var(--checkerboard-dark-grey) 25%, var(--checkerboard-light-grey) 25%, var(--checkerboard-light-grey) 50%, var(--checkerboard-dark-grey) 50%, var(--checkerboard-dark-grey) 75%, var(--checkerboard-light-grey) 75%);
-		background-size: var(--padding_minimum) var(--padding_minimum);
+		background: linear-gradient(45deg, lightgrey 25%, transparent 25%, transparent 75%, lightgrey 75%) 0 0/2em 2em,linear-gradient(45deg, lightgrey 25%, white 25%, white 75%, lightgrey 75%) 1em 1em/2em 2em;
 		border: 3px solid white;
 		border-radius: 6px;
-		z-index: 9999;
 		cursor: pointer;
 		box-shadow: 0px 0px 0px 1px var(--divider);
+		overflow: hidden;
 	}
 
 	.colour-picker:hover {
@@ -110,10 +112,19 @@
 	}
 
 	.colour-preview {
-		background: #74a6a6;
 		width: auto;
 		height: inherit;
 		position: relative;
+	}
+
+	#colour-picker-anchor {
+		margin: var(--padding_minimum);
+		position: absolute;
+		bottom: 10px;
+		right: 8px;
+		height: 30px;
+		width: 30px;
+		pointer-events: none;
 	}
 
 </style>

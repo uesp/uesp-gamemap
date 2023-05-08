@@ -888,8 +888,90 @@ textarea.materialize-textarea {
 	border-bottom: 1px solid var(--divider) !important;
 }
 
-
 /* fix padding overflow on colourpicker textbox */
 .colour-picker-container .textbox {
 	width: calc(100% - 8px);
+}
+
+/* make colour code text monospace font */
+.colour-picker-container .textbox .input-field input {
+	font-family: monospace !important;
+}
+
+/* colour picker */
+.picker_wrapper.popup, .picker_wrapper.popup .picker_arrow::before, .picker_wrapper.popup .picker_arrow::after {
+	background: var(--primary_variant_light) !important;
+}
+
+.picker_wrapper.layout_default {
+	border-radius: var(--padding_minimum) !important;
+}
+
+/* .picker_alpha, .picker_sample {
+	box-shadow: 0 0 0 1px var(--divider) !important;
+} */
+
+.layout_default .picker_editor {
+	width: 10rem !important;
+}
+
+.layout_default .picker_sl {
+	border-radius: var(--padding_minimum) !important;
+}
+
+.picker_hue.picker_slider {
+	border-radius: var(--padding_medium) !important;
+}
+
+.picker_slider .picker_selector {
+	border-radius: var(--padding_minimum) !important;
+}
+
+.picker_slider, .picker_sl {
+	box-shadow: 0 0 0 1px var(--divider) !important;
+}
+
+.picker_selector {
+	box-shadow: 0 0 3px 1px var(--shadow) !important;
+}
+
+.picker_done button {
+	height: 100% !important;
+	background: none !important;
+	color: var(--secondary) !important;
+	font-weight: 600 !important;
+	text-transform: uppercase !important;
+	letter-spacing: 0.55px !important;
+}
+
+.picker_done button:hover {
+	background: var(--selection) !important;
+	border-radius: 2px !important;
+}
+
+.popup.popup_left {
+	right: 30% !important;
+}
+
+.picker_wrapper.popup .picker_arrow::before, .picker_wrapper.popup .picker_arrow::after {
+	content: unset !important;
+}
+
+.picker_wrapper button, .picker_wrapper input {
+	box-shadow: none !important;
+}
+
+.picker_editor input {
+	background: var(--surface_variant_dark) !important;
+	border-radius: 4px !important;
+	border-bottom-left-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+}
+
+.picker_editor input:active {
+	border-bottom: 1px solid var(--secondary) !important;
+}
+
+.picker_alpha, .picker_sample {
+	box-shadow: 0 0 0 1px var(--divider) !important;
 }
