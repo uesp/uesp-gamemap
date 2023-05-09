@@ -28,6 +28,7 @@
     import Divider from "./Divider.svelte";
     import Icon from "./Icon.svelte";
     import ColourPicker from "./ColourPicker.svelte";
+    import AvatarComponent from "./AvatarComponent.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -177,19 +178,69 @@
             <div id="editor_pane">
 
                 <FormGroup title="General" icon="description">
-                    <!-- Name -->
-                    <Textbox
-                        label={(isWorld ? "Display " : "") + "Name"}
-                        text={isWorld ? place.displayName : place.name }
-                        placeholder="Enter {objectType} name..."
-                        tooltip="User facing {objectType} name"
-                        on:change={(e) => {
-                            if (linkWikiPage) {
-                                modify("wikiPage", e.detail)
-                            }
-                            modify(isWorld ? "displayName" : "name", e.detail)
-                        }}>
-                    </Textbox>
+
+                    <header class="header">
+                        <AvatarComponent>
+
+                            <!-- Name -->
+                            <Textbox
+                                text={isWorld ? place.displayName : place.name }
+                                hint={(isWorld ? "Display " : "") + "Name"}
+                                tooltip="User facing {objectType} name"
+                                on:change={(e) => {
+                                    if (linkWikiPage) {
+                                        modify("wikiPage", e.detail)
+                                    }
+                                    modify(isWorld ? "displayName" : "name", e.detail)
+                                }}>
+                            </Textbox>
+
+                            <!-- Parent ID (for World) -->
+                            {#if isWorld}
+                                <!-- svelte-ignore missing-declaration -->
+                                <Textbox
+                                    hint="Parent ID"
+                                    text={place.parentID}
+                                    tooltip="Parent world ID"
+                                    type="number"
+                                    subtext={(place.parentID && !isNaN(place.parentID) && gamemap.getWorldDisplayNameFromID(place.parentID)) ? gamemap.getWorldDisplayNameFromID(place.parentID) : "Invalid World ID!"}
+                                    on:change={(e) => modify("parentID", e.detail)}>
+                                </Textbox>
+                            {/if}
+
+                            <!-- Destination ID (for Locations) -->
+                            {#if isLocation}
+                                <!-- svelte-ignore missing-declaration -->
+                                {#if place.locType != LOCTYPES.PATH}
+                                    <Textbox
+                                        hint="Destination ID"
+                                        text={place.destinationID}
+                                        subtext="+ for world, - for location"
+                                        tooltip="Location/world destination ID"
+                                        type="number"
+                                        on:change={(e) => modify("destinationID", e.detail)}>
+                                    </Textbox>
+                                {/if}
+                            {/if}
+
+
+                        </AvatarComponent>
+
+                        <!-- avatar component -->
+
+
+                        <!-- text div -->
+                            <!-- name -->
+                            <!-- destination id / parent ID -->
+                        <!-- text div -->
+
+                        <!-- divider -->
+
+                    </header>
+
+
+
+
 
                     <!-- Wiki Page -->
                     <Switch
@@ -213,35 +264,7 @@
                         </Textbox>
                     </Switch>
 
-                    <!-- Parent ID (for World) -->
-                    {#if isWorld}
-                        <!-- svelte-ignore missing-declaration -->
-                        <Textbox
-                            label="Parent ID"
-                            text={place.parentID}
-                            placeholder="Enter parent world ID..."
-                            tooltip="Parent world ID"
-                            type="number"
-                            subtext={(place.parentID && !isNaN(place.parentID) && gamemap.getWorldDisplayNameFromID(place.parentID)) ? gamemap.getWorldDisplayNameFromID(place.parentID) : "Invalid World ID!"}
-                            on:change={(e) => modify("parentID", e.detail)}>
-                        </Textbox>
-                    {/if}
 
-                    <!-- Destination ID (for Locations) -->
-                    {#if isLocation}
-                        <!-- svelte-ignore missing-declaration -->
-                        {#if place.locType != LOCTYPES.PATH}
-                            <Textbox
-                                label="Destination ID"
-                                text={place.destinationID}
-                                placeholder="Enter destination ID..."
-                                subtext="+ for world, - for location"
-                                tooltip="Location/world destination ID"
-                                type="number"
-                                on:change={(e) => modify("destinationID", e.detail)}>
-                            </Textbox>
-                        {/if}
-                    {/if}
 
                     <!-- Location Type (for Locations) -->
                     {#if isLocation}

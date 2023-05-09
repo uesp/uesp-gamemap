@@ -318,8 +318,9 @@ export default class Location {
 			query += `&locheight=${this.iconSize}&locwidth=${this.iconSize}`;
 		}
 
-		// query += '&x=' + this.x;
-		// query += '&y=' + this.y;
+		// query += '&x=' + (this.coords[0].x * gamemap.getWorldFromID(this.worldID).maxX)
+		// query += '&y=' + (this.coords[0].y * gamemap.getWorldFromID(this.worldID).maxY);
+
 		query += `&displaylevel=${+this.displayLevel + +gamemap.getWorldFromID(this.worldID).zoomOffset}`;
 
 		query += `&displaydata=${encodeURIComponent(JSON.stringify(this.displayData))}`;
@@ -328,7 +329,7 @@ export default class Location {
 		query += `&revisionid=${this.revisionID}`;
 		query += `&db=${gamemap.getMapConfig().database}&visible=1`;
 
-		return query;
+		//return query;
 	}
 
 	// get query for deleting this location

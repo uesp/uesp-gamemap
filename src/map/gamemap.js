@@ -1199,24 +1199,25 @@ export default class Gamemap {
 	getLocationLabel(location) {
 
 		let offset = [0, 0];
-		const OFFSET_AMOUNT = this.getMapConfig().iconLabelOffset;
+		const X_OFFSET = this.getMapConfig().iconLabelXOffset;
+		const Y_OFFSET = this.getMapConfig().iconLabelYOffset;
 
 		// set label offset based on direction
 		switch (location.labelDirection) {
 			case "top":
-				offset = [0, -OFFSET_AMOUNT];
+				offset = [0, -Y_OFFSET];
 				break;
 			case "bottom":
-				offset = [0, OFFSET_AMOUNT];
+				offset = [0, Y_OFFSET];
 				break;
 			case "left":
-				offset = [-OFFSET_AMOUNT, 0];
+				offset = [-X_OFFSET, 0];
 				break;
 			case "right":
-				offset = [OFFSET_AMOUNT, 0];
+				offset = [X_OFFSET, 0];
 				break;
 			case "auto":
-				offset = [OFFSET_AMOUNT, 0];
+				offset = [Y_OFFSET, 0];
 				break;
 		}
 		return {
