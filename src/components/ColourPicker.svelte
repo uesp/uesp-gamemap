@@ -53,7 +53,7 @@
 		{/if}
 
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<div class="colour-picker" class:hasTextbox={showTextBox} on:click={() => picker.show()}>
+		<div class="colour-picker" class:hasTextbox={showTextBox} on:click={() => picker.show()} title="Select colour">
 			<div class="colour-preview" bind:this={colourPickerPreview}/>
 		</div>
 		<!-- svelte-ignore a11y-missing-content -->

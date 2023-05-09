@@ -145,7 +145,7 @@ class GameMap
 	public function canEditMap($dbPrefix)
 	{
 
-		if ($isLocalhost) return true;
+		if ($this->isLocalhost) return true;
 
 		if ($dbPrefix === null) return false;
 
@@ -401,7 +401,7 @@ class GameMap
 		if ($userId == null) $userId = 0;
 		if ($userName == null) $userName = $_SERVER["REMOTE_ADDR"];
 		//Special case for local edits or for dev/testing
-		if ($isLocalhost) $userName = "Bot";
+		if ($this->isLocalhost) $userName = "Bot";
 
 		$userName = $this->db->real_escape_string($userName);
 
