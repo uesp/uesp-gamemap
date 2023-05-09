@@ -23,6 +23,7 @@
 
     // Map icon info
     "iconSize" : 32,
+    "iconLabelOffset" : 4,
     "icons": {
         "1"  : "Artifact Gate",
         "2"  : "Bank",
@@ -200,6 +201,7 @@
         "179": "Cave (Group)",
         "180": "Cemetary (Group)",
         "181": "Crypt (Group)",
+        "231": "Dolmen (Group)",
         "182": "Dwemer Ruin (Group)",
         "183": "Estate (Group)",
         "184": "Gate (Group)",
@@ -248,6 +250,7 @@
         "227": "Antiquity",
         "228": "Furnisher",
         "229": "Quest (Story)",
-        "230": "Tales of Tribute"
+        "230": "Tales of Tribute",
+        "232": "Telvanni Tower"
     }
 }

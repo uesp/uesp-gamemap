@@ -320,7 +320,8 @@ export default class Location {
 
 		// query += '&x=' + this.x;
 		// query += '&y=' + this.y;
-		query += `&displaylevel=${this.displayLevel}`;
+		query += `&displaylevel=${+this.displayLevel + +gamemap.getWorldFromID(this.worldID).zoomOffset}`;
+
 		query += `&displaydata=${encodeURIComponent(JSON.stringify(this.displayData))}`;
 
 		query += `&destid=${-(this.destinationID)}`;

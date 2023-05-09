@@ -1199,7 +1199,7 @@ export default class Gamemap {
 	getLocationLabel(location) {
 
 		let offset = [0, 0];
-		const OFFSET_AMOUNT = 5;
+		const OFFSET_AMOUNT = this.getMapConfig().iconLabelOffset;
 
 		// set label offset based on direction
 		switch (location.labelDirection) {

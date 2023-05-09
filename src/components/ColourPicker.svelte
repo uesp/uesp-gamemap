@@ -49,7 +49,7 @@
 
 	<div class="colour-picker-container" style="position: relative;">
 		{#if showTextBox}
-			 <Textbox placeholder={placeholder} block={true} label={label} text={colour} bind:value={colour}/>
+			 <Textbox placeholder={placeholder} block={true} label={label} text={colour} on:change={(e) => colour = e.detail}/>
 		{/if}
 
 		<!-- svelte-ignore a11y-click-events-have-key-events -->

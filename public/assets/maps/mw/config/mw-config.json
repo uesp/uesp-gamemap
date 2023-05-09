@@ -25,6 +25,7 @@
 
     // Map icon info
     "iconSize" : 16,
+    "iconLabelOffset" : 5,
     "icons": {
         "0": "None",
         "1": "City",

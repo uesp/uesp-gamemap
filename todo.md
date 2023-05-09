@@ -1,6 +1,9 @@
 ## last week:
 
 
+- added "iconLabelOffset" property to mapconfig (default 0, 5 on MW, OB, TR) as eso's icon labels were too far from the centre with 5 (the previous global value)
+
+
 ## dave stuff:
 - 32px skyrim icons
 - cave interior maps for skyrim, ob, mw

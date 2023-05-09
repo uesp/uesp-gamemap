@@ -26,6 +26,7 @@
 
     // Map icon info
     "iconSize" : 32,
+    "iconLabelOffset" : 0,
     "icons": {
         // icon list goes here...
     },
