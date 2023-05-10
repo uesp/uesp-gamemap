@@ -4,6 +4,12 @@
 - added "iconLabelOffset" property to mapconfig (default 0, 5 on MW, OB, TR) as eso's icon labels were too far from the centre with 5 (the previous global value)
 
 
+
+
+- compacted/prettified the ui a bit by adding the icon of the marker at the top next to the name
+>> clicking the icon does the dropdown as usual
+>> besides looking pretty it fixes an annoying bug with long dropdown lists not scrolling properly
+
 ## dave stuff:
 - 32px skyrim icons
 - cave interior maps for skyrim, ob, mw

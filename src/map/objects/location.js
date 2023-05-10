@@ -293,7 +293,7 @@ export default class Location {
 
 		// if we were a path before and are now an area or a marker, add generic icon
 		if (this.locType == LOCTYPES.PATH && (locType == LOCTYPES.MARKER || locType == LOCTYPES.AREA)) {
-			this.icon = Object.keys(gamemap.getMapConfig().icons)[0];
+			this.icon = null;
 			if (this.labelDirection == null) {
 				this.getLabelOffsets(1);
 			}

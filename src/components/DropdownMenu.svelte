@@ -15,7 +15,9 @@
     export let label;
     export let hint;
     export let tooltip;
-    let id = Math.random();
+    export let align = "left";
+    export let invisible;
+    let id = Math.random().toString(36).substr(2, 10);
     let dropdown;
     let selectedIcon;
 
@@ -23,9 +25,12 @@
 
     // initiate dropdown menu
     onMount(async () => {
-        M.FormSelect.init(document.querySelectorAll('select'), {
-            dropdownOptions : {alignment: 'right', constrainWidth: false}
+
+        M.FormSelect.init(document.querySelectorAll(`#form-select-${id}`), {
+            dropdownOptions : {alignment: align, constrainWidth: false}
         });
+
+
         onChanged();
     });
 
@@ -50,14 +55,16 @@
 
 <markup>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="input-field col s12" on:click={onChanged} bind:this={dropdown}>
-        <label class="label truncate" title={tooltip} for="form-select-{id}">{label}</label>
+    <div class="input-field col s12" on:click={onChanged} bind:this={dropdown} class:invisible={invisible}>
+        {#if label}
+             <label class="label truncate" title={tooltip} for="form-select-{id}">{label}</label>
+        {/if}
         <select id="form-select-{id}" on:change={onChanged}>
             <!-- Hint -->
             {#if hint != null}<option value="" disabled>{hint}</option>{/if}
             <slot> <!-- Menu items go here --> </slot>
         </select>
-        {#if selectedIcon}
+        {#if selectedIcon && !invisible}
              <!-- svelte-ignore a11y-missing-attribute -->
              <img class="selected-icon" src={selectedIcon}>
         {/if}

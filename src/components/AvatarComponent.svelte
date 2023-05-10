@@ -7,80 +7,78 @@
 
 <script>
 
+    // import svelte stuff
+    import { createEventDispatcher } from "svelte";
+
     // import ui components
     import Icon from "./Icon.svelte";
-    import { onMount } from 'svelte';
+    import DropdownMenu from './DropdownMenu.svelte';
 
     //state variables
     export let icon;
     export let isWorld;
     export let locType;
-    let canHaveIcon = true;
+    let canChangeIcon = true;
+    let showOverlay = false;
+    let iconTooltip;
+
+    const dispatch = createEventDispatcher();
 
     $: {
-
-        if (icon == null) {
-            if (isWorld) {
-                icon = "public";
-            } else if (locType != LOCTYPES.PATH) {
-                icon = "add";
-            } else {
-                icon = "location_on"
-            }
-        } else {
-            print(icon);
-            icon = gamemap.getMapConfig().iconPath + icon + ".png";
-        }
-
-        canHaveIcon = locType != LOCTYPES.PATH && !isWorld;
+        icon = (icon != null) ? icon = gamemap.getMapConfig().iconPath + icon + ".png" : isWorld ? "public" : (locType != LOCTYPES.PATH) ? "add" : "location_on";
+        canChangeIcon = locType != LOCTYPES.PATH && !isWorld;
+        iconTooltip = (canChangeIcon) ? icon.includes("/") ? gamemap.getMapConfig().icons[icon.replace(/\D/g, "")] : "Add Icon" : (isWorld) ? "World" : "Location";
     }
 
+    function change(iconID) {
+        print(iconID);
 
-    onMount(async() => {
-        //icon = (icon != null) ?  : (isWorld) ? "public" : locType != LOCTYPES.PATH ? "add_circle" : icon;
-        print("afdadada");
-        print(icon);
-    });
-
-
-    //if loctype == line, and icon null, then add icon
-
-    let showOverlay = false;
-
-    // hover over avatar = "change icon"
-    // also tooltip of name of icon
-    // click icon, opens dropdown with list of icons
-
-
+        if (iconID != "null" || iconID == null) {
+            dispatch("change", Number(iconID));
+            icon = iconID;
+        } else {
+            dispatch("change", null);
+            icon = null;
+        }
+    }
 
 </script>
-
 
 <markup>
 
     <div class="avatar_container">
         <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 
-        {#if canHaveIcon}
-             <div class="avatar circle" title="icon name go here" class:waves-effect={canHaveIcon} on:mouseover={() => {showOverlay = canHaveIcon}} on:mouseout={() => showOverlay = false}>
+        <div class="avatar circle" title={iconTooltip} class:waves-effect={canChangeIcon} on:mouseover={() => {showOverlay = canChangeIcon}} on:mouseout={() => showOverlay = false}>
 
-                 {#if icon && icon.includes("/")}
+            {#if icon}
+                 {#if icon.includes("/")}
                      <!-- svelte-ignore a11y-missing-attribute -->
                      <img src={icon}/>
                  {:else}
                      <Icon size="medium" name={icon}></Icon>
                  {/if}
+            {/if}
 
+            <!-- svelte-ignore missing-declaration -->
+            {#if canChangeIcon}
+                {@const iconIDs = Object.keys(gamemap.getMapConfig().icons)}
+                {@const iconNames = Object.values(gamemap.getMapConfig().icons)}
+                <DropdownMenu hint="Select icon..." on:change={(e) => change(e.detail)} invisible={true}>
+                    <option value={null} selected={icon == null}>None</option>
+                    {#each iconNames as name, i}
+                        <option value={iconIDs[i]} selected={icon.toString() == iconIDs[i]} data-icon={gamemap.getMapConfig().iconPath + iconIDs[i] + ".png"}>{name}</option>
+                    {/each}
+                </DropdownMenu>
+            {/if}
 
-                 <!-- {@const iconTooltip = (icon.includes("/")) ? gamemap.getMapConfig().icons[icon.replace(/\D/g, "")] : (destinationID > 0) ? "World" : "Location"} -->
+            {#if showOverlay}
+                <div class="overlay">
+                    <b class="overlay-text">Select Icon</b>
+                </div>
+            {/if}
 
-                 {#if showOverlay}
-                     <div class="overlay">
-                         <b class="overlay-text">Change Icon</b>
-                     </div>
-                 {/if}
-             </div>
-        {/if}
+        </div>
 
         <div class="form_container">
             <slot>
@@ -89,50 +87,6 @@
         </div>
 
     </div>
-
-
-
-    <!-- <a class='collection-item waves-effect mdc-ripple-surface list-item' class:avatar={icon != null} on:click={onClicked} class:compact={compact}>
-     svelte-ignore missing-declaration -->
-        <!-- {#if icon}
-            {@const iconTooltip = (icon.includes("/")) ? gamemap.getMapConfig().icons[icon.replace(/\D/g, "")] : (destinationID > 0) ? "World" : "Location"}
-            {#if icon.includes("/")} -->
-                <!-- svelte-ignore missing-declaration -->
-                <!-- <img class='circle' src={icon} width={gamemap.getMapConfig().iconSize} height={gamemap.getMapConfig().iconSize} title={iconTooltip}/>
-            {:else}
-                <i class="material-icons circle" title={iconTooltip}>{icon}</i>
-            {/if}
-            {#if action}
-                {@const icon = (action.includes("edit") ? "edit" : action.includes("delete") ? "delete_forever" : "add")}
-                <div title={comment} class="action" class:add={action.includes("add")} class:delete={action.includes("delete")} class:edit={action.includes("edit")}>
-                    <Icon name={icon} size=13></Icon>
-                </div>
-            {/if}
-        {/if}
-        <div class="text"> -->
-            <!-- svelte-ignore missing-declaration -->
-            <!-- <div class="title">
-                <b class="list_title" class:bold={bold} title={title}>{title}</b>
-                {#if timestamp}
-                    {@const UTCDate = new Date(Date.parse(timestamp))}
-                    {@const localDate = UTCtoLocalDate(UTCDate)}
-                    <small class="timestamp" title={localDate}>{getTimeAgo(Date.parse(localDate))}</small>
-                {/if}
-            </div>
-            <div class="subtitle">
-                {#if subtitle || user}
-                    <small class="list_subtitle" style='color: var(--text_low_emphasis);'>{(user && !subtitle) ? "" : subtitle}</small>
-                {/if}
-                {#if user}
-                    <small class="author">
-                        <Icon name={user.toLowerCase() == "bot" ? "smart_toy" : "person"} size="tiny"/>
-                        {(user.toLowerCase() == "bot") ? " "+ user : user}
-                    </small>
-                {/if}
-            </div>
-        </div>
-    </a> -->
-
 
 </markup>
 
@@ -143,6 +97,7 @@
         padding-bottom: 8px;
         display: flex;
         --avatar_size: 80px;
+        z-index: 9999;
     }
 
     .avatar {
@@ -154,6 +109,7 @@
         place-items: center;
         place-content: center;
         margin-right: 12px;
+        z-index: 9999999999999999;
     }
 
     .form_container {

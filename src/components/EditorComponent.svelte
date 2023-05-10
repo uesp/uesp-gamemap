@@ -180,9 +180,7 @@
                 <FormGroup title="General" icon="description">
 
                     <header class="header">
-                        <AvatarComponent  icon={place.icon} locType={place.locType} isWorld={isWorld}>
-
-
+                        <AvatarComponent icon={place.icon} locType={place.locType} isWorld={isWorld} on:change={(e) => modify("icon", e.detail)}>
 
                             <!-- Name -->
                             <Textbox
@@ -228,21 +226,20 @@
 
                         </AvatarComponent>
 
-                        <!-- avatar component -->
-
-
-                        <!-- text div -->
-                            <!-- name -->
-                            <!-- destination id / parent ID -->
-                        <!-- text div -->
-
-                        <!-- divider -->
-
                     </header>
 
-
-
-
+                    <!-- Location Type (for Locations) -->
+                    {#if isLocation}
+                        <!-- svelte-ignore missing-declaration -->
+                        <SegmentedButton
+                            label="Location Type"
+                            entries={LOCTYPES}
+                            tooltip="Location type (marker or area)"
+                            hint="Caution: changing location types is lossy"
+                            selected={Object.values(LOCTYPES).indexOf(place.locType)}
+                            on:change={(e) => {place.setLocType(e.detail); modify("locType", e.detail)}}>
+                        </SegmentedButton>
+                    {/if}
 
                     <!-- Wiki Page -->
                     <Switch
@@ -265,21 +262,6 @@
                          on:change={(e) => modify("wikiPage", e.detail)}>
                         </Textbox>
                     </Switch>
-
-
-
-                    <!-- Location Type (for Locations) -->
-                    {#if isLocation}
-                        <!-- svelte-ignore missing-declaration -->
-                        <SegmentedButton
-                            label="Location Type"
-                            entries={LOCTYPES}
-                            tooltip="Location type (marker or area)"
-                            hint="Caution: changing location types is lossy"
-                            selected={Object.values(LOCTYPES).indexOf(place.locType)}
-                            on:change={(e) => {place.setLocType(e.detail); modify("locType", e.detail)}}>
-                        </SegmentedButton>
-                    {/if}
 
                     <!-- Description -->
                     <Textbox label="Description"
@@ -353,22 +335,10 @@
                         </Textbox>
 
                         <!-- svelte-ignore missing-declaration -->
-                        {#if place.locType == LOCTYPES.MARKER || place.locType == LOCTYPES.AREA}
-                            {@const iconIDs = Object.keys(gamemap.getMapConfig().icons)}
-                            {@const iconNames = Object.values(gamemap.getMapConfig().icons)}
-                             <DropdownMenu label="Icon" hint="Select location icon..." on:change={(e) => modify("icon", Number(e.detail))}>
-                                <option value={null} selected={place.icon == null}>None</option>
-                                {#each iconNames as name, i}
-                                    <option value={iconIDs[i]} selected={place.icon == iconIDs[i]} data-icon={gamemap.getMapConfig().iconPath + iconIDs[i] + ".png"}>{name}</option>
-                                {/each}
-                             </DropdownMenu>
-                        {/if}
-
-                        <!-- svelte-ignore missing-declaration -->
                         {#if place.locType != LOCTYPES.PATH}
                             {@const posIDs = Object.keys(LABEL_POSITIONS)}
                             {@const posNames = Object.values(LABEL_POSITIONS)}
-                            <DropdownMenu label="Label Direction" hint="Select label direction..." on:change={(e) => {place.getLabelOffsets(Number(e.detail)); modify("labelPos", Number(e.detail), true)}}>
+                            <DropdownMenu label="Label Direction" hint="Select label direction..." align="right" on:change={(e) => {place.getLabelOffsets(Number(e.detail)); modify("labelPos", Number(e.detail), true)}}>
                                 {#each posNames as posName, i}
                                     <option value={posIDs[i]} selected={place.displayData.labelPos == posIDs[i]}>{posName}</option>
                                 {/each}

@@ -988,3 +988,33 @@ textarea.materialize-textarea {
 	margin-top: auto !important;
 	margin-bottom: auto !important;
 }
+
+.invisible {
+	position: absolute !important;
+	height: inherit !important;
+	margin-top: 0px !important;
+	margin-bottom: 0px !important;
+}
+
+.invisible .select-wrapper {
+	width: 100% !important;
+	height: 100% !important;
+	float: unset !important;
+}
+
+.invisible .select-wrapper .dropdown-trigger {
+	height: 100% !important;
+	opacity: 0 !important;
+}
+
+.invisible .select-wrapper .dropdown-content {
+	position: fixed !important;
+}
+
+.invisible .select-wrapper .caret {
+	display: none !important;
+}
+
+.invisible .select-wrapper .selected-icon {
+	display: none !important;
+}
