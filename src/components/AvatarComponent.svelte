@@ -97,6 +97,7 @@
         display: flex;
         --avatar_size: 80px;
         z-index: 9999;
+        padding-bottom: 12px;
     }
 
     .avatar {

@@ -206,10 +206,8 @@
                                     subtext={(place.parentID && !isNaN(place.parentID) && gamemap.getWorldDisplayNameFromID(place.parentID)) ? gamemap.getWorldDisplayNameFromID(place.parentID) : "Invalid World ID!"}
                                     on:change={(e) => modify("parentID", e.detail)}>
                                 </Textbox>
-                            {/if}
-
                             <!-- Destination ID (for Locations) -->
-                            {#if isLocation}
+                            {:else if isLocation}
                                 <!-- svelte-ignore missing-declaration -->
                                 {#if place.locType != LOCTYPES.PATH}
                                     <Textbox
@@ -223,23 +221,9 @@
                                 {/if}
                             {/if}
 
-
                         </AvatarComponent>
 
                     </header>
-
-                    <!-- Location Type (for Locations) -->
-                    {#if isLocation}
-                        <!-- svelte-ignore missing-declaration -->
-                        <SegmentedButton
-                            label="Location Type"
-                            entries={LOCTYPES}
-                            tooltip="Location type (marker or area)"
-                            hint="Caution: changing location types is lossy"
-                            selected={Object.values(LOCTYPES).indexOf(place.locType)}
-                            on:change={(e) => {place.setLocType(e.detail); modify("locType", e.detail)}}>
-                        </SegmentedButton>
-                    {/if}
 
                     <!-- Wiki Page -->
                     <Switch
@@ -248,20 +232,35 @@
                         label={"Use " + (isWorld ? "Display Name" : "Name") + " as Wiki Page"}
                         tooltip={`Use this ${objectType}'s ${(isWorld ? "display name" : "name")} as its wiki page`}
                         on:change={(e) => {
-                             if (e.detail) {
-                                modify("wikiPage", isWorld ? place.displayName : place.name);
-                             } else {
-                                modify("wikiPage", "");
-                             }
-                             linkWikiPage = e.detail;
+                                if (e.detail) {
+                                    modify("wikiPage", isWorld ? place.displayName : place.name);
+                                } else {
+                                    modify("wikiPage", "");
+                                }
+                                linkWikiPage = e.detail;
                         }}>
                         <Textbox label="Wiki Page"
-                         text={place.wikiPage}
-                         placeholder="Enter wiki page..."
-                         tooltip="Wiki page name"
-                         on:change={(e) => modify("wikiPage", e.detail)}>
+                            text={place.wikiPage}
+                            placeholder="Enter wiki page..."
+                            tooltip="Wiki page name"
+                            on:change={(e) => modify("wikiPage", e.detail)}>
                         </Textbox>
                     </Switch>
+
+                    <!-- Location Type (for Locations) -->
+                    {#if isLocation}
+                        <!-- svelte-ignore missing-declaration -->
+                        <SegmentedButton
+                            label="Location Type"
+                            entries={LOCTYPES}
+                            tooltip="Location type (marker, path or area)"
+                            hint="Caution: changing location types is lossy"
+                            selected={Object.values(LOCTYPES).indexOf(place.locType)}
+                            on:change={(e) => {place.setLocType(e.detail); modify("locType", e.detail)}}>
+                        </SegmentedButton>
+                    {/if}
+
+
 
                     <!-- Description -->
                     <Textbox label="Description"
@@ -365,10 +364,6 @@
 
                      </FormGroup>
                 {/if}
-
-                <div style="text-align: center;">
-                    <Button text="Edit Handles" icon="polyline"/>
-                </div>
 
                 <!-- General info -->
                 {#if place.id > 0}

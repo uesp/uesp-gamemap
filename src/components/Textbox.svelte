@@ -66,10 +66,7 @@
         }
     });
 
-    function typeAction(node) {
-        node.type = type;
-    }
-
+    function typeAction(node) {node.type = type}
 </script>
 
 <markup>
@@ -87,6 +84,7 @@
                     use:typeAction
                     min={min}
                     max={max}
+                    step="any"
                     class:hideSpinner={hideSpinner}>
             {/if}
             {#if !placeholder}

@@ -10,6 +10,13 @@
 >> clicking the icon does the dropdown as usual
 >> besides looking pretty it fixes an annoying bug with long dropdown lists not scrolling properly
 
+
+
+
+- added educational tip in tooltips to ctrl + click to open popup
+
+fix: firefox complaining with decimalised values in fields
+
 ## dave stuff:
 - 32px skyrim icons
 - cave interior maps for skyrim, ob, mw

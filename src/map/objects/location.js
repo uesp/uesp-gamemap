@@ -151,6 +151,8 @@ export default class Location {
 			content += this.description + "</div>";
 		}
 
+		content += "<small class='tooltip-tip'>Ctrl + click for more</small>";
+
 		return content;
 	}
 

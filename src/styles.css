@@ -1022,3 +1022,13 @@ textarea.materialize-textarea {
 .invisible .select-wrapper .selected-icon {
 	display: none !important;
 }
+
+.avatar_container .form_container .textbox .input-field .supporting-text{
+	position: absolute !important;
+}
+
+
+.tooltip-tip {
+	color: var(--text_low_emphasis);
+	text-transform: uppercase;
+}
