@@ -94,7 +94,6 @@
 
     .avatar_container {
         padding-top: 12px;
-        padding-bottom: 8px;
         display: flex;
         --avatar_size: 80px;
         z-index: 9999;
@@ -133,7 +132,9 @@
         font-size: 1.2rem;
         text-align: center;
         display: flex;
-        backdrop-filter: blur(2px);
+        backdrop-filter: opacity(90%);
+        backdrop-filter: brightness(60%);
+        backdrop-filter: contrast(40%);
     }
 
     .overlay-text {

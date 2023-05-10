@@ -1011,6 +1011,10 @@ textarea.materialize-textarea {
 	position: fixed !important;
 }
 
+.invisible .select-wrapper .dropdown-content li img {
+	z-index: 2 !important;
+}
+
 .invisible .select-wrapper .caret {
 	display: none !important;
 }
