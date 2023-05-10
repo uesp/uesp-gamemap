@@ -180,7 +180,9 @@
                 <FormGroup title="General" icon="description">
 
                     <header class="header">
-                        <AvatarComponent>
+                        <AvatarComponent  icon={place.icon} locType={place.locType} isWorld={isWorld}>
+
+
 
                             <!-- Name -->
                             <Textbox

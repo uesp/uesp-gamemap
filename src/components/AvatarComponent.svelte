@@ -7,19 +7,49 @@
 
 <script>
 
+    // import ui components
     import Icon from "./Icon.svelte";
+    import { onMount } from 'svelte';
+
+    //state variables
+    export let icon;
+    export let isWorld;
+    export let locType;
+    let canHaveIcon = true;
+
+    $: {
+
+        if (icon == null) {
+            if (isWorld) {
+                icon = "public";
+            } else if (locType != LOCTYPES.PATH) {
+                icon = "add";
+            } else {
+                icon = "location_on"
+            }
+        } else {
+            print(icon);
+            icon = gamemap.getMapConfig().iconPath + icon + ".png";
+        }
+
+        canHaveIcon = locType != LOCTYPES.PATH && !isWorld;
+    }
 
 
+    onMount(async() => {
+        //icon = (icon != null) ?  : (isWorld) ? "public" : locType != LOCTYPES.PATH ? "add_circle" : icon;
+        print("afdadada");
+        print(icon);
+    });
 
 
-    let canChangeIcon = false;
+    //if loctype == line, and icon null, then add icon
+
+    let showOverlay = false;
 
     // hover over avatar = "change icon"
     // also tooltip of name of icon
     // click icon, opens dropdown with list of icons
-
-
-    //icon={(RCItem.icon != null) ? gamemap.getMapConfig().iconPath + RCItem.icon + ".png" : (isWorld) ? "public" : "location_on"}
 
 
 
@@ -29,12 +59,28 @@
 <markup>
 
     <div class="avatar_container">
-        <div class="avatar circle">
-            <Icon name="sun"></Icon>
-            <div class="overlay">
-                <b>Change Icon</b>
-            </div>
-        </div>
+        <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+
+        {#if canHaveIcon}
+             <div class="avatar circle" title="icon name go here" class:waves-effect={canHaveIcon} on:mouseover={() => {showOverlay = canHaveIcon}} on:mouseout={() => showOverlay = false}>
+
+                 {#if icon && icon.includes("/")}
+                     <!-- svelte-ignore a11y-missing-attribute -->
+                     <img src={icon}/>
+                 {:else}
+                     <Icon size="medium" name={icon}></Icon>
+                 {/if}
+
+
+                 <!-- {@const iconTooltip = (icon.includes("/")) ? gamemap.getMapConfig().icons[icon.replace(/\D/g, "")] : (destinationID > 0) ? "World" : "Location"} -->
+
+                 {#if showOverlay}
+                     <div class="overlay">
+                         <b class="overlay-text">Change Icon</b>
+                     </div>
+                 {/if}
+             </div>
+        {/if}
 
         <div class="form_container">
             <slot>
@@ -92,32 +138,59 @@
 
 <style>
 
-    :root {
-        --avatar_size: 90px;
-    }
-
     .avatar_container {
         padding-top: 12px;
         padding-bottom: 8px;
         display: flex;
+        --avatar_size: 80px;
     }
 
     .avatar {
         flex-shrink: 0;
         width: var(--avatar_size);
         height: var(--avatar_size);
-    }
-
-    .avatar:hover {
-        background-color: var(--shadow) !important;
+        position: relative;
+        display: flex;
+        place-items: center;
+        place-content: center;
+        margin-right: 12px;
     }
 
     .form_container {
         flex-grow: 1;
-        margin-left: 12px;
         display: flex;
         flex-direction: column;
         place-content: center;
     }
 
+    .waves-effect:hover {
+        background-color: var(--shadow) !important;
+    }
+
+    .overlay {
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        text-anchor: middle;
+        font-size: 1.2rem;
+        text-align: center;
+        display: flex;
+        backdrop-filter: blur(2px);
+    }
+
+    .overlay-text {
+        margin-top: auto;
+        margin-bottom: auto;
+        place-self: center;
+        color: white;
+    }
+
+    img {
+        height: 100%;
+        width: 100%;
+        padding: var(--padding_medium);
+        object-fit: cover;
+    }
 </style>
