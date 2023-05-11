@@ -39,6 +39,7 @@
     let isLocation = data instanceof Location;
     let isWorld = data instanceof World;
     let editor;
+    let editorWindow;
     let saveButton;
     let haveSaved = false;
     let objectType = (isWorld) ? "world" : "location";
@@ -81,6 +82,9 @@
                 }
             });
         }
+
+        // ensure editor window is scrolled to top on load
+        setTimeout(function() { editorWindow.scrollTop = 0 }, 1);
     });
 
     function save() {
@@ -174,7 +178,7 @@
 
 <markup>
     <div id="editor" out:cleanUp bind:this={editor}>
-        <div class="editor_window">
+        <div class="editor_window" bind:this={editorWindow}>
             <div id="editor_pane">
 
                 <FormGroup title="General" icon="description">
