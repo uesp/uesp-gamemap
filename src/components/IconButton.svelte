@@ -55,11 +55,10 @@ iconButton element:
 
     function onClicked(e) {
 
-        print(e)
 
         if (checked != null) {
             checked = !checked;
-            dispatch("checked", checked);
+            dispatch("checked", {checked: checked, shift: e.shiftKey});
         } else {
             dispatch("click", "clicked");
         }

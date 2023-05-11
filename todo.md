@@ -18,6 +18,9 @@
 
 fix: firefox complaining with decimalised values in fields
 
+
+qol: since shift clicking locations edits locations, i made shift clicking the edit button edit the current world
+
 ## dave stuff:
 - 32px skyrim icons
 - cave interior maps for skyrim, ob, mw
