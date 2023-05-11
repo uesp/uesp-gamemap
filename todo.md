@@ -13,10 +13,10 @@
 
 - fixed: tooltip wikipage + description was on one line (al donaba tomb)
 
-- added educational tip in tooltips to ctrl + click to open popup
 - added "click to enter" text in tooltips for locations that go to other maps
 
 fix: firefox complaining with decimalised values in fields
+fix: editor window scrolling down
 
 
 qol: since shift clicking locations edits locations, i made shift clicking the edit button edit the current world

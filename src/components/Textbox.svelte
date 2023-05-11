@@ -8,7 +8,6 @@
 <script>
 
     // import svelte stuff
-    import { onMount } from 'svelte';
     import { createEventDispatcher } from "svelte";
 
     // state vars
@@ -30,7 +29,7 @@
     const dispatch = createEventDispatcher();
 
     let textbox;
-    let id = Math.random();
+    let id = Math.random().toString(36).substr(2, 10); // generate unique random string
     block = (textArea != null) ? true : block;
 
     $: {
@@ -41,30 +40,15 @@
         }
     };
 
-    // on component load
-	onMount(async() => {
-
-        // if textbox is a text area, and contains text, force expand the textbox
-        if (textArea && text.length > 47) {
-            textbox.focus();
-            print("hello world");
-
-            setTimeout(function() {
-
-                // simulate keypress event to expand the textarea
-                var keyboardEvent = document.createEvent('KeyboardEvent');
-                var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? 'initKeyboardEvent' : 'initKeyEvent';
+    function expand() {
+        //simulate keypress event to expand the textarea
+        var keyboardEvent = document.createEvent('KeyboardEvent');
+        var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? 'initKeyboardEvent' : 'initKeyEvent';
 
 
-                keyboardEvent[initMethod]('keydown', true, true, window, false, false, false, false, 40, 0);
-                textbox.dispatchEvent(keyboardEvent);
-
-
-                document.activeElement.blur();
-
-            }, 1);
-        }
-    });
+        keyboardEvent[initMethod]('keydown', true, true, window, false, false, false, false, 40, 0);
+        textbox.dispatchEvent(keyboardEvent);
+    }
 
     function typeAction(node) {node.type = type}
 </script>
@@ -74,7 +58,9 @@
         {#if label}<p class="label" class:hasSubtext={subtext}>{label}</p>{/if}
         <div class="input-field" class:inline={!block} class:isNumber={type == "number"} class:compact={!label && type == "number"}>
             {#if textArea}
-                <textarea id={id} placeholder={(placeholder != null) ? placeholder : null} class="materialize-textarea input" bind:value={value} bind:this={textbox} style="margin-left: -8px; padding-left: 8px; width: calc(100%); padding-right: 8px;"/>
+                <textarea id={id} placeholder={(placeholder != null) ? placeholder : null} class="materialize-textarea input"
+                bind:value={value} bind:this={textbox} style="margin-left: -8px; padding-left: 8px; width: calc(100%); padding-right: 8px;"
+                on:click={expand}/>
             {:else}
                 <input id={id}
                     placeholder={(placeholder != null) ? placeholder : null}
