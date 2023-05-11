@@ -143,7 +143,7 @@ export default class Location {
 					${this.name} ${this.isClickable() ? "<i class='tiny material-icons'>open_in_browser</i>" : ""}
 				</span>
 			    <div class='tooltip-desc'>
-			   		${this.wikiPage != "" && this.name != this.wikiPage ? this.description + "</br>" + this.wikiPage : this.description}
+			   		${this.wikiPage != "" && this.name != this.wikiPage ? ((this.description != "") ? this.description + "</br>" : "") + this.wikiPage : this.description}
 				</div>
 			   	${this.isClickable() ? "<small class='tooltip-tip'>Click to enter</small>" : ""}`;
 	}

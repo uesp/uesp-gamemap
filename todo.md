@@ -11,7 +11,7 @@
 >> besides looking pretty it fixes an annoying bug with long dropdown lists not scrolling properly
 
 
-
+- fixed: tooltip wikipage + description was on one line (al donaba tomb)
 
 - added educational tip in tooltips to ctrl + click to open popup
 - added "click to enter" text in tooltips for locations that go to other maps
@@ -40,7 +40,6 @@ fix: firefox complaining with decimalised values in fields
 - redesign location popups
 - fix polygons disappearing when outer points are not viewable (consider centre point as well)
 - make embeded map watermark actually open in new tab
-- fix tooltip text: wikilink and detail not being put on separate lines
 - make labels clickable
 - make going to location centre zoom dynamically instead of always zoom level 5
 - add continuous zoom, markers popup on zoom rather than zoomend

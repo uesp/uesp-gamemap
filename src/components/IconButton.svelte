@@ -53,13 +53,19 @@ iconButton element:
         }
     });
 
-    function onClicked() {
+    function onClicked(e) {
+
+        print(e)
 
         if (checked != null) {
             checked = !checked;
             dispatch("checked", checked);
         } else {
             dispatch("click", "clicked");
+        }
+
+        if (e.shiftKey) {
+            dispatch("shiftClicked", "clicked");
         }
 
     }

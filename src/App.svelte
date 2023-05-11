@@ -332,7 +332,7 @@
 
 						<IconBar>
 							<slot:template slot="primary">
-								{#if canEdit}<IconButton icon="edit" tooltip="Toggle map editor" noMobile="true" checked={isEditing} on:checked={(e) => { editPane.show(e.detail)}}/>{/if}
+								{#if canEdit}<IconButton icon="edit" tooltip="Toggle map editor" noMobile="true" checked={isEditing} on:checked={(e) => { print(e); editPane.show(e.detail)}} on:shiftClicked={() => editPane.edit(gamemap.getCurrentWorld())}/>{/if}
 								<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu' lock={mapLock}>
 									<!-- Menu Items -->
 									<ul id='overflow-menu' class='dropdown-content'>
