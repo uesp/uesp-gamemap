@@ -41,6 +41,7 @@
     };
 
     function expand() {
+
         //simulate keypress event to expand the textarea
         var keyboardEvent = document.createEvent('KeyboardEvent');
         var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? 'initKeyboardEvent' : 'initKeyEvent';
@@ -176,3 +177,6 @@
     }
 
 </style>
+
+<!-- Global event listeners -->
+<svelte:window on:resize={() => {if(textArea) {expand()}}}/>

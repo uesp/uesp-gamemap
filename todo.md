@@ -18,6 +18,8 @@
 fix: firefox complaining with decimalised values in fields
 fix: editor window scrolling down
 
+fix: make description textbox resize with editor (didnt before)
+
 
 qol: since shift clicking locations edits locations, i made shift clicking the edit button edit the current world
 
