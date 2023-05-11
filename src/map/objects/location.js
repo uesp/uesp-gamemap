@@ -138,22 +138,14 @@ export default class Location {
 	}
 
 	getTooltipContent() {
-		let content = this.name;
 
-		// put icon by the tooltip to indicate that clicking will go to a different map
-		if (this.isClickable()){ content += "  <i class='tiny material-icons'>open_in_browser</i>"; }
-
-		content += "<div class='tooltip-desc'>";
-
-		if (this.wikiPage != "" && this.name != this.wikiPage) {
-			content += this.description + this.wikiPage + "</div>";
-		} else {
-			content += this.description + "</div>";
-		}
-
-		content += "<small class='tooltip-tip'>Ctrl + click for more</small>";
-
-		return content;
+		return `<span>
+					${this.name} ${this.isClickable() ? "<i class='tiny material-icons'>open_in_browser</i>" : ""}
+				</span>
+			    <div class='tooltip-desc'>
+			   		${this.wikiPage != "" && this.name != this.wikiPage ? this.description + "</br>" + this.wikiPage : this.description}
+				</div>
+			   	${this.isClickable() ? "<small class='tooltip-tip'>Click to enter</small>" : ""}`;
 	}
 
 	getPopupContent() {

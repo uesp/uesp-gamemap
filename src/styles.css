@@ -43,6 +43,7 @@
 	--text_link: rgba(138,90,68,1);
 	--text_on_primary: black;
 	--text_on_secondary: white;
+	--text_tertiary: rgba(255, 255, 255, 0.5);
 	--text_low_emphasis: #474747;
 
 	/* misc colours */
@@ -1029,6 +1030,6 @@ textarea.materialize-textarea {
 
 
 .tooltip-tip {
-	color: var(--text_low_emphasis);
+	color: var(--text_tertiary);
 	text-transform: uppercase;
 }

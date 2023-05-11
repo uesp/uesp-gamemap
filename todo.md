@@ -14,6 +14,7 @@
 
 
 - added educational tip in tooltips to ctrl + click to open popup
+- added "click to enter" text in tooltips for locations that go to other maps
 
 fix: firefox complaining with decimalised values in fields
 
@@ -41,9 +42,11 @@ fix: firefox complaining with decimalised values in fields
 - make embeded map watermark actually open in new tab
 - fix tooltip text: wikilink and detail not being put on separate lines
 - make labels clickable
+- make going to location centre zoom dynamically instead of always zoom level 5
 - add continuous zoom, markers popup on zoom rather than zoomend
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
+- make tooltips follow the mouse rather than the centre of the location
 - fix all markers showing up at initial load on highest zoom level
 - button to go to the map menu
 - button to go up a map, right click isnt intuitive
