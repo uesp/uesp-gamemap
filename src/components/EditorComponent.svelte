@@ -158,6 +158,8 @@
         print(place);
 
         unsavedChanges = !(JSON.stringify(place) === JSON.stringify(data));
+
+        gamemap.updateLocation(place);
     }
 
     function cleanUp() {

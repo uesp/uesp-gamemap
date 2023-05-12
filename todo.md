@@ -20,6 +20,16 @@ fix: editor window scrolling down
 
 fix: make description textbox resize with editor (didnt before)
 
+fix: prevent being able to click into other zones when editing
+
+tweak: hovering over icons now brings it to the front (vvardenfell foyada quarry)
+
+- fixed: currently editing marker disappearing when zoomed out of its display level
+tweak: prevent markers that are being edited from being culled
+
+tweak: made the edit pan a bit smarter, now zooms in for icons and zooms out for polygons depending on how big they are
+and the exact zoom amount is dependent on how big they are
+for things like treasure chests, it will choose whichever is biggest: the display level, or the bounds + padding
 
 qol: since shift clicking locations edits locations, i made shift clicking the edit button edit the current world
 
@@ -50,7 +60,7 @@ qol: since shift clicking locations edits locations, i made shift clicking the e
 - add continuous zoom, markers popup on zoom rather than zoomend
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
-- add riseOnHover to icons when hovering over
+- add riseOnHover to icon labels when hovering over
 - make tooltips follow the mouse rather than the centre of the location
 - fix all markers showing up at initial load on highest zoom level
 - button to go to the map menu

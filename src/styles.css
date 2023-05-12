@@ -1026,6 +1026,8 @@ textarea.materialize-textarea {
 
 .avatar_container .form_container .textbox .input-field .supporting-text{
 	position: absolute !important;
+	bottom: -20px;
+    left: 0;
 }
 
 

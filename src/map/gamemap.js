@@ -1065,6 +1065,19 @@ export default class Gamemap {
 		}
 	}
 
+
+	updateLocation(location) {
+
+		// remove existing marker(s)
+		let markers = this.getMarkersFromLocation(location);
+		markers.forEach(function(marker) { marker.remove() });
+
+		// create new markers
+		markers = this.getMarkers(location);
+		markers.forEach(function(marker) { marker.addTo(map) });
+
+	}
+
 	redrawLocations(locations) {
 
 		print(locations);
@@ -1087,20 +1100,8 @@ export default class Gamemap {
 					// get marker/polygon/icon for this location
 					let markers = this.getMarkers(location);
 
-					// add marker to relevant map layer
-					if (markers != null) {
-
-						markers.forEach(marker => {
-							// bind event listeners to marker
-							locationMarkers.push(marker);
-							this.bindMarkerEvents(marker, location)
-
-							// add label to marker if applicable
-							if (location.hasLabel() && !(location.hasIcon() && marker._path != null)) {
-								marker.bindTooltip(location.name, this.getLocationLabel(location));
-							}
-						});
-					}
+					// add markers to map layer
+					markers.forEach(marker => { locationMarkers.push(marker) });
 				}
 			});
 		}
@@ -1181,6 +1182,17 @@ export default class Gamemap {
 		} else {
 			markers = [marker];
 		}
+
+		// bind marker events
+		markers.forEach(marker => {
+			// bind event listeners to marker
+			this.bindMarkerEvents(marker, location)
+
+			// add label to marker if applicable
+			if (location.hasLabel() && !(location.hasIcon() && marker._path != null)) {
+				marker.bindTooltip(location.name, this.getLocationLabel(location));
+			}
+		});
 
 		return markers;
 	}
@@ -1296,7 +1308,7 @@ export default class Gamemap {
 	onMarkerClicked(marker, shift, ctrl) {
 
 		print(marker.location);
-		let canJumpTo = marker.location != null && marker.location.isClickable();
+		let canJumpTo = marker.location != null && marker.location.isClickable() && !this.mapLock;
 
 		if (canJumpTo && !shift && !ctrl) { // is location a link to a worldspace/location
 
@@ -1314,8 +1326,10 @@ export default class Gamemap {
 				}
 			}
 		} else {
-			if (shift) { // if shift pressed, and can edit, show edit menu
-				this.openPopup(marker, this.canEdit());
+			if (!this.mapLock) {
+				if (shift) { // if shift pressed, and can edit, show edit menu
+					this.openPopup(marker, this.canEdit());
+				}
 			}
 		}
 
@@ -1433,32 +1447,45 @@ export default class Gamemap {
 	}
 
 
-	centreOnMarker(marker) {
+	centreOnLocation(location) {
 
-		// check that we're not being passed a location
-		if (marker instanceof Location) {
-			marker = this.getMarkers(marker)[0];
+		// get marker object from location
+		let marker = this.getMarkers(location)[0];
+
+		// get bounds of the marker
+		let bounds;
+		if (marker instanceof L.Marker) {
+			bounds = L.latLngBounds([marker.getLatLng()]);
+		} else {
+			bounds = marker.getBounds();
+		}
+		var boundsWithPadding = this.getBoundsWithPadding(bounds, 0.2);
+
+		// centre around the bounds of the marker
+		if (!(this.getZoomFromBounds(boundsWithPadding) < location.displayLevel)) {
+			map.flyToBounds(boundsWithPadding);
+		} else {
+			this.goto(location);
 		}
 
-		let latLngs = [ marker.getLatLng() ];
-		let bounds = L.latLngBounds(latLngs);
+	}
 
-		let padding = 20;
+	getZoomFromBounds(bounds) {
+		return map.getBoundsZoom(bounds, false);
+	}
+
+	getBoundsWithPadding(bounds, nPadding) {
 
 		let southWest = bounds._southWest;
 		let northEast = bounds._northEast;
 
-		southWest.lng = southWest.lng - padding;
-		southWest.lat = southWest.lat - padding;
-		northEast.lng = northEast.lng + padding;
-		northEast.lat = northEast.lat + padding;
+		southWest.lng = southWest.lng * (1 - nPadding);
+		southWest.lat = southWest.lat * (1 - nPadding);
+		northEast.lng = northEast.lng * (1 + nPadding);
+		northEast.lat = northEast.lat * (1 + nPadding);
 
-		map.flyToBounds(new L.LatLngBounds(southWest, northEast));
-
-		// //markerBounds.
-		// print(markerBounds);
-		// print(markerBounds.pad(2));
-	  }
+		return new L.LatLngBounds(southWest, northEast);
+	}
 
 	/*================================================
 						  General
@@ -1495,9 +1522,8 @@ export default class Gamemap {
 		let markers = []; //sometimes locations can have multiple markers
 		map.eachLayer((layer) => {
 			if (layer.location != null) {
-				if (layer.location == location) {
+				if (layer.location.id == location.id) {
 					layer.element = layer._icon || layer._path;
-					print(layer);
 					markers.push(layer);
 				}
 			}
@@ -1512,10 +1538,7 @@ export default class Gamemap {
 
 			// if the passed object is a location, pan to its centre
 			if (object instanceof Location) {
-
-				//map.setMinZoom(object.displayLevel)
-				this.centreOnMarker(object);
-				//map.flyTo(object.getCentre());
+				this.centreOnLocation(object);
 			}
 		}
 	}
