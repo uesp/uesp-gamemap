@@ -65,6 +65,8 @@
             gamemap.reset(true, 30); // zoom out world map
             gamemap.setMapLock("full"); // lock the world map
             gamemap.mapRoot.classList.add("editing"); // add editing effect
+            //gamemap.getMapObject().setMaxZoom(data.maxZoomLevel);
+
         } else if (isLocation) {
             gamemap.setMapLock("partial"); // set map lock to partial
 

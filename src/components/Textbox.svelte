@@ -9,6 +9,7 @@
 
     // import svelte stuff
     import { createEventDispatcher } from "svelte";
+    import { onMount } from 'svelte';
 
     // state vars
     export let label;
@@ -50,6 +51,9 @@
         keyboardEvent[initMethod]('keydown', true, true, window, false, false, false, false, 40, 0);
         textbox.dispatchEvent(keyboardEvent);
     }
+
+    // on component load
+    onMount(async() => { expand() });
 
     function typeAction(node) {node.type = type}
 </script>

@@ -50,6 +50,7 @@ qol: since shift clicking locations edits locations, i made shift clicking the e
 - add continuous zoom, markers popup on zoom rather than zoomend
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
+- add riseOnHover to icons when hovering over
 - make tooltips follow the mouse rather than the centre of the location
 - fix all markers showing up at initial load on highest zoom level
 - button to go to the map menu

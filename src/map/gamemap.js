@@ -1022,7 +1022,10 @@ export default class Gamemap {
 			}
 		}
 
-		let isVisible = isInsideViewport && marker.displayLevel <= map.getZoom();
+		let markerElement = marker._icon || marker._path;
+		let isEditing = (markerElement) && markerElement.classList.contains("editing");
+
+		let isVisible = (isInsideViewport && marker.displayLevel <= map.getZoom()) || isEditing;
 		let wasVisible = marker._wasVisible;
 
 		// add/remove from DOM on change
@@ -1125,7 +1128,7 @@ export default class Gamemap {
 		let coords = location.coords;
 
 		// make a generic fallback marker
-		let marker = new L.marker(this.toLatLngs(coords[0]));
+		let marker = new L.marker(this.toLatLngs(coords[0]), {riseOnHover: true});
 		L.Marker.prototype.options.icon = L.icon({
 			iconUrl: IMAGES_DIR + "transparent.png",
 		});
@@ -1191,7 +1194,7 @@ export default class Gamemap {
 			iconAnchor: anchor,
 		});
 
-		let marker = L.marker(coords, {icon: locationIcon});
+		let marker = L.marker(coords, {icon: locationIcon, riseOnHover: true});
 
 		return marker;
 	}
@@ -1429,6 +1432,34 @@ export default class Gamemap {
 
 	}
 
+
+	centreOnMarker(marker) {
+
+		// check that we're not being passed a location
+		if (marker instanceof Location) {
+			marker = this.getMarkers(marker)[0];
+		}
+
+		let latLngs = [ marker.getLatLng() ];
+		let bounds = L.latLngBounds(latLngs);
+
+		let padding = 20;
+
+		let southWest = bounds._southWest;
+		let northEast = bounds._northEast;
+
+		southWest.lng = southWest.lng - padding;
+		southWest.lat = southWest.lat - padding;
+		northEast.lng = northEast.lng + padding;
+		northEast.lat = northEast.lat + padding;
+
+		map.flyToBounds(new L.LatLngBounds(southWest, northEast));
+
+		// //markerBounds.
+		// print(markerBounds);
+		// print(markerBounds.pad(2));
+	  }
+
 	/*================================================
 						  General
 	================================================*/
@@ -1481,7 +1512,10 @@ export default class Gamemap {
 
 			// if the passed object is a location, pan to its centre
 			if (object instanceof Location) {
-				map.flyTo(object.getCentre());
+
+				//map.setMinZoom(object.displayLevel)
+				this.centreOnMarker(object);
+				//map.flyTo(object.getCentre());
 			}
 		}
 	}
