@@ -149,6 +149,6 @@
         height: 100%;
         width: 100%;
         padding: var(--padding_medium);
-        object-fit: fill;
+        object-fit: contain;
     }
 </style>

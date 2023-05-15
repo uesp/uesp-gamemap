@@ -6,6 +6,7 @@
 
 // import leaflet
 import * as L from 'leaflet';
+import "leaflet-markers-canvas/src/leaflet-markers-canvas.js";
 import 'leaflet/dist/leaflet.css';
 
 // import plugins
@@ -31,6 +32,7 @@ let RC; // RasterCoords instance, for converting leaflet latlongs to XY coords a
 let mapWorldNameIndex = {}; // Local list of map world names
 let mapWorldDisplayNameIndex = {}; // Local list of map display names
 let tileLayer; // Local tiles
+let markersCanvas;
 
 /*================================================
 				  Constructor
@@ -97,20 +99,23 @@ export default class Gamemap {
 	initialiseMap(mapConfig) {
 		// set global map options
 		var mapOptions = {
-			crs: L.CRS.Simple, // CRS: coordinate reference system
-			zoomSnap: false, // enable snapping to zoom levels
-			zoomDelta: 0.50, // control how much the map zooms in by per scroll
-			zoomControl: false, // hide leaflet zoom control (we have our own)
-			boxZoom: false, // disable box zoom
-			doubleClickZoom: false, // disable double click to zoom
-			scrollWheelZoom: false, // disable original zoom function
-			smoothWheelZoom: true,  // enable smooth zoom
-  			smoothSensitivity: 0.9, // zoom sensitivity. default is 1
-			attributionControl: false, // disable leaflet attribution control
+			crs: L.CRS.Simple, 			// CRS: coordinate reference system
+			zoomSnap: false, 			// enable snapping to zoom levels
+			zoomDelta: 0.50, 			// control how much the map zooms in by per scroll
+			zoomControl: false, 		// hide leaflet zoom control (we have our own)
+			boxZoom: false, 			// disable box zoom
+			doubleClickZoom: false, 	// disable double click to zoom
+			scrollWheelZoom: false, 	// disable original zoom function
+			smoothWheelZoom: true,  	// enable smooth zoom
+  			smoothSensitivity: 0.9, 	// zoom sensitivity. default is 1
+			attributionControl: false,  // disable leaflet attribution control
+			renderer: L.canvas(), 		// use canvas for polygons
         }
 
 		// create root map object
 		map = L.map(this.mapRoot.id, mapOptions);
+
+		markersCanvas = new L.MarkersCanvas();
 
 		// create inital mapState object
 		let mapState = new MapState();
@@ -153,6 +158,7 @@ export default class Gamemap {
 		// remove previous tiles
 		if (tileLayer != null) {
 			tileLayer.remove();
+			markersCanvas.clear();
 			if (!onlyUpdateTiles) {
 				this.clearLocations();
 			}
@@ -1093,6 +1099,8 @@ export default class Gamemap {
 
 			print("Loading locations...");
 
+					markersCanvas.addTo(map);
+
 			// iterate through each location in the list
 			Object.values(locations).forEach(location => {
 
@@ -1100,8 +1108,13 @@ export default class Gamemap {
 					// get marker/polygon/icon for this location
 					let markers = this.getMarkers(location);
 
-					// add markers to map layer
+					if (markers.length == 1 && !markers[0]._latlngs) {
+						markersCanvas.addMarker(markers[0]);
+					}
+
+					// add marker(s) to map layer
 					markers.forEach(marker => { locationMarkers.push(marker) });
+
 				}
 			});
 		}
@@ -1110,7 +1123,6 @@ export default class Gamemap {
 
 		// add markers to map
 		print("Adding location markers to map...")
-		this.markerLayer.addTo(map);
 
 		// callback to show map fully loaded
 		if (this.mapCallbacks != null) {
@@ -1124,6 +1136,18 @@ export default class Gamemap {
 	// create marker(s) for location
 	getMarkers(location){
 
+		var nMarker = L.Marker.extend({
+			location: location,
+			options: {
+				shadowUrl: 'leaf-shadow.png',
+				iconSize:     [38, 95],
+				shadowSize:   [50, 64],
+				iconAnchor:   [22, 94],
+				shadowAnchor: [4, 62],
+				popupAnchor:  [-3, -76]
+			}
+		});
+
 		let markers = [];
 		let polygonIcon = null;
 		let coords = location.coords;
@@ -1132,6 +1156,8 @@ export default class Gamemap {
 		let marker = new L.marker(this.toLatLngs(coords[0]), {riseOnHover: true});
 		L.Marker.prototype.options.icon = L.icon({
 			iconUrl: IMAGES_DIR + "transparent.png",
+			iconSize: [32, 32],
+			iconAnchor: [0, 0],
 		});
 
 		// create specific marker type
@@ -1145,7 +1171,6 @@ export default class Gamemap {
 
 			let options = {
 				noClip: true,
-				renderer: L.svg({ padding: 5 }),
 				smoothFactor: 2,
 				fillColor: location.style.fillColour,
 				color: location.style.strokeColour,
@@ -1185,8 +1210,72 @@ export default class Gamemap {
 
 		// bind marker events
 		markers.forEach(marker => {
-			// bind event listeners to marker
-			this.bindMarkerEvents(marker, location)
+
+			// on add to map
+			marker.once('add', function () {
+
+				marker.location = location;
+
+				if (location.worldID == self.getCurrentWorldID()){
+					this.displayLevel = location.displayLevel;
+
+					map.on('resize moveend zoomend', function(){
+						self.redrawMarkers(marker);
+					});
+
+				}
+
+				if (location.displayLevel > map.getZoom()) {
+					if (location.locType != LOCTYPES.PATH) {
+						marker.remove();
+					}
+				}
+
+			});
+
+			// on marker deselected
+			marker.on("mouseout", function () {
+				self.clearTooltips();
+				let isPolygon = marker.location != null && marker.location.isPolygon();
+
+				if (isPolygon){
+					this.setStyle({
+						fillColor: location.style.fillColour,
+						color: location.style.strokeColour,
+						opacity: location.style.strokeOpacity,
+						fillOpacity: location.style.fillOpacity,
+						weight: location.style.lineWidth,
+					});
+				}
+			});
+
+			// on marker hovered over
+			marker.on('mouseover', function () {
+
+				let isPolygon = marker.location != null && marker.location.isPolygon();
+				let latLngs = (isPolygon ) ? marker.getCenter() : marker.getLatLng();
+
+
+				L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
+
+				if (isPolygon){
+					this.setStyle({
+						fillColor: location.style.hover.fillColour,
+						color: location.style.hover.strokeColour,
+						opacity: location.style.hover.strokeOpacity,
+						fillOpacity: location.style.hover.fillOpacity,
+						weight: location.style.hover.lineWidth,
+					});
+				}
+			});
+
+			// on marker clicked
+			marker.on('click', function (event) {
+				print(event);
+				let shift = event.originalEvent.shiftKey; // edit
+				let ctrl = event.originalEvent.ctrlKey; // popup
+				self.onMarkerClicked(this, shift, ctrl);
+			});
 
 			// add label to marker if applicable
 			if (location.hasLabel() && !(location.hasIcon() && marker._path != null)) {
@@ -1204,6 +1293,7 @@ export default class Gamemap {
 		let locationIcon = L.icon({
 			iconUrl: iconURL,
 			iconAnchor: anchor,
+			iconSize: [32, 32],
 		});
 
 		let marker = L.marker(coords, {icon: locationIcon, riseOnHover: true});
@@ -1302,7 +1392,6 @@ export default class Gamemap {
 			}
 		});
 
-
 	}
 
 	onMarkerClicked(marker, shift, ctrl) {
@@ -1361,75 +1450,6 @@ export default class Gamemap {
 		} else {
 			this.edit(marker.location);
 		}
-	}
-
-	bindMarkerEvents(marker, location) {
-
-		// on add to map
-		marker.once('add', function () {
-
-			marker.location = location;
-
-			if (location.worldID == self.getCurrentWorldID()){
-				this.displayLevel = location.displayLevel;
-
-				map.on('resize moveend zoomend', function(){
-					self.redrawMarkers(marker);
-				});
-
-			}
-
-			if (location.displayLevel > map.getZoom()) {
-				if (location.locType != LOCTYPES.PATH) {
-					marker.remove();
-				}
-			}
-
-		});
-
-		// on marker deselected
-		marker.on("mouseout", function () {
-			self.clearTooltips();
-			let isPolygon = marker.location.isPolygon() && marker._path != null;
-
-			if (isPolygon){
-				this.setStyle({
-					fillColor: location.style.fillColour,
-					color: location.style.strokeColour,
-					opacity: location.style.strokeOpacity,
-					fillOpacity: location.style.fillOpacity,
-					weight: location.style.lineWidth,
-				});
-			}
-		});
-
-		// on marker hovered over
-		marker.on('mouseover', function () {
-
-			let isPolygon = marker.location.isPolygon() && marker._path != null;
-			let latLngs = (isPolygon ) ? marker.getCenter() : marker.getLatLng();
-
-
-			L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
-
-			if (isPolygon){
-				this.setStyle({
-					fillColor: location.style.hover.fillColour,
-					color: location.style.hover.strokeColour,
-					opacity: location.style.hover.strokeOpacity,
-					fillOpacity: location.style.hover.fillOpacity,
-					weight: location.style.hover.lineWidth,
-				});
-			}
-		});
-
-		// on marker clicked
-		marker.on('click', function (event) {
-			let shift = event.originalEvent.shiftKey; // edit
-			let ctrl = event.originalEvent.ctrlKey; // popup
-			self.onMarkerClicked(this, shift, ctrl);
-		});
-
 	}
 
 	setZoomTo(zoom) {

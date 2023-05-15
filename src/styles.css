@@ -709,13 +709,13 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	padding: 0px !important;
 }
 
-.leaflet-interactive {
+/* .leaflet-interactive {
 	-webkit-animation: fade-in 0.3s !important;
     -moz-animation: fade-in 0.3s !important;
     -ms-animation: fade-in 0.3s !important;
     -o-animation: fade-in 0.3s !important;
     animation: fade-in 0.3s !important;
-}
+} */
 
 .location-tooltip {
 	z-index: 45 !important;

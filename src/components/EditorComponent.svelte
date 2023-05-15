@@ -35,6 +35,7 @@
     // state vars
     export let data;
     export let unsavedChanges = false;
+    let originalData = Object.assign(Object.create(Object.getPrototypeOf(data)), data);
     let place = Object.assign(Object.create(Object.getPrototypeOf(data)), data)
     let isLocation = data instanceof Location;
     let isWorld = data instanceof World;
@@ -42,6 +43,7 @@
     let editorWindow;
     let saveButton;
     let haveSaved = false;
+    let canEdit = false;
     let objectType = (isWorld) ? "world" : "location";
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
     let linkWikiPage = place.wikiPage == place.name || place.wikiPage == place.displayName;
@@ -86,7 +88,13 @@
         }
 
         // ensure editor window is scrolled to top on load
-        setTimeout(function() { editorWindow.scrollTop = 0 }, 1);
+        setTimeout(function() {
+            editorWindow.scrollTop = 0;
+        }, 1);
+
+        setTimeout(function() {
+            canEdit = true;
+        }, 1000);
     });
 
     function save() {
@@ -146,20 +154,24 @@
 
     function modify(property, value, isDisplayData) {
 
-        // update svelte reactivity
-        if (isDisplayData) {
-            place.displayData[property] = value;
-        } else {
-            place[property] = value;
+        if (canEdit) {
+            // update svelte reactivity
+            if (isDisplayData) {
+                place.displayData[property] = value;
+            } else {
+                place[property] = value;
+            }
+            place = place;
+
+            print(data);
+            print(place);
+
+            unsavedChanges = !(JSON.stringify(place) === JSON.stringify(data));
+
+            if (isLocation) {
+                gamemap.updateLocation(place);
+            }
         }
-        place = place;
-
-        print(data);
-        print(place);
-
-        unsavedChanges = !(JSON.stringify(place) === JSON.stringify(data));
-
-        gamemap.updateLocation(place);
     }
 
     function cleanUp() {
@@ -176,7 +188,14 @@
         gamemap.setMapLock(false);
     }
 
-    function cancel() { dispatch("cancel", "cancelled"); }
+    function cancel() {
+        if (unsavedChanges) {
+            if (isLocation) {
+                gamemap.updateLocation(originalData);
+            }
+        }
+        dispatch("cancel", "cancelled");
+    }
 
 </script>
 

@@ -1,37 +1,12 @@
 ## last week:
 
 
-- added "iconLabelOffset" property to mapconfig (default 0, 5 on MW, OB, TR) as eso's icon labels were too far from the centre with 5 (the previous global value)
 
 
+## performance optimisations:
 
+- all polygons/lines are now canvas-based instead of svg
 
-- compacted/prettified the ui a bit by adding the icon of the marker at the top next to the name
->> clicking the icon does the dropdown as usual
->> besides looking pretty it fixes an annoying bug with long dropdown lists not scrolling properly
-
-
-- fixed: tooltip wikipage + description was on one line (al donaba tomb)
-
-- added "click to enter" text in tooltips for locations that go to other maps
-
-fix: firefox complaining with decimalised values in fields
-fix: editor window scrolling down
-
-fix: make description textbox resize with editor (didnt before)
-
-fix: prevent being able to click into other zones when editing
-
-tweak: hovering over icons now brings it to the front (vvardenfell foyada quarry)
-
-- fixed: currently editing marker disappearing when zoomed out of its display level
-tweak: prevent markers that are being edited from being culled
-
-tweak: made the edit pan a bit smarter, now zooms in for icons and zooms out for polygons depending on how big they are
-and the exact zoom amount is dependent on how big they are
-for things like treasure chests, it will choose whichever is biggest: the display level, or the bounds + padding
-
-qol: since shift clicking locations edits locations, i made shift clicking the edit button edit the current world
 
 ## dave stuff:
 - 32px skyrim icons
@@ -52,6 +27,8 @@ qol: since shift clicking locations edits locations, i made shift clicking the e
 - fix polylines not respecting zoom levels
 - make leaflet popup wikilinks turn black if there's no href
 - add permalink option in location popups
+- fix linking to locations causing big lags (eldbur sancturary stairs)
+- fix paths just disappearing after pan after first load
 - redesign location popups
 - fix polygons disappearing when outer points are not viewable (consider centre point as well)
 - make embeded map watermark actually open in new tab
@@ -70,8 +47,7 @@ qol: since shift clicking locations edits locations, i made shift clicking the e
 - make maps in game release order
 
 feedback:
-- map key alphabetical
-- map key not nearest neighbour
+- make map key alphabetical
 - divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)
 - some kind of tutorial on first non-cookie load to tell user how to use ui
 - an undo button for deleting/editing locations and worlds
