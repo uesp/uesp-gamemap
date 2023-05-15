@@ -6,11 +6,11 @@
 
 // import leaflet
 import * as L from 'leaflet';
-import "leaflet-markers-canvas/src/leaflet-markers-canvas.js";
 import 'leaflet/dist/leaflet.css';
 
 // import plugins
 import RasterCoords from "./plugins/rastercoords";
+import './plugins/canvasmarkers';
 import './plugins/smoothwheelzoom';
 import './plugins/tilelayercanvas';
 import './plugins/canvasoverlay';
@@ -1099,7 +1099,7 @@ export default class Gamemap {
 
 			print("Loading locations...");
 
-					markersCanvas.addTo(map);
+			markersCanvas.addTo(map);
 
 			// iterate through each location in the list
 			Object.values(locations).forEach(location => {
