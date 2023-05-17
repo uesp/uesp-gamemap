@@ -23,6 +23,7 @@
     "svelte-preprocess": "^5.0.0"
   },
   "dependencies": {
+    "@geoman-io/leaflet-geoman-free": "^2.14.2",
     "leaflet": "^1.9.3",
     "long-press-event": "^2.4.4",
     "marked": "^4.2.12",

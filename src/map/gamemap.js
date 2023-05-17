@@ -14,6 +14,7 @@ import './plugins/smoothwheelzoom';
 import './plugins/tilelayercanvas';
 import './plugins/canvasoverlay';
 import './plugins/edgebuffer';
+import '@geoman-io/leaflet-geoman-free';
 
 // import map classes
 import World from "./objects/world.js";
@@ -111,6 +112,11 @@ export default class Gamemap {
 
 		// create root map object
 		map = L.map(this.mapRoot.id, mapOptions);
+
+		map.pm.addControls({
+			position: 'topleft',
+			drawCircle: false,
+		  });
 
 		// create inital mapState object
 		let mapState = new MapState();

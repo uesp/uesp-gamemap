@@ -352,23 +352,11 @@
                             </DropdownMenu>
                         {/if}
 
-                        {#if !place.isPolygon()}
-                            <b class="subheading">Position</b>
-                            <div class="row">
-                                <Textbox text={place.coords[0].x} hint="X Position" tooltip="X coordinate for this location" type="float"/>
-                                <Textbox text={place.coords[0].y} hint="Y Position" tooltip="Y coordinate for this location" type="float" />
-                                <IconButton icon="my_location" hasBackground={false} tooltip="Set location position"></IconButton>
-                            </div>
-                        {:else}
-                            <div style="display:inline">
-                                <br/>
-                                <Divider/>
-                                <br/>
-                                <div style="text-align: center;">
-                                    <Button text="Edit Handles" icon="polyline"/>
-                                </div>
-                            </div>
-                        {/if}
+                        <b class="subheading">Position</b>
+                        <div class="row">
+                            <Textbox text={place.coords[0].x} hint="X Position" tooltip="X coordinate for this location" type="float"/>
+                            <Textbox text={place.coords[0].y} hint="Y Position" tooltip="Y coordinate for this location" type="float" />
+                        </div>
 
                      </FormGroup>
                 {/if}
