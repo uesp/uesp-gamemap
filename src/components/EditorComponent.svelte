@@ -22,11 +22,8 @@
     import InfoTextPair from "./InfoTextPair.svelte";
     import DropdownMenu from "./DropdownMenu.svelte";
     import SegmentedButton from "./SegmentedButton.svelte";
-    import Modal from "./Modal.svelte";
     import Switch from "./Switch.svelte";
-    import IconButton from "./IconButton.svelte";
-    import Divider from "./Divider.svelte";
-    import Icon from "./Icon.svelte";
+
     import ColourPicker from "./ColourPicker.svelte";
     import AvatarComponent from "./AvatarComponent.svelte";
 

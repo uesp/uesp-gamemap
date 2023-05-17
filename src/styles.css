@@ -842,27 +842,12 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 }
 
 .editing:not(.leaflet-container) {
-	animation: throb 2.5s infinite !important;
-}
-
-@keyframes throb {
-	0% {
-	  filter: drop-shadow(none);
-	}
-
-	50% {
-	  filter:
+	filter:
 		drop-shadow(-2px -2px 0px var(--editing))
 		drop-shadow(2px -1px 0px var(--editing))
 		drop-shadow(2px 2px 0px var(--editing))
-		drop-shadow(-1px 2px 0px var(--editing));
-	}
-
-	100% {
-	  filter: drop-shadow(none);
-	}
+		drop-shadow(-1px 2px 0px var(--editing)) !important;
 }
-
 
 /*================================================
 				  Ugly CSS Hacks
@@ -1032,12 +1017,10 @@ textarea.materialize-textarea {
     left: 0;
 }
 
-
 .tooltip-tip {
 	color: var(--text_tertiary);
 	text-transform: uppercase;
 }
-
 
 .leaflet-marker-icon.marker-icon {
 	background-color: var(--editing_light) !important;
@@ -1047,6 +1030,10 @@ textarea.materialize-textarea {
 .leaflet-marker-icon.marker-icon:active {
 	background-color: var(--editing_dark) !important;
 	border: solid 2px var(--text_on_primary) !important;
+}
+
+.leaflet-marker-icon.marker-icon:hover {
+	opacity: 1 !important;
 }
 
 .marker-icon.marker-icon-middle {
@@ -1077,4 +1064,9 @@ textarea.materialize-textarea {
 .marker-icon.marker-icon-middle:active::before {
 	top: -7.5px;
 	left: 1px;
+}
+
+.leaflet-container.editing {
+
+	cursor: not-allowed !important;
 }

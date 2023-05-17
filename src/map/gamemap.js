@@ -114,11 +114,6 @@ export default class Gamemap {
 		// create root map object
 		map = L.map(this.mapRoot.id, mapOptions);
 
-		map.pm.addControls({
-			position: 'topleft',
-			drawCircle: false,
-		  });
-
 		// create inital mapState object
 		let mapState = new MapState();
 		mapState.world = this.getWorldFromID(mapConfig.defaultWorldID || 0);
@@ -1073,7 +1068,7 @@ export default class Gamemap {
 	}
 
 
-	updateLocation(location) {
+	updateLocation(location, editing) {
 
 		// remove existing marker(s)
 		let markers = this.getMarkersFromLocation(location);
@@ -1081,7 +1076,11 @@ export default class Gamemap {
 
 		// create new markers
 		markers = this.getMarkers(location);
-		markers.forEach(function(marker) { marker.addTo(map) });
+		markers.forEach(function(marker) {
+			marker.addTo(map)
+			let element = marker._path || marker._icon;
+			element.classList.add("editing");
+		});
 
 	}
 
@@ -1548,10 +1547,16 @@ export default class Gamemap {
 				this.centreOnLocation(object);
 
 				setTimeout(() => {
-					this.getMarkersFromLocation(object)[0].pm.enable({
+					let marker = this.getMarkersFromLocation(object)[0];
+
+					marker.pm.enable({
 						allowSelfIntersection: false,
-						addVertexOnClick: true,
+						snapDistance: 10,
+						allowEditing: true,
+						draggable: true,
+						syncLayersOnDrag: true,
 					});
+
 				}, 3000);
 
 

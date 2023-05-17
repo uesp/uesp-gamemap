@@ -1,6 +1,16 @@
 ## last week:
 
 
+## editing
+
+- added polygon editing/ marker moving
+- using geoman library
+
+
+useful features:
+- polygon handles snap to nearest polygon (show zone map) for neater zones
+- "add new point" button in the middle between points
+
 
 ## canvas experiment
 already mentioned earlier last week, but i experimented briefly with porting icons + polygons to canvas
