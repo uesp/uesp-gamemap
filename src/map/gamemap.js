@@ -1134,6 +1134,15 @@ export default class Gamemap {
 		let polygonIcon = null;
 		let coords = location.coords;
 
+		L.Marker.include({
+			setEditing: () => {
+				print("ligma")
+				print(this);
+				print("ligma2")
+			},
+
+		});
+
 		// make a generic fallback marker
 		let marker = new L.marker(this.toLatLngs(coords[0]), {riseOnHover: true});
 		L.Marker.prototype.options.icon = L.icon({
@@ -1431,9 +1440,11 @@ export default class Gamemap {
 
 		// on marker clicked
 		marker.on('click', function (event) {
-			let shift = event.originalEvent.shiftKey; // edit
-			let ctrl = event.originalEvent.ctrlKey; // popup
-			self.onMarkerClicked(this, shift, ctrl);
+			if(!self.mapLock) {
+				let shift = event.originalEvent.shiftKey; // edit
+				let ctrl = event.originalEvent.ctrlKey; // popup
+				self.onMarkerClicked(this, shift, ctrl);
+			}
 		});
 
 	}
@@ -1548,6 +1559,10 @@ export default class Gamemap {
 
 				setTimeout(() => {
 					let marker = this.getMarkersFromLocation(object)[0];
+
+					print(marker);
+
+					marker.setEditing(true);
 
 					marker.pm.enable({
 						allowSelfIntersection: false,

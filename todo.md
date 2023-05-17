@@ -6,6 +6,8 @@
 - added polygon editing/ marker moving
 - using geoman library
 
+- removed throb effect on editing markers for performance
+
 
 useful features:
 - polygon handles snap to nearest polygon (show zone map) for neater zones
