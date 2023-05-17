@@ -15,6 +15,7 @@ import './plugins/tilelayercanvas';
 import './plugins/canvasoverlay';
 import './plugins/edgebuffer';
 import '@geoman-io/leaflet-geoman-free';
+import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 
 // import map classes
 import World from "./objects/world.js";
@@ -1545,6 +1546,15 @@ export default class Gamemap {
 			// if the passed object is a location, pan to its centre
 			if (object instanceof Location) {
 				this.centreOnLocation(object);
+
+				setTimeout(() => {
+					this.getMarkersFromLocation(object)[0].pm.enable({
+						allowSelfIntersection: false,
+						addVertexOnClick: true,
+					});
+				}, 3000);
+
+
 			}
 		}
 	}

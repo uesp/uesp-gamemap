@@ -33,6 +33,8 @@
 	--delete_pastel: #d95c5c;
 	--add: #a0ca76;
 	--editing: #3e68ffc0;
+	--editing_light: #3e68ff;
+	--editing_dark: #3557d1;
 	--delete: rgba(186,43,69,1);
 	--delete_light: rgb(207, 47, 76);
 	--save: #5e8735;
@@ -1034,4 +1036,45 @@ textarea.materialize-textarea {
 .tooltip-tip {
 	color: var(--text_tertiary);
 	text-transform: uppercase;
+}
+
+
+.leaflet-marker-icon.marker-icon {
+	background-color: var(--editing_light) !important;
+	border: solid 2px var(--text_on_primary) !important;
+}
+
+.leaflet-marker-icon.marker-icon:active {
+	background-color: var(--editing_dark) !important;
+	border: solid 2px var(--text_on_primary) !important;
+}
+
+.marker-icon.marker-icon-middle {
+	height: 12px !important;
+	width: 12px !important;
+	background-color: var(--add) !important;
+	opacity: 0 !important;
+}
+
+.marker-icon.marker-icon-middle:hover {
+	opacity: 1 !important;
+}
+
+.marker-icon.marker-icon-middle:active {
+	background-color: var(--save_light) !important;
+	height: 13px !important;
+	width: 13px !important;
+	opacity: 1;
+}
+
+.marker-icon.marker-icon-middle::before {
+	content: "+";
+	position: absolute;
+	top: -7px;
+	left: 0.5px;
+}
+
+.marker-icon.marker-icon-middle:active::before {
+	top: -7.5px;
+	left: 1px;
 }
