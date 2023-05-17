@@ -102,6 +102,7 @@ export default class Gamemap {
 			crs: L.CRS.Simple, 			// CRS: coordinate reference system
 			zoomSnap: false, 			// enable snapping to zoom levels
 			zoomDelta: 0.50, 			// control how much the map zooms in by per scroll
+			zoomAnimation: true,		// enable zoom animation
 			zoomControl: false, 		// hide leaflet zoom control (we have our own)
 			boxZoom: false, 			// disable box zoom
 			doubleClickZoom: false, 	// disable double click to zoom
@@ -1136,17 +1137,7 @@ export default class Gamemap {
 	// create marker(s) for location
 	getMarkers(location){
 
-		var nMarker = L.Marker.extend({
-			location: location,
-			options: {
-				shadowUrl: 'leaf-shadow.png',
-				iconSize:     [38, 95],
-				shadowSize:   [50, 64],
-				iconAnchor:   [22, 94],
-				shadowAnchor: [4, 62],
-				popupAnchor:  [-3, -76]
-			}
-		});
+
 
 		let markers = [];
 		let polygonIcon = null;
@@ -1158,6 +1149,11 @@ export default class Gamemap {
 			iconUrl: IMAGES_DIR + "transparent.png",
 			iconSize: [32, 32],
 			iconAnchor: [0, 0],
+		});
+
+		L.Layer.include({
+			location: null,
+			setLocation: (location) =>  { return this.location = location; }
 		});
 
 		// create specific marker type
@@ -1211,10 +1207,11 @@ export default class Gamemap {
 		// bind marker events
 		markers.forEach(marker => {
 
+			marker.setLocation(location);
+
 			// on add to map
 			marker.once('add', function () {
 
-				marker.location = location;
 
 				if (location.worldID == self.getCurrentWorldID()){
 					this.displayLevel = location.displayLevel;
@@ -1272,6 +1269,7 @@ export default class Gamemap {
 			// on marker clicked
 			marker.on('click', function (event) {
 				print(event);
+				print("hello")
 				let shift = event.originalEvent.shiftKey; // edit
 				let ctrl = event.originalEvent.ctrlKey; // popup
 				self.onMarkerClicked(this, shift, ctrl);
