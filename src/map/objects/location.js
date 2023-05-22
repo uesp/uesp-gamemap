@@ -41,9 +41,8 @@ export default class Location {
 
 		// set location icon info
 		this.icon = location.iconType || null;
-		if (this.icon) {
-			this.iconSize = mapConfig.iconSize;
-		}
+		this.width = (this.icon) ? location.width || mapConfig.iconSize : location.width;
+		this.height = (this.icon) ? location.height || mapConfig.iconSize : location.height;
 
 		// set coords
 		this.coords = [];
@@ -309,11 +308,11 @@ export default class Location {
 
 		if (this.hasIcon()) {
 			query += `&icontype=${encodeURIComponent(this.icon)}`;
-			query += `&locheight=${this.iconSize}&locwidth=${this.iconSize}`;
 		}
 
 		// query += '&x=' + (this.coords[0].x * gamemap.getWorldFromID(this.worldID).maxX)
 		// query += '&y=' + (this.coords[0].y * gamemap.getWorldFromID(this.worldID).maxY);
+		query += `&locwidth=${this.width}&locheight=${this.height}`;
 
 		query += `&displaylevel=${+this.displayLevel + +gamemap.getWorldFromID(this.worldID).zoomOffset}`;
 

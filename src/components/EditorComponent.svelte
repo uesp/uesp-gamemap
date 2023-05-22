@@ -68,19 +68,9 @@
         } else if (isLocation) {
             gamemap.setMapLock("partial"); // set map lock to partial
 
-            // add editing effect to marker(s)
-            let markers = gamemap.getMarkersFromLocation(data);
-            markers.forEach((marker) => {
-                print(marker);
-                marker.element.classList.add("editing");
+            // add editing effect to markers
+            gamemap.edit(gamemap.getMarkersFromLocation(data));
 
-                // and editing effect to label (if available)
-                if (marker._tooltip) {
-                    setTimeout(function() {
-                        document.getElementById(marker.element.getAttribute('aria-describedby')).classList.add("editing"); // add editing effect
-                    }, 100); // fix label not being given edit effect on first load
-                }
-            });
         }
 
         // ensure editor window is scrolled to top on load
@@ -144,26 +134,29 @@
 
     function modify(property, value, isDisplayData) {
 
+        // update svelte reactivity
+        if (isDisplayData) {
+            place.displayData[property] = value;
+        } else {
+            place[property] = value;
+        }
+        place = place;
+
         // are there any unsaved changes
         unsavedChanges = !(JSON.stringify(place) === JSON.stringify(data));
-
-        // enable has been modified since default state
-        if (unsavedChanges) {
-            hasBeenModified = true;
-        }
+        hasBeenModified = (unsavedChanges) ? true : hasBeenModified;
 
         if (hasBeenModified) {
-            // update svelte reactivity
-            if (isDisplayData) {
-                place.displayData[property] = value;
-            } else {
-                place[property] = value;
-            }
-            place = place;
 
             print(data);
+            print("modifying!");
             print(place);
-            gamemap.updateLocation(place);
+
+            // redraw location with new changes
+            if (isLocation) {
+                gamemap.redrawLocation(place, true);
+            }
+
         }
     }
 

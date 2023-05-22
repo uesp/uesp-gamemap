@@ -1068,7 +1068,7 @@ export default class Gamemap {
 	}
 
 
-	updateLocation(location, editing) {
+	redrawLocation(location, isEditing) {
 
 		// remove existing marker(s)
 		let markers = this.getMarkersFromLocation(location);
@@ -1080,10 +1080,12 @@ export default class Gamemap {
 			marker.addTo(map);
 		});
 
-		if (editing) {
-			this.edit(markers[0], true);
-		}
-
+		setTimeout(() => {
+			if (isEditing) {
+				this.edit(markers);
+				print(markers);
+			}
+		}, 1000);
 	}
 
 	redrawLocations(locations) {
@@ -1206,7 +1208,7 @@ export default class Gamemap {
 	}
 
 	makeMarker(location, coords) {
-		let anchor = [location.iconSize/2, location.iconSize/2];
+		let anchor = [location.width / 2, location.height / 2];
 		let iconURL = this.mapConfig.iconPath + location.icon + ".png";
 
 		let locationIcon = L.icon({
@@ -1542,44 +1544,47 @@ export default class Gamemap {
 		return markers;
 	}
 
-	edit(object, noAnimate) {
+	edit(object) {
+		let location;
+		let markers;
 
-
-		if (this.mapCallbacks != null && !noAnimate) {
-			this.mapCallbacks.edit(object);
+		if (object instanceof Location) {
+			location =  object;
+			markers = this.getMarkersFromLocation(location);
+		} else if (object instanceof L.Layer) {
+			markers = object;
+			print("should be being called")
 		}
 
-		// if the passed object is a location, pan to its centre
-		if (object instanceof Location) {
-			let location = object;
-			let markers = gamemap.getMarkersFromLocation(location);
+		// tell rest of the app we're editing this object
+		if (location || object instanceof World) {
+			this.mapCallbacks?.edit(object);
+		}
 
-			if (!noAnimate) {
-				this.centreOnLocation(location);
-			}
-
-			// add editing effect to marker(s)
+		// add editing effect to marker(s)
+		if (markers) {
 			markers.forEach((marker) => {
 				print("printing marker")
 				print(marker);
 				marker.element.classList.add("editing");
 
+				marker.pm.enable({
+					allowSelfIntersection: false,
+					snapDistance: 10,
+					allowEditing: true,
+					draggable: true,
+					syncLayersOnDrag: markers,
+				});
+
 				// and editing effect to label (if available)
 				if (marker._tooltip) {
-					document.getElementById(marker.element.getAttribute('aria-describedby')).classList.add("editing"); // add editing effect
+					setTimeout(() => {
+						document.getElementById(marker.element.getAttribute('aria-describedby')).classList.add("editing"); // add editing effect
+					}, 10)
 				}
 			});
-
-			let marker = markers[0];
-			marker.pm.enable({
-				allowSelfIntersection: false,
-				snapDistance: 10,
-				allowEditing: true,
-				draggable: true,
-				syncLayersOnDrag: true,
-			});
-
 		}
+
 	}
 
 	// get if editing is enabled on this map
