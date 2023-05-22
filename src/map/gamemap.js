@@ -1560,7 +1560,9 @@ export default class Gamemap {
 		if (markers) {
 			markers.forEach((marker) => {
 				marker.element = marker.element ?? marker._path ?? marker._icon;
-				marker.element.classList.add("editing");
+				if (!marker._path) {
+					marker.element.classList.add("editing");
+				}
 
 				marker.pm.enable({
 					allowSelfIntersection: false,
