@@ -1,5 +1,11 @@
 ## last week:
 
+
+- turned off pan/zoom editing anim for performace
+- added live editing debouncing for performance
+
+
+
 need to do:
 - stop polygon disappearing on name edit
 

@@ -712,10 +712,6 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 }
 
 .leaflet-interactive {
-	-webkit-animation: fade-in 0.3s !important;
-    -moz-animation: fade-in 0.3s !important;
-    -ms-animation: fade-in 0.3s !important;
-    -o-animation: fade-in 0.3s !important;
     animation: fade-in 0.3s !important;
 }
 
@@ -842,6 +838,8 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 }
 
 .editing:not(.leaflet-container) {
+	animation: none !important;
+	z-index: 999 !important;
 	filter:
 		drop-shadow(-2px -2px 0px var(--editing))
 		drop-shadow(2px -1px 0px var(--editing))

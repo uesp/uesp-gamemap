@@ -38,7 +38,7 @@
     let editor;
     let editorWindow;
     let saveButton;
-    let hasBeenModified = false;
+    let canEdit = true;
     let haveSaved = false;
     let objectType = (isWorld) ? "world" : "location";
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
@@ -132,33 +132,34 @@
     }
 
 
+    let timer;
+    const DEBOUNCE_AMOUNT = 75;
     function modify(property, value, isDisplayData) {
+        if (canEdit) {
+            // update svelte reactivity
+            if (isDisplayData) {
+                place.displayData[property] = value;
+            } else {
+                place[property] = value;
+            }
+            place = place;
 
-        // update svelte reactivity
-        if (isDisplayData) {
-            place.displayData[property] = value;
-        } else {
-            place[property] = value;
-        }
-        place = place;
-
-        // are there any unsaved changes
-        unsavedChanges = !(JSON.stringify(place) === JSON.stringify(data));
-        hasBeenModified = (unsavedChanges) ? true : hasBeenModified;
-
-        if (hasBeenModified) {
-
-            print(data);
-            print("modifying!");
-            print(place);
+            // are there any unsaved changes
+            unsavedChanges = !(JSON.stringify(place) === JSON.stringify(data));
 
             // redraw location with new changes
             if (isLocation) {
-                gamemap.redrawLocation(place, true);
+                // editing debouncing
+                if (timer != null){
+                    clearTimeout(timer);
+                }
+                timer = setTimeout(() => {
+                    gamemap.redrawLocation(place, true);
+                }, DEBOUNCE_AMOUNT)
             }
-
         }
     }
+
 
     function cleanUp() {
         let glowElements = document.querySelectorAll("[class*='editing']");
@@ -177,7 +178,11 @@
         gamemap.setMapLock(false);
     }
 
-    function cancel() { dispatch("cancel", "cancelled"); }
+    function cancel() {
+        dispatch("cancel", "cancelled");
+        canEdit = false;
+        gamemap.redrawLocation(data);
+    }
 
 </script>
 

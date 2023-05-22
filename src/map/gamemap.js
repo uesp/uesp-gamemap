@@ -1080,12 +1080,10 @@ export default class Gamemap {
 			marker.addTo(map);
 		});
 
-		setTimeout(() => {
-			if (isEditing) {
-				this.edit(markers);
-				print(markers);
-			}
-		}, 1000);
+		if (isEditing) {
+			this.edit(markers);
+			print(markers);
+		}
 	}
 
 	redrawLocations(locations) {
@@ -1549,9 +1547,9 @@ export default class Gamemap {
 		let markers;
 
 		if (object instanceof Location) {
-			location =  object;
+			location = object;
 			markers = this.getMarkersFromLocation(location);
-		} else if (object instanceof L.Layer) {
+		} else if (object?.length > 0) {
 			markers = object;
 			print("should be being called")
 		}
@@ -1566,6 +1564,7 @@ export default class Gamemap {
 			markers.forEach((marker) => {
 				print("printing marker")
 				print(marker);
+				marker.element = marker.element ?? marker._path ?? marker._icon;
 				marker.element.classList.add("editing");
 
 				marker.pm.enable({
@@ -1579,7 +1578,7 @@ export default class Gamemap {
 				// and editing effect to label (if available)
 				if (marker._tooltip) {
 					setTimeout(() => {
-						document.getElementById(marker.element.getAttribute('aria-describedby')).classList.add("editing"); // add editing effect
+						document.getElementById(marker.element.getAttribute('aria-describedby'))?.classList.add("editing"); // add editing effect
 					}, 10)
 				}
 			});
