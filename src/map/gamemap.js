@@ -555,6 +555,7 @@ export default class Gamemap {
 					// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
 					coords.x = (coords.x / this.mapImage.width).toFixed(3);
 					coords.y = (coords.y / this.mapImage.height).toFixed(3);
+					coords.coordType = COORD_TYPES.NORMALISED;
 				}
 			} else if (coordType == COORD_TYPES.WORLDSPACE) {
 				// get current map world pixel position values
@@ -565,6 +566,7 @@ export default class Gamemap {
 				// reproject pixel values to worldspace
 				coords.x = Math.trunc(world.minX + (world.maxX - world.minX) * nX);
 				coords.y = Math.trunc(world.minY + (world.maxY - world.minY) * nY);
+				coordType.coordType = coords.coordType = COORD_TYPES.WORLDSPACE;
 			}
 		}
 
@@ -580,7 +582,7 @@ export default class Gamemap {
 
 		var latLngs;
 
-		if (coords instanceof Point && !Array.isArray(coords)) {
+		if ( (coords instanceof Point || coords.x) && !Array.isArray(coords)) {
 
 			switch (coords.coordType) {
 				default:
@@ -588,8 +590,8 @@ export default class Gamemap {
 					latLngs = RC.unproject([coords.x , coords.y]);
 					return latLngs;
 				case COORD_TYPES.NORMALISED || COORD_TYPES.PSEUDO_NORMALISED:
-					let x = (coords.x * this.mapImage.width);
-					let y = (coords.y * this.mapImage.height);
+					let x = (Number(coords.x) * this.mapImage.width);
+					let y = (Number(coords.y) * this.mapImage.height);
 
 					latLngs = RC.unproject([x , y]);
 					return latLngs;
@@ -1070,13 +1072,17 @@ export default class Gamemap {
 
 	redrawLocation(location, isEditing) {
 
+		print(location);
+
 		// remove existing marker(s)
 		let markers = this.getMarkersFromLocation(location);
 		markers.forEach(function(marker) { marker.remove() });
 
 		// create new markers
-		markers = this.getMarkers(location);
+		print("making new marker")
+		markers = this.getMarkers(location, true);
 		markers.forEach(function(marker) {
+			print(marker);
 			marker.addTo(map);
 		});
 
@@ -1129,7 +1135,7 @@ export default class Gamemap {
 	}
 
 	// create marker(s) for location
-	getMarkers(location){
+	getMarkers(location, isEditing) {
 
 		let markers = [];
 		let polygonIcon = null;
@@ -1179,7 +1185,9 @@ export default class Gamemap {
 		} else { // if no, then it must be a single point (icon, label)
 
 			if (location.hasIcon()) {
-				marker = this.makeMarker(location, this.toLatLngs(coords[0]));
+				marker = this.makeMarker(location, this.toLatLngs(coords[0]), isEditing);
+				print("glt icon")
+				print(marker);
 			}
 
 		}
@@ -1204,7 +1212,7 @@ export default class Gamemap {
 		return markers;
 	}
 
-	makeMarker(location, coords) {
+	makeMarker(location, coords, isEditing) {
 		let anchor = [location.width / 2, location.height / 2];
 		let iconURL = this.mapConfig.iconPath + location.icon + ".png";
 
@@ -1213,7 +1221,7 @@ export default class Gamemap {
 			iconAnchor: anchor,
 		});
 
-		let marker = L.marker(coords, {icon: locationIcon, riseOnHover: true});
+		let marker = L.marker(coords, {icon: locationIcon, riseOnHover: true, className: `${isEditing ? "editing" : ""}`});
 
 		return marker;
 	}
@@ -1309,7 +1317,6 @@ export default class Gamemap {
 			}
 		});
 
-
 	}
 
 	onMarkerClicked(marker, shift, ctrl) {
@@ -1385,7 +1392,7 @@ export default class Gamemap {
 
 			}
 
-			if (location.displayLevel > map.getZoom()) {
+			if (location.displayLevel > map.getZoom() && !marker.options.className == "editing") {
 				if (location.locType != LOCTYPES.PATH) {
 					marker.remove();
 				}
@@ -1560,16 +1567,25 @@ export default class Gamemap {
 		if (markers) {
 			markers.forEach((marker) => {
 				marker.element = marker.element ?? marker._path ?? marker._icon;
-				if (!marker._path) {
-					marker.element.classList.add("editing");
-				}
+				marker.element.classList.add("editing");
 
 				marker.pm.enable({
-					allowSelfIntersection: false,
 					snapDistance: 10,
 					allowEditing: true,
 					draggable: true,
 					syncLayersOnDrag: markers,
+				});
+
+				marker.on('pm:markerdragend pm:edit', (e) => {
+					print(e);
+					if (e.shape == "Marker") {
+						let coords = this.toCoords(e.layer.getLatLng());
+						updateMarkerCoords([coords]);
+					}
+
+					if (e.shape == "Polygon") {
+						//print(this.toCoords(e.layer.getLatLngs()));
+					}
 				});
 
 				// and editing effect to label (if available)

@@ -160,24 +160,20 @@
 
 		// define callbacks
 		let mapCallbacks = {
-			onWorldsLoaded : function (worlds) {
+			onWorldsLoaded: (worlds) => {
 				print("Worlds loaded!");
 				print(worlds);
 			},
-			onPermissionsLoaded : function(enableEditing) {
+			onPermissionsLoaded: (enableEditing) => {
 				print("Editing permissions: " + enableEditing);
 				canEdit = enableEditing;
 			},
-			onMapLoaded : function() {
+			onMapLoaded: () => {
 				setLoading(false);
 				currentZoom = gamemap.getCurrentZoom();
 			},
-			onMapLockChanged : function(string) {
-				mapLock = string;
-			},
-			edit : function(object) {
-				editPane.edit(object);
-			},
+			onMapLockChanged: (lockType) => { mapLock = lockType },
+			edit: (object) => { editPane.edit(object) },
 			onMapStateChanged,
 			onZoom,
 			setLoading,

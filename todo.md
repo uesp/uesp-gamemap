@@ -4,6 +4,8 @@
 ## editing:
 - turned off pan/zoom editing anim for performace
 - added live editing debouncing for performance
+- removed blue editing tint from polygons, so you can see the fill/hover colours
+>> tint remains on label and handles, though
 
 ## bug fixes:
 - fixed cancelling editing not working (it would restore change after few milliseconds)

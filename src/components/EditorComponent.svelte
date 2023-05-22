@@ -13,7 +13,8 @@
 
     // import data classes
     import World from "../map/objects/world";
-    import Location from "../map/objects/location"
+    import Location from "../map/objects/location";
+    import Point from "../map/objects/point";
 
     // import UI components
     import Button from "./Button.svelte";
@@ -139,6 +140,12 @@
                 place[property] = value;
             }
             place = place;
+            place.coords = place.coords;
+
+            print("before edit");
+            print(data);
+            print("after edit");
+            print(place);
 
             // are there any unsaved changes
             unsavedChanges = !(JSON.stringify(place) === JSON.stringify(data));
@@ -157,6 +164,11 @@
         }
     }
 
+    // received updated marker coords from gamemap (via drag and dropping)
+    window.updateMarkerCoords = function updateMarkerCoords(coords) {
+        print(coords)
+        modify("coords", coords);
+    }
 
     function cleanUp() {
         let glowElements = document.querySelectorAll("[class*='editing']");
@@ -274,8 +286,6 @@
                         </SegmentedButton>
                     {/if}
 
-
-
                     <!-- Description -->
                     <Textbox label="Description"
                              text={place.description}
@@ -360,7 +370,14 @@
 
                         <b class="subheading">Position</b>
                         <div class="row">
-                            <Textbox text={place.coords[0].x} hint="X Position" tooltip="X coordinate for this location" type="float"/>
+                            <Textbox text={place.coords[0].x}
+                                     hint="X Position"
+                                    tooltip="X coordinate for this location"
+                                    type="float"
+                                    on:change={(e) => {modify("coords", new Point(e.detail, place.coords[0].y))}}
+
+
+                                    />
                             <Textbox text={place.coords[0].y} hint="Y Position" tooltip="Y coordinate for this location" type="float" />
                         </div>
 
