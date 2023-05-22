@@ -39,6 +39,7 @@
     let editorWindow;
     let saveButton;
     let canEdit = true;
+    let hasBeenModified = false;
     let haveSaved = false;
     let objectType = (isWorld) ? "world" : "location";
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
@@ -54,7 +55,6 @@
         window.onpopstate = () => currentZoom = gamemap.getCurrentZoom().toFixed(3);
 
         // begin editing provided data
-        gamemap.edit(data);
         print(data);
         unsavedChanges = false;
 
@@ -66,11 +66,8 @@
             //gamemap.getMapObject().setMaxZoom(data.maxZoomLevel);
 
         } else if (isLocation) {
+            canEdit = true;
             gamemap.setMapLock("partial"); // set map lock to partial
-
-            // add editing effect to markers
-            gamemap.edit(gamemap.getMarkersFromLocation(data));
-
         }
 
         // ensure editor window is scrolled to top on load
@@ -146,15 +143,16 @@
 
             // are there any unsaved changes
             unsavedChanges = !(JSON.stringify(place) === JSON.stringify(data));
+            hasBeenModified = (unsavedChanges) ? true : hasBeenModified;
 
             // redraw location with new changes
-            if (isLocation) {
+            if (isLocation && hasBeenModified) {
                 // editing debouncing
                 if (timer != null){
                     clearTimeout(timer);
                 }
                 timer = setTimeout(() => {
-                    gamemap.redrawLocation(place, true);
+                    gamemap.redrawLocation(place, canEdit);
                 }, DEBOUNCE_AMOUNT)
             }
         }
@@ -172,8 +170,10 @@
         } else if (isLocation) {
             // disable edit mode
             gamemap.getMapObject().pm.disableGlobalEditMode();
+            canEdit = false;
         }
 
+        hasBeenModified = false;
         // remove map lock from gamemap
         gamemap.setMapLock(false);
     }
@@ -181,7 +181,8 @@
     function cancel() {
         dispatch("cancel", "cancelled");
         canEdit = false;
-        gamemap.redrawLocation(data);
+        hasBeenModified = false;
+        gamemap.redrawLocation(data, canEdit);
     }
 
 </script>

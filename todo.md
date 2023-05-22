@@ -1,23 +1,25 @@
 ## last week:
 
 
+## editing:
 - turned off pan/zoom editing anim for performace
 - added live editing debouncing for performance
 
+## bug fixes:
+- fixed cancelling editing not working (it would restore change after few milliseconds)
+- fixed not being able to edit polygon/marker after changing a field in the edit window
 
 
-need to do:
-- stop polygon disappearing on name edit
 
 
 
-
-## dave stuff:
-- 32px skyrim icons
-- cave interior maps for skyrim, ob, mw
-- skyrim minecraft thing
 
 ## todo
+
+- get rid of blue tint when editing polygons and lines
+- fix edit being called three times
+- fix polygons with icons not showing their icons
+- fix polylines disappearing
 
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
 - convert eso and dawnstar to psueodo normalised in mapconfig
@@ -47,6 +49,13 @@ need to do:
 - separate mods from offical maps
 - disable polygon fade css effect on firefox
 - make maps in game release order
+
+
+## dave stuff:
+- 32px skyrim icons
+- cave interior maps for skyrim, ob, mw
+- skyrim minecraft thing
+
 
 feedback:
 - map key alphabetical

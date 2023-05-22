@@ -839,7 +839,6 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 
 .editing:not(.leaflet-container) {
 	animation: none !important;
-	z-index: 999 !important;
 	filter:
 		drop-shadow(-2px -2px 0px var(--editing))
 		drop-shadow(2px -1px 0px var(--editing))

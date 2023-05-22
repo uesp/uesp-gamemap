@@ -1082,7 +1082,6 @@ export default class Gamemap {
 
 		if (isEditing) {
 			this.edit(markers);
-			print(markers);
 		}
 	}
 
@@ -1325,7 +1324,6 @@ export default class Gamemap {
 				if (location.destinationID > 0) { // is destinationID a worldID
 					this.goto(location.destinationID);
 				} else { // it is a location ID
-					print("ligma")
 					print(location.destinationID)
 					function onGetLocation(location) {
 						self.goto(-location.id);
@@ -1522,8 +1520,6 @@ export default class Gamemap {
 		return map.getBoundsZoom(this.getMapBounds());
 	}
 
-
-
 	/*================================================
 						Editing
 	================================================*/
@@ -1538,11 +1534,13 @@ export default class Gamemap {
 				}
 			}
 		});
-		print(markers);
 		return markers;
 	}
 
 	edit(object) {
+		print("edit() is being called with");
+		print(object);
+		print("-")
 		let location;
 		let markers;
 
@@ -1551,7 +1549,6 @@ export default class Gamemap {
 			markers = this.getMarkersFromLocation(location);
 		} else if (object?.length > 0) {
 			markers = object;
-			print("should be being called")
 		}
 
 		// tell rest of the app we're editing this object
@@ -1562,8 +1559,6 @@ export default class Gamemap {
 		// add editing effect to marker(s)
 		if (markers) {
 			markers.forEach((marker) => {
-				print("printing marker")
-				print(marker);
 				marker.element = marker.element ?? marker._path ?? marker._icon;
 				marker.element.classList.add("editing");
 
@@ -1736,23 +1731,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.onFinishedAddPath = function()
-// {
-// 	this.displayLocation(this.currentEditLocation);
-// 	this.currentEditLocation.showPopup();
-
-// 	this.currentEditLocation = null;
-// 	return true;
-// }
-
-
-// uesp.gamemap.Map.prototype.onFinishedAddArea = function()
-// {
-// 	this.onFinishedAddPath();
-// 	return true;
-// }
-
-
 // uesp.gamemap.Map.prototype.onAddPathStart = function()
 // {
 // 	if (!this.canEdit()) return false;
@@ -1858,53 +1836,6 @@ export default class Gamemap {
 // }
 
 
-// uesp.gamemap.Map.prototype.onAddPathClick = function (event)
-// {
-// 	if (!this.canEdit()) return false;
-// 	if (this.currentEditLocation == null) return false;
-
-// 	gamePos = this.convertWindowPixelToGamePos(event.pageX, event.pageY);
-
-// 	this.currentEditLocation.displayData.points.push(gamePos.x);
-// 	this.currentEditLocation.displayData.points.push(gamePos.y);
-
-// 	xMin = this.currentEditLocation.displayData.points[0];
-// 	yMin = this.currentEditLocation.displayData.points[1];
-// 	xMax = this.currentEditLocation.displayData.points[0];
-// 	yMax = this.currentEditLocation.displayData.points[1];
-// 	numPoints = this.currentEditLocation.displayData.points.length;
-
-// 	for (i = 0; i < numPoints; i += 2)
-// 	{
-// 		x = this.currentEditLocation.displayData.points[i];
-// 		y = this.currentEditLocation.displayData.points[i+1];
-
-// 		if (x < xMin) xMin = x;
-// 		if (y < yMin) yMin = y;
-// 		if (x > xMax) xMax = x;
-// 		if (y > yMax) yMax = y;
-// 	}
-
-// 		//TODO: Proper handling of inverse coordinate systems
-// 	this.currentEditLocation.x = xMin;
-// 	this.currentEditLocation.y = yMax;
-
-// 	this.currentEditLocation.width  = xMax - xMin;
-// 	this.currentEditLocation.height = yMax - yMin;
-
-// 	this.displayLocation(this.currentEditLocation);
-// 	this.redrawCanvas(true);
-
-// 	return true;
-// }
-
-
-// uesp.gamemap.Map.prototype.onAddAreaClick = function (event)
-// {
-// 	this.onAddPathClick(event);
-// 	return true;
-// }
-
 // uesp.gamemap.Map.prototype.onReceiveCenterOnLocationData = function (data)
 // {
 // 	uesp.printDebug(uesp.print_LEVEL_INFO, "Received centeron location data");
@@ -1962,60 +1893,7 @@ export default class Gamemap {
 
 
 
-// uesp.gamemap.Map.prototype.retrieveCenterOnLocation = function(world, locationName)
-// {
-// 	var self = this;
 
-// 	var queryParams = {};
-// 	queryParams.action = "get_centeron";
-// 	if (world != null) queryParams.world  = world;
-// 	queryParams.centeron = locationName;
-// 	queryParams.db = this.mapConfig.dbPrefix;
-// 	if (this.isHiddenLocsShown()) queryParams.showhidden = 1;
-
-// 	//if (!this.hasWorld(this.worldID)) queryParams.incworld = 1;
-// 	//if (queryParams.world <= 0) return uesp.printError("Unknown worldID " + this.currentWorldID + "!");
-
-// 	if (this.mapConfig.isOffline)
-// 	{
-// 		setTimeout(	function() { ugmLoadOfflineCenterOnLocation(self, queryParams); }, 10);
-// 	}
-// 	else
-// 	{
-// 		$.getJSON(Constants.GAME_DATA_SCRIPT, queryParams, function(data) { self.onReceiveCenterOnLocationData(data); });
-// 	}
-
-// }
-
-// uesp.gamemap.Map.prototype.onEditDragLocationStart = function (location)
-// {
-// 	this.currentEditMode = 'draglocation';
-// 	this.currentEditLocation = location;
-// 	this.displayEditNotice('Click to move location to a new position.<br/>Hit \'Finish\' on the right when done.', 'Finish', 'Cancel');
-// 	this.currentEditPathPoints = uesp.cloneObject(location.displayData.points);
-
-// 	this.addEditClickWall();
-
-// 	this.displayLocation(this.currentEditLocation);
-// 	this.redrawCanvas(true);
-// }
-
-
-// uesp.gamemap.Map.prototype.onFinishedEditDragLocation = function (location)
-// {
-// 	this.removeEditClickWall();
-
-// 	this.displayLocation(this.currentEditLocation);
-
-// 	this.currentEditLocation.showPopup();
-// 	this.currentEditLocation.updateFormPosition();
-// 	this.currentEditLocation.updateOffset();
-// 	this.currentEditLocation.updatePopupOffset();
-
-
-// 	this.currentEditLocation = null;
-// 	return true;
-// }
 
 // uesp.gamemap.Map.prototype.onEditPathHandlesStart = function (location)
 // {
