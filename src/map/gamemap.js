@@ -9,13 +9,13 @@ import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 // import plugins
+import '@geoman-io/leaflet-geoman-free';
+import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import RasterCoords from "./plugins/rastercoords";
 import './plugins/smoothwheelzoom';
 import './plugins/tilelayercanvas';
 import './plugins/canvasoverlay';
 import './plugins/edgebuffer';
-import '@geoman-io/leaflet-geoman-free';
-import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 
 // import map classes
 import World from "./objects/world.js";
@@ -1077,10 +1077,12 @@ export default class Gamemap {
 		// create new markers
 		markers = this.getMarkers(location);
 		markers.forEach(function(marker) {
-			marker.addTo(map)
-			let element = marker._path || marker._icon;
-			element.classList.add("editing");
+			marker.addTo(map);
 		});
+
+		if (editing) {
+			this.edit(markers[0], true);
+		}
 
 	}
 
@@ -1133,15 +1135,6 @@ export default class Gamemap {
 		let markers = [];
 		let polygonIcon = null;
 		let coords = location.coords;
-
-		L.Marker.include({
-			setEditing: () => {
-				print("ligma")
-				print(this);
-				print("ligma2")
-			},
-
-		});
 
 		// make a generic fallback marker
 		let marker = new L.marker(this.toLatLngs(coords[0]), {riseOnHover: true});
@@ -1549,33 +1542,43 @@ export default class Gamemap {
 		return markers;
 	}
 
-	edit(object) {
-		if (this.mapCallbacks != null) {
+	edit(object, noAnimate) {
+
+
+		if (this.mapCallbacks != null && !noAnimate) {
 			this.mapCallbacks.edit(object);
+		}
 
-			// if the passed object is a location, pan to its centre
-			if (object instanceof Location) {
-				this.centreOnLocation(object);
+		// if the passed object is a location, pan to its centre
+		if (object instanceof Location) {
+			let location = object;
+			let markers = gamemap.getMarkersFromLocation(location);
 
-				setTimeout(() => {
-					let marker = this.getMarkersFromLocation(object)[0];
-
-					print(marker);
-
-					marker.setEditing(true);
-
-					marker.pm.enable({
-						allowSelfIntersection: false,
-						snapDistance: 10,
-						allowEditing: true,
-						draggable: true,
-						syncLayersOnDrag: true,
-					});
-
-				}, 3000);
-
-
+			if (!noAnimate) {
+				this.centreOnLocation(location);
 			}
+
+			// add editing effect to marker(s)
+			markers.forEach((marker) => {
+				print("printing marker")
+				print(marker);
+				marker.element.classList.add("editing");
+
+				// and editing effect to label (if available)
+				if (marker._tooltip) {
+					document.getElementById(marker.element.getAttribute('aria-describedby')).classList.add("editing"); // add editing effect
+				}
+			});
+
+			let marker = markers[0];
+			marker.pm.enable({
+				allowSelfIntersection: false,
+				snapDistance: 10,
+				allowEditing: true,
+				draggable: true,
+				syncLayersOnDrag: true,
+			});
+
 		}
 	}
 

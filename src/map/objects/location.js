@@ -194,7 +194,7 @@ export default class Location {
 	}
 
 	isClickable() {
-		return this.destinationID != 0 && ((this.destinationID < 0 || this.destinationID > 0));
+		return this.destinationID != 0 && ((this.destinationID < 0 || this.destinationID > 0)) && !gamemap.mapLock;
 	}
 
 	createWikiLink() {
@@ -323,7 +323,7 @@ export default class Location {
 		query += `&revisionid=${this.revisionID}`;
 		query += `&db=${gamemap.getMapConfig().database}&visible=1`;
 
-		//return query;
+		return query;
 	}
 
 	// get query for deleting this location

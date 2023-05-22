@@ -38,6 +38,7 @@
     let editor;
     let editorWindow;
     let saveButton;
+    let hasBeenModified = false;
     let haveSaved = false;
     let objectType = (isWorld) ? "world" : "location";
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
@@ -143,20 +144,27 @@
 
     function modify(property, value, isDisplayData) {
 
-        // update svelte reactivity
-        if (isDisplayData) {
-            place.displayData[property] = value;
-        } else {
-            place[property] = value;
-        }
-        place = place;
-
-        print(data);
-        print(place);
-
+        // are there any unsaved changes
         unsavedChanges = !(JSON.stringify(place) === JSON.stringify(data));
 
-        gamemap.updateLocation(place);
+        // enable has been modified since default state
+        if (unsavedChanges) {
+            hasBeenModified = true;
+        }
+
+        if (hasBeenModified) {
+            // update svelte reactivity
+            if (isDisplayData) {
+                place.displayData[property] = value;
+            } else {
+                place[property] = value;
+            }
+            place = place;
+
+            print(data);
+            print(place);
+            gamemap.updateLocation(place);
+        }
     }
 
     function cleanUp() {
@@ -167,6 +175,9 @@
 
         if (isWorld) {
             gamemap.reset(true);
+        } else if (isLocation) {
+            // disable edit mode
+            gamemap.getMapObject().pm.disableGlobalEditMode();
         }
 
         // remove map lock from gamemap

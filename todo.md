@@ -8,6 +8,10 @@
 
 - removed throb effect on editing markers for performance
 
+fix: popup getting in the way whilst editing
+
+tweak: hide "click to enter" text when editing
+
 
 useful features:
 - polygon handles snap to nearest polygon (show zone map) for neater zones

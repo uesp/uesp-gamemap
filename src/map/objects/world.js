@@ -20,16 +20,16 @@ export default class World {
 			this.wikiPage = world.wikiPage || null;
 			this.cellSize = world.cellSize || -1;
 
-			this.zoomOffset = (mapConfig.zoomOffset != null) ? mapConfig.zoomOffset : world.zoomOffset;
+			this.zoomOffset = mapConfig.zoomOffset ?? world.zoomOffset;
 			this.defaultZoom = world.defaultZoom - this.zoomOffset;
 
 			this.maxZoomLevel = (world.maxZoom - this.zoomOffset);
 			this.minZoomLevel = (world.minZoom - this.zoomOffset) || 0;
 
-			this.minX = (mapConfig.minX != null) ? mapConfig.minX : world.posLeft;
-			this.maxX = (mapConfig.maxX != null) ? mapConfig.maxX : world.posRight;
-			this.minY = (mapConfig.minY != null) ? mapConfig.minY : world.posBottom;
-			this.maxY = (mapConfig.maxY != null) ? mapConfig.maxY : world.posTop;
+			this.minX = mapConfig.minX ?? world.posLeft;
+			this.maxX = mapConfig.maxX ?? world.posRight;
+			this.minY = mapConfig.minY ?? world.posBottom;
+			this.maxY = mapConfig.maxY ?? world.posTop;
 
 			this.numTilesX = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the X direction
 			this.numTilesY = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the Y direction
