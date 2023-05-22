@@ -18,6 +18,16 @@ useful features:
 - "add new point" button in the middle between points
 
 
+- tried other lib, didnt work, got geoman working
+- being able to use keyboard shortcuts on it is a pro feature though i think
+
+- getting geoman working wasnt that easy, other polygons kept interfering with it
+- ignoring clicks etc
+
+
+just need to link up the polygon stuff and marker moving to the location's coordinates and get coord saving working
+
+
 ## canvas experiment
 already mentioned earlier last week, but i experimented briefly with porting icons + polygons to canvas
 resulted in 300mb ram usage down from 1gb
