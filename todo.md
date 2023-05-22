@@ -8,7 +8,11 @@
 ## bug fixes:
 - fixed cancelling editing not working (it would restore change after few milliseconds)
 - fixed not being able to edit polygon/marker after changing a field in the edit window
+- fixed edit() function being called three times (and redrawing marker every time) you edit
 
+
+## misc:
+- finalised design of the polygon handles
 
 
 

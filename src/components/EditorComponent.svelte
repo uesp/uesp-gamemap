@@ -128,7 +128,6 @@
 
     }
 
-
     let timer;
     const DEBOUNCE_AMOUNT = 75;
     function modify(property, value, isDisplayData) {

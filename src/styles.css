@@ -31,10 +31,16 @@
 	--error_light: #cf5f1f;
 	--error_dark: #DD8A5B;
 	--delete_pastel: #d95c5c;
+	--add_light: #aad67d;
 	--add: #a0ca76;
+	--add_dark: #84a861;
 	--editing: #3e68ffc0;
-	--editing_light: #3e68ff;
-	--editing_dark: #3557d1;
+	--editing_opaque: #3e68ff;
+	--editing_opaque_dark: #3557d1;
+	--editing_opaque_light: rgb(60, 95, 224);
+	--editing_outline: #263e97;
+	--editing_outline_light: #1e40ba;
+	--editing_outline_dark: #203377;
 	--delete: rgba(186,43,69,1);
 	--delete_light: rgb(207, 47, 76);
 	--save: #5e8735;
@@ -1019,51 +1025,56 @@ textarea.materialize-textarea {
 	text-transform: uppercase;
 }
 
-.leaflet-marker-icon.marker-icon {
-	background-color: var(--editing_light) !important;
-	border: solid 2px var(--text_on_primary) !important;
+.leaflet-marker-icon.marker-icon:hover {
+	opacity: 1 !important;
 }
 
-.leaflet-marker-icon.marker-icon:active {
-	background-color: var(--editing_dark) !important;
-	border: solid 2px var(--text_on_primary) !important;
+.leaflet-marker-icon.marker-icon {
+	animation: none !important;
+	background-color: var(--editing_opaque) !important;
+	border: solid 2px var(--editing_outline) !important;
 }
 
 .leaflet-marker-icon.marker-icon:hover {
-	opacity: 1 !important;
+	animation: none !important;
+	background-color: var(--editing_opaque_light) !important;
+	border-color: var(--editing_outline_light) !important;
+}
+
+.leaflet-marker-icon.marker-icon:active {
+	background-color: var(--editing_opaque_dark) !important;
+	border: solid 2px var(--editing_outline_dark) !important;
 }
 
 .marker-icon.marker-icon-middle {
 	height: 12px !important;
 	width: 12px !important;
 	background-color: var(--add) !important;
+	border: solid 2px var(--add) !important;
 	opacity: 0 !important;
 }
 
 .marker-icon.marker-icon-middle:hover {
 	opacity: 1 !important;
+	background-color: var(--add) !important;
+	border: solid 2px var(--add) !important;
 }
 
 .marker-icon.marker-icon-middle:active {
-	background-color: var(--save_light) !important;
-	height: 13px !important;
-	width: 13px !important;
-	opacity: 1;
+	background-color: var(--add_dark) !important;
+	border: solid 2px var(--add_dark) !important;
+	opacity: 1 !important;
+	height: 12px !important;
+	width: 12px !important;
 }
 
 .marker-icon.marker-icon-middle::before {
-	content: "+";
-	position: absolute;
-	top: -7px;
-	left: 0.5px;
-}
-
-.marker-icon.marker-icon-middle:active::before {
-	top: -7.5px;
-	left: 1px;
+	content: "+" !important;
+	position: absolute !important;
+	top: -7px !important;
+	left: 0.5px !important;
 }
 
 .leaflet-container.editing {
-
 	cursor: not-allowed !important;
 }
