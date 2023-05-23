@@ -1701,10 +1701,7 @@ L.Layer.include({
 		if (editing) {
 			// and editing effect to marker
 			this.getElement().classList.add("editing");
-			this.getTooltip()?.classList.add("editing");
-			// if (this._tooltip) {
-			// 	setTimeout(() => { )?.
-			// }
+			setTimeout(() => {this.getTooltip()?.classList.add("editing")}, 10);
 
 			this.pm.enable({
 				snapDistance: 10,
@@ -1719,13 +1716,8 @@ L.Layer.include({
 				}
 
 				if ((e.shape == "Polygon" || e.shape == "Line") && e.type == "pm:markerdragend" || e.type == "pm:vertexremoved") {
-					let latLngs = e.layer.getCoordinates();
-					let coords = [];
-
-					latLngs.forEach((latLng) => {
-						coords.push(gamemap.toCoords(latLng));
-					});
-
+					let [latLngs, coords] = [e.layer.getCoordinates(), []];
+					latLngs.forEach((latLng) => { coords.push(gamemap.toCoords(latLng)) });
 					updateMarkerCoords(coords);
 				}
 			});

@@ -37,9 +37,9 @@
 	--editing: #3e68ffc0;
 	--editing_opaque: #3e68ff;
 	--editing_opaque_dark: #3557d1;
-	--editing_opaque_light: rgb(60, 95, 224);
+	--editing_opaque_light: #5d80ff;
 	--editing_outline: #263e97;
-	--editing_outline_light: #1e40ba;
+	--editing_outline_light: #3c53aa;
 	--editing_outline_dark: #203377;
 	--delete: rgba(186,43,69,1);
 	--delete_light: rgb(207, 47, 76);
