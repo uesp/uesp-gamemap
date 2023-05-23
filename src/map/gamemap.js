@@ -35,6 +35,34 @@ let mapWorldDisplayNameIndex = {}; // Local list of map display names
 let tileLayer; // Local tiles
 
 /*================================================
+				Leaflet Extensions
+================================================*/
+
+// Custom mini-extensions on top of Leaflet
+L.Layer.include({
+
+    // Adding a new property to the class
+    getLatLngsee: function(e) {
+
+		print(this);
+		print("ligma")
+		print(e);
+	},
+
+	// get centre latLng coordinate for all layers
+	getCentre: function() {
+		return this.getLatLng?.() ?? L.latLngBounds(this.getLatLngs()[0]).getCenter();
+	},
+
+	setLocation: function(location) {
+		this.location = location;
+	},
+	setDisplayLevel: function(displayLevel) {
+		this.displayLevel = displayLevel;
+	},
+});
+
+/*================================================
 				  Constructor
 ================================================*/
 export default class Gamemap {
@@ -1012,9 +1040,8 @@ export default class Gamemap {
 		if (marker instanceof L.Marker) {
 			latlngs = [marker.getLatLng()];
 		} else {
-			latlngs = marker.getLatLngs()[0];
-			// latlngs = array.push(this.toLatLngs(getAverageCoord(array)));
-			// todo: do averagecoord here
+			latlngs = JSON.parse(JSON.stringify(marker.getLatLngs()[0]));
+			latlngs.push(marker.getCentre());
 		}
 
 		let isInsideViewport;
@@ -1186,8 +1213,6 @@ export default class Gamemap {
 
 			if (location.hasIcon()) {
 				marker = this.makeMarker(location, this.toLatLngs(coords[0]), isEditing);
-				print("glt icon")
-				print(marker);
 			}
 
 		}
@@ -1370,6 +1395,7 @@ export default class Gamemap {
 
 		if (!isEdit){
 			print("making popup");
+			marker.getLatLngsee();
 			L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
 		} else {
 			this.edit(marker.location);
@@ -1392,9 +1418,13 @@ export default class Gamemap {
 
 			}
 
-			if (location.displayLevel > map.getZoom() && !marker.options.className == "editing") {
-				if (location.locType != LOCTYPES.PATH) {
-					marker.remove();
+			if (location.displayLevel > map.getZoom() ) {
+				if (marker.options.className != "editing") {
+					if (location.locType != LOCTYPES.PATH) {
+						marker.getLatLngsee();
+						marker.remove();
+					}
+
 				}
 			}
 
@@ -1545,9 +1575,6 @@ export default class Gamemap {
 	}
 
 	edit(object) {
-		print("edit() is being called with");
-		print(object);
-		print("-")
 		let location;
 		let markers;
 

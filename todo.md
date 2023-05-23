@@ -11,6 +11,7 @@
 - fixed cancelling editing not working (it would restore change after few milliseconds)
 - fixed not being able to edit polygon/marker after changing a field in the edit window
 - fixed edit() function being called three times (and redrawing marker every time) you edit
+- fixed polygons disappearing when zooming to their centre (all the outside polygons were not visible, so the polygon was culled)
 
 
 ## misc:
@@ -33,7 +34,6 @@
 - alphabeticise map key ui
 - hamburger for search bar to show other maps
 - cell resource state from url
-- do get centre of polygon to count towards isvisible
 - add allow long clicking on mobile to open popups
 - fix requesting /null in layerbutton
 - fix polylines not respecting zoom levels
@@ -43,10 +43,13 @@
 - fix polygons disappearing when outer points are not viewable (consider centre point as well)
 - make embeded map watermark actually open in new tab
 - make labels clickable
+- fix edit pane causing iconbar to overlap
 - make going to location centre zoom dynamically instead of always zoom level 5
 - add continuous zoom, markers popup on zoom rather than zoomend
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
+- fix regaining grid on day/night mode switch
+- fix canvas grid layer being laggy af when zooming out
 - add riseOnHover to icon labels when hovering over
 - make tooltips follow the mouse rather than the centre of the location
 - fix all markers showing up at initial load on highest zoom level

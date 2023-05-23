@@ -431,7 +431,7 @@ window.getAverageCoord = function getAverageCoord(coords) {
 	return new Point(finalX / xs.length, finalY / ys.length, null, gamemap.getMapConfig().coordType);
 }
 
-/** Function turns a date object into a relative string (4 days ago)
+/** Function turns a date object into a relative string (i.e 4 days ago)
  * @param {Date} date - The date object to parse
  * @returns {String} timeAgo - How long ago it was
  */
