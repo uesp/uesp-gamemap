@@ -1044,14 +1044,7 @@ export default class Gamemap {
 			latlngs.push(marker.getCentre());
 		}
 
-		let isInsideViewport;
-
-		for (let i = 0; i < latlngs.length; i++ ) {
-
-			if (isInsideViewport != true) {
-				isInsideViewport = (map.getBounds().contains(latlngs[i]));
-			}
-		}
+		let isInsideViewport = map.getBounds().intersects(L.latLngBounds(latlngs));
 
 		let markerElement = marker._icon || marker._path;
 		let isEditing = (markerElement) && markerElement.classList.contains("editing");
