@@ -6,8 +6,6 @@ lots of bug fixes, worked on location stuff too
 ## editing:
 - turned off pan/zoom editing anim for performace
 - added live editing debouncing for performance
-- removed blue editing tint from polygons, so you can see the fill/hover colours
->> tint remains on label and handles, though
 - dragging/moving markers now updates location's position live
 
 ## bug fixes:
@@ -18,6 +16,7 @@ lots of bug fixes, worked on location stuff too
 - fixed memory leak which was causing icons to stay in memory and jank up the pan/zoom events
 - fixed polylines ignoring displayLevel (longstanding bug)
 - fixed polygons with icons not being centred correctly
+- fixed all icons loading in when loading map at full zoom levels
 
 ## polish:
 - finalised design of the polygon handles

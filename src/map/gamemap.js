@@ -35,40 +35,6 @@ let mapWorldDisplayNameIndex = {}; // Local list of map display names
 let tileLayer; // Local tiles
 
 /*================================================
-				Leaflet Extensions
-================================================*/
-
-// Custom mini-extensions on top of Leaflet
-L.Layer.include({
-
-	location: null,
-
-	setLocation: function(location) {
-		this.location = location;
-	},
-
-	getLocation: function() {
-		return this.location;
-	},
-
-    // get layer latlongs as array
-    getCoordinates: function() {
-		if (this.getLatLng) {
-			return [structuredClone(this.getLatLng())];
-		} else if (this.getLatLngs) {
-			let latLngs = structuredClone(this.getLatLngs());
-			return (latLngs.length > 1) ? latLngs : latLngs[0];
-		}
-	},
-
-	// get centre latLng coordinate for layers
-	getCentre: function(latLngs) {
-		return this.getLatLng?.() ?? L.latLngBounds((latLngs && Array.isArray(latLngs)) ? latLngs : this.getCoordinates()).getCenter();
-	},
-
-});
-
-/*================================================
 				  Constructor
 ================================================*/
 export default class Gamemap {
@@ -572,16 +538,22 @@ export default class Gamemap {
 
 	/**
 	 * Convert leaflet LatLngs to human readable map coordinates coordinates.
-	 * @param {Object} latLng - the leaflet latLng coordinate object
+	 * @param {Object} latLngs - the leaflet latLng coordinate object
 	 */
-	toCoords(latLng, coordType) {
+	toCoords(latLngs, coordType) {
 
 		var coords;
-		coordType = (coordType != null) ? coordType : (latLng instanceof Point) ? latLng.coordType : this.mapConfig.coordType;
+		latLngs = structuredClone(latLngs);
+		coordType = (coordType != null) ? coordType : (latLngs instanceof Point) ? latLngs.coordType : this.mapConfig.coordType;
 
 		// convert latlng to XY coords;
-		if (latLng.lat != null) {
-			coords = RC.project(latLng);
+		if (latLngs.lat != null) {
+			coords = RC.project(latLngs);
+		} else if (Array.isArray(latLngs)) {
+			coords = [];
+			latLngs.forEach((latLng) => {
+				coords.push(RC.project(latLng));
+			});
 		}
 
 		if (coordType != COORD_TYPES.XY) {
@@ -601,7 +573,7 @@ export default class Gamemap {
 				// reproject pixel values to worldspace
 				coords.x = Math.trunc(world.minX + (world.maxX - world.minX) * nX);
 				coords.y = Math.trunc(world.minY + (world.maxY - world.minY) * nY);
-				coordType.coordType = coords.coordType = COORD_TYPES.WORLDSPACE;
+				coords.coordType = COORD_TYPES.WORLDSPACE;
 			}
 		}
 
@@ -1047,8 +1019,9 @@ export default class Gamemap {
 
 		let isInsideViewport = map.getBounds().intersects(L.latLngBounds(latlngs));
 
-		let markerElement = marker._icon || marker._path;
-		let isEditing = (markerElement) && markerElement.classList.contains("editing");
+		print(marker.getElement());
+
+		let isEditing = (marker.element) && marker.element.classList.contains("editing");
 
 		let isVisible = (isInsideViewport && marker.getLocation().displayLevel <= map.getZoom()) || isEditing;
 		let wasVisible = marker._wasVisible;
@@ -1443,6 +1416,8 @@ export default class Gamemap {
 
 		if (!isEdit){
 			print("making popup");
+			print(marker);
+			print(marker.element);
 			L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
 		} else {
 			this.edit(marker.location);
@@ -1564,36 +1539,7 @@ export default class Gamemap {
 
 		// add editing effect to marker(s)
 		if (markers) {
-			markers.forEach((marker) => {
-				marker.element = marker.element ?? marker._path ?? marker._icon;
-				marker.element.classList.add("editing");
-
-				marker.pm.enable({
-					snapDistance: 10,
-					allowEditing: true,
-					draggable: true,
-					syncLayersOnDrag: markers,
-				});
-
-				marker.on('pm:markerdragend pm:edit', (e) => {
-					print(e);
-					if (e.shape == "Marker") {
-						let coords = this.toCoords(e.layer.getLatLng());
-						updateMarkerCoords([coords]);
-					}
-
-					if (e.shape == "Polygon") {
-						//print(this.toCoords(e.layer.getLatLngs()));
-					}
-				});
-
-				// and editing effect to label (if available)
-				if (marker._tooltip) {
-					setTimeout(() => {
-						document.getElementById(marker.element.getAttribute('aria-describedby'))?.classList.add("editing"); // add editing effect
-					}, 10)
-				}
-			});
+			markers.forEach((marker) => { marker.setEditing(true)});
 		}
 
 	}
@@ -1698,41 +1644,133 @@ export default class Gamemap {
 	}
 }
 
-// uesp.gamemap.Map.prototype.hasLocation = function(locId)
-// {
-// 	return locId in this.locations;
+/*================================================
+				Leaflet Extensions
+================================================*/
+
+L.Layer.include({
+
+	// properties
+	location: null,
+	element: null,
+	editing: false,
+
+	// getters
+	getLocation: function() { return this.location },
+	getCentre: function(latLngs) { return this.getLatLng?.() ?? L.latLngBounds((latLngs && Array.isArray(latLngs)) ? latLngs : this.getCoordinates()).getCenter() },
+	getElement() { return this.element = this?._icon ?? this?._path },
+
+	// setters
+	setLocation(location) { this.location = location },
+
+    // get layer latlngs as array
+    getCoordinates() {
+		if (this.getLatLng) {
+			return [structuredClone(this.getLatLng())];
+		} else if (this.getLatLngs) {
+			let latLngs = structuredClone(this.getLatLngs());
+			return (latLngs.length > 1) ? latLngs : latLngs[0];
+		}
+	},
+
+	// get layer latlngs as well as estimated centre point as an array
+	getCoordinatesAndCentre() {
+		let latlngs = marker.getCoordinates();
+		if (this.getLatLngs) {latlngs.push(this.getCentre(latlngs))}
+		return latlngs;
+	},
+
+	// get marker is visible
+	isVisible() {
+		if (this.isEditing()) return true;
+
+		let isInsideViewport = map.getBounds().intersects(L.latLngBounds(this.getCoordinatesAndCentre()));
+	},
+
+	isEditing() {
+		return this.getElement()?.classList.contains("editing") || this.editing;
+	},
+
+	getTooltip() {
+		return document.getElementById(this.getElement().getAttribute('aria-describedby'));
+	},
+
+	setEditing(editing) {
+		this.editing = editing;
+
+		if (editing) {
+			// and editing effect to marker
+			this.getElement().classList.add("editing");
+			this.getTooltip()?.classList.add("editing");
+			// if (this._tooltip) {
+			// 	setTimeout(() => { )?.
+			// }
+
+			this.pm.enable({
+				snapDistance: 10,
+				allowEditing: true,
+				draggable: true,
+			});
+
+			this.on('pm:markerdragend pm:vertexremoved pm:edit', (e) => {
+				if (e.shape == "Marker") {
+					let coords = gamemap.toCoords(e.layer.getLatLng());
+					updateMarkerCoords([coords]);
+				}
+
+				if ((e.shape == "Polygon" || e.shape == "Line") && e.type == "pm:markerdragend" || e.type == "pm:vertexremoved") {
+					let latLngs = e.layer.getCoordinates();
+					let coords = [];
+
+					latLngs.forEach((latLng) => {
+						coords.push(gamemap.toCoords(latLng));
+					});
+
+					updateMarkerCoords(coords);
+				}
+			});
+		} else {
+			this.off("pm:markerdragend pm:vertexremoved pm:edit");
+		}
+
+	}
+});
+
+
+
+// let isEditing = (marker.element) && marker.element.;
+
+// let isVisible = (isInsideViewport && marker.getLocation().displayLevel <= map.getZoom()) || isEditing;
+// let wasVisible = marker._wasVisible;
+
+// // add/remove from DOM on change
+// if (isVisible != wasVisible) {
+// 	if (isVisible) {
+
+// 		if (this.markerLayer.hasLayer(marker)) {
+// 			marker.addTo(map);
+// 			if (marker.location.hasLabel() && !(marker.location.hasIcon() && marker._path != null)) {
+// 				marker.bindTooltip(marker.location.name, this.getLocationLabel(marker.location));
+// 			}
+// 		}
+
+// 	} else {
+// 		//print("should be getting removed");
+// 		marker.remove();
+// 	}
+
+// 	marker._wasVisible = isVisible;
+
 // }
 
-// uesp.gamemap.Map.prototype.onFinishEditMode = function(event)
-// {
-// 	if (this.currentEditMode == '') return true;
 
-// 	this.removeEditClickWall();
-// 	this.hideEditNotice();
 
-// 	if (this.currentEditMode == 'addpath')
-// 	{
-// 		this.onFinishedAddPath();
-// 	}
-// 	else if (this.currentEditMode == 'addarea')
-// 	{
-// 		this.onFinishedAddArea();
-// 	}
-// 	else if (this.currentEditMode == 'edithandles')
-// 	{
-// 		this.onFinishedEditHandles();
-// 	}
-// 	else if (this.currentEditMode == 'draglocation')
-// 	{
-// 		this.onFinishedEditDragLocation();
-// 	}
 
-// 	this.currentEditMode = '';
 
-// 	this.redrawCanvas(true);
 
-// 	return true;
-// }
+
+
+
 
 
 // uesp.gamemap.Map.prototype.onAddLocationStart = function()
@@ -1746,7 +1784,6 @@ export default class Gamemap {
 
 // 	return true;
 // }
-
 
 // uesp.gamemap.Map.prototype.onAddPathStart = function()
 // {
@@ -1794,14 +1831,12 @@ export default class Gamemap {
 // 	this.displayEditNotice("Click on the map to add points to the area. Click 'Finish' when done...", 'Finish', 'Cancel');
 // }
 
-
 // uesp.gamemap.Map.prototype.createNewLocationId = function ()
 // {
 // 	NewId = this.nextNewLocationId;
 // 	this.nextNewLocationId -= 1;
 // 	return NewId;
 // }
-
 
 // uesp.gamemap.Map.prototype.createNewLocation = function (gamePos)
 // {
@@ -1908,53 +1943,6 @@ export default class Gamemap {
 // 	return true;
 // }
 
-
-
-
-
-// uesp.gamemap.Map.prototype.onEditPathHandlesStart = function (location)
-// {
-// 	this.currentEditMode = 'edithandles';
-// 	this.currentEditLocation = location;
-// 	this.displayEditNotice('Edit path/area nodes by clicking and dragging.<br/>Hit \'Finish\' on the right when done.<br />Ctrl+Click deletes a point. Shift+Click adds a point.', 'Finish', 'Cancel');
-// 	this.currentEditPathPoints = uesp.cloneObject(location.displayData.points);
-
-// 	this.currentEditLocation.updateFormPosition();
-// 	this.addEditClickWall('default');
-
-// 	if (this.currentEditLocation.pathElement)
-// 	{
-// 		this.currentEditLocation.pathElement.css('z-index', '150');
-// 	}
-
-// 	this.displayLocation(this.currentEditLocation);
-// 	this.redrawCanvas();
-// }
-
-// uesp.gamemap.Map.prototype.onFinishedEditHandles = function()
-// {
-// 	this.removeEditClickWall();
-
-// 	if (this.currentEditLocation.pathElement)
-// 	{
-// 		this.currentEditLocation.pathElement.css('z-index', '');
-// 	}
-
-// 	this.currentEditLocation.editPathHandles = false;
-// 	this.displayLocation(this.currentEditLocation);
-
-// 	this.currentEditLocation.showPopup();
-// 	this.currentEditLocation.updateFormPosition();
-// 	this.currentEditLocation.updateOffset();
-// 	this.currentEditLocation.updatePopupOffset();
-
-// 	this.currentEditLocation = null;
-
-// 	this.redrawCanvas();
-
-// 	return true;
-// }
-
 // uesp.gamemap.Location.prototype.setPopupEditNotice = function (Msg, MsgType)
 // {
 // 	if (this.popupElement == null) return;
@@ -1968,6 +1956,7 @@ export default class Gamemap {
 // 	$status.removeClass('gmMapEditPopupStatusWarning');
 // 	$status.removeClass('gmMapEditPopupStatusError');
 
+// 	this.displayEditNotice('Edit path/area nodes by clicking and dragging.<br/>Hit \'Finish\' on the right when done.<br />Ctrl+Click deletes a point. Shift+Click adds a point.', 'Finish', 'Cancel');
 // 	if (MsgType == null || MsgType === 'ok')
 // 		$status.addClass('gmMapEditPopupStatusOk');
 // 	else if (MsgType === 'note')
