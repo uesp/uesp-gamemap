@@ -93,8 +93,6 @@ export default class Location {
 			this.style.lineWidth = this.displayData.lineWidth;
 			this.style.hover.lineWidth = this.displayData.hover.lineWidth;
 
-			print(this.displayData.fillStyle);
-
 			this.style.fillColour = this.displayData.fillStyle;
 			this.style.hover.fillColour = this.displayData.hover.fillStyle;
 
@@ -103,9 +101,7 @@ export default class Location {
 
 			this.style.strokeWidth = this.displayData.lineWidth;
 			this.style.hover.strokeWidth = this.displayData.hover.lineWidth;
-
 		}
-
 	}
 
 	makePoint(coords) {

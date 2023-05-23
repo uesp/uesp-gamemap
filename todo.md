@@ -12,10 +12,12 @@
 - fixed not being able to edit polygon/marker after changing a field in the edit window
 - fixed edit() function being called three times (and redrawing marker every time) you edit
 - fixed polygons centre coordinates not counting towards it being visible (if all the outside polygons were not visible, the polygon was culled)
+- fixed memory leak which was causing icons to stay in memory and jank up the pan/zoom events
 
 
-## misc:
+## polish:
 - finalised design of the polygon handles
+- optimised icon culling code to be more performant
 
 
 
