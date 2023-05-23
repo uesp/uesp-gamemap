@@ -14,7 +14,7 @@ lots of bug fixes, worked on
 - fixed cancelling editing not working (it would restore change after few milliseconds)
 - fixed not being able to edit polygon/marker after changing a field in the edit window
 - fixed edit() function being called three times (and redrawing marker every time) you edit
-- fixed polygons centre coordinates not counting towards it being visible (if all the outside polygons were not visible, the polygon was culled)
+- fixed polygons centre coordinates not counting towards it being visible (if all the outside polygons were not visible, the polygon was culled) - long standing bug
 - fixed memory leak which was causing icons to stay in memory and jank up the pan/zoom events
 - fixed polylines ignoring displayLevel (longstanding bug)
 - fixed polygons with icons not being centred correctly
@@ -23,6 +23,11 @@ lots of bug fixes, worked on
 - finalised design of the polygon handles
 - optimised icon culling code to be more performant
 - rewrote marker engine to be more performant (900mb ram usage)
+
+## problems:
+- when editing polygons, geoman adds several 10's of circle markers to the map for handles, laggy
+- no easy way to fix that exept for using canvas
+- mitigated it somewhat by optimising the marker engine above and debouncing when editing fields
 
 
 
@@ -51,6 +56,7 @@ lots of bug fixes, worked on
 - add continuous zoom, markers popup on zoom rather than zoomend
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
+- make tooltip follow mouse cursor instead of centre
 - fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af when zooming out
 - add riseOnHover to icon labels when hovering over

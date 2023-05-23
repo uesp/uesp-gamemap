@@ -852,6 +852,11 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 		drop-shadow(-1px 2px 0px var(--editing)) !important;
 }
 
+path.editing {
+	filter: none !important;
+}
+
+
 /*================================================
 				  Ugly CSS Hacks
 ================================================*/

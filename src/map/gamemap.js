@@ -54,9 +54,9 @@ L.Layer.include({
     // get layer latlongs as array
     getCoordinates: function() {
 		if (this.getLatLng) {
-			return [this.getLatLng()];
+			return [structuredClone(this.getLatLng())];
 		} else if (this.getLatLngs) {
-			let latLngs = this.getLatLngs();
+			let latLngs = structuredClone(this.getLatLngs());
 			return (latLngs.length > 1) ? latLngs : latLngs[0];
 		}
 	},
@@ -143,6 +143,7 @@ export default class Gamemap {
 			smoothWheelZoom: true,  // enable smooth zoom
   			smoothSensitivity: 0.9, // zoom sensitivity. default is 1
 			attributionControl: false, // disable leaflet attribution control
+			renderer: L.svg({ padding: 2 }) // custom SVG renderer
         }
 
 		// create root map object
@@ -1041,7 +1042,7 @@ export default class Gamemap {
 
 	redrawMarkers(marker){
 
-		let latlngs = structuredClone(marker.getCoordinates());
+		let latlngs = marker.getCoordinates();
 		if (marker.getLatLngs) {latlngs.push(marker.getCentre(latlngs))}
 
 		let isInsideViewport = map.getBounds().intersects(L.latLngBounds(latlngs));
@@ -1174,7 +1175,6 @@ export default class Gamemap {
 
 			let options = {
 				noClip: true,
-				renderer: L.svg({ padding: 5 }),
 				smoothFactor: 2,
 				fillColor: location.style.fillColour,
 				color: location.style.strokeColour,
