@@ -1,11 +1,14 @@
 ## last week:
 
+lots of bug fixes, worked on
+
 
 ## editing:
 - turned off pan/zoom editing anim for performace
 - added live editing debouncing for performance
 - removed blue editing tint from polygons, so you can see the fill/hover colours
 >> tint remains on label and handles, though
+- dragging/moving markers now updates location's position live
 
 ## bug fixes:
 - fixed cancelling editing not working (it would restore change after few milliseconds)
@@ -13,11 +16,13 @@
 - fixed edit() function being called three times (and redrawing marker every time) you edit
 - fixed polygons centre coordinates not counting towards it being visible (if all the outside polygons were not visible, the polygon was culled)
 - fixed memory leak which was causing icons to stay in memory and jank up the pan/zoom events
-
+- fixed polylines ignoring displayLevel (longstanding bug)
+- fixed polygons with icons not being centred correctly
 
 ## polish:
 - finalised design of the polygon handles
 - optimised icon culling code to be more performant
+- rewrote marker engine to be more performant (900mb ram usage)
 
 
 
@@ -26,9 +31,7 @@
 ## todo
 
 - get rid of blue tint when editing polygons and lines
-- fix edit being called three times
 - fix polygons with icons not showing their icons
-- fix polylines disappearing
 
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
 - convert eso and dawnstar to psueodo normalised in mapconfig
@@ -38,11 +41,9 @@
 - cell resource state from url
 - add allow long clicking on mobile to open popups
 - fix requesting /null in layerbutton
-- fix polylines not respecting zoom levels
 - make leaflet popup wikilinks turn black if there's no href
 - add permalink option in location popups
 - redesign location popups
-- fix polygons disappearing when outer points are not viewable (consider centre point as well)
 - make embeded map watermark actually open in new tab
 - make labels clickable
 - fix edit pane causing iconbar to overlap
@@ -60,7 +61,6 @@
 - separate mods from offical maps
 - disable polygon fade css effect on firefox
 - make maps in game release order
-
 
 ## dave stuff:
 - 32px skyrim icons

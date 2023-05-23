@@ -43,49 +43,29 @@ L.Layer.include({
 
 	location: null,
 
-    // Adding a new property to the class
-    getLatLongs: function() {
-		// print ("getting latlngs");
-		// print(this);
-		if (this.getLatLng) {
-			return [this.getLatLng()];
-		} else if (this.getLatLngs) {
-			// print(this.getLatLngs?.());
-			// print(this.getLatLngs?.()?.[0]);
-		}
-	},
-
-	// get centre latLng coordinate for all layers
-	// getCentre: function() {
-	// 	return this.getLatLng?.() ?? L.latLngBounds(this.getLatLngs()[0]).getCenter();
-	// },
-
-	getCentre: function(latLngs) {
-		// print(this.getLatLongs());
-		// print(latLngs);
-		// print(this.getLatLngs?.());
-		// print(this.getLatLngs?.()?.[0]);
-		//latLngs = this.getLatLngs ? latLngs : this.getLatLngs()[0];
-		return this.getLatLng?.() ?? (() => {
-			let final = null;
-
-			let lat = 0;
-			let lng = 0;
-			latLngs.forEach?.((latLng) => {
-				lat += latLng.lat;
-				lng += latLng.lng;
-			});
-			return L.latLng(lat/latLngs.length, lng/latLngs.length);
-		}).call();
-	},
-
 	setLocation: function(location) {
 		this.location = location;
 	},
 
 	getLocation: function() {
 		return this.location;
-	}
+	},
+
+    // get layer latlongs as array
+    getCoordinates: function() {
+		if (this.getLatLng) {
+			return [this.getLatLng()];
+		} else if (this.getLatLngs) {
+			let latLngs = this.getLatLngs();
+			return (latLngs.length > 1) ? latLngs : latLngs[0];
+		}
+	},
+
+	// get centre latLng coordinate for layers
+	getCentre: function(latLngs) {
+		return this.getLatLng?.() ?? L.latLngBounds((latLngs && Array.isArray(latLngs)) ? latLngs : this.getCoordinates()).getCenter();
+	},
+
 });
 
 /*================================================
@@ -103,7 +83,7 @@ export default class Gamemap {
 		// create map root element if it doesn't exist
 		if (mapRoot == null) {
 			let gamemap = document.createElement("div");
-			gamemap.id = "gamemap"
+			gamemap.id = "gamemap";
 			let appNode = (document.body.children[0] != null) ? document.body.children[0] : document.body;
 			appNode.prepend(gamemap);
 			mapRoot = gamemap;
@@ -1061,16 +1041,8 @@ export default class Gamemap {
 
 	redrawMarkers(marker){
 
-		let latlngs = [];
-
-		//print(marker.getLatLongs());
-
-		if (marker instanceof L.Marker) {
-			latlngs = [marker.getLatLng()];
-		} else if (marker.getLatLngs) {
-			latlngs = JSON.parse(JSON.stringify(marker.getLatLngs()[0]));
-			//latlngs.push(marker.getCentre(latlngs));
-		}
+		let latlngs = structuredClone(marker.getCoordinates());
+		if (marker.getLatLngs) {latlngs.push(marker.getCentre(latlngs))}
 
 		let isInsideViewport = map.getBounds().intersects(L.latLngBounds(latlngs));
 
@@ -1215,9 +1187,7 @@ export default class Gamemap {
 				marker = new L.polygon(coords, options);
 
 				if (location.hasIcon()){
-					marker.addTo(map);
-					polygonIcon = this.makeMarker(location, marker.getCenter());
-					marker.remove();
+					polygonIcon = this.makeMarker(location, marker.getCentre());
 				}
 			}
 
@@ -1242,18 +1212,15 @@ export default class Gamemap {
 			// bind marker events
 			marker.once('add', function() {
 
-				const EVENT_STRING = "resize moveend zoomend";
-
+				const EVENTS_STRING = "resize moveend zoomend";
 				if (marker.getLocation().displayLevel > map.getZoom()) {
 					if (marker.options.className != "editing") {
-						if (location.locType != LOCTYPES.PATH) {
-							marker.off(EVENT_STRING);
+							marker.off(EVENTS_STRING);
 							marker.remove();
-						}
 					}
 				}
 
-				map.on(EVENT_STRING, function() {
+				map.on(EVENTS_STRING, function() {
 					if (marker.getLocation().worldID == self.getCurrentWorldID()) {
 						self.redrawMarkers(marker);
 					}
