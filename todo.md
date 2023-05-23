@@ -1,6 +1,6 @@
 ## last week:
 
-lots of bug fixes, worked on
+lots of bug fixes, worked on location stuff too
 
 
 ## editing:
@@ -23,6 +23,7 @@ lots of bug fixes, worked on
 - finalised design of the polygon handles
 - optimised icon culling code to be more performant
 - rewrote marker engine to be more performant (900mb ram usage)
+- optimised svg renderer to use just 1 svg element instead of loads for each path
 
 ## problems:
 - when editing polygons, geoman adds several 10's of circle markers to the map for handles, laggy
@@ -45,6 +46,8 @@ lots of bug fixes, worked on
 - hamburger for search bar to show other maps
 - cell resource state from url
 - add allow long clicking on mobile to open popups
+- zoom/pan in effects for markers when editing
+- fix centreon going to the wrong place
 - fix requesting /null in layerbutton
 - make leaflet popup wikilinks turn black if there's no href
 - add permalink option in location popups

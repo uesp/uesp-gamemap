@@ -1213,7 +1213,11 @@ export default class Gamemap {
 			marker.once('add', function() {
 
 				const EVENTS_STRING = "resize moveend zoomend";
-				if (marker.getLocation().displayLevel > map.getZoom()) {
+
+				let latlngs = marker.getCoordinates();
+				if (marker.getLatLngs) {latlngs.push(marker.getCentre(latlngs))}
+
+				if (marker.getLocation().displayLevel > map.getZoom() || !map.getBounds().intersects(L.latLngBounds(latlngs))) {
 					if (marker.options.className != "editing") {
 							marker.off(EVENTS_STRING);
 							marker.remove();
