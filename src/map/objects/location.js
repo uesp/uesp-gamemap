@@ -284,6 +284,32 @@ export default class Location {
 
 	// get query for saving this location
 	getSaveQuery() {
+
+		const esoConvert = (coords) => {
+
+			coords = (!Array.isArray(coords)) ? [structuredClone(coords)] : structuredClone(coords);
+
+
+
+			coords.forEach(coord => {
+				print(coord);
+
+				coord.x = coord.x / nextPowerOfTwo(currentWorld.dbNumTilesX) * currentWorld.dbNumTilesX;
+				coord.y = coord.y / nextPowerOfTwo(currentWorld.dbNumTilesY) * currentWorld.dbNumTilesY;
+
+				print(coord);
+
+				coord.x = coord.x * currentWorld.maxRangeX;
+				coord.y = (1 - coord.y) * currentWorld.maxRangeY;
+
+				print(coord);
+
+			})
+
+			return coords;
+		}
+
+		print(esoConvert(this.coords));
 		var query = 'action=set_loc';
 
 		query += `&name=${encodeURIComponent(this.name)}`;
@@ -298,8 +324,10 @@ export default class Location {
 			query += `&icontype=${encodeURIComponent(this.icon)}`;
 		}
 
-		// query += '&x=' + (this.coords[0].x * gamemap.getWorldFromID(this.worldID).maxX)
-		// query += '&y=' + (this.coords[0].y * gamemap.getWorldFromID(this.worldID).maxY);
+		let coords = (mapConfig.database == "eso") ? esoConvert(this.coords) : this.coords;
+
+		query += '&x=' + (coords[0].x);
+		query += '&y=' + (coords[0].y);
 		query += `&locwidth=${this.width}&locheight=${this.height}`;
 
 		query += `&displaylevel=${+this.displayLevel + +gamemap.getWorldFromID(this.worldID).zoomOffset}`;
