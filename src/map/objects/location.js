@@ -16,10 +16,7 @@ export default class Location {
 			throw new Error("Location cannot be null!")
 		}
 
-		if (world == null) {
-			throw new Error("World cannot be null!")
-		}
-
+		world = world ?? gamemap.getCurrentWorld();
 		mapConfig = gamemap.getMapConfig() || DEFAULT_MAP_CONFIG;
 		currentWorld = world;
 
@@ -31,7 +28,7 @@ export default class Location {
 		this.name = location.name || "";
 		this.wikiPage = location.wikiPage || "";
 		this.description = location.description || "";
-		this.isVisible = (location.visible != null && location.visible == 1 && !location.description.includes("teleport dest")) ? true : false;
+		this.isVisible = location?.visible == 1 && !location.description.includes("teleport dest");
 		this.displayData = JSON.parse(location.displayData) || {};
 		this.worldID = location.worldId || 0;
 		this.destinationID = -(location.destinationId) || null;
@@ -82,13 +79,8 @@ export default class Location {
 			this.style = {};
 			this.style.hover = {};
 
-			if (this.displayData.lineWidth == null){
-				this.displayData.lineWidth = 0;
-			}
-
-			if (this.displayData.hover == null){
-				this.displayData.hover = this.displayData;
-			}
+			if (this.displayData.lineWidth == null) { this.displayData.lineWidth = 0 }
+			if (this.displayData.hover == null) { this.displayData.hover = this.displayData }
 
 			this.style.lineWidth = this.displayData.lineWidth;
 			this.style.hover.lineWidth = this.displayData.hover.lineWidth;
@@ -289,21 +281,12 @@ export default class Location {
 
 			coords = (!Array.isArray(coords)) ? [structuredClone(coords)] : structuredClone(coords);
 
-
-
 			coords.forEach(coord => {
-				print(coord);
-
 				coord.x = coord.x / nextPowerOfTwo(currentWorld.dbNumTilesX) * currentWorld.dbNumTilesX;
 				coord.y = coord.y / nextPowerOfTwo(currentWorld.dbNumTilesY) * currentWorld.dbNumTilesY;
 
-				print(coord);
-
 				coord.x = coord.x * currentWorld.maxRangeX;
 				coord.y = (1 - coord.y) * currentWorld.maxRangeY;
-
-				print(coord);
-
 			})
 
 			return coords;

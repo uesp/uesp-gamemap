@@ -11,7 +11,9 @@ export default class World {
 			this.displayName = world.displayName;
 			this.name = world.name.toLowerCase();
 			this.description = world.description || "";
-			this.locations = null; // locations are loaded async after the world is created
+
+			// locations are loaded async after the world is created
+			this.locations = null;
 
 			this.id = world.id || 0;
 			this.parentID = world.parentId || -1;
@@ -22,9 +24,8 @@ export default class World {
 
 			this.zoomOffset = mapConfig.zoomOffset ?? world.zoomOffset;
 			this.defaultZoom = world.defaultZoom - this.zoomOffset;
-
-			this.maxZoomLevel = (world.maxZoom - this.zoomOffset);
-			this.minZoomLevel = (world.minZoom - this.zoomOffset) || 0;
+			this.maxZoomLevel = world.maxZoom - this.zoomOffset;
+			this.minZoomLevel = world.minZoom - this.zoomOffset || 0;
 
 			this.minX = mapConfig.minX ?? world.posLeft;
 			this.maxX = mapConfig.maxX ?? world.posRight;
@@ -43,20 +44,20 @@ export default class World {
 			this.legacy = world; // legacy attributes from server
 
 			// world display data (grids and layers)
-			this.displayData = (world.displayData != null && world.displayData != "") ? JSON.parse(world.displayData) : null;
-			this.layers = (this.displayData != null && this.displayData.layers != null) ? this.displayData.layers : mapConfig.layers;
-			this.gridStart = (this.displayData != null && this.displayData.gridStart != null) ? this.displayData.gridStart : null;
+			this.displayData = (world?.displayData) ? JSON.parse(world.displayData) : null;
+			this.layers = this.displayData?.layers ?? mapConfig.layers;
+			this.gridStart = this.displayData?.gridStart;
 		} else {
 			throw new Error("World cannot be null!");
 		}
 	}
 
 	hasGrid() {
-		return (this.displayData != null && this.displayData.hasGrid != null && this.displayData.gridStart != null) ? this.displayData.hasGrid : false;
+		return this.displayData?.hasGrid && this.displayData?.gridStart;
 	}
 
 	hasCellResources() {
-		return (this.displayData.hasCellResource != null) ? this.hasGrid() && this.displayData.hasCellResource : false;
+		return this.hasGrid() && this.displayData?.hasCellResource;
 	}
 
 	hasMultipleLayers() {
