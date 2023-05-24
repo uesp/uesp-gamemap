@@ -41,7 +41,6 @@
     let saveButton;
     let canEdit = true;
     let hasBeenModified = false;
-    let haveSaved = false;
     let objectType = (isWorld) ? "world" : "location";
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
     let linkWikiPage = place.wikiPage == place.name || place.wikiPage == place.displayName;
@@ -100,9 +99,9 @@
                     callback();
                     modify("revisionID", data.newRevisionId);
                     data = place;
+                    if (isLocation) { gamemap.redrawLocation(place, canEdit) }
+                    unsavedChanges = false;
 
-                    //edit editObject to have new revision id, then make data = editobject
-                    // if (data.newRevisionId != null) this.currentEditWorld.revisionId = ;
                 }
 
             } else {
@@ -113,7 +112,6 @@
         function callback(error) {
 
             if (error == null) {
-                haveSaved = true;
                 saveButton.$set({ text: "Done!", icon: "done" });
             } else {
                 saveButton.$set({ text: error, icon: "warning" });
@@ -406,7 +404,7 @@
             </div>
             <div class="footer-buttons">
                 <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
-                <Button text={haveSaved && !unsavedChanges ? "Done" : "Cancel"} icon="close" on:click={cancel}/>
+                <Button text={!unsavedChanges ? "Close" : "Cancel"} icon="close" on:click={cancel}/>
                 <Button text="Delete" icon="delete" type="delete"/>
             </div>
         </footer>

@@ -1019,8 +1019,6 @@ export default class Gamemap {
 
 		let isInsideViewport = map.getBounds().intersects(L.latLngBounds(latlngs));
 
-		print(marker.getElement());
-
 		let isEditing = (marker.element) && marker.element.classList.contains("editing");
 
 		let isVisible = (isInsideViewport && marker.getLocation().displayLevel <= map.getZoom()) || isEditing;
@@ -1187,14 +1185,9 @@ export default class Gamemap {
 
 				const EVENTS_STRING = "resize moveend zoomend";
 
-				let latlngs = marker.getCoordinates();
-				if (marker.getLatLngs) {latlngs.push(marker.getCentre(latlngs))}
-
-				if (marker.getLocation().displayLevel > map.getZoom() || !map.getBounds().intersects(L.latLngBounds(latlngs))) {
-					if (marker.options.className != "editing") {
-							marker.off(EVENTS_STRING);
-							marker.remove();
-					}
+				if (!marker.isVisible()) {
+					marker.off(EVENTS_STRING);
+					marker.remove();
 				}
 
 				map.on(EVENTS_STRING, function() {
@@ -1654,14 +1647,17 @@ L.Layer.include({
 	location: null,
 	element: null,
 	editing: false,
+	wasVisible: false,
 
 	// getters
 	getLocation: function() { return this.location },
 	getCentre: function(latLngs) { return this.getLatLng?.() ?? L.latLngBounds((latLngs && Array.isArray(latLngs)) ? latLngs : this.getCoordinates()).getCenter() },
 	getElement() { return this.element = this?._icon ?? this?._path },
+	getTooltip() { return document.getElementById(this.getElement().getAttribute('aria-describedby')) },
 
 	// setters
 	setLocation(location) { this.location = location },
+	setWasVisible(wasVisible) { this.wasVisible = wasVisible },
 
     // get layer latlngs as array
     getCoordinates() {
@@ -1675,7 +1671,7 @@ L.Layer.include({
 
 	// get layer latlngs as well as estimated centre point as an array
 	getCoordinatesAndCentre() {
-		let latlngs = marker.getCoordinates();
+		let latlngs = this.getCoordinates();
 		if (this.getLatLngs) {latlngs.push(this.getCentre(latlngs))}
 		return latlngs;
 	},
@@ -1683,16 +1679,11 @@ L.Layer.include({
 	// get marker is visible
 	isVisible() {
 		if (this.isEditing()) return true;
-
-		let isInsideViewport = map.getBounds().intersects(L.latLngBounds(this.getCoordinatesAndCentre()));
+		return map.getZoom() >= this.getLocation().displayLevel && map.getBounds().intersects(L.latLngBounds(this.getCoordinatesAndCentre()));
 	},
 
 	isEditing() {
 		return this.getElement()?.classList.contains("editing") || this.editing;
-	},
-
-	getTooltip() {
-		return document.getElementById(this.getElement().getAttribute('aria-describedby'));
 	},
 
 	setEditing(editing) {
