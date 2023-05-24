@@ -23,6 +23,7 @@ lots of bug fixes, worked on location stuff too
 - optimised icon culling code to be more performant
 - rewrote marker engine to be more performant (900mb ram usage)
 - optimised svg renderer to use just 1 svg element instead of loads for each path
+- editor close button now says "cancel" if there are unsaved changes, instead of "close"
 
 ## problems:
 - when editing polygons, geoman adds several 10's of circle markers to the map for handles, laggy
@@ -35,12 +36,9 @@ lots of bug fixes, worked on location stuff too
 
 ## todo
 
-- get rid of blue tint when editing polygons and lines
 - fix polygons with icons not showing their icons
-
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
 - convert eso and dawnstar to psueodo normalised in mapconfig
-
 - alphabeticise map key ui
 - hamburger for search bar to show other maps
 - cell resource state from url
@@ -51,6 +49,8 @@ lots of bug fixes, worked on location stuff too
 - make leaflet popup wikilinks turn black if there's no href
 - add permalink option in location popups
 - redesign location popups
+- fix edit panel not animating close properly
+- fix recent changes list overflowing downwards
 - make embeded map watermark actually open in new tab
 - make labels clickable
 - fix edit pane causing iconbar to overlap

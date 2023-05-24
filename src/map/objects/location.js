@@ -112,13 +112,9 @@ export default class Location {
 		// convert eso coordinates to be normalised
 		if (mapConfig.coordType == COORD_TYPES.NORMALISED && mapConfig.database == "eso") {
 
-			// get max range of x and y, assure it is a positive number
-			let maxRangeX = Math.abs(currentWorld.maxX - currentWorld.minX);
-            let maxRangeY = Math.abs(currentWorld.maxY - currentWorld.minY);
-
 			// get normalised value of x and y in range
-            x = (x - currentWorld.minX) / maxRangeX;
-			y = Math.abs((y - currentWorld.maxY) / maxRangeY); // flip y around
+            x = (x - currentWorld.minX) / currentWorld.maxRangeX;
+			y = Math.abs((y - currentWorld.maxY) / currentWorld.maxRangeY); // flip y around
 
 			// transform coords to better fit power of two numbers of tiles
 			x = (x * nextPowerOfTwo(currentWorld.dbNumTilesX) / currentWorld.dbNumTilesX).toFixed(3);
