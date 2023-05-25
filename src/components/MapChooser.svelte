@@ -71,7 +71,9 @@
                     {/each}
                 </div>
             {/if}
-            <b>Unofficial:</b><p/>
+            <div style="margin:10px;">
+                <Divider direction="horizontal"/><p/>
+            </div>
             {#if maps.mods.length > 0}
                 <div class="options_container">
                     {#each maps.mods as map}
