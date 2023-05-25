@@ -4,6 +4,7 @@ lots of bug fixes, worked on location stuff too
 
 
 ## editing:
+- got location/polgon saving working 100%
 - turned off pan/zoom editing anim for performace
 - added live editing debouncing for performance
 - dragging/moving markers now updates location's position live

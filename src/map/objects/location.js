@@ -169,7 +169,7 @@ export default class Location {
 	}
 
 	isLabel() {
-		return (!this.hasIcon && !this.isPolygonal && this.hasLabel);
+		return (!this.hasIcon && !this.isPolygon() && this.hasLabel);
 	}
 
 	isClickable() {
@@ -284,7 +284,6 @@ export default class Location {
 			coords.forEach(coord => {
 				coord.x = coord.x / nextPowerOfTwo(currentWorld.dbNumTilesX) * currentWorld.dbNumTilesX;
 				coord.y = coord.y / nextPowerOfTwo(currentWorld.dbNumTilesY) * currentWorld.dbNumTilesY;
-
 				coord.x = coord.x * currentWorld.maxRangeX;
 				coord.y = (1 - coord.y) * currentWorld.maxRangeY;
 			})
@@ -292,7 +291,6 @@ export default class Location {
 			return coords;
 		}
 
-		print(esoConvert(this.coords));
 		var query = 'action=set_loc';
 
 		query += `&name=${encodeURIComponent(this.name)}`;
@@ -307,10 +305,28 @@ export default class Location {
 			query += `&icontype=${encodeURIComponent(this.icon)}`;
 		}
 
+		// convert coordinates into displayData point format
 		let coords = (mapConfig.database == "eso") ? esoConvert(this.coords) : this.coords;
+		let [minX, maxX, minY, maxY] = [coords[0].x, coords[0].x, coords[0].y, coords[0].y];
+		this.displayData.points = (() => {
+			let points = [];
+			coords.forEach(coord => {
+				points.push(coord.x, coord.y);
+				minX = (coord.x < minX) ? coord.x : minX;
+				maxX = (coord.x > maxX) ? coord.x : maxX;
+				minY = (coord.y < minY) ? coord.y : minY;
+				maxY = (coord.y > maxY) ? coord.y : maxY;
 
-		query += '&x=' + (coords[0].x);
-		query += '&y=' + (coords[0].y);
+			});
+			if (this.isPolygon()) {
+				this.width = maxX - minX;
+				this.height = maxY - minY;
+			}
+			return points;
+		})();
+
+		query += `&x=${(this.isPolygon()) ? minX: coords[0].x}`;
+		query += `&y=${(this.isPolygon()) ? maxY: coords[0].y}`;
 		query += `&locwidth=${this.width}&locheight=${this.height}`;
 
 		query += `&displaylevel=${+this.displayLevel + +gamemap.getWorldFromID(this.worldID).zoomOffset}`;
