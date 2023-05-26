@@ -32,6 +32,7 @@ let self; // Local "this" instance of Gamemap
 let RC; // RasterCoords instance, for converting leaflet latlongs to XY coords and back
 let mapWorldNameIndex = {}; // Local list of map world names
 let mapWorldDisplayNameIndex = {}; // Local list of map display names
+let mapBounds; // Current map bounds
 let tileLayer; // Local tiles
 
 /*================================================
@@ -1005,7 +1006,7 @@ export default class Gamemap {
 		}
 
 		map.eachLayer((layer) => {
-			if (layer._tiles == null && layer.options.className != "cellGrid" ) { //remove anything that is not a tile or cell grid
+			if (!layer._tiles && layer.options.className != "cellGrid" ) { //remove anything that is not a tile or cell grid
 				layer.off('resize move zoom');
 				layer.remove();
 			}
@@ -1017,19 +1018,18 @@ export default class Gamemap {
 		let isVisible = marker.isVisible();
 		let wasVisible = marker.getWasVisible();
 
-		// add/remove from DOM on change
+		// add/remove from DOM on marker visibility change
 		if (isVisible != wasVisible) {
 			if (isVisible) {
 
 				if (this.markerLayer.hasLayer(marker)) {
 					marker.addTo(map);
-					if (marker.location.hasLabel() && !(marker.location.hasIcon() && marker._path != null)) {
+					if (marker.location.hasLabel() && !(marker.location.hasIcon() && marker._path)) {
 						marker.bindTooltip(marker.location.name, this.getLocationLabel(marker.location));
 					}
 				}
 
 			} else {
-				//print("should be getting removed");
 				marker.remove();
 			}
 
@@ -1063,16 +1063,10 @@ export default class Gamemap {
 		markers.forEach(function(marker) { marker.remove() });
 
 		// create new markers
-		print("making new marker")
 		markers = this.getMarkers(location, true);
-		markers.forEach(function(marker) {
-			print(marker);
-			marker.addTo(map);
-		});
+		markers.forEach(function(marker) { marker.addTo(map) });
 
-		if (isEditing) {
-			this.edit(markers);
-		}
+		if (isEditing) { this.edit(markers) }
 	}
 
 	redrawLocations(locations) {
@@ -1149,7 +1143,8 @@ export default class Gamemap {
 			if (location.locType == LOCTYPES.AREA) {
 				marker = new L.polygon(coords, options);
 
-				if (location.hasIcon()){
+				if (location.hasIcon()) {
+					marker.setIsIconPolygon(true);
 					polygonIcon = this.makeMarker(location, marker.getCentre());
 				}
 			}
@@ -1171,6 +1166,11 @@ export default class Gamemap {
 		markers.forEach(marker => {
 			// bind location to marker
 			marker.setLocation(location);
+
+			// add label to marker if applicable
+			if (location.hasLabel() && !marker.isIconPolygon()) {
+				marker.bindTooltip(location.name, this.getLocationLabel(location));
+			}
 
 			// bind marker events
 			marker.once('add', function() {
@@ -1232,11 +1232,6 @@ export default class Gamemap {
 					}
 				});
 			});
-
-			// add label to marker if applicable
-			if (location.hasLabel() && !(location.hasIcon() && marker._path != null)) {
-				marker.bindTooltip(location.name, this.getLocationLabel(location));
-			}
 
 		});
 
@@ -1523,9 +1518,8 @@ export default class Gamemap {
 		}
 
 		// add editing effect to marker(s)
-		if (markers) {
-			markers.forEach((marker) => { marker.setEditing(true)});
-		}
+		markers[0].setEditing(true);
+		if (markers) { markers.forEach((marker) => { marker.setEditingEffect(true)}) }
 
 	}
 
@@ -1640,6 +1634,7 @@ L.Layer.include({
 	element: null,
 	editing: false,
 	wasVisible: null,
+	isIconPoly: null,
 
 	// getters
 	getLocation: function() { return this.location },
@@ -1647,10 +1642,13 @@ L.Layer.include({
 	getElement() { return this.element = this?._icon ?? this?._path },
 	getTooltip() { return document.getElementById(this.getElement().getAttribute('aria-describedby')) },
 	getWasVisible() { return this.wasVisible },
+	isIconPolygon() { return this.isIconPoly },
+	isEditing() { return this.getElement()?.classList.contains("editing") || this.editing },
 
 	// setters
 	setLocation(location) { this.location = location },
 	setWasVisible(wasVisible) { this.wasVisible = wasVisible },
+	setIsIconPolygon(isIcon) {this.isIconPoly = isIcon },
 
     // get layer latlngs as array
     getCoordinates() {
@@ -1673,11 +1671,8 @@ L.Layer.include({
 	isVisible() {
 		if (this.isEditing()) return true;
 		if (map.getZoom() < this.location.displayLevel) return false;
-		return map.getBounds().intersects(L.latLngBounds(this.getCoordinatesAndCentre()));
-	},
-
-	isEditing() {
-		return this.getElement()?.classList.contains("editing") || this.editing;
+		if (mapBounds != map.getBounds()) { mapBounds = map.getBounds() }
+		return mapBounds.intersects(L.latLngBounds(this.getCoordinatesAndCentre()));
 	},
 
 	setEditingEffect(doEffect) {
@@ -1719,42 +1714,6 @@ L.Layer.include({
 
 	}
 });
-
-
-
-// let isEditing = (marker.element) && marker.element.;
-
-// let isVisible = (isInsideViewport && marker.getLocation().displayLevel <= map.getZoom()) || isEditing;
-// let wasVisible = marker._wasVisible;
-
-// // add/remove from DOM on change
-// if (isVisible != wasVisible) {
-// 	if (isVisible) {
-
-// 		if (this.markerLayer.hasLayer(marker)) {
-// 			marker.addTo(map);
-// 			if (marker.location.hasLabel() && !(marker.location.hasIcon() && marker._path != null)) {
-// 				marker.bindTooltip(marker.location.name, this.getLocationLabel(marker.location));
-// 			}
-// 		}
-
-// 	} else {
-// 		//print("should be getting removed");
-// 		marker.remove();
-// 	}
-
-// 	marker._wasVisible = isVisible;
-
-// }
-
-
-
-
-
-
-
-
-
 
 
 // uesp.gamemap.Map.prototype.onAddLocationStart = function()

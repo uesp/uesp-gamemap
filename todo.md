@@ -23,6 +23,9 @@ lots of bug fixes, worked on location stuff too
 - finalised design of the polygon handles
 - optimised icon culling code to be more performant
 - rewrote marker engine to be more performant (900mb ram usage)
+>> caches current map bounds, so each marker doesnt need to calcuate that each time
+>> checks zoom levels first, before calculating if marker is inside bounds (skips most markers if zoomed out)
+>> instead of modding each leaflet marker class with custom props each time a marker is made, just extended base marker class
 - optimised svg renderer to use just 1 svg element instead of loads for each path
 - editor close button now says "cancel" if there are unsaved changes, instead of "close"
 
