@@ -1,6 +1,6 @@
 ## last week:
 
-got location and poly coord saving done, lots of bug fixes
+got location and poly coord saving done, lots of longstanding bug fixes
 
 note to future james: open current gamemmap.uesp.net to showcase comparisons
 
@@ -33,6 +33,7 @@ note to future james: open current gamemmap.uesp.net to showcase comparisons
 >> instead of modding each leaflet marker class with custom props each time a marker is made, just extended base marker class
 - optimised svg renderer to use just 1 svg element instead of loads for each path
 - editor close button now says "cancel" if there are unsaved changes, instead of "close"
+- made icon labels clickable, just like live
 
 ## problems:
 - when editing polygons, geoman adds several 10's of circle markers to the map for handles, laggy
@@ -57,6 +58,7 @@ fix markers not being visually saved after save
 - convert eso and dawnstar to psueodo normalised in mapconfig
 - hamburger for search bar to show other maps
 - cell resource state from url
+- allow both edit polygon and drag at same time
 - add allow long clicking on mobile to open popups
 - zoom/pan in effects for markers when editing
 - fix centreon going to the wrong place
@@ -89,6 +91,10 @@ fix markers not being visually saved after save
 - button to go up a map, right click isnt intuitive
 - disable polygon fade css effect on firefox
 - make maps in game release order
+- allow shiftclick/ctrl click to add/remove vertices
+- maybe refactor to divicon to allow drag by label
+- drag and edit polygon at the same time
+>> https://jsfiddle.net/Razielwar/hmqgn69r/14/
 
 ## dave stuff:
 - 32px skyrim icons

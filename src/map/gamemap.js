@@ -1095,6 +1095,10 @@ export default class Gamemap {
 					// get marker/polygon/icon for this location
 					let markers = this.getMarkers(location);
 
+					if (markers.length > 1) {
+						print (markers);
+					}
+
 					// add markers to map layer
 					markers.forEach(marker => { locationMarkers.push(marker) });
 				}
@@ -1244,15 +1248,13 @@ export default class Gamemap {
 	}
 
 	makeMarker(location, coords, isEditing) {
-		let anchor = [location.width / 2, location.height / 2];
+		let anchor = [this.mapConfig.iconSize / 2, this.mapConfig.iconSize / 2];
 		let iconURL = this.mapConfig.iconPath + location.icon + ".png";
 
 		let locationIcon = L.icon({
 			iconUrl: iconURL,
 			iconAnchor: anchor,
 		});
-
-		print(isEditing);
 
 		let marker = L.marker(coords, {icon: locationIcon, riseOnHover: true, className: `${isEditing ? "editing" : ""}`});
 		marker.setEditingEffect(isEditing);
@@ -1290,6 +1292,7 @@ export default class Gamemap {
 			direction: location.labelDirection,
 			interactive: true,
 			offset: offset,
+			riseOnHover: true,
 		}
 	}
 
@@ -1615,7 +1618,7 @@ export default class Gamemap {
 
 	getLayerIndexFromName(layerName, layersObj) {
 		let layers = (layersObj != null) ? layersObj : this.getCurrentWorld().layers;
-		for (let [key, value] of Object.entries(layers)) {
+		for (let [key] of Object.entries(layers)) {
 			if (layers[key].name == layerName) {
 				return parseInt(key);
 			}
