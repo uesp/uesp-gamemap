@@ -1288,6 +1288,7 @@ export default class Gamemap {
 			className : "location-label",
 			permanent: true,
 			direction: location.labelDirection,
+			interactive: true,
 			offset: offset,
 		}
 	}

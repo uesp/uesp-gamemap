@@ -1,7 +1,8 @@
 ## last week:
 
-lots of bug fixes, worked on location stuff too
+got location and poly coord saving done, lots of bug fixes
 
+note to future james: open current gamemmap.uesp.net to showcase comparisons
 
 ## editing:
 - got location/polgon saving working 100%
@@ -18,6 +19,10 @@ lots of bug fixes, worked on location stuff too
 - fixed polylines ignoring displayLevel (longstanding bug)
 - fixed polygons with icons not being centred correctly
 - fixed all icons loading in when loading map at full zoom levels
+- fixed race condition w/ loading a world & locations for the first time, then  leaving world before network request completed
+>> load into world
+>> exit it before locations load in
+>> wrong locations now load in parent world
 
 ## polish:
 - finalised design of the polygon handles
@@ -33,9 +38,7 @@ lots of bug fixes, worked on location stuff too
 - when editing polygons, geoman adds several 10's of circle markers to the map for handles, laggy
 - no easy way to fix that exept for using canvas
 - mitigated it somewhat by optimising the marker engine above and debouncing when editing fields
-
-
-
+- cos rewrote marker code, poly icons dont have their icon right now (cyrodiil bases, some cities)
 
 
 ## todo
@@ -44,6 +47,8 @@ lots of bug fixes, worked on location stuff too
 fix polygons/icons disappearing after edit
 fix markers not being visually saved after save
 
+- add tutorial message for draging markers and edit handles like live
+- overwrite polygon edit colours for geoman
 
 
 
@@ -65,10 +70,6 @@ fix markers not being visually saved after save
 - make embeded map watermark actually open in new tab
 - make labels clickable
 - fix edit pane causing iconbar to overlap
-- fix race condition where:
->> load into world
->> exit it before locations load in
->> wrong locations now load in parent world
 - make going to location centre zoom dynamically instead of always zoom level 5
 - add continuous zoom, markers popup on zoom rather than zoomend
 - add way to show popups on centreon, optional param
@@ -77,6 +78,7 @@ fix markers not being visually saved after save
 - fix maps with multiple worlds being reset if you pass just the world name and not pass x/y or zoom params
 - make tooltip follow mouse cursor instead of centre
 - fix handling of small icons like 16p when rest of map is 32px (centre them properly)
+- on mobile, double tap icon to open its popup
 - fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af when zooming out
 - add riseOnHover to icon labels when hovering over
@@ -96,7 +98,6 @@ fix markers not being visually saved after save
 
 feedback:
 - map key alphabetical
-- map key not nearest neighbour
 - divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)
 - some kind of tutorial on first non-cookie load to tell user how to use ui
 - an undo button for deleting/editing locations and worlds
