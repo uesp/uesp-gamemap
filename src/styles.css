@@ -717,7 +717,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	padding: 0px !important;
 }
 
-.leaflet-interactive {
+.leaflet-interactive:not(.location-label) {
     animation: fade-in 0.3s !important;
 }
 

@@ -39,8 +39,6 @@ note to future james: open current gamemmap.uesp.net to showcase comparisons
 - when editing polygons, geoman adds several 10's of circle markers to the map for handles, laggy
 - no easy way to fix that exept for using canvas
 - mitigated it somewhat by optimising the marker engine above and debouncing when editing fields
-- cos rewrote marker code, poly icons dont have their icon right now (cyrodiil bases, some cities)
-
 
 ## todo
 
