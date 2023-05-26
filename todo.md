@@ -76,6 +76,7 @@ fix markers not being visually saved after save
 - fix double click to pan on ui elements (zoom, search bar)
 - fix maps with multiple worlds being reset if you pass just the world name and not pass x/y or zoom params
 - make tooltip follow mouse cursor instead of centre
+- fix handling of small icons like 16p when rest of map is 32px (centre them properly)
 - fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af when zooming out
 - add riseOnHover to icon labels when hovering over

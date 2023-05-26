@@ -937,8 +937,12 @@ export default class Gamemap {
 
 				// update world
 				self.mapWorlds[world.id].locations = parsedLocations;
-				self.updateMapState();
-				self.redrawLocations(parsedLocations);
+
+				// make sure we're in the right world before overwriting all locations
+				if (self.getCurrentWorldID() == world.id) {
+					self.updateMapState();
+					self.redrawLocations(parsedLocations);
+				}
 			} else {
 				print.warn("There was an error getting locations for this world.");
 			}
