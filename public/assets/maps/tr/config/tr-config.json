@@ -30,7 +30,6 @@
     // Map icon info
     "iconSize" : 16,
     "icons": {
-        "0": "None",
         "1": "City",
         "2": "Town",
         "3": "Village",

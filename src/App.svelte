@@ -20,7 +20,7 @@
 	import { marked } from 'marked';
 
 	// import commons
-	import './commons.js';
+	import './common.js';
 
 	// import material UI
 	import "materialize-css";
@@ -132,7 +132,7 @@
 							mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
 							mapConfig.iconPath = mapConfig.assetsPath + "icons/";
 							// sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this
-							mapConfig.tileURL = (mapConfig.tileURLName != null) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/";
+							mapConfig.tileURL = (mapConfig.tileURLName) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/";
 
 							print("Completed merged map config:")
 							print(mapConfig);

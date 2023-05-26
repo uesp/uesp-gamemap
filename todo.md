@@ -37,10 +37,16 @@ lots of bug fixes, worked on location stuff too
 
 ## todo
 
+
+fix polygons/icons disappearing after edit
+fix markers not being visually saved after save
+
+
+
+
 - fix polygons with icons not showing their icons
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
 - convert eso and dawnstar to psueodo normalised in mapconfig
-- alphabeticise map key ui
 - hamburger for search bar to show other maps
 - cell resource state from url
 - add allow long clicking on mobile to open popups
@@ -52,13 +58,19 @@ lots of bug fixes, worked on location stuff too
 - redesign location popups
 - fix edit panel not animating close properly
 - fix recent changes list overflowing downwards
+- fix location list dropdown not being centred properly
 - make embeded map watermark actually open in new tab
 - make labels clickable
 - fix edit pane causing iconbar to overlap
+- fix race condition where:
+>> load into world
+>> exit it before locations load in
+>> wrong locations now load in parent world
 - make going to location centre zoom dynamically instead of always zoom level 5
 - add continuous zoom, markers popup on zoom rather than zoomend
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
+- fix double click to pan on ui elements (zoom, search bar)
 - make tooltip follow mouse cursor instead of centre
 - fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af when zooming out
@@ -66,8 +78,8 @@ lots of bug fixes, worked on location stuff too
 - make tooltips follow the mouse rather than the centre of the location
 - fix all markers showing up at initial load on highest zoom level
 - button to go to the map menu
+- fix pip on layer switcher ui being small
 - button to go up a map, right click isnt intuitive
-- separate mods from offical maps
 - disable polygon fade css effect on firefox
 - make maps in game release order
 

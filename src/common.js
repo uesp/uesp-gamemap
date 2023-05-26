@@ -357,7 +357,6 @@ function getCookie(c_name) {
  * @param {Object} value - The desired value to set
  */
 window.setPrefs = function setPrefs(key, value) {
-	print(value);
 	setCookie(key, value);
 }
 
@@ -368,15 +367,11 @@ window.setPrefs = function setPrefs(key, value) {
  */
 window.getPrefs = function getPrefs(key, defaultValue) {
 
-	print(key);
-	print(defaultValue);
-
 	// set default value
 	defaultValue = (defaultValue != null) ? defaultValue : false;
 
 	// take preference over URL parms over cookies
 	if (getURLParams().has(key)){
-		print("should be called")
 		return getURLParams().get(key);
 	} else {
 		let value = (getCookie(key) != null && getCookie(key) != "") ? getCookie(key) : defaultValue;
@@ -403,8 +398,6 @@ window.isString = function isString(str) {
  * @returns {Point} - the centralised coord object
  */
 window.getAverageCoord = function getAverageCoord(coords) {
-
-	print(coords);
 
 	if (coords[0].lat != null) {
 		for (let i = 0; i < coords.length; i++) {

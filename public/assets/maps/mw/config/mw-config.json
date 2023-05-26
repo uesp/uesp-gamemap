@@ -28,7 +28,6 @@
     "iconLabelXOffset" : 5,
     "iconLabelYOffset" : 5,
     "icons": {
-        "0": "None",
         "1": "City",
         "2": "Town",
         "3": "House",

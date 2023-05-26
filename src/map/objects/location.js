@@ -329,8 +329,7 @@ export default class Location {
 		query += `&y=${(this.isPolygon()) ? maxY: coords[0].y}`;
 		query += `&locwidth=${this.width}&locheight=${this.height}`;
 
-		query += `&displaylevel=${+this.displayLevel + +gamemap.getWorldFromID(this.worldID).zoomOffset}`;
-
+		query += `&displaylevel=${+this.displayLevel + +currentWorld.zoomOffset}`;
 		query += `&displaydata=${encodeURIComponent(JSON.stringify(this.displayData))}`;
 
 		query += `&destid=${-(this.destinationID)}`;

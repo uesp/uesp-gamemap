@@ -19,7 +19,6 @@
     // Map icon info
     "iconSize" : 16,
     "icons": {
-        "0": "None",
         "1": "Camp",
         "2": "Cave",
         "3": "City",

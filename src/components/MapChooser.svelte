@@ -28,10 +28,7 @@
             let mapInfos = sortObject(data.mapInfos);
 
             // define map list object
-            let mapList = {
-                official : [],
-                mods : [],
-            };
+            let mapList = { official: [], mods: [] };
 
             for (let [key, object] of Object.entries(mapInfos)) {
                 let map = {};
@@ -44,6 +41,7 @@
                     mapList.mods.push(map);
                 }
             }
+
             maps = mapList;
             print(maps);
         }

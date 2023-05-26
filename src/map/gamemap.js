@@ -1014,15 +1014,8 @@ export default class Gamemap {
 
 	redrawMarkers(marker){
 
-		let latlngs = marker.getCoordinates();
-		if (marker.getLatLngs) {latlngs.push(marker.getCentre(latlngs))}
-
-		let isInsideViewport = map.getBounds().intersects(L.latLngBounds(latlngs));
-
-		let isEditing = (marker.element) && marker.element.classList.contains("editing");
-
-		let isVisible = (isInsideViewport && marker.getLocation().displayLevel <= map.getZoom()) || isEditing;
-		let wasVisible = marker._wasVisible;
+		let isVisible = marker.isVisible();
+		let wasVisible = marker.getWasVisible();
 
 		// add/remove from DOM on change
 		if (isVisible != wasVisible) {
@@ -1040,8 +1033,7 @@ export default class Gamemap {
 				marker.remove();
 			}
 
-			marker._wasVisible = isVisible;
-
+			marker.setWasVisible(isVisible);
 		}
 
 	}
@@ -1647,13 +1639,14 @@ L.Layer.include({
 	location: null,
 	element: null,
 	editing: false,
-	wasVisible: false,
+	wasVisible: null,
 
 	// getters
 	getLocation: function() { return this.location },
 	getCentre: function(latLngs) { return this.getLatLng?.() ?? L.latLngBounds((latLngs && Array.isArray(latLngs)) ? latLngs : this.getCoordinates()).getCenter() },
 	getElement() { return this.element = this?._icon ?? this?._path },
 	getTooltip() { return document.getElementById(this.getElement().getAttribute('aria-describedby')) },
+	getWasVisible() { return this.wasVisible },
 
 	// setters
 	setLocation(location) { this.location = location },
@@ -1679,20 +1672,28 @@ L.Layer.include({
 	// get marker is visible
 	isVisible() {
 		if (this.isEditing()) return true;
-		return map.getZoom() >= this.getLocation().displayLevel && map.getBounds().intersects(L.latLngBounds(this.getCoordinatesAndCentre()));
+		if (map.getZoom() < this.location.displayLevel) return false;
+		return map.getBounds().intersects(L.latLngBounds(this.getCoordinatesAndCentre()));
 	},
 
 	isEditing() {
 		return this.getElement()?.classList.contains("editing") || this.editing;
 	},
 
+	setEditingEffect(doEffect) {
+		if (doEffect) {
+			// add editing effect to marker
+			this.getElement().classList.add("editing");
+			setTimeout(() => {this.getTooltip()?.classList.add("editing")}, 15);
+		}
+	},
+
 	setEditing(editing) {
 		this.editing = editing;
 
 		if (editing) {
-			// and editing effect to marker
-			this.getElement().classList.add("editing");
-			setTimeout(() => {this.getTooltip()?.classList.add("editing")}, 10);
+
+			this.setEditingEffect(editing);
 
 			this.pm.enable({
 				snapDistance: 10,

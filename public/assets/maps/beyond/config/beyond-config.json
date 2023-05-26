@@ -20,7 +20,6 @@
     // Map icon info
     "iconSize" : 16,
     "icons": {
-        "0": "None",
         "1": "City",
         "2": "Town",
         "3": "Settlement",
@@ -84,10 +83,6 @@
         "61": "Shrine",
         "62": "Ore Vein",
         "63": "Dragon Mound",
-        "124": "Other",
-        "191": "Other",
-        "123": "Other",
-        "82": "Other",
         "77": "Other",
         "100": "Beehive"
     }
