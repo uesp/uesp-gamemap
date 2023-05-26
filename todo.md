@@ -74,6 +74,7 @@ fix markers not being visually saved after save
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
 - fix double click to pan on ui elements (zoom, search bar)
+- fix maps with multiple worlds being reset if you pass just the world name and not pass x/y or zoom params
 - make tooltip follow mouse cursor instead of centre
 - fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af when zooming out

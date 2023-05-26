@@ -1063,7 +1063,7 @@ export default class Gamemap {
 		markers.forEach(function(marker) { marker.remove() });
 
 		// create new markers
-		markers = this.getMarkers(location, true);
+		markers = this.getMarkers(location, isEditing);
 		markers.forEach(function(marker) { marker.addTo(map) });
 
 		if (isEditing) { this.edit(markers) }
@@ -1145,7 +1145,7 @@ export default class Gamemap {
 
 				if (location.hasIcon()) {
 					marker.setIsIconPolygon(true);
-					polygonIcon = this.makeMarker(location, marker.getCentre());
+					polygonIcon = this.makeMarker(location, marker.getCentre(), isEditing);
 				}
 			}
 
@@ -1177,6 +1177,7 @@ export default class Gamemap {
 
 				const EVENTS_STRING = "resize moveend zoomend";
 
+				// don't show any markers that are not currently visible
 				if (!marker.isVisible()) {
 					marker.off(EVENTS_STRING);
 					marker.remove();
@@ -1191,7 +1192,7 @@ export default class Gamemap {
 				// on marker deselected
 				marker.on("mouseout", function () {
 					self.clearTooltips();
-					let isPolygon = marker.location.isPolygon() && marker._path != null;
+					let isPolygon = marker.location.isPolygon() && marker._path;
 
 					if (isPolygon){
 						this.setStyle({
@@ -1207,8 +1208,8 @@ export default class Gamemap {
 				// on marker hovered over
 				marker.on('mouseover', function () {
 
-					let isPolygon = marker.location.isPolygon() && marker._path != null;
-					let latLngs = (isPolygon ) ? marker.getCenter() : marker.getLatLng();
+					let isPolygon = marker.location.isPolygon() && marker._path;
+					let latLngs = marker.getCentre();
 
 					L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
 
@@ -1247,7 +1248,10 @@ export default class Gamemap {
 			iconAnchor: anchor,
 		});
 
+		print(isEditing);
+
 		let marker = L.marker(coords, {icon: locationIcon, riseOnHover: true, className: `${isEditing ? "editing" : ""}`});
+		marker.setEditingEffect(isEditing);
 
 		return marker;
 	}
@@ -1640,10 +1644,10 @@ L.Layer.include({
 	getLocation: function() { return this.location },
 	getCentre: function(latLngs) { return this.getLatLng?.() ?? L.latLngBounds((latLngs && Array.isArray(latLngs)) ? latLngs : this.getCoordinates()).getCenter() },
 	getElement() { return this.element = this?._icon ?? this?._path },
-	getTooltip() { return document.getElementById(this.getElement().getAttribute('aria-describedby')) },
+	getTooltip() { return document.getElementById(this.getElement()?.getAttribute('aria-describedby')) },
 	getWasVisible() { return this.wasVisible },
 	isIconPolygon() { return this.isIconPoly },
-	isEditing() { return this.getElement()?.classList.contains("editing") || this.editing },
+	isEditing() { return this.getElement()?.classList?.contains("editing") || this.editing },
 
 	// setters
 	setLocation(location) { this.location = location },
@@ -1678,8 +1682,9 @@ L.Layer.include({
 	setEditingEffect(doEffect) {
 		if (doEffect) {
 			// add editing effect to marker
-			this.getElement().classList.add("editing");
-			setTimeout(() => {this.getTooltip()?.classList.add("editing")}, 15);
+			this.getElement()?.classList?.add("editing");
+			setTimeout(() => {this.getTooltip()?.classList?.add("editing")}, 15);
+			this.editing = doEffect;
 		}
 	},
 
