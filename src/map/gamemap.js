@@ -1126,7 +1126,7 @@ export default class Gamemap {
 		// make generic fallback marker
 		let polygonIcon = null;
 		let coords = location.coords;
-		let marker = new L.marker(this.toLatLngs(coords[0]), {riseOnHover: true});
+		let marker = new L.marker(this.toLatLngs(coords[0]), {riseOnHover: true},);
 		L.Marker.prototype.options.icon = L.icon({ iconUrl: IMAGES_DIR + "transparent.png" });
 
 		// create specific marker type
@@ -1254,6 +1254,7 @@ export default class Gamemap {
 		let locationIcon = L.icon({
 			iconUrl: iconURL,
 			iconAnchor: anchor,
+			iconSize: [this.mapConfig.iconSize, this.mapConfig.iconSize],
 		});
 
 		let marker = L.marker(coords, {icon: locationIcon, riseOnHover: true, className: `${isEditing ? "editing" : ""}`});

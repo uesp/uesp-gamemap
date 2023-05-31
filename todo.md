@@ -2,10 +2,15 @@
 
 
 
+## polish:
+
+- made map key and icons ABC
+>> done on the client side using a map, so the mapconfig icons list remains a simple object for readability
 
 
 
-
+## bug fixes:
+- fixed icons being squished/stretched in map key and editor icon chooser (noticeable on skyrim icons)
 
 
 ## todo
