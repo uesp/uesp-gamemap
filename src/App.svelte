@@ -134,6 +134,12 @@
 							// sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this
 							mapConfig.tileURL = (mapConfig.tileURLName) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/";
 
+							// sort icon list to be alphabetical
+							let icons = Object.entries(mapConfig.icons).map(( [k, v] ) => ({ [k]: v }));
+							icons.sort((a, b) => Object.values(a)[0].localeCompare(Object.values(b)[0], 'en', {'sensitivity': 'base'}));
+							mapConfig.icons = new Map(icons.map(obj => [Object.keys(obj)[0], Object.values(obj)[0]]));
+							print(mapConfig.icons);
+
 							print("Completed merged map config:")
 							print(mapConfig);
 
@@ -416,12 +422,10 @@
 	<!-- Map key dialog -->
 	{#if showMapKey}
 		<Modal title="Map Key" id="map_key_modal" fixedFooter="true" on:dismiss={() => (showMapKey = false)}>
-			{@const iconIDs = Object.keys(mapConfig.icons)}
-			{@const iconNames = Object.values(mapConfig.icons)}
 			<div id="map_key_container">
-				{#each iconNames as name, i}
+				{#each [...mapConfig.icons] as [id, name]}
 					<div class="map_key_item left-align">
-						<img title={name} alt={name} src={mapConfig.iconPath + iconIDs[i] + ".png"}/>
+						<img title={name} alt={name} src={mapConfig.iconPath + id + ".png"}/>
 						<b class="left-align">{name}</b>
 					</div>
 				{/each}

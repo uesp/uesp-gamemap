@@ -152,7 +152,7 @@ export default class Gamemap {
 	setMapState(mapState, onlyUpdateTiles) {
 
 		print("Setting map state!");
-		onlyUpdateTiles = (onlyUpdateTiles != null) ? onlyUpdateTiles : false;
+		onlyUpdateTiles = onlyUpdateTiles ?? false;
 
 		// remove previous tiles
 		if (tileLayer != null) {
@@ -1704,8 +1704,8 @@ L.Layer.include({
 			this.setEditingEffect(editing);
 
 			this.pm.enable({
-				snapDistance: 10,
 				allowEditing: true,
+				snapDistance: 10,
 				draggable: true,
 			});
 

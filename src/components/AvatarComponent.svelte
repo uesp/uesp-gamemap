@@ -62,12 +62,10 @@
 
             <!-- svelte-ignore missing-declaration -->
             {#if canChangeIcon}
-                {@const iconIDs = Object.keys(gamemap.getMapConfig().icons)}
-                {@const iconNames = Object.values(gamemap.getMapConfig().icons)}
                 <DropdownMenu hint="Select icon..." on:change={(e) => change(e.detail)} invisible={true}>
                     <option value={null} selected={icon == null}>None</option>
-                    {#each iconNames as name, i}
-                        <option value={iconIDs[i]} selected={icon.toString() == iconIDs[i]} data-icon={gamemap.getMapConfig().iconPath + iconIDs[i] + ".png"}>{name}</option>
+                    {#each [...gamemap.getMapConfig().icons] as [id, name]}
+                        <option value={id} selected={icon.toString() == name} data-icon={gamemap.getMapConfig().iconPath + id + ".png"}>{name}</option>
                     {/each}
                 </DropdownMenu>
             {/if}

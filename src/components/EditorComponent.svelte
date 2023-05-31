@@ -374,10 +374,7 @@
                                         hint="X Position"
                                         tooltip="X coordinate for this location"
                                         type="float"
-                                        on:change={(e) => {modify("coords", new Point(e.detail, place.coords[0].y))}}
-
-
-                                        />
+                                        on:change={(e) => {modify("coords", new Point(e.detail, place.coords[0].y))}}/>
                                 <Textbox text={place.coords[0].y} hint="Y Position" tooltip="Y coordinate for this location" type="float" />
                             </div>
                         {/if}

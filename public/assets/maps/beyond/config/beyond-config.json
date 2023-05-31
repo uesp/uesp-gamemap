@@ -19,6 +19,11 @@
 
     // Map icon info
     "iconSize" : 16,
+
+    // "icons": [
+    //     {"key": 1, "name": "city"},
+    //     {"key": 1, "name": "city"}
+    // ],
     "icons": {
         "1": "City",
         "2": "Town",

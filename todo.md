@@ -1,47 +1,23 @@
 ## last week:
 
-got location and poly coord saving done, lots of longstanding bug fixes
 
-note to future james: open current gamemmap.uesp.net to showcase comparisons
 
-## editing:
-- got location/polgon saving working 100%
-- turned off pan/zoom editing anim for performace
-- added live editing debouncing for performance
-- dragging/moving markers now updates location's position live
 
-## bug fixes:
-- fixed cancelling editing not working (it would restore change after few milliseconds)
-- fixed not being able to edit polygon/marker after changing a field in the edit window
-- fixed edit() function being called three times (and redrawing marker every time) you edit
-- fixed polygons centre coordinates not counting towards it being visible (if all the outside polygons were not visible, the polygon was culled) - long standing bug
-- fixed memory leak which was causing icons to stay in memory and jank up the pan/zoom events
-- fixed polylines ignoring displayLevel (longstanding bug)
-- fixed polygons with icons not being centred correctly
-- fixed all icons loading in when loading map at full zoom levels
-- fixed race condition w/ loading a world & locations for the first time, then  leaving world before network request completed
->> load into world
->> exit it before locations load in
->> wrong locations now load in parent world
 
-## polish:
-- finalised design of the polygon handles
-- optimised icon culling code to be more performant
-- rewrote marker engine to be more performant (900mb ram usage)
->> caches current map bounds, so each marker doesnt need to calcuate that each time
->> checks zoom levels first, before calculating if marker is inside bounds (skips most markers if zoomed out)
->> instead of modding each leaflet marker class with custom props each time a marker is made, just extended base marker class
-- optimised svg renderer to use just 1 svg element instead of loads for each path
-- editor close button now says "cancel" if there are unsaved changes, instead of "close"
-- made icon labels clickable, just like live
 
-## problems:
-- when editing polygons, geoman adds several 10's of circle markers to the map for handles, laggy
-- no easy way to fix that exept for using canvas
-- mitigated it somewhat by optimising the marker engine above and debouncing when editing fields
+
+
 
 ## todo
 
+
+
+- whenever move, iterate through location list not marker list
+
+- make close button in edit panel always close the panel regardless of direct edit or not
+
+- fix skyrim big lags
+>> probably iterate through world location list to only add the ones currently visible rather than adding all and removing them after
 
 fix polygons/icons disappearing after edit
 fix markers not being visually saved after save
@@ -50,8 +26,6 @@ fix markers not being visually saved after save
 - overwrite polygon edit colours for geoman
 
 
-
-- fix polygons with icons not showing their icons
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
 - convert eso and dawnstar to psueodo normalised in mapconfig
 - hamburger for search bar to show other maps
@@ -67,8 +41,8 @@ fix markers not being visually saved after save
 - fix edit panel not animating close properly
 - fix recent changes list overflowing downwards
 - fix location list dropdown not being centred properly
+- make polygon edit handles have high zindex
 - make embeded map watermark actually open in new tab
-- make labels clickable
 - fix edit pane causing iconbar to overlap
 - make going to location centre zoom dynamically instead of always zoom level 5
 - add continuous zoom, markers popup on zoom rather than zoomend
@@ -101,7 +75,6 @@ fix markers not being visually saved after save
 
 
 feedback:
-- map key alphabetical
 - divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)
 - some kind of tutorial on first non-cookie load to tell user how to use ui
 - an undo button for deleting/editing locations and worlds
