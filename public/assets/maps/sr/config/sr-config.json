@@ -16,8 +16,8 @@
     "coordType" : 2,
 
     // Map icon info
-    "iconSize" : 32,
-    "labelOffset" : 12,
+    "iconSize" : 24,
+    "labelOffset" : 10,
     "icons": {
         // Cities
         "36": "Riften",
@@ -26,21 +26,20 @@
         "42": "Solitude",
         "44": "Markarth",
         "46": "Winterhold",
-        "47": "Morthal Castle",
         "48": "Morthal",
         "50": "Falkreath",
         "52": "Dawnstar",
 
         // Castles
         "37":  "Palace of Kings",
-        "39":  "Castle (Whiterun)",
+        "39":  "Dragonsreach",
         "41":  "Blue Palace",
-        "35":  "Castle (Riften)",
+        "35":  "Mistveil Keep",
         "45":  "College of Winterhold",
-        "51":  "Castle (Dawnstar)",
-        "150": "Castle (Unused)",
+        "150": "Castle",
         "59":  "Castle Karstaag",
         "43":  "Understone Keep",
+        "51":  "Hendraheim",
 
         // Towns / Settlements
         "2":  "Town",
@@ -65,6 +64,7 @@
         // Environment
         "10":  "Grove",
         "11":  "Landmark",
+        "26":  "Rock",
         "77":  "Landmark (Small)",
         "18":  "Standing Stone",
         "23":  "Clearing",
@@ -83,7 +83,7 @@
 
         // Important Locations
         "34": "Shrine",
-        "86": "Altar",
+        "25": "Altar",
         "53": "Temple of Miraak",
         "63": "Dragon Mound",
         "78": "Aedric Shrine",
@@ -106,9 +106,9 @@
         "83": "Forge",
         "84": "Grindstone",
         "85": "Cooking Pot",
-        "91": "Rock",
         "92": "Smelter",
-        "93": "Tanning Rack"
+        "93": "Tanning Rack",
+        "94": "Workbench"
     },
 
     // cell resource info

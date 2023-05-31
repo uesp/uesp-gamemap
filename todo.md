@@ -6,15 +6,23 @@
 
 - made map key and icons ABC
 >> done on the client side using a JS map, so the mapconfig icons list remains a simple object for readability
+- made all skyrim icons HD
+- added BS icons to beyond skyrim map (along with HD skyrim icons)
+- added display levels to BS map (werent before)
 
 
 ## bug fixes:
-- fixed icons being squished/stretched in map key and editor icon chooser (noticeable on skyrim icons)
 - fixed marker icons not being centred (chests, lorebooks)
+- fixed icons being squished/stretched in map key and editor icon chooser (noticeable on skyrim icons)
 >> also improves support for maps with varying icon resolutions (eso, skyrim)
+- made popup links turn black if there's no href
 
 
 ## todo
+
+
+
+
 
 - whenever move, iterate through location list not marker list
 
@@ -27,9 +35,6 @@ fix polygons/icons disappearing after edit
 fix markers not being visually saved after save
 
 - add tutorial message for draging markers and edit handles like live
-- overwrite polygon edit colours for geoman
-
-
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
 - convert eso and dawnstar to psueodo normalised in mapconfig
 - hamburger for search bar to show other maps
@@ -39,8 +44,8 @@ fix markers not being visually saved after save
 - zoom/pan in effects for markers when editing
 - fix centreon going to the wrong place
 - fix requesting /null in layerbutton
-- make leaflet popup wikilinks turn black if there's no href
 - add permalink option in location popups
+- editing skyrim map adds locations to eso map
 - redesign location popups
 - fix edit panel not animating close properly
 - fix recent changes list overflowing downwards
@@ -73,7 +78,6 @@ fix markers not being visually saved after save
 >> https://jsfiddle.net/Razielwar/hmqgn69r/14/
 
 ## dave stuff:
-- 32px skyrim icons
 - cave interior maps for skyrim, ob, mw
 - skyrim minecraft thing
 

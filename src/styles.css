@@ -783,11 +783,11 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 .popupTitle a {
 	font-weight: bolder;
 	font-size: 14px;
-	color: var(--text_low_emphasis);
+	color: black !important;
 }
 
 .popupTitle a[href] {
-	color: #0078A8;
+	color: #0078A8 !important;
 }
 
 .popupTitle a[href]:hover {
