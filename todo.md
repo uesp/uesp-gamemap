@@ -16,8 +16,6 @@
 
 ## todo
 
-
-
 - whenever move, iterate through location list not marker list
 
 - make close button in edit panel always close the panel regardless of direct edit or not

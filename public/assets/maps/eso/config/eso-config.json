@@ -23,8 +23,7 @@
 
     // Map icon info
     "iconSize" : 32,
-    "iconLabelXOffset" : 8,
-    "iconLabelYOffset" : 3.5,
+    "labelOffset" : 8,
     "icons": {
         "1"  : "Artifact Gate",
         "2"  : "Bank",
