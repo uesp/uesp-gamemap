@@ -1455,7 +1455,7 @@ uesp.gamemap.Location.prototype.updatePopup = function ()
 		self.onClosePopup(event);
 	});
 	
-	if (this.destinationId != 0)
+	if (this.destinationId != 0 && this.parentMap.jumpToDestinationOnClick)
 	{
 		if (this.destinationId < 0)
 		{

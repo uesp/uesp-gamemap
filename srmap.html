@@ -258,6 +258,9 @@
 			
 			g_GameMap = new uesp.gamemap.Map('gmMap', g_DefaultMapOptions, userEvents);
 			
+				//Prevent bug with jumping to Solstheim with new map system
+			g_GameMap.jumpToDestinationOnClick = false;
+			
 			$("#gmMapCellGrid").bind("touchstart click", { self: g_GameMap }, g_GameMap.onCellGridClick);
 			
 			updateMenuBarHeight();
