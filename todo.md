@@ -3,12 +3,12 @@
 
 
 ## polish:
-
 - made map key and icons ABC
 >> done on the client side using a JS map, so the mapconfig icons list remains a simple object for readability
 - made all skyrim icons HD
 - added BS icons to beyond skyrim map (along with HD skyrim icons)
 - added display levels to BS map (werent before)
+- made OB icons more consistent
 
 
 ## bug fixes:
@@ -43,14 +43,20 @@ fix markers not being visually saved after save
 - add allow long clicking on mobile to open popups
 - zoom/pan in effects for markers when editing
 - fix centreon going to the wrong place
+- fix type:blah not working after the icon list to map change
+- fix oblivion icons being inconsistent (some discovered, some undescovered - use map marker overhaul for custom icons)
 - fix requesting /null in layerbutton
 - add permalink option in location popups
-- editing skyrim map adds locations to eso map
-- redesign location popups
+- fix editing skyrim map adds locations to eso map
+- redesign location popups (add icon in circle in popup, with title and info to the right of it)
 - fix edit panel not animating close properly
+- add middle click event listener to button and listItem
+>> allow middle click to open in new tab for goto article button
+>> and add middle click on listitems to open in a new tab w/ centreon link
 - fix recent changes list overflowing downwards
 - fix location list dropdown not being centred properly
 - make polygon edit handles have high zindex
+- refactor gamemap.js to Gamemap.svelte and use realtime svelte features
 - make embeded map watermark actually open in new tab
 - fix edit pane causing iconbar to overlap
 - make going to location centre zoom dynamically instead of always zoom level 5
@@ -67,10 +73,11 @@ fix markers not being visually saved after save
 - add riseOnHover to icon labels when hovering over
 - make tooltips follow the mouse rather than the centre of the location
 - fix all markers showing up at initial load on highest zoom level
+- show more columns on map key menu dynamically
 - button to go to the map menu
 - fix pip on layer switcher ui being small
 - button to go up a map, right click isnt intuitive
-- disable polygon fade css effect on firefox
+- make readme on how to create the favicon styles for maps for future developers
 - make maps in game release order
 - allow shiftclick/ctrl click to add/remove vertices
 - maybe refactor to divicon to allow drag by label
