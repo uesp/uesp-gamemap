@@ -28,12 +28,14 @@ export default class Location {
 		this.name = location.name || "";
 		this.wikiPage = location.wikiPage || "";
 		this.description = location.description || "";
-		this.isVisible = location?.visible == 1 && !location.description.includes("teleport dest");
+		this.visible = location?.visible == 1 && !location.description.includes("teleport dest");
+		this.wasVisible = null;
 		this.displayData = JSON.parse(location.displayData) || {};
 		this.worldID = location.worldId || 0;
 		this.destinationID = -(location.destinationId) || null;
 		this.revisionID = location.revisionId || 0;
 		this.displayLevel = parseFloat(location.displayLevel - world.zoomOffset || 0);
+		this.editing = false; // whether this location is currently being edited;
 		this.legacy = location;
 
 		// set location icon info
@@ -272,6 +274,41 @@ export default class Location {
 			}
 		}
 
+	}
+
+	setEditing(editing) {
+		this.editing = editing;
+	}
+
+	getWasVisible() {
+		return this.wasVisible;
+	}
+
+	setWasVisible(wasVisible) {
+		this.wasVisible = wasVisible;
+	}
+
+	setVisible(visible) {
+		this.visible = visible;
+	}
+
+	// is location visible (with optional passed bounds)
+	isVisible(bounds) {
+		if (this.editing) return true;
+		if (this.legacy?.visible == 0 || this.legacy.description.includes("teleport dest")) return false;
+		if (gamemap.getCurrentZoom() < this.displayLevel) return false;
+		bounds = bounds ?? gamemap.getCurrentViewBounds();
+		// todo: also need centre coord checking in here too
+		let isInside = false;
+		this.coords.every(coord => {
+			if (coord.x >= bounds.minX && coord.x <= bounds.maxX && coord.y >= bounds.minY && coord.y <= bounds.maxY) {
+				isInside = true;
+			  	return false; // coordinate was found within the bounds, break early
+			} else {
+				return true; // returning true to keep loop going if no coordinate was found within bounds
+			}
+		});
+		return isInside;
 	}
 
 	// get query for saving this location

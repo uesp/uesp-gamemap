@@ -1,6 +1,24 @@
 ## last week:
 
 
+## performance/optimisations
+- last week's marker optimisations ended up making things worse
+- tried different approach this time
+
+
+- location array is now a map, instead world.location was an object. performance cost for iterating over object props
+- iterate over world.locations array instead of all markers
+- previously on load it added all locations to the map and quickly removed them if not visible/too low displaylevel
+- now only adds markers that are at that zoom level
+- also some locations have multiple markers, so iterating over locations means less iterations
+- in order to markers to be iterated over, they need to be added to the map, which means all event listeners in memory
+- also each marker was responsible for hiding/moving it self
+
+- this was causing big lags on skyrim, for example
+- when going from solstheim to skyrim, it was adding ALL the markers and then removing the ones that shouldnt be seen
+- now only adds the ones that are visible
+
+- most noticeable when going from big maps like cyrodiil to tamriel
 
 ## polish:
 - made map key and icons ABC
@@ -9,7 +27,6 @@
 - added BS icons to beyond skyrim map (along with HD skyrim icons)
 - added display levels to BS map (werent before)
 - made OB icons more consistent
-
 
 ## bug fixes:
 - fixed marker icons not being centred (chests, lorebooks)
@@ -21,6 +38,15 @@
 ## todo
 
 
+
+web worker for locations.js
+it downloads, parses, and creates location array for locations
+
+...
+
+when its ready, only add the markers icons that are currently visible
+
+every time the camera is moved, iterate through location array to find new markers to add
 
 
 
@@ -43,6 +69,7 @@ fix markers not being visually saved after save
 - add allow long clicking on mobile to open popups
 - zoom/pan in effects for markers when editing
 - fix centreon going to the wrong place
+- fix clicking out while zoomed in zooming in to parent map as well
 - fix type:blah not working after the icon list to map change
 - fix oblivion icons being inconsistent (some discovered, some undescovered - use map marker overhaul for custom icons)
 - fix requesting /null in layerbutton
@@ -87,6 +114,9 @@ fix markers not being visually saved after save
 ## dave stuff:
 - cave interior maps for skyrim, ob, mw
 - skyrim minecraft thing
+
+https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=drive_link
+Skyrim and Solstheim at 512 x 512 per cell
 
 
 feedback:

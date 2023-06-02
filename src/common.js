@@ -268,7 +268,7 @@ window.changeFavIcon = function changeFavIcon(favIconURL) {
  * @param {String} cssPath - Path to desired css file to be injected
  */
 window.injectCSS = function injectCSS(cssPath) {
-	cssPath = cssPath + "?" + Math.random(); // ensure that the custom css is not cached and is redownloaded
+	cssPath = cssPath + "?" + Math.random().toString(36).substr(2, 10); // ensure that the custom css is not cached and is redownloaded
 	document.getElementsByTagName("head")[0].insertAdjacentHTML("beforeend","<link rel=\"stylesheet\" href=\"" + cssPath + "\" />");
 }
 

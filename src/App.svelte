@@ -131,14 +131,13 @@
 							// set up map config assets
 							mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
 							mapConfig.iconPath = mapConfig.assetsPath + "icons/";
-							// sometimes tileURLs on the server are not consistent with the databaseName+"map" schema, so you can define an tileURLName in the map config to override this
+							// sometimes tileURLs on the server are not consistent with the dbName+"map" schema, so you can define an tileURLName in the map config to override this
 							mapConfig.tileURL = (mapConfig.tileURLName) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/";
 
 							// sort icon list to be alphabetical
 							let icons = Object.entries(mapConfig.icons).map(( [k, v] ) => ({ [k]: v }));
 							icons.sort((a, b) => Object.values(a)[0].localeCompare(Object.values(b)[0], 'en', {'sensitivity': 'base'}));
 							mapConfig.icons = new Map(icons.map(obj => [Object.keys(obj)[0], Object.values(obj)[0]]));
-							print(mapConfig.icons);
 
 							print("Completed merged map config:")
 							print(mapConfig);

@@ -32,7 +32,7 @@ let self; // Local "this" instance of Gamemap
 let RC; // RasterCoords instance, for converting leaflet latlongs to XY coords and back
 let mapWorldNameIndex = {}; // Local list of map world names
 let mapWorldDisplayNameIndex = {}; // Local list of map display names
-let mapBounds; // Current map bounds
+let mapBounds; // Current map bounds in LatLngs
 let tileLayer; // Local tiles
 
 /*================================================
@@ -201,7 +201,6 @@ export default class Gamemap {
 		tileLayer.addTo(map);
 
 		// set map view
-		print(mapState.coords);
 		if(mapState.coords == null || mapState.zoomLevel == null) {
 			// reset map to fill world bounds
 			map.fitBounds(RC.getMaxBounds(), {animate: false});
@@ -284,21 +283,14 @@ export default class Gamemap {
 	 */
 	updateMapState(mapState) {
 
-		let newMapState;
-
-		if (mapState == null) {
-			newMapState = this.getMapState();
-		} else {
-			newMapState = mapState;
-		}
-
 		// update map state
+		mapState = mapState ?? this.getMapState();
 		let x = Number(this.toCoords(map.getCenter()).x, this.mapConfig.coordType).toFixed(3);
 		let y = Number(this.toCoords(map.getCenter()).y, this.mapConfig.coordType).toFixed(3);
-		newMapState.coords = (this.mapConfig.coordType == COORD_TYPES.NORMALISED || this.mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? [x, y] : [Math.floor(x), Math.floor(y)];
-		newMapState.zoomLevel = parseFloat(map.getZoom().toFixed(3));
-		newMapState.world = this.getWorldFromID(this.currentWorldID);
-		this.currentMapState = newMapState;
+		mapState.coords = (this.mapConfig.coordType == COORD_TYPES.NORMALISED || this.mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? [x, y] : [Math.floor(x), Math.floor(y)];
+		mapState.zoomLevel = parseFloat(map.getZoom().toFixed(3));
+		mapState.world = this.getWorldFromID(this.currentWorldID);
+		this.currentMapState = mapState;
 
 		// update url
 		let mapLink;
@@ -310,27 +302,27 @@ export default class Gamemap {
 
 		// world related
 		if (this.hasMultipleWorlds()){
-			mapLink += 'world=' + newMapState.world.name;
+			mapLink += 'world=' + mapState.world.name;
 			mapLink += '&';
 		}
-		if (newMapState.world.hasMultipleLayers()) {
-			mapLink += 'layer=' + newMapState.world.layers[newMapState.layerIndex].name;
+		if (mapState.world.hasMultipleLayers()) {
+			mapLink += 'layer=' + mapState.world.layers[mapState.layerIndex].name;
 			mapLink += '&';
 		}
-		mapLink += 'x=' + newMapState.coords[0];
-		mapLink += '&y=' + newMapState.coords[1];
-		mapLink += '&zoom=' + newMapState.zoomLevel;
-		if (newMapState.showGrid) {
-			mapLink += '&grid=' + newMapState.showGrid;
+		mapLink += 'x=' + mapState.coords[0];
+		mapLink += '&y=' + mapState.coords[1];
+		mapLink += '&zoom=' + mapState.zoomLevel;
+		if (mapState.showGrid) {
+			mapLink += '&grid=' + mapState.showGrid;
 		}
 
 		// callback
 		if (self.mapCallbacks != null) {
-			self.mapCallbacks.onMapStateChanged(newMapState);
+			self.mapCallbacks.onMapStateChanged(mapState);
 		}
 
 		// update url with new state
-		window.history.replaceState(newMapState, document.title, mapLink);
+		window.history.replaceState(mapState, document.title, mapLink);
   		window.dispatchEvent(new PopStateEvent('popstate'));
 	}
 
@@ -400,21 +392,21 @@ export default class Gamemap {
 	 * @returns {Boolean} Whether or not the provided world is valid or not
 	 */
 	isWorldValid(world) {
-		return (world != null && world >= 0 && world in this.mapWorlds);
+		return (world && world >= 0 && world in this.mapWorlds);
 	}
 
 	/** Get the current world object
 	 * @returns {Object} world - An object that represents the current map world.
 	 */
 	getCurrentWorld() {
-		return ( !isNull(this.getMapState()) && !isNull(this.getMapState().world) != null) ? self.getMapState().world : this.getWorldFromID( (this.currentWorldID != null) ? this.currentWorldID : this.mapConfig.defaultWorldID);
+		return this.getMapState()?.world ?? this.getWorldFromID(this.currentWorldID ?? this.mapConfig.defaultWorldID);
 	}
 
 	/** Gets the current world ID (0 by default).
 	 * @returns {int} worldID - ID that represents a world in the database.
 	 */
 	getCurrentWorldID() {
-		return (this.currentWorldID != null) ? this.currentWorldID : getCurrentWorld().id;
+		return this.currentWorldID ?? getCurrentWorld()?.id;
 	}
 
 	/** Gets the world object associated to a given worldID.
@@ -430,7 +422,7 @@ export default class Gamemap {
 	 * @returns {String} worldName - The internal name of the world.
 	 */
 	getWorldNameFromID(worldID) {
-		if (this.getWorldFromID(worldID) != null) return this.getWorldFromID(worldID).name; else return null;
+		return this.getWorldFromID(worldID)?.name;
 	}
 
 	/** Get world display name from a given worldID
@@ -438,11 +430,7 @@ export default class Gamemap {
 	 * @returns {String} displayName - The user facing display name of the world.
 	 */
 	getWorldDisplayNameFromID(worldID) {
-		if (this.getWorldFromID(worldID) == null) {
-			return null;
-		} else {
-			return this.getWorldFromID(worldID).displayName || null;
-		}
+		return this.getWorldFromID(worldID)?.displayName;
 	}
 
 	/** Get world object from internal world name
@@ -479,7 +467,7 @@ export default class Gamemap {
 	goto(place, coords) {
 		// figure out what data we're being passed
 		this.mapCallbacks.setLoading(true);
-		place = (place != null) ? (isString(place)) ? parseInt(place) : place : this.getCurrentWorldID();
+		place = (place) ? (isString(place)) ? parseInt(place) : place : this.getCurrentWorldID();
 		let isWorld = place instanceof World || place.numTilesX;
 		let isID = !isNaN(place);
 		let isLocation = place instanceof Location || place.coords;
@@ -924,24 +912,22 @@ export default class Gamemap {
 		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 			if (!error && data != null) {
 				print("Got " + data.locationCount + " locations!");
-				let locations = data.locations
-				let parsedLocations = {};
+				let locations = data.locations;
+				let locationMap = new Map();
 
-				for (let key in locations) {
-					let location = locations[key];
-
-					if (location.id != null) {
-						parsedLocations[location.id] = new Location(location, world);
+				locations.forEach(location => {
+					if (location.id) {
+						locationMap.set(location.id, new Location(location, world));
 					}
-				}
+				});
 
 				// update world
-				self.mapWorlds[world.id].locations = parsedLocations;
+				self.mapWorlds[world.id].locations = locationMap;
 
 				// make sure we're in the right world before overwriting all locations
 				if (self.getCurrentWorldID() == world.id) {
 					self.updateMapState();
-					self.redrawLocations(parsedLocations);
+					self.redrawLocations(self.mapWorlds[world.id].locations);
 				}
 			} else {
 				print.warn("There was an error getting locations for this world.");
@@ -1003,43 +989,12 @@ export default class Gamemap {
 	}
 
 	clearLocations() {
-		if (this.markerLayer != null) {
-			this.markerLayer.off('resize move zoom');
-			this.markerLayer.clearLayers();
-			this.markerLayer.remove();
-		}
-
 		map.eachLayer((layer) => {
 			if (!layer._tiles && layer.options.className != "cellGrid" ) { //remove anything that is not a tile or cell grid
 				layer.off('resize move zoom');
 				layer.remove();
 			}
 		});
-	}
-
-	redrawMarkers(marker){
-
-		let isVisible = marker.isVisible();
-		let wasVisible = marker.getWasVisible();
-
-		// add/remove from DOM on marker visibility change
-		if (isVisible != wasVisible) {
-			if (isVisible) {
-
-				if (this.markerLayer.hasLayer(marker)) {
-					marker.addTo(map);
-					if (marker.location.hasLabel() && !(marker.location.hasIcon() && marker._path)) {
-						marker.bindTooltip(marker.location.name, this.getLocationLabel(marker.location));
-					}
-				}
-
-			} else {
-				marker.remove();
-			}
-
-			marker.setWasVisible(isVisible);
-		}
-
 	}
 
 	getLocTypeByName(locTypeName) {
@@ -1056,7 +1011,6 @@ export default class Gamemap {
 			return null;
 		}
 	}
-
 
 	redrawLocation(location, isEditing) {
 
@@ -1080,43 +1034,26 @@ export default class Gamemap {
 		this.clearLocations();
 
 		// set up location layer for each zoom level
-		print("Setting up location markers...")
-		let locationMarkers = [];
+		print("Loading initial locations...");
 
 		// check if current map has any locations
-		if (Object.keys(locations).length > 0) {
-
-			print("Loading locations...");
+		if (locations.size > 0) {
 
 			// iterate through each location in the list
-			Object.values(locations).forEach(location => {
+			print("Adding location markers to map...")
+			locations.forEach(location => {
 
-				if (location.isVisible) {
-					// get marker/polygon/icon for this location
-					let markers = this.getMarkers(location);
-
-					if (markers.length > 1) {
-						print (markers);
-					}
-
-					// add markers to map layer
-					markers.forEach(marker => { locationMarkers.push(marker) });
+				if (location.isVisible()) {
+					// add markers to the map
+					this.getMarkers(location).forEach(marker => { marker.addTo(map) });
+					location.setWasVisible(true);
 				}
 			});
 		}
 
-		this.markerLayer = new L.layerGroup(locationMarkers);
-
-		// add markers to map
-		print("Adding location markers to map...")
-		this.markerLayer.addTo(map);
-
 		// callback to show map fully loaded
-		if (this.mapCallbacks != null) {
-			this.mapCallbacks.onMapLoaded(true);
-			// fix screen flash bug when editing worlds
-			this.mapRoot.style.animation = "none";
-		}
+		this.mapCallbacks?.onMapLoaded(true);
+		this.mapRoot.style.animation = "none";
 
 	}
 
@@ -1182,20 +1119,6 @@ export default class Gamemap {
 
 			// bind marker events
 			marker.once('add', function() {
-
-				const EVENTS_STRING = "resize moveend zoomend";
-
-				// don't show any markers that are not currently visible
-				if (!marker.isVisible()) {
-					marker.off(EVENTS_STRING);
-					marker.remove();
-				}
-
-				map.on(EVENTS_STRING, function() {
-					if (marker.getLocation().worldID == self.getCurrentWorldID()) {
-						self.redrawMarkers(marker);
-					}
-				});
 
 				// on marker deselected
 				marker.on("mouseout", function () {
@@ -1304,6 +1227,35 @@ export default class Gamemap {
 	bindMapEvents() {
 
 		map.on('resize moveend zoomend', function() {
+
+			self.getCurrentWorld()?.locations?.forEach(location => {
+
+				let isVisible = location.isVisible();
+				let wasVisible = location.getWasVisible();
+
+				// add/remove from DOM on marker visibility change
+				if (isVisible != wasVisible) {
+					if (isVisible) {
+
+						let markers = self.getMarkers(location);
+						markers.forEach(function(marker) {
+							marker.addTo(map);
+							if (marker.location.hasLabel() && !(marker.location.hasIcon() && marker._path)) {
+								marker.bindTooltip(marker.location.name, self.getLocationLabel(marker.location));
+							}
+						});
+
+					} else {
+
+						self.getMarkersFromLocation(location).forEach(m => m.remove());
+						//marker.remove();
+					}
+
+					location.setWasVisible(isVisible);
+				}
+
+			});
+
 			self.updateMapState();
 			self.clearTooltips();
 		});
@@ -1471,6 +1423,8 @@ export default class Gamemap {
 		return new L.LatLngBounds(southWest, northEast);
 	}
 
+
+
 	/*================================================
 						  General
 	================================================*/
@@ -1488,8 +1442,28 @@ export default class Gamemap {
 		}
 	}
 
+
+	getCurrentViewBounds() {
+
+		let northWest = this.toCoords(this.getCurrentMapBounds().getNorthWest());
+		let southEast = this.toCoords(this.getCurrentMapBounds().getSouthEast());
+
+		let bounds = {};
+		bounds.minX = northWest.x;
+		bounds.maxX = southEast.x;
+		bounds.minY = (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) ? southEast.y : northWest.y;
+		bounds.maxY = (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) ? northWest.y : southEast.y;
+
+		return bounds;
+
+	}
+
 	getMapBounds() {
 		return RC.getMaxBounds();
+	}
+
+	getCurrentMapBounds() {
+		return mapBounds = map.getBounds();
 	}
 
 	getMaxBoundsZoom() {
