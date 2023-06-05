@@ -136,16 +136,11 @@
 
     let timer;
     const DEBOUNCE_AMOUNT = 75;
-    function modify(property, value, isDisplayData) {
+    function modify(property, value) {
         if (canEdit) {
             // update svelte reactivity
-            if (isDisplayData) {
-                modifiedObj.displayData[property] = value;
-            } else {
-                modifiedObj[property] = value;
-            }
+            modifiedObj[property] = value;
             modifiedObj = modifiedObj;
-            modifiedObj.coords = modifiedObj.coords;
 
             print("before edit");
             print(data);
@@ -367,9 +362,9 @@
                         {#if modifiedObj.locType != LOCTYPES.PATH}
                             {@const posIDs = Object.keys(LABEL_POSITIONS)}
                             {@const posNames = Object.values(LABEL_POSITIONS)}
-                            <DropdownMenu label="Label Direction" hint="Select label direction..." align="right" on:change={(e) => {modifiedObj.getLabelOffsets(Number(e.detail)); modify("labelPos", Number(e.detail), true)}}>
+                            <DropdownMenu label="Label Direction" hint="Select label direction..." align="right" on:change={(e) => {modify("labelPos", Number(e.detail))}} >
                                 {#each posNames as posName, i}
-                                    <option value={posIDs[i]} selected={modifiedObj.displayData.labelPos == posIDs[i]}>{posName}</option>
+                                    <option value={posIDs[i]} selected={modifiedObj.labelPos == posIDs[i]}>{posName.toSentenceCase()}</option>
                                 {/each}
                             </DropdownMenu>
                         {/if}
@@ -393,7 +388,7 @@
                 <!-- General info -->
                 {#if modifiedObj.id > 0}
                     <FormGroup title="Info" icon="info">
-                        <InfoTextPair name="{objectType.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} ID" value={modifiedObj.id} tooltip="This {objectType}'s ID"/>
+                        <InfoTextPair name="{objectType.toSentenceCase()} ID" value={modifiedObj.id} tooltip="This {objectType}'s ID"/>
                         {#if isWorld}<InfoTextPair name="World Name" value={modifiedObj.name} tooltip="This world's internal name"/>{/if}
                         {#if isWorld}<InfoTextPair name="Tiles" value={modifiedObj.dbNumTilesX + " x " + modifiedObj.dbNumTilesY} tooltip="Number of tiles at full zoom"/>{/if}
                         <!-- svelte-ignore missing-declaration -->

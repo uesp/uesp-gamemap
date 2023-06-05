@@ -82,7 +82,7 @@
             Layers
             <i class="small material-icons" style="position: relative; bottom: 45px;">layers</i>
             {#if hasMultipleLayers}
-                <p id="layer-name" class="layer-name" style="bottom: 12px;">{layerName.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())}</p>
+                <p id="layer-name" class="layer-name" style="bottom: 12px;">{layerName.toSentenceCase()}</p>
             {/if}
         </button>
 
@@ -94,7 +94,7 @@
                 {#if hasMultipleLayers}
                     {#each layers as layer}
                         <!-- svelte-ignore missing-declaration -->
-                        <LayerButton on:onClick={onLayerClicked} label={layer.name.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer.name, true)}/>
+                        <LayerButton on:onClick={onLayerClicked} label={layer.name.toSentenceCase()} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer.name, true)}/>
                     {/each}
                     <Divider direction="vertical"></Divider>
                 {/if}

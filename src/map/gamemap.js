@@ -1186,7 +1186,7 @@ export default class Gamemap {
 		const [X_OFFSET, Y_OFFSET] = [this.getMapConfig().labelOffset, this.getMapConfig().labelOffset / 2];
 
 		// set label offset based on direction
-		switch (location.labelDirection) {
+		switch (LABEL_POSITIONS[location.labelPos]) {
 			case "top":
 				offset = [0, -Y_OFFSET];
 				break;
@@ -1206,7 +1206,7 @@ export default class Gamemap {
 		return {
 			className : "location-label",
 			permanent: true,
-			direction: location.labelDirection,
+			direction: LABEL_POSITIONS[location.labelPos],
 			interactive: true,
 			offset: offset,
 			riseOnHover: true,

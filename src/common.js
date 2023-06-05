@@ -52,13 +52,13 @@ window.COORD_TYPES = {
 // 	9 : 'Bottom Right',
 
 window.LABEL_POSITIONS = {
-	0  : 'None',
-	4  : 'Left',
-	5  : 'Center',
-	6  : 'Right',
-	2  : 'Top',
-	8  : 'Bottom',
-	10 : 'Auto',
+	0  : 'none',
+	4  : 'left',
+	5  : 'center',
+	6  : 'right',
+	2  : 'top',
+	8  : 'bottom',
+	10 : 'auto',
 };
 
 const MINUTE = 60;
@@ -475,3 +475,12 @@ window.getClientLocale = function getClientLocale() {
 window.UTCtoLocalDate = function UTCtoLocalDate(date) {
 	return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
 }
+
+/** Transform string to sentence case
+ * @returns {String} string - the sentence case string
+ */
+Object.assign(String.prototype, {
+    toSentenceCase() {
+        return this.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase());
+    }
+});

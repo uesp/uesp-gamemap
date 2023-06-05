@@ -37,48 +37,74 @@ export default class Location {
 		this.displayLevel = parseFloat(location.displayLevel - world.zoomOffset || 0);
 		this.editing = false; // whether this location is currently being edited;
 		this.legacy = location;
-		this.markers = [];
 
 		// set location icon info
 		this.icon = location.iconType || null;
 		this.width = (this.icon) ? location.width || mapConfig.iconSize : location.width;
 		this.height = (this.icon) ? location.height || mapConfig.iconSize : location.height;
 
-		// set coords
-		this.coords = [];
-		let coordArray = this.displayData.points;
-		if (coordArray != null && coordArray.length > 0) {
+		// set up coords
+		this.coords = (() => {
+			let coords = [];
+			let coordArray = this.displayData.points;
+			if (coordArray?.length > 0) {
 
-			let x = [];
-			let y = [];
+				let [x, y] = [ [], [] ];
 
-			// split single coord array into x and y arrays
-			for (let i = 0; i < coordArray.length; i++) {
-				if (i % 2 == 0 || i == 0 ) {  // if even, put into x, else: y
-					x.push(coordArray[i]);
-				} else {
-					y.push(coordArray[i]);
+				// split single coord array into x and y arrays
+				for (let i = 0; i < coordArray.length; i++) {
+					if (i % 2 == 0 || i == 0 ) {  // if even, put into x, else: y
+						x.push(coordArray[i]);
+					} else {
+						y.push(coordArray[i]);
+					}
 				}
+
+				// push joined coords into coord array
+				for (let i = 0; i < y.length; i++ ) {
+					let coord = [x[i], y[i]];
+					coords.push(this.makePoint(coord));
+				}
+
+			} else {
+				coords.push(this.makePoint([location.x, location.y]));
 			}
+			return coords;
+		})();
 
-			// push joined coords into coord array
-			for (let i = 0; i < y.length; i++ ) {
-				let coord = [x[i], y[i]];
-				this.coords.push(this.makePoint(coord));
+		// set up label positions
+		this.labelPos = (() => {
+			switch (this.displayData.labelPos) {
+				case null, 0:	// legacy: none
+					return 0;	// returns: none
+				case 1: 		// legacy: top left
+					return 4;	// returns: left
+				case 2:			// legacy: top center
+					return 2; 	// returns: top
+				case 3:			// legacy: top right
+					return 6;	// returns: right
+				case 4:			// legacy: left
+					return 4;	// returns: left
+				case 5:			// legacy: center
+					return 5;	// returns: center
+				case 6:			// legacy: right
+					return 6;	// returns: right
+				case 7:			// legacy: bottom left
+					return 4; 	// returns: left
+				case 8:			// legacy: bottom
+					return 8;	// returns: bottom
+				case 9:			// legacy: bottom right
+					return 6;	// returns: right
+				default:		// legacy: auto
+					return 10; 	// returns: auto
 			}
-
-		} else {
-			this.coords.push(this.makePoint([location.x, location.y]));
-		}
-
-		// set up label info
-		this.labelPos = this.getLabelOffsets(this.displayData?.labelPos);
+		})();
 
 		// set up display info for polygons
 		if (this.isPolygon()){
 
-			if ( !this.displayData?.lineWidth) { this.displayData.lineWidth = 0 }
-			if ( !this.displayData?.hover) { this.displayData.hover = this.displayData }
+			if (!this.displayData?.lineWidth) { this.displayData.lineWidth = 0 }
+			if (!this.displayData?.hover) { this.displayData.hover = this.displayData }
 
 			this.fillColour = this.displayData.fillStyle;
 			this.fillColourHover = this.displayData.hover.fillStyle;
@@ -194,50 +220,6 @@ export default class Location {
 
 		return wikiLink;
 
-	}
-
-	getLabelOffsets(labelPos) {
-
-		switch (labelPos) {
-			case 1:
-				// top left
-				this.labelDirection = "left";
-				break;
-			case 2:
-				// top
-				this.labelDirection = "top";
-				break;
-			case 3:
-				// top right
-				this.labelDirection = "right";
-			case 4:
-				// left
-				this.labelDirection = "left";
-				break;
-			case 5:
-				// centre
-				this.labelDirection = "center";
-				break;
-			case 6:
-				// right
-				this.labelDirection = "right";
-				break;
-			case 7:
-				// bottom left
-				this.labelDirection = "left";
-				break;
-			case 8:
-				// bottom
-				this.labelDirection = "bottom";
-				break;
-			case 9:
-				// bottom right
-				this.labelDirection = "right";
-				break;
-			default:
-				// auto
-				this.labelDirection = "auto";
-		}
 	}
 
 	getCentre() {
