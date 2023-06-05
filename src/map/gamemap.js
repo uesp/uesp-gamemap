@@ -317,9 +317,7 @@ export default class Gamemap {
 		}
 
 		// callback
-		if (self.mapCallbacks != null) {
-			self.mapCallbacks.onMapStateChanged(mapState);
-		}
+		self.mapCallbacks?.onMapStateChanged(mapState);
 
 		// update url with new state
 		window.history.replaceState(mapState, document.title, mapLink);
@@ -340,10 +338,7 @@ export default class Gamemap {
 			let queryParams = {};
 			queryParams.action = "get_worlds";
 			queryParams.db = mapConfig.database;
-
-			if (self.mapCallbacks != null) {
-				self.mapCallbacks.setLoading("Loading world");
-			}
+			self.mapCallbacks?.setLoading("Loading world");
 
 			if (Object.keys(this.mapWorlds).length === 0) {
 				getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
@@ -370,10 +365,9 @@ export default class Gamemap {
 
 							}
 						}
-						if (self.mapCallbacks != null) {
-							self.mapCallbacks.onWorldsLoaded(self.mapWorlds);
-
+						if (self.mapCallbacks) {
 							// load map
+							self.mapCallbacks.onWorldsLoaded(self.mapWorlds);
 							self.initialiseMap(mapConfig);
 						}
 
@@ -466,7 +460,7 @@ export default class Gamemap {
 	 */
 	goto(place, coords) {
 		// figure out what data we're being passed
-		this.mapCallbacks.setLoading(true);
+		this.mapCallbacks?.setLoading(true);
 		place = (place) ? (isString(place)) ? parseInt(place) : place : this.getCurrentWorldID();
 		let isWorld = place instanceof World || place.numTilesX;
 		let isID = !isNaN(place);
@@ -492,7 +486,7 @@ export default class Gamemap {
 						self.goto(location);
 					} else {
 						M.toast({html: "That location doesn't exist!"});
-						self.mapCallbacks.setLoading(false);
+						self.mapCallbacks?.setLoading(false);
 					}
 				}
 			}
@@ -509,7 +503,7 @@ export default class Gamemap {
 					} else {
 						self.reset(true);
 					}
-					self.mapCallbacks.setLoading(false);
+					self.mapCallbacks?.setLoading(false);
 				} else { // else load up the new world
 					self.clearLocations();
 					let mapState = new MapState(coords);
@@ -848,9 +842,7 @@ export default class Gamemap {
 		}
 
 		// and callback back to UI
-		if (this.mapCallbacks != null) {
-			this.mapCallbacks.onMapLockChanged(this.mapLock);
-		}
+		this.mapCallbacks?.onMapLockChanged(this.mapLock);
 	}
 
 	getCurrentTileLayerIndex() {
@@ -1012,19 +1004,27 @@ export default class Gamemap {
 		}
 	}
 
-	redrawLocation(location, isEditing) {
 
-		print(location);
+	// update location on the map
+	updateLocation(location) {
 
 		// remove existing marker(s)
 		let markers = this.getMarkersFromLocation(location);
 		markers.forEach(function(marker) { marker.remove() });
 
+		// update location data
+		this.getCurrentWorld().locations.set(location.id, location);
+
 		// create new markers
-		markers = this.getMarkers(location, isEditing);
+		markers = this.getMarkers(location);
 		markers.forEach(function(marker) { marker.addTo(map) });
 
-		if (isEditing) { this.edit(markers) }
+		// enable edit mode on marker if needed
+		if (location.editing) {
+			markers[0].edit();
+			markers.forEach(function(marker) { marker.setEditingEffect(true) });
+		}
+
 	}
 
 	redrawLocations(locations) {
@@ -1058,7 +1058,7 @@ export default class Gamemap {
 	}
 
 	// create marker(s) for location
-	getMarkers(location, isEditing) {
+	getMarkers(location) {
 
 		// make generic fallback marker
 		let polygonIcon = null;
@@ -1078,11 +1078,10 @@ export default class Gamemap {
 			let options = {
 				noClip: true,
 				smoothFactor: 2,
-				fillColor: location.style.fillColour,
-				color: location.style.strokeColour,
-				opacity: location.style.strokeOpacity,
-				fillOpacity: location.style.fillOpacity,
-				weight: location.style.lineWidth,
+				fillColor: location.fillColour,
+				color: location.strokeColour,
+				fillOpacity: null,
+				weight: location.strokeWidth,
 			}
 
 			if (location.locType == LOCTYPES.AREA) {
@@ -1090,7 +1089,7 @@ export default class Gamemap {
 
 				if (location.hasIcon()) {
 					marker.setIsIconPolygon(true);
-					polygonIcon = this.makeMarker(location, marker.getCentre(), isEditing);
+					polygonIcon = this.makeMarker(location, marker.getCentre());
 				}
 			}
 
@@ -1101,7 +1100,7 @@ export default class Gamemap {
 		} else { // if no, then it must be a single point (icon, label)
 
 			if (location.hasIcon()) {
-				marker = this.makeMarker(location, this.toLatLngs(coords[0]), isEditing);
+				marker = this.makeMarker(location, this.toLatLngs(coords[0]));
 			}
 
 		}
@@ -1127,11 +1126,9 @@ export default class Gamemap {
 
 					if (isPolygon){
 						this.setStyle({
-							fillColor: location.style.fillColour,
-							color: location.style.strokeColour,
-							opacity: location.style.strokeOpacity,
-							fillOpacity: location.style.fillOpacity,
-							weight: location.style.lineWidth,
+							fillColor: location.fillColour,
+							color: location.strokeColour,
+							weight: location.strokeWidth,
 						});
 					}
 				});
@@ -1146,11 +1143,9 @@ export default class Gamemap {
 
 					if (isPolygon){
 						this.setStyle({
-							fillColor: location.style.hover.fillColour,
-							color: location.style.hover.strokeColour,
-							opacity: location.style.hover.strokeOpacity,
-							fillOpacity: location.style.hover.fillOpacity,
-							weight: location.style.hover.lineWidth,
+							fillColor: location.fillColourHover,
+							color: location.strokeColourHover,
+							weight: location.strokeWidthHover,
 						});
 					}
 				});
@@ -1170,7 +1165,7 @@ export default class Gamemap {
 		return markers;
 	}
 
-	makeMarker(location, coords, isEditing) {
+	makeMarker(location, coords) {
 		let anchor = [this.mapConfig.iconSize / 2, this.mapConfig.iconSize / 2];
 		let iconURL = this.mapConfig.iconPath + location.icon + ".png";
 
@@ -1180,8 +1175,7 @@ export default class Gamemap {
 			iconSize: [this.mapConfig.iconSize, this.mapConfig.iconSize],
 		});
 
-		let marker = L.marker(coords, {icon: locationIcon, riseOnHover: true, className: `${isEditing ? "editing" : ""}`});
-		marker.setEditingEffect(isEditing);
+		let marker = L.marker(coords, {icon: locationIcon, riseOnHover: true});
 
 		return marker;
 	}
@@ -1285,12 +1279,8 @@ export default class Gamemap {
 		});
 		map.on("zoom", function() {
 
-			print(map.getZoom());
-
 			if (!self.mapLock && self.mapLock != "full") {
-				if (self.mapCallbacks != null) {
-					self.mapCallbacks.onZoom(map.getZoom());
-				}
+				self.mapCallbacks?.onZoom(map.getZoom());
 			} else {
 				//self.reset(true, 50);
 			}
@@ -1383,7 +1373,6 @@ export default class Gamemap {
 		});
 
 	}
-
 
 	centreOnLocation(location) {
 
@@ -1490,25 +1479,8 @@ export default class Gamemap {
 	}
 
 	edit(object) {
-		let location;
-		let markers;
-
-		if (object instanceof Location) {
-			location = object;
-			markers = this.getMarkersFromLocation(location);
-		} else if (object?.length > 0) {
-			markers = object;
-		}
-
-		// tell rest of the app we're editing this object
-		if (location || object instanceof World) {
-			this.mapCallbacks?.edit(object);
-		}
-
-		// add editing effect to marker(s)
-		markers[0].setEditing(true);
-		if (markers) { markers.forEach((marker) => { marker.setEditingEffect(true)}) }
-
+		// tell the editor we're editing this object
+		this.mapCallbacks?.edit(object);
 	}
 
 	// get if editing is enabled on this map
@@ -1522,10 +1494,7 @@ export default class Gamemap {
 		let self = this;
 		queryParams.action = "get_perm";
 		queryParams.db = this.mapConfig.database;
-
-		if (this.mapCallbacks != null) {
-			this.mapCallbacks.setLoading("Getting permissions");
-		}
+		this.mapCallbacks?.setLoading("Getting permissions");
 
 		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 
@@ -1538,9 +1507,7 @@ export default class Gamemap {
 			}
 
 			self.mapConfig.editingEnabled = ((canEdit || isDebug) && (!self.isEmbedded() && !isMobile()));
-			if (self.mapCallbacks != null) {
-				self.mapCallbacks.onPermissionsLoaded(self.mapConfig.editingEnabled);
-			}
+			self.mapCallbacks?.onPermissionsLoaded(self.mapConfig.editingEnabled);
 		});
 
 	}
@@ -1672,34 +1639,27 @@ L.Layer.include({
 		}
 	},
 
-	setEditing(editing) {
-		this.editing = editing;
+	edit() {
+		this.editing = true;
 
-		if (editing) {
+		this.pm.enable({
+			allowEditing: true,
+			snapDistance: 10,
+			draggable: true,
+		});
 
-			this.setEditingEffect(editing);
+		this.on('pm:markerdragend pm:vertexremoved pm:edit', (e) => {
+			if (e.shape == "Marker") {
+				let coords = gamemap.toCoords(e.layer.getLatLng());
+				updateMarkerCoords([coords]);
+			}
 
-			this.pm.enable({
-				allowEditing: true,
-				snapDistance: 10,
-				draggable: true,
-			});
-
-			this.on('pm:markerdragend pm:vertexremoved pm:edit', (e) => {
-				if (e.shape == "Marker") {
-					let coords = gamemap.toCoords(e.layer.getLatLng());
-					updateMarkerCoords([coords]);
-				}
-
-				if ((e.shape == "Polygon" || e.shape == "Line") && e.type == "pm:markerdragend" || e.type == "pm:vertexremoved") {
-					let [latLngs, coords] = [e.layer.getCoordinates(), []];
-					latLngs.forEach((latLng) => { coords.push(gamemap.toCoords(latLng)) });
-					updateMarkerCoords(coords);
-				}
-			});
-		} else {
-			this.off("pm:markerdragend pm:vertexremoved pm:edit");
-		}
+			if ((e.shape == "Polygon" || e.shape == "Line") && e.type == "pm:markerdragend" || e.type == "pm:vertexremoved") {
+				let [latLngs, coords] = [e.layer.getCoordinates(), []];
+				latLngs.forEach((latLng) => { coords.push(gamemap.toCoords(latLng)) });
+				updateMarkerCoords(coords);
+			}
+		});
 
 	}
 });

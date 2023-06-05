@@ -72,30 +72,22 @@ export default class Location {
 		}
 
 		// set up label info
-		if (this.displayData.labelPos != null){
-			this.getLabelOffsets(this.displayData.labelPos);
-		}
+		this.labelPos = this.getLabelOffsets(this.displayData?.labelPos);
 
 		// set up display info for polygons
 		if (this.isPolygon()){
 
-			this.style = {};
-			this.style.hover = {};
+			if ( !this.displayData?.lineWidth) { this.displayData.lineWidth = 0 }
+			if ( !this.displayData?.hover) { this.displayData.hover = this.displayData }
 
-			if (this.displayData.lineWidth == null) { this.displayData.lineWidth = 0 }
-			if (this.displayData.hover == null) { this.displayData.hover = this.displayData }
+			this.fillColour = this.displayData.fillStyle;
+			this.fillColourHover = this.displayData.hover.fillStyle;
 
-			this.style.lineWidth = this.displayData.lineWidth;
-			this.style.hover.lineWidth = this.displayData.hover.lineWidth;
+			this.strokeColour = this.displayData.strokeStyle;
+			this.strokeColourHover = this.displayData.hover.strokeStyle;
 
-			this.style.fillColour = this.displayData.fillStyle;
-			this.style.hover.fillColour = this.displayData.hover.fillStyle;
-
-			this.style.strokeColour = this.displayData.strokeStyle;
-			this.style.hover.strokeColour = this.displayData.hover.strokeStyle;
-
-			this.style.strokeWidth = this.displayData.lineWidth;
-			this.style.hover.strokeWidth = this.displayData.hover.lineWidth;
+			this.strokeWidth = this.displayData.lineWidth;
+			this.strokeWidthHover = this.displayData.hover.lineWidth;
 		}
 	}
 
@@ -168,11 +160,11 @@ export default class Location {
 	}
 
 	hasLabel() {
-		return (this.displayData.labelPos != null && this.displayData.labelPos >= 1 && this.name != "");
+		return (this.labelPos && this.labelPos >= 1 && this.name != "");
 	}
 
 	isLabel() {
-		return (!this.hasIcon && !this.isPolygon() && this.hasLabel);
+		return (!this.hasIcon() && !this.isPolygon() && this.hasLabel());
 	}
 
 	isClickable() {

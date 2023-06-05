@@ -754,6 +754,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 .leaflet-marker-icon {
 	user-select: none !important;
 	object-fit: scale-down !important;
+	font-size: 0 !important;
 }
 
 /*================================================

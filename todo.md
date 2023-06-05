@@ -3,32 +3,28 @@
 
 
 
-
+## technical:
+- attempting a data-based approach to editing, rather than just editing the marker element itself
+- every time you edit, you modify the actual location object, and the marker just gets redrawn based on that
+- flattened location class (all displayData stuff is in root of object)
 
 
 
 ## bug fixes:
 
 - fixed not being able to zoom past X.97
+- fixed location disappearing after editing
+
+
+
+## random stuff
+
+- out of curiosity how much has been made on donations on the uesp app?
+
 
 
 ## todo
 
-- write dave db job thing
-
-
-web worker for locations.js
-it downloads, parses, and creates location array for locations
-
-...
-
-when its ready, only add the markers icons that are currently visible
-
-every time the camera is moved, iterate through location array to find new markers to add
-
-
-
-- whenever move, iterate through location list not marker list
 
 - make close button in edit panel always close the panel regardless of direct edit or not
 

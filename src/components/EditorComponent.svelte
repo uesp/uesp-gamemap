@@ -33,9 +33,13 @@
     // state vars
     export let data;
     export let unsavedChanges = false;
-    let place = Object.assign(Object.create(Object.getPrototypeOf(data)), data)
-    let isLocation = data instanceof Location;
-    let isWorld = data instanceof World;
+
+    // create full clones of original objects
+    let originalObj = Object.assign(Object.create(Object.getPrototypeOf(data)), data);
+    let modifiedObj = Object.assign(Object.create(Object.getPrototypeOf(data)), data);
+
+    let isLocation = originalObj instanceof Location;
+    let isWorld = originalObj instanceof World;
     let editor;
     let editorWindow;
     let saveButton;
@@ -43,7 +47,7 @@
     let hasBeenModified = false;
     let objectType = (isWorld) ? "world" : "location";
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
-    let linkWikiPage = place.wikiPage == place.name || place.wikiPage == place.displayName;
+    let linkWikiPage = modifiedObj.wikiPage == modifiedObj.name || modifiedObj.wikiPage == modifiedObj.displayName;
 
     // on editor load
 	onMount(async() => {
@@ -55,19 +59,22 @@
         window.onpopstate = () => currentZoom = gamemap.getCurrentZoom().toFixed(3);
 
         // begin editing provided data
-        print(data);
         unsavedChanges = false;
 
         // do state changes to edit object
-        if (isWorld && data.id == gamemap.getCurrentWorld().id) {
+        if (isWorld && originalObj.id == gamemap.getCurrentWorld().id) {
             gamemap.reset(true, 30); // zoom out world map
             gamemap.setMapLock("full"); // lock the world map
             gamemap.mapRoot.classList.add("editing"); // add editing effect
             //gamemap.getMapObject().setMaxZoom(data.maxZoomLevel);
 
         } else if (isLocation) {
+            print("being called to edit location")
             canEdit = true;
             gamemap.setMapLock("partial"); // set map lock to partial
+            originalObj.setEditing(true);
+            modifiedObj.setEditing(true);
+            gamemap.updateLocation(modifiedObj);
         }
 
         // ensure editor window is scrolled to top on load
@@ -76,13 +83,13 @@
 
     function save() {
 
-        print(data)
-        print(place)
+        print(originalObj)
+        print(modifiedObj)
 
         print("saving...");
         saveButton.$set({ text: "Saving...", icon: "loading" });
 
-        let queryParams = objectify(place.getSaveQuery());
+        let queryParams = objectify(modifiedObj.getSaveQuery());
         queryParams.db = gamemap.getMapConfig().database;
 
         getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
@@ -98,8 +105,8 @@
                     // tell save function that we're done saving
                     callback();
                     modify("revisionID", data.newRevisionId);
-                    data = place;
-                    if (isLocation) { gamemap.redrawLocation(place, canEdit) }
+                    data = modifiedObj;
+                    if (isLocation) { gamemap.updateLocation(modifiedObj) }
                     unsavedChanges = false;
 
                 }
@@ -133,20 +140,20 @@
         if (canEdit) {
             // update svelte reactivity
             if (isDisplayData) {
-                place.displayData[property] = value;
+                modifiedObj.displayData[property] = value;
             } else {
-                place[property] = value;
+                modifiedObj[property] = value;
             }
-            place = place;
-            place.coords = place.coords;
+            modifiedObj = modifiedObj;
+            modifiedObj.coords = modifiedObj.coords;
 
             print("before edit");
             print(data);
             print("after edit");
-            print(place);
+            print(modifiedObj);
 
             // are there any unsaved changes
-            unsavedChanges = !(JSON.stringify(place) === JSON.stringify(data));
+            unsavedChanges = !(JSON.stringify(modifiedObj) === JSON.stringify(originalObj));
             hasBeenModified = (unsavedChanges) ? true : hasBeenModified;
 
             // redraw location with new changes
@@ -156,7 +163,7 @@
                     clearTimeout(timer);
                 }
                 timer = setTimeout(() => {
-                    gamemap.redrawLocation(place, canEdit);
+                    gamemap.updateLocation(modifiedObj);
                 }, DEBOUNCE_AMOUNT)
             }
         }
@@ -191,7 +198,8 @@
         dispatch("cancel", "cancelled");
         canEdit = false;
         hasBeenModified = false;
-        gamemap.redrawLocation(data, canEdit);
+        originalObj.setEditing(false);
+        gamemap.updateLocation(originalObj);
     }
 
 </script>
@@ -204,11 +212,11 @@
                 <FormGroup title="General" icon="description">
 
                     <header class="header">
-                        <AvatarComponent icon={place.icon} locType={place.locType} isWorld={isWorld} on:change={(e) => modify("icon", e.detail)}>
+                        <AvatarComponent icon={modifiedObj.icon} locType={modifiedObj.locType} isWorld={isWorld} on:change={(e) => modify("icon", e.detail)}>
 
                             <!-- Name -->
                             <Textbox
-                                text={isWorld ? place.displayName : place.name }
+                                text={isWorld ? modifiedObj.displayName : modifiedObj.name }
                                 hint={(isWorld ? "Display " : "") + "Name"}
                                 tooltip="User facing {objectType} name"
                                 on:change={(e) => {
@@ -224,19 +232,19 @@
                                 <!-- svelte-ignore missing-declaration -->
                                 <Textbox
                                     hint="Parent ID"
-                                    text={place.parentID}
+                                    text={modifiedObj.parentID}
                                     tooltip="Parent world ID"
                                     type="number"
-                                    subtext={(place.parentID && !isNaN(place.parentID) && gamemap.getWorldDisplayNameFromID(place.parentID)) ? gamemap.getWorldDisplayNameFromID(place.parentID) : "Invalid World ID!"}
+                                    subtext={(modifiedObj.parentID && !isNaN(modifiedObj.parentID) && gamemap.getWorldDisplayNameFromID(modifiedObj.parentID)) ? gamemap.getWorldDisplayNameFromID(modifiedObj.parentID) : "Invalid World ID!"}
                                     on:change={(e) => modify("parentID", e.detail)}>
                                 </Textbox>
                             <!-- Destination ID (for Locations) -->
                             {:else if isLocation}
                                 <!-- svelte-ignore missing-declaration -->
-                                {#if place.locType != LOCTYPES.PATH}
+                                {#if modifiedObj.locType != LOCTYPES.PATH}
                                     <Textbox
                                         hint="Destination ID"
-                                        text={place.destinationID}
+                                        text={modifiedObj.destinationID}
                                         subtext="+ for world, - for location"
                                         tooltip="Location/world destination ID"
                                         type="number"
@@ -257,14 +265,14 @@
                         tooltip={`Use this ${objectType}'s ${(isWorld ? "display name" : "name")} as its wiki page`}
                         on:change={(e) => {
                                 if (e.detail) {
-                                    modify("wikiPage", isWorld ? place.displayName : place.name);
+                                    modify("wikiPage", isWorld ? modifiedObj.displayName : modifiedObj.name);
                                 } else {
                                     modify("wikiPage", "");
                                 }
                                 linkWikiPage = e.detail;
                         }}>
                         <Textbox label="Wiki Page"
-                            text={place.wikiPage}
+                            text={modifiedObj.wikiPage}
                             placeholder="Enter wiki page..."
                             tooltip="Wiki page name"
                             on:change={(e) => modify("wikiPage", e.detail)}>
@@ -279,14 +287,14 @@
                             entries={LOCTYPES}
                             tooltip="Location type (marker, path or area)"
                             hint="Caution: changing location types is lossy"
-                            selected={Object.values(LOCTYPES).indexOf(place.locType)}
-                            on:change={(e) => {place.setLocType(e.detail); modify("locType", e.detail)}}>
+                            selected={Object.values(LOCTYPES).indexOf(modifiedObj.locType)}
+                            on:change={(e) => {modifiedObj.setLocType(e.detail); modify("locType", e.detail)}}>
                         </SegmentedButton>
                     {/if}
 
                     <!-- Description -->
                     <Textbox label="Description"
-                             text={place.description}
+                             text={modifiedObj.description}
                              placeholder="Enter description..."
                              tooltip="Description of this {objectType}"
                              textArea="true"
@@ -299,8 +307,8 @@
                 {#if isWorld}
                     <FormGroup title="Zoom" icon="zoom_in">
                         <div class="row">
-                            <Textbox text={place.minZoomLevel} type="number" hint="Min Zoom" tooltip="Minimum zoom level for this world" on:change={(e) => modify("minZoomLevel", e.detail)} min=0/>
-                            <Textbox text={place.maxZoomLevel} type="number" hint="Max Zoom" tooltip="Maximum zoom level for this world" on:change={(e) => modify("maxZoomLevel", e.detail)} min=0/>
+                            <Textbox text={modifiedObj.minZoomLevel} type="number" hint="Min Zoom" tooltip="Minimum zoom level for this world" on:change={(e) => modify("minZoomLevel", e.detail)} min=0/>
+                            <Textbox text={modifiedObj.maxZoomLevel} type="number" hint="Max Zoom" tooltip="Maximum zoom level for this world" on:change={(e) => modify("maxZoomLevel", e.detail)} min=0/>
                         </div>
                     </FormGroup>
                 {/if}
@@ -309,30 +317,30 @@
                 {#if isWorld}
                      <FormGroup title="Bounds" icon="crop_free">
                          <div class="row">
-                            <Textbox text={place.minX} hint="Minimum X" type="number" hideSpinner={true} on:change={(e) => modify("minX", e.detail)}/>
-                            <Textbox text={place.maxX} hint="Maximum X" type="number" hideSpinner={true} on:change={(e) => modify("maxY", e.detail)}/>
+                            <Textbox text={modifiedObj.minX} hint="Minimum X" type="number" hideSpinner={true} on:change={(e) => modify("minX", e.detail)}/>
+                            <Textbox text={modifiedObj.maxX} hint="Maximum X" type="number" hideSpinner={true} on:change={(e) => modify("maxY", e.detail)}/>
                          </div>
                          <div class="row">
-                            <Textbox text={place.minY} hint="Minimum Y" type="number" hideSpinner={true} on:change={(e) => modify("minY", e.detail)}/>
-                            <Textbox text={place.maxY} hint="Maximum Y" type="number" hideSpinner={true} on:change={(e) => modify("maxY", e.detail)}/>
+                            <Textbox text={modifiedObj.minY} hint="Minimum Y" type="number" hideSpinner={true} on:change={(e) => modify("minY", e.detail)}/>
+                            <Textbox text={modifiedObj.maxY} hint="Maximum Y" type="number" hideSpinner={true} on:change={(e) => modify("maxY", e.detail)}/>
                          </div>
                      </FormGroup>
                 {/if}
 
                 <!-- Styles (for Polygon Locations) -->
-                {#if isLocation && place.isPolygon()}
+                {#if isLocation && modifiedObj.isPolygon()}
                     <FormGroup title="Style" icon="format_color_fill">
 
 
                         <ColourPicker
                             label="Fill colour"
-                            colour = {place.style.fillColour}
+                            colour = {modifiedObj.style.fillColour}
                             placeholder="Select/enter fill colour...">
                         </ColourPicker>
 
                         <ColourPicker
                             label="Fill colour (Hovered)"
-                            colour = {place.style.hover.fillColour}
+                            colour = {modifiedObj.style.hover.fillColour}
                             placeholder="Select/enter fill colour...">
                         </ColourPicker>
 
@@ -345,7 +353,7 @@
 
                         <!-- svelte-ignore missing-declaration -->
                         <Textbox label="Display Level"
-                            text={place.displayLevel}
+                            text={modifiedObj.displayLevel}
                             placeholder="Enter display level..."
                             tooltip="Zoom level at which this location will appear"
                             type="number"
@@ -356,26 +364,26 @@
                         </Textbox>
 
                         <!-- svelte-ignore missing-declaration -->
-                        {#if place.locType != LOCTYPES.PATH}
+                        {#if modifiedObj.locType != LOCTYPES.PATH}
                             {@const posIDs = Object.keys(LABEL_POSITIONS)}
                             {@const posNames = Object.values(LABEL_POSITIONS)}
-                            <DropdownMenu label="Label Direction" hint="Select label direction..." align="right" on:change={(e) => {place.getLabelOffsets(Number(e.detail)); modify("labelPos", Number(e.detail), true)}}>
+                            <DropdownMenu label="Label Direction" hint="Select label direction..." align="right" on:change={(e) => {modifiedObj.getLabelOffsets(Number(e.detail)); modify("labelPos", Number(e.detail), true)}}>
                                 {#each posNames as posName, i}
-                                    <option value={posIDs[i]} selected={place.displayData.labelPos == posIDs[i]}>{posName}</option>
+                                    <option value={posIDs[i]} selected={modifiedObj.displayData.labelPos == posIDs[i]}>{posName}</option>
                                 {/each}
                             </DropdownMenu>
                         {/if}
 
                         <!-- svelte-ignore missing-declaration -->
-                        {#if place.locType == LOCTYPES.MARKER}
+                        {#if modifiedObj.locType == LOCTYPES.MARKER}
                             <b class="subheading">Position</b>
                             <div class="row">
-                                <Textbox text={place.coords[0].x}
+                                <Textbox text={modifiedObj.coords[0].x}
                                         hint="X Position"
                                         tooltip="X coordinate for this location"
                                         type="float"
-                                        on:change={(e) => {modify("coords", new Point(e.detail, place.coords[0].y))}}/>
-                                <Textbox text={place.coords[0].y} hint="Y Position" tooltip="Y coordinate for this location" type="float" />
+                                        on:change={(e) => {modify("coords", new Point(e.detail, modifiedObj.coords[0].y))}}/>
+                                <Textbox text={modifiedObj.coords[0].y} hint="Y Position" tooltip="Y coordinate for this location" type="float" />
                             </div>
                         {/if}
 
@@ -383,16 +391,16 @@
                 {/if}
 
                 <!-- General info -->
-                {#if place.id > 0}
+                {#if modifiedObj.id > 0}
                     <FormGroup title="Info" icon="info">
-                        <InfoTextPair name="{objectType.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} ID" value={place.id} tooltip="This {objectType}'s ID"/>
-                        {#if isWorld}<InfoTextPair name="World Name" value={place.name} tooltip="This world's internal name"/>{/if}
-                        {#if isWorld}<InfoTextPair name="Tiles" value={place.dbNumTilesX + " x " + place.dbNumTilesY} tooltip="Number of tiles at full zoom"/>{/if}
+                        <InfoTextPair name="{objectType.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase())} ID" value={modifiedObj.id} tooltip="This {objectType}'s ID"/>
+                        {#if isWorld}<InfoTextPair name="World Name" value={modifiedObj.name} tooltip="This world's internal name"/>{/if}
+                        {#if isWorld}<InfoTextPair name="Tiles" value={modifiedObj.dbNumTilesX + " x " + modifiedObj.dbNumTilesY} tooltip="Number of tiles at full zoom"/>{/if}
                         <!-- svelte-ignore missing-declaration -->
-                        {#if isLocation}<InfoTextPair name="In World" value={gamemap.getWorldNameFromID(place.worldID)} tooltip="The world this location is in"/>{/if}
+                        {#if isLocation}<InfoTextPair name="In World" value={gamemap.getWorldNameFromID(modifiedObj.worldID)} tooltip="The world this location is in"/>{/if}
                         <!-- svelte-ignore missing-declaration -->
                         <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES)[gamemap.getMapConfig().coordType].toLowerCase()} tooltip="Coordinate system that this {objectType} is using"/>
-                        <InfoTextPair name="Revision ID" value={place.revisionID} tooltip="Current revision ID"/>
+                        <InfoTextPair name="Revision ID" value={modifiedObj.revisionID} tooltip="Current revision ID"/>
                     </FormGroup>
                 {/if}
             </div>
