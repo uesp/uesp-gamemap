@@ -1,42 +1,20 @@
 ## last week:
 
 
-## performance/optimisations
-- last week's marker optimisations ended up making things worse
-- tried different approach this time
 
 
-- location array is now a map, instead world.location was an object. performance cost for iterating over object props
-- iterate over world.locations array instead of all markers
-- previously on load it added all locations to the map and quickly removed them if not visible/too low displaylevel
-- now only adds markers that are at that zoom level
-- also some locations have multiple markers, so iterating over locations means less iterations
-- in order to markers to be iterated over, they need to be added to the map, which means all event listeners in memory
-- also each marker was responsible for hiding/moving it self
 
-- this was causing big lags on skyrim, for example
-- when going from solstheim to skyrim, it was adding ALL the markers and then removing the ones that shouldnt be seen
-- now only adds the ones that are visible
 
-- most noticeable when going from big maps like cyrodiil to tamriel
 
-## polish:
-- made map key and icons ABC
->> done on the client side using a JS map, so the mapconfig icons list remains a simple object for readability
-- made all skyrim icons HD
-- added BS icons to beyond skyrim map (along with HD skyrim icons)
-- added display levels to BS map (werent before)
-- made OB icons more consistent
 
 ## bug fixes:
-- fixed marker icons not being centred (chests, lorebooks)
-- fixed icons being squished/stretched in map key and editor icon chooser (noticeable on skyrim icons)
->> also improves support for maps with varying icon resolutions (eso, skyrim)
-- made popup links turn black if there's no href
+
+- fixed not being able to zoom past X.97
 
 
 ## todo
 
+- write dave db job thing
 
 
 web worker for locations.js
@@ -65,6 +43,7 @@ fix markers not being visually saved after save
 - convert eso and dawnstar to psueodo normalised in mapconfig
 - hamburger for search bar to show other maps
 - cell resource state from url
+- fix zoom levels stopping at x.97 instead of going all the way
 - allow both edit polygon and drag at same time
 - add allow long clicking on mobile to open popups
 - zoom/pan in effects for markers when editing
@@ -101,6 +80,7 @@ fix markers not being visually saved after save
 - make tooltips follow the mouse rather than the centre of the location
 - fix all markers showing up at initial load on highest zoom level
 - show more columns on map key menu dynamically
+- fix cell resource colour intensity to make sense. deeper the colour the more stuff
 - button to go to the map menu
 - fix pip on layer switcher ui being small
 - button to go up a map, right click isnt intuitive
@@ -110,6 +90,9 @@ fix markers not being visually saved after save
 - maybe refactor to divicon to allow drag by label
 - drag and edit polygon at the same time
 >> https://jsfiddle.net/Razielwar/hmqgn69r/14/
+- be able to copy a map pin and place the copy (for those times when you've got three, four, eight of the same sub-quest steps to put on the map)
+- be able to use a search function when looking at the list of icons when placing a map pin (for those times when you remember "I think there was an icon with the word 'shrine' in it, but I can't remember what it was." (answer: rededication shrine, for which I have to search the whole list until I see the picture)).
+
 
 ## dave stuff:
 - cave interior maps for skyrim, ob, mw

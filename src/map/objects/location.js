@@ -37,6 +37,7 @@ export default class Location {
 		this.displayLevel = parseFloat(location.displayLevel - world.zoomOffset || 0);
 		this.editing = false; // whether this location is currently being edited;
 		this.legacy = location;
+		this.markers = [];
 
 		// set location icon info
 		this.icon = location.iconType || null;
@@ -296,7 +297,7 @@ export default class Location {
 	isVisible(bounds) {
 		if (this.editing) return true;
 		if (this.legacy?.visible == 0 || this.legacy.description.includes("teleport dest")) return false;
-		if (gamemap.getCurrentZoom() < this.displayLevel) return false;
+		if ((gamemap.getCurrentZoom() + 0.001) < this.displayLevel) return false;
 		bounds = bounds ?? gamemap.getCurrentViewBounds();
 		// todo: also need centre coord checking in here too
 		let isInside = false;

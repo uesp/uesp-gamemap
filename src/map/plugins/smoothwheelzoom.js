@@ -79,8 +79,8 @@ L.Map.SmoothWheelZoom = L.Handler.extend({
         if ((!map.getCenter().equals(this._prevCenter)) || map.getZoom() != this._prevZoom)
             return;
 
+
         this._zoom = map.getZoom() + (this._goalZoom - map.getZoom()) * 0.3;
-        this._zoom = Math.floor(this._zoom * 100) / 100;
 
         var delta = this._wheelMousePosition.subtract(this._centerPoint);
         if (delta.x === 0 && delta.y === 0)

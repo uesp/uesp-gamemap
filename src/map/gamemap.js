@@ -511,6 +511,7 @@ export default class Gamemap {
 					}
 					self.mapCallbacks.setLoading(false);
 				} else { // else load up the new world
+					self.clearLocations();
 					let mapState = new MapState(coords);
 					let world = self.getWorldFromID(worldID);
 					print("Going to world... " + world.displayName + " (" + world.id + ").");
@@ -667,11 +668,10 @@ export default class Gamemap {
 				// get zoom info
 				let world = self.getCurrentWorld();
 				let currentZoom = self.getCurrentZoom();
-				let maxZoomLevel = world.maxZoomLevel - 0.03;
 
 				// work out normalised grid cell sizes
 				let cellSize = (self.mapConfig.cellSize != null) ? self.mapConfig.cellSize : Math.round(self.mapConfig.tileSize * Math.pow(2, Math.round(world.maxZoomLevel)) / ((world.maxX - world.minX) / world.cellSize));
-				let nGridSize = cellSize / Math.pow(2, Math.round(maxZoomLevel) - currentZoom) / gridHeight;
+				let nGridSize = cellSize / Math.pow(2, Math.round(world.maxZoomLevel) - currentZoom) / gridHeight;
 
 				// work out how many rows and columns there should be
 				let nRows = world.getWorldDimensions().width / cellSize;
@@ -1284,6 +1284,8 @@ export default class Gamemap {
 			}
 		});
 		map.on("zoom", function() {
+
+			print(map.getZoom());
 
 			if (!self.mapLock && self.mapLock != "full") {
 				if (self.mapCallbacks != null) {

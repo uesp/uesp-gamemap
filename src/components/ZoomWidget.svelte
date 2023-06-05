@@ -20,7 +20,7 @@
 
     const dispatch = createEventDispatcher();
 
-    $: canZoomIn = currentZoom < (gamemap.getMaxZoom() - 0.03);
+    $: canZoomIn = currentZoom < (gamemap.getMaxZoom());
     $: canZoomOut = currentZoom > gamemap.getMinZoom();
 
     // long press listener
