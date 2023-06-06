@@ -165,10 +165,6 @@
 
 		// define callbacks
 		let mapCallbacks = {
-			onWorldsLoaded: (worlds) => {
-				print("Worlds loaded!");
-				print(worlds);
-			},
 			onPermissionsLoaded: (enableEditing) => {
 				print("Editing permissions: " + enableEditing);
 				canEdit = enableEditing;
@@ -365,7 +361,7 @@
 								{/if}
 
 								<!-- svelte-ignore missing-declaration -->
-								<IconButton icon="link" label="Copy Link" lock={mapLock} tooltip="Copy link to this location" on:click={() => {
+								<IconButton icon="link" label="Copy Link" lock={mapLock} tooltip="Copy link to current map view" on:click={() => {
 									print("Copying link to clipboard...");
 									M.toast({html: 'Map link copied to clipboard!'});
 									navigator.clipboard.writeText(window.location);

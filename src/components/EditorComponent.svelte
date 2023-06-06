@@ -24,9 +24,9 @@
     import DropdownMenu from "./DropdownMenu.svelte";
     import SegmentedButton from "./SegmentedButton.svelte";
     import Switch from "./Switch.svelte";
-
     import ColourPicker from "./ColourPicker.svelte";
     import AvatarComponent from "./AvatarComponent.svelte";
+    import Modal from "./Modal.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -48,6 +48,7 @@
     let objectType = (isWorld) ? "world" : "location";
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
     let linkWikiPage = modifiedObj.wikiPage == modifiedObj.name || modifiedObj.wikiPage == modifiedObj.displayName;
+    let boop = false;
 
     // on editor load
 	onMount(async() => {
@@ -81,16 +82,52 @@
         setTimeout(function() { editorWindow.scrollTop = 0 }, 1);
     });
 
-    function save() {
 
+    function doDelete() {
+
+        print("deleting object...");
+        //saveButton.$set({ text: "Saving...", icon: "loading" });
+
+        let queryParams = objectify(modifiedObj.getDeleteQuery());
+        queryParams.db = gamemap.getMapConfig().database;
+
+        getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+
+            // if (!error && data != null) {
+
+            //     if (data.isError) {
+            //         print(data.errorMsg);
+            //         callback((data.errorMsg.includes("permissions")) ? "Insufficient permissions!" : data.errorMsg);
+            //     } else {
+            //         print(data);
+
+            //         // tell save function that we're done saving
+            //         callback();
+            //         modify("revisionID", data.newRevisionId);
+            //         data = modifiedObj;
+            //         if (isLocation) { gamemap.updateLocation(modifiedObj) }
+            //         unsavedChanges = false;
+
+            //     }
+
+            // } else {
+            //     callback(`Error saving ${objectType}!`);
+            // }
+            // });
+
+        });
+
+    }
+
+    function doSave() {
+
+        print("saving object...");
         print(originalObj)
         print(modifiedObj)
 
-        print("saving...");
-        saveButton.$set({ text: "Saving...", icon: "loading" });
-
         let queryParams = objectify(modifiedObj.getSaveQuery());
         queryParams.db = gamemap.getMapConfig().database;
+        saveButton.$set({ text: "Saving...", icon: "loading" });
 
         getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 
@@ -101,14 +138,12 @@
                     callback((data.errorMsg.includes("permissions")) ? "Insufficient permissions!" : data.errorMsg);
                 } else {
                     print(data);
-
                     // tell save function that we're done saving
                     callback();
                     modify("revisionID", data.newRevisionId);
-                    data = modifiedObj;
                     if (isLocation) { gamemap.updateLocation(modifiedObj) }
+                    originalObj = Object.assign(Object.create(Object.getPrototypeOf(modifiedObj)), modifiedObj);
                     unsavedChanges = false;
-
                 }
 
             } else {
@@ -281,9 +316,9 @@
                             label="Location Type"
                             entries={LOCTYPES}
                             tooltip="Location type (marker, path or area)"
-                            hint="Caution: changing location types is lossy"
+                            hint="Caution: changing location type might be buggy"
                             selected={Object.values(LOCTYPES).indexOf(modifiedObj.locType)}
-                            on:change={(e) => {modifiedObj.setLocType(e.detail); modify("locType", e.detail)}}>
+                            on:change={(e) => modify("locType", e.detail)}>
                         </SegmentedButton>
                     {/if}
 
@@ -403,15 +438,24 @@
 
         <footer id="footer" in:fly={{ y: 10, duration: 250 }}>
             <div class="footer-buttons">
-                <Button text="Save" icon="save" type="save" bold="true" bind:this={saveButton} on:click={() => save((isWorld) ? "world" : "location")}/>
+                <Button text="Save" icon="save" type="save" bold="true" bind:this={saveButton} on:click={() => doSave((isWorld) ? "world" : "location")}/>
             </div>
             <div class="footer-buttons">
                 <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
                 <Button text={!unsavedChanges ? "Close" : "Cancel"} icon="close" on:click={cancel}/>
-                <Button text="Delete" icon="delete" type="delete"/>
+                <Button text="Delete" icon="delete" type="delete" on:click={() => boop = true}/>
             </div>
         </footer>
     </div>
+
+    <!-- Delete dialog -->
+	{#if boop}
+        <Modal title="Map Key" id="modal" fixedFooter="true">
+            <div id="map_key_container">
+                <p>hello</p>
+            </div>
+        </Modal>
+    {/if}
 
 </markup>
 

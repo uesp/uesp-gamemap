@@ -27,13 +27,11 @@ import Point from "./objects/point.js";
 					Locals
 ================================================*/
 
-let map; // Leaflet map instance
 let self; // Local "this" instance of Gamemap
-let RC; // RasterCoords instance, for converting leaflet latlongs to XY coords and back
-let mapWorldNameIndex = {}; // Local list of map world names
-let mapWorldDisplayNameIndex = {}; // Local list of map display names
+let map; // Leaflet map instance
 let mapBounds; // Current map bounds in LatLngs
-let tileLayer; // Local tiles
+let tileLayer; // Current tile layer
+let RC; // RasterCoords instance, for converting leaflet latlngs to XY pixel coords and back
 
 /*================================================
 				  Constructor
@@ -75,7 +73,7 @@ export default class Gamemap {
 			if (this.mapConfig.hasCustomCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; print("Loading custom map css: " + cssPath); injectCSS(cssPath);}
 
 			// set the default map world info
-			this.mapWorlds = {};
+			this.mapWorlds = new Map();
 			this.gridEnabled = false;
 			this.mapLock = null;
 
@@ -333,43 +331,30 @@ export default class Gamemap {
 	 */
 	getWorlds(mapConfig) {
 
-		if (mapConfig != null) {
+		if (mapConfig) {
 
 			let queryParams = {};
 			queryParams.action = "get_worlds";
 			queryParams.db = mapConfig.database;
-			self.mapCallbacks?.setLoading("Loading world");
+			self.mapCallbacks?.setLoading("Loading world(s)");
 
-			if (Object.keys(this.mapWorlds).length === 0) {
+			if (this.mapWorlds.size === 0) {
 				getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 
-					if (!error && data != null) {
+					if (!error && data?.worlds) {
+						let worlds = data.worlds;
 
-						if (data.worlds == null) {
-							throw new Error("World data was null.");
-						}
-
-						for (var key in data.worlds) {
-							let world = data.worlds[key];
-
-							if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name != null) {
-
-								self.mapWorlds[world.id] = new World(world, mapConfig);
-								mapWorldNameIndex[world.name] = world.id;
-
-								if (world.displayName != null) {
-									mapWorldDisplayNameIndex[world.displayName] = world.id;
-								} else {
-									mapWorldDisplayNameIndex[world.name] = world.id;
-								}
-
+						// parse worlds
+						worlds.forEach(world => {
+							if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name) {
+								self.mapWorlds.set(world.id, new World(world, mapConfig));
 							}
-						}
-						if (self.mapCallbacks) {
-							// load map
-							self.mapCallbacks.onWorldsLoaded(self.mapWorlds);
-							self.initialiseMap(mapConfig);
-						}
+						});
+
+						// initialise map
+						print(`Loaded ${worlds.length} worlds!`);
+						print(worlds);
+						self.initialiseMap(mapConfig);
 
 					} else {
 						throw new Error("Could not retrieve world data.");
@@ -382,11 +367,11 @@ export default class Gamemap {
 	}
 
 	/** Function to check whether a world object or a worldID is valid (exists, is within bounds)
-	 * @param {String} world - Either a worldID or a world object
+	 * @param {String} worldID - Either a worldID or a world object
 	 * @returns {Boolean} Whether or not the provided world is valid or not
 	 */
-	isWorldValid(world) {
-		return (world && world >= 0 && world in this.mapWorlds);
+	isWorldValid(worldID) {
+		return (worldID && worldID >= 0 && this.mapWorlds.has(worldID));
 	}
 
 	/** Get the current world object
@@ -408,7 +393,7 @@ export default class Gamemap {
 	 * @returns {Object} world - A world object that contains map info for the gamemap.
 	 */
 	getWorldFromID(worldID) {
-		return this.mapWorlds[worldID];
+		return this.mapWorlds.get(worldID);
 	}
 
 	/** Get internal world name from a given worldID
@@ -432,7 +417,7 @@ export default class Gamemap {
 	 * @returns {Object} world - A world object.
 	 */
 	getWorldFromName(worldName){
-		return this.mapWorlds[mapWorldNameIndex[worldName]];
+		return [...this.mapWorlds.values()].find(prop => prop.name == worldName);
 	}
 
 	/** Get world object from user facing display name
@@ -440,14 +425,14 @@ export default class Gamemap {
 	 * @returns {Object} world - A world object.
 	 */
 	getWorldFromDisplayName(worldDisplayName){
-		return this.mapWorlds[mapWorldDisplayNameIndex[worldDisplayName]];
+		return [...this.mapWorlds.values()].find(prop => prop.displayName == worldDisplayName);
 	}
 
 	/** Simple function that returns whether the current gamemap has multiple worlds.
 	 * @returns {Boolean} - A boolean whether or not the current gamemap contains multiple worlds.
 	 */
 	hasMultipleWorlds() {
-		return Object.keys(this.mapWorlds).length > 1;
+		return this.mapWorlds.size > 1;
 	}
 
 	/*================================================
@@ -890,7 +875,6 @@ export default class Gamemap {
 
 		// make sure we're being given a valid world state
 		if (world == null || world.id == null || world.id < 0 ) {
-			print(world)
 			return;
 		}
 
@@ -903,9 +887,11 @@ export default class Gamemap {
 		// make api query
 		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 			if (!error && data != null) {
-				print("Got " + data.locationCount + " locations!");
 				let locations = data.locations;
 				let locationMap = new Map();
+
+				print(`Got ${data.locationCount} locations!`);
+				print(locations);
 
 				locations.forEach(location => {
 					if (location.id) {
@@ -914,12 +900,12 @@ export default class Gamemap {
 				});
 
 				// update world
-				self.mapWorlds[world.id].locations = locationMap;
+				self.mapWorlds.get(world.id).locations = locationMap;
 
 				// make sure we're in the right world before overwriting all locations
 				if (self.getCurrentWorldID() == world.id) {
 					self.updateMapState();
-					self.redrawLocations(self.mapWorlds[world.id].locations);
+					self.redrawLocations(locationMap);
 				}
 			} else {
 				print.warn("There was an error getting locations for this world.");
@@ -936,21 +922,13 @@ export default class Gamemap {
 			onLoadFunction.call(null, location);
 		}
 
-		print("Getting info for locationID: "+ locationID);
+		print(`Getting info for locationID: ${locationID}`);
 
 		// iterate through local world list to see if locationID exists in them
-		Object.values(this.mapWorlds).forEach(world => {
-			if (world.locations) {
-				Object.values(this.mapWorlds).forEach(world => {
-					if (world.locations) {
-						Object.values(world.locations).forEach(location => {
-							if (location.id == locationID) {
-								callback(location);
-								hasSearchedLocal = true;
-							}
-						});
-					}
-				});
+		this.mapWorlds?.forEach(world => {
+			if (world?.locations?.has(locationID)) {
+				hasSearchedLocal = true;
+				callback(world.locations.get(locationID));
 			}
 		});
 
@@ -958,14 +936,14 @@ export default class Gamemap {
 		if (!hasSearchedLocal) {
 			let queryParams = {};
 			queryParams.action = "get_loc";
-			queryParams.locid  = locationID;
+			queryParams.locid = locationID;
 			queryParams.db = this.mapConfig.database;
 
 			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
 
 				print(data);
 
-				if (!error && data != null && data.locations[0] != null) {
+				if (!error && data?.locations != null) {
 					print("Got location info!");
 					let world = self.getWorldFromID(data.locations[0].worldId);
 					print(data.locations[0]);
@@ -1005,6 +983,19 @@ export default class Gamemap {
 	}
 
 
+	// delete locations on the map
+	deleteLocation() {
+
+		// remove existing marker(s)
+		let markers = this.getMarkersFromLocation(location);
+		markers.forEach(function(marker) { marker.remove() });
+
+		// delete location from data as well
+		let locations = this.getCurrentWorld().locations;
+		delete locations[location.id];
+	}
+
+
 	// update location on the map
 	updateLocation(location) {
 
@@ -1029,7 +1020,6 @@ export default class Gamemap {
 
 	redrawLocations(locations) {
 
-		print(locations);
 		// delete any existing location layers
 		this.clearLocations();
 
@@ -1544,12 +1534,12 @@ export default class Gamemap {
 	 */
 	getArticleLink() {
 
-		if (!(this.currentWorldID in this.mapWorlds)) {
+		if (!(this.mapWorlds.has(this.currentWorldID))) {
 			return "";
 		}
 
-		let wikiPage = this.mapWorlds[this.currentWorldID].wikiPage;
-		if (wikiPage == null || wikiPage == '') wikiPage = this.mapWorlds[this.currentWorldID].displayName;
+		let wikiPage = this.mapWorlds.get(this.currentWorldID).wikiPage;
+		if (wikiPage == null || wikiPage == '') wikiPage = this.mapWorlds.get(this.currentWorldID).displayName;
 
 		let namespace = '';
 		if (this.mapConfig.wikiNamespace != null && this.mapConfig.wikiNamespace != '') namespace = this.mapConfig.wikiNamespace + ':';

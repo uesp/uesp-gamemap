@@ -3,10 +3,17 @@
 
 
 
+## editing
+- loctype switcher is now no longer destructive (it only changes loctype, doesnt affect data)
+
+
+
+
 ## technical:
 - attempting a data-based approach to editing, rather than just editing the marker element itself
 - every time you edit, you modify the actual location object, and the marker just gets redrawn based on that
 - flattened location class (all displayData stuff is in root of object)
+- refactored world list to be map object, increase performance across the board
 
 
 
@@ -14,6 +21,7 @@
 
 - fixed not being able to zoom past X.97
 - fixed location disappearing after editing
+- fix long lag for locations that link to other locations within the same map (solitude castle western skyrim)
 
 
 
@@ -26,12 +34,12 @@
 ## todo
 
 
+
+- merge display and style into teh same thing
+- preview colour component
+
 - make close button in edit panel always close the panel regardless of direct edit or not
 
-- fix skyrim big lags
->> probably iterate through world location list to only add the ones currently visible rather than adding all and removing them after
-
-fix polygons/icons disappearing after edit
 fix markers not being visually saved after save
 
 - add tutorial message for draging markers and edit handles like live
@@ -42,7 +50,7 @@ fix markers not being visually saved after save
 - fix zoom levels stopping at x.97 instead of going all the way
 - allow both edit polygon and drag at same time
 - add allow long clicking on mobile to open popups
-- zoom/pan in effects for markers when editing
+- add zoom/pan in effects for markers when editing
 - fix centreon going to the wrong place
 - fix clicking out while zoomed in zooming in to parent map as well
 - fix type:blah not working after the icon list to map change
@@ -61,20 +69,19 @@ fix markers not being visually saved after save
 - refactor gamemap.js to Gamemap.svelte and use realtime svelte features
 - make embeded map watermark actually open in new tab
 - fix edit pane causing iconbar to overlap
+- cache world list for location switcher in svelte stores
+- fix "this is a header" for location list
 - make going to location centre zoom dynamically instead of always zoom level 5
 - add continuous zoom, markers popup on zoom rather than zoomend
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
 - fix double click to pan on ui elements (zoom, search bar)
 - fix maps with multiple worlds being reset if you pass just the world name and not pass x/y or zoom params
-- make tooltip follow mouse cursor instead of centre
-- fix handling of small icons like 16p when rest of map is 32px (centre them properly)
 - on mobile, double tap icon to open its popup
 - fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af when zooming out
 - add riseOnHover to icon labels when hovering over
 - make tooltips follow the mouse rather than the centre of the location
-- fix all markers showing up at initial load on highest zoom level
 - show more columns on map key menu dynamically
 - fix cell resource colour intensity to make sense. deeper the colour the more stuff
 - button to go to the map menu

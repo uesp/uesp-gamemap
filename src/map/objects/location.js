@@ -172,17 +172,11 @@ export default class Location {
 	}
 
 	isPolygon(){
-		return this.locType == LOCTYPES.AREA || this.locType == LOCTYPES.PATH || this.coords.length > 1;
-	}
-
-	removePolygon() {
-		let coord = this.coords[0];
-		this.coords = [];
-		this.coords[0] = coord;
+		return this.locType == LOCTYPES.AREA || this.locType == LOCTYPES.PATH;
 	}
 
 	hasIcon() {
-		return (this.icon != null);
+		return (this.icon != null && this.locType != LOCTYPES.PATH);
 	}
 
 	hasLabel() {
@@ -194,7 +188,7 @@ export default class Location {
 	}
 
 	isClickable() {
-		return this.destinationID != 0 && ((this.destinationID < 0 || this.destinationID > 0)) && !gamemap.mapLock;
+		return this.destinationID && this.destinationID != 0 && !gamemap.mapLock && this.locType != LOCTYPES.PATH;
 	}
 
 	createWikiLink() {
@@ -219,35 +213,6 @@ export default class Location {
 		}
 
 		return wikiLink;
-
-	}
-
-	getCentre() {
-		return gamemap.toLatLngs(this.coords);
-	}
-
-	// modify location data upon loc type change
-	setLocType(locType) {
-
-		// if we were a polygon before and now set to a marker, lose extra coords
-		if (this.isPolygon() && locType == LOCTYPES.MARKER) {
-			this.removePolygon();
-		}
-
-		// if we were an area or a marker before and now set to a polyline, lose the icon
-		if ((this.locType == LOCTYPES.MARKER || this.locType == LOCTYPES.AREA) && locType == LOCTYPES.PATH) {
-			this.icon = null;
-			this.destinationID = null;
-			this.labelDirection = null;
-		}
-
-		// if we were a path before and are now an area or a marker, add generic icon
-		if (this.locType == LOCTYPES.PATH && (locType == LOCTYPES.MARKER || locType == LOCTYPES.AREA)) {
-			this.icon = null;
-			if (this.labelDirection == null) {
-				this.getLabelOffsets(1);
-			}
-		}
 
 	}
 
@@ -289,64 +254,28 @@ export default class Location {
 	// get query for saving this location
 	getSaveQuery() {
 
-		const esoConvert = (coords) => {
-
-			coords = (!Array.isArray(coords)) ? [structuredClone(coords)] : structuredClone(coords);
-
-			coords.forEach(coord => {
-				coord.x = coord.x / nextPowerOfTwo(currentWorld.dbNumTilesX) * currentWorld.dbNumTilesX;
-				coord.y = coord.y / nextPowerOfTwo(currentWorld.dbNumTilesY) * currentWorld.dbNumTilesY;
-				coord.x = coord.x * currentWorld.maxRangeX;
-				coord.y = (1 - coord.y) * currentWorld.maxRangeY;
-			})
-
-			return coords;
-		}
-
 		var query = 'action=set_loc';
 
 		query += `&name=${encodeURIComponent(this.name)}`;
 		query += `&description=${encodeURIComponent(this.description)}`;
 		query += `&wikipage=${encodeURIComponent(this.wikiPage)}`;
 
+		query += `&loctype=${this.locType}`;
 		query += `&locid=${this.id}`;
 		query += `&worldid=${this.worldID}`;
-		query += `&loctype=${this.locType}`;
-
-		if (this.hasIcon()) {
-			query += `&icontype=${encodeURIComponent(this.icon)}`;
-		}
-
-		// convert coordinates into displayData point format
-		let coords = (mapConfig.database == "eso") ? esoConvert(this.coords) : this.coords;
-		let [minX, maxX, minY, maxY] = [coords[0].x, coords[0].x, coords[0].y, coords[0].y];
-		this.displayData.points = (() => {
-			let points = [];
-			coords.forEach(coord => {
-				points.push(coord.x, coord.y);
-				minX = (coord.x < minX) ? coord.x : minX;
-				maxX = (coord.x > maxX) ? coord.x : maxX;
-				minY = (coord.y < minY) ? coord.y : minY;
-				maxY = (coord.y > maxY) ? coord.y : maxY;
-
-			});
-			if (this.isPolygon()) {
-				this.width = maxX - minX;
-				this.height = maxY - minY;
-			}
-			return points;
-		})();
-
-		query += `&x=${(this.isPolygon()) ? minX: coords[0].x}`;
-		query += `&y=${(this.isPolygon()) ? maxY: coords[0].y}`;
-		query += `&locwidth=${this.width}&locheight=${this.height}`;
-
-		query += `&displaylevel=${+this.displayLevel + +currentWorld.zoomOffset}`;
-		query += `&displaydata=${encodeURIComponent(JSON.stringify(this.displayData))}`;
-
 		query += `&destid=${-(this.destinationID)}`;
 		query += `&revisionid=${this.revisionID}`;
 		query += `&db=${gamemap.getMapConfig().database}&visible=1`;
+
+		let coords = (mapConfig.database == "eso") ? this.convertESOCoords(this.coords) : this.coords;
+		query += `&x=${(this.isPolygon()) ? this.getMaxBounds().minX: coords[0].x}`;
+		query += `&y=${(this.isPolygon()) ? this.getMaxBounds().maxY: coords[0].y}`;
+		query += `&locwidth=${this.width}&locheight=${this.height}`;
+
+		this.updateDisplayData(coords);
+		query += `&displaylevel=${+this.displayLevel + +currentWorld.zoomOffset}`;
+		query += `&displaydata=${encodeURIComponent(JSON.stringify(this.displayData))}`;
+		if (this.hasIcon()) { query += `&icontype=${encodeURIComponent(this.icon)}` }
 
 		return query;
 	}
@@ -357,11 +286,52 @@ export default class Location {
 		var query = 'action=enable_loc';
 
 		query += `&locid=${this.id}`;
-		query += `&db=${gamemap.getMapConfig().database}&visible=1`;
-		query += '&visible=0';
+		query += `&db=${gamemap.getMapConfig().database}&visible=0`;
 
 		return query;
 
+	}
+
+	// update display data with current object state
+	updateDisplayData(coords) {
+		this.displayData.labelPos = this.labelPos;
+		this.displayData.points = (() => {
+			let points = [];
+			coords.forEach(coord => { points.push(coord.x, coord.y) });
+			return points;
+		})();
+	}
+
+	// convert eso coordinates
+	convertESOCoords(coords) {
+		coords = (!Array.isArray(coords)) ? [structuredClone(coords)] : structuredClone(coords);
+
+		coords.forEach(coord => {
+			coord.x = coord.x / nextPowerOfTwo(currentWorld.dbNumTilesX) * currentWorld.dbNumTilesX;
+			coord.y = coord.y / nextPowerOfTwo(currentWorld.dbNumTilesY) * currentWorld.dbNumTilesY;
+			coord.x = coord.x * currentWorld.maxRangeX;
+			coord.y = (1 - coord.y) * currentWorld.maxRangeY;
+		})
+
+		return coords;
+	}
+
+	// get max bounds of the current location, or, optionally, a set of coords
+	getMaxBounds(coords) {
+		coords = coords ?? this.coords;
+		let bounds;
+		[bounds.minX, bounds.maxX, bounds.minY, bounds.maxY] = [coords[0].x, coords[0].x, coords[0].y, coords[0].y];
+		coords.forEach(coord => {
+			minX = (coord.x < minX) ? coord.x : minX;
+			maxX = (coord.x > maxX) ? coord.x : maxX;
+			minY = (coord.y < minY) ? coord.y : minY;
+			maxY = (coord.y > maxY) ? coord.y : maxY;
+		});
+		if (this.isPolygon()) {
+			this.width = maxX - minX;
+			this.height = maxY - minY;
+		}
+		return bounds;
 	}
 
 }

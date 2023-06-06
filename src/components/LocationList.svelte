@@ -61,9 +61,10 @@
         pairings = [];
 
         // get alphabetical list
-        for (let key in mapWorlds) {
-    		if (mapWorlds[key].displayName[0] != '_' && key > 0) abcWorldList.push(mapWorlds[key].displayName);
-    	}
+        mapWorlds.forEach(world => {
+            if (world.displayName != '_' && world.id > 0) abcWorldList.push(world.displayName);
+        });
+
     	abcWorldList = abcWorldList.sort(function(a, b) {
     		// ignore "The" in alphabetical sort
     		a = a.replace("The ", "");
