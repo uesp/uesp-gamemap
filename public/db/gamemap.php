@@ -94,7 +94,7 @@ class GameMap
 	public $cellResourceEditorId = "";
 
 	public $db = null;
-	public $dbPrefix = "";
+	public $dbPrefix = null;
 	public $skipCheckTables = true;
 	public $dbReadInitialized  = false;
 	public $dbWriteInitialized = false;
@@ -116,6 +116,14 @@ class GameMap
 
 		$this->setInputParams();
 		$this->parseInputParams();
+
+		// Error on missing/unknown database
+		if ($this->dbPrefix === null)
+		{
+			$this->reportError("Error: Missing database in query parameters!");
+			$this->writeJson();
+			die();
+		}
 
 		session_name('uesp_net_wiki5_session');
 		session_set_cookie_params(3600*24*10, '/', '.uesp.net', false);
@@ -1605,6 +1613,9 @@ class GameMap
 
 			switch ($dbPrefix)
 			{
+				case 'eso':		// Make explicit
+					$this->dbPrefix = "";
+					break;
 				case 'sr':
 					$this->dbPrefix = "sr";
 					break;
