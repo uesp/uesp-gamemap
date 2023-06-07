@@ -831,7 +831,7 @@ uesp.gamemap.Location.prototype.getFormData = function()
 	
 	formValues.displayLevel = parseFloat(formValues.displayLevel);
 	if (formValues.displayLevel < this.parentMap.mapOptions.minZoomLevel) formValues.displayLevel = this.parentMap.mapOptions.minZoomLevel;
-	if (formValues.displayLevel > this.parentMap.mapOptions.maxZoomLevel) formValues.displayLevel = this.parentMap.mapOptions.maxZoomLevel;
+	if (formValues.displayLevel > this.parentMap.mapOptions.maxZoomLevel - 0.5) formValues.displayLevel = this.parentMap.mapOptions.maxZoomLevel - 0.5;
 	
 	formValues.x = parseInt(formValues.x);
 	formValues.y = parseInt(formValues.y);
@@ -1191,104 +1191,105 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 	var displayLevel = this.popupElement.find("input[name=displayLevel]");
 	var labelPos = this.popupElement.find("select[name='displayData.labelPos']");
 	var wikiPage = this.popupElement.find("input[name=wikiPage]");
+	var maxZoom = this.parentMap.mapOptions.maxZoomLevel - 0.5;
 	
 		// TODO: Don't hardcode values?
 	if (nameValue == "skyshard")
 	{
 		this.setIconTypeCustomListValue(75);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 		wikiPage.val("Skyshard");
 	}
 	else if (nameValue == "chest")
 	{
 		this.setIconTypeCustomListValue(83);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "fishing hole")
 	{
 		this.setIconTypeCustomListValue(36);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "ayleid well")
 	{
 		this.setIconTypeCustomListValue(131);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 	}
 	else if (nameValue == "heavy sack" || nameValue == "heavy crate")
 	{
 		this.setIconTypeCustomListValue(89);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "cooking fire")
 	{
 		this.setIconTypeCustomListValue(28);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "alchemy station")
 	{
 		this.setIconTypeCustomListValue(84);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "enchanting station")
 	{
 		this.setIconTypeCustomListValue(85);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "enchanting table")
 	{
 		nameInput.val("Enchanting Station");	//To be consistent with everything else named as "station"
 		this.setIconTypeCustomListValue(85);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "jewelry station" || nameValue == "jewel station" || nameValue == "jewelry crafting station")
 	{
 		nameInput.val("Jewelry Crafting Station");
 		this.setIconTypeCustomListValue(215);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "blacksmith station")
 	{
 		this.setIconTypeCustomListValue(86);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "clothing station")
 	{
 		this.setIconTypeCustomListValue(88);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "woodworking station")
 	{
 		this.setIconTypeCustomListValue(87);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "ayleid well")
 	{
 		this.setIconTypeCustomListValue(0);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel-1);
+		displayLevel.val(maxZoom-1);
 		labelPos.val(6);
 	}
 	else if (nameValue == "imperial camp")
 	{
 		this.setIconTypeCustomListValue(0);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel-1);
+		displayLevel.val(maxZoom-1);
 		labelPos.val(6);
 	}
 	else if (nameValue == "lorebook" || nameValue == "lore book" || uesp.beginsWith(nameValue, "lorebook"))
 	{
 		this.setIconTypeCustomListValue(76);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel - 2);
+		displayLevel.val(maxZoom - 2);
 		labelPos.val(0);
 	}
 	else if (uesp.endsWith(nameValue, "wayshrine"))
@@ -1301,26 +1302,26 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 	else if (uesp.endsWith(nameValue, "world event"))
 	{
 		this.setIconTypeCustomListValue(140);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 		wikiPage.val(rawNameValue);
 	}
 	else if (uesp.endsWith(nameValue, "crafting node"))
 	{
 		this.setIconTypeCustomListValue(90);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (uesp.endsWith(nameValue, "container"))
 	{
 		this.setIconTypeCustomListValue(91);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue.indexOf("treasure map") !== -1)
 	{
 		this.setIconTypeCustomListValue(79);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel - 1);
+		displayLevel.val(maxZoom - 1);
 		labelPos.val(0);
 	}
 	else if (uesp.endsWith(nameValue, "dolmen"))
@@ -1332,14 +1333,14 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 	else if (nameValue == "dark fissure")
 	{
 		this.setIconTypeCustomListValue(129);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 		wikiPage.val(rawNameValue);
 	}
 	else if (nameValue == "celestial rift")
 	{
 		this.setIconTypeCustomListValue(128);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 		wikiPage.val(rawNameValue);
 	}
@@ -1360,38 +1361,38 @@ uesp.gamemap.Location.prototype.onEditLocationNameBlur = function(event)
 	else if (uesp.beginsWith(nameValue, "safebox") || uesp.beginsWith(nameValue, "strongbox") || uesp.beginsWith(nameValue, "lockbox"))
 	{
 		this.setIconTypeCustomListValue(143);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 		wikiPage.val("Safebox");
 	}
 	else if (nameValue == "dye station" || nameValue == "outfit station")
 	{
 		this.setIconTypeCustomListValue(135);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "fence")
 	{
 		this.setIconTypeCustomListValue(133);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "hiding spot")
 	{
 		this.setIconTypeCustomListValue(170);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "thieves trove")
 	{
 		this.setIconTypeCustomListValue(167);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	else if (nameValue == "psijic portal")
 	{
 		this.setIconTypeCustomListValue(204);
-		displayLevel.val(this.parentMap.mapOptions.maxZoomLevel);
+		displayLevel.val(maxZoom);
 		labelPos.val(0);
 	}
 	
