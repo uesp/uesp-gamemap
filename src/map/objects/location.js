@@ -180,7 +180,7 @@ export default class Location {
 	}
 
 	hasLabel() {
-		return (this.labelPos && this.labelPos >= 1 && this.name != "");
+		return (this.labelPos && this.labelPos >= 1 && this.name != "" && this.locType != LOCTYPES.PATH);
 	}
 
 	isLabel() {
@@ -267,17 +267,16 @@ export default class Location {
 		query += `&revisionid=${this.revisionID}`;
 		query += `&db=${gamemap.getMapConfig().database}&visible=1`;
 
-		let coords = (mapConfig.database == "eso") ? this.convertESOCoords(this.coords) : this.coords;
-		query += `&x=${(this.isPolygon()) ? this.getMaxBounds().minX: coords[0].x}`;
-		query += `&y=${(this.isPolygon()) ? this.getMaxBounds().maxY: coords[0].y}`;
+		query += `&x=${(this.isPolygon()) ? this.getMaxBounds().minX: this.coords[0].x}`;
+		query += `&y=${(this.isPolygon()) ? this.getMaxBounds().maxY: this.coords[0].y}`;
 		query += `&locwidth=${this.width}&locheight=${this.height}`;
 
-		this.updateDisplayData(coords);
+		this.updateDisplayData();
 		query += `&displaylevel=${+this.displayLevel + +currentWorld.zoomOffset}`;
 		query += `&displaydata=${encodeURIComponent(JSON.stringify(this.displayData))}`;
 		if (this.hasIcon()) { query += `&icontype=${encodeURIComponent(this.icon)}` }
 
-		return query;
+		return encodeURIComponent(query);
 	}
 
 	// get query for deleting this location
@@ -293,13 +292,25 @@ export default class Location {
 	}
 
 	// update display data with current object state
-	updateDisplayData(coords) {
+	updateDisplayData() {
 		this.displayData.labelPos = this.labelPos;
 		this.displayData.points = (() => {
 			let points = [];
+			let coords = (mapConfig.database == "eso") ? this.convertESOCoords(this.coords) : this.coords;
 			coords.forEach(coord => { points.push(coord.x, coord.y) });
 			return points;
 		})();
+
+		if (this.isPolygon()) {
+			this.displayData.fillStyle = this.fillColour;
+			this.displayData.hover.fillStyle = this.fillColourHover;
+
+			this.displayData.strokeStyle = this.strokeColour;
+			this.displayData.hover.strokeStyle = this.strokeColourHover;
+
+			this.displayData.lineWidth = this.strokeWidth;
+			this.displayData.hover.lineWidth = this.strokeWidthHover;
+		}
 	}
 
 	// convert eso coordinates
@@ -316,20 +327,20 @@ export default class Location {
 		return coords;
 	}
 
-	// get max bounds of the current location, or, optionally, a set of coords
-	getMaxBounds(coords) {
-		coords = coords ?? this.coords;
-		let bounds;
+	// get max bounds of the current location
+	getMaxBounds() {
+		let coords = (mapConfig.database == "eso") ? this.convertESOCoords(this.coords) : this.coords;
+		let bounds = {};
 		[bounds.minX, bounds.maxX, bounds.minY, bounds.maxY] = [coords[0].x, coords[0].x, coords[0].y, coords[0].y];
 		coords.forEach(coord => {
-			minX = (coord.x < minX) ? coord.x : minX;
-			maxX = (coord.x > maxX) ? coord.x : maxX;
-			minY = (coord.y < minY) ? coord.y : minY;
-			maxY = (coord.y > maxY) ? coord.y : maxY;
+			bounds.minX = (coord.x < bounds.minX) ? coord.x : bounds.minX;
+			bounds.maxX = (coord.x > bounds.maxX) ? coord.x : bounds.maxX;
+			bounds.minY = (coord.y < bounds.minY) ? coord.y : bounds.minY;
+			bounds.maxY = (coord.y > bounds.maxY) ? coord.y : bounds.maxY;
 		});
 		if (this.isPolygon()) {
-			this.width = maxX - minX;
-			this.height = maxY - minY;
+			this.width = bounds.maxX - bounds.minX;
+			this.height = bounds.maxY - bounds.minY;
 		}
 		return bounds;
 	}

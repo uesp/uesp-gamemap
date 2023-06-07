@@ -126,7 +126,6 @@
         print(modifiedObj)
 
         let queryParams = objectify(modifiedObj.getSaveQuery());
-        queryParams.db = gamemap.getMapConfig().database;
         saveButton.$set({ text: "Saving...", icon: "loading" });
 
         getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
@@ -316,7 +315,6 @@
                             label="Location Type"
                             entries={LOCTYPES}
                             tooltip="Location type (marker, path or area)"
-                            hint="Caution: changing location type might be buggy"
                             selected={Object.values(LOCTYPES).indexOf(modifiedObj.locType)}
                             on:change={(e) => modify("locType", e.detail)}>
                         </SegmentedButton>
@@ -357,29 +355,23 @@
                      </FormGroup>
                 {/if}
 
-                <!-- Styles (for Polygon Locations) -->
-                {#if isLocation && modifiedObj.isPolygon()}
-                    <FormGroup title="Style" icon="format_color_fill">
-
-
-                        <ColourPicker
-                            label="Fill colour"
-                            colour = {modifiedObj.style.fillColour}
-                            placeholder="Select/enter fill colour...">
-                        </ColourPicker>
-
-                        <ColourPicker
-                            label="Fill colour (Hovered)"
-                            colour = {modifiedObj.style.hover.fillColour}
-                            placeholder="Select/enter fill colour...">
-                        </ColourPicker>
-
-                    </FormGroup>
-                {/if}
-
                 <!-- Display Data (for Locations) -->
                 {#if isLocation}
                      <FormGroup title="Display" icon="light_mode">
+
+                        {#if modifiedObj.isPolygon()}
+                            <ColourPicker
+                                label="Fill colour"
+                                colour = {modifiedObj.fillColour}
+                                placeholder="Select/enter fill colour...">
+                            </ColourPicker>
+
+                            <ColourPicker
+                                label="Fill colour (Hovered)"
+                                colour = {modifiedObj.fillColourHover}
+                                placeholder="Select/enter fill colour...">
+                            </ColourPicker>
+                        {/if}
 
                         <!-- svelte-ignore missing-declaration -->
                         <Textbox label="Display Level"
@@ -443,7 +435,7 @@
             <div class="footer-buttons">
                 <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
                 <Button text={!unsavedChanges ? "Close" : "Cancel"} icon="close" on:click={cancel}/>
-                <Button text="Delete" icon="delete" type="delete" on:click={() => boop = true}/>
+                <Button text="Delete" icon="delete" type="delete" on:click={() => cancel(true)}/>
             </div>
         </footer>
     </div>

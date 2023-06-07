@@ -1,13 +1,8 @@
 ## last week:
 
-
-
-
 ## editing
-- loctype switcher is now no longer destructive (it only changes loctype, doesnt affect data)
-
-
-
+- loctype switcher is now no longer destructive (it only changes loctype visually, doesnt affect data)
+- made live edit actually modify gamemap data (you can edit, save, and it reflects automatically)
 
 ## technical:
 - attempting a data-based approach to editing, rather than just editing the marker element itself
@@ -15,15 +10,12 @@
 - flattened location class (all displayData stuff is in root of object)
 - refactored world list to be map object, increase performance across the board
 
-
-
 ## bug fixes:
 
 - fixed not being able to zoom past X.97
-- fixed location disappearing after editing
+- fixed markers disappearing after editing / not being visually saved
 - fix long lag for locations that link to other locations within the same map (solitude castle western skyrim)
-
-
+- fixed editing skyrim map adding locations to eso map (query needed escaping)
 
 ## random stuff
 
@@ -35,12 +27,10 @@
 
 
 
-- merge display and style into teh same thing
 - preview colour component
 
 - make close button in edit panel always close the panel regardless of direct edit or not
 
-fix markers not being visually saved after save
 
 - add tutorial message for draging markers and edit handles like live
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
@@ -54,10 +44,8 @@ fix markers not being visually saved after save
 - fix centreon going to the wrong place
 - fix clicking out while zoomed in zooming in to parent map as well
 - fix type:blah not working after the icon list to map change
-- fix oblivion icons being inconsistent (some discovered, some undescovered - use map marker overhaul for custom icons)
 - fix requesting /null in layerbutton
 - add permalink option in location popups
-- fix editing skyrim map adds locations to eso map
 - redesign location popups (add icon in circle in popup, with title and info to the right of it)
 - fix edit panel not animating close properly
 - add middle click event listener to button and listItem
