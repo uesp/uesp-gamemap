@@ -39,6 +39,14 @@ window.COORD_TYPES = {
 	PSEUDO_NORMALISED : 3,
 }
 
+window.MAPLOCK = {
+	NONE: false,
+	FULL : 1,
+	PARTIAL : 2,
+	PARTIAL_MARKER : 3,
+	PARTIAL_POLYGON : 4,
+}
+
 // legacy positions:
 // 	0 : 'None',
 // 	1 : 'Top Left',
@@ -303,14 +311,12 @@ window.objectify = function objectify(query) {
 
 	const obj = {}
 	for (const key of params.keys()) {
-	if (params.getAll(key).length > 1) {
-		obj[key] = params.getAll(key)
-	} else {
-		obj[key] = params.get(key)
+		if (params.getAll(key).length > 1) {
+			obj[key] = params.getAll(key)
+		} else {
+			obj[key] = params.get(key)
+		}
 	}
-	}
-
-	console.log(obj)
 
 	return obj;
 }

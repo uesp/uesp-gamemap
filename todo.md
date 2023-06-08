@@ -4,6 +4,8 @@
 - loctype switcher is now no longer destructive (it only changes loctype visually, doesnt affect data)
 - made live edit actually modify gamemap data (you can edit, save, and it reflects automatically)
 
+- added edit tutorial messages when editing
+
 ## technical:
 - attempting a data-based approach to editing, rather than just editing the marker element itself
 - every time you edit, you modify the actual location object, and the marker just gets redrawn based on that
@@ -11,14 +13,12 @@
 - refactored world list to be map object, increase performance across the board
 
 ## bug fixes:
-
 - fixed not being able to zoom past X.97
 - fixed markers disappearing after editing / not being visually saved
 - fix long lag for locations that link to other locations within the same map (solitude castle western skyrim)
 - fixed editing skyrim map adding locations to eso map (query needed escaping)
 
 ## random stuff
-
 - out of curiosity how much has been made on donations on the uesp app?
 
 

@@ -37,6 +37,7 @@ export default class Location {
 		this.displayLevel = parseFloat(location.displayLevel - world.zoomOffset || 0);
 		this.editing = false; // whether this location is currently being edited;
 		this.legacy = location;
+		this.bounds = null; // bounds are generated when asked
 
 		// set location icon info
 		this.icon = location.iconType || null;
@@ -49,7 +50,7 @@ export default class Location {
 			let coordArray = this.displayData.points;
 			if (coordArray?.length > 0) {
 
-				let [x, y] = [ [], [] ];
+				let [x, y] = [[], []];
 
 				// split single coord array into x and y arrays
 				for (let i = 0; i < coordArray.length; i++) {
@@ -115,6 +116,19 @@ export default class Location {
 			this.strokeWidth = this.displayData.lineWidth;
 			this.strokeWidthHover = this.displayData.hover.lineWidth;
 		}
+	}
+
+
+	// get centre coordinate of this location or passed coords
+	getCentre(coords) {
+		coords = coords ?? this.coords;
+
+		if (coords.length == 1) {
+			return coords[0];
+		} else if (coords.length > 0) {
+
+		}
+
 	}
 
 	makePoint(coords) {
@@ -235,7 +249,6 @@ export default class Location {
 	// is location visible (with optional passed bounds)
 	isVisible(bounds) {
 		if (this.editing) return true;
-		if (this.legacy?.visible == 0 || this.legacy.description.includes("teleport dest")) return false;
 		if ((gamemap.getCurrentZoom() + 0.001) < this.displayLevel) return false;
 		bounds = bounds ?? gamemap.getCurrentViewBounds();
 		// todo: also need centre coord checking in here too
@@ -255,6 +268,7 @@ export default class Location {
 	getSaveQuery() {
 
 		var query = 'action=set_loc';
+		let coords = (mapConfig.database == "eso") ? this.convertESOCoords(this.coords) : this.coords;
 
 		query += `&name=${encodeURIComponent(this.name)}`;
 		query += `&description=${encodeURIComponent(this.description)}`;
@@ -267,15 +281,16 @@ export default class Location {
 		query += `&revisionid=${this.revisionID}`;
 		query += `&db=${gamemap.getMapConfig().database}&visible=1`;
 
-		query += `&x=${(this.isPolygon()) ? this.getMaxBounds().minX: this.coords[0].x}`;
-		query += `&y=${(this.isPolygon()) ? this.getMaxBounds().maxY: this.coords[0].y}`;
+		this.updateDisplayData(coords);
+		query += `&x=${(this.isPolygon()) ? this.getMaxBounds().minX: coords[0].x}`;
+		query += `&y=${(this.isPolygon()) ? this.getMaxBounds().maxY: coords[0].y}`;
 		query += `&locwidth=${this.width}&locheight=${this.height}`;
 
-		this.updateDisplayData();
 		query += `&displaylevel=${+this.displayLevel + +currentWorld.zoomOffset}`;
 		query += `&displaydata=${encodeURIComponent(JSON.stringify(this.displayData))}`;
 		if (this.hasIcon()) { query += `&icontype=${encodeURIComponent(this.icon)}` }
 
+		print(objectify(query));
 		return encodeURIComponent(query);
 	}
 
@@ -292,11 +307,10 @@ export default class Location {
 	}
 
 	// update display data with current object state
-	updateDisplayData() {
+	updateDisplayData(coords) {
 		this.displayData.labelPos = this.labelPos;
 		this.displayData.points = (() => {
 			let points = [];
-			let coords = (mapConfig.database == "eso") ? this.convertESOCoords(this.coords) : this.coords;
 			coords.forEach(coord => { points.push(coord.x, coord.y) });
 			return points;
 		})();
@@ -310,6 +324,10 @@ export default class Location {
 
 			this.displayData.lineWidth = this.strokeWidth;
 			this.displayData.hover.lineWidth = this.strokeWidthHover;
+
+			let bounds = this.getMaxBounds(true);
+			this.width = bounds.maxX - bounds.minX;
+			this.height = bounds.maxY - bounds.minY;
 		}
 	}
 
@@ -328,21 +346,22 @@ export default class Location {
 	}
 
 	// get max bounds of the current location
-	getMaxBounds() {
-		let coords = (mapConfig.database == "eso") ? this.convertESOCoords(this.coords) : this.coords;
-		let bounds = {};
-		[bounds.minX, bounds.maxX, bounds.minY, bounds.maxY] = [coords[0].x, coords[0].x, coords[0].y, coords[0].y];
-		coords.forEach(coord => {
-			bounds.minX = (coord.x < bounds.minX) ? coord.x : bounds.minX;
-			bounds.maxX = (coord.x > bounds.maxX) ? coord.x : bounds.maxX;
-			bounds.minY = (coord.y < bounds.minY) ? coord.y : bounds.minY;
-			bounds.maxY = (coord.y > bounds.maxY) ? coord.y : bounds.maxY;
-		});
-		if (this.isPolygon()) {
-			this.width = bounds.maxX - bounds.minX;
-			this.height = bounds.maxY - bounds.minY;
+	getMaxBounds(regen) {
+		if (regen ?? this.bounds == null) {
+			let coords = (mapConfig.database == "eso") ? this.convertESOCoords(this.coords) : this.coords;
+			let bounds = {};
+			[bounds.minX, bounds.maxX, bounds.minY, bounds.maxY] = [coords[0].x, coords[0].x, coords[0].y, coords[0].y];
+			coords.forEach(coord => {
+				bounds.minX = (coord.x < bounds.minX) ? coord.x : bounds.minX;
+				bounds.maxX = (coord.x > bounds.maxX) ? coord.x : bounds.maxX;
+				bounds.minY = (coord.y < bounds.minY) ? coord.y : bounds.minY;
+				bounds.maxY = (coord.y > bounds.maxY) ? coord.y : bounds.maxY;
+			});
+			this.bounds = bounds;
+			return bounds;
+		} else {
+			return this.bounds;
 		}
-		return bounds;
 	}
 
 }

@@ -18,12 +18,28 @@
 <markup>
     <div id="watermark" class:watermark={!embedded && !lock} on:contextmenu={(e) => e.stopPropagation()}>
         {#if !embedded}
-            {#if lock == "full"}
+            <!-- svelte-ignore missing-declaration -->
+            {#if lock == MAPLOCK.FULL}
                 <Icon name = "lock" size={16}/>
-                <b title="Map is locked while editing worlds">Locked</b>
-            {:else if lock == "partial"}
-                <Icon name = "lock_open" size={16}/>
-                <b title="Map is partially locked while editing locations">Partially locked</b>
+                <b>Map locked.</b>
+            {:else if lock == MAPLOCK.PARTIAL}
+                <Icon name = "lock" size={16}/>
+                <b>Map partially locked.</b>
+            {:else if lock >= MAPLOCK.PARTIAL_MARKER}
+                <span class="highlight">
+                    <Icon name="info" size={16}/>
+                    <small><b>Editing Tip</b></small>
+                </span>
+
+                {#if lock == MAPLOCK.PARTIAL_MARKER}
+                    Drag the selected marker to move it to a new position.
+                {/if}
+
+                {#if lock == MAPLOCK.PARTIAL_POLYGON}
+                     Drag handles to move them, right click to remove them.<br>
+                     Click the green plus (+) to add new handles.
+                {/if}
+
             {:else}
                 <!-- svelte-ignore a11y-invalid-attribute -->
                 <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home" target='_top'>UESP</a></span> • <a title="Reset this map" href="javascript:void(0);" onclick="gamemap.reset();">{mapName}</a></b>
@@ -53,6 +69,7 @@
         -ms-user-select: none;
         user-select: none;
         cursor: auto;
+        border-radius: var(--padding_small);
     }
 
     #watermark:hover {
@@ -72,6 +89,22 @@
 
     .watermark {
         opacity: 0.55;
+    }
+
+
+    small {
+        text-transform: uppercase;
+    }
+
+    .highlight {
+        color: var(--highlight_light);
+        display: flex;
+        align-content: center;
+        align-self: center;
+        justify-content: center;
+        flex-wrap: wrap-reverse;
+        gap: 3px;
+        padding-top: 3px;
     }
 
 </style>

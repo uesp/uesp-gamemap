@@ -813,20 +813,15 @@ export default class Gamemap {
 
 	setMapLock(mapLock) {
 		// set map lock state
-		print(mapLock);
-		if (mapLock) {
-			this.mapLock = mapLock;
-
-			if (self.mapLock == "full") {
-				map.dragging.disable();
-				//map.options = {smoothWheelZoom : false};
-			}
+		if (mapLock && mapLock == MAPLOCK.FULL)  {
+			map.dragging.disable();
+			//map.options = {smoothWheelZoom : false};
 		} else {
-			this.mapLock = null;
 			map.dragging.enable();
 		}
 
-		// and callback back to UI
+		// callback back to UI
+		this.mapLock = mapLock;
 		this.mapCallbacks?.onMapLockChanged(this.mapLock);
 	}
 
@@ -855,7 +850,7 @@ export default class Gamemap {
 
 		let zoom = (root) ? "/zoom0/" : "/zoom{z}/";
 		let xy = (root) ? "-0-0.jpg" : "-{x}-{y}.jpg";
-		return this.mapConfig.tileURL + world.name + "/leaflet/" + world.layers[layerIndex].name + zoom + world.name + xy;
+		return `${this.mapConfig.tileURL + world.name}/leaflet/${world.layers[layerIndex].name + zoom + world.name + xy}`;
 	}
 
 	/*================================================
@@ -886,7 +881,7 @@ export default class Gamemap {
 
 		// make api query
 		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-			if (!error && data != null) {
+			if (!error && data?.locations) {
 				let locations = data.locations;
 				let locationMap = new Map();
 
@@ -894,7 +889,7 @@ export default class Gamemap {
 				print(locations);
 
 				locations.forEach(location => {
-					if (location.id) {
+					if (location.id && location.visible == 1 && !location.description.includes("teleport dest")) {
 						locationMap.set(location.id, new Location(location, world));
 					}
 				});
@@ -908,7 +903,7 @@ export default class Gamemap {
 					self.redrawLocations(locationMap);
 				}
 			} else {
-				print.warn("There was an error getting locations for this world.");
+				print.warn("There was an error getting locations for this world!");
 			}
 		});
 
@@ -1249,8 +1244,6 @@ export default class Gamemap {
 				if (!self.mapLock) {
 					let parentID = self.getMapState().world.parentID;
 					self.goto(parentID);
-				} else {
-					M.toast({html: "Map is locked while editing!"});
 				}
 			}
 		})
@@ -1578,7 +1571,6 @@ L.Layer.include({
 	location: null,
 	element: null,
 	editing: false,
-	wasVisible: null,
 	isIconPoly: null,
 
 	// getters
@@ -1586,13 +1578,11 @@ L.Layer.include({
 	getCentre: function(latLngs) { return this.getLatLng?.() ?? L.latLngBounds((latLngs && Array.isArray(latLngs)) ? latLngs : this.getCoordinates()).getCenter() },
 	getElement() { return this.element = this?._icon ?? this?._path },
 	getTooltip() { return document.getElementById(this.getElement()?.getAttribute('aria-describedby')) },
-	getWasVisible() { return this.wasVisible },
 	isIconPolygon() { return this.isIconPoly },
 	isEditing() { return this.getElement()?.classList?.contains("editing") || this.editing },
 
 	// setters
 	setLocation(location) { this.location = location },
-	setWasVisible(wasVisible) { this.wasVisible = wasVisible },
 	setIsIconPolygon(isIcon) {this.isIconPoly = isIcon },
 
     // get layer latlngs as array
@@ -1612,14 +1602,6 @@ L.Layer.include({
 		return latlngs;
 	},
 
-	// get marker is visible
-	isVisible() {
-		if (this.isEditing()) return true;
-		if (map.getZoom() < this.location.displayLevel) return false;
-		if (mapBounds != map.getBounds()) { mapBounds = map.getBounds() }
-		return mapBounds.intersects(L.latLngBounds(this.getCoordinatesAndCentre()));
-	},
-
 	setEditingEffect(doEffect) {
 		if (doEffect) {
 			// add editing effect to marker
@@ -1631,13 +1613,7 @@ L.Layer.include({
 
 	edit() {
 		this.editing = true;
-
-		this.pm.enable({
-			allowEditing: true,
-			snapDistance: 10,
-			draggable: true,
-		});
-
+		this.pm.enable({ allowEditing: true, snapDistance: 10, draggable: true });
 		this.on('pm:markerdragend pm:vertexremoved pm:edit', (e) => {
 			if (e.shape == "Marker") {
 				let coords = gamemap.toCoords(e.layer.getLatLng());

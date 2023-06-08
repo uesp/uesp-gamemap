@@ -65,14 +65,14 @@
         // do state changes to edit object
         if (isWorld && originalObj.id == gamemap.getCurrentWorld().id) {
             gamemap.reset(true, 30); // zoom out world map
-            gamemap.setMapLock("full"); // lock the world map
+            gamemap.setMapLock(MAPLOCK.FULL); // lock the world map
             gamemap.mapRoot.classList.add("editing"); // add editing effect
             //gamemap.getMapObject().setMaxZoom(data.maxZoomLevel);
 
         } else if (isLocation) {
             print("being called to edit location")
             canEdit = true;
-            gamemap.setMapLock("partial"); // set map lock to partial
+            gamemap.setMapLock(modifiedObj.isPolygon() ? MAPLOCK.PARTIAL_POLYGON : MAPLOCK.PARTIAL_MARKER)
             originalObj.setEditing(true);
             modifiedObj.setEditing(true);
             gamemap.updateLocation(modifiedObj);
@@ -220,7 +220,7 @@
 
         hasBeenModified = false;
         // remove map lock from gamemap
-        gamemap.setMapLock(false);
+        gamemap.setMapLock(MAPLOCK.NONE);
     }
 
     function cancel() {
