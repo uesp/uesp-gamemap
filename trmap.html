@@ -7,6 +7,15 @@
 	<link rel="stylesheet" href="gamemap.css?date=15May2018" />
 	<link rel="stylesheet" href="trgamemap.css?date=15May2018" />
 	<link rel="stylesheet" media="only screen and (max-device-width:799px)" href="gamemap-mobile.css?date=29march2014a"/>
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-1386039-6"></script>
+		<script>
+		  window.dataLayer = window.dataLayer || [];
+		  function gtag(){dataLayer.push(arguments);}
+		  gtag('js', new Date());
+		
+		  gtag('config', 'UA-1386039-6');
+		</script>
 	<script type="text/javascript" src="jquery-1.10.2.js"></script>
 	<script type="text/javascript" src="common.js?date=8May2018"></script>
 	<script type="text/javascript" src="bounds.js?date=29march2014a"></script>
@@ -262,21 +271,6 @@
 <div id="gmMap">
 	<!--OFFLINE_HELPBLOCK-->
 </div>
-
-<script type="text/javascript">
-if (!g_DefaultMapOptions.isOffline)
-{
-	var _gaq = _gaq || [];
-	_gaq.push(['_setAccount', 'UA-1386039-6']);
-	_gaq.push(['_trackPageview']);
-	
-	(function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	})();
-}
-</script>
 
 </body>
 </html>
