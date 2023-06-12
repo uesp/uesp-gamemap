@@ -30,7 +30,7 @@ export default class Location {
 		this.description = location.description || "";
 		this.visible = location?.visible == 1 && !location.description.includes("teleport dest");
 		this.wasVisible = null;
-		this.displayData = JSON.parse(location.displayData) || {};
+		this.displayData = JSON.parse(location.displayData) ?? {};
 		this.worldID = location.worldId || 0;
 		this.destinationID = -(location.destinationId) || null;
 		this.revisionID = location.revisionId || 0;

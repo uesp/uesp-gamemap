@@ -72,7 +72,7 @@
         } else if (isLocation) {
             print("being called to edit location")
             canEdit = true;
-            gamemap.setMapLock(modifiedObj.isPolygon() ? MAPLOCK.PARTIAL_POLYGON : MAPLOCK.PARTIAL_MARKER)
+            gamemap.setMapLock(modifiedObj.isPolygon() ? MAPLOCK.PARTIAL_POLYGON : MAPLOCK.PARTIAL_MARKER);
             originalObj.setEditing(true);
             modifiedObj.setEditing(true);
             gamemap.updateLocation(modifiedObj);
@@ -126,9 +126,11 @@
         print(modifiedObj)
 
         let queryParams = objectify(modifiedObj.getSaveQuery());
+        let query = (GAME_DATA_SCRIPT + queryify(queryParams)).replace(/=\s*$/, "");
         saveButton.$set({ text: "Saving...", icon: "loading" });
 
-        getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+        print(query);
+        getJSON(query, function(error, data) {
 
             if (!error && data != null) {
 
@@ -184,6 +186,7 @@
             // are there any unsaved changes
             unsavedChanges = !(JSON.stringify(modifiedObj) === JSON.stringify(originalObj));
             hasBeenModified = (unsavedChanges) ? true : hasBeenModified;
+            gamemap.setMapLock(modifiedObj.isPolygon() ? MAPLOCK.PARTIAL_POLYGON : MAPLOCK.PARTIAL_MARKER);
 
             // redraw location with new changes
             if (isLocation && hasBeenModified) {
@@ -435,7 +438,10 @@
             <div class="footer-buttons">
                 <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
                 <Button text={!unsavedChanges ? "Close" : "Cancel"} icon="close" on:click={cancel}/>
-                <Button text="Delete" icon="delete" type="delete" on:click={() => cancel(true)}/>
+                {#if isLocation}
+                     <Button text="Delete" icon="delete" type="delete" on:click={() => cancel(true)}/>
+                {/if}
+
             </div>
         </footer>
     </div>

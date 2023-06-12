@@ -71,7 +71,8 @@
 </script>
 
 <markup>
-    <div id="zoom_widget" in:fly="{{ x: 5, duration: 250 }}" out:fade="{{duration: 75}}" class:lock={lock == "full"} class:disabled={lock == "full"} on:contextmenu={(e) => e.stopPropagation()}>
+    <!-- svelte-ignore missing-declaration -->
+    <div id="zoom_widget" in:fly="{{ x: 5, duration: 250 }}" out:fade="{{duration: 75}}" class:lock={lock == MAPLOCK.FULL} class:disabled={lock == MAPLOCK.FULL} on:contextmenu={(e) => e.stopPropagation()}>
         <!-- svelte-ignore missing-declaration -->
         <button on:click={() => zoom(gamemap.getMapObject().options.zoomDelta)} class="btn_zoom waves-effect long-press" id="btn_zoom_in" tabindex="-1" title="Zoom in" disabled={!canZoomIn} data-long-press-delay="600"><Icon name="add"/></button>
         <Divider/>

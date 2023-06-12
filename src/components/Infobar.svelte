@@ -21,18 +21,18 @@
             <!-- svelte-ignore missing-declaration -->
             {#if lock == MAPLOCK.FULL}
                 <Icon name = "lock" size={16}/>
-                <b>Map locked.</b>
+                <b title="Map is locked whilst editing worlds.">Map locked.</b>
             {:else if lock == MAPLOCK.PARTIAL}
                 <Icon name = "lock" size={16}/>
-                <b>Map partially locked.</b>
+                <b title="Map is partially locked whilst editing locations.">Map partially locked.</b>
             {:else if lock >= MAPLOCK.PARTIAL_MARKER}
                 <span class="highlight">
                     <Icon name="info" size={16}/>
-                    <small><b>Editing Tip</b></small>
+                    <small><b>Editing Help</b></small>
                 </span>
 
                 {#if lock == MAPLOCK.PARTIAL_MARKER}
-                    Drag the selected marker to move it to a new position.
+                    Drag the marker to move it to a new position.
                 {/if}
 
                 {#if lock == MAPLOCK.PARTIAL_POLYGON}
