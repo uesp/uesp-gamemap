@@ -857,6 +857,50 @@ export default class Gamemap {
 						Locations
 	================================================*/
 
+
+	addLocation(locType) {
+
+		print("adding location..");
+
+		this.setMapLock(MAPLOCK.PARTIAL);
+		let isMarker = locType == LOCTYPES.MARKER;
+		let shape = (isMarker ? "Marker" : locType == LOCTYPES.AREA ? "Polygon" : "Line");
+		let altText = isMarker ? "new_marker" : "";
+
+		print(shape)
+
+		map.pm.enableDraw(shape, {
+            markerStyle: {
+				icon: this.getIcon(1),
+				alt: altText,
+			},
+            continueDrawing: false,
+        });
+
+		if (isMarker) {
+			// get our marker
+			let marker = document.querySelectorAll(`[alt="${altText}"]`)[0];
+			if (marker) {
+				marker.removeAttribute("alt") // remove alt attribute
+				marker.classList.add("editing");
+				print(marker);
+
+				// get tooltip
+				let tooltip = document.getElementById(marker.getAttribute('aria-describedby'));
+				tooltip.classList.add("location-label", "new-marker-label", "editing");
+				tooltip.innerText = "New Marker";
+
+			}
+		}
+
+
+
+		// if marker, then find the element with the alt text "joe"
+		// find its tooltip via the "described by" attribute
+		// give it an id of something and a class of location label
+		// then change the contents of the tooltip to "New Marker"
+	}
+
 	getLocations(world) {
 
 		print("Getting locations...");
@@ -1150,9 +1194,9 @@ export default class Gamemap {
 		return markers;
 	}
 
-	makeMarker(location, coords) {
+	getIcon(iconNumber) {
 		let anchor = [this.mapConfig.iconSize / 2, this.mapConfig.iconSize / 2];
-		let iconURL = this.mapConfig.iconPath + location.icon + ".png";
+		let iconURL = this.mapConfig.iconPath + iconNumber + ".png";
 
 		let locationIcon = L.icon({
 			iconUrl: iconURL,
@@ -1160,9 +1204,11 @@ export default class Gamemap {
 			iconSize: [this.mapConfig.iconSize, this.mapConfig.iconSize],
 		});
 
-		let marker = L.marker(coords, {icon: locationIcon, riseOnHover: true});
+		return locationIcon;
+	}
 
-		return marker;
+	makeMarker(location, coords) {
+		return L.marker(coords, {icon: this.getIcon(location.icon), riseOnHover: true});
 	}
 
 	getLocationLabel(location) {
@@ -1225,9 +1271,7 @@ export default class Gamemap {
 						});
 
 					} else {
-
 						self.getMarkersFromLocation(location).forEach(m => m.remove());
-						//marker.remove();
 					}
 
 					location.setWasVisible(isVisible);
@@ -1415,7 +1459,6 @@ export default class Gamemap {
 			this.goto(this.mapConfig.defaultWorldID);
 		}
 	}
-
 
 	getCurrentViewBounds() {
 
@@ -1630,65 +1673,6 @@ L.Layer.include({
 	}
 });
 
-
-// uesp.gamemap.Map.prototype.onAddLocationStart = function()
-// {
-// 	if (!this.canEdit()) return false;
-// 	if (this.currentEditMode != '') return false;
-
-// 	this.addEditClickWall();
-// 	this.currentEditMode = 'addlocation';
-// 	this.displayEditNotice("Click on the map to add a location...", '', 'Cancel');
-
-// 	return true;
-// }
-
-// uesp.gamemap.Map.prototype.onAddPathStart = function()
-// {
-// 	if (!this.canEdit()) return false;
-// 	if (this.currentEditMode != '') return false;
-
-// 	this.addEditClickWall();
-// 	this.currentEditMode = 'addpath';
-// 	this.displayEditNotice("Click on the map to add points to the path. Click 'Finish' when done...", 'Finish', 'Cancel');
-
-// 	this.currentEditLocation = new uesp.gamemap.Location(this);
-// 	this.currentEditLocation.locType = Constants.LOCTYPE_PATH;
-// 	this.currentEditLocation.id = this.createNewLocationId();
-// 	this.currentEditLocation.worldID = this.currentWorldID;
-// 	this.currentEditLocation.name = 'New Path';
-// 	this.currentEditLocation.displayLevel = this.zoomLevel - 1;
-// 	this.currentEditLocation.visible = true;
-// 	this.currentEditLocation.useEditPopup = true;
-// 	this.currentEditLocation.displayData.labelPos = 0;
-// 	this.currentEditLocation.displayData.points = [];
-// 	this.currentEditLocation.displayData.hover = { };
-// 	this.currentEditLocation.displayData.hover.fillStyle = "rgba(255,255,255,0.25)";
-// 	this.currentEditLocation.displayData.hover.strokeStyle = "rgba(0,0,0,1)";
-// 	this.currentEditLocation.displayData.hover.lineWidth = 2;
-// 	this.currentEditLocation.displayData.fillStyle = "rgba(255,255,255,0.05)";
-// 	this.currentEditLocation.displayData.strokeStyle = "rgba(0,0,0,0.5)";
-// 	this.currentEditLocation.displayData.lineWidth = 1;
-// 	this.currentEditLocation.iconType = 0;
-// 	this.currentEditLocation.isFirstEdit = true;
-
-// 	this.locations[this.currentEditLocation.id] = this.currentEditLocation;
-// 	return true;
-// }
-
-
-// uesp.gamemap.Map.prototype.onAddAreaStart = function()
-// {
-// 	if (!this.canEdit()) return false;
-
-// 	this.onAddPathStart();
-
-// 	this.currentEditLocation.locType = Constants.LOCTYPE_AREA;
-// 	this.currentEditMode = 'addarea';
-
-// 	this.displayEditNotice("Click on the map to add points to the area. Click 'Finish' when done...", 'Finish', 'Cancel');
-// }
-
 // uesp.gamemap.Map.prototype.createNewLocationId = function ()
 // {
 // 	NewId = this.nextNewLocationId;
@@ -1725,102 +1709,4 @@ L.Layer.include({
 // 	location.showPopup();
 
 // 	return location;
-// }
-
-
-// uesp.gamemap.Map.prototype.onAddLocationClick = function (event)
-// {
-// 	this.removeEditClickWall();
-// 	this.hideEditNotice();
-// 	this.currentEditMode = '';
-
-// 	if (!this.canEdit()) return false;
-
-// 	gamePos = this.convertWindowPixelToGamePos(event.pageX, event.pageY);
-// 	//uesp.printDebug(uesp.print_LEVEL_INFO, "onAddLocationClick()", gamePos);
-
-// 	this.createNewLocation(gamePos);
-// 	this.redrawCanvas(true);
-
-// 	return true;
-// }
-
-
-// uesp.gamemap.Map.prototype.onReceiveCenterOnLocationData = function (data)
-// {
-// 	uesp.printDebug(uesp.print_LEVEL_INFO, "Received centeron location data");
-// 	uesp.printDebug(uesp.print_LEVEL_INFO, data);
-
-// 	if (data.isError === true || data.locations == null || data.locations.length === 0)
-// 	{
-// 		if (data.worlds == null || data.worlds.length === 0)
-// 		{
-// 			this.changeWorld(this.mapConfig.homeworldID);
-// 			this.centerOnError = true;
-// 		}
-// 		else
-// 		{
-// 			this.mergeWorldData(data.worlds);
-// 			this.changeWorld(data.worlds[0].id);
-// 			this.centerOnError = true;
-// 		}
-
-// 		return false;
-// 	}
-
-// 	this.mergeLocationData(data.locations, true);
-// 	var worldID = 0;
-
-// 	if (data.worlds == null || data.worlds.length === 0)
-// 	{
-// 		worldID = data.locations[0].worldID;
-// 	}
-// 	else
-// 	{
-// 		this.mergeWorldData(data.worlds);
-// 		worldID = data.worlds[0].id
-// 	}
-
-// 	if (this.mapWorlds[worldID] == null)
-// 	{
-// 		this.changeWorld(this.mapConfig.homeworldID);
-// 		this.centerOnError = true;
-// 		return true;
-// 	}
-
-// 	var mapState = new uesp.gamemap.MapState();
-// 	mapState.worldID = worldID;
-// 	mapState.zoomLevel = this.mapWorlds[worldID].maxZoom;
-// 	mapState.gamePos.x = data.locations[0].x + data.locations[0].width/2;
-// 	mapState.gamePos.y = data.locations[0].y - data.locations[0].height/2;
-
-// 	this.showPopupOnLoadLocationId = data.locations[0].id;
-
-// 	this.changeWorld(data.worlds[0].id, mapState);
-
-// 	return true;
-// }
-
-// uesp.gamemap.Location.prototype.setPopupEditNotice = function (Msg, MsgType)
-// {
-// 	if (this.popupElement == null) return;
-
-// 	$status = $('#' + this.popupId + ' .gmMapEditPopupStatus');
-// 	if ($status == null) return;
-
-// 	$status.html(Msg);
-// 	$status.removeClass('gmMapEditPopupStatusOk');
-// 	$status.removeClass('gmMapEditPopupStatusNote');
-// 	$status.removeClass('gmMapEditPopupStatusWarning');
-// 	$status.removeClass('gmMapEditPopupStatusError');
-
-// 	this.displayEditNotice('Edit path/area nodes by clicking and dragging.<br/>Hit \'Finish\' on the right when done.<br />Ctrl+Click deletes a point. Shift+Click adds a point.', 'Finish', 'Cancel');
-// 	if (MsgType == null || MsgType === 'ok')
-// 		$status.addClass('gmMapEditPopupStatusOk');
-// 	else if (MsgType === 'note')
-// 		$status.addClass('gmMapEditPopupStatusNote');
-// 	else if (MsgType === 'warning')
-// 		$status.addClass('gmMapEditPopupStatusWarning');
-// 	else if (MsgType === 'error')
-// 		$status.addClass('gmMapEditPopupStatusError');
 // }

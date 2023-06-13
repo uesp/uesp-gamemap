@@ -34,7 +34,7 @@ export default class Location {
 		this.worldID = location.worldId || 0;
 		this.destinationID = -(location.destinationId) || null;
 		this.revisionID = location.revisionId || 0;
-		this.displayLevel = parseFloat(location.displayLevel - world.zoomOffset || 0);
+		this.displayLevel = parseFloat(location.displayLevel - world.zoomOffset || 3);
 		this.editing = false; // whether this location is currently being edited;
 		this.legacy = location;
 		this.bounds = null; // bounds are generated when asked

@@ -63,6 +63,7 @@
 	--secondary_variant_light: #bda993;
 	--secondary_variant_dark: #8b7d6d;
   	--selection: rgba(121, 80, 60, 0.234);
+	--selection_variant: #8b7d6d61;
 }
 
 /*================================================
@@ -700,6 +701,23 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	cursor: auto;
 }
 
+.leaflet-interactive:not(.location-label) {
+    animation: fade-in 0.3s !important;
+}
+
+.leaflet-tooltip {
+	z-index: 45 !important;
+	position: absolute !important;
+	border: 2px solid #606030 !important;
+	background-color: rgba(0,0,0,0.85) !important;
+	color: #ffffff !important;
+	font-size: 11px !important;
+	font-weight: bold !important;
+	font-family: sans-serif !important;
+	white-space: nowrap !important;
+	border-image: url(../assets/images/tooltip-border.png) 2 2 2 2 stretch !important;
+}
+
 .location-label {
 	border-radius: var(--padding_large) !important;
 	position: absolute !important;
@@ -718,23 +736,9 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	padding: 0px !important;
 }
 
-.leaflet-interactive:not(.location-label) {
-    animation: fade-in 0.3s !important;
-}
-
-.location-tooltip {
-	z-index: 45 !important;
-	position: absolute !important;
-	border: 2px solid #606030 !important;
-	background-color: rgba(0,0,0,0.85) !important;
-	padding: 3px !important;
-	display: inline-block !important;
-	color: #ffffff !important;
-	font-size: 11px !important;
-	font-weight: bold !important;
-	font-family: sans-serif !important;
-	white-space: nowrap !important;
-	border-image: url(../assets/images/tooltip-border.png) 2 2 2 2 stretch !important;
+.new-marker-label {
+	margin-left: 50px !important;
+	margin-top: -18px !important;
 }
 
 @keyframes fade-in {

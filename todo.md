@@ -9,6 +9,14 @@
 ## todo
 
 
+
+
+
+- fix edit panel not animating correctl
+- begin getting add locations working
+- fix recent changes list overflowing, not correct height
+
+
 - 0.5 on all locations client side
 
 

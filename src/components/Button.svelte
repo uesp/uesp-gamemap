@@ -35,7 +35,7 @@
 <markup>
     <!-- svelte-ignore a11y-missing-attribute -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <a class="waves-effect waves-light btn{flat != null ? "-flat" : ""}{size != null ? "-"+{size} : ""}" class:disabled={disabled} class:saving={type=="save" && icon == "loading"} class:error={type=="save" && icon == "warning"}
+    <a class="waves-effect waves-light btn{flat ? "-flat" : ""}{size ? "-"+{size} : ""}" class:disabled={disabled} class:saving={type=="save" && icon == "loading"} class:error={type=="save" && icon == "warning"}
     on:click={onClicked} class:loadingButton={icon == "loading"} class:deleteButton={type == "delete"} class:saveButton={type=="save"} class:bold={bold}>
 
         {#if icon}
@@ -56,6 +56,15 @@
         letter-spacing: 0px;
         margin: 2px;
         padding: 0 var(--padding_minimum);
+    }
+
+    .btn-flat {
+        background-color: unset;
+        color: var(--secondary_variant_light) !important;
+    }
+
+    .btn-flat:hover {
+        background-color: var(--selection_variant) !important;
     }
 
     p {

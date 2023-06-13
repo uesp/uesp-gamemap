@@ -165,9 +165,7 @@
                     saveButton.$set({ text: "Save", icon: "save" });
                 }
             }, (!error) ? 1500 : 2500);
-
         }
-
     }
 
     let timer;

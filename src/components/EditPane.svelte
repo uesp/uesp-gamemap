@@ -25,7 +25,6 @@
     import Location from "../map/objects/location"
 
     // constants
-    const OVERLAY = { NONE : 0, LOCATION : 2, PATH : 3, AREA : 4}
     let PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     const ANIMATION_DURATION = 350;
     const RESIZE_OBSERVER = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
@@ -36,7 +35,7 @@
     let editPanelContent;
     let editPanel;
     let recentChanges = [];
-    $: currentOverlay  = OVERLAY.NONE;
+    let overlay = null;
     $: editObject = null;
     let directEdit = null;
     let unsavedChanges = false;
@@ -86,6 +85,18 @@
         }
 
     }
+
+    function addLocation(locType) {
+        overlay = locType;
+        gamemap.addLocation(locType);
+    }
+
+    function cancelNewLocation() {
+        overlay = null;
+        gamemap.getMapObject().pm.disableDraw();
+        gamemap.setMapLock(MAPLOCK.NONE);
+    }
+
     export function edit(object) { show(object) }
     export function dismiss() { show(false) }
 
@@ -162,8 +173,9 @@
         return { ANIMATION_DURATION, css: () => `width: ${$TWEEN * PANEL_WIDTH}`};
     }
 
-
     // handle resizing the edit pane
+    function onResizerDown(e) { document.addEventListener('mousemove', onResizerDrag);}
+    function onResizerUp(e) { document.removeEventListener('mousemove', onResizerDrag); }
     function onResizerDrag(e) {
         let width = (window.innerWidth - e.pageX + 150);
         width = (width < 350) ? 350 : width;
@@ -172,19 +184,30 @@
         setPrefs("editpanelwidth", width);
         PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     }
-    function onResizerDown(e) { document.addEventListener('mousemove', onResizerDrag);}
-    function onResizerUp(e) { document.removeEventListener('mousemove', onResizerDrag); }
 </script>
 
 
 <markup>
+    <!-- svelte-ignore missing-declaration -->
     {#if isShown}
          <aside id="edit-panel" bind:this={editPanel} style="width: {$TWEEN * PANEL_WIDTH}px;" out:slideOut>
 
              <!-- editing overlays (for adding paths, areas etc) -->
-             {#if currentOverlay != OVERLAY.NONE}
+             {#if overlay}
+                {@const locType = Object.keys(LOCTYPES).find(key => LOCTYPES[key] === overlay)}
                  <div id="edit-overlay">
-
+                    <b class="subheading">Adding {locType.toSentenceCase()}</b>
+                    <p style="color: white; text-align: center; margin: 12px;">Begin adding your {locType.toLowerCase()} to the map.</p>
+                    <div id="arrow_container">
+                        <div class="arrow">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: var(--padding_medium); padding-top: 6px;">
+                        <Button text="Cancel" icon="close" flat={true} on:click={cancelNewLocation}></Button>
+                    </div>
                  </div>
              {/if}
 
@@ -201,10 +224,9 @@
                 {#if !isEditing}
                      <b>Actions</b><br/>
                      <div id="actions-container">
-                         <Button text="Add Location" icon="add_location_alt"></Button>
-                         <Button text="Add Path" icon="timeline"></Button>
-                         <Button text="Add Area" icon="local_hospital"></Button>
-                         <!-- svelte-ignore missing-declaration -->
+                         <Button text="Add Marker" icon="add_location_alt" on:click={() => addLocation(LOCTYPES.MARKER)}></Button>
+                         <Button text="Add Area" icon="local_hospital" on:click={() => addLocation(LOCTYPES.AREA)}></Button>
+                         <Button text="Add Path" icon="timeline" on:click={() => addLocation(LOCTYPES.PATH)}></Button>
                          <Button text="Edit World" icon="public" on:click={() => (edit(gamemap.getCurrentWorld()))}></Button>
                      </div>
                      <b>Recent Changes</b>
@@ -247,7 +269,6 @@
     {/if}
 </markup>
 
-
 <style>
     #edit-panel {
         background-color: var(--surface);
@@ -261,13 +282,23 @@
     }
 
     #edit-overlay {
-        background-color: rgba(0, 0, 0, 0.65);
+        background-color: rgba(0, 0, 0, 0.70);
         width: 100%;
         height: 100%;
         position: absolute;
         pointer-events: all;
-        z-index: 5;
-        display: none;
+        z-index: 999999999999;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+        text-shadow: 0px 0px 5px var(--background) !important;
+        flex-direction: column;
+    }
+
+    .subheading {
+        color: var(--highlight_light);
+        font-size: x-large;
     }
 
     #edit-panel-content {
@@ -317,6 +348,55 @@
 
     #window-resizer:hover {
         background-color: var(--shadow);
+    }
+
+
+    .arrow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transform: rotate(90deg);
+        cursor: pointer;
+    }
+
+    #arrow_container {
+        position: relative;
+        margin-top: 10px;
+        margin-bottom: 18px;
+    }
+
+    .arrow span {
+        display: block;
+        width: 1.5vw;
+        height: 1.5vw;
+        border-bottom: 5px solid white;
+        border-right: 5px solid white;
+        transform: rotate(45deg);
+        margin: -10px;
+        animation: animate 2s infinite;
+    }
+
+    .arrow span:nth-child(2) {
+        animation-delay: -0.2s;
+    }
+
+    .arrow span:nth-child(3) {
+        animation-delay: -0.4s;
+    }
+
+    @keyframes animate {
+        0% {
+            opacity: 0;
+            transform: rotate(45deg) translate(-20px, -20px);
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+            transform: rotate(45deg) translate(20px, 20px);
+        }
     }
 
 </style>
