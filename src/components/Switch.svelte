@@ -8,10 +8,7 @@
 <script>
     // import core svelte stuff
     import { createEventDispatcher } from "svelte";
-    import { fade, slide } from 'svelte/transition';
-
-    // import ui compontents
-    import Divider from "./Divider.svelte";
+    import { slide } from 'svelte/transition';
 
     // state vars
     export let label;
@@ -38,7 +35,7 @@
 
     <!-- optional child UI component if togged -->
     {#if (expand != null && expand == true || expand == null && enabled)}
-        <div class="optional-component" in:slide out:slide>
+        <div class="optional-component" in:slide|local out:slide|local>
             <slot/>
         </div>
     {/if}

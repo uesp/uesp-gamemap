@@ -56,7 +56,7 @@
         // fix footer height
         editor.style.height = (editor.parentElement.clientHeight) + "px";
 
-        // refresh zoom on url change
+        // refresh current zoom on url change
         window.onpopstate = () => currentZoom = gamemap.getCurrentZoom().toFixed(3);
 
         // begin editing provided data
@@ -67,8 +67,6 @@
             gamemap.reset(true, 30); // zoom out world map
             gamemap.setMapLock(MAPLOCK.FULL); // lock the world map
             gamemap.mapRoot.classList.add("editing"); // add editing effect
-            //gamemap.getMapObject().setMaxZoom(data.maxZoomLevel);
-
         } else if (isLocation) {
             print("being called to edit location")
             canEdit = true;
@@ -235,6 +233,7 @@
 </script>
 
 <markup>
+    <!-- svelte-ignore missing-declaration -->
     <div id="editor" out:cleanUp bind:this={editor}>
         <div class="editor_window" bind:this={editorWindow}>
             <div id="editor_pane">
@@ -243,7 +242,6 @@
 
                     <header class="header">
                         <AvatarComponent icon={modifiedObj.icon} locType={modifiedObj.locType} isWorld={isWorld} on:change={(e) => modify("icon", e.detail)}>
-
                             <!-- Name -->
                             <Textbox
                                 text={isWorld ? modifiedObj.displayName : modifiedObj.name }
@@ -259,7 +257,6 @@
 
                             <!-- Parent ID (for World) -->
                             {#if isWorld}
-                                <!-- svelte-ignore missing-declaration -->
                                 <Textbox
                                     hint="Parent ID"
                                     text={modifiedObj.parentID}
@@ -270,7 +267,6 @@
                                 </Textbox>
                             <!-- Destination ID (for Locations) -->
                             {:else if isLocation}
-                                <!-- svelte-ignore missing-declaration -->
                                 {#if modifiedObj.locType != LOCTYPES.PATH}
                                     <Textbox
                                         hint="Destination ID"
@@ -282,7 +278,6 @@
                                     </Textbox>
                                 {/if}
                             {/if}
-
                         </AvatarComponent>
 
                     </header>
@@ -297,7 +292,7 @@
                                 if (e.detail) {
                                     modify("wikiPage", isWorld ? modifiedObj.displayName : modifiedObj.name);
                                 } else {
-                                    modify("wikiPage", "");
+                                    modify("wikiPage", null);
                                 }
                                 linkWikiPage = e.detail;
                         }}>
@@ -311,7 +306,6 @@
 
                     <!-- Location Type (for Locations) -->
                     {#if isLocation}
-                        <!-- svelte-ignore missing-declaration -->
                         <SegmentedButton
                             label="Location Type"
                             entries={LOCTYPES}
@@ -374,7 +368,6 @@
                             </ColourPicker>
                         {/if}
 
-                        <!-- svelte-ignore missing-declaration -->
                         <Textbox label="Display Level"
                             text={modifiedObj.displayLevel}
                             placeholder="Enter display level..."
@@ -386,7 +379,6 @@
                             on:change={(e) => modify("displayLevel", e.detail)}>
                         </Textbox>
 
-                        <!-- svelte-ignore missing-declaration -->
                         {#if modifiedObj.locType != LOCTYPES.PATH}
                             {@const posIDs = Object.keys(LABEL_POSITIONS)}
                             {@const posNames = Object.values(LABEL_POSITIONS)}
@@ -397,7 +389,6 @@
                             </DropdownMenu>
                         {/if}
 
-                        <!-- svelte-ignore missing-declaration -->
                         {#if modifiedObj.locType == LOCTYPES.MARKER}
                             <b class="subheading">Position</b>
                             <div class="row">
@@ -415,13 +406,12 @@
 
                 <!-- General info -->
                 {#if modifiedObj.id > 0}
+
                     <FormGroup title="Info" icon="info">
                         <InfoTextPair name="{objectType.toSentenceCase()} ID" value={modifiedObj.id} tooltip="This {objectType}'s ID"/>
                         {#if isWorld}<InfoTextPair name="World Name" value={modifiedObj.name} tooltip="This world's internal name"/>{/if}
                         {#if isWorld}<InfoTextPair name="Tiles" value={modifiedObj.dbNumTilesX + " x " + modifiedObj.dbNumTilesY} tooltip="Number of tiles at full zoom"/>{/if}
-                        <!-- svelte-ignore missing-declaration -->
                         {#if isLocation}<InfoTextPair name="In World" value={gamemap.getWorldNameFromID(modifiedObj.worldID)} tooltip="The world this location is in"/>{/if}
-                        <!-- svelte-ignore missing-declaration -->
                         <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES)[gamemap.getMapConfig().coordType].toLowerCase()} tooltip="Coordinate system that this {objectType} is using"/>
                         <InfoTextPair name="Revision ID" value={modifiedObj.revisionID} tooltip="Current revision ID"/>
                     </FormGroup>
@@ -429,7 +419,7 @@
             </div>
         </div>
 
-        <footer id="footer" in:fly={{ y: 10, duration: 250 }}>
+        <footer id="footer" in:fly|local={{ y: 10, duration: 250 }}>
             <div class="footer-buttons">
                 <Button text="Save" icon="save" type="save" bold="true" bind:this={saveButton} on:click={() => doSave((isWorld) ? "world" : "location")}/>
             </div>

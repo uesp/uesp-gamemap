@@ -35,9 +35,21 @@
                     Drag the marker to move it to a new position.
                 {/if}
 
+                {#if lock == MAPLOCK.PARTIAL_NEW_MARKER}
+                    Click to add the new marker to the map.
+                {/if}
+
                 {#if lock == MAPLOCK.PARTIAL_POLYGON}
                      Drag handles to move them, right click to remove them.<br>
                      Click the green plus (+) to add new handles.
+                {/if}
+
+                {#if lock == MAPLOCK.PARTIAL_NEW_POLYGON}
+                    Click to add new points. Click the first handle when you're done.
+                {/if}
+
+                {#if lock == MAPLOCK.PARTIAL_NEW_LINE}
+                    Click to add new points. Click the last point again when you're done.
                 {/if}
 
             {:else}

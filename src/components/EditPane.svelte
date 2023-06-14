@@ -191,11 +191,10 @@
     <!-- svelte-ignore missing-declaration -->
     {#if isShown}
          <aside id="edit-panel" bind:this={editPanel} style="width: {$TWEEN * PANEL_WIDTH}px;" out:slideOut>
-
              <!-- editing overlays (for adding paths, areas etc) -->
              {#if overlay}
                 {@const locType = Object.keys(LOCTYPES).find(key => LOCTYPES[key] === overlay)}
-                 <div id="edit-overlay">
+                 <div id="edit-overlay" in:fade|local={{ duration: 100 }}>
                     <b class="subheading">Adding {locType.toSentenceCase()}</b>
                     <p style="color: white; text-align: center; margin: 12px;">Begin adding your {locType.toLowerCase()} to the map.</p>
                     <div id="arrow_container">

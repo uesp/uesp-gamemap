@@ -44,7 +44,10 @@ window.MAPLOCK = {
 	FULL : 1,
 	PARTIAL : 2,
 	PARTIAL_MARKER : 3,
+	PARTIAL_NEW_MARKER : 3.5,
 	PARTIAL_POLYGON : 4,
+	PARTIAL_NEW_POLYGON : 4.5,
+	PARTIAL_NEW_LINE : 5,
 }
 
 // legacy positions:

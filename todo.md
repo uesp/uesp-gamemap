@@ -1,10 +1,26 @@
 ## last week:
 
-
-
-
+## editing
 - removed delete button on editing worlds
 
+
+-
+
+## bug fixes
+- fixed animation for wiki page switch/save delete buttons holding up quitting the edit panel (you can now quit edit panel instantly)
+
+## the marker label problem
+- reminder to self: show img in browser
+- incredibly hacky, but i solved it by passing a unique ``alt`` attr to the marker via geoman
+- then get the marker html via that alt when the editing is started
+- add a unique class to both the marker and the tooltip
+- and use css to move the default geoman tooltip ("click to add the marker") to change the text, positioning and make it look like a label
+- this is just for the preview. when the user clicks, it is replaced with a normal marker which i can control properly
+
+
+## problems
+- server doesnt respond with ``comment`` for added or delete events, only edit
+>> used for tooltips over the action, but add and delete dont have tooltips
 
 ## todo
 
@@ -64,6 +80,7 @@
 - make tooltips follow the mouse rather than the centre of the location
 - show more columns on map key menu dynamically
 - fix cell resource colour intensity to make sense. deeper the colour the more stuff
+- shower thought: could we use the "Dev/Beta" versions of maps for eso as separate layers?
 - button to go to the map menu
 - fix pip on layer switcher ui being small
 - button to go up a map, right click isnt intuitive

@@ -7,47 +7,43 @@
 import Point from "./point.js";
 
 let mapConfig;
-let currentWorld;
+let world;
 
 export default class Location {
-	constructor(location, world) {
+	constructor(data) {
 
-		if (location == null) {
-			throw new Error("Location cannot be null!")
-		}
-
-		world = world ?? gamemap.getCurrentWorld();
-		mapConfig = gamemap.getMapConfig() || DEFAULT_MAP_CONFIG;
-		currentWorld = world;
+		world = gamemap.getCurrentWorld();
+		mapConfig = gamemap.getMapConfig() ?? DEFAULT_MAP_CONFIG;
 
 		// set location type
-		this.locType = location.locType || LOCTYPES.MARKER;
+		this.locType = data?.locType ?? LOCTYPES.MARKER;
 
 		// set basic location info
-		this.id = location.id || 0;
-		this.name = location.name || "";
-		this.wikiPage = location.wikiPage || "";
-		this.description = location.description || "";
-		this.visible = location?.visible == 1 && !location.description.includes("teleport dest");
+		this.id = data.id ?? -100;
+		this.name = (this.id > 0) ? data.name : (this.locType == LOCTYPES.MARKER) ? "New Marker" : (this.locType == LOCTYPES.AREA) ? "New Area" : "New Line";
+		this.wikiPage = data?.wikiPage ?? null;
+		this.description = data?.description ?? null;
+		this.enabled = data?.visible == 1 && !data.description.includes("teleport dest");
 		this.wasVisible = null;
-		this.displayData = JSON.parse(location.displayData) ?? {};
-		this.worldID = location.worldId || 0;
-		this.destinationID = -(location.destinationId) || null;
-		this.revisionID = location.revisionId || 0;
-		this.displayLevel = parseFloat(location.displayLevel - world.zoomOffset || 3);
-		this.editing = false; // whether this location is currently being edited;
-		this.legacy = location;
+		this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : {};
+		this.worldID = data?.worldId ?? world.id;
+		this.destinationID = -(data?.destinationId) ?? null;
+		this.revisionID = data.revisionId || 0;
+		this.displayLevel = parseFloat(data.displayLevel - world.zoomOffset || 3);
+		this.unsavedLocation = (this.id < 0); // used when determining if this a new, unpublished location or not
+		this.editing = this.unsavedLocation || false; // whether this location is currently being edited;
+		this.legacy = data;
 		this.bounds = null; // bounds are generated when asked
 
 		// set location icon info
-		this.icon = location.iconType || null;
-		this.width = (this.icon) ? location.width || mapConfig.iconSize : location.width;
-		this.height = (this.icon) ? location.height || mapConfig.iconSize : location.height;
+		this.icon = data.iconType || null;
+		this.width = (this.icon) ? data.width || mapConfig.iconSize : data.width;
+		this.height = (this.icon) ? data.height || mapConfig.iconSize : data.height;
 
 		// set up coords
 		this.coords = (() => {
 			let coords = [];
-			let coordArray = this.displayData.points;
+			let coordArray = this.displayData?.points;
 			if (coordArray?.length > 0) {
 
 				let [x, y] = [[], []];
@@ -68,14 +64,14 @@ export default class Location {
 				}
 
 			} else {
-				coords.push(this.makePoint([location.x, location.y]));
+				coords.push(this.makePoint([data.x, data.y]));
 			}
-			return coords;
+			return data?.coords ?? coords;
 		})();
 
 		// set up label positions
 		this.labelPos = (() => {
-			switch (this.displayData.labelPos) {
+			switch (this?.displayData?.labelPos ?? this.labelPos) {
 				case null, 0:	// legacy: none
 					return 0;	// returns: none
 				case 1: 		// legacy: top left
@@ -140,15 +136,15 @@ export default class Location {
 		if (mapConfig.coordType == COORD_TYPES.NORMALISED && mapConfig.database == "eso") {
 
 			// get normalised value of x and y in range
-            x = (x - currentWorld.minX) / currentWorld.maxRangeX;
-			y = Math.abs((y - currentWorld.maxY) / currentWorld.maxRangeY); // flip y around
+            x = (x - world.minX) / world.maxRangeX;
+			y = Math.abs((y - world.maxY) / world.maxRangeY); // flip y around
 
 			// transform coords to better fit power of two numbers of tiles
-			x = (x * nextPowerOfTwo(currentWorld.dbNumTilesX) / currentWorld.dbNumTilesX).toFixed(3);
-			y = (y * nextPowerOfTwo(currentWorld.dbNumTilesY) / currentWorld.dbNumTilesY).toFixed(3);
+			x = (x * nextPowerOfTwo(world.dbNumTilesX) / world.dbNumTilesX).toFixed(3);
+			y = (y * nextPowerOfTwo(world.dbNumTilesY) / world.dbNumTilesY).toFixed(3);
 		}
 
-		return new Point(x, y, mapConfig.coordType, currentWorld.maxZoomLevel);
+		return new Point(x, y, mapConfig.coordType, world.maxZoomLevel);
 	}
 
 	getTooltipContent() {
@@ -157,7 +153,7 @@ export default class Location {
 					${this.name} ${this.isClickable() ? "<i class='tiny material-icons'>open_in_browser</i>" : ""}
 				</span>
 			    <div class='tooltip-desc'>
-			   		${this.wikiPage != "" && this.name != this.wikiPage ? ((this.description != "") ? this.description + "</br>" : "") + this.wikiPage : this.description}
+					${this.description ? (this.name != this.wikiPage) ? this.description + "</br>" + this.wikiPage : this.description : "" }
 				</div>
 			   	${this.isClickable() ? "<small class='tooltip-tip'>Click to enter</small>" : ""}`;
 	}
@@ -242,10 +238,6 @@ export default class Location {
 		this.wasVisible = wasVisible;
 	}
 
-	setVisible(visible) {
-		this.visible = visible;
-	}
-
 	// is location visible (with optional passed bounds)
 	isVisible(bounds) {
 		if (this.editing) return true;
@@ -286,7 +278,7 @@ export default class Location {
 		query += `&y=${(this.isPolygon()) ? this.getMaxBounds().maxY: coords[0].y}`;
 		query += `&locwidth=${this.width}&locheight=${this.height}`;
 
-		query += `&displaylevel=${+this.displayLevel + +currentWorld.zoomOffset}`;
+		query += `&displaylevel=${+this.displayLevel + +world.zoomOffset}`;
 		query += `&displaydata=${encodeURIComponent(JSON.stringify(this.displayData))}`;
 		if (this.hasIcon()) { query += `&icontype=${encodeURIComponent(this.icon)}` }
 
@@ -336,10 +328,10 @@ export default class Location {
 		coords = (!Array.isArray(coords)) ? [structuredClone(coords)] : structuredClone(coords);
 
 		coords.forEach(coord => {
-			coord.x = coord.x / nextPowerOfTwo(currentWorld.dbNumTilesX) * currentWorld.dbNumTilesX;
-			coord.y = coord.y / nextPowerOfTwo(currentWorld.dbNumTilesY) * currentWorld.dbNumTilesY;
-			coord.x = coord.x * currentWorld.maxRangeX;
-			coord.y = (1 - coord.y) * currentWorld.maxRangeY;
+			coord.x = coord.x / nextPowerOfTwo(world.dbNumTilesX) * world.dbNumTilesX;
+			coord.y = coord.y / nextPowerOfTwo(world.dbNumTilesY) * world.dbNumTilesY;
+			coord.x = coord.x * world.maxRangeX;
+			coord.y = (1 - coord.y) * world.maxRangeY;
 		})
 
 		return coords;

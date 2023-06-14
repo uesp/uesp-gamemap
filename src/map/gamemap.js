@@ -862,12 +862,11 @@ export default class Gamemap {
 
 		print("adding location..");
 
-		this.setMapLock(MAPLOCK.PARTIAL);
 		let isMarker = locType == LOCTYPES.MARKER;
+		let showTooltip = isMarker;
+		this.setMapLock(isMarker ? MAPLOCK.PARTIAL_NEW_MARKER : locType == LOCTYPES.AREA ? MAPLOCK.PARTIAL_NEW_POLYGON : MAPLOCK.PARTIAL_NEW_LINE );
 		let shape = (isMarker ? "Marker" : locType == LOCTYPES.AREA ? "Polygon" : "Line");
 		let altText = isMarker ? "new_marker" : "";
-
-		print(shape)
 
 		map.pm.enableDraw(shape, {
             markerStyle: {
@@ -875,9 +874,10 @@ export default class Gamemap {
 				alt: altText,
 			},
             continueDrawing: false,
+			tooltips: showTooltip,
         });
 
-		if (isMarker) {
+		if (isMarker) { // hacky stuff to add label to geoman's marker object
 			// get our marker
 			let marker = document.querySelectorAll(`[alt="${altText}"]`)[0];
 			if (marker) {
@@ -889,16 +889,9 @@ export default class Gamemap {
 				let tooltip = document.getElementById(marker.getAttribute('aria-describedby'));
 				tooltip.classList.add("location-label", "new-marker-label", "editing");
 				tooltip.innerText = "New Marker";
-
 			}
 		}
 
-
-
-		// if marker, then find the element with the alt text "joe"
-		// find its tooltip via the "described by" attribute
-		// give it an id of something and a class of location label
-		// then change the contents of the tooltip to "New Marker"
 	}
 
 	getLocations(world) {
@@ -1250,6 +1243,25 @@ export default class Gamemap {
 	================================================*/
 
 	bindMapEvents() {
+
+
+		map.on("pm:create", ({ shape, layer }) => {
+			print(shape);
+			print(layer);
+			let isMarker = shape == "Marker";
+			layer.remove();
+			print(isMarker);
+			let coords = [];
+			layer.getCoordinates().forEach((latLng) => { coords.push(self.toCoords(latLng)) });
+			let location = new Location({
+				locType:  (isMarker) ? LOCTYPES.MARKER : (shape == "Polygon") ? LOCTYPES.AREA : LOCTYPES.LINE,
+				labelPos: (isMarker) ? 4 : null,
+				iconType: (isMarker) ? 1 : null,
+				coords: coords,
+			});
+			print(location);
+			this.edit(location);
+		});
 
 		map.on('resize moveend zoomend', function() {
 
