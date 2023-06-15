@@ -306,6 +306,7 @@ export default class Location {
 		var query = 'action=enable_loc';
 
 		query += `&locid=${this.id}`;
+		query += `&worldid=${this.worldID}`;
 		query += `&db=${gamemap.getMapConfig().database}&visible=0`;
 
 		return query;

@@ -93,29 +93,9 @@
         queryParams.db = gamemap.getMapConfig().database;
 
         getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-
-            // if (!error && data != null) {
-
-            //     if (data.isError) {
-            //         print(data.errorMsg);
-            //         callback((data.errorMsg.includes("permissions")) ? "Insufficient permissions!" : data.errorMsg);
-            //     } else {
-            //         print(data);
-
-            //         // tell save function that we're done saving
-            //         callback();
-            //         modify("revisionID", data.newRevisionId);
-            //         data = modifiedObj;
-            //         if (isLocation) { gamemap.updateLocation(modifiedObj) }
-            //         unsavedChanges = false;
-
-            //     }
-
-            // } else {
-            //     callback(`Error saving ${objectType}!`);
-            // }
-            // });
-
+            if (!error && data) {
+                gamemap.deleteLocation(modifiedObj);
+            }
         });
 
     }
@@ -430,7 +410,7 @@
                 <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
                 <Button text={!unsavedChanges ? "Close" : "Cancel"} icon="close" on:click={cancel}/>
                 {#if isLocation}
-                     <Button text="Delete" icon="delete" type="delete" on:click={() => cancel(true)}/>
+                     <Button text="Delete" icon="delete" type="delete" on:click={doDelete}/>
                 {/if}
 
             </div>

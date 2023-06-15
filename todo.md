@@ -5,10 +5,7 @@ got adding locs working
 ## editing
 - removed delete button on editing worlds
 - got adding locs working (still buggy)
-
--
-
-
+- got delete location working
 
 ## technical
 - added marker snap distance to mapconfig
@@ -27,14 +24,22 @@ got adding locs working
 - this is just for the preview. when the user clicks, it is replaced with a normal marker which i can control properly
 
 
-## problems
-- server doesnt respond with ``comment`` for added or delete events, only edit
->> used for tooltips over the action, but add and delete dont have tooltips
 
 ## todo
 
 
-- fix polygon cyclic thingy error
+
+- get dialogs working
+
+
+
+
+
+
+
+
+
+
 change "editing location" to "adding location" on add
 if adding location, hide delete button
 if adding location, save will dismiss the editor window

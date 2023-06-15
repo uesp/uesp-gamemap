@@ -1014,9 +1014,8 @@ export default class Gamemap {
 		}
 	}
 
-
-	// delete locations on the map
-	deleteLocation() {
+	// delete location from the map
+	deleteLocation(location) {
 
 		// remove existing marker(s)
 		let markers = this.getMarkersFromLocation(location);
@@ -1026,7 +1025,6 @@ export default class Gamemap {
 		let locations = this.getCurrentWorld().locations;
 		delete locations[location.id];
 	}
-
 
 	// update location on the map
 	updateLocation(location) {

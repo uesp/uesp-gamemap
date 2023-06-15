@@ -362,13 +362,13 @@
     #arrow_container {
         position: relative;
         margin-top: 10px;
-        margin-bottom: 18px;
+        margin-bottom: 10px;
     }
 
     .arrow span {
         display: block;
-        width: 1.5vw;
-        height: 1.5vw;
+        width: 1.1rem;
+        height: 1.1rem;
         border-bottom: 5px solid white;
         border-right: 5px solid white;
         transform: rotate(45deg);

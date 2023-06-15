@@ -45,7 +45,7 @@
                 {/if}
 
                 {#if lock == MAPLOCK.PARTIAL_NEW_POLYGON}
-                    Click to add new points. Click the first handle when you're done.
+                    Click to add new points. Close the shape by clicking the first handle when you're done.
                 {/if}
 
                 {#if lock == MAPLOCK.PARTIAL_NEW_LINE}
@@ -82,6 +82,8 @@
         user-select: none;
         cursor: auto;
         border-radius: var(--padding_small);
+        margin-left: 100px;
+        margin-right: 100px;
     }
 
     #watermark:hover {
