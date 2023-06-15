@@ -8,6 +8,13 @@ got adding locs working
 
 -
 
+
+
+## technical
+- added marker snap distance to mapconfig
+- added default polygon/polyline styling to mapconfig
+- made mapconfig global so everything can access it (it makes sense)
+
 ## bug fixes
 - fixed animation for wiki page switch/save delete buttons holding up quitting the edit panel (you can now quit edit panel instantly)
 
@@ -27,6 +34,7 @@ got adding locs working
 ## todo
 
 
+- fix polygon cyclic thingy error
 change "editing location" to "adding location" on add
 if adding location, hide delete button
 if adding location, save will dismiss the editor window
@@ -36,6 +44,10 @@ if adding location, close button is always "cancel"
 - fix edit panel not animating correctl
 - begin getting add locations working
 - fix recent changes list overflowing, not correct height
+
+
+
+- add quick toggles for areas, "is zone" to get rid of outline for eso
 
 
 - 0.5 on all locations client side
@@ -49,6 +61,8 @@ if adding location, close button is always "cancel"
 - make close button in edit panel always close the panel regardless of direct edit or not
 
 
+- tamriel, clockwork city and artaeum are missing from aurbis
+- "this is a header" spam for location list
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
 - convert eso and dawnstar to psueodo normalised in mapconfig
 - hamburger for search bar to show other maps

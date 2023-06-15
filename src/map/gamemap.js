@@ -202,7 +202,6 @@ export default class Gamemap {
 		if(mapState.coords == null || mapState.zoomLevel == null) {
 			// reset map to fill world bounds
 			map.fitBounds(RC.getMaxBounds(), {animate: false});
-			// now actually reset it
 			setTimeout(function() { map.fitBounds(RC.getMaxBounds(), {animate: true}) }, 1);
 		} else {
 			map.setView(this.toLatLngs(mapState.coords), mapState.zoomLevel, {animate: false});
@@ -515,14 +514,15 @@ export default class Gamemap {
 		latLngs = structuredClone(latLngs);
 		coordType = (coordType != null) ? coordType : (latLngs instanceof Point) ? latLngs.coordType : this.mapConfig.coordType;
 
-		// convert latlng to XY coords;
 		if (latLngs.lat != null) {
+			// project latlng to XY coords;
 			coords = RC.project(latLngs);
 		} else if (Array.isArray(latLngs)) {
 			coords = [];
 			latLngs.forEach((latLng) => {
-				coords.push(RC.project(latLng));
+				coords.push(this.toCoords(latLng, this.mapConfig.coordType));
 			});
+			return coords;
 		}
 
 		if (coordType != COORD_TYPES.XY) {
@@ -1251,13 +1251,9 @@ export default class Gamemap {
 			let isMarker = shape == "Marker";
 			layer.remove();
 			print(isMarker);
-			let coords = [];
-			layer.getCoordinates().forEach((latLng) => { coords.push(self.toCoords(latLng)) });
 			let location = new Location({
 				locType:  (isMarker) ? LOCTYPES.MARKER : (shape == "Polygon") ? LOCTYPES.AREA : LOCTYPES.LINE,
-				labelPos: (isMarker) ? 4 : null,
-				iconType: (isMarker) ? 1 : null,
-				coords: coords,
+				coords: self.toCoords(layer.getCoordinates()),
 			});
 			print(location);
 			this.edit(location);
@@ -1666,20 +1662,12 @@ L.Layer.include({
 
 	edit() {
 		this.editing = true;
-		this.pm.enable({ allowEditing: true, snapDistance: 10, draggable: true });
+		this.pm.enable({ allowEditing: true, snapDistance: self.mapConfig.markerSnapDistance, draggable: true });
 		this.on('pm:markerdragend pm:vertexremoved pm:edit', (e) => {
-			if (e.shape == "Marker") {
-				let coords = gamemap.toCoords(e.layer.getLatLng());
-				updateMarkerCoords([coords]);
-			}
-
-			if ((e.shape == "Polygon" || e.shape == "Line") && e.type == "pm:markerdragend" || e.type == "pm:vertexremoved") {
-				let [latLngs, coords] = [e.layer.getCoordinates(), []];
-				latLngs.forEach((latLng) => { coords.push(gamemap.toCoords(latLng)) });
-				updateMarkerCoords(coords);
+			if ((e.shape == "Marker") || ((e.shape == "Polygon" || e.shape == "Line") && (e.type == "pm:markerdragend" || e.type == "pm:vertexremoved"))) {
+				updateMarkerCoords(self.toCoords(e.layer.getCoordinates()));
 			}
 		});
-
 	}
 });
 

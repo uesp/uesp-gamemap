@@ -454,6 +454,12 @@ class GameMap
 
 	public function MakeEditComment($editAction, $oldRecord, $newRecord)
 	{
+
+		if ($editAction == "add location") return "Added location";
+		if ($editAction == "add world")    return "Added world";
+		if ($editAction == "delete location") return "Deleted location";
+		if ($editAction == "delete world")    return "Deleted world";
+
 		$comments = [];
 
 		if ($oldRecord == null || $newRecord == null) return '';

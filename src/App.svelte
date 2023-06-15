@@ -141,6 +141,7 @@
 
 							print("Completed merged map config:")
 							print(mapConfig);
+							window.mapConfig = mapConfig; // make global
 
 							// load map
 							loadGamemap(mapConfig);

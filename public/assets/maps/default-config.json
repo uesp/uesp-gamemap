@@ -12,6 +12,7 @@
     "defaultZoomLevel" : 2,
     "defaultXPos" : 0,
     "defaultYPos" : 0,
+    "markerSnapDistance" : 10, // invisible padding around markers in pixels that let them snap to eachother
 
     // Map coordinate system info
     // 0: XY (Default)
@@ -30,6 +31,16 @@
     "icons": {
         // icon list goes here...
     },
+
+    // Default styling for polygon/polylines
+    "defaultFillColour": "rgba(255,255,255,0.05)",
+    "defaultFillColourHover": "rgba(255,255,255,0.25)",
+
+    "defaultStrokeColour": "rgba(0,0,0,0.5)",
+    "defaultStrokeColourHover": "rgba(0,0,0,1)",
+
+    "defaultStrokeWidth": 1,
+    "defaultStrokeWidthHover": 2,
 
     // Map grid info
     "gridStart" : [0, 0], //cell coords of the top leftmost point (default: 0 , 0);

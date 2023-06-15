@@ -122,8 +122,7 @@
     	queryParams.db = gamemap.getMapConfig().database;
 
         getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-            if (!error && data != null && data.recentChanges != null) {
-
+            if (!error && data?.recentChanges) {
                 // recent changes item object
                 let RecentChangesItem = class {
                     constructor(data) {
@@ -183,13 +182,13 @@
         let width = (window.innerWidth - event.pageX + 150);
         width = (width < 350) ? 350 : width;
         editPanel.style.width = width + "px";
-        setPrefs("editpanelwidth", width);
+        setPrefs("editpanelwidth", width); // save user's edit panel width preference
         PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     }
 </script>
 
-
 <markup>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore missing-declaration -->
     {#if isShown}
          <aside id="edit-panel" bind:this={editPanel} style="width: {$TWEEN * PANEL_WIDTH}px;" out:slideOut>
@@ -212,7 +211,7 @@
                  </div>
              {/if}
 
-             <!-- resize dragger for resizing window -->
+             <!-- resize handle for resizing window -->
              <div id="window-resizer" on:mousedown={onResizerDown}/>
 
              <!-- edit panel appbar -->
@@ -231,7 +230,6 @@
                          <Button text="Edit World" icon="public" on:click={() => (edit(gamemap.getCurrentWorld()))}></Button>
                      </div>
                      <b>Recent Changes</b>
-                     <!-- svelte-ignore a11y-click-events-have-key-events -->
                      <div id="refresh-button" title="Refresh the Recent Changes list" class="waves-effect" on:click={getRecentChanges}><Icon name="refresh" size=20/></div>
                      <div id="recent-changes-container">
                          {#if recentChanges.length > 0}

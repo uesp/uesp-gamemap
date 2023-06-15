@@ -17,26 +17,28 @@ export default class Location {
 
 		// set location type
 		this.locType = data?.locType ?? LOCTYPES.MARKER;
+		let unsavedLocation = (this.id < 0); // used when determining if this a new, unpublished location or not
 
 		// set basic location info
 		this.id = data.id ?? -100;
 		this.name = (this.id > 0) ? data.name : (this.locType == LOCTYPES.MARKER) ? "New Marker" : (this.locType == LOCTYPES.AREA) ? "New Area" : "New Line";
 		this.wikiPage = data?.wikiPage || null;
 		this.description = data?.description || null;
-		this.enabled = data?.visible == 1 && !data.description.includes("teleport dest");
-		this.wasVisible = null;
 		this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : {};
 		this.worldID = data?.worldId ?? world.id;
 		this.destinationID = -(data?.destinationId) || null;
 		this.revisionID = data.revisionId || 0;
 		this.displayLevel = parseFloat(data.displayLevel - world.zoomOffset || 3);
-		this.unsavedLocation = (this.id < 0); // used when determining if this a new, unpublished location or not
-		this.editing = this.unsavedLocation || false; // whether this location is currently being edited;
+		this.editing = unsavedLocation || false; // whether this location is currently being edited
+		this.wasVisible = this.editing ?? null;
 		this.legacy = data;
 		this.bounds = null; // bounds are generated when asked
 
 		// set location icon info
-		this.icon = data.iconType || null;
+		print("printing mapconfig icon")
+		print([...mapConfig.icons]);
+		print(mapConfig);
+		this.icon = (unsavedLocation) ? mapConfig.icons.keys().next() : data.iconType || null;
 		this.width = (this.icon) ? data.width || mapConfig.iconSize : data.width;
 		this.height = (this.icon) ? data.height || mapConfig.iconSize : data.height;
 
@@ -71,46 +73,58 @@ export default class Location {
 
 		// set up label positions
 		this.labelPos = (() => {
-			switch (this?.displayData?.labelPos ?? this.labelPos) {
-				case null, 0:	// legacy: none
-					return 0;	// returns: none
-				case 1: 		// legacy: top left
-					return 4;	// returns: left
-				case 2:			// legacy: top center
-					return 2; 	// returns: top
-				case 3:			// legacy: top right
-					return 6;	// returns: right
-				case 4:			// legacy: left
-					return 4;	// returns: left
-				case 5:			// legacy: center
-					return 5;	// returns: center
-				case 6:			// legacy: right
-					return 6;	// returns: right
-				case 7:			// legacy: bottom left
-					return 4; 	// returns: left
-				case 8:			// legacy: bottom
-					return 8;	// returns: bottom
-				case 9:			// legacy: bottom right
-					return 6;	// returns: right
-				default:		// legacy: auto
-					return 10; 	// returns: auto
+			if (unsavedLocation) {
+				if (this.locType == LOCTYPES.MARKER) {
+					return 6;
+				} else if (this.locType == LOCTYPES.AREA ) {
+					return 5;
+				} else if (this.locType == LOCTYPES.LINE) {
+					return 0;
+				}
+			} else {
+				switch (this?.displayData?.labelPos) {
+					case null, 0:	// legacy: none
+						return 0;	// returns: none
+					case 1: 		// legacy: top left
+						return 4;	// returns: left
+					case 2:			// legacy: top center
+						return 2; 	// returns: top
+					case 3:			// legacy: top right
+						return 6;	// returns: right
+					case 4:			// legacy: left
+						return 4;	// returns: left
+					case 5:			// legacy: center
+						return 5;	// returns: center
+					case 6:			// legacy: right
+						return 6;	// returns: right
+					case 7:			// legacy: bottom left
+						return 4; 	// returns: left
+					case 8:			// legacy: bottom
+						return 8;	// returns: bottom
+					case 9:			// legacy: bottom right
+						return 6;	// returns: right
+					default:		// legacy: auto
+						return 10; 	// returns: auto
+				}
 			}
 		})();
 
 		// set up display info for polygons
 		if (this.isPolygon()){
 
-			if (!this.displayData?.lineWidth) { this.displayData.lineWidth = 0 }
-			if (!this.displayData?.hover) { this.displayData.hover = this.displayData }
+			if (!this.displayData?.lineWidth) { this.displayData.lineWidth = 0 } else {}
+			if (!this.displayData?.hover) { this.displayData.hover = structuredClone(this.displayData) }
 
-			this.fillColour = this.displayData.fillStyle;
-			this.fillColourHover = this.displayData.hover.fillStyle;
+			this.fillColour = this.displayData?.fillStyle ?? mapConfig.defaultFillColour;
+			this.fillColourHover = this.displayData?.hover.fillStyle ?? mapConfig.defaultFillColourHover;
 
-			this.strokeColour = this.displayData.strokeStyle;
-			this.strokeColourHover = this.displayData.hover.strokeStyle;
+			this.strokeColour = this.displayData?.strokeStyle ?? mapConfig.defaultStrokeColour;
+			this.strokeColourHover = this.displayData?.hover.strokeStyle ?? mapConfig.defaultStrokeColourHover;
 
-			this.strokeWidth = this.displayData.lineWidth;
-			this.strokeWidthHover = this.displayData.hover.lineWidth;
+			this.strokeWidth = this.displayData?.lineWidth ?? mapConfig.defaultStrokeWidth;
+			this.strokeWidthHover = this.displayData?.hover?.lineWidth ?? mapConfig.defaultStrokeWidthHover;
+
+			print(this.displayData);
 		}
 	}
 
