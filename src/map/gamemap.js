@@ -858,7 +858,7 @@ export default class Gamemap {
 	================================================*/
 
 
-	addLocation(locType) {
+	addNewLocation(locType) {
 
 		print("adding location..");
 
@@ -1295,27 +1295,21 @@ export default class Gamemap {
 			self.clearTooltips();
 		});
 
-		map.on("contextmenu", function(e){
+		map.on("contextmenu", function(event){
 			if (self.getMapState().world.parentID != null && self.getMapState().world.parentID != -1 ) {
 				if (!self.mapLock) {
 					let parentID = self.getMapState().world.parentID;
 					self.goto(parentID);
 				}
 			}
-		})
-
-		map.on("contextmenu", function (event) {
 			print(event);
 			let target = event.originalEvent.explicitOriginalTarget;
-
 			print(target);
 			if (target != self.mapRoot && target.classList != null && !target.classList.contains("leaflet-interactive")) {
-
 				target.oncontextmenu = null;
-			} else {
-
 			}
-		});
+		})
+
 		map.on("zoom", function() {
 
 			if (!self.mapLock && self.mapLock != "full") {
@@ -1325,8 +1319,12 @@ export default class Gamemap {
 			}
 		})
 
-		map.on("dblclick", function(event){
-			map.panTo(event.latlng, {animate: true});
+		map.on("dblclick", function(event) {
+			let target = event.originalEvent?.target ?? event?.originalEvent?.explicitOriginalTarget;
+			if (target.classList.contains("leaflet-interactive")) {
+				map.panTo(event.latlng, {animate: true});
+			}
+			print(target);
 		})
 
 		map.on("mousemove", function(event) {

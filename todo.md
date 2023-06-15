@@ -1,8 +1,10 @@
 ## last week:
 
+got adding locs working
+
 ## editing
 - removed delete button on editing worlds
-
+- got adding locs working (still buggy)
 
 -
 
@@ -25,7 +27,10 @@
 ## todo
 
 
-
+change "editing location" to "adding location" on add
+if adding location, hide delete button
+if adding location, save will dismiss the editor window
+if adding location, close button is always "cancel"
 
 
 - fix edit panel not animating correctl
@@ -34,6 +39,9 @@
 
 
 - 0.5 on all locations client side
+
+
+- fix chrome bugging out with target event in gamemap
 
 
 - preview colour component

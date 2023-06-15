@@ -78,6 +78,9 @@
 
         // ensure editor window is scrolled to top on load
         setTimeout(function() { editorWindow.scrollTop = 0 }, 1);
+
+        // inform parent edit pane that the editor is loaded now
+        dispatch("loaded", "editor loaded!");
     });
 
 

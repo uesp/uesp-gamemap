@@ -18,7 +18,7 @@
     import LoadingSpinner from './LoadingSpinner.svelte';
     import ListItem from './ListItem.svelte';
     import Icon from './Icon.svelte';
-    import EditorComponent from './EditorComponent.svelte';
+    import EditorComponent from './Editor.svelte';
 
     // import data classes
     import World from "../map/objects/world";
@@ -86,9 +86,9 @@
 
     }
 
-    function addLocation(locType) {
+    function addNewLocation(locType) {
         overlay = locType;
-        gamemap.addLocation(locType);
+        gamemap.addNewLocation(locType);
     }
 
     function cancelNewLocation() {
@@ -101,10 +101,6 @@
     export function dismiss() { show(false) }
 
     function onBackPressed() {
-        if (directEdit) {
-            print("ligma");
-        }
-
         if (isEditing) {
             if (directEdit) {
                 print("should be being dismissed")
@@ -130,18 +126,17 @@
 
                 // recent changes item object
                 let RecentChangesItem = class {
-                    constructor(icon, editID, user, timestamp, locationName, destinationID, worldID,
-                                worldName, comment, action) {
-                        this.icon = (icon != 0) ? icon : null //iconType || null;
-                        this.editID = editID; //id
-                        this.user = user //editUserText;
-                        this.timestamp = timestamp //editTimestamp;
-                        this.locationName = locationName; // locationName
-                        this.destinationID = destinationID //worldHistoryId != 0 ? worldId : -locationId;
-                        this.worldID = worldID //worldId;
-                        this.worldName = worldName //worldDisplayName;
-                        this.comment = comment // editComment;
-                        this.action = action // editAction;
+                    constructor(data) {
+                        this.icon = (data.icon != 0) ? data.icon : null //iconType || null;
+                        this.editID = data.editID; //id
+                        this.user = data.user //editUserText;
+                        this.timestamp = data.timestamp //editTimestamp;
+                        this.locationName = data.locationName; // locationName
+                        this.destinationID = data.destinationID //worldHistoryId != 0 ? worldId : -locationId;
+                        this.worldID = data.worldID //worldId;
+                        this.worldName = data.worldName //worldDisplayName;
+                        this.comment = data.comment // editComment;
+                        this.action = data.action // editAction;
                     }
                 };
 
@@ -150,10 +145,18 @@
                 for (let i = 0; i < data.recentChanges.length; i++) {
                     let change = data.recentChanges[i];
                     let destinationID = (change.worldHistoryId != 0) ? change.worldId : -change.locationId;
-                    let changeItem = new RecentChangesItem(change.iconType, change.id, change.editUserText,
-                                                           change.editTimestamp, change.locationName, destinationID,
-                                                           change.worldId, change.worldDisplayName, change.editComment,
-                                                           change.editAction);
+                    let changeItem = new RecentChangesItem({
+                        icon: change.iconType,
+                        editID: change.id,
+                        user: change.editUserText,
+                        timestamp: change.editTimestamp,
+                        locationName: change.locationName,
+                        destinationID: destinationID,
+                        worldID: change.worldId,
+                        worldName: change.worldDisplayName,
+                        comment: change.editComment,
+                        action: change.editAction,
+                    })
                     tempList.push(changeItem);
                 }
                 recentChanges = tempList;
@@ -174,13 +177,12 @@
     }
 
     // handle resizing the edit pane
-    function onResizerDown(e) { document.addEventListener('mousemove', onResizerDrag);}
-    function onResizerUp(e) { document.removeEventListener('mousemove', onResizerDrag); }
-    function onResizerDrag(e) {
-        let width = (window.innerWidth - e.pageX + 150);
+    function onResizerDown() { document.addEventListener('mousemove', onResizerDrag);}
+    function onResizerUp() { document.removeEventListener('mousemove', onResizerDrag); }
+    function onResizerDrag(event) {
+        let width = (window.innerWidth - event.pageX + 150);
         width = (width < 350) ? 350 : width;
         editPanel.style.width = width + "px";
-        print(width);
         setPrefs("editpanelwidth", width);
         PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     }
@@ -223,9 +225,9 @@
                 {#if !isEditing}
                      <b>Actions</b><br/>
                      <div id="actions-container">
-                         <Button text="Add Marker" icon="add_location_alt" on:click={() => addLocation(LOCTYPES.MARKER)}></Button>
-                         <Button text="Add Area" icon="local_hospital" on:click={() => addLocation(LOCTYPES.AREA)}></Button>
-                         <Button text="Add Path" icon="timeline" on:click={() => addLocation(LOCTYPES.PATH)}></Button>
+                         <Button text="Add Marker" icon="add_location_alt" on:click={() => addNewLocation(LOCTYPES.MARKER)}></Button>
+                         <Button text="Add Area" icon="local_hospital" on:click={() => addNewLocation(LOCTYPES.AREA)}></Button>
+                         <Button text="Add Path" icon="timeline" on:click={() => addNewLocation(LOCTYPES.PATH)}></Button>
                          <Button text="Edit World" icon="public" on:click={() => (edit(gamemap.getCurrentWorld()))}></Button>
                      </div>
                      <b>Recent Changes</b>
@@ -261,7 +263,7 @@
                          {/if}
                      </div>
                 {:else}
-                     <EditorComponent data={editObject} bind:unsavedChanges={unsavedChanges} on:cancel={onBackPressed}/>
+                     <EditorComponent data={editObject} bind:unsavedChanges={unsavedChanges} on:cancel={onBackPressed} on:loaded={() => overlay = null}/>
                 {/if}
              </div>
          </aside>

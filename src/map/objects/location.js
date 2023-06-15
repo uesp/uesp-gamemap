@@ -21,13 +21,13 @@ export default class Location {
 		// set basic location info
 		this.id = data.id ?? -100;
 		this.name = (this.id > 0) ? data.name : (this.locType == LOCTYPES.MARKER) ? "New Marker" : (this.locType == LOCTYPES.AREA) ? "New Area" : "New Line";
-		this.wikiPage = data?.wikiPage ?? null;
-		this.description = data?.description ?? null;
+		this.wikiPage = data?.wikiPage || null;
+		this.description = data?.description || null;
 		this.enabled = data?.visible == 1 && !data.description.includes("teleport dest");
 		this.wasVisible = null;
 		this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : {};
 		this.worldID = data?.worldId ?? world.id;
-		this.destinationID = -(data?.destinationId) ?? null;
+		this.destinationID = -(data?.destinationId) || null;
 		this.revisionID = data.revisionId || 0;
 		this.displayLevel = parseFloat(data.displayLevel - world.zoomOffset || 3);
 		this.unsavedLocation = (this.id < 0); // used when determining if this a new, unpublished location or not
