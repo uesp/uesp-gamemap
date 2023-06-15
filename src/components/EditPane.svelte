@@ -192,7 +192,7 @@
     <!-- svelte-ignore missing-declaration -->
     {#if isShown}
          <aside id="edit-panel" bind:this={editPanel} style="width: {$TWEEN * PANEL_WIDTH}px;" out:slideOut>
-             <!-- editing overlays (for adding paths, areas etc) -->
+             <!-- editing overlay (for adding paths, areas etc) -->
              {#if overlay}
                 {@const locType = Object.keys(LOCTYPES).find(key => LOCTYPES[key] === overlay)}
                  <div id="edit-overlay" in:fade|local={{ duration: 100 }}>
@@ -242,7 +242,6 @@
                                  <div slot="item" let:index let:style {style}>
                                      {@const RCItem = recentChanges[index]}
                                      {@const isWorld = RCItem.destinationID > 0}
-                                     <!-- svelte-ignore missing-declaration -->
                                      <ListItem title={(isWorld) ? RCItem.worldName : RCItem.locationName}
                                                subtitle={(!isWorld) ? RCItem.worldName : null}
                                                destinationID={RCItem.destinationID}
@@ -286,7 +285,7 @@
         height: 100%;
         position: absolute;
         pointer-events: all;
-        z-index: 999999999999;
+        z-index: 999999999999; /* i know, this is stupid */
         display: flex;
         justify-content: center;
         align-content: center;

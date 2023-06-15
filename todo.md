@@ -7,6 +7,9 @@ got adding locs working
 - got adding locs working (still buggy)
 - got delete location working
 
+## polish
+- prompt to ask if you're sure you want to leave the page whilst unsaved changes / new location
+
 ## technical
 - added marker snap distance to mapconfig
 - added default polygon/polyline styling to mapconfig

@@ -48,7 +48,16 @@
     let objectType = (isWorld) ? "world" : "location";
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
     let linkWikiPage = modifiedObj.wikiPage == modifiedObj.name || modifiedObj.wikiPage == modifiedObj.displayName;
-    let boop = false;
+
+    $: { // prevent leaving the page on unsaved changes
+        if (unsavedChanges || modifiedObj?.unsavedLocation) {
+            window.onbeforeunload = function() {
+                return "";
+            }
+        } else {
+            window.onbeforeunload = null;
+        }
+    }
 
     // on editor load
 	onMount(async() => {
@@ -84,19 +93,19 @@
     });
 
 
-    function doDelete() {
+    function doDelete(doConfirm) {
+        doConfirm = (doConfirm != null) ? doConfirm : false;
+        if (!doConfirm) {
+            // visually delete location from the map
+            print("deleting object...");
+            gamemap.deleteLocation(modifiedObj);
+            dispatch("cancel", "cancelled");
 
-        print("deleting object...");
-        //saveButton.$set({ text: "Saving...", icon: "loading" });
-
-        let queryParams = objectify(modifiedObj.getDeleteQuery());
-        queryParams.db = gamemap.getMapConfig().database;
-
-        getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-            if (!error && data) {
-                gamemap.deleteLocation(modifiedObj);
-            }
-        });
+            // do api request to actually delete location
+            getJSON(GAME_DATA_SCRIPT + queryify(objectify(modifiedObj.getDeleteQuery())));
+        } else {
+            alert("warning !! you are deleting a location! this cant be undone!")
+        }
 
     }
 
@@ -113,27 +122,35 @@
         print(query);
         getJSON(query, function(error, data) {
 
-            if (!error && data != null) {
-
-                if (data.isError) {
-                    print(data.errorMsg);
-                    callback((data.errorMsg.includes("permissions")) ? "Insufficient permissions!" : data.errorMsg);
-                } else {
-                    print(data);
-                    // tell save function that we're done saving
-                    callback();
-                    modify("revisionID", data.newRevisionId);
+            if (!error && data) {
+                if (!data?.isError) {
+                    // modify location with new attributes if available
+                    if (modifiedObj?.unsavedLocation) {
+                        print("why")
+                        modify("unsavedLocation", false);
+                        print("isnt this working!")
+                        modify("id", data.newLocId);
+                    }
+                    modify("revisionID", data?.newRevisionId);
                     if (isLocation) { gamemap.updateLocation(modifiedObj) }
+
+                    // tell ui that we're done saving
+                    saveCallback();
+
+                    // overwrite existing object with deep clone of modified one
                     originalObj = Object.assign(Object.create(Object.getPrototypeOf(modifiedObj)), modifiedObj);
                     unsavedChanges = false;
+                } else {
+                    print(data.errorMsg);
+                    saveCallback((data.errorMsg.includes("permissions")) ? "Insufficient permissions!" : data.errorMsg);
                 }
 
             } else {
-                callback(`Error saving ${objectType}!`);
+                saveCallback(`Error saving ${objectType}!`);
             }
         });
 
-        function callback(error) {
+        function saveCallback(error) {
 
             if (error == null) {
                 saveButton.$set({ text: "Done!", icon: "done" });
@@ -209,7 +226,7 @@
         dispatch("cancel", "cancelled");
         canEdit = false;
         hasBeenModified = false;
-        originalObj.setEditing(false);
+        if (isLocation) { originalObj.setEditing(false) }
         gamemap.updateLocation(originalObj);
     }
 
@@ -389,7 +406,6 @@
 
                 <!-- General info -->
                 {#if modifiedObj.id > 0}
-
                     <FormGroup title="Info" icon="info">
                         <InfoTextPair name="{objectType.toSentenceCase()} ID" value={modifiedObj.id} tooltip="This {objectType}'s ID"/>
                         {#if isWorld}<InfoTextPair name="World Name" value={modifiedObj.name} tooltip="This world's internal name"/>{/if}
@@ -409,22 +425,13 @@
             <div class="footer-buttons">
                 <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
                 <Button text={!unsavedChanges ? "Close" : "Cancel"} icon="close" on:click={cancel}/>
-                {#if isLocation}
-                     <Button text="Delete" icon="delete" type="delete" on:click={doDelete}/>
+                {#if isLocation && !modifiedObj.unsavedLocation}
+                     <Button text="Delete" icon="delete" type="delete" on:click={() => doDelete(true)} on:shiftClick={() => doDelete(false)}/>
                 {/if}
 
             </div>
         </footer>
     </div>
-
-    <!-- Delete dialog -->
-	{#if boop}
-        <Modal title="Map Key" id="modal" fixedFooter="true">
-            <div id="map_key_container">
-                <p>hello</p>
-            </div>
-        </Modal>
-    {/if}
 
 </markup>
 

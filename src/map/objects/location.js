@@ -17,28 +17,32 @@ export default class Location {
 
 		// set location type
 		this.locType = data?.locType ?? LOCTYPES.MARKER;
-		let unsavedLocation = (this.id < 0); // used when determining if this a new, unpublished location or not
 
 		// set basic location info
 		this.id = data.id ?? -100;
-		this.name = (this.id > 0) ? data.name : (this.locType == LOCTYPES.MARKER) ? "New Marker" : (this.locType == LOCTYPES.AREA) ? "New Area" : "New Line";
+		this.unsavedLocation = (this.id < 0); // used when determining if this a new, unpublished location or not
+		this.name = (!this.unsavedLocation) ? data.name : (this.locType == LOCTYPES.MARKER) ? "New Marker" : (this.locType == LOCTYPES.AREA) ? "New Area" : "New Line";
+		this.revisionID = data.revisionId || 0;
+		this.worldID = data?.worldId ?? world.id;
+		this.destinationID = -(data?.destinationId) || null;
+		this.legacy = data;
+
+		// display attributes
 		this.wikiPage = data?.wikiPage || null;
 		this.description = data?.description || null;
 		this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : {};
-		this.worldID = data?.worldId ?? world.id;
-		this.destinationID = -(data?.destinationId) || null;
-		this.revisionID = data.revisionId || 0;
 		this.displayLevel = parseFloat(data.displayLevel - world.zoomOffset || 3);
-		this.editing = unsavedLocation || false; // whether this location is currently being edited
 		this.wasVisible = this.editing ?? null;
-		this.legacy = data;
+
+		// editing attributes
+		this.editing = this.unsavedLocation || false; // whether this location is currently being edited
 		this.bounds = null; // bounds are generated when asked
 
 		// set location icon info
 		print("printing mapconfig icon")
 		print([...mapConfig.icons]);
 		print(mapConfig);
-		this.icon = (unsavedLocation) ? mapConfig.icons.keys().next() : data.iconType || null;
+		this.icon = (this.unsavedLocation) ? mapConfig.icons.keys().next() : data.iconType || null;
 		this.width = (this.icon) ? data.width || mapConfig.iconSize : data.width;
 		this.height = (this.icon) ? data.height || mapConfig.iconSize : data.height;
 
@@ -73,15 +77,15 @@ export default class Location {
 
 		// set up label positions
 		this.labelPos = (() => {
-			if (unsavedLocation) {
+			if (this.unsavedLocation) { // if we're a newly created location, return defaults
 				if (this.locType == LOCTYPES.MARKER) {
-					return 6;
+					return 6; // markers' labels should be positioned to the right
 				} else if (this.locType == LOCTYPES.AREA ) {
-					return 5;
+					return 5; // polygons/areas should have centred labels
 				} else if (this.locType == LOCTYPES.LINE) {
-					return 0;
+					return 0; // lines do not have a label
 				}
-			} else {
+			} else { // otherwise, iterate through labelPos and translate into leaflet-accepted label positions
 				switch (this?.displayData?.labelPos) {
 					case null, 0:	// legacy: none
 						return 0;	// returns: none
@@ -123,8 +127,6 @@ export default class Location {
 
 			this.strokeWidth = this.displayData?.lineWidth ?? mapConfig.defaultStrokeWidth;
 			this.strokeWidthHover = this.displayData?.hover?.lineWidth ?? mapConfig.defaultStrokeWidthHover;
-
-			print(this.displayData);
 		}
 	}
 

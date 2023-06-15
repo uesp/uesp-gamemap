@@ -136,15 +136,15 @@ window.getJSON = function getJSON(url, callback) {
 			.then((data) => {
 				try {
 					// remove comments before parsing
-					callback(null, JSON.parse((data.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m))));
+					callback?.(null, JSON.parse((data.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m))));
 				} catch (error) {
 					console.log(error);
-					callback(error, null);
+					callback?.(error, null);
 				}
 			});
 
 	} catch (error){
-		callback(error, null);
+		callback?.(error, null);
 	}
 }
 

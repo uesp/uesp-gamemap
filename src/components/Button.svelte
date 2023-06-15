@@ -5,7 +5,6 @@
 ### Author(s)
 - Thal-J <thal-j@uesp.net> (7th March, 2023) -->
 
-
 <script>
     // import svelte stuff
     import { createEventDispatcher } from "svelte";
@@ -22,22 +21,26 @@
     export let disabled;
     export let type;
     export let bold;
+    export let tooltip;
 
     disabled = (icon == "loading") ? true : disabled;
 
     const dispatch = createEventDispatcher();
 
-    function onClicked() {
-        dispatch("click", "clicked");
+    function onClicked(event) {
+        if (event.shiftKey) {
+            dispatch("shiftClick", "shift clicked");
+        } else {
+            dispatch("click", "clicked");
+        }
     }
 </script>
 
 <markup>
     <!-- svelte-ignore a11y-missing-attribute -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <a class="waves-effect waves-light btn{flat ? "-flat" : ""}{size ? "-"+{size} : ""}" class:disabled={disabled} class:saving={type=="save" && icon == "loading"} class:error={type=="save" && icon == "warning"}
+    <a class="waves-effect waves-light btn{flat ? "-flat" : ""}{size ? "-"+{size} : ""}" class:disabled={disabled} class:saving={type=="save" && icon == "loading"} class:error={type=="save" && icon == "warning"} title={tooltip}
     on:click={onClicked} class:loadingButton={icon == "loading"} class:deleteButton={type == "delete"} class:saveButton={type=="save"} class:bold={bold}>
-
         {#if icon}
             {#if icon != "loading"}
                  <i class="material-icons {iconDirection}">{icon}</i>

@@ -975,9 +975,9 @@ export default class Gamemap {
 
 				print(data);
 
-				if (!error && data?.locations != null) {
+				if (!error && data?.locations[0] != null) {
 					print("Got location info!");
-					let world = self.getWorldFromID(data.locations[0].worldId);
+					let world = self.getWorldFromID(data?.locations[0]?.worldId);
 					print(data.locations[0]);
 					let location = new Location(data.locations[0], world)
 					callback(location);
