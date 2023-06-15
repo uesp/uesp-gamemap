@@ -453,6 +453,11 @@ class GameMap
 	{
 		$comments = [];
 		
+		if ($editAction == "add location") return "Added location";
+		if ($editAction == "add world")    return "Added world";
+		if ($editAction == "delete location") return "Deleted location";
+		if ($editAction == "delete world")    return "Deleted world";
+		
 		if ($oldRecord == null || $newRecord == null) return '';
 		
 		foreach ($oldRecord as $key => $oldValue)
