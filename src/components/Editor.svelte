@@ -38,16 +38,16 @@
     let originalObj = Object.assign(Object.create(Object.getPrototypeOf(data)), data);
     let modifiedObj = Object.assign(Object.create(Object.getPrototypeOf(data)), data);
 
+    let canEdit = true;
     let isLocation = originalObj instanceof Location;
     let isWorld = originalObj instanceof World;
+    let linkWikiPage = modifiedObj.wikiPage == modifiedObj.name || modifiedObj.wikiPage == modifiedObj.displayName;
     let editor;
     let editorWindow;
-    let saveButton;
-    let canEdit = true;
     let hasBeenModified = false;
     let objectType = (isWorld) ? "world" : "location";
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
-    let linkWikiPage = modifiedObj.wikiPage == modifiedObj.name || modifiedObj.wikiPage == modifiedObj.displayName;
+    let saveButton;
 
     $: { // prevent leaving the page on unsaved changes
         if (unsavedChanges || modifiedObj?.unsavedLocation) {

@@ -21,10 +21,10 @@
             <!-- svelte-ignore missing-declaration -->
             {#if lock == MAPLOCK.FULL}
                 <Icon name = "lock" size={16}/>
-                <b title="Map is locked whilst editing worlds.">Map locked.</b>
+                <b title="Map is locked whilst editing worlds.">Map locked</b>
             {:else if lock == MAPLOCK.PARTIAL}
                 <Icon name = "lock" size={16}/>
-                <b title="Map is partially locked whilst editing locations.">Map partially locked.</b>
+                <b title="Map is partially locked whilst editing locations.">Map partially locked</b>
             {:else if lock >= MAPLOCK.PARTIAL_MARKER}
                 <span class="highlight">
                     <Icon name="info" size={16}/>

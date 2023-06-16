@@ -101,6 +101,7 @@
     export function dismiss() { show(false) }
 
     function onBackPressed() {
+        window.onbeforeunload = null;
         if (isEditing) {
             if (directEdit) {
                 print("should be being dismissed")

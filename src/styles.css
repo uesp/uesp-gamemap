@@ -1035,13 +1035,11 @@ textarea.materialize-textarea {
 }
 
 .leaflet-marker-icon.marker-icon {
-	animation: none !important;
 	background-color: var(--editing_opaque) !important;
 	border: solid 2px var(--editing_outline) !important;
 }
 
 .leaflet-marker-icon.marker-icon:hover {
-	animation: none !important;
 	background-color: var(--editing_opaque_light) !important;
 	border-color: var(--editing_outline_light) !important;
 }

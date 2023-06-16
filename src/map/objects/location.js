@@ -31,7 +31,7 @@ export default class Location {
 		this.wikiPage = data?.wikiPage || null;
 		this.description = data?.description || null;
 		this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : {};
-		this.displayLevel = parseFloat(data.displayLevel - world.zoomOffset || 3);
+		this.displayLevel = parseFloat(data.displayLevel - world.zoomOffset || 0);
 		this.wasVisible = this.editing ?? null;
 
 		// editing attributes

@@ -1296,12 +1296,6 @@ export default class Gamemap {
 					self.goto(parentID);
 				}
 			}
-			print(event);
-			let target = event.originalEvent.explicitOriginalTarget;
-			print(target);
-			if (target != self.mapRoot && target.classList != null && !target.classList.contains("leaflet-interactive")) {
-				target.oncontextmenu = null;
-			}
 		})
 
 		map.on("zoom", function() {
@@ -1322,8 +1316,8 @@ export default class Gamemap {
 		})
 
 		map.on("mousemove", function(event) {
-			let target = event.originalEvent.explicitOriginalTarget;
-			if (target != self.mapRoot && target.classList != null && !target.classList.contains("leaflet-interactive")) {
+			let target = event.originalEvent?.target ?? event?.originalEvent?.explicitOriginalTarget;
+			if (target != self.mapRoot && !target?.classList?.contains("leaflet-interactive")) {
 				map.dragging.disable();
 			} else {
 				map.dragging.enable();

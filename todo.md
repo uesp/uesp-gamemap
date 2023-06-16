@@ -7,8 +7,10 @@ got adding locs working
 - got adding locs working (still buggy)
 - got delete location working
 
-## polish
+## polish / small stuff
 - prompt to ask if you're sure you want to leave the page whilst unsaved changes / new location
+- gave tooltips some more padding/breathing room to fit better with the "click to enter" text
+- removed the popup/toast when right clicking when the map is locked - the tutorial text is better anyway
 
 ## technical
 - added marker snap distance to mapconfig
@@ -17,6 +19,11 @@ got adding locs working
 
 ## bug fixes
 - fixed animation for wiki page switch/save delete buttons holding up quitting the edit panel (you can now quit edit panel instantly)
+- fixed bug where double clicking on UI elements would pan the map (also affected toggling grid)
+- fixed a bunch of chrome-only bugs:
+>> fix being able to pan "through" UI elements on chrome (click and drag would drag the map behind)
+>> fix loads of errors happening on only chrome when moving the mouse
+>> fixed error when right clicking on chrome
 
 ## the marker label problem
 - reminder to self: show img in browser
@@ -68,20 +75,20 @@ if adding location, close button is always "cancel"
 
 - make close button in edit panel always close the panel regardless of direct edit or not
 
+- fix not being able to click location dropdown while it's open to close it
 
 - tamriel, clockwork city and artaeum are missing from aurbis
 - "this is a header" spam for location list
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
 - convert eso and dawnstar to psueodo normalised in mapconfig
 - hamburger for search bar to show other maps
-- cell resource state from url
+- cell resource state in/from url
 - fix zoom levels stopping at x.97 instead of going all the way
-- allow both edit polygon and drag at same time
 - add allow long clicking on mobile to open popups
 - add zoom/pan in effects for markers when editing
 - fix centreon going to the wrong place
 - fix clicking out while zoomed in zooming in to parent map as well
-- fix type:blah not working after the icon list to map change
+- fix type:blah not working after the icon list to js map change
 - fix requesting /null in layerbutton
 - add permalink option in location popups
 - redesign location popups (add icon in circle in popup, with title and info to the right of it)
@@ -116,6 +123,7 @@ if adding location, close button is always "cancel"
 - button to go up a map, right click isnt intuitive
 - make readme on how to create the favicon styles for maps for future developers
 - make maps in game release order
+- allow both edit polygon and drag at same time
 - allow shiftclick/ctrl click to add/remove vertices
 - maybe refactor to divicon to allow drag by label
 - drag and edit polygon at the same time
