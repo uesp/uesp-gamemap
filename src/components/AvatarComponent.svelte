@@ -28,7 +28,6 @@
         icon = (icon != null) ? icon = gamemap.getMapConfig().iconPath + icon + ".png" : isWorld ? "public" : (locType != LOCTYPES.PATH) ? "add" : "location_on";
         canChangeIcon = locType != LOCTYPES.PATH && !isWorld;
         iconTooltip = (canChangeIcon) ? icon.includes("/") ? gamemap.getMapConfig().icons.get(icon.replace(/\D/g, "")) : "Add Icon" : (isWorld) ? "World" : "Location";
-        print(`icon tooltip is ${iconTooltip}`);
     }
 
     function change(iconID) {

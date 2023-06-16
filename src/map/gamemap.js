@@ -392,7 +392,7 @@ export default class Gamemap {
 	 * @returns {Object} world - A world object that contains map info for the gamemap.
 	 */
 	getWorldFromID(worldID) {
-		return this.mapWorlds.get(worldID);
+		return this.mapWorlds.get(Number(worldID));
 	}
 
 	/** Get internal world name from a given worldID
