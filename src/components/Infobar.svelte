@@ -45,7 +45,7 @@
                 {/if}
 
                 {#if lock == MAPLOCK.PARTIAL_NEW_POLYGON}
-                    Click to add new points. Close the shape by clicking the first handle when you're done.
+                    Click to add new points. Close the shape when you're done.
                 {/if}
 
                 {#if lock == MAPLOCK.PARTIAL_NEW_LINE}

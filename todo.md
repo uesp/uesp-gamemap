@@ -10,7 +10,8 @@ got adding locs working
 ## polish / small stuff
 - prompt to ask if you're sure you want to leave the page whilst unsaved changes / new location
 - gave tooltips some more padding/breathing room to fit better with the "click to enter" text
-- removed the popup/toast when right clicking when the map is locked - the tutorial text is better anyway
+- removed the popup/toast when right clicking when the map is locked
+- fixed alignment of edit panel buttons (edit world, add location etc), now in a perfect 2x2 grid instead of overlapping
 
 ## technical
 - added marker snap distance to mapconfig
@@ -40,7 +41,8 @@ got adding locs working
 
 ## todo
 
-
+- fix tooltips not showing on icon
+- fix "this is a header" in loc list
 
 - get dialogs working
 

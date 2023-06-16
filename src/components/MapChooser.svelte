@@ -54,7 +54,7 @@
 
         <span class="info_title">
             <Icon name="map" size="medium"></Icon><br>
-            <b style="margin-bottom: 10px;">Choose a game map:</b>
+            <b style="margin-bottom: 10px;">Choose a game map</b>
         </span>
         <p/>
         <Divider direction="horizontal"/>
