@@ -27,7 +27,8 @@ got adding locs working
 >> fixed error when right clicking on chrome
 >> fixed not being able to scroll search/location list on chrome mobile
 >> fixed marker animation (when adding) not animating with cursor properly
-- fixed icon name tooltip for the current icon in map editor not working
+- fixed icon name tooltips not showing up hovering over icons
+- fixed location list showing ``undefined`` world names
 
 ## the marker label problem
 - reminder to self: show img in browser

@@ -137,7 +137,7 @@
 							// sort icon list to be alphabetical
 							let icons = Object.entries(mapConfig.icons).map(( [k, v] ) => ({ [k]: v }));
 							icons.sort((a, b) => Object.values(a)[0].localeCompare(Object.values(b)[0], 'en', {'sensitivity': 'base'}));
-							mapConfig.icons = new Map(icons.map(obj => [Object.keys(obj)[0], Object.values(obj)[0]]));
+							mapConfig.icons = new Map(icons.map(obj => [Number(Object.keys(obj)[0]), Object.values(obj)[0]]));
 
 							print("Completed merged map config:")
 							print(mapConfig);

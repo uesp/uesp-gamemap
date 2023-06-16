@@ -870,7 +870,7 @@ export default class Gamemap {
 
 		map.pm.enableDraw(shape, {
             markerStyle: {
-				icon: this.getIcon(1),
+				icon: this.getIcon(Math.min(...Array.from(mapConfig.icons.keys()))),
 				alt: altText,
 			},
             continueDrawing: false,

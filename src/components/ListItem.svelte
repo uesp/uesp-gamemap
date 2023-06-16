@@ -43,7 +43,7 @@
         <a class='collection-item waves-effect mdc-ripple-surface list-item' class:avatar={icon != null} on:click={onClicked} class:compact={compact}>
             <!-- svelte-ignore missing-declaration -->
             {#if icon}
-                {@const iconTooltip = (icon.includes("/")) ? gamemap.getMapConfig().icons[icon.replace(/\D/g, "")] : (destinationID > 0) ? "World" : "Location"}
+                {@const iconTooltip = (icon.includes("/")) ? gamemap.getMapConfig().icons.get(Number(icon.replace(/\D/g, ""))) : (destinationID > 0) ? "World" : "Location"}
                 {#if icon.includes("/")}
                     <!-- svelte-ignore missing-declaration -->
                     <img class='circle' src={icon} width={gamemap.getMapConfig().iconSize} height={gamemap.getMapConfig().iconSize} title={iconTooltip}/>

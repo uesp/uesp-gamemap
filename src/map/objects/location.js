@@ -42,7 +42,7 @@ export default class Location {
 		print("printing mapconfig icon")
 		print([...mapConfig.icons]);
 		print(mapConfig);
-		this.icon = (this.unsavedLocation) ? mapConfig.icons.keys().next() : data.iconType || null;
+		this.icon = (this.unsavedLocation) ? Math.min(...Array.from(mapConfig.icons.keys())) : data.iconType || null;
 		this.width = (this.icon) ? data.width || mapConfig.iconSize : data.width;
 		this.height = (this.icon) ? data.height || mapConfig.iconSize : data.height;
 
