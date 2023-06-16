@@ -20,10 +20,12 @@ got adding locs working
 ## bug fixes
 - fixed animation for wiki page switch/save delete buttons holding up quitting the edit panel (you can now quit edit panel instantly)
 - fixed bug where double clicking on UI elements would pan the map (also affected toggling grid)
-- fixed a bunch of chrome-only bugs:
+- fixed a bunch of longstanding chrome-only bugs:
 >> fix being able to pan "through" UI elements on chrome (click and drag would drag the map behind)
 >> fix loads of errors happening on only chrome when moving the mouse
 >> fixed error when right clicking on chrome
+>> fixed not being able to scroll search/location list on chrome mobile
+>> fixed marker animation (when adding) not animating with cursor properly
 
 ## the marker label problem
 - reminder to self: show img in browser
@@ -33,7 +35,8 @@ got adding locs working
 - and use css to move the default geoman tooltip ("click to add the marker") to change the text, positioning and make it look like a label
 - this is just for the preview. when the user clicks, it is replaced with a normal marker which i can control properly
 
-
+## problems
+- devgamemap is being listed in search engines, probably should be removed
 
 ## todo
 
@@ -83,7 +86,6 @@ if adding location, close button is always "cancel"
 - convert eso and dawnstar to psueodo normalised in mapconfig
 - hamburger for search bar to show other maps
 - cell resource state in/from url
-- fix zoom levels stopping at x.97 instead of going all the way
 - add allow long clicking on mobile to open popups
 - add zoom/pan in effects for markers when editing
 - fix centreon going to the wrong place

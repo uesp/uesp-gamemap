@@ -322,8 +322,8 @@
     #actions-container {
         padding-top: 4px;
         padding-bottom: 6px;
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     #refresh-button {
