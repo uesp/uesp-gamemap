@@ -4,7 +4,7 @@
  * @summary Contains common functions and constants for the gamemap.
  */
 
-import Point from "./map/objects/point";
+import Point from "./map/point";
 
 /*================================================
 					Constants

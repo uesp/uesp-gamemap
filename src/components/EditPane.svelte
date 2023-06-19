@@ -21,8 +21,8 @@
     import EditorComponent from './Editor.svelte';
 
     // import data classes
-    import World from "../map/objects/world";
-    import Location from "../map/objects/location"
+    import World from "../map/world";
+    import Location from "../map/location"
 
     // constants
     let PANEL_WIDTH = getPrefs("editpanelwidth", 480);

@@ -18,10 +18,10 @@ import './plugins/canvasoverlay';
 import './plugins/edgebuffer';
 
 // import map classes
-import World from "./objects/world.js";
-import MapState from "./objects/mapstate.js";
-import Location from "./objects/location.js";
-import Point from "./objects/point.js";
+import World from "./world.js";
+import MapState from "./mapstate.js";
+import Location from "./location.js";
+import Point from "./point.js";
 
 /*================================================
 					Locals
@@ -558,7 +558,7 @@ export default class Gamemap {
 
 		var latLngs;
 
-		if ( (coords instanceof Point || coords.x) && !Array.isArray(coords)) {
+		if ( (coords instanceof Point || coords?.x) && !Array.isArray(coords)) {
 
 			switch (coords.coordType) {
 				default:
@@ -1023,7 +1023,7 @@ export default class Gamemap {
 
 		// delete location from data as well
 		let locations = this.getCurrentWorld().locations;
-		delete locations[location.id];
+		locations.delete(location.id);
 	}
 
 	// update location on the map
@@ -1242,7 +1242,6 @@ export default class Gamemap {
 
 	bindMapEvents() {
 
-
 		map.on("pm:create", ({ shape, layer }) => {
 			print(shape);
 			print(layer);
@@ -1253,7 +1252,7 @@ export default class Gamemap {
 				locType:  (isMarker) ? LOCTYPES.MARKER : (shape == "Polygon") ? LOCTYPES.AREA : LOCTYPES.LINE,
 				coords: self.toCoords(layer.getCoordinates()),
 			});
-			print(location);
+			this.getCurrentWorld().locations.set(location.id, location);
 			this.edit(location);
 		});
 

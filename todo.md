@@ -1,60 +1,37 @@
-## last week:
 
-got adding locs working
 
-## editing
-- removed delete button on editing worlds
-- got adding locs working (still buggy)
-- got delete location working
+## last week
 
-## polish / small stuff
-- prompt to ask if you're sure you want to leave the page whilst unsaved changes / new location
-- gave tooltips some more padding/breathing room to fit better with the "click to enter" text
-- removed the popup/toast when right clicking when the map is locked
-- fixed alignment of edit panel buttons (edit world, add location etc), now in a perfect 2x2 grid instead of overlapping
 
-## technical
-- added marker snap distance to mapconfig
-- added default polygon/polyline styling to mapconfig
-- made mapconfig global so everything can access it (it makes sense)
+
+
+
 
 ## bug fixes
-- fixed animation for wiki page switch/save delete buttons holding up quitting the edit panel (you can now quit edit panel instantly)
-- fixed bug where double clicking on UI elements would pan the map (also affected toggling grid)
-- fixed a bunch of longstanding chrome-only bugs:
->> fix being able to pan "through" UI elements on chrome (click and drag would drag the map behind)
->> fix loads of errors happening on only chrome when moving the mouse
->> fixed error when right clicking on chrome
->> fixed not being able to scroll search/location list on chrome mobile
->> fixed marker animation (when adding) not animating with cursor properly
-- fixed icon name tooltips not showing up hovering over icons
-- fixed location list showing ``undefined`` world names
 
-## the marker label problem
-- reminder to self: show img in browser
-- incredibly hacky, but i solved it by passing a unique ``alt`` attr to the marker via geoman
-- then get the marker html via that alt when the editing is started
-- add a unique class to both the marker and the tooltip
-- and use css to move the default geoman tooltip ("click to add the marker") to change the text, positioning and make it look like a label
-- this is just for the preview. when the user clicks, it is replaced with a normal marker which i can control properly
+- fixed not being able to add new location on blank worlds (worls that have no locations)
 
-## problems
-- devgamemap is being listed in search engines, probably should be removed
 
 ## todo
 
-- fix tooltips not showing on icon
-- fix "this is a header" in loc list
+
+- add colour preview thing
+- fix location position not changing when icon move
+- fix updating polygon colour doesnt change poly colour
+- fix cant change positions XY and it affects marker live
+- fix moving map on add location adds double location and cant move location anymore
 
 - get dialogs working
 
+- fix + missing on green new handle blob
 
 
 - fix clicking X button "saving" changes unlike cancel button
+- fix cell resources menu going the wrong way
 
 
-
-
+- reimplement eso-specific name shortcuts for locations
+- also ask feedback to map editors for the above
 
 
 change "editing location" to "adding location" on add
@@ -74,6 +51,7 @@ if adding location, close button is always "cancel"
 
 - 0.5 on all locations client side
 
+- reminder about skyrim/beyond skyrim/solstheim tiles from BS guy
 
 - fix chrome bugging out with target event in gamemap
 
@@ -92,6 +70,7 @@ if adding location, close button is always "cancel"
 - cell resource state in/from url
 - add allow long clicking on mobile to open popups
 - add zoom/pan in effects for markers when editing
+- check if ddg updated query for "uesp gamemap" to remove devgamemap
 - fix centreon going to the wrong place
 - fix clicking out while zoomed in zooming in to parent map as well
 - fix type:blah not working after the icon list to js map change

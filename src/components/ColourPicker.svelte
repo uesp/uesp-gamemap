@@ -60,20 +60,6 @@
 		<a id="colour-picker-anchor" bind:this={colourPickerAnchor}></a>
 	</div>
 
-
-    <!-- export let label;
-    export let hint = "Enter text...";
-    export let block = false;
-    export let subtext;
-    export let text;
-    export let value = text;
-    export let tooltip;
-    export let type = "text";
-    export let hideSpinner = type == "float"; -->
-
-
-
-
 </markup>
 
 <style>

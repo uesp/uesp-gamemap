@@ -12,9 +12,9 @@
     import { onMount } from 'svelte';
 
     // import data classes
-    import World from "../map/objects/world";
-    import Location from "../map/objects/location";
-    import Point from "../map/objects/point";
+    import World from "../map/world";
+    import Location from "../map/location";
+    import Point from "../map/point";
 
     // import UI components
     import Button from "./Button.svelte";
@@ -26,6 +26,7 @@
     import Switch from "./Switch.svelte";
     import ColourPicker from "./ColourPicker.svelte";
     import AvatarComponent from "./AvatarComponent.svelte";
+    import ColourPreview from "./ColourPreview.svelte";
     import Modal from "./Modal.svelte";
 
     const dispatch = createEventDispatcher();
@@ -126,9 +127,7 @@
                 if (!data?.isError) {
                     // modify location with new attributes if available
                     if (modifiedObj?.unsavedLocation) {
-                        print("why")
                         modify("unsavedLocation", false);
-                        print("isnt this working!")
                         modify("id", data.newLocId);
                     }
                     modify("revisionID", data?.newRevisionId);
@@ -173,6 +172,7 @@
             // update svelte reactivity
             modifiedObj[property] = value;
             modifiedObj = modifiedObj;
+            originalObj = originalObj;
 
             print("before edit");
             print(data);
@@ -223,11 +223,15 @@
     }
 
     function cancel() {
-        dispatch("cancel", "cancelled");
         canEdit = false;
         hasBeenModified = false;
         if (isLocation) { originalObj.setEditing(false) }
-        gamemap.updateLocation(originalObj);
+        if (isLocation && originalObj?.unsavedLocation) {
+            gamemap.deleteLocation(originalObj)
+        } else {
+            gamemap.updateLocation(originalObj);
+        }
+        dispatch("cancel", "cancelled");
     }
 
 </script>
@@ -355,6 +359,9 @@
                      <FormGroup title="Display" icon="light_mode">
 
                         {#if modifiedObj.isPolygon()}
+
+                            <ColourPreview/>
+
                             <ColourPicker
                                 label="Fill colour"
                                 colour = {modifiedObj.fillColour}
@@ -396,7 +403,7 @@
                                         hint="X Position"
                                         tooltip="X coordinate for this location"
                                         type="float"
-                                        on:change={(e) => {modify("coords", new Point(e.detail, modifiedObj.coords[0].y))}}/>
+                                        on:change={(e) => {modify("coords", new Point(0.6, 0.5))}}/>
                                 <Textbox text={modifiedObj.coords[0].y} hint="Y Position" tooltip="Y coordinate for this location" type="float" />
                             </div>
                         {/if}

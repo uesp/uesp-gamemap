@@ -31,7 +31,7 @@ export default class Location {
 		this.wikiPage = data?.wikiPage || null;
 		this.description = data?.description || null;
 		this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : {};
-		this.displayLevel = parseFloat(data.displayLevel - world.zoomOffset || 0);
+		this.displayLevel = (this.unsavedLocation) ? Number((gamemap.getCurrentZoom()).toFixed()) : parseFloat(data.displayLevel - world.zoomOffset || 0);
 		this.wasVisible = this.editing ?? null;
 
 		// editing attributes
@@ -42,7 +42,7 @@ export default class Location {
 		print("printing mapconfig icon")
 		print([...mapConfig.icons]);
 		print(mapConfig);
-		this.icon = (this.unsavedLocation) ? Math.min(...Array.from(mapConfig.icons.keys())) : data.iconType || null;
+		this.icon = (this.unsavedLocation && this.locType == LOCTYPES.MARKER) ? Math.min(...Array.from(mapConfig.icons.keys())) : data.iconType || null;
 		this.width = (this.icon) ? data.width || mapConfig.iconSize : data.width;
 		this.height = (this.icon) ? data.height || mapConfig.iconSize : data.height;
 
