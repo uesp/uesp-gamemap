@@ -106,7 +106,7 @@ class GameMap
 			// Error on missing/unknown database
 		if ($this->dbPrefix === null)
 		{
-			if ($this->action != "get_maps" && $this->action != "create_tables")
+			if ($this->action != "get_maps")
 			{
 				$this->reportError("Error: Missing database in query parameters!");
 				$this->writeJson();
