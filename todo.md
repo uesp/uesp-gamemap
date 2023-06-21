@@ -8,16 +8,11 @@ bug bash, finish missing editing features
 - therefore fixed cancelling adding marker/location
 - fixed map selection menu not working
 - fixed cell resource dropdown being aligned the wrong way (was going off the screen)
-
+- fixed icon bar buttons overlapping when edit panel was open
 
 ## polish
 - restore map load animation (slow background fade)
 - fixed edit panel not animating correctly (didnt slide shut)
-
-
-
-
-
 
 
 
@@ -31,6 +26,12 @@ bug bash, finish missing editing features
 - fix moving map on add location adds double location and cant move location anymore
 
 - get dialogs working
+
+- fix focus on svelte elements mean cant move map (mobile especially)
+
+- fix loading into new worlf while zoomed in not removing old locations
+
+- fix on edit: adding identical icon when map move on top of added/adding icon
 
 - fix + missing on green new handle blob
 
@@ -69,6 +70,8 @@ if adding location, close button is always "cancel"
 
 - fix not being able to click location dropdown while it's open to close it
 
+- fix num up and down things appearing on floats or on invis numbers on chrome
+
 
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
 - convert eso and dawnstar to psueodo normalised in mapconfig
@@ -76,7 +79,6 @@ if adding location, close button is always "cancel"
 - cell resource state in/from url
 - add allow long clicking on mobile to open popups
 - add zoom/pan in effects for markers when editing
-- check if ddg updated query for "uesp gamemap" to remove devgamemap
 - fix centreon going to the wrong place
 - fix clicking out while zoomed in zooming in to parent map as well
 - fix type:blah not working after the icon list to js map change
@@ -91,9 +93,7 @@ if adding location, close button is always "cancel"
 - fix location list dropdown not being centred properly
 - refactor gamemap.js to Gamemap.svelte and use realtime svelte features
 - make embeded map watermark actually open in new tab
-- fix edit pane causing iconbar to overlap
 - cache world list for location switcher in svelte stores
-- fix "this is a header" for location list
 - make going to location centre zoom dynamically instead of always zoom level 5
 - add continuous zoom, markers popup on zoom rather than zoomend
 - add way to show popups on centreon, optional param

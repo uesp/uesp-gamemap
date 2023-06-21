@@ -129,29 +129,94 @@ class GameMap
 		}
 
 		session_name('uesp_net_wiki5_session');
-		session_set_cookie_params(3600*24*10, '/', '.uesp.net', false);
+		session_set_cookie_params(3600*24*30, '/', '.uesp.net', false);
 		$this->startedSession = session_start();
 
 		if (!$this->startedSession) error_log("Failed to start session!");
 
 		$userId = UespMemcachedSession::readKey('wsUserID');
+		$groups = null;
 
 		if ($userId > 0)
 		{
-			if (UespMemcachedSession::readKey('UESP_AllMap_canEdit') === 1)
+			$groups = $this->loadUserWikiGroups($userId);
+		}
+		// If session is not available, check the wiki token and user ID
+		else
+		{
+			$userId = $_COOKIE['uesp_net_wiki5UserID'];
+			$token = $_COOKIE['uesp_net_wiki5Token'];
+			$groups = $this->loadUserWikiGroupsFromToken($userId, $token);
+		}
+
+		if ($groups)
+		{
+			if ($groups['cartographer'])
 			{
 				$this->canEdit = true;
 				$this->canEditESO = true;
 				$this->canEditTR = true;
 				$this->canEditOther = true;
 			}
-
-			if (UespMemcachedSession::readKey('UESP_EsoMap_canEdit') === 1) $this->canEditESO = true;
-			if (UespMemcachedSession::readKey('UESP_TRMap_canEdit') === 1) $this->canEditTR = true;
-			if (UespMemcachedSession::readKey('UESP_OtherMap_canEdit') === 1) $this->canEditOther = true;
+				//TODO: Remove old groups once merged into cartographer
+			if ($groups['esocartographer'])
+			{
+				$this->canEditESO = true;
+			}
+			if ($groups['trcartographer'])
+			{
+				$this->canEditTR = true;
+			}
+			if ($groups['othercartographer'])
+			{
+				$this->canEditOther = true;
+			}
 		}
+
 	}
 
+	public function loadUserWikiGroupsFromToken($userId, $token)
+	{
+		if ($userId == null || $userId === '') return false;
+		if ($token == null || $token === '') return false;
+
+		$userId = intval($userId);
+		if ($userId <= 0) return false;
+
+		$query = "SELECT * FROM uesp_net_wiki5.user WHERE user_id='$userId';";
+		$result = $this->db->query($query);
+		if (!$result) return false;
+
+		$user = $result->fetch_assoc();
+		if ($user == null) return false;
+
+		if ($user['user_token'] != $token) return false;
+
+		return $this->loadUserWikiGroups($userId);
+	}
+
+
+	public function loadUserWikiGroups($userId)
+	{
+		$userId = intval($userId);
+		if ($userId <= 0) return false;
+
+		$query = "SELECT * FROM uesp_net_wiki5.user_groups WHERE ug_user='$userId';";
+		$result = $this->db->query($query);
+		if (!$result) return false;
+
+		$groups = [];
+
+		while ($perm = $result->fetch_assoc())
+		{
+			$group = $perm['ug_group'];
+			$expires = $perm['ug_expires'];
+			if ($expires == null) $expires = true;
+			$groups[$group] = $expires;
+		}
+
+		return $groups;
+	}
 
 	public function canEditMap($dbPrefix)
 	{
