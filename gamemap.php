@@ -106,9 +106,12 @@ class GameMap
 			// Error on missing/unknown database
 		if ($this->dbPrefix === null)
 		{
-			$this->reportError("Error: Missing database in query parameters!");
-			$this->writeJson();
-			die();
+			if ($this->action != "get_maps" && $this->action != "create_tables")
+			{
+				$this->reportError("Error: Missing database in query parameters!");
+				$this->writeJson();
+				die();
+			}
 		}
 		
 		session_name('uesp_net_wiki5_session');
