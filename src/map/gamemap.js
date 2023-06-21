@@ -202,12 +202,12 @@ export default class Gamemap {
 		tileLayer.addTo(map);
 
 		// set map view
-		if(mapState.coords == null || mapState.zoomLevel == null) {
+		if(mapState.coords == null || mapState.zoom == null) {
 			// reset map to fill world bounds
 			map.fitBounds(RC.getMaxBounds(), {animate: false});
 			setTimeout(function() { map.fitBounds(RC.getMaxBounds(), {animate: true}) }, 1);
 		} else {
-			map.setView(this.toLatLngs(mapState.coords), mapState.zoomLevel, {animate: false});
+			map.setView(this.toLatLngs(mapState.coords), mapState.zoom, {animate: false});
 		}
 
 		// set background colour
@@ -243,9 +243,9 @@ export default class Gamemap {
 		let mapState = new MapState();
 
 		if (getURLParams().has("zoom")){
-			mapState.zoomLevel = getURLParams().get("zoom");
+			mapState.zoom = getURLParams().get("zoom");
 		} else {
-			mapState.zoomLevel = this.mapConfig.defaultZoomLevel;
+			mapState.zoom = this.mapConfig.defaultZoomLevel;
 		}
 
 		if (getURLParams().has("world")) {
@@ -288,7 +288,7 @@ export default class Gamemap {
 		let x = Number(this.toCoords(map.getCenter()).x, this.mapConfig.coordType).toFixed(3);
 		let y = Number(this.toCoords(map.getCenter()).y, this.mapConfig.coordType).toFixed(3);
 		mapState.coords = (this.mapConfig.coordType == COORD_TYPES.NORMALISED || this.mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? [x, y] : [Math.floor(x), Math.floor(y)];
-		mapState.zoomLevel = parseFloat(map.getZoom().toFixed(3));
+		mapState.zoom = parseFloat(map.getZoom().toFixed(3));
 		mapState.world = this.getWorldFromID(this.currentWorldID);
 		this.currentMapState = mapState;
 
@@ -311,7 +311,7 @@ export default class Gamemap {
 		}
 		mapLink += 'x=' + mapState.coords[0];
 		mapLink += '&y=' + mapState.coords[1];
-		mapLink += '&zoom=' + mapState.zoomLevel;
+		mapLink += '&zoom=' + mapState.zoom;
 		if (mapState.showGrid) {
 			mapLink += '&grid=' + mapState.showGrid;
 		}
@@ -495,7 +495,7 @@ export default class Gamemap {
 					self.clearLocations();
 					let mapState = new MapState(coords);
 					let world = self.getWorldFromID(worldID);
-					print("Going to world... " + world.displayName + " (" + world.id + ").");
+					print(`Going to world... ${world.displayName} (${world.id});`);
 					print(world);
 					mapState.world = world;
 					self.setMapState(mapState);

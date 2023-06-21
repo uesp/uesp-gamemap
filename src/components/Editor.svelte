@@ -431,7 +431,7 @@
             </div>
             <div class="footer-buttons">
                 <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
-                <Button text={!unsavedChanges ? "Close" : "Cancel"} icon="close" on:click={cancel}/>
+                <Button text={!unsavedChanges && !modifiedObj?.unsavedLocation ? "Close" : "Cancel"} icon="close" on:click={cancel}/>
                 {#if isLocation && !modifiedObj.unsavedLocation}
                      <Button text="Delete" icon="delete" type="delete" on:click={() => doDelete(true)} on:shiftClick={() => doDelete(false)}/>
                 {/if}

@@ -8,7 +8,6 @@
 <script>
     // import svelte core stuff
     import { fade } from 'svelte/transition';
-    import { tweened } from 'svelte/motion';
 	import { cubicInOut } from 'svelte/easing';
     import VirtualList from 'svelte-tiny-virtual-list';
 
@@ -28,7 +27,6 @@
     let PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     const ANIMATION_DURATION = 350;
     const RESIZE_OBSERVER = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
-    const TWEEN = tweened(0, {duration: ANIMATION_DURATION, easing: cubicInOut } );
 
     // state vars
     export let isShown = false;
@@ -64,10 +62,7 @@
             isShown = true;
             setTimeout(function() {
                 RESIZE_OBSERVER.observe(editPanel);
-                TWEEN.set(1);
-                if (recentChanges.length == 0) {
-                    getRecentChanges();
-                }
+                if (recentChanges.length == 0) { getRecentChanges() }
             }, 1);
 
             // check if current edit object is null
@@ -96,9 +91,6 @@
         gamemap.getMapObject().pm.disableDraw();
         gamemap.setMapLock(MAPLOCK.NONE);
     }
-
-    export function edit(object) { show(object) }
-    export function dismiss() { show(false) }
 
     function onBackPressed() {
         window.onbeforeunload = null;
@@ -168,14 +160,6 @@
 		});
     }
 
-    // slide out animation
-    function slideOut() {
-        TWEEN.set(0);
-        gamemap.getMapObject().invalidateSize();
-        print($TWEEN);
-        return { ANIMATION_DURATION, css: () => `width: ${$TWEEN * PANEL_WIDTH}`};
-    }
-
     // handle resizing the edit pane
     function onResizerDown() { document.addEventListener('mousemove', onResizerDrag);}
     function onResizerUp() { document.removeEventListener('mousemove', onResizerDrag); }
@@ -186,13 +170,30 @@
         setPrefs("editpanelwidth", width); // save user's edit panel width preference
         PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     }
+
+    // slide in/out animation
+    function slide() {
+        gamemap.getMapObject().invalidateSize();
+        return {
+            duration: ANIMATION_DURATION,
+            easing: cubicInOut,
+            css: (t) => {
+                if (t == 1) { editPanel.style.width = `${PANEL_WIDTH}px`;}
+                return `width: ${PANEL_WIDTH * t}px; opacity: ${t};)`;
+            }
+        }
+    }
+
+    // convenience method to map to show()
+    export function edit(object) { show(object) }
+    export function dismiss() { show(false) }
 </script>
 
 <markup>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore missing-declaration -->
     {#if isShown}
-         <aside id="edit-panel" bind:this={editPanel} style="width: {$TWEEN * PANEL_WIDTH}px;" out:slideOut>
+         <aside id="edit-panel" bind:this={editPanel} in:slide out:slide>
              <!-- editing overlay (for adding paths, areas etc) -->
              {#if overlay}
                 {@const locType = Object.keys(LOCTYPES).find(key => LOCTYPES[key] === overlay)}
@@ -220,7 +221,7 @@
              icon={isEditing && !directEdit ? "arrow_back" : "close"} on:backClicked={onBackPressed} tooltip={unsavedChanges ? "You have unsaved changes" : null}/>
 
              <!-- edit panel content -->
-             <div id="edit-panel-content" in:fade={{duration: ANIMATION_DURATION / 2}} out:fade={{duration: ANIMATION_DURATION / 2}} bind:this={editPanelContent} class:isEditing={isEditing}>
+             <div id="edit-panel-content" bind:this={editPanelContent} class:isEditing={isEditing}>
 
                 {#if !isEditing}
                      <b>Actions</b><br/>
@@ -271,13 +272,13 @@
 <style>
     #edit-panel {
         background-color: var(--surface);
-        width: 0px;
         height: 100%;
         z-index: 100;
         position: relative;
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
         display: flex;
         flex-direction: column;
+        width: 0px;
     }
 
     #edit-overlay {

@@ -193,7 +193,7 @@
 		isLoaded = true;
 		showLocationList = false;
 		showLayerSwitcher = (world.layers.length > 1 || world.hasGrid());
-		onZoom(mapState.zoomLevel);
+		onZoom(mapState.zoom);
 		gridEnabled = mapState.showGrid;
 	}
 

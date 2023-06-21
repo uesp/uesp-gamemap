@@ -2,7 +2,6 @@
 bug bash, finish missing editing features
 
 ## bug fixes
-
 - fixed not being able to add new location on blank worlds (worls that have no locations)
 - fixed not deleting locations properly ( was using ``delete locations[key]`` instead of ``locations.delete(key)`` )
 >> didnt work with negative numbers (-100), so cancelling wasnt working
@@ -12,7 +11,7 @@ bug bash, finish missing editing features
 
 ## polish
 - restore map load animation (slow background fade)
-
+- fixed edit panel not animating correctly (didnt slide shut)
 
 
 
