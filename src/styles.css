@@ -680,7 +680,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	left: 0px;
 	right: 0px;
 	background-color: var(--background_dark);
-	transition: background-color ease 100ms;
+	transition: background-color ease 900ms;
 	animation: fade-in 0.9s;
 	z-index: 0;
 	line-height: 1.5;

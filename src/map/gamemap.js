@@ -39,7 +39,7 @@ let RC; // RasterCoords instance, for converting leaflet latlngs to XY pixel coo
 export default class Gamemap {
 	/**
 	 * Interactive map viewer class.
-	 * @param {String} mapRootID - The root gamemap element in which the map is displayed
+	 * @param {String} mapRoot - The root gamemap element in which the map is displayed
 	 * @param {Object} mapConfig - The map config object, controls the type, state, and view of the map
 	 * @param {Object} mapCallbacks - The callbacks object, to optionally receive events back from the gamemap
 	 */
@@ -113,6 +113,9 @@ export default class Gamemap {
 
 		// create root map object
 		map = L.map(this.mapRoot.id, mapOptions);
+
+		// fix background colour transition delay
+		self.mapRoot.style.transition = "background-color ease 100ms";
 
 		// create inital mapState object
 		let mapState = new MapState();

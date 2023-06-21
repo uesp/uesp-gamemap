@@ -10,8 +10,8 @@ bug bash, finish missing editing features
 - fixed map selection menu not working
 
 
-
 ## polish
+- restore map load animation (slow background fade)
 
 
 
