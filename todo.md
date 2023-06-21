@@ -1,15 +1,24 @@
-
-
 ## last week
-
-
-
-
-
+bug bash, finish missing editing features
 
 ## bug fixes
 
 - fixed not being able to add new location on blank worlds (worls that have no locations)
+- fixed not deleting locations properly ( was using ``delete locations[key]`` instead of ``locations.delete(key)`` )
+>> didnt work with negative numbers (-100), so cancelling wasnt working
+- therefore fixed cancelling adding marker/location
+- fixed map selection menu not working
+
+
+
+## polish
+
+
+
+
+
+
+
 
 
 ## todo
@@ -45,7 +54,7 @@ if adding location, close button is always "cancel"
 - fix recent changes list overflowing, not correct height
 
 
-
+- use similar centre of polygon algorithm as leaflet does for locations/latlng conversion
 - add quick toggles for areas, "is zone" to get rid of outline for eso
 
 
@@ -62,8 +71,7 @@ if adding location, close button is always "cancel"
 
 - fix not being able to click location dropdown while it's open to close it
 
-- tamriel, clockwork city and artaeum are missing from aurbis
-- "this is a header" spam for location list
+
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
 - convert eso and dawnstar to psueodo normalised in mapconfig
 - hamburger for search bar to show other maps
@@ -83,7 +91,6 @@ if adding location, close button is always "cancel"
 >> and add middle click on listitems to open in a new tab w/ centreon link
 - fix recent changes list overflowing downwards
 - fix location list dropdown not being centred properly
-- make polygon edit handles have high zindex
 - refactor gamemap.js to Gamemap.svelte and use realtime svelte features
 - make embeded map watermark actually open in new tab
 - fix edit pane causing iconbar to overlap
@@ -108,36 +115,30 @@ if adding location, close button is always "cancel"
 - button to go up a map, right click isnt intuitive
 - make readme on how to create the favicon styles for maps for future developers
 - make maps in game release order
-- allow both edit polygon and drag at same time
-- allow shiftclick/ctrl click to add/remove vertices
+
+- Skyrim and Solstheim at 512 x 512 per cell
+> https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=drive_link
+
+## todo maps (future)
+- skyrim minecraft thing
+- cave interior maps for skyrim, ob, mw
+- some kind of tutorial on first non-cookie load to tell user how to use ui
+- divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)
+- localisations for maps (local json and server database)
+- an undo button for deleting/editing locations and worlds
 - maybe refactor to divicon to allow drag by label
 - drag and edit polygon at the same time
 >> https://jsfiddle.net/Razielwar/hmqgn69r/14/
-- be able to copy a map pin and place the copy (for those times when you've got three, four, eight of the same sub-quest steps to put on the map)
-- be able to use a search function when looking at the list of icons when placing a map pin (for those times when you remember "I think there was an icon with the word 'shrine' in it, but I can't remember what it was." (answer: rededication shrine, for which I have to search the whole list until I see the picture)).
+- allow shiftclick/ctrl click to add/remove vertices
+- be able to search the icon list in editor
 
-
-## dave stuff:
-- cave interior maps for skyrim, ob, mw
-- skyrim minecraft thing
-
-https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=drive_link
-Skyrim and Solstheim at 512 x 512 per cell
-
-
-feedback:
-- divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)
-- some kind of tutorial on first non-cookie load to tell user how to use ui
-- an undo button for deleting/editing locations and worlds
-- localisations for maps (local json and server database)
-
-## todo (future)
+## todo future general
 - wiki features
 - email thing
 - starfield wiki app
 - starfield map
 
-app :
+app:
 - cross platform
 - cross wiki
 - integrate maps

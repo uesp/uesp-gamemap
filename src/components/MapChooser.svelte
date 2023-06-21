@@ -21,7 +21,9 @@
     let queryParams = {};
 	queryParams.action = "get_maps";
     getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-        if (!error && data != null) {
+        if (!error && data) {
+
+            print(data);
 
             // sort data in alphabetical order
             const sortObject = o => Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {})

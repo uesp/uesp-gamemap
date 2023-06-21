@@ -26,7 +26,7 @@
             <div class="colour-preview"></div>
         </div>
 
-        <small class="label">Interactive Preview</small>
+        <small class="label">Preview</small>
     </div>
 
 </markup>

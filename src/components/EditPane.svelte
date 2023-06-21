@@ -40,7 +40,7 @@
     let directEdit = null;
     let unsavedChanges = false;
     $: isEditing = editObject != null && (editObject instanceof Location) || (editObject instanceof World);
-
+    $: appbarTitle = `${!isEditing ? "Map Editor" : ((editObject.id > 0) ? "Editing" : "Adding") + " " + ((editObject instanceof World) ? "World" : "Location")} ${unsavedChanges ? "*" : ""}`;
     // public function to show/hide the panel, or edit an object
     export function show(data) {
 
@@ -49,7 +49,7 @@
 
         if (data) {
 
-            // determine whether we are directly editing an object, or just editing from RC
+            // determine whether we are directly editing an object, or just editing from recent changes
             if (directEdit == null) {
                 if (!isShown && data) {
                     if (data == true) {
@@ -216,7 +216,7 @@
              <div id="window-resizer" on:mousedown={onResizerDown}/>
 
              <!-- edit panel appbar -->
-             <AppBar title={!isEditing ? "Map Editor" : ((unsavedChanges) ? "* " : "") + "Editing " + ((editObject instanceof World) ? "World" : "Location")} subtitle={isEditing ? (editObject instanceof World) ? editObject.displayName + " ("+editObject.name+")" : editObject.name : null}
+             <AppBar title={appbarTitle} subtitle={isEditing ? (editObject instanceof World) ? editObject.displayName + " ("+editObject.name+")" : editObject.name : null}
              icon={isEditing && !directEdit ? "arrow_back" : "close"} on:backClicked={onBackPressed} tooltip={unsavedChanges ? "You have unsaved changes" : null}/>
 
              <!-- edit panel content -->
