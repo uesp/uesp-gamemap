@@ -7,6 +7,7 @@ bug bash, finish missing editing features
 >> didnt work with negative numbers (-100), so cancelling wasnt working
 - therefore fixed cancelling adding marker/location
 - fixed map selection menu not working
+- fixed cell resource dropdown being aligned the wrong way (was going off the screen)
 
 
 ## polish
@@ -48,8 +49,6 @@ if adding location, save will dismiss the editor window
 if adding location, close button is always "cancel"
 
 
-- fix edit panel not animating correctl
-- begin getting add locations working
 - fix recent changes list overflowing, not correct height
 
 

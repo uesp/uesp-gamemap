@@ -34,7 +34,8 @@
         }
 
         if (!isMobile) {
-            let iconBarWidth = screenWidth - (searchPaneWidth + iconBarPrimary.clientWidth + 19);
+
+            let iconBarWidth = screenWidth - (searchPaneWidth + (screenWidth - iconBarPrimary.getBoundingClientRect().left) + 19);
             iconBarSecondary.style.width = iconBarWidth + "px";
         }
     }
