@@ -530,12 +530,10 @@ export default class Gamemap {
 
 		if (coordType != COORD_TYPES.XY) {
 			if (coordType == COORD_TYPES.NORMALISED || coordType == COORD_TYPES.PSEUDO_NORMALISED) {
-				if (coords.x > 1.5 || coords.y > 1.5) { // make sure to only convert non-normalised coordinates
-					// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
-					coords.x = (coords.x / this.mapImage.width).toFixed(3);
-					coords.y = (coords.y / this.mapImage.height).toFixed(3);
-					coords.coordType = COORD_TYPES.NORMALISED;
-				}
+				// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
+				coords.x = (coords.x / this.mapImage.width).toFixed(3);
+				coords.y = (coords.y / this.mapImage.height).toFixed(3);
+				coords.coordType = COORD_TYPES.NORMALISED;
 			} else if (coordType == COORD_TYPES.WORLDSPACE) {
 				// get current map world pixel position values
 				let world = this.getCurrentWorld();

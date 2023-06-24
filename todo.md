@@ -15,7 +15,9 @@ bug bash, finish missing editing features
 - fixed edit panel not animating correctly (didnt slide shut)
 - markers that are being edited now have "click to drag" tooltip as a mini tutorial
 
-
+## technical
+- upgraded to svelte 4, which came out last week
+- should result in smaller bundle size
 
 ## todo
 
