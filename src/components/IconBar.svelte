@@ -43,11 +43,11 @@
 </script>
 
 <markup>
-    <div class="icon_bar_primary" in:fly={{ x: 5, duration: 250 }} out:fade={{duration: 75}} bind:this={iconBarPrimary} on:contextmenu={(e) => e.stopPropagation()}>
+    <div class="icon_bar_primary" in:fly|global={{ x: 5, duration: 250 }} out:fade|global={{duration: 75}} bind:this={iconBarPrimary} on:contextmenu={(e) => e.stopPropagation()}>
         <slot name="primary"></slot>
     </div>
 
-    <div class="icon_bar_secondary" in:fly={{ x: 5, duration: 250 }} out:fade={{duration: 75}} bind:this={iconBarSecondary} on:contextmenu={(e) => e.stopPropagation()}>
+    <div class="icon_bar_secondary" in:fly|global={{ x: 5, duration: 250 }} out:fade|global={{duration: 75}} bind:this={iconBarSecondary} on:contextmenu={(e) => e.stopPropagation()}>
         <slot name="secondary"></slot>
     </div>
 </markup>

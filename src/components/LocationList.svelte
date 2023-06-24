@@ -220,7 +220,7 @@
 
 <markup>
     <!-- Location list -->
-    <div id="location_list" bind:this={locationList} in:fly={!mobile ? { y: -15, duration: 200 } : { x: 15, duration: 150 }} out:fly={ !mobile ? { y: -5, duration: 150 } : { x: 5, duration: 150 } }>
+    <div id="location_list" bind:this={locationList} in:fly|global={!mobile ? { y: -15, duration: 200 } : { x: 15, duration: 150 }} out:fly|global={ !mobile ? { y: -5, duration: 150 } : { x: 5, duration: 150 } }>
 
         <ul id="location_list_tab_bar" class="tabs" class:singleTab={!hasGroupedList} bind:this={tabBar}>
             <!-- svelte-ignore a11y-click-events-have-key-events -->

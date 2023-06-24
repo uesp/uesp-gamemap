@@ -48,7 +48,7 @@
             </div>
 
             {#if expanded}
-                <div class='collapsible-body' in:slide out:slide>
+                <div class='collapsible-body' in:slide|global out:slide|global>
                     <!-- svelte-ignore missing-declaration -->
                     {#if data.id > 0}
                         {@const worldID = data.id}

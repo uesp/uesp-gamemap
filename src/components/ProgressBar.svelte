@@ -10,7 +10,7 @@
     import { fade} from 'svelte/transition';
 </script>
 
-<div class="progress_bar" out:fade={{duration: 100}}>
+<div class="progress_bar" out:fade|global={{duration: 100}}>
     <div class="progress"><div class="indeterminate"></div></div>
 </div>
 

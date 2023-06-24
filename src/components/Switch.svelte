@@ -35,7 +35,7 @@
 
     <!-- optional child UI component if togged -->
     {#if (expand != null && expand == true || expand == null && enabled)}
-        <div class="optional-component" in:slide|local out:slide|local>
+        <div class="optional-component" in:slide out:slide>
             <slot/>
         </div>
     {/if}

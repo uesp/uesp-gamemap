@@ -238,7 +238,7 @@
 
 <markup>
     <!-- svelte-ignore missing-declaration -->
-    <div id="editor" out:cleanUp bind:this={editor}>
+    <div id="editor" out:cleanUp|global bind:this={editor}>
         <div class="editor_window" bind:this={editorWindow}>
             <div id="editor_pane">
 
@@ -425,7 +425,7 @@
             </div>
         </div>
 
-        <footer id="footer" in:fly|local={{ y: 10, duration: 250 }}>
+        <footer id="footer" in:fly={{ y: 10, duration: 250 }}>
             <div class="footer-buttons">
                 <Button text="Save" icon="save" type="save" bold="true" bind:this={saveButton} on:click={() => doSave((isWorld) ? "world" : "location")}/>
             </div>

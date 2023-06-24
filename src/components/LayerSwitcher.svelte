@@ -75,7 +75,7 @@
 
 <markup>
     <!-- Layer switcher Widget -->
-    <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit} in:fly="{{ x: -5, duration: 250 }}" out:fade="{{duration: 75}}" class:lock={lock} on:contextmenu={(e) => e.stopPropagation()}>
+    <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit} in:fly|global="{{ x: -5, duration: 250 }}" out:fade|global="{{duration: 75}}" class:lock={lock} on:contextmenu={(e) => e.stopPropagation()}>
 
         <!-- Primary layer switcher button -->
         <button id="btn_layer_widget_switcher" class:hasLayerImage={hasMultipleLayers} class="waves-effect" on:click={onLayerClicked} style="background-image: url({layerImage});">
@@ -88,7 +88,7 @@
 
         <!-- Additional layer options (on hover) -->
         {#if isHovered}
-            <div class="layer_widget_options" in:fly="{{ x: -15, duration: 200 }}" out:fade="{{duration: 125}}">
+            <div class="layer_widget_options" in:fly|global="{{ x: -15, duration: 200 }}" out:fade|global="{{duration: 125}}">
 
                 <!-- Dynamic map layers -->
                 {#if hasMultipleLayers}
@@ -121,7 +121,7 @@
                 <b class="waves-effect" title="Click to show/hide grid options" style="display: -webkit-box; width: fit-content;" on:click={() => {setPrefs("expandgridoptions", !getPrefs("expandgridoptions")); expandGridOptions = getPrefs("expandgridoptions");}}>Grid Options <Icon name={(expandGridOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b>
 
                 {#if expandGridOptions}
-                    <div in:slide out:slide>
+                    <div in:slide|global out:slide|global>
                         <Switch label="Show Cell Grid" tooltip="Toggle cell grid" enabled={doCellGrid} on:change={(e) => {doCellGrid = e.detail; onGridChecked({detail: true})}}></Switch>
 
                         <!-- Cell resource dropdown -->
