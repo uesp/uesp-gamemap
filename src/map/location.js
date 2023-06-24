@@ -164,14 +164,14 @@ export default class Location {
 	}
 
 	getTooltipContent() {
-
 		return `<span>
 					${this.name} ${this.isClickable() ? "<i class='tiny material-icons'>open_in_browser</i>" : ""}
 				</span>
 			    <div class='tooltip-desc'>
 					${this.description ? (this.name != this.wikiPage) ? this.description + "</br>" + this.wikiPage : this.description : "" }
 				</div>
-			   	${this.isClickable() ? "<small class='tooltip-tip'>Click to enter</small>" : ""}`;
+			   	${this.isClickable() ? "<small class='tooltip-tip'>Click to enter</small>" : ""}
+				${this.editing && !this.isPolygon() ? "<small class='tooltip-tip'>Click to drag</small>" : ""}`;
 	}
 
 	getPopupContent() {

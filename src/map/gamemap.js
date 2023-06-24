@@ -1522,16 +1522,8 @@ export default class Gamemap {
 		queryParams.db = this.mapConfig.database;
 		this.mapCallbacks?.setLoading("Getting permissions");
 
-		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-
-			let canEdit = false;
-
-			if (!error && data != null) {
-				canEdit = data.canEdit;
-			} else {
-				print.warn("There was an error getting permissions.")
-			}
-
+		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(_, data) {
+			let canEdit = data?.canEdit;
 			self.mapConfig.editingEnabled = ((canEdit || isDebug) && (!self.isEmbedded() && !isMobile()));
 			self.mapCallbacks?.onPermissionsLoaded(self.mapConfig.editingEnabled);
 		});

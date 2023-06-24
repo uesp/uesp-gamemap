@@ -13,6 +13,7 @@ bug bash, finish missing editing features
 ## polish
 - restore map load animation (slow background fade)
 - fixed edit panel not animating correctly (didnt slide shut)
+- markers that are being edited now have "click to drag" tooltip as a mini tutorial
 
 
 
@@ -91,6 +92,8 @@ if adding location, close button is always "cancel"
 >> and add middle click on listitems to open in a new tab w/ centreon link
 - fix recent changes list overflowing downwards
 - fix location list dropdown not being centred properly
+- fix live edit on world name location switcher
+- fix live edit on worlds (every change changes the current world in map object)
 - refactor gamemap.js to Gamemap.svelte and use realtime svelte features
 - make embeded map watermark actually open in new tab
 - cache world list for location switcher in svelte stores
