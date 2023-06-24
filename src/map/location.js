@@ -127,27 +127,31 @@ export default class Location {
 		}
 	}
 
-
 	// get centre coordinate of this location or passed coords
 	getCentre(coords) {
 		coords = coords ?? this.coords;
-		let xs = [];
-		let ys = [];
 
-		for (let i in coords) {
-			xs.push(coords[i].x);
-			ys.push(coords[i].y);
+		if (coords.length > 1) { // do we have multiple points?
+			let xs = [];
+			let ys = [];
+
+			for (let i in coords) {
+				xs.push(coords[i].x);
+				ys.push(coords[i].y);
+			}
+
+			let centreX = 0;
+			let centreY = 0;
+
+			for (let i in xs) {
+				centreX = centreX + parseFloat(xs[i]);
+				centreY = centreY + parseFloat(ys[i]);
+			}
+
+			return new Point(centreX / xs.length, centreY / ys.length, gamemap.getMapConfig().coordType);
+		} else {
+			return coords[0]; // if not, just return the first one
 		}
-
-		let finalX = 0;
-		let finalY = 0;
-
-		for (let i in xs) {
-			finalX = finalX + parseFloat(xs[i]);
-			finalY = finalY + parseFloat(ys[i]);
-		}
-
-		return new Point(finalX / xs.length, finalY / ys.length, gamemap.getMapConfig().coordType);
 	}
 
 	makePoint(coords) {
@@ -171,18 +175,15 @@ export default class Location {
 	}
 
 	getTooltipContent() {
-		return `<span>
-					${this.name} ${this.isClickable() ? "<i class='tiny material-icons'>open_in_browser</i>" : ""}
-				</span>
-			    <div class='tooltip-desc'>
+		return `<span>${this.name} ${this.isClickable() ? "<i class='tiny material-icons'>open_in_browser</i>" : ""}</span>
+				<div class='tooltip-desc'>
 					${this.description ? (this.name != this.wikiPage) ? this.description + "</br>" + this.wikiPage : this.description : "" }
 				</div>
-			   	${this.isClickable() ? "<small class='tooltip-tip'>Click to enter</small>" : ""}
+				${this.isClickable() ? "<small class='tooltip-tip'>Click to enter</small>" : ""}
 				${this.editing && !this.isPolygon() ? "<small class='tooltip-tip'>Click to drag</small>" : ""}`;
 	}
 
 	getPopupContent() {
-
 		let popupContent = `<div class='popupTitle'><a ${this.createWikiLink()} target='_top'> ${this.name} </a></div>
 							<div class='popupDesc'>${this.description}</div><hr/>
 							<div class='popupInfo'><b>Location ID:</b> ${this.id}</div>`;
@@ -263,15 +264,10 @@ export default class Location {
 
 	// is location visible (with optional passed bounds)
 	isVisible(bounds) {
-		let coords = this.coords;
-		if (this.isPolygon()) {
-			coords.add(this.getCentre());
-		}
 		if (this.editing) return true;
 		if ((gamemap.getCurrentZoom() + 0.001) < this.displayLevel) return false;
 		bounds = bounds ?? gamemap.getCurrentViewBounds();
-		// todo: also need centre coord checking in here too
-		let isInside = false;
+		let [isInside, coords] = [false, [this.getCentre()].concat(structuredClone(this.coords))];
 		coords.every(coord => {
 			if (coord.x >= bounds.minX && coord.x <= bounds.maxX && coord.y >= bounds.minY && coord.y <= bounds.maxY) {
 				isInside = true;
@@ -287,11 +283,11 @@ export default class Location {
 	getSaveQuery() {
 
 		var query = 'action=set_loc';
-		let coords = (mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.convertPseudoNormalisedCoords(this.coords) : this.coords;
+		let coords = (mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.convPseudoNormalisedCoords(this.coords) : this.coords;
 
-		query += `&name=${encodeURIComponent(this.name)}`;
-		query += `&description=${encodeURIComponent(this.description)}`;
-		query += `&wikipage=${encodeURIComponent(this.wikiPage)}`;
+		query += `&name=${encodeURI(this.name)}`;
+		query += `&description=${encodeURI(this.description)}`;
+		query += `&wikipage=${encodeURI(this.wikiPage)}`;
 
 		query += `&loctype=${this.locType}`;
 		query += `&locid=${this.id}`;
@@ -306,11 +302,11 @@ export default class Location {
 		query += `&locwidth=${this.width}&locheight=${this.height}`;
 
 		query += `&displaylevel=${+this.displayLevel + +world.zoomOffset}`;
-		query += `&displaydata=${encodeURIComponent(JSON.stringify(this.displayData))}`;
-		if (this.hasIcon()) { query += `&icontype=${encodeURIComponent(this.icon)}` }
+		query += `&displaydata=${encodeURI(JSON.stringify(this.displayData))}`;
+		if (this.hasIcon()) { query += `&icontype=${encodeURI(this.icon)}` }
 
 		print(objectify(query));
-		return encodeURIComponent(query);
+		return encodeURI(query);
 	}
 
 	// get query for deleting this location
@@ -352,7 +348,7 @@ export default class Location {
 	}
 
 	// convert pseudo normalised coordinates (eso)
-	convertPseudoNormalisedCoords(coords) {
+	convPseudoNormalisedCoords(coords) {
 		coords = (!Array.isArray(coords)) ? [structuredClone(coords)] : structuredClone(coords);
 
 		coords.forEach(coord => {
@@ -368,7 +364,7 @@ export default class Location {
 	// get max bounds of the current location
 	getMaxBounds(regen) {
 		if (regen ?? this.bounds == null) {
-			let coords = (mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.convertPseudoNormalisedCoords(this.coords) : this.coords;
+			let coords = (mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.convPseudoNormalisedCoords(this.coords) : this.coords;
 			let bounds = {};
 			[bounds.minX, bounds.maxX, bounds.minY, bounds.maxY] = [coords[0].x, coords[0].x, coords[0].y, coords[0].y];
 			coords.forEach(coord => {

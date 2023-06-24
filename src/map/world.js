@@ -68,8 +68,8 @@ export default class World {
 	getWorldDimensions() {
 
 		let dimens = {};
-		let width = ((gamemap.getMapConfig().database == "eso") ? this.dbNumTilesX : this.numTilesX * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
-		let height = ((gamemap.getMapConfig().database == "eso") ? this.dbNumTilesY : this.numTilesY * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
+		let width  = ((gamemap.getMapConfig().coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.dbNumTilesX : this.numTilesX * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
+		let height = ((gamemap.getMapConfig().coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.dbNumTilesY : this.numTilesY * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
 
 		dimens.width = width;
 		dimens.height = height;

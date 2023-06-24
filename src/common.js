@@ -390,6 +390,7 @@ window.isString = function isString(str) {
 	return (typeof str === 'string' || str instanceof String)
 }
 
+
 /** Function turns a date object into a relative string (i.e 4 days ago)
  * @param {Date} date - The date object to parse
  * @returns {String} timeAgo - How long ago it was
@@ -450,3 +451,15 @@ Object.assign(String.prototype, {
         return this.toLowerCase().replace(/\.\s*([a-z])|^[a-z]/gm, s => s.toUpperCase());
     }
 });
+
+
+/** Encodes javascript data into a url-passable form
+ * @param {Object} data - the data you want to encode
+ */
+window.encodeURI = function encodeURI(data) {
+	if (data) {
+		return encodeURIComponent(data);
+	} else {
+		return "";
+	}
+}

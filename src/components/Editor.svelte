@@ -225,11 +225,13 @@
     function cancel() {
         canEdit = false;
         hasBeenModified = false;
-        if (isLocation) { originalObj.setEditing(false) }
-        if (isLocation && originalObj?.unsavedLocation) {
-            gamemap.deleteLocation(originalObj)
-        } else {
-            gamemap.updateLocation(originalObj);
+        if (isLocation) {
+            originalObj.setEditing(false);
+            if (originalObj?.unsavedLocation) {
+                gamemap.deleteLocation(originalObj)
+            } else {
+                gamemap.updateLocation(originalObj);
+            }
         }
         dispatch("cancel", "cancelled");
     }
@@ -418,7 +420,7 @@
                         {#if isWorld}<InfoTextPair name="World Name" value={modifiedObj.name} tooltip="This world's internal name"/>{/if}
                         {#if isWorld}<InfoTextPair name="Tiles" value={modifiedObj.dbNumTilesX + " x " + modifiedObj.dbNumTilesY} tooltip="Number of tiles at full zoom"/>{/if}
                         {#if isLocation}<InfoTextPair name="In World" value={gamemap.getWorldNameFromID(modifiedObj.worldID)} tooltip="The world this location is in"/>{/if}
-                        <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES)[gamemap.getMapConfig().coordType].toLowerCase()} tooltip="Coordinate system that this {objectType} is using"/>
+                        <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES).find(i=>COORD_TYPES[i] === gamemap.getMapConfig().coordType).toLowerCase()} tooltip="Coordinate system that this {objectType} is using"/>
                         <InfoTextPair name="Revision ID" value={modifiedObj.revisionID} tooltip="Current revision ID"/>
                     </FormGroup>
                 {/if}

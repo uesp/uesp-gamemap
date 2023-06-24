@@ -554,26 +554,27 @@ export default class Gamemap {
 	}
 
 	/**
-	 * Convert XY/Worldspace coordinates to leaflet's LatLongs.
+	 * Convert XY/Normalised/Worldspace coordinates to leaflet's LatLongs.
 	 * @param {Object} coords - the coordinate/point object
 	 */
 	toLatLngs(coords) {
 
-		var latLngs;
+		coords = structuredClone(coords) // make distinct
 
-		if ( (coords instanceof Point || coords?.x) && !Array.isArray(coords)) {
+		if ((coords instanceof Point || coords?.x) && !Array.isArray(coords)) {
 
 			switch (coords.coordType) {
 				default:
-				case COORD_TYPES.XY || null:
-					latLngs = RC.unproject([coords.x , coords.y]);
-					return latLngs;
-				case COORD_TYPES.NORMALISED || COORD_TYPES.PSEUDO_NORMALISED:
+				case COORD_TYPES.XY:
+					return RC.unproject([coords.x , coords.y]);
+				case COORD_TYPES.NORMALISED:
 					let x = (Number(coords.x) * this.mapImage.width);
 					let y = (Number(coords.y) * this.mapImage.height);
 
-					latLngs = RC.unproject([x , y]);
-					return latLngs;
+					return RC.unproject([x , y]);
+				case COORD_TYPES.PSEUDO_NORMALISED:
+					coords.coordType = COORD_TYPES.NORMALISED;
+					return this.toLatLngs(coords);
 				case COORD_TYPES.WORLDSPACE:
 
 					let xN = coords.x;
@@ -587,22 +588,20 @@ export default class Gamemap {
 					xN = (xN - this.getCurrentWorld().minX) / maxRangeX;
 					yN = Math.abs((yN - this.getCurrentWorld().maxY) / maxRangeY); // flip y around
 
-					latLngs = this.toLatLngs(new Point(xN, yN, COORD_TYPES.NORMALISED));
-					return latLngs;
+					return this.toLatLngs(new Point(xN, yN, COORD_TYPES.NORMALISED));
 			}
 
 		} else if (Array.isArray(coords)) {
 
-			if (coords[0].x != null) { // are we given an array of coord objects?
+			print("are we going here for some reason?");
 
+			if (coords[0].x != null) { // are we given an array of coord objects?
 				if (coords.length == 1) { // are we given a single coord object? (marker, point)
-					latLngs = this.toLatLngs(coords[0]);
-					return latLngs;
+					return this.toLatLngs(coords[0]);
 				}
 
 			} else if (coords.length > 1) { // else we are just given a coord array [x, y]
-				latLngs = this.toLatLngs(new Point(coords[0], coords[1], this.mapConfig.coordType));
-				return latLngs;
+				return this.toLatLngs(new Point(coords[0], coords[1], this.mapConfig.coordType));
 			}
 		}
 	}

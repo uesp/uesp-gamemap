@@ -10,6 +10,7 @@ bug bash, finish missing editing features
 - fixed cell resource dropdown being aligned the wrong way (was going off the screen)
 - fixed icon bar buttons overlapping when edit panel was open
 - fixed float imprecision bug causing some locations to disappear when visible
+- fixed locations/markers descriptions and names being saved as the string "null" when empty
 
 ## polish
 - restore map load animation (slow background fade)
@@ -18,7 +19,9 @@ bug bash, finish missing editing features
 
 ## technical
 - upgraded to svelte 4, which came out last week
-- should result in smaller bundle size
+>> should result in smaller bundle size
+- converted eso over to coordType "pseudo_normalised" (before was just hardcoded to check for eso)
+- refactored isVisible algorithm slightly to search for centre coordinate of polygon first rather than outside points
 
 ## todo
 - add colour preview thing
