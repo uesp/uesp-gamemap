@@ -11,9 +11,13 @@
     // Map coordinate system info
     // 0: XY (Default)
     // 1: Normalised
+    // 1.5: Pseudo-Normalised
     // 2: Worldspace
-    // 3: Pseudo-Normalised
-    "coordType" : 3,
+    "coordType" : 1,
+
+    // Map world info
+    "defaultWorldID" : 1,
+    // "rootWorldID" : 667, Determines what the root map ID is (default is defaultWorldID)
 
     // Map icon info
     "iconSize" : 64,

@@ -207,6 +207,8 @@ export default class Gamemap {
 			map.fitBounds(RC.getMaxBounds(), {animate: false});
 			setTimeout(function() { map.fitBounds(RC.getMaxBounds(), {animate: true}) }, 1);
 		} else {
+			print(mapState.coords);
+			print(this.toLatLngs(mapState.coords));
 			map.setView(this.toLatLngs(mapState.coords), mapState.zoom, {animate: false});
 		}
 
@@ -510,8 +512,10 @@ export default class Gamemap {
 	/**
 	 * Convert leaflet LatLngs to human readable map coordinates coordinates.
 	 * @param {Object} latLngs - the leaflet latLng coordinate object
+	 * @param {Object} coordType - the coordinate system type to convert to
+	 * @param {Object} world - optional world parameter to converted based on
 	 */
-	toCoords(latLngs, coordType) {
+	toCoords(latLngs, coordType, world) {
 
 		var coords;
 		latLngs = structuredClone(latLngs);
@@ -522,27 +526,25 @@ export default class Gamemap {
 			coords = RC.project(latLngs);
 		} else if (Array.isArray(latLngs)) {
 			coords = [];
-			latLngs.forEach((latLng) => {
-				coords.push(this.toCoords(latLng, this.mapConfig.coordType));
-			});
+			latLngs.forEach((latLng) => {coords.push(this.toCoords(latLng, this.mapConfig.coordType));});
 			return coords;
 		}
 
 		if (coordType != COORD_TYPES.XY) {
+			let worldDimensions = this.getCurrentWorld().getWorldDimensions();
 			if (coordType == COORD_TYPES.NORMALISED || coordType == COORD_TYPES.PSEUDO_NORMALISED) {
 				// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
-				coords.x = (coords.x / this.mapImage.width).toFixed(3);
-				coords.y = (coords.y / this.mapImage.height).toFixed(3);
+				coords.x = (coords.x / worldDimensions.width).toFixed(3);
+				coords.y = (coords.y / worldDimensions.height).toFixed(3);
 				coords.coordType = COORD_TYPES.NORMALISED;
 			} else if (coordType == COORD_TYPES.WORLDSPACE) {
 				// get current map world pixel position values
-				let world = this.getCurrentWorld();
-				let nX = coords.x / world.totalWidth;
-				let nY = 1 - (coords.y / world.totalHeight);
+				let nX = coords.x / worldDimensions.width;
+				let nY = 1 - (coords.y / worldDimensions.height);
 
 				// reproject pixel values to worldspace
-				coords.x = Math.trunc(world.minX + (world.maxX - world.minX) * nX);
-				coords.y = Math.trunc(world.minY + (world.maxY - world.minY) * nY);
+				coords.x = Math.trunc(worldDimensions.minX + (worldDimensions.maxX - worldDimensions.minX) * nX);
+				coords.y = Math.trunc(worldDimensions.minY + (worldDimensions.maxY - worldDimensions.minY) * nY);
 				coords.coordType = COORD_TYPES.WORLDSPACE;
 			}
 		}
@@ -595,10 +597,6 @@ export default class Gamemap {
 
 				if (coords.length == 1) { // are we given a single coord object? (marker, point)
 					latLngs = this.toLatLngs(coords[0]);
-					return latLngs;
-				} else { // else we are given a polygon, get the middle coordinate
-					let centreCoord = getAverageCoord(coords);
-					latLngs = this.toLatLngs(new Point(centreCoord.x, centreCoord.y, this.mapConfig.coordType));
 					return latLngs;
 				}
 

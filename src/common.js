@@ -35,8 +35,8 @@ window.LOCTYPES = {
 window.COORD_TYPES = {
 	XY : 0,
     NORMALISED : 1,
+	PSEUDO_NORMALISED : 1.5,
     WORLDSPACE : 2,
-	PSEUDO_NORMALISED : 3,
 }
 
 window.MAPLOCK = {
@@ -49,18 +49,6 @@ window.MAPLOCK = {
 	PARTIAL_NEW_POLYGON : 4.5,
 	PARTIAL_NEW_LINE : 5,
 }
-
-// legacy positions:
-// 	0 : 'None',
-// 	1 : 'Top Left',
-// 	2 : 'Top Center',
-// 	3 : 'Top Right',
-// 	4 : 'Middle Left',
-// 	5 : 'Center',
-// 	6 : 'Middle Right',
-// 	7 : 'Bottom Left',
-// 	8 : 'Bottom Center',
-// 	9 : 'Bottom Right',
 
 window.LABEL_POSITIONS = {
 	0  : 'none',
@@ -400,37 +388,6 @@ window.getPrefs = function getPrefs(key, defaultValue) {
  */
 window.isString = function isString(str) {
 	return (typeof str === 'string' || str instanceof String)
-}
-
-/** Function that gets the average (centre) coordinate of an array of point objects
- * @param {Array} coords - The list to iterate through
- * @returns {Point} - the centralised coord object
- */
-window.getAverageCoord = function getAverageCoord(coords) {
-
-	if (coords[0].lat != null) {
-		for (let i = 0; i < coords.length; i++) {
-			coords[i] = gamemap.toCoords(coords[i]);
-		}
-	}
-
-	let xs = [];
-	let ys = [];
-
-	for (let i in coords) {
-		xs.push(coords[i].x);
-		ys.push(coords[i].y);
-	}
-
-	let finalX = 0;
-	let finalY = 0;
-
-	for (let i in xs) {
-		finalX = finalX + parseFloat(xs[i]);
-		finalY = finalY + parseFloat(ys[i]);
-	}
-
-	return new Point(finalX / xs.length, finalY / ys.length, null, gamemap.getMapConfig().coordType);
 }
 
 /** Function turns a date object into a relative string (i.e 4 days ago)

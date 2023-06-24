@@ -6,10 +6,9 @@
  */
 
 export default class Point {
-    constructor(x, y, coordType, zoom) {
+    constructor(x, y, coordType) {
         this.x = x ?? 0;
         this.y = y ?? 0;
-        this.zoom = zoom ?? 2;
         this.coordType = coordType;
     }
 

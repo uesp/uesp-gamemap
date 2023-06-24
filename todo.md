@@ -9,6 +9,7 @@ bug bash, finish missing editing features
 - fixed map selection menu not working
 - fixed cell resource dropdown being aligned the wrong way (was going off the screen)
 - fixed icon bar buttons overlapping when edit panel was open
+- fixed float imprecision bug causing some locations to disappear when visible
 
 ## polish
 - restore map load animation (slow background fade)
@@ -20,8 +21,6 @@ bug bash, finish missing editing features
 - should result in smaller bundle size
 
 ## todo
-
-
 - add colour preview thing
 - fix location position not changing when icon move
 - fix updating polygon colour doesnt change poly colour
@@ -38,6 +37,8 @@ bug bash, finish missing editing features
 
 - fix + missing on green new handle blob
 
+- the location coord mismatch is happening because you are converting a new location's coords based on the current world's dimensions
+>> need to find a way to pass location.js reference to the current world
 
 - fix clicking X button "saving" changes unlike cancel button
 - fix cell resources menu going the wrong way
@@ -46,6 +47,7 @@ bug bash, finish missing editing features
 - reimplement eso-specific name shortcuts for locations
 - also ask feedback to map editors for the above
 
+- fix double click to pan not working
 
 change "editing location" to "adding location" on add
 if adding location, hide delete button

@@ -39,9 +39,6 @@ export default class Location {
 		this.bounds = null; // bounds are generated when asked
 
 		// set location icon info
-		print("printing mapconfig icon")
-		print([...mapConfig.icons]);
-		print(mapConfig);
 		this.icon = (this.unsavedLocation && this.locType == LOCTYPES.MARKER) ? Math.min(...Array.from(mapConfig.icons.keys())) : data.iconType || null;
 		this.width = (this.icon) ? data.width || mapConfig.iconSize : data.width;
 		this.height = (this.icon) ? data.height || mapConfig.iconSize : data.height;
@@ -134,13 +131,23 @@ export default class Location {
 	// get centre coordinate of this location or passed coords
 	getCentre(coords) {
 		coords = coords ?? this.coords;
+		let xs = [];
+		let ys = [];
 
-		if (coords.length == 1) {
-			return coords[0];
-		} else if (coords.length > 0) {
-
+		for (let i in coords) {
+			xs.push(coords[i].x);
+			ys.push(coords[i].y);
 		}
 
+		let finalX = 0;
+		let finalY = 0;
+
+		for (let i in xs) {
+			finalX = finalX + parseFloat(xs[i]);
+			finalY = finalY + parseFloat(ys[i]);
+		}
+
+		return new Point(finalX / xs.length, finalY / ys.length, gamemap.getMapConfig().coordType);
 	}
 
 	makePoint(coords) {
@@ -149,7 +156,7 @@ export default class Location {
 		let y = coords[1];
 
 		// convert eso coordinates to be normalised
-		if (mapConfig.coordType == COORD_TYPES.NORMALISED && mapConfig.database == "eso") {
+		if (mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) {
 
 			// get normalised value of x and y in range
             x = (x - world.minX) / world.maxRangeX;
@@ -160,7 +167,7 @@ export default class Location {
 			y = (y * nextPowerOfTwo(world.dbNumTilesY) / world.dbNumTilesY).toFixed(3);
 		}
 
-		return new Point(x, y, mapConfig.coordType, world.maxZoomLevel);
+		return new Point(x, y, mapConfig.coordType);
 	}
 
 	getTooltipContent() {
@@ -256,12 +263,16 @@ export default class Location {
 
 	// is location visible (with optional passed bounds)
 	isVisible(bounds) {
+		let coords = this.coords;
+		if (this.isPolygon()) {
+			coords.add(this.getCentre());
+		}
 		if (this.editing) return true;
 		if ((gamemap.getCurrentZoom() + 0.001) < this.displayLevel) return false;
 		bounds = bounds ?? gamemap.getCurrentViewBounds();
 		// todo: also need centre coord checking in here too
 		let isInside = false;
-		this.coords.every(coord => {
+		coords.every(coord => {
 			if (coord.x >= bounds.minX && coord.x <= bounds.maxX && coord.y >= bounds.minY && coord.y <= bounds.maxY) {
 				isInside = true;
 			  	return false; // coordinate was found within the bounds, break early
@@ -276,7 +287,7 @@ export default class Location {
 	getSaveQuery() {
 
 		var query = 'action=set_loc';
-		let coords = (mapConfig.database == "eso") ? this.convertESOCoords(this.coords) : this.coords;
+		let coords = (mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.convertPseudoNormalisedCoords(this.coords) : this.coords;
 
 		query += `&name=${encodeURIComponent(this.name)}`;
 		query += `&description=${encodeURIComponent(this.description)}`;
@@ -340,8 +351,8 @@ export default class Location {
 		}
 	}
 
-	// convert eso coordinates
-	convertESOCoords(coords) {
+	// convert pseudo normalised coordinates (eso)
+	convertPseudoNormalisedCoords(coords) {
 		coords = (!Array.isArray(coords)) ? [structuredClone(coords)] : structuredClone(coords);
 
 		coords.forEach(coord => {
@@ -357,7 +368,7 @@ export default class Location {
 	// get max bounds of the current location
 	getMaxBounds(regen) {
 		if (regen ?? this.bounds == null) {
-			let coords = (mapConfig.database == "eso") ? this.convertESOCoords(this.coords) : this.coords;
+			let coords = (mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.convertPseudoNormalisedCoords(this.coords) : this.coords;
 			let bounds = {};
 			[bounds.minX, bounds.maxX, bounds.minY, bounds.maxY] = [coords[0].x, coords[0].x, coords[0].y, coords[0].y];
 			coords.forEach(coord => {

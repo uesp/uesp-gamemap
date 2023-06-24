@@ -11,9 +11,9 @@
     // Map coordinate system info
     // 0: XY (Default)
     // 1: Normalised
+    // 1.5: Pseudo-Normalised
     // 2: Worldspace
-    // 3: Pseudo-Normalised
-    "coordType" : 1,
+    "coordType" : 1.5,
 
     // Map world info
     "defaultWorldID" : 668,
