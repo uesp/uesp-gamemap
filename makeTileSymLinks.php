@@ -39,8 +39,8 @@ class CMakeTileSymLinks
 					'newPrefix' => 'solstheim',
 					'minZoom' => 10,
 			], */
-			'dgmap' => [
-					'prefix' => 'dg',
+			'dsmap' => [
+					'prefix' => 'ds',
 					'minZoom' => 0,
 			], /*
 			'simap' => [

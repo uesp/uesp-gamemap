@@ -391,6 +391,14 @@ class GameMap
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to create revision table!");
 		
+		$query = "ALTER TABLE `revision` MODIFY COLUMN `editTimestamp` TIMESTAMP NOT NULL DEFAULT 0;";
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to update timestamp in revision table!");
+		
+		$query = "ALTER TABLE `revision` ALTER COLUMN `editTimestamp` DROP DEFAULT;";
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to update timestamp in revision table!");
+		
 		$query = "CREATE TABLE IF NOT EXISTS cellResource (
 					worldId BIGINT,
 					formId BIGINT NOT NULL,
