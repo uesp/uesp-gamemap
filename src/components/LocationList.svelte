@@ -54,7 +54,9 @@
     	const GROUP_DEV_ID = -1337;
     	const GROUP_UNSORTED_ID = -1;
     	let rootID = gamemap.getMapConfig().rootWorldID || gamemap.getMapConfig().defaultWorldID;
-    	let topLevelWorldIDs = [rootID, GROUP_DEV_ID, GROUP_UNSORTED_ID];
+    	let topLevelWorldIDs = [rootID, GROUP_UNSORTED_ID];
+
+        if (gamemap.getMapConfig().database == "eso") { topLevelWorldIDs.push(GROUP_DEV_ID) } // add beta map section for eso
 
         abcWorldList = [];
         groupedWorldList = [];
@@ -104,7 +106,7 @@
                     }
                 }
             }
-            for (let i in topLevelWorldIDs){
+            for (let i in topLevelWorldIDs) {
 
                 pairings = [];
 

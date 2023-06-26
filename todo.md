@@ -1,30 +1,20 @@
 ## last week
-bug bash, finish missing editing features
 
-## bug fixes
-- fixed not being able to add new location on blank worlds (worls that have no locations)
-- fixed not deleting locations properly ( was using ``delete locations[key]`` instead of ``locations.delete(key)`` )
->> didnt work with negative numbers (-100), so cancelling wasnt working
-- therefore fixed cancelling adding marker/location
-- fixed map selection menu not working
-- fixed cell resource dropdown being aligned the wrong way (was going off the screen)
-- fixed icon bar buttons overlapping when edit panel was open
-- fixed float imprecision bug causing some locations to disappear when visible
-- fixed locations/markers descriptions and names being saved as the string "null" when empty
 
-## polish
-- restore map load animation (slow background fade)
-- fixed edit panel not animating correctly (didnt slide shut)
-- markers that are being edited now have "click to drag" tooltip as a mini tutorial
 
-## technical
-- upgraded to svelte 4, which came out last week
->> should result in smaller bundle size
-- converted eso over to coordType "pseudo_normalised" (before was just hardcoded to check for eso)
-- refactored isVisible algorithm slightly to search for centre coordinate of polygon first rather than outside points
+
+
+
+## polish:
+- get dawnstar map done
+
+
+
+
+
 
 ## todo
-- add colour preview thing
+- finish colour preview thing
 - fix location position not changing when icon move
 - fix updating polygon colour doesnt change poly colour
 - fix cant change positions XY and it affects marker live
@@ -59,6 +49,9 @@ if adding location, close button is always "cancel"
 
 
 - fix recent changes list overflowing, not correct height
+
+- if parent id for world is -1, consider it null
+- also reflect this in saving
 
 
 - use similar centre of polygon algorithm as leaflet does for locations/latlng conversion

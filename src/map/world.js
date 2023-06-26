@@ -16,7 +16,7 @@ export default class World {
 			this.locations = null;
 
 			this.id = world.id || 0;
-			this.parentID = world.parentId || -1;
+			this.parentID = world.parentId || null;
 			this.revisionID = world.revisionId || 0;
 
 			this.wikiPage = world.wikiPage || null;

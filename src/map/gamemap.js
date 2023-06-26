@@ -486,9 +486,8 @@ export default class Gamemap {
 			if (self.isWorldValid(worldID)) {
 				// if we are in the same world, just pan to the provided location (or just reset map)
 				if (worldID == self.getCurrentWorldID()) {
-					if (coords != null) {
-						map.setView(self.toLatLngs(coords), (coords[0].zoom != null) ? coords[0].zoom : coords.zoom);
-
+					if (coords) {
+						map.setView(self.toLatLngs(coords), self.getCurrentWorld().maxZoomLevel);
 					} else {
 						self.reset(true);
 					}

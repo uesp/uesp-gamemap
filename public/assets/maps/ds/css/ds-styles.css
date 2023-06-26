@@ -2,9 +2,3 @@
 	/* text colours */
 	--text_loc_name: #fffc37;
 }
-
-.leaflet-marker-icon {
-	background-color: var(--shadow);
-    box-shadow: 0px 0px 4px 4px var(--shadow);
-    border-radius: 6px !important;
-}

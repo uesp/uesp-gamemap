@@ -182,17 +182,22 @@
             // are there any unsaved changes
             unsavedChanges = !(JSON.stringify(modifiedObj) === JSON.stringify(originalObj));
             hasBeenModified = (unsavedChanges) ? true : hasBeenModified;
-            gamemap.setMapLock(modifiedObj.isPolygon() ? MAPLOCK.PARTIAL_POLYGON : MAPLOCK.PARTIAL_MARKER);
 
-            // redraw location with new changes
-            if (isLocation && hasBeenModified) {
-                // editing debouncing
-                if (timer != null){
-                    clearTimeout(timer);
+            if (isLocation) {
+
+                gamemap.setMapLock(modifiedObj.isPolygon() ? MAPLOCK.PARTIAL_POLYGON : MAPLOCK.PARTIAL_MARKER);
+
+                if (hasBeenModified) {
+                    // editing debouncing
+                    if (timer != null){
+                        clearTimeout(timer);
+                    }
+                    timer = setTimeout(() => {
+                        // redraw location with new changes
+                        gamemap.updateLocation(modifiedObj);
+                    }, DEBOUNCE_AMOUNT)
                 }
-                timer = setTimeout(() => {
-                    gamemap.updateLocation(modifiedObj);
-                }, DEBOUNCE_AMOUNT)
+
             }
         }
     }
