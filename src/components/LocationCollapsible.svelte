@@ -15,7 +15,7 @@
     // state vars
     export let data;
     export let expanded = false;
-    export let title = "This is a header";
+    export let title;
     let isArray = Array.isArray(data);
 
     function onLocationClicked(id) {
@@ -40,26 +40,28 @@
         {/each}
 
     {:else}
-        <div class="collapsible">
+        {#if title}
+            <div class="collapsible">
 
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div class='collapsible-header waves-effect' class:expanded={expanded} on:click={() => expanded = !expanded}>
-                {title}<i class='material-icons'>expand_more</i>
-            </div>
-
-            {#if expanded}
-                <div class='collapsible-body' in:slide|global out:slide|global>
-                    <!-- svelte-ignore missing-declaration -->
-                    {#if data.id > 0}
-                        {@const worldID = data.id}
-                        {@const worldName = gamemap.getWorldDisplayNameFromID(worldID)}
-                        <!-- svelte-ignore missing-declaration -->
-                        <ListItem title={worldName} selected={gamemap.getCurrentWorld().displayName == worldName} on:click={() => onLocationClicked(gamemap.getWorldFromDisplayName(worldName).id)}/>
-                    {/if}
-                    <svelte:self data={data["children"]}/>
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <div class='collapsible-header waves-effect' class:expanded={expanded} on:click={() => expanded = !expanded}>
+                    {title}<i class='material-icons'>expand_more</i>
                 </div>
-            {/if}
-        </div>
+
+                {#if expanded}
+                    <div class='collapsible-body' in:slide|global out:slide|global>
+                        <!-- svelte-ignore missing-declaration -->
+                        {#if data.id > 0}
+                            {@const worldID = data.id}
+                            {@const worldName = gamemap.getWorldDisplayNameFromID(worldID)}
+                            <!-- svelte-ignore missing-declaration -->
+                            <ListItem title={worldName} selected={gamemap.getCurrentWorld().displayName == worldName} on:click={() => onLocationClicked(gamemap.getWorldFromDisplayName(worldName).id)}/>
+                        {/if}
+                        <svelte:self data={data["children"]}/>
+                    </div>
+                {/if}
+            </div>
+        {/if}
     {/if}
 
 </markup>
