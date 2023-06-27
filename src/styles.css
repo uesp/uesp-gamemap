@@ -1035,6 +1035,7 @@ textarea.materialize-textarea {
 }
 
 .leaflet-marker-icon.marker-icon {
+	animation: 0s !important;
 	background-color: var(--editing_opaque) !important;
 	border: solid 2px var(--editing_outline) !important;
 }

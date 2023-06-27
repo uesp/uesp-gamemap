@@ -4,10 +4,8 @@
 ## bug fixes:
 - fixed "Orphaned maps" (maps without a parent) header showing up when there isnt any
 - fixed back/close button on edit pane not cancelling new marker properly
-
-
-
-
+- fix position not updating as you move markers around
+- fixed the unsaved indicator (*) hanging around after you click cancel
 
 ## polish:
 - got dawnstar map done
@@ -19,17 +17,10 @@
 ## technical
 - merged editor panel and editor content (actual forms and stuff) component files into just one "editor.svelte"
 
-
-
-
-
 ## todo
 - finish colour preview thing
-- fix location position not changing when icon move
 - fix updating polygon colour doesnt change poly colour
-- fix cant change positions XY and it affects marker live
 - fix moving map on add location adds double location and cant move location anymore
-- fix asterisk in map editor title
 
 - get dialogs working
 - fix drawing line not working (sets as marker)

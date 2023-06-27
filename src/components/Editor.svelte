@@ -140,7 +140,7 @@
                 print("should be being dismissed")
                 dismiss();
             } else {
-                editObject = null;
+                cancel();
             }
         } else {
             dismiss();
@@ -155,9 +155,11 @@
     function initEditor(data) {
 
         // begin editing provided data
+        unsavedChanges = false;
         editObject = Object.assign(Object.create(Object.getPrototypeOf(data)), data);
         modEditObject = Object.assign(Object.create(Object.getPrototypeOf(data)), data);
-        unsavedChanges = false;
+        isLocation = editObject instanceof Location;
+        isWorld = editObject instanceof World;
 
         // do state changes to map
         if (isWorld && editObject.id == gamemap.getCurrentWorld().id) {
@@ -175,18 +177,15 @@
 
     }
 
-
-
     function doDelete(doConfirm) {
         doConfirm = (doConfirm != null) ? doConfirm : false;
         if (!doConfirm) {
             // visually delete location from the map
             print("deleting object...");
             gamemap.deleteLocation(modEditObject);
-            cancel(true); // close the editor
 
             // do async api request to actually delete the location
-            getJSON(GAME_DATA_SCRIPT + queryify(objectify(modEditObject.getDeleteQuery())), () => { getRecentChanges()});
+            getJSON(GAME_DATA_SCRIPT + queryify(objectify(modEditObject.getDeleteQuery())), () => { getRecentChanges();});
         } else {
             alert("warning !! you are deleting a location! this cant be undone!")
         }
@@ -251,12 +250,7 @@
 
 
 
-    function cancel(doDispatch) {
-
-        // set no longer editing
-        liveEdit = false;
-        hasBeenModified = false;
-        gamemap.setMapLock(MAPLOCK.NONE);
+    function cancel() {
 
         // clean up
         if (isWorld) {
@@ -272,8 +266,13 @@
             }
         }
 
-        // tell parent we're cancelling if required
-        if (doDispatch == true) { dispatch("cancel"); }
+        // turn off editing
+        editObject = null;
+        modEditObject = null;
+        liveEdit = false;
+        hasBeenModified = false;
+        unsavedChanges = false;
+        gamemap.setMapLock(MAPLOCK.NONE);
     }
 
     // received updated marker coords from gamemap (via drag and dropping)
@@ -292,7 +291,7 @@
             editObject = editObject;
 
             print("before edit");
-            print(data);
+            print(editObject);
             print("after edit");
             print(modEditObject);
 
@@ -319,7 +318,7 @@
         }
     }
 
-    // handle resizing the edit pane
+    // handle resizing the editor panel
     function onResizerDown() { document.addEventListener('mousemove', onResizerDrag);}
     function onResizerUp() { document.removeEventListener('mousemove', onResizerDrag); }
     function onResizerDrag(event) {
@@ -634,10 +633,10 @@
                                             <InfoTextPair name="Tiles" value={modEditObject.dbNumTilesX + " x " + modEditObject.dbNumTilesY} tooltip="Number of tiles at full zoom"/>
                                         {/if}
                                         {#if isLocation}
+                                            <InfoTextPair name="Location Type" value={Object.keys(LOCTYPES).find(key => LOCTYPES[key] === modEditObject.locType).toLowerCase()} tooltip="What kind of location this is"/>
+                                            <InfoTextPair name="In World" value={gamemap.getWorldNameFromID(modEditObject.worldID)} tooltip="The world this location is in"/>
                                             <InfoTextPair name="X Position" value={modEditObject.getCentre().x} tooltip="The X position this location is at"/>
                                             <InfoTextPair name="Y Position" value={modEditObject.getCentre().y} tooltip="The Y position this location is at"/>
-                                            <InfoTextPair name="In World" value={gamemap.getWorldNameFromID(modEditObject.worldID)} tooltip="The world this location is in"/>
-                                            <InfoTextPair name="Location Type" value={Object.keys(LOCTYPES).find(key => LOCTYPES[key] === modEditObject.locType).toLowerCase()} tooltip="What type of location this is"/>
                                         {/if}
                                         <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES).find(i=>COORD_TYPES[i] === gamemap.getMapConfig().coordType).toLowerCase()} tooltip="Coordinate system that this {objectType} is using"/>
                                         <InfoTextPair name="Revision ID" value={modEditObject.revisionID} tooltip="Current revision ID"/>
@@ -695,6 +694,7 @@
     .subheading {
         color: var(--highlight_light);
         font-size: x-large;
+        font-weight: bold;
     }
 
     #edit-panel-content {
@@ -741,9 +741,46 @@
         z-index: 9999999;
         transition: background-color ease 150ms;
     }
-
     #window-resizer:hover {
         background-color: var(--shadow);
+    }
+
+    #editor {
+        display: flex;
+        flex-flow: column;
+    }
+
+    .editor_window {
+        flex: 1;
+        overflow-y: auto;
+        position: relative;
+    }
+
+    #editor_pane {
+        padding-top: var(--padding_minimum);
+        padding-bottom: var(--padding_minimum);
+    }
+
+    #footer {
+        box-shadow: 0px 1.5px 4px 4px var(--shadow);
+        background-color: var(--surface_variant);
+        bottom: 0;
+        padding: var(--padding_minimum);
+        position: relative;
+        width: 100%;
+        z-index: 99999;
+    }
+
+    .footer-buttons {
+        display: flex;
+        width: 100%;
+    }
+
+    .row {
+        margin-bottom: 0;
+        margin-right: -8px;
+        display: inline-flex;
+        gap: 8px;
     }
 
 
@@ -793,53 +830,6 @@
             opacity: 0;
             transform: rotate(45deg) translate(20px, 20px);
         }
-    }
-
-
-    #editor {
-        display: flex;
-        flex-flow: column;
-    }
-
-    .editor_window {
-        flex: 1;
-        overflow-y: auto;
-        position: relative;
-    }
-
-    #editor_pane {
-        padding-top: var(--padding_minimum);
-        padding-bottom: var(--padding_minimum);
-    }
-
-    #footer {
-        box-shadow: 0px 1.5px 4px 4px var(--shadow);
-        background-color: var(--surface_variant);
-        bottom: 0;
-        padding: var(--padding_minimum);
-        position: relative;
-        width: 100%;
-        z-index: 99999;
-    }
-
-    .footer-buttons {
-        display: flex;
-        width: 100%;
-    }
-
-    .row {
-        margin-bottom: 0;
-        margin-right: -8px;
-        display: inline-flex;
-        gap: 8px;
-    }
-
-    .subheading {
-        font-weight: initial;
-        padding-top: 5px;
-        display: block;
-        padding-bottom: 2px;
-        padding-top: 4px;
     }
 
 </style>
