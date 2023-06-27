@@ -227,7 +227,7 @@
         <ul id="location_list_tab_bar" class="tabs" class:singleTab={!hasGroupedList} bind:this={tabBar}>
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             {#if hasGroupedList}
-                <li id="group_tab" class="tab" on:click={() => selectTab(0)}><a class:active={currentTab == 0} href="#tab_categories">Groups</a></li>
+                <li id="group_tab" class="tab" on:click={() => selectTab(0)}><a class:active={currentTab == 0} href="#tab_categories">Grouped</a></li>
             {/if}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <li id="abc_tab" class="tab" on:click={() => selectTab(1)}><a class:active={currentTab == 1} href="#tab_alphabetical">{hasGroupedList ? "ABC" : "Worlds"}</a></li>

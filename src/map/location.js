@@ -31,7 +31,7 @@ export default class Location {
 		this.wikiPage = data?.wikiPage || null;
 		this.description = data?.description || null;
 		this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : {};
-		this.displayLevel = (this.unsavedLocation) ? Number((gamemap.getCurrentZoom()).toFixed()) : parseFloat(data.displayLevel - world.zoomOffset || 0);
+		this.displayLevel = (this.unsavedLocation) ? Number((Math.floor(gamemap.getCurrentZoom()))) : parseFloat(data.displayLevel - world.zoomOffset || 0);
 		this.wasVisible = this.editing ?? null;
 
 		// editing attributes
@@ -269,7 +269,7 @@ export default class Location {
 		bounds = bounds ?? gamemap.getCurrentViewBounds();
 		let [isInside, coords] = [false, [this.getCentre()].concat(structuredClone(this.coords))];
 		coords.every(coord => {
-			if (coord.x >= bounds.minX && coord.x <= bounds.maxX && coord.y >= bounds.minY && coord.y <= bounds.maxY) {
+			if (Number(coord.x) >= Number(bounds.minX) && Number(coord.x) <= Number(bounds.maxX) && Number(coord.y) >= Number(bounds.minY) && Number(coord.y) <= Number(bounds.maxY)) {
 				isInside = true;
 			  	return false; // coordinate was found within the bounds, break early
 			} else {

@@ -7,8 +7,8 @@
 
 export default class Point {
     constructor(x, y, coordType) {
-        this.x = x ?? 0;
-        this.y = y ?? 0;
+        this.x = Number(x) ?? 0;
+        this.y = Number(y) ?? 0;
         this.coordType = coordType;
     }
 

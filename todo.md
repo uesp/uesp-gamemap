@@ -10,8 +10,10 @@
 - fixed green "+" not visible in polygons
 - restored double click to pan
 - fixed RC list overflowing at the bottom
-- fixed "null" appearing in popups when descriptions were empty
+- fixed "null" appearing in popups/tooltips when descriptions were empty
 - fixed popups not working when wiki links were null
+- fix inane bug causing locations outside of the map (negative x, y) to disappear, even when inside map view, because javascript was turning the coord pairs into strings(??) and breaking the bounds calculation, because -0.20 is not more than "-0.40"
+- fixed new locations rounding up their display levels (3.5 > 4.0) which was causing new locations to disappear upon refresh (now rounds down to nearest integer, aka 3.0)
 
 ## polish:
 - got dawnstar map done
@@ -24,8 +26,10 @@
 ## technical
 - merged editor panel and editor content (actual forms and stuff) component files into just one "editor.svelte"
 
+
+
+
 ## todo
-- fix "null" in popups
 - finish colour preview thing
 - fix updating polygon colour doesnt change poly colour
 - fix moving map on add location adds double location and cant move location anymore
@@ -63,6 +67,8 @@
 - also ask feedback to map editors for the above
 
 
+- fix having to load new world once, then click RC item again to jump to centre of it
+
 if adding location, save will dismiss the editor window
 if adding location, close button is always "cancel"
 
@@ -88,8 +94,6 @@ if adding location, close button is always "cancel"
 - make close button in edit panel always close the panel regardless of direct edit or not
 
 - fix not being able to click location dropdown while it's open to close it
-
-- fix num up and down things appearing on floats or on invis numbers on chrome
 
 - make iconbar and resizing dynamic, dont rely on css for mobile mode, do it in javascript based on map size
 
