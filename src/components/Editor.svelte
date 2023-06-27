@@ -399,7 +399,7 @@
 
     // on editor load
 	onMount(async() => { window.onpopstate = () => currentZoom = gamemap.getCurrentZoom().toFixed(3);});
-    function fixEditor() {editor.style.height = `${editor.parentElement.clientHeight}px`; editorWindow.scrollTop = 0;}
+    function fixEditor() {editor.style.height = `${editor?.parentElement?.clientHeight}px`; editorWindow.scrollTop = 0;}
 </script>
 
 <markup>
@@ -474,7 +474,7 @@
                          {/if}
                      </div>
                 {:else}
-                    <div id="editor" in:fixEditor out:cancel|local bind:this={editor}>
+                    <div id="editor" in:fixEditor out:cancel bind:this={editor}>
                         <div class="editor_window" bind:this={editorWindow}>
                             <div id="editor_pane">
                                 <FormGroup title="General" icon="description">

@@ -148,7 +148,7 @@ export default class Location {
 				centreY = centreY + parseFloat(ys[i]);
 			}
 
-			return new Point(centreX / xs.length, centreY / ys.length, gamemap.getMapConfig().coordType);
+			return new Point((centreX / xs.length).toFixed(3), (centreY / ys.length).toFixed(3), gamemap.getMapConfig().coordType);
 		} else {
 			return coords[0]; // if not, just return the first one
 		}

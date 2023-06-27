@@ -6,6 +6,7 @@
 - fixed back/close button on edit pane not cancelling new marker properly
 - fix position not updating as you move markers around
 - fixed the unsaved indicator (*) hanging around after you click cancel
+- fixed polygons flashing when moving points
 
 ## polish:
 - got dawnstar map done
@@ -25,11 +26,14 @@
 - get dialogs working
 - fix drawing line not working (sets as marker)
 
-- update rc on every edit (save/delete)
+
+
+- fix markers carying over between maps
 
 - fix focus on svelte elements mean cant move map (mobile especially)
 
 - fix loading into new worlf while zoomed in not removing old locations
+- fix wiki name switch not switching
 
 - fix on edit: adding identical icon when map move on top of added/adding icon
 
@@ -65,11 +69,10 @@ if adding location, close button is always "cancel"
 - add quick toggles for areas, "is zone" to get rid of outline for eso
 
 
-- 0.5 on all locations client side
+- -0.5 on all locations client side
 
 - reminder about skyrim/beyond skyrim/solstheim tiles from BS guy
 
-- fix chrome bugging out with target event in gamemap
 
 
 - preview colour component
@@ -82,7 +85,6 @@ if adding location, close button is always "cancel"
 
 
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
-- convert eso and dawnstar to psueodo normalised in mapconfig
 - hamburger for search bar to show other maps
 - cell resource state in/from url
 - add allow long clicking on mobile to open popups
