@@ -1305,7 +1305,7 @@ export default class Gamemap {
 
 		map.on("dblclick", function(event) {
 			let target = event.originalEvent?.target ?? event?.originalEvent?.explicitOriginalTarget;
-			if (target.classList.contains("leaflet-interactive")) {
+			if (target.className.includes("leaflet")) {
 				map.panTo(event.latlng, {animate: true});
 			}
 			print(target);

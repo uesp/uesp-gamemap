@@ -7,12 +7,14 @@
 - fix position not updating as you move markers around
 - fixed the unsaved indicator (*) hanging around after you click cancel
 - fixed polygons flashing when moving points
+- fixed green "+" not visible in polygons
 
 ## polish:
 - got dawnstar map done
 - removed loctype switcher as it was causing issues (also conceptually changing from a single point to a line live didnt really work that well)
 - move label direction up to "general" for ease of access
 - recent changes automatically updates on save/delete
+- fix editor title not changing from "adding location" to "editing location" after save
 
 
 ## technical
@@ -36,8 +38,6 @@
 - fix wiki name switch not switching
 
 - fix on edit: adding identical icon when map move on top of added/adding icon
-
-- fix + missing on green new handle blob
 
 - the location coord mismatch is happening because you are converting a new location's coords based on the current world's dimensions
 >> need to find a way to pass location.js reference to the current world
