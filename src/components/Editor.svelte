@@ -53,6 +53,7 @@
     let editorWindow;
     let overlay = null;
     let saveButton;
+    let innerHeight;
 
     let recentChanges = [];
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
@@ -403,18 +404,13 @@
 <markup>
     {#if shown}
          <aside id="edit-panel" bind:this={editPanel} in:slide|global out:slide|global>
-             <!-- editing overlay (for adding paths, areas etc) -->
-             {#if overlay}
+             {#if overlay} <!-- editing overlay (for adding paths, areas etc) -->
                 {@const locType = Object.keys(LOCTYPES).find(key => LOCTYPES[key] === overlay)}
                  <div id="edit-overlay" in:fade={{ duration: 100 }}>
                     <b class="subheading">Adding {locType.toSentenceCase()}</b>
                     <p style="color: white; text-align: center; margin: 12px;">Begin adding your {locType.toLowerCase()} to the map.</p>
                     <div id="arrow_container">
-                        <div class="arrow">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
+                        <div class="arrow"><span></span><span></span><span></span></div>
                     </div>
                     <div style="display: flex; gap: var(--padding_medium); padding-top: 6px;">
                         <Button text="Cancel" icon="close" flat={true} on:click={cancel}></Button>
@@ -447,7 +443,7 @@
                          {#if recentChanges.length > 0}
                              <VirtualList
                                  width="100%"
-                                 height={window.innerHeight - 60}
+                                 height={innerHeight - document.getElementById("refresh-button").getBoundingClientRect().bottom}
                                  itemCount={recentChanges.length}
                                  scrollToIndex={1}
                                  itemSize={60}>
@@ -832,4 +828,4 @@
 
 </style>
 <svelte:options accessors/>
-<svelte:window on:resize={() => { if (editPanel != null) { editPanelContent.style.height = document.querySelector('.appbar') ? editPanel.clientHeight - document.querySelector('.appbar').clientHeight + "px" : null } if (editor) { editor.style.height = `${editor.parentElement.clientHeight}px`;}}} on:mouseup={onResizerUp}/>
+<svelte:window on:resize={() => { if (editPanel != null) { editPanelContent.style.height = document.querySelector('.appbar') ? editPanel.clientHeight - document.querySelector('.appbar').clientHeight + "px" : null } if (editor) { editor.style.height = `${editor.parentElement.clientHeight}px`;}}} on:mouseup={onResizerUp} bind:innerHeight />

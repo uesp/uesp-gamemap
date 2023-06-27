@@ -14,7 +14,8 @@
 - got dawnstar map done
 - removed loctype switcher as it was causing issues (also conceptually changing from a single point to a line live didnt really work that well)
 - move label direction up to "general" for ease of access
-- recent changes automatically updates on save/delete
+- recent changes automatically updates on save/delete, so it's "live"
+>> if anyone adds stuff when it's refreshed, it isnt added to the local cache, so navigating to new locations will say they dont exist
 - fix editor title not changing from "adding location" to "editing location" after save
 
 ## technical
@@ -27,8 +28,6 @@
 
 - get dialogs working
 - fix drawing line not working (sets as marker)
-
-
 
 - fix markers carying over between maps
 
@@ -56,6 +55,8 @@ if adding location, save will dismiss the editor window
 if adding location, close button is always "cancel"
 
 
+- fix cant set new marker to "none" / dropdown always selecting "none" on first load on any edit
+
 - fix recent changes list overflowing, not correct height
 
 - if parent id for world is -1, consider it null
@@ -80,12 +81,16 @@ if adding location, close button is always "cancel"
 
 - fix num up and down things appearing on floats or on invis numbers on chrome
 
+- make iconbar and resizing dynamic, dont rely on css for mobile mode, do it in javascript based on map size
 
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
 - hamburger for search bar to show other maps
 - cell resource state in/from url
 - add allow long clicking on mobile to open popups
 - add zoom/pan in effects for markers when editing
+
+- make editing polygons always the same colour (blue)
+
 - fix centreon going to the wrong place
 - fix clicking out while zoomed in zooming in to parent map as well
 - fix type:blah not working after the icon list to js map change
