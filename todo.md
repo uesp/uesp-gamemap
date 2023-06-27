@@ -9,6 +9,9 @@
 - fixed polygons flashing when moving points
 - fixed green "+" not visible in polygons
 - restored double click to pan
+- fixed RC list overflowing at the bottom
+- fixed "null" appearing in popups when descriptions were empty
+- fixed popups not working when wiki links were null
 
 ## polish:
 - got dawnstar map done
@@ -22,6 +25,7 @@
 - merged editor panel and editor content (actual forms and stuff) component files into just one "editor.svelte"
 
 ## todo
+- fix "null" in popups
 - finish colour preview thing
 - fix updating polygon colour doesnt change poly colour
 - fix moving map on add location adds double location and cant move location anymore
@@ -41,7 +45,15 @@
 - the location coord mismatch is happening because you are converting a new location's coords based on the current world's dimensions
 >> need to find a way to pass location.js reference to the current world
 
+- add strok width for normal and hover
+- get default stroke widths working for adding default polygon (black outline)
+- get colour code changing whenever user moves coloru swatch
+- and get colour changing whenever user types in different colour
+
 - fix clicking X button "saving" changes unlike cancel button
+
+
+- deleting markers still adds edit-version marked with "click to drag" back to map on map move
 
 - fix slow zooming on macbooks and laptops with pinch zoom gestures (NOT normal scroll gestures)
 - shift click on other locations while unsaved changes should immediately change to edit it
@@ -56,8 +68,6 @@ if adding location, close button is always "cancel"
 
 
 - fix cant set new marker to "none" / dropdown always selecting "none" on first load on any edit
-
-- fix recent changes list overflowing, not correct height
 
 - if parent id for world is -1, consider it null
 - also reflect this in saving

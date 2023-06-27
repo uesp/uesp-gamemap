@@ -177,7 +177,7 @@ export default class Location {
 	getTooltipContent() {
 		return `<span>${this.name} ${this.isClickable() ? "<i class='tiny material-icons'>open_in_browser</i>" : ""}</span>
 				<div class='tooltip-desc'>
-					${this.description ? (this.name != this.wikiPage) ? this.description + "</br>" + this.wikiPage : this.description : "" }
+					${this.description ? (this.name != this.wikiPage && this.wikiPage) ? this.description + "</br>" + this.wikiPage : this.description : "" }
 				</div>
 				${this.isClickable() ? "<small class='tooltip-tip'>Click to enter</small>" : ""}
 				${this.editing && !this.isPolygon() ? "<small class='tooltip-tip'>Click to drag</small>" : ""}`;
@@ -185,7 +185,7 @@ export default class Location {
 
 	getPopupContent() {
 		let popupContent = `<div class='popupTitle'><a ${this.createWikiLink()} target='_top'> ${this.name} </a></div>
-							<div class='popupDesc'>${this.description}</div><hr/>
+							<div class='popupDesc'>${(this.description) ? this.description : ""}</div><hr/>
 							<div class='popupInfo'><b>Location ID:</b> ${this.id}</div>`;
 
 		if (this.coords.length == 1 ) {
@@ -231,7 +231,7 @@ export default class Location {
 
 		if (mapConfig.wikiNamespace != null && mapConfig.wikiNamespace.length > 0) {
 
-			if (this.wikiPage != "") {
+			if (this.wikiPage) {
 				if (this.wikiPage.indexOf(":") >= 0) {
 					wikiLink = mapConfig.wikiURL + encodeURIComponent(this.wikiPage).replace("%3A", ":").replace("%2F", "/");;
 				} else {

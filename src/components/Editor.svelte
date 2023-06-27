@@ -9,7 +9,6 @@
 
 <script>
     // import core svelte stuff
-    import { createEventDispatcher } from "svelte";
     import { fade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
     import { fly } from 'svelte/transition';
@@ -19,7 +18,6 @@
     // import data classes
     import World from "../map/world";
     import Location from "../map/location";
-    import Point from "../map/point";
 
     // import ui components
     import AppBar from './AppBar.svelte';
@@ -35,10 +33,8 @@
     import ColourPicker from "./ColourPicker.svelte";
     import AvatarComponent from "./AvatarComponent.svelte";
     import ColourPreview from "./ColourPreview.svelte";
-    import Modal from "./Modal.svelte";
 
     // constants
-    const dispatch = createEventDispatcher();
     let PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     const ANIMATION_DURATION = 350;
     const RESIZE_OBSERVER = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
@@ -53,6 +49,7 @@
     let editorWindow;
     let overlay = null;
     let saveButton;
+    let refreshButton;
     let innerHeight;
 
     let recentChanges = [];
@@ -272,6 +269,13 @@
         gamemap.setMapLock(MAPLOCK.NONE);
         gamemap.getMapObject().pm.disableDraw();
         gamemap.getMapObject().pm.disableGlobalEditMode();
+
+        // weird hack to stop recent changes list being wrong size
+        setTimeout(() => {
+            let oldRecentChanges = recentChanges;
+            recentChanges = [];
+            recentChanges = oldRecentChanges;
+        }, 0)
     }
 
     // received updated marker coords from gamemap (via drag and dropping)
@@ -438,34 +442,36 @@
                          <Button text="Edit World" icon="public" on:click={() => (edit(gamemap.getCurrentWorld()))}></Button>
                      </div>
                      <b>Recent Changes</b>
-                     <div id="refresh-button" title="Refresh the Recent Changes list" class="waves-effect" on:click={getRecentChanges}><Icon name="refresh" size=20/></div>
+                     <div id="refresh-button" title="Refresh the Recent Changes list" class="waves-effect" on:click={getRecentChanges} bind:this={refreshButton}><Icon name="refresh" size=20 /></div>
                      <div id="recent-changes-container">
-                         {#if recentChanges.length > 0}
-                             <VirtualList
-                                 width="100%"
-                                 height={innerHeight - document.getElementById("refresh-button").getBoundingClientRect().bottom}
-                                 itemCount={recentChanges.length}
-                                 scrollToIndex={1}
-                                 itemSize={60}>
-                                 <div slot="item" let:index let:style {style}>
-                                     {@const data = recentChanges[index]}
-                                     {@const isWorld = data.destinationID > 0}
-                                     <ListItem title={(isWorld) ? data.worldName : data.locationName}
-                                               subtitle={(!isWorld) ? data.worldName : null}
-                                               destinationID={data.destinationID}
-                                               compact={true}
-                                               bold={isWorld}
-                                               icon={(data.icon != null) ? gamemap.getMapConfig().iconPath + data.icon + ".png" : (isWorld) ? "public" : "location_on"}
-                                               user={data.user}
-                                               timestamp={data.timestamp}
-                                               action={data.action}
-                                               comment={data.comment}
-                                      on:click={() => gamemap.goto(data.destinationID)} />
-                                 </div>
-                             </VirtualList>
-                         {:else}
-                             <LoadingSpinner/>
-                         {/if}
+                        {#key recentChanges}
+                            {#if recentChanges.length > 0}
+                                <VirtualList
+                                    width="100%"
+                                    height={innerHeight - (refreshButton?.getBoundingClientRect()?.bottom + 8)}
+                                    itemCount={recentChanges.length}
+                                    scrollToIndex={1}
+                                    itemSize={60}>
+                                    <div slot="item" let:index let:style {style}>
+                                        {@const data = recentChanges[index]}
+                                        {@const isWorld = data.destinationID > 0}
+                                        <ListItem title={(isWorld) ? data.worldName : data.locationName}
+                                                subtitle={(!isWorld) ? data.worldName : null}
+                                                destinationID={data.destinationID}
+                                                compact={true}
+                                                bold={isWorld}
+                                                icon={(data.icon != null) ? gamemap.getMapConfig().iconPath + data.icon + ".png" : (isWorld) ? "public" : "location_on"}
+                                                user={data.user}
+                                                timestamp={data.timestamp}
+                                                action={data.action}
+                                                comment={data.comment}
+                                        on:click={() => gamemap.goto(data.destinationID)} />
+                                    </div>
+                                </VirtualList>
+                            {:else}
+                                <LoadingSpinner/>
+                            {/if}
+                        {/key}
                      </div>
                 {:else}
                     <div id="editor" in:fixEditor out:cancel bind:this={editor}>
