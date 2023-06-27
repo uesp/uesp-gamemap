@@ -855,7 +855,7 @@ export default class Gamemap {
 	================================================*/
 
 
-	addNewLocation(locType) {
+	addLocation(locType) {
 
 		print("adding location..");
 

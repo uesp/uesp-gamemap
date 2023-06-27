@@ -8,6 +8,7 @@
 - fixed the unsaved indicator (*) hanging around after you click cancel
 - fixed polygons flashing when moving points
 - fixed green "+" not visible in polygons
+- restored double click to pan
 
 ## polish:
 - got dawnstar map done
@@ -15,7 +16,6 @@
 - move label direction up to "general" for ease of access
 - recent changes automatically updates on save/delete
 - fix editor title not changing from "adding location" to "editing location" after save
-
 
 ## technical
 - merged editor panel and editor content (actual forms and stuff) component files into just one "editor.svelte"
@@ -32,7 +32,7 @@
 
 - fix markers carying over between maps
 
-- fix focus on svelte elements mean cant move map (mobile especially)
+- fix focus on svelte elements mean cant move map (mobile specifically)
 
 - fix loading into new worlf while zoomed in not removing old locations
 - fix wiki name switch not switching
@@ -51,10 +51,7 @@
 - reimplement eso-specific name shortcuts for locations
 - also ask feedback to map editors for the above
 
-- fix double click to pan not working
 
-change "editing location" to "adding location" on add
-if adding location, hide delete button
 if adding location, save will dismiss the editor window
 if adding location, close button is always "cancel"
 

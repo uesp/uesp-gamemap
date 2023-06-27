@@ -124,13 +124,7 @@
 
     function addNewLocation(locType) {
         overlay = locType;
-        gamemap.addNewLocation(locType);
-    }
-
-    function cancelNewLocation() {
-        overlay = null;
-        gamemap.getMapObject().pm.disableDraw();
-        gamemap.setMapLock(MAPLOCK.NONE);
+        gamemap.addLocation(locType);
     }
 
     function onBackPressed() {
@@ -183,9 +177,10 @@
             // visually delete location from the map
             print("deleting object...");
             gamemap.deleteLocation(modEditObject);
-
+            let query = queryify(objectify(modEditObject.getDeleteQuery()));
             // do async api request to actually delete the location
-            getJSON(GAME_DATA_SCRIPT + queryify(objectify(modEditObject.getDeleteQuery())), () => { getRecentChanges();});
+            getJSON(GAME_DATA_SCRIPT + query, () => { getRecentChanges();});
+            cancel();
         } else {
             alert("warning !! you are deleting a location! this cant be undone!")
         }
@@ -248,31 +243,34 @@
         }
     }
 
-
-
+    // cancel editing
     function cancel() {
 
         // clean up
         if (isWorld) {
             gamemap.reset(true);
             Array.from(document.querySelectorAll("[class*='editing']")).forEach(element => { element.classList.remove("editing"); })
-        } else if (isLocation) {
-            gamemap.getMapObject().pm.disableGlobalEditMode();
+        } else if (isLocation) { // if it was an unadded location, delete it
             editObject.setEditing(false);
             if (editObject?.unsavedLocation) {
                 gamemap.deleteLocation(editObject)
-            } else {
-                gamemap.updateLocation(editObject);
+            } else { // else revert to how it was, if it still exists
+                if (gamemap.getCurrentWorld().locations.get(editObject.id)) {
+                    gamemap.updateLocation(editObject);
+                }
             }
         }
 
         // turn off editing
+        overlay = null;
         editObject = null;
         modEditObject = null;
         liveEdit = false;
         hasBeenModified = false;
         unsavedChanges = false;
         gamemap.setMapLock(MAPLOCK.NONE);
+        gamemap.getMapObject().pm.disableDraw();
+        gamemap.getMapObject().pm.disableGlobalEditMode();
     }
 
     // received updated marker coords from gamemap (via drag and dropping)
@@ -419,7 +417,7 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: var(--padding_medium); padding-top: 6px;">
-                        <Button text="Cancel" icon="close" flat={true} on:click={cancelNewLocation}></Button>
+                        <Button text="Cancel" icon="close" flat={true} on:click={cancel}></Button>
                     </div>
                  </div>
              {/if}
