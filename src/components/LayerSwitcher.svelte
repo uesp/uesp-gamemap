@@ -127,7 +127,7 @@
                         <!-- Cell resource dropdown -->
                         {#if world.hasCellResources()}
                             <!-- svelte-ignore missing-declaration -->
-                            <DropdownMenu label="Show Resource" hint="Select resource..." tooltip="Select cell resource" on:change={(e) => {currentCellResource = e.detail; onGridChecked({detail: true})}} align="left">
+                            <DropdownMenu label="Show Resource" hint="Select resource..." tooltip="Select cell resource" on:change={(e) => {currentCellResource = e.detail; onGridChecked({detail: true})}} align="right">
                                 {@const keys = Object.keys(gamemap.getMapConfig().cellResources)}
                                 {@const names = Object.values(gamemap.getMapConfig().cellResources)}
                                     {#each keys as value, i}

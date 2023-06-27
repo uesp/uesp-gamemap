@@ -1,12 +1,15 @@
 ## last week
 
 
+## bug fixes:
+- fixed "Orphaned maps" (maps without a parent) header showing up when there isnt any
+
 
 
 
 
 ## polish:
-- get dawnstar map done
+- got dawnstar map done
 
 
 
@@ -19,6 +22,7 @@
 - fix updating polygon colour doesnt change poly colour
 - fix cant change positions XY and it affects marker live
 - fix moving map on add location adds double location and cant move location anymore
+- fix asterisk in map editor title
 
 - get dialogs working
 
@@ -34,7 +38,9 @@
 >> need to find a way to pass location.js reference to the current world
 
 - fix clicking X button "saving" changes unlike cancel button
-- fix cell resources menu going the wrong way
+
+- fix slow zooming on macbooks and laptops with pinch zoom gestures (NOT normal scroll gestures)
+- shift click on other locations while unsaved changes should immediately change to edit it
 
 
 - reimplement eso-specific name shortcuts for locations
@@ -52,9 +58,9 @@ if adding location, close button is always "cancel"
 
 - if parent id for world is -1, consider it null
 - also reflect this in saving
+- get live editing working for worlds as well
 
 
-- use similar centre of polygon algorithm as leaflet does for locations/latlng conversion
 - add quick toggles for areas, "is zone" to get rid of outline for eso
 
 
@@ -86,7 +92,6 @@ if adding location, close button is always "cancel"
 - fix requesting /null in layerbutton
 - add permalink option in location popups
 - redesign location popups (add icon in circle in popup, with title and info to the right of it)
-- fix edit panel not animating close properly
 - add middle click event listener to button and listItem
 >> allow middle click to open in new tab for goto article button
 >> and add middle click on listitems to open in a new tab w/ centreon link
@@ -107,6 +112,7 @@ if adding location, close button is always "cancel"
 - fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af when zooming out
 - add riseOnHover to icon labels when hovering over
+- shift click in RC to travel to and edit world/location
 - make tooltips follow the mouse rather than the centre of the location
 - show more columns on map key menu dynamically
 - fix cell resource colour intensity to make sense. deeper the colour the more stuff
@@ -116,6 +122,7 @@ if adding location, close button is always "cancel"
 - button to go up a map, right click isnt intuitive
 - make readme on how to create the favicon styles for maps for future developers
 - make maps in game release order
+- use similar centre of polygon algorithm as leaflet does for locations/latlng conversion
 
 - Skyrim and Solstheim at 512 x 512 per cell
 > https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=drive_link

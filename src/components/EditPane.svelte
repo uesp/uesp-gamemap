@@ -242,19 +242,19 @@
                                  scrollToIndex={1}
                                  itemSize={60}>
                                  <div slot="item" let:index let:style {style}>
-                                     {@const RCItem = recentChanges[index]}
-                                     {@const isWorld = RCItem.destinationID > 0}
-                                     <ListItem title={(isWorld) ? RCItem.worldName : RCItem.locationName}
-                                               subtitle={(!isWorld) ? RCItem.worldName : null}
-                                               destinationID={RCItem.destinationID}
+                                     {@const data = recentChanges[index]}
+                                     {@const isWorld = data.destinationID > 0}
+                                     <ListItem title={(isWorld) ? data.worldName : data.locationName}
+                                               subtitle={(!isWorld) ? data.worldName : null}
+                                               destinationID={data.destinationID}
                                                compact={true}
                                                bold={isWorld}
-                                               icon={(RCItem.icon != null) ? gamemap.getMapConfig().iconPath + RCItem.icon + ".png" : (isWorld) ? "public" : "location_on"}
-                                               user={RCItem.user}
-                                               timestamp={RCItem.timestamp}
-                                               action={RCItem.action}
-                                               comment={RCItem.comment}
-                                      on:click={() => gamemap.goto(RCItem.destinationID)} />
+                                               icon={(data.icon != null) ? gamemap.getMapConfig().iconPath + data.icon + ".png" : (isWorld) ? "public" : "location_on"}
+                                               user={data.user}
+                                               timestamp={data.timestamp}
+                                               action={data.action}
+                                               comment={data.comment}
+                                      on:click={() => gamemap.goto(data.destinationID)} />
                                  </div>
                              </VirtualList>
                          {:else}
@@ -363,7 +363,7 @@
     #arrow_container {
         position: relative;
         margin-top: 10px;
-        margin-bottom: 10px;
+        margin-bottom: 14px;
     }
 
     .arrow span {

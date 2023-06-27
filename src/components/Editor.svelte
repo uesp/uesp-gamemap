@@ -315,17 +315,6 @@
                         </Textbox>
                     </Switch>
 
-                    <!-- Location Type (for Locations) -->
-                    {#if isLocation}
-                        <SegmentedButton
-                            label="Location Type"
-                            entries={LOCTYPES}
-                            tooltip="Location type (marker, path or area)"
-                            selected={Object.values(LOCTYPES).indexOf(modifiedObj.locType)}
-                            on:change={(e) => modify("locType", e.detail)}>
-                        </SegmentedButton>
-                    {/if}
-
                     <!-- Description -->
                     <Textbox label="Description"
                              text={modifiedObj.description}
