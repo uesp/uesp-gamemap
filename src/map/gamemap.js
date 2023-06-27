@@ -205,7 +205,7 @@ export default class Gamemap {
 		if(mapState.coords == null || mapState.zoom == null) {
 			// reset map to fill world bounds
 			map.fitBounds(RC.getMaxBounds(), {animate: false});
-			setTimeout(function() { map.fitBounds(RC.getMaxBounds(), {animate: true}) }, 1);
+			setTimeout(function() { map.fitBounds(RC.getMaxBounds(), {animate: true}) }, 1); // now actually reset it
 		} else {
 			print(mapState.coords);
 			print(this.toLatLngs(mapState.coords));
@@ -1650,41 +1650,3 @@ L.Layer.include({
 		});
 	}
 });
-
-// uesp.gamemap.Map.prototype.createNewLocationId = function ()
-// {
-// 	NewId = this.nextNewLocationId;
-// 	this.nextNewLocationId -= 1;
-// 	return NewId;
-// }
-
-// uesp.gamemap.Map.prototype.createNewLocation = function (gamePos)
-// {
-// 	if (!this.canEdit()) return null;
-
-// 	var location = new uesp.gamemap.Location(this);
-
-// 	location.id = this.createNewLocationId();
-// 	location.worldID = this.currentWorldID;
-// 	location.name = 'New Location';
-// 	location.x = Math.round(gamePos.x);
-// 	location.y = Math.round(gamePos.y);
-// 	location.locType = Constants.LOCTYPE_POINT;
-// 	location.displayLevel = this.zoomLevel - 1;
-// 	location.visible = true;
-// 	location.useEditPopup = true;
-// 	location.isFirstEdit = true;
-// 	location.displayData = {};
-// 	location.displayData.points = [];
-// 	location.displayData.labelPos = 0;
-
-// 	location.displayData.labelPos = 6;
-// 	location.iconType = 1;
-
-// 	this.locations[location.id] = location;
-
-// 	this.displayLocation(location);
-// 	location.showPopup();
-
-// 	return location;
-// }

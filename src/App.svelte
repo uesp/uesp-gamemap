@@ -43,7 +43,7 @@
 	import IconBar from './components/IconBar.svelte';
 	import Icon from './components/Icon.svelte';
 	import Modal from './components/Modal.svelte';
-	import EditPane from './components/EditPane.svelte';
+	import EditPane from './components/Editor.svelte';
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
@@ -381,7 +381,7 @@
 
 	<!-- Map editor panel -->
 	{#if canEdit}
-		<EditPane bind:this={editPane} bind:isShown={isEditing}/>
+		<EditPane bind:this={editPane} bind:shown={isEditing}/>
 	{/if}
 
 	<!-- Help dialog -->

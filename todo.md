@@ -3,6 +3,7 @@
 
 ## bug fixes:
 - fixed "Orphaned maps" (maps without a parent) header showing up when there isnt any
+- fixed back/close button on edit pane not cancelling new marker properly
 
 
 
@@ -10,7 +11,13 @@
 
 ## polish:
 - got dawnstar map done
+- removed loctype switcher as it was causing issues (also conceptually changing from a single point to a line live didnt really work that well)
+- move label direction up to "general" for ease of access
+- recent changes automatically updates on save/delete
 
+
+## technical
+- merged editor panel and editor content (actual forms and stuff) component files into just one "editor.svelte"
 
 
 
@@ -25,6 +32,9 @@
 - fix asterisk in map editor title
 
 - get dialogs working
+- fix drawing line not working (sets as marker)
+
+- update rc on every edit (save/delete)
 
 - fix focus on svelte elements mean cant move map (mobile especially)
 

@@ -8,7 +8,7 @@
     constructor(coords) {
         //set default state
 		this.coords = coords;
-        this.zoom = coords?.zoom ?? coords?.[0].zoom ?? DEFAULT_MAP_CONFIG.zoomLevel;
+        this.zoom = coords?.zoom ?? coords?.[0]?.zoom ?? DEFAULT_MAP_CONFIG.zoomLevel;
         this.world = null;
         this.showGrid = false;
         this.cellResource = "";

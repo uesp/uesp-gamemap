@@ -105,6 +105,9 @@ class GameMap
 	public $canEditTR = false;
 	public $canEditOther = false;
 
+	public $wikiUserId = 0;
+	public $wikiUserName = '';
+
 
 	function __construct ()
 	{
@@ -139,6 +142,10 @@ class GameMap
 
 		if ($userId > 0)
 		{
+
+			$this->wikiUserId = intval($userId);
+			$this->wikiUserName = UespMemcachedSession::readKey('wsUserName');
+
 			$groups = $this->loadUserWikiGroups($userId);
 		}
 		// If session is not available, check the wiki token and user ID
@@ -191,6 +198,10 @@ class GameMap
 		if ($user == null) return false;
 
 		if ($user['user_token'] != $token) return false;
+
+
+		$this->wikiUserId = $userId;
+		$this->wikiUserName = $user['user_name'];
 
 		return $this->loadUserWikiGroups($userId);
 	}
@@ -476,14 +487,15 @@ class GameMap
 
 	public function addRevision ($editAction, $oldRecord = null, $newRecord = null)
 	{
-		$userName = $_SERVER["REMOTE_ADDR"];
-		$userId = 0;
+		$userId = $this->wikiUserId;
+		$userName = $this->wikiUserName;
 		$revisionId = 0;
 
-		$userId = UespMemcachedSession::readKey('wsUserId');
-		$userName = UespMemcachedSession::readKey('wsUserName');
-		if ($userId == null) $userId = 0;
-		if ($userName == null) $userName = $_SERVER["REMOTE_ADDR"];
+		if ($userId == null || $userId <= 0)
+		{
+			$userId = 0;
+			$userName = $_SERVER["REMOTE_ADDR"];
+		}
 		//Special case for local edits or for dev/testing
 		if ($this->isLocalhost) $userName = "Bot";
 
