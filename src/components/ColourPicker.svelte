@@ -20,9 +20,20 @@
 	export let placeholder;
 	export let showTextBox = true;
 	export let colour = "rgba(0, 0, 0, 0)";
+	export let tooltip;
 	let picker;
 	let colourPickerAnchor;
 	let colourPickerPreview;
+
+	const dispatch = createEventDispatcher();
+
+	$: { // on colour update, do stuff
+		if (picker) {
+			print(`current colour is: ${colour}`);
+			picker.setColour(colour);
+			dispatch("change", colour);
+		}
+	}
 
 	// on component load
 	onMount(async() => {
@@ -47,9 +58,9 @@
 
 <markup>
 
-	<div class="colour-picker-container" style="position: relative;">
+	<div class="colour-picker-container" style="position: relative;" class:isEmpty={colour == null || colour == "" || colour.length == 0} title={tooltip}>
 		{#if showTextBox}
-			 <Textbox placeholder={placeholder} block={true} label={label} text={colour} on:change={(e) => colour = e.detail}/>
+			 <Textbox placeholder={placeholder} block={true} label={label} text={colour} bind:value={colour} on:change={(e) => colour = e.detail}/>
 		{/if}
 
 		<!-- svelte-ignore a11y-click-events-have-key-events -->

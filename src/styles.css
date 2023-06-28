@@ -893,6 +893,10 @@ textarea.materialize-textarea {
 .colour-picker-container .textbox .input-field input {
 	font-family: monospace !important;
 }
+/* except when empty */
+.colour-picker-container.isEmpty .textbox .input-field input {
+	font-family: unset !important;
+}
 
 /* colour picker */
 .picker_wrapper.popup, .picker_wrapper.popup .picker_arrow::before, .picker_wrapper.popup .picker_arrow::after {

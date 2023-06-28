@@ -1,5 +1,10 @@
 ## last week
 
+## editing:
+- got colour preview working
+- added stroke colour and stroke width to the editor since i forgot
+- area fill/stroke colours work
+
 
 ## bug fixes:
 - fixed "Orphaned maps" (maps without a parent) header showing up when there isnt any
@@ -14,6 +19,7 @@
 - fixed popups not working when wiki links were null
 - fix inane bug causing locations outside of the map (negative x, y) to disappear, even when inside map view, because javascript was turning the coord pairs into strings(??) and breaking the bounds calculation, because -0.20 is not more than "-0.40"
 - fixed new locations rounding up their display levels (3.5 > 4.0) which was causing new locations to disappear upon refresh (now rounds down to nearest integer, aka 3.0)
+- fixed typing in the polygon colour box not updating colour picker
 
 ## polish:
 - got dawnstar map done

@@ -579,12 +579,12 @@
                                 {#if isWorld}
                                     <FormGroup title="Bounds" icon="crop_free">
                                         <div class="row">
-                                            <Textbox text={modEditObject.minX} hint="Minimum X" type="number" hideSpinner={true} on:change={(e) => modify("minX", e.detail)}/>
-                                            <Textbox text={modEditObject.maxX} hint="Maximum X" type="number" hideSpinner={true} on:change={(e) => modify("maxY", e.detail)}/>
+                                            <Textbox text={modEditObject.minX} hint="Minimum X" type="number" hideSpinner={true} on:change={(e) => modify("minX", e.detail)} tooltip="Minimum X bounds for this world"/>
+                                            <Textbox text={modEditObject.maxX} hint="Maximum X" type="number" hideSpinner={true} on:change={(e) => modify("maxY", e.detail)} tooltip="Maximum X bounds for this world"/>
                                         </div>
                                         <div class="row">
-                                            <Textbox text={modEditObject.minY} hint="Minimum Y" type="number" hideSpinner={true} on:change={(e) => modify("minY", e.detail)}/>
-                                            <Textbox text={modEditObject.maxY} hint="Maximum Y" type="number" hideSpinner={true} on:change={(e) => modify("maxY", e.detail)}/>
+                                            <Textbox text={modEditObject.minY} hint="Minimum Y" type="number" hideSpinner={true} on:change={(e) => modify("minY", e.detail)} tooltip="Minimum Y bounds for this world"/>
+                                            <Textbox text={modEditObject.maxY} hint="Maximum Y" type="number" hideSpinner={true} on:change={(e) => modify("maxY", e.detail)} tooltip="Maximum Y bounds for this world"/>
                                         </div>
                                     </FormGroup>
                                 {/if}
@@ -597,17 +597,48 @@
 
                                             <ColourPreview data={modEditObject}/>
 
-                                            <ColourPicker
-                                                label="Fill colour"
-                                                colour = {modEditObject.fillColour}
-                                                placeholder="Select/enter fill colour...">
-                                            </ColourPicker>
+                                            <!-- only show fill colour for areas -->
+                                            {#if modEditObject.locType == LOCTYPES.AREA}
+                                                <ColourPicker
+                                                    label="Fill Colour"
+                                                    colour = {modEditObject.fillColour}
+                                                    placeholder="Enter fill colour..."
+                                                    tooltip="Default fill colour for this location"
+                                                    on:change={(e) => modify("fillColour", e.detail)}>
+                                                </ColourPicker>
+                                            {/if}
 
                                             <ColourPicker
-                                                label="Fill colour (Hovered)"
-                                                colour = {modEditObject.fillColourHover}
-                                                placeholder="Select/enter fill colour...">
+                                                label="Stroke Colour"
+                                                colour = {modEditObject.strokeColour}
+                                                placeholder="Enter stroke colour..."
+                                                tooltip="Default stroke colour for this location"
+                                                on:change={(e) => modify("strokeColour", e.detail)}>
                                             </ColourPicker>
+
+                                            <!-- only show fill colour for areas -->
+                                            {#if modEditObject.locType == LOCTYPES.AREA}
+                                                <ColourPicker
+                                                    label="Fill Colour (Hover)"
+                                                    colour = {modEditObject.fillColourHover}
+                                                    placeholder="Enter hovered fill colour..."
+                                                    tooltip="Hovered fill colour for this location"
+                                                    on:change={(e) => modify("fillColourHover", e.detail)}>
+                                                </ColourPicker>
+                                            {/if}
+
+                                            <ColourPicker
+                                                label="Stroke Colour (Hover)"
+                                                colour = {modEditObject.strokeColourHover}
+                                                placeholder="Enter hovered stroke colour..."
+                                                tooltip="Hovered stroke colour for this location"
+                                                on:change={(e) => modify("strokeColourHover", e.detail)}>
+                                            </ColourPicker>
+
+                                            <div class="row">
+                                                <Textbox text={modEditObject.strokeWidth} label="Stroke Width" hint="" column={true} type="number" on:change={(e) => modify("strokeWidth", e.detail)} tooltip="Default stroke width for this location"/>
+                                                <Textbox text={modEditObject.strokeWidthHover} label="Stroke Width (Hover)" hint="" column={true} type="number" on:change={(e) => modify("strokeWidthHover", e.detail)} tooltip="Hovered stroke width for this location"/>
+                                            </div>
                                         {/if}
 
                                         <Textbox label="Display Level"

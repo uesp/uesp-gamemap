@@ -1246,7 +1246,7 @@ export default class Gamemap {
 			layer.remove();
 			print(isMarker);
 			let location = new Location({
-				locType:  (isMarker) ? LOCTYPES.MARKER : (shape == "Polygon") ? LOCTYPES.AREA : LOCTYPES.LINE,
+				locType:  (isMarker) ? LOCTYPES.MARKER : (shape == "Polygon") ? LOCTYPES.AREA : LOCTYPES.PATH,
 				coords: self.toCoords(layer.getCoordinates()),
 			});
 			this.getCurrentWorld().locations.set(location.id, location);

@@ -25,6 +25,7 @@
     export let hideSpinner = type == "float";
     export let min;
     export let max;
+    export let column;
     type = (type == "float") ? "number" : type;
 
     const dispatch = createEventDispatcher();
@@ -59,7 +60,7 @@
 </script>
 
 <markup>
-    <div class="textbox" class:inline={!block} title={tooltip}>
+    <div class="textbox" class:inline={!block} title={tooltip} class:column={column}>
         {#if label}<p class="label" class:hasSubtext={subtext}>{label}</p>{/if}
         <div class="input-field" class:inline={!block} class:isNumber={type == "number"} class:compact={!label && type == "number"}>
             {#if textArea}
@@ -89,8 +90,8 @@
 <style>
 
     .input-field {
-        margin-top: 3px;
-        margin-bottom: 3px;
+        margin-top: 4px;
+        margin-bottom: 4px;
         margin-left: var(--padding_minimum);
         width: 100%;
     }
@@ -178,6 +179,15 @@
     .hasSubtext {
         position: relative;
         top: -12px;
+    }
+
+    .column {
+        flex-direction: column;
+    }
+
+    .column .label {
+        width: 100%;
+        padding-left: 8px;
     }
 
 </style>
