@@ -34,14 +34,14 @@
 - fix updating polygon colour doesnt change poly colour
 - fix moving map on add location adds double location and cant move location anymore
 
-- get dialogs working
 - fix drawing line not working (sets as marker)
 
+- fix loading into new worlf while zoomed in not removing old locations
 - fix markers carying over between maps
+- get dialogs working
 
 - fix focus on svelte elements mean cant move map (mobile specifically)
 
-- fix loading into new worlf while zoomed in not removing old locations
 - fix wiki name switch not switching
 
 - fix on edit: adding identical icon when map move on top of added/adding icon
@@ -62,7 +62,7 @@
 - fix slow zooming on macbooks and laptops with pinch zoom gestures (NOT normal scroll gestures)
 - shift click on other locations while unsaved changes should immediately change to edit it
 
-
+- fix being able to close editor panel while in "add marker" mode
 - reimplement eso-specific name shortcuts for locations
 - also ask feedback to map editors for the above
 
@@ -88,7 +88,7 @@ if adding location, close button is always "cancel"
 - reminder about skyrim/beyond skyrim/solstheim tiles from BS guy
 
 
-
+- make "grouped/abc" symmetrical
 - preview colour component
 
 - make close button in edit panel always close the panel regardless of direct edit or not

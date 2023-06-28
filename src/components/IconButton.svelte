@@ -54,8 +54,6 @@ iconButton element:
     });
 
     function onClicked(e) {
-
-
         if (checked != null) {
             checked = !checked;
             dispatch("checked", {checked: checked, shift: e.shiftKey});

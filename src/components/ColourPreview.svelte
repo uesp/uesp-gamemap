@@ -9,21 +9,18 @@
 
     export let data;
 
-
-
-    // if line, fill is the same as stroke colour, and no outline
-    // if polygon, show both outline and fill colour
-
+    let isHovered = false;
+    $: fillColour = (!isHovered) ? data.fillColour : data.fillColourHover;
+    $: strokeColour = (!isHovered) ? data.strokeColour : data.strokeColourHover;
+    $: strokeWidth = (!isHovered) ? data.strokeWidth : data.strokeWidthHover;
 
 </script>
-
-
 
 <markup>
 
     <div id="colour-preview-container">
         <div class="colour-picker" title="Colour preview">
-            <div class="colour-preview"></div>
+            <div class="colour-preview" style:--fillColour={fillColour} style:--strokeColour={strokeColour} style:--strokeWidth={strokeWidth+"px"} on:mouseenter={() => isHovered = true} on:mouseleave={() => isHovered = false}></div>
         </div>
 
         <small class="label">Preview</small>
@@ -31,8 +28,16 @@
 
 </markup>
 
-
 <style>
+
+    .colour-preview {
+        width: auto;
+		height: inherit;
+		position: relative;
+        border: var(--strokeWidth) solid var(--strokeColour);
+        background: var(--fillColour);
+        border-radius: 16px;
+	}
 
     #colour-preview-container {
         display: flex;
@@ -48,13 +53,6 @@
 		border-radius: var(--padding_medium);
 		box-shadow: 0px 0px 0px 1px var(--divider);
 		overflow: hidden;
-	}
-
-	.colour-preview {
-        width: auto;
-		height: inherit;
-		position: relative;
-        border: 3px solid white;
 	}
 
     .label {

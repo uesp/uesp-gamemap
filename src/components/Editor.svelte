@@ -595,7 +595,7 @@
 
                                         {#if modEditObject.isPolygon()}
 
-                                            <ColourPreview/>
+                                            <ColourPreview data={modEditObject}/>
 
                                             <ColourPicker
                                                 label="Fill colour"
