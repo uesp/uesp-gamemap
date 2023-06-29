@@ -296,26 +296,24 @@ export default class Gamemap {
 
 		// update url
 		let mapLink;
-		if (!location.href.includes("localhost")) { // use server schema if hosted, else use query params
+		if (!location.href.includes("localhost")) { // use server schema if hosted
 			mapLink = (window.location.href.includes("/"+this.mapConfig.database+"/")) ? "?" : (this.mapConfig.database+"/?");
 		} else {
-			mapLink = "?game=" + this.mapConfig.database + "&";
+			mapLink = "?";
 		}
 
 		// world related
 		if (this.hasMultipleWorlds()){
-			mapLink += 'world=' + mapState.world.name;
-			mapLink += '&';
+			mapLink += `world=${mapState.world.name}&`;
 		}
 		if (mapState.world.hasMultipleLayers()) {
-			mapLink += 'layer=' + mapState.world.layers[mapState.layerIndex].name;
-			mapLink += '&';
+			mapLink += `layer=${mapState.world.layers[mapState.layerIndex].name}&`;
 		}
-		mapLink += 'x=' + mapState.coords[0];
-		mapLink += '&y=' + mapState.coords[1];
-		mapLink += '&zoom=' + mapState.zoom;
+		mapLink += `x=${mapState.coords[0]}`;
+		mapLink += `&y=${mapState.coords[1]}`;
+		mapLink += `&zoom=${mapState.zoom}`;
 		if (mapState.showGrid) {
-			mapLink += '&grid=' + mapState.showGrid;
+			mapLink += `&grid=${mapState.showGrid}`;
 		}
 
 		// callback
@@ -893,6 +891,7 @@ export default class Gamemap {
 
 	getLocations(world) {
 
+		self.clearLocations();
 		print("Getting locations...");
 
 		// check if we've been sent a world ID

@@ -33,6 +33,7 @@
 - fixed paths and areas missing their outlines by default
 - fixed adding new markers duplicating and preventing bottom one from being moved (due to being considered visible, adding a new one)
 - fixed hang when double clicking on svgs while editing to pan
+- fixed map state not being saved on refresh if there's only one url param (world=solstheim)
 
 ## technical
 - merged editor panel and editor content (actual forms and stuff) component files into just one "editor.svelte"
@@ -40,11 +41,11 @@
 
 ## todo
 
-- fix maps with multiple worlds being reset if you pass just the world name and not pass x/y or zoom params
-
 
 - fix loading into new worlf while zoomed in not removing old locations
 - fix markers carying over between maps
+
+
 - get dialogs working
 
 - fix focus on svelte elements mean cant move map (mobile specifically)
