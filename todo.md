@@ -1,10 +1,19 @@
 ## last week
-- bug fixes, and finish polygon editor stuff
+- big bug bash, finish polygon editor stuff, and polish
 
 ## editing:
 - got colour preview working
 - added stroke colour and stroke width to the editor since i forgot
 - area fill/stroke colours work
+
+## polish:
+- got dawnstar map done
+- removed loctype switcher as it was causing issues (also conceptually changing from a single point to a line live didnt really work that well)
+- move label direction up to "general" for ease of access
+- recent changes automatically updates on save/delete, so it's "live"
+>> if anyone adds stuff when it's refreshed, it isnt added to the local cache, so navigating to new locations will say they dont exist
+- fix editor title not changing from "adding location" to "editing location" after save
+- fixed "invalid world ID!" showing up when you havent entered anything in the parent id form yet
 
 ## bug fixes:
 - fixed "Orphaned maps" (maps without a parent) header showing up when there isnt any
@@ -23,21 +32,16 @@
 - fixed paths being created as markers instead of lines
 - fixed paths and areas missing their outlines by default
 - fixed adding new markers duplicating and preventing bottom one from being moved (due to being considered visible, adding a new one)
-
-## polish:
-- got dawnstar map done
-- removed loctype switcher as it was causing issues (also conceptually changing from a single point to a line live didnt really work that well)
-- move label direction up to "general" for ease of access
-- recent changes automatically updates on save/delete, so it's "live"
->> if anyone adds stuff when it's refreshed, it isnt added to the local cache, so navigating to new locations will say they dont exist
-- fix editor title not changing from "adding location" to "editing location" after save
+- fixed hang when double clicking on svgs while editing to pan
 
 ## technical
 - merged editor panel and editor content (actual forms and stuff) component files into just one "editor.svelte"
 
 
 ## todo
-- fix moving map on add location adds double location and cant move location anymore
+
+- fix maps with multiple worlds being reset if you pass just the world name and not pass x/y or zoom params
+
 
 - fix loading into new worlf while zoomed in not removing old locations
 - fix markers carying over between maps
@@ -47,15 +51,12 @@
 
 - fix wiki name switch not switching
 
-- fix on edit: adding identical icon when map move on top of added/adding icon
-
 - the location coord mismatch is happening because you are converting a new location's coords based on the current world's dimensions
 >> need to find a way to pass location.js reference to the current world
 
 - remember last icon used in the editor and auto select it next time
 
 - fix clicking X button "saving" changes unlike cancel button
-
 
 - deleting markers still adds edit-version marked with "click to drag" back to map on map move
 
@@ -75,10 +76,10 @@ if adding location, close button is always "cancel"
 
 - fix cant set new marker to "none" / dropdown always selecting "none" on first load on any edit
 
-- if parent id for world is -1, consider it null
-- also reflect this in saving
-- get live editing working for worlds as well
+- get live editing working for worlds
 
+
+- fix colour picker default colour to something sensible instead of the blue
 
 - add quick toggles for areas, "is zone" to get rid of outline for eso
 
@@ -109,8 +110,8 @@ if adding location, close button is always "cancel"
 - fix clicking out while zoomed in zooming in to parent map as well
 - fix type:blah not working after the icon list to js map change
 - fix requesting /null in layerbutton
-- add permalink option in location popups
 - redesign location popups (add icon in circle in popup, with title and info to the right of it)
+- add permalink/centre option in location popups
 - add middle click event listener to button and listItem
 >> allow middle click to open in new tab for goto article button
 >> and add middle click on listitems to open in a new tab w/ centreon link
@@ -126,7 +127,6 @@ if adding location, close button is always "cancel"
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
 - fix double click to pan on ui elements (zoom, search bar)
-- fix maps with multiple worlds being reset if you pass just the world name and not pass x/y or zoom params
 - on mobile, double tap icon to open its popup
 - fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af when zooming out

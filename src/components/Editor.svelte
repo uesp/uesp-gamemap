@@ -152,6 +152,7 @@
         modEditObject = Object.assign(Object.create(Object.getPrototypeOf(data)), data);
         isLocation = editObject instanceof Location;
         isWorld = editObject instanceof World;
+        liveEdit = true;
 
         // do state changes to map
         if (isWorld && editObject.id == gamemap.getCurrentWorld().id) {
@@ -160,7 +161,6 @@
             gamemap.mapRoot.classList.add("editing"); // add editing effect
         } else if (isLocation) {
             print("being called to edit location")
-            liveEdit = true;
             gamemap.setMapLock(modEditObject.isPolygon() ? MAPLOCK.PARTIAL_POLYGON : MAPLOCK.PARTIAL_MARKER);
             editObject.setEditing(true);
             modEditObject.setEditing(true);
@@ -494,6 +494,7 @@
                                                 }}>
                                             </Textbox>
 
+
                                             <!-- Parent ID (for World) -->
                                             {#if isWorld}
                                                 <Textbox
@@ -501,7 +502,7 @@
                                                     text={modEditObject.parentID}
                                                     tooltip="Parent world ID"
                                                     type="number"
-                                                    subtext={(modEditObject.parentID && !isNaN(modEditObject.parentID) && gamemap.getWorldDisplayNameFromID(modEditObject.parentID)) ? gamemap.getWorldDisplayNameFromID(modEditObject.parentID) : "Invalid World ID!"}
+                                                    subtext={gamemap.isWorldValid(modEditObject.parentID) ? gamemap.getWorldDisplayNameFromID(modEditObject.parentID) : modEditObject.parentID != null && modEditObject.parentID != "" ? "Invalid World ID!" : null}
                                                     on:change={(e) => modify("parentID", e.detail)}>
                                                 </Textbox>
                                             <!-- Destination ID (for Locations) -->
@@ -599,12 +600,21 @@
 
                                             <!-- only show fill colour for areas -->
                                             {#if modEditObject.locType == LOCTYPES.AREA}
+
                                                 <ColourPicker
                                                     label="Fill Colour"
                                                     colour = {modEditObject.fillColour}
                                                     placeholder="Enter fill colour..."
                                                     tooltip="Default fill colour for this location"
                                                     on:change={(e) => modify("fillColour", e.detail)}>
+                                                </ColourPicker>
+
+                                                <ColourPicker
+                                                    label="Fill Colour (Hover)"
+                                                    colour = {modEditObject.fillColourHover}
+                                                    placeholder="Enter hovered fill colour..."
+                                                    tooltip="Hovered fill colour for this location"
+                                                    on:change={(e) => modify("fillColourHover", e.detail)}>
                                                 </ColourPicker>
                                             {/if}
 
@@ -615,17 +625,6 @@
                                                 tooltip="Default stroke colour for this location"
                                                 on:change={(e) => modify("strokeColour", e.detail)}>
                                             </ColourPicker>
-
-                                            <!-- only show fill colour for areas -->
-                                            {#if modEditObject.locType == LOCTYPES.AREA}
-                                                <ColourPicker
-                                                    label="Fill Colour (Hover)"
-                                                    colour = {modEditObject.fillColourHover}
-                                                    placeholder="Enter hovered fill colour..."
-                                                    tooltip="Hovered fill colour for this location"
-                                                    on:change={(e) => modify("fillColourHover", e.detail)}>
-                                                </ColourPicker>
-                                            {/if}
 
                                             <ColourPicker
                                                 label="Stroke Colour (Hover)"
@@ -666,7 +665,7 @@
                                         {#if isLocation}
                                             <InfoTextPair name="Location Type" value={Object.keys(LOCTYPES).find(key => LOCTYPES[key] === modEditObject.locType).toLowerCase()} tooltip="The type of location this is"/>
                                             <InfoTextPair name="In World" value={gamemap.getWorldNameFromID(modEditObject.worldID)} tooltip="The world this location is in"/>
-                                            <InfoTextPair name="Position" value={"X: "+modEditObject.getCentre().x + " | Y: " +modEditObject.getCentre().y} tooltip="The centre coordinate that this location is at"/>
+                                            <InfoTextPair name="Position" value={modEditObject.getCentre().x + ", " +modEditObject.getCentre().y} tooltip="This location's coordinates"/>
                                         {/if}
                                         <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES).find(i=>COORD_TYPES[i] === gamemap.getMapConfig().coordType).toLowerCase()} tooltip="Coordinate system that this {objectType} is using"/>
                                         <InfoTextPair name="Revision ID" value={modEditObject.revisionID} tooltip="Current revision ID"/>

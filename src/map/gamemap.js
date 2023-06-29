@@ -123,7 +123,7 @@ export default class Gamemap {
 
 		if (getURLParams().has("centeron")) { // check if URL has "centeron" param
 			// TODO: find location and centre on it
-		} else if (this.hasMultipleURLParams()) { // else check if has multiple url params
+		} else if (this.hasURLParams()) { // else check if has url params
 			// load state from URL
 			mapState = this.getMapStateFromURL();
 		}
@@ -1039,7 +1039,11 @@ export default class Gamemap {
 
 		// enable edit mode on marker if needed
 		if (location.editing) {
-			setTimeout(() => { markers[0].edit() }, 1)
+			if (location.locType == LOCTYPES.MARKER) { // race condition if marker isnt actually added yet
+				setTimeout(() => { markers[0].edit() }, 0);
+			} else {
+				markers[0].edit();
+			}
 			markers.forEach(function(marker) { marker.setEditingEffect(true) });
 		}
 
@@ -1305,7 +1309,7 @@ export default class Gamemap {
 
 		map.on("dblclick", function(event) {
 			let target = event.originalEvent?.target ?? event?.originalEvent?.explicitOriginalTarget;
-			if (target.className.includes("leaflet")) {
+			if (target?.className?.includes("leaflet")) {
 				map.panTo(event.latlng, {animate: true});
 			}
 			print(target);
@@ -1585,8 +1589,8 @@ export default class Gamemap {
 		return map;
 	}
 
-	hasMultipleURLParams() {
-		return (Array.from(getURLParams().values())).length >= 2;
+	hasURLParams() {
+		return (Array.from(getURLParams().values())).length >= 1;
 	}
 }
 

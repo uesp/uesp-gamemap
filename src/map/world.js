@@ -16,7 +16,7 @@ export default class World {
 			this.locations = null;
 
 			this.id = world.id || 0;
-			this.parentID = world.parentId || null;
+			this.parentID = (world?.parentId == -1) ? null : world.parentId ?? null;
 			this.revisionID = world.revisionId || 0;
 
 			this.wikiPage = world.wikiPage || null;
@@ -87,12 +87,12 @@ export default class World {
 
 		query += '&worldid=' + this.id;
 		query += '&db=' + gamemap.getMapConfig().database;
-		query += '&parentid=' + this.parentID;
+		query += '&parentid=' + encodeURI(this.parentID);
 		query += '&revisionid=' + this.revisionID;
-		query += '&name=' + encodeURIComponent(this.name);
-		query += '&displayname=' + encodeURIComponent(this.displayName);
-		query += '&description=' + encodeURIComponent(this.description);
-		query += '&wikipage=' + encodeURIComponent(this.wikiPage);
+		query += '&name=' + encodeURI(this.name);
+		query += '&displayname=' + encodeURI(this.displayName);
+		query += '&description=' + encodeURI(this.description);
+		query += '&wikipage=' + encodeURI(this.wikiPage);
 		query += '&minzoom=' + (+this.minZoomLevel + +this.zoomOffset); //unary black magic
 		query += '&maxzoom=' + (+this.maxZoomLevel + +this.zoomOffset); //unary black magic
 		query += '&posleft=' + this.minX;
