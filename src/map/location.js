@@ -25,6 +25,8 @@ export default class Location {
 		this.revisionID = data.revisionId || 0;
 		this.worldID = data?.worldId ?? world.id;
 		this.destinationID = -(data?.destinationId) || null;
+		this.editing = this.unsavedLocation ?? false; // whether this location is currently being edited
+		this.wasVisible = this.editing ?? null;
 		this.legacy = data;
 
 		// display attributes
@@ -32,10 +34,6 @@ export default class Location {
 		this.description = data?.description || null;
 		this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : {};
 		this.displayLevel = (this.unsavedLocation) ? Number((Math.floor(gamemap.getCurrentZoom()))) : parseFloat(data.displayLevel - world.zoomOffset || 0);
-		this.wasVisible = this.editing ?? null;
-
-		// editing attributes
-		this.editing = this.unsavedLocation || false; // whether this location is currently being edited
 		this.bounds = null; // bounds are generated when asked
 
 		// set location icon info
@@ -122,8 +120,8 @@ export default class Location {
 			this.strokeColour = this.displayData?.strokeStyle ?? mapConfig.defaultStrokeColour;
 			this.strokeColourHover = this.displayData?.hover.strokeStyle ?? mapConfig.defaultStrokeColourHover;
 
-			this.strokeWidth = this.displayData?.lineWidth ?? mapConfig.defaultStrokeWidth;
-			this.strokeWidthHover = this.displayData?.hover?.lineWidth ?? mapConfig.defaultStrokeWidthHover;
+			this.strokeWidth = this.unsavedLocation ? mapConfig.defaultStrokeWidth : this.displayData?.lineWidth;
+			this.strokeWidthHover = this.unsavedLocation ? mapConfig.defaultStrokeWidthHover : this.displayData?.hover?.lineWidth;
 		}
 	}
 

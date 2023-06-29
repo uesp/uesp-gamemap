@@ -1039,7 +1039,7 @@ export default class Gamemap {
 
 		// enable edit mode on marker if needed
 		if (location.editing) {
-			markers[0].edit();
+			setTimeout(() => { markers[0].edit() }, 1)
 			markers.forEach(function(marker) { marker.setEditingEffect(true) });
 		}
 

@@ -664,10 +664,9 @@
                                             <InfoTextPair name="Tiles" value={modEditObject.dbNumTilesX + " x " + modEditObject.dbNumTilesY} tooltip="Number of tiles at full zoom"/>
                                         {/if}
                                         {#if isLocation}
-                                            <InfoTextPair name="Location Type" value={Object.keys(LOCTYPES).find(key => LOCTYPES[key] === modEditObject.locType).toLowerCase()} tooltip="What kind of location this is"/>
+                                            <InfoTextPair name="Location Type" value={Object.keys(LOCTYPES).find(key => LOCTYPES[key] === modEditObject.locType).toLowerCase()} tooltip="The type of location this is"/>
                                             <InfoTextPair name="In World" value={gamemap.getWorldNameFromID(modEditObject.worldID)} tooltip="The world this location is in"/>
-                                            <InfoTextPair name="X Position" value={modEditObject.getCentre().x} tooltip="The X position this location is at"/>
-                                            <InfoTextPair name="Y Position" value={modEditObject.getCentre().y} tooltip="The Y position this location is at"/>
+                                            <InfoTextPair name="Position" value={"X: "+modEditObject.getCentre().x + " | Y: " +modEditObject.getCentre().y} tooltip="The centre coordinate that this location is at"/>
                                         {/if}
                                         <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES).find(i=>COORD_TYPES[i] === gamemap.getMapConfig().coordType).toLowerCase()} tooltip="Coordinate system that this {objectType} is using"/>
                                         <InfoTextPair name="Revision ID" value={modEditObject.revisionID} tooltip="Current revision ID"/>

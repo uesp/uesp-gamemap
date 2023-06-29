@@ -39,7 +39,7 @@
     "defaultStrokeColour": "rgba(0,0,0,0.5)",
     "defaultStrokeColourHover": "rgba(0,0,0,1)",
 
-    "defaultStrokeWidth": 1,
+    "defaultStrokeWidth": 2,
     "defaultStrokeWidthHover": 2,
 
     // Map grid info

@@ -1,10 +1,10 @@
 ## last week
+- bug fixes, and finish polygon editor stuff
 
 ## editing:
 - got colour preview working
 - added stroke colour and stroke width to the editor since i forgot
 - area fill/stroke colours work
-
 
 ## bug fixes:
 - fixed "Orphaned maps" (maps without a parent) header showing up when there isnt any
@@ -20,6 +20,9 @@
 - fix inane bug causing locations outside of the map (negative x, y) to disappear, even when inside map view, because javascript was turning the coord pairs into strings(??) and breaking the bounds calculation, because -0.20 is not more than "-0.40"
 - fixed new locations rounding up their display levels (3.5 > 4.0) which was causing new locations to disappear upon refresh (now rounds down to nearest integer, aka 3.0)
 - fixed typing in the polygon colour box not updating colour picker
+- fixed paths being created as markers instead of lines
+- fixed paths and areas missing their outlines by default
+- fixed adding new markers duplicating and preventing bottom one from being moved (due to being considered visible, adding a new one)
 
 ## polish:
 - got dawnstar map done
@@ -33,14 +36,8 @@
 - merged editor panel and editor content (actual forms and stuff) component files into just one "editor.svelte"
 
 
-
-
 ## todo
-- finish colour preview thing
-- fix updating polygon colour doesnt change poly colour
 - fix moving map on add location adds double location and cant move location anymore
-
-- fix drawing line not working (sets as marker)
 
 - fix loading into new worlf while zoomed in not removing old locations
 - fix markers carying over between maps
@@ -55,10 +52,7 @@
 - the location coord mismatch is happening because you are converting a new location's coords based on the current world's dimensions
 >> need to find a way to pass location.js reference to the current world
 
-- add strok width for normal and hover
-- get default stroke widths working for adding default polygon (black outline)
-- get colour code changing whenever user moves coloru swatch
-- and get colour changing whenever user types in different colour
+- remember last icon used in the editor and auto select it next time
 
 - fix clicking X button "saving" changes unlike cancel button
 
@@ -148,9 +142,27 @@ if adding location, close button is always "cancel"
 - make readme on how to create the favicon styles for maps for future developers
 - make maps in game release order
 - use similar centre of polygon algorithm as leaflet does for locations/latlng conversion
+- organise styles.css and comment gamemap js
 
 - Skyrim and Solstheim at 512 x 512 per cell
 > https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=drive_link
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## todo maps (future)
 - skyrim minecraft thing
