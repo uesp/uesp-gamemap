@@ -80,6 +80,7 @@ class GameMap
 	
 	public $limitCount = 10000;
 	public $searchLimitCount = 100;
+	public $revLimitCount = 5;
 	
 	public $cellResourceEditorId = "";
 	
@@ -394,7 +395,9 @@ class GameMap
 					editAction TINYTEXT NOT NULL,
 					editComment TEXT NOT NULL,
 					patrolled TINYINT NOT NULL,
-					PRIMARY KEY (id)
+					PRIMARY KEY (id),
+					INDEX index_worldId(worldId),
+					INDEX index_locationId(locationId)
 				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
@@ -458,7 +461,12 @@ class GameMap
 			case 'search':
 				return $this->doSearch();
 			case 'get_rc':
+			case 'get_rev':
 				return $this->doGetRecentChanges();
+			case 'get_worldrev':
+				return $this->doGetWorldRevisions();
+			case 'get_locrev':
+				return $this->doGetLocationRevisions();
 			case 'get_cellresource':
 				return $this->doGetCellResource();
 			case 'get_maps':
@@ -1161,6 +1169,107 @@ class GameMap
 		$this->addOutputItem("locationCount", $count);
 		
 		if ($this->includeWorld != 0) return $this->doGetWorld();
+		return true;
+	}
+	
+	
+	public function doGetWorldRevisions()
+	{
+		if (!$this->initDatabase()) return false;
+		
+		$worldId = intval($this->worldId);
+		if ($worldId <= 0) return $this->reportError("No world to get revisions for!");
+		
+		$query  = "SELECT world_history.*, revision.* FROM revision LEFT JOIN world_history ON world_history.id=revision.worldHistoryId WHERE revision.worldId='$worldId' AND revision.locationID IS NULL ORDER BY editTimestamp DESC LIMIT {$this->revLimitCount};";
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to retrieve revisions for world '$worldId'!");
+		
+		$revisions = [];
+		$count = 0;
+		
+		while ( ($row = $result->fetch_assoc()) )
+		{
+			settype($row['id'], "integer");
+			settype($row['worldId'], "integer");
+			settype($row['locationId'], "integer");
+			settype($row['destinationId'], "integer");
+			settype($row['worldHistoryId'], "integer");
+			settype($row['locationHistoryId'], "integer");
+			settype($row['editUserId'], "integer");
+			
+			settype($row['id'], "integer");
+			settype($row['parentId'], "integer");
+			settype($row['revisionId'], "integer");
+			settype($row['enabled'], "integer");
+			settype($row['posRight'], "float");
+			settype($row['posLeft'], "float");
+			settype($row['posTop'], "float");
+			settype($row['posBottom'], "float");
+			settype($row['cellSize'], "integer");
+			settype($row['minZoom'], "integer");
+			settype($row['maxZoom'], "integer");
+			settype($row['defaultZoom'], "integer");
+			settype($row['zoomOffset'], "float");
+			settype($row['tilesX'], "integer");
+			settype($row['tilesY'], "integer");
+			settype($row['maxTilesX'], "integer");
+			settype($row['maxTilesY'], "integer");
+			
+			$revisions[] = $row;
+			$count += 1;
+		}
+		
+		$this->addOutputItem("revisions", $revisions);
+		$this->addOutputItem("revisionCount", $count);
+		
+		return true;
+	}
+	
+	
+	public function doGetLocationRevisions()
+	{
+		if (!$this->initDatabase()) return false;
+		
+		$locId = intval($this->locationId);
+		if ($locId <= 0) return $this->reportError("No location to get revisions for!");
+		
+		$query  = "SELECT location_history.*, revision.* FROM revision LEFT JOIN location_history ON location_history.id=revision.locationHistoryId WHERE revision.locationId='$locId' ORDER BY editTimestamp DESC LIMIT {$this->revLimitCount};";
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to retrieve revisions for location '$locId'!");
+		
+		$revisions = [];
+		$count = 0;
+		
+		while ( ($row = $result->fetch_assoc()) )
+		{
+			settype($row['id'], "integer");
+			settype($row['worldId'], "integer");
+			settype($row['locationId'], "integer");
+			settype($row['destinationId'], "integer");
+			settype($row['worldHistoryId'], "integer");
+			settype($row['locationHistoryId'], "integer");
+			settype($row['editUserId'], "integer");
+			
+			settype($row['id'], "integer");
+			settype($row['worldId'], "integer");
+			settype($row['destinationId'], "integer");
+			settype($row['revisionId'], "integer");
+			settype($row['locType'], "integer");
+			settype($row['iconType'], "integer");
+			settype($row['x'], "float");
+			settype($row['y'], "float");
+			settype($row['width'], "float");
+			settype($row['height'], "float");
+			settype($row['displayLevel'], "float");
+			settype($row['visible'], "integer");
+			
+			$revisions[] = $row;
+			$count += 1;
+		}
+		
+		$this->addOutputItem("revisions", $revisions);
+		$this->addOutputItem("revisionCount", $count);
+		
 		return true;
 	}
 	
