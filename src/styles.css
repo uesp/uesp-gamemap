@@ -1042,6 +1042,7 @@ textarea.materialize-textarea {
 	animation: 0s !important;
 	background-color: var(--editing_opaque) !important;
 	border: solid 2px var(--editing_outline) !important;
+	filter: drop-shadow(0 0 0.5rem var(--shadow));
 }
 
 .leaflet-marker-icon.marker-icon:hover {

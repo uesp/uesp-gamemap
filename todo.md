@@ -1,54 +1,22 @@
 ## last week
-- big bug bash, finish polygon editor stuff, and polish
 
-## editing:
-- got colour preview working
-- added stroke colour and stroke width to the editor since i forgot
-- area fill/stroke colours work
 
-## polish:
-- got dawnstar map done
-- removed loctype switcher as it was causing issues (also conceptually changing from a single point to a line live didnt really work that well)
-- move label direction up to "general" for ease of access
-- recent changes automatically updates on save/delete, so it's "live"
->> if anyone adds stuff when it's refreshed, it isnt added to the local cache, so navigating to new locations will say they dont exist
-- fix editor title not changing from "adding location" to "editing location" after save
-- fixed "invalid world ID!" showing up when you havent entered anything in the parent id form yet
-
-## bug fixes:
-- fixed "Orphaned maps" (maps without a parent) header showing up when there isnt any
-- fixed back/close button on edit pane not cancelling new marker properly
-- fix position not updating as you move markers around
-- fixed the unsaved indicator (*) hanging around after you click cancel
-- fixed polygons flashing when moving points
-- fixed green "+" not visible in polygons
-- restored double click to pan
-- fixed RC list overflowing at the bottom
-- fixed "null" appearing in popups/tooltips when descriptions were empty
-- fixed popups not working when wiki links were null
-- fix inane bug causing locations outside of the map (negative x, y) to disappear, even when inside map view, because javascript was turning the coord pairs into strings(??) and breaking the bounds calculation, because -0.20 is not more than "-0.40"
-- fixed new locations rounding up their display levels (3.5 > 4.0) which was causing new locations to disappear upon refresh (now rounds down to nearest integer, aka 3.0)
-- fixed typing in the polygon colour box not updating colour picker
-- fixed paths being created as markers instead of lines
-- fixed paths and areas missing their outlines by default
-- fixed adding new markers duplicating and preventing bottom one from being moved (due to being considered visible, adding a new one)
-- fixed hang when double clicking on svgs while editing to pan
-- fixed map state not being saved on refresh if there's only one url param (world=solstheim)
-
-## technical
-- merged editor panel and editor content (actual forms and stuff) component files into just one "editor.svelte"
 
 
 ## todo
 
 
-- fix loading into new worlf while zoomed in not removing old locations
-- fix markers carying over between maps
+- fix "vosh rahk control path" bugging up, cant visit location
 
+
+- toFixed() all output to server for displayData and xy
+
+- refude min width for edit panel to fix rc height on animate problem
 
 - get dialogs working
 
 - fix focus on svelte elements mean cant move map (mobile specifically)
+>> try re allowing map panning on the "zoom" or "move" events
 
 - fix wiki name switch not switching
 
@@ -57,9 +25,12 @@
 
 - remember last icon used in the editor and auto select it next time
 
+- direct edit "close" button isnt closing whole panel as expected
 - fix clicking X button "saving" changes unlike cancel button
 
 - deleting markers still adds edit-version marked with "click to drag" back to map on map move
+
+- fix line colour preview showing fill colours from area
 
 - fix slow zooming on macbooks and laptops with pinch zoom gestures (NOT normal scroll gestures)
 - shift click on other locations while unsaved changes should immediately change to edit it
@@ -68,7 +39,7 @@
 - reimplement eso-specific name shortcuts for locations
 - also ask feedback to map editors for the above
 
-
+- double clicking markers that arent clickable edits them
 - fix having to load new world once, then click RC item again to jump to centre of it
 
 if adding location, save will dismiss the editor window
@@ -89,9 +60,11 @@ if adding location, close button is always "cancel"
 
 - reminder about skyrim/beyond skyrim/solstheim tiles from BS guy
 
+"goto article" button doesnt update when world wiki link updated
 
+- fix RC inconsistently being resized after coming back from editing location
+- fix RC not going all the way down on initial edit pane open
 - make "grouped/abc" symmetrical
-- preview colour component
 
 - make close button in edit panel always close the panel regardless of direct edit or not
 
@@ -105,6 +78,9 @@ if adding location, close button is always "cancel"
 - add allow long clicking on mobile to open popups
 - add zoom/pan in effects for markers when editing
 
+- if location list button is overflowing, show the name of the world insated of "show location list"
+
+- add tooltip to editor back button/ close button "Back" "Close"
 - make editing polygons always the same colour (blue)
 
 - fix centreon going to the wrong place
@@ -118,13 +94,12 @@ if adding location, close button is always "cancel"
 >> and add middle click on listitems to open in a new tab w/ centreon link
 - fix recent changes list overflowing downwards
 - fix location list dropdown not being centred properly
+- bring back editing throbbing animation for locations
 - fix live edit on world name location switcher
 - fix live edit on worlds (every change changes the current world in map object)
 - refactor gamemap.js to Gamemap.svelte and use realtime svelte features
 - make embeded map watermark actually open in new tab
-- cache world list for location switcher in svelte stores
 - make going to location centre zoom dynamically instead of always zoom level 5
-- add continuous zoom, markers popup on zoom rather than zoomend
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
 - fix double click to pan on ui elements (zoom, search bar)
@@ -170,9 +145,6 @@ if adding location, close button is always "cancel"
 - cave interior maps for skyrim, ob, mw
 - some kind of tutorial on first non-cookie load to tell user how to use ui
 - divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)
-- localisations for maps (local json and server database)
-- an undo button for deleting/editing locations and worlds
-- maybe refactor to divicon to allow drag by label
 - drag and edit polygon at the same time
 >> https://jsfiddle.net/Razielwar/hmqgn69r/14/
 - allow shiftclick/ctrl click to add/remove vertices

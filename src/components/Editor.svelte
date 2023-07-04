@@ -356,40 +356,11 @@
 
         getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
             if (!error && data?.recentChanges) {
-                // recent changes item object
-                let RecentChangesItem = class {
-                    constructor(data) {
-                        this.icon = (data.icon != 0) ? data.icon : null //iconType || null;
-                        this.editID = data.editID; //id
-                        this.user = data.user //editUserText;
-                        this.timestamp = data.timestamp //editTimestamp;
-                        this.locationName = data.locationName; // locationName
-                        this.destinationID = data.destinationID //worldHistoryId != 0 ? worldId : -locationId;
-                        this.worldID = data.worldID //worldId;
-                        this.worldName = data.worldName //worldDisplayName;
-                        this.comment = data.comment // editComment;
-                        this.action = data.action // editAction;
-                    }
-                };
 
                 print("parsing data...");
                 let tempList = [];
                 for (let i = 0; i < data.recentChanges.length; i++) {
-                    let change = data.recentChanges[i];
-                    let destinationID = (change.worldHistoryId != 0) ? change.worldId : -change.locationId;
-                    let changeItem = new RecentChangesItem({
-                        icon: change.iconType,
-                        editID: change.id,
-                        user: change.editUserText,
-                        timestamp: change.editTimestamp,
-                        locationName: change.locationName,
-                        destinationID: destinationID,
-                        worldID: change.worldId,
-                        worldName: change.worldDisplayName,
-                        comment: change.editComment,
-                        action: change.editAction,
-                    })
-                    tempList.push(changeItem);
+                    tempList.push(getRCItem(data.recentChanges[i]));
                 }
                 recentChanges = tempList;
 
@@ -400,8 +371,28 @@
         });
     }
 
+    // make RC object function
+    function getRCItem(data) {
+        print(data);
+        let destinationID = (data.worldHistoryId != 0) ? data.worldId : -data.locationId;
+        let isWorld = destinationID > 0;
+        return {
+            icon: (data.iconType != 0) ? MAPCONFIG.iconPath + data.iconType + ".png" : (isWorld) ? "public" : "location_on",
+            editID: data.id,
+            user: data.editUserText,
+            timestamp: data.editTimestamp,
+            destinationID: destinationID,
+            name: (isWorld) ? data.worldDisplayName ?? data.displayName : data.locationName ?? data.name,
+            comment: data.editComment,
+            action: data.editAction,
+            worldID: data.worldId,
+            isWorld: isWorld,
+            subtitle: isWorld ? null : data.worldDisplayName,
+        }
+    }
+
     // on editor load
-	onMount(async() => { window.onpopstate = () => currentZoom = gamemap.getCurrentZoom().toFixed(3);});
+	onMount(() => { window.onpopstate = () => currentZoom = gamemap.getCurrentZoom().toFixed(3);});
     function fixEditor() {editor.style.height = `${editor?.parentElement?.clientHeight}px`; editorWindow.scrollTop = 0;}
 </script>
 
@@ -454,18 +445,7 @@
                                     itemSize={60}>
                                     <div slot="item" let:index let:style {style}>
                                         {@const data = recentChanges[index]}
-                                        {@const isWorld = data.destinationID > 0}
-                                        <ListItem title={(isWorld) ? data.worldName : data.locationName}
-                                                subtitle={(!isWorld) ? data.worldName : null}
-                                                destinationID={data.destinationID}
-                                                compact={true}
-                                                bold={isWorld}
-                                                icon={(data.icon != null) ? gamemap.getMapConfig().iconPath + data.icon + ".png" : (isWorld) ? "public" : "location_on"}
-                                                user={data.user}
-                                                timestamp={data.timestamp}
-                                                action={data.action}
-                                                comment={data.comment}
-                                        on:click={() => gamemap.goto(data.destinationID)} />
+                                        <ListItem {...data} title={data.name} bold={data.isWorld} compact={true} on:click={() => gamemap.goto(data.destinationID)} />
                                     </div>
                                 </VirtualList>
                             {:else}
@@ -559,7 +539,7 @@
                                     <Textbox label="Description"
                                             text={modEditObject.description}
                                             placeholder="Enter description..."
-                                            tooltip="Description of this {objectType}"
+                                            tooltip="Description of this {objectType.toLowerCase()}"
                                             textArea="true"
                                             on:change={(e) => modify("description", e.detail)}>
                                     </Textbox>
@@ -657,7 +637,7 @@
                                 <!-- General info -->
                                 {#if modEditObject.id > 0}
                                     <FormGroup title="Info" icon="info">
-                                        <InfoTextPair name="{objectType.toSentenceCase()} ID" value={modEditObject.id} tooltip="This {objectType}'s ID"/>
+                                        <InfoTextPair name="{objectType.toSentenceCase()} ID" value={modEditObject.id} tooltip="This {objectType.toLowerCase()}'s ID"/>
                                         {#if isWorld}
                                             <InfoTextPair name="World Name" value={modEditObject.name} tooltip="This world's internal name"/>
                                             <InfoTextPair name="Tiles" value={modEditObject.dbNumTilesX + " x " + modEditObject.dbNumTilesY} tooltip="Number of tiles at full zoom"/>
@@ -665,10 +645,28 @@
                                         {#if isLocation}
                                             <InfoTextPair name="Location Type" value={Object.keys(LOCTYPES).find(key => LOCTYPES[key] === modEditObject.locType).toLowerCase()} tooltip="The type of location this is"/>
                                             <InfoTextPair name="In World" value={gamemap.getWorldNameFromID(modEditObject.worldID)} tooltip="The world this location is in"/>
-                                            <InfoTextPair name="Position" value={modEditObject.getCentre().x + ", " +modEditObject.getCentre().y} tooltip="This location's coordinates"/>
+                                            <InfoTextPair name="Position" value={"X: "+modEditObject.getCentre().x + ", Y: " +modEditObject.getCentre().y} tooltip="This location's coordinates"/>
                                         {/if}
-                                        <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES).find(i=>COORD_TYPES[i] === gamemap.getMapConfig().coordType).toLowerCase()} tooltip="Coordinate system that this {objectType} is using"/>
+                                        <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES).find(i=>COORD_TYPES[i] === gamemap.getMapConfig().coordType).toLowerCase()} tooltip="Coordinate system that this {objectType.toLowerCase()} is using"/>
                                         <InfoTextPair name="Revision ID" value={modEditObject.revisionID} tooltip="Current revision ID"/>
+                                    </FormGroup>
+
+                                    <!-- Recent edits for this object -->
+                                    <FormGroup title="Edit History" icon="history">
+                                        {@const type = isWorld ? "world" : "loc"}
+                                        {#await fetch(GAME_DATA_SCRIPT + `?db=${MAPCONFIG.database}&action=get_${type}rev&${type}id=${editObject.id}`)}
+                                            <LoadingSpinner/>
+                                        {:then data}
+                                            {#await data.json() then json}
+                                                {#each Object.values(json.revisions) as rev}
+                                                    {@const entry = getRCItem(rev)}
+                                                    <ListItem {...entry} title={entry.name} bold={entry.isWorld} compact={true}/>
+                                                {/each}
+                                            {/await}
+                                        {:catch}
+                                            <b>Error loading recent edits.</b>
+                                        {/await}
+
                                     </FormGroup>
                                 {/if}
                             </div>
