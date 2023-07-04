@@ -314,12 +314,14 @@
 
 						<IconBar>
 							<slot:template slot="primary">
-								{#if canEdit}<IconButton icon="edit" tooltip="Toggle map editor" noMobile="true" checked={isEditing} on:checked={(e) => {
-									if (e.detail.checked && e.detail.shift) {
-										editPane.edit(gamemap.getCurrentWorld());
-									} else {
-										editPane.show(e.detail.checked);
-									}}}/>{/if}
+								{#if canEdit}
+									<IconButton icon="edit" tooltip="Toggle map editor" noMobile="true" checked={isEditing} on:checked={(e) => {
+										if (e.detail.checked && e.detail.shift) {
+											editPane.edit(gamemap.getCurrentWorld());
+										} else {
+											editPane.show(e.detail.checked);
+										}}} lock={mapLock}/>
+								{/if}
 								<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu' lock={mapLock}>
 									<!-- Menu Items -->
 									<ul id='overflow-menu' class='dropdown-content'>

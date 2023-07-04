@@ -295,9 +295,9 @@ export default class Location {
 		query += `&db=${gamemap.getMapConfig().database}&visible=1`;
 
 		this.updateDisplayData(coords);
-		query += `&x=${(this.isPolygon()) ? this.getMaxBounds().minX: coords[0].x}`;
-		query += `&y=${(this.isPolygon()) ? this.getMaxBounds().maxY: coords[0].y}`;
-		query += `&locwidth=${this.width}&locheight=${this.height}`;
+		query += `&x=${((this.isPolygon()) ? this.getMaxBounds().minX: coords[0].x).toFixed(3)}`;
+		query += `&y=${((this.isPolygon()) ? this.getMaxBounds().maxY: coords[0].y).toFixed(3)}`;
+		query += `&locwidth=${this.width.toFixed(3)}&locheight=${this.height.toFixed(3)}`;
 
 		query += `&displaylevel=${+this.displayLevel + +world.zoomOffset}`;
 		query += `&displaydata=${encodeURI(JSON.stringify(this.displayData))}`;
@@ -325,7 +325,7 @@ export default class Location {
 		this.displayData.labelPos = this.labelPos;
 		this.displayData.points = (() => {
 			let points = [];
-			coords.forEach(coord => { points.push(coord.x, coord.y) });
+			coords.forEach(coord => { points.push(coord.x.toFixed(3), coord.y.toFixed(3)) });
 			return points;
 		})();
 

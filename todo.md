@@ -1,6 +1,13 @@
 ## last week
 
+## polish
+- added the edit history feature for worlds/locs
 
+
+## bug fixes
+- toFixed(3) all output to server for displayData and xy
+- fixed being able to close the editor while adding a new marker
+- fixed not being able to centre on paths (error/hang)
 
 
 ## todo
@@ -8,8 +15,6 @@
 
 - fix "vosh rahk control path" bugging up, cant visit location
 
-
-- toFixed() all output to server for displayData and xy
 
 - refude min width for edit panel to fix rc height on animate problem
 
@@ -45,6 +50,8 @@
 if adding location, save will dismiss the editor window
 if adding location, close button is always "cancel"
 
+
+- remove edit history being clickable with ripple
 
 - fix cant set new marker to "none" / dropdown always selecting "none" on first load on any edit
 
@@ -111,7 +118,6 @@ if adding location, close button is always "cancel"
 - make tooltips follow the mouse rather than the centre of the location
 - show more columns on map key menu dynamically
 - fix cell resource colour intensity to make sense. deeper the colour the more stuff
-- shower thought: could we use the "Dev/Beta" versions of maps for eso as separate layers?
 - button to go to the map menu
 - fix pip on layer switcher ui being small
 - button to go up a map, right click isnt intuitive
@@ -149,6 +155,7 @@ if adding location, close button is always "cancel"
 >> https://jsfiddle.net/Razielwar/hmqgn69r/14/
 - allow shiftclick/ctrl click to add/remove vertices
 - be able to search the icon list in editor
+- shower thought: could use the "Dev/Beta" versions of maps for eso as separate layers
 
 ## todo future general
 - wiki features

@@ -18,6 +18,7 @@
 <style>
 .spinner {
   width: auto;
+  overflow: clip;
 }
 
 .spinner svg {

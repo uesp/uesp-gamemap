@@ -212,15 +212,17 @@
 
                     // overwrite existing object with deep clone of modified one
                     editObject = Object.assign(Object.create(Object.getPrototypeOf(modEditObject)), modEditObject);
+
+                    // update edit history lists
                     getEditHistory(editObject);
-                    unsavedChanges = false;
+                    getRecentChanges()
 
                     // reset save button
+                    unsavedChanges = false;
                     saveButton.$set({ text: "Save", icon: "save" });
                 } else {
                     print(data.errorMsg);
                     saveButton.$set({ text: data.errorMsg.includes("permissions") ? "Insufficient permissions!" : data.errorMsg, icon: "warning" });
-                    saveCallback();
                 }
             } else {
                 saveButton.$set({ text: `Error saving ${objectType}!`, icon: "warning" });
@@ -340,7 +342,7 @@
         recentChanges = [];
         let queryParams = {};
         queryParams.action = "get_rc";
-        queryParams.db = gamemap.getMapConfig().database;
+        queryParams.db = MAPCONFIG.database;
 
         getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
             if (!error && data?.recentChanges) {
@@ -645,22 +647,25 @@
                                             <InfoTextPair name="In World" value={gamemap.getWorldNameFromID(modEditObject.worldID)} tooltip="The world this location is in"/>
                                             <InfoTextPair name="Position" value={"X: "+modEditObject.getCentre().x + ", Y: " +modEditObject.getCentre().y} tooltip="This location's coordinates"/>
                                         {/if}
-                                        <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES).find(i=>COORD_TYPES[i] === gamemap.getMapConfig().coordType).toLowerCase()} tooltip="Coordinate system that this {objectType.toLowerCase()} is using"/>
+                                        <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES).find(i=>COORD_TYPES[i] === MAPCONFIG.coordType).toLowerCase()} tooltip="Coordinate system that this {objectType.toLowerCase()} is using"/>
                                         <InfoTextPair name="Revision ID" value={modEditObject.revisionID} tooltip="Current revision ID"/>
                                     </FormGroup>
 
                                     <!-- Recent edits for this object -->
-                                    <FormGroup title="Edit History" icon="history">
-                                        {@const type = isWorld ? "world" : "loc"}
-                                        {#if editHistory.length > 0}
-                                            {#each editHistory as rev}
-                                                {@const entry = getRCItem(rev)}
-                                                <ListItem {...entry} title={entry.name} bold={entry.isWorld} compact={true}/>
-                                            {/each}
-                                        {:else}
-                                            <LoadingSpinner/>
-                                        {/if}
-                                    </FormGroup>
+                                    {#if editObject.id > 0 && editObject.revisionID > 0}
+                                        <FormGroup title="Edit History" icon="history">
+                                            {@const type = isWorld ? "world" : "loc"}
+                                            {#if editHistory.length > 0}
+                                                {#each editHistory as rev}
+                                                    {@const entry = getRCItem(rev)}
+                                                    <ListItem {...entry} title={entry.name} bold={entry.isWorld} compact={true}/>
+                                                {/each}
+                                            {:else}
+                                                <LoadingSpinner/>
+                                            {/if}
+                                        </FormGroup>
+                                    {/if}
+
                                 {/if}
                             </div>
                         </div>

@@ -457,7 +457,7 @@ export default class Gamemap {
 			gotoWorld(place.id, coords);
 		} else if (isLocation) {
 			let location = place;
-			gotoWorld(location.worldID, location.coords);
+			gotoWorld(location.worldID, location.getCentre());
 			//openPopup(location); //TODO
 
 		} else if (isID) {
