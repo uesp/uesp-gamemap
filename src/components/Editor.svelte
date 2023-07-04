@@ -53,6 +53,7 @@
     let innerHeight;
 
     let recentChanges = [];
+    let editHistory = [];
     let currentZoom = gamemap.getCurrentZoom().toFixed(3);
 
     let liveEdit = false;
@@ -153,6 +154,7 @@
         isLocation = editObject instanceof Location;
         isWorld = editObject instanceof World;
         liveEdit = true;
+        if (!editObject?.unsavedLocation) { getEditHistory(editObject) }
 
         // do state changes to map
         if (isWorld && editObject.id == gamemap.getCurrentWorld().id) {
@@ -208,37 +210,22 @@
                     modify("revisionID", data?.newRevisionId);
                     if (isLocation) { gamemap.updateLocation(modEditObject) }
 
-                    // tell ui that we're done saving
-                    saveCallback();
-
                     // overwrite existing object with deep clone of modified one
                     editObject = Object.assign(Object.create(Object.getPrototypeOf(modEditObject)), modEditObject);
+                    getEditHistory(editObject);
                     unsavedChanges = false;
+
+                    // reset save button
+                    saveButton.$set({ text: "Save", icon: "save" });
                 } else {
                     print(data.errorMsg);
-                    saveCallback((data.errorMsg.includes("permissions")) ? "Insufficient permissions!" : data.errorMsg);
+                    saveButton.$set({ text: data.errorMsg.includes("permissions") ? "Insufficient permissions!" : data.errorMsg, icon: "warning" });
+                    saveCallback();
                 }
-
             } else {
-                saveCallback(`Error saving ${objectType}!`);
+                saveButton.$set({ text: `Error saving ${objectType}!`, icon: "warning" });
             }
         });
-
-        function saveCallback(error) {
-
-            if (error == null) {
-                saveButton.$set({ text: "Done!", icon: "done" });
-                getRecentChanges();
-            } else {
-                saveButton.$set({ text: error, icon: "warning" });
-            }
-
-            setTimeout(function() {
-                if (saveButton.icon == "done" || saveButton.icon == "warning") {
-                    saveButton.$set({ text: "Save", icon: "save" });
-                }
-            }, (!error) ? 1500 : 2500);
-        }
     }
 
     // cancel editing
@@ -260,6 +247,7 @@
         }
 
         // turn off editing
+        editHistory = [];
         overlay = null;
         editObject = null;
         modEditObject = null;
@@ -275,7 +263,7 @@
             let oldRecentChanges = recentChanges;
             recentChanges = [];
             recentChanges = oldRecentChanges;
-        }, 0)
+        }, 10)
     }
 
     // received updated marker coords from gamemap (via drag and dropping)
@@ -371,13 +359,23 @@
         });
     }
 
+    // get edit history for the current object
+    function getEditHistory(object) {
+        editHistory = [];
+        let type = (isWorld) ? "world" : "loc";
+        getJSON(GAME_DATA_SCRIPT + `?db=${MAPCONFIG.database}&action=get_${type}rev&${type}id=${object.id}`, function(error, data) {
+            print(data);
+            print(error);
+            if (!error && data) { editHistory = data.revisions ? Object.values(data.revisions) : []}
+        });
+    }
+
     // make RC object function
     function getRCItem(data) {
-        print(data);
         let destinationID = (data.worldHistoryId != 0) ? data.worldId : -data.locationId;
         let isWorld = destinationID > 0;
         return {
-            icon: (data.iconType != 0) ? MAPCONFIG.iconPath + data.iconType + ".png" : (isWorld) ? "public" : "location_on",
+            icon: (data.iconType != 0 && data.iconType) ? MAPCONFIG.iconPath + data.iconType + ".png" : (isWorld) ? "public" : "location_on",
             editID: data.id,
             user: data.editUserText,
             timestamp: data.editTimestamp,
@@ -654,19 +652,14 @@
                                     <!-- Recent edits for this object -->
                                     <FormGroup title="Edit History" icon="history">
                                         {@const type = isWorld ? "world" : "loc"}
-                                        {#await fetch(GAME_DATA_SCRIPT + `?db=${MAPCONFIG.database}&action=get_${type}rev&${type}id=${editObject.id}`)}
+                                        {#if editHistory.length > 0}
+                                            {#each editHistory as rev}
+                                                {@const entry = getRCItem(rev)}
+                                                <ListItem {...entry} title={entry.name} bold={entry.isWorld} compact={true}/>
+                                            {/each}
+                                        {:else}
                                             <LoadingSpinner/>
-                                        {:then data}
-                                            {#await data.json() then json}
-                                                {#each Object.values(json.revisions) as rev}
-                                                    {@const entry = getRCItem(rev)}
-                                                    <ListItem {...entry} title={entry.name} bold={entry.isWorld} compact={true}/>
-                                                {/each}
-                                            {/await}
-                                        {:catch}
-                                            <b>Error loading recent edits.</b>
-                                        {/await}
-
+                                        {/if}
                                     </FormGroup>
                                 {/if}
                             </div>
@@ -861,4 +854,4 @@
 
 </style>
 <svelte:options accessors/>
-<svelte:window on:resize={() => { if (editPanel != null) { editPanelContent.style.height = document.querySelector('.appbar') ? editPanel.clientHeight - document.querySelector('.appbar').clientHeight + "px" : null } if (editor) { editor.style.height = `${editor.parentElement.clientHeight}px`;}}} on:mouseup={onResizerUp} bind:innerHeight />
+<svelte:window on:resize={() => { if (editPanel != null) { editPanelContent.style.height = document.querySelector('.appbar') ? editPanel.clientHeight - document.querySelector('.appbar').clientHeight + "px" : null } if (editor) { editor.style.height = `${editor?.parentElement?.clientHeight}px`;}}} on:mouseup={onResizerUp} bind:innerHeight />
