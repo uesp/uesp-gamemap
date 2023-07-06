@@ -18,7 +18,6 @@
     export let block = false;
     export let subtext;
     export let text;
-    export let value = text;
     export let textArea;
     export let tooltip;
     export let type = "text";
@@ -30,17 +29,19 @@
 
     const dispatch = createEventDispatcher();
 
+    let value = text;
     let textbox;
     let id = Math.random().toString(36).substr(2, 10); // generate unique random string
     block = (textArea != null) ? true : block;
 
-    $: {
+    function change(event) {
+        value = event.target.value;
         if (type == "number") {
             dispatch("change", Number(value));
         } else {
             dispatch("change", value);
         }
-    };
+    }
 
     function expand() {
 
@@ -64,19 +65,20 @@
         {#if label}<p class="label" class:hasSubtext={subtext}>{label}</p>{/if}
         <div class="input-field" class:inline={!block} class:isNumber={type == "number"} class:compact={!label && type == "number"}>
             {#if textArea}
-                <textarea id={id} placeholder={(placeholder != null) ? placeholder : null} class="materialize-textarea input"
-                bind:value={value} bind:this={textbox} style="margin-left: -8px; padding-left: 8px; width: calc(100%); padding-right: 8px;"
+                <textarea id={id} on:input={change} value={text} placeholder={(placeholder != null) ? placeholder : null} class="materialize-textarea input" bind:this={textbox} style="margin-left: -8px; padding-left: 8px; width: calc(100%); padding-right: 8px;"
                 on:click={expand}/>
             {:else}
                 <input id={id}
                     placeholder={(placeholder != null) ? placeholder : null}
                     type="text"
                     class="input"
-                    bind:value={value} bind:this={textbox}
+                    bind:this={textbox}
                     use:typeAction
                     min={min}
                     max={max}
+                    value={text}
                     step="any"
+                    on:input={change}
                     class:hideSpinner={hideSpinner}>
             {/if}
             {#if !placeholder}

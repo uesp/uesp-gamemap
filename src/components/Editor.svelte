@@ -33,6 +33,7 @@
     import ColourPicker from "./ColourPicker.svelte";
     import AvatarComponent from "./AvatarComponent.svelte";
     import ColourPreview from "./ColourPreview.svelte";
+    import SuggestionBar from './SuggestionBar.svelte';
 
     // constants
     let PANEL_WIDTH = getPrefs("editpanelwidth", 480);
@@ -64,9 +65,10 @@
     let modEditObject = null;
     $: isLocation = editObject instanceof Location;
     $: isWorld = editObject instanceof World;
-    $: objectType = isWorld ? "World" : "Location";
+    $: objectType = isWorld ? "world" : "location";
     $: isEditing = editObject && isLocation || isWorld;
-    $: linkWikiPage = editObject?.wikiPage == editObject?.name || editObject?.wikiPage == editObject?.displayName;
+    $: name = (isWorld ? modEditObject?.displayName : modEditObject?.name);
+    $: linkWikiPage = editObject?.wikiPage == name;
 
     $: { // prevent leaving the page on unsaved changes
         if (unsavedChanges || editObject?.unsavedLocation) {
@@ -236,7 +238,6 @@
         // clean up
         if (isWorld) {
             gamemap.reset(true);
-            Array.from(document.querySelectorAll("[class*='editing']")).forEach(element => { element.classList.remove("editing"); })
         } else if (isLocation) { // if it was an unadded location, delete it
             editObject.setEditing(false);
             if (editObject?.unsavedLocation) {
@@ -259,6 +260,7 @@
         gamemap.setMapLock(MAPLOCK.NONE);
         gamemap.getMapObject().pm.disableDraw();
         gamemap.getMapObject().pm.disableGlobalEditMode();
+        Array.from(document.querySelectorAll("[class*='editing']")).forEach(element => { element.classList.remove("editing"); })
 
         // weird hack to stop recent changes list being wrong size
         setTimeout(() => {
@@ -309,6 +311,23 @@
 
             }
         }
+    }
+
+
+    function fillFromTemplate(template) {
+        print("printing template");
+        print(template);
+
+        // fill in data from template
+        for (let [key, value] of Object.entries(template)) {
+            if (!key.includes("$")) {
+                print(key, value);
+                modify(key, value);
+            }
+        }
+
+        // mark suggestion as accepted
+        modify("acceptedSuggestion", true);
     }
 
     // handle resizing the editor panel
@@ -417,7 +436,7 @@
              <div id="window-resizer" on:mousedown={onResizerDown}/>
 
              <!-- edit panel appbar -->
-             <AppBar title={!isEditing ? "Map Editor" : ((modEditObject.id > 0) ? "Editing" : "Adding") + " " + ((editObject instanceof World) ? "World" : "Location")}
+             <AppBar title={!isEditing ? "Map Editor" : ((modEditObject.id > 0) ? "Editing" : "Adding") + " " + objectType.toSentenceCase()}
                 subtitle={isEditing ? (isWorld) ? editObject.displayName + " ("+editObject.name+")" : editObject.name : null} unsavedChanges={unsavedChanges}
                 icon={isEditing && !directEdit ? "arrow_back" : "close"} on:back={onBackPressed} tooltip={unsavedChanges ? "You have unsaved changes" : null}
              />
@@ -456,7 +475,15 @@
                 {:else}
                     <div id="editor" in:fixEditor out:cancel bind:this={editor}>
                         <div class="editor_window" bind:this={editorWindow}>
+
+                            <!-- show edit suggestions if available -->
+                            {#if MAPCONFIG?.editTemplates[objectType][name.toLowerCase()] && unsavedChanges && !modEditObject?.acceptedSuggestion}
+                                {@const template = MAPCONFIG.editTemplates[objectType][name.toLowerCase()]}
+                                <SuggestionBar suggestion={name.toSentenceCase()} on:confirm={() => fillFromTemplate(template)}/>
+                            {/if}
+
                             <div id="editor_pane">
+
                                 <FormGroup title="General" icon="description">
 
                                     <header class="header">
@@ -539,7 +566,7 @@
                                     <Textbox label="Description"
                                             text={modEditObject.description}
                                             placeholder="Enter description..."
-                                            tooltip="Description of this {objectType.toLowerCase()}"
+                                            tooltip="Description of this {objectType}"
                                             textArea="true"
                                             on:change={(e) => modify("description", e.detail)}>
                                     </Textbox>
@@ -637,7 +664,7 @@
                                 <!-- General info -->
                                 {#if modEditObject.id > 0}
                                     <FormGroup title="Info" icon="info">
-                                        <InfoTextPair name="{objectType.toSentenceCase()} ID" value={modEditObject.id} tooltip="This {objectType.toLowerCase()}'s ID"/>
+                                        <InfoTextPair name="{objectType.toSentenceCase()} ID" value={modEditObject.id} tooltip="This {objectType}'s ID"/>
                                         {#if isWorld}
                                             <InfoTextPair name="World Name" value={modEditObject.name} tooltip="This world's internal name"/>
                                             <InfoTextPair name="Tiles" value={modEditObject.dbNumTilesX + " x " + modEditObject.dbNumTilesY} tooltip="Number of tiles at full zoom"/>
@@ -647,7 +674,7 @@
                                             <InfoTextPair name="In World" value={gamemap.getWorldNameFromID(modEditObject.worldID)} tooltip="The world this location is in"/>
                                             <InfoTextPair name="Position" value={"X: "+modEditObject.getCentre().x + ", Y: " +modEditObject.getCentre().y} tooltip="This location's coordinates"/>
                                         {/if}
-                                        <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES).find(i=>COORD_TYPES[i] === MAPCONFIG.coordType).toLowerCase()} tooltip="Coordinate system that this {objectType.toLowerCase()} is using"/>
+                                        <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES).find(i=>COORD_TYPES[i] === MAPCONFIG.coordType).toLowerCase()} tooltip="Coordinate system that this {objectType} is using"/>
                                         <InfoTextPair name="Revision ID" value={modEditObject.revisionID} tooltip="Current revision ID"/>
                                     </FormGroup>
 

@@ -2,18 +2,27 @@
 
 ## polish
 - added the edit history feature for worlds/locs
-
+- added the edit templates/suggestions feature
+>> templates are declared in mapconfig
+>> each template is sorted under mapconfig.editTemplates[objectType][objectName]
+>> where object type is whether it is a location or world ("location", "world") and the latter is just the name
+>> means you can declare templates for both worlds and locations separately per map
+>> when user types in the right name "chest" (case insensitive) a prompt asks whether they want to fill in the info from the template
 
 ## bug fixes
 - toFixed(3) all output to server for displayData and xy
 - fixed being able to close the editor while adding a new marker
 - fixed not being able to centre on paths (error/hang)
+- fixed locations not loading on mobile
+- fix div by 0 causing map not to load when x or y was 0
+
+
+## problems
+
+- wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 
 
 ## todo
-
-
-- fix "vosh rahk control path" bugging up, cant visit location
 
 
 - refude min width for edit panel to fix rc height on animate problem
@@ -80,7 +89,6 @@ if adding location, close button is always "cancel"
 - make iconbar and resizing dynamic, dont rely on css for mobile mode, do it in javascript based on map size
 
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
-- hamburger for search bar to show other maps
 - cell resource state in/from url
 - add allow long clicking on mobile to open popups
 - add zoom/pan in effects for markers when editing
@@ -104,21 +112,16 @@ if adding location, close button is always "cancel"
 - bring back editing throbbing animation for locations
 - fix live edit on world name location switcher
 - fix live edit on worlds (every change changes the current world in map object)
-- refactor gamemap.js to Gamemap.svelte and use realtime svelte features
 - make embeded map watermark actually open in new tab
 - make going to location centre zoom dynamically instead of always zoom level 5
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
-- fix double click to pan on ui elements (zoom, search bar)
-- on mobile, double tap icon to open its popup
 - fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af when zooming out
-- add riseOnHover to icon labels when hovering over
 - shift click in RC to travel to and edit world/location
 - make tooltips follow the mouse rather than the centre of the location
 - show more columns on map key menu dynamically
 - fix cell resource colour intensity to make sense. deeper the colour the more stuff
-- button to go to the map menu
 - fix pip on layer switcher ui being small
 - button to go up a map, right click isnt intuitive
 - make readme on how to create the favicon styles for maps for future developers

@@ -29,7 +29,6 @@ import Point from "./point.js";
 
 let self; // Local "this" instance of Gamemap
 let map; // Leaflet map instance
-let mapBounds; // Current map bounds in LatLngs
 let tileLayer; // Current tile layer
 let RC; // RasterCoords instance, for converting leaflet latlngs to XY pixel coords and back
 
@@ -194,21 +193,18 @@ export default class Gamemap {
 		}
 
 		// set map tile layer
-		if (isFirefox()){ // use HTML-based rendering on firefox
+		if (isFirefox()){ // use DOM-based rendering on firefox
 			tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, mapState.layerIndex), tileOptions);
-		} else { // use canvas based tile rendering on everything else
+		} else { // use canvas-based tile rendering on everything else
 			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, mapState.layerIndex), tileOptions);
 		}
 		tileLayer.addTo(map);
 
 		// set map view
 		if(mapState.coords == null || mapState.zoom == null) {
-			// reset map to fill world bounds
-			map.fitBounds(RC.getMaxBounds(), {animate: false});
+			map.fitBounds(RC.getMaxBounds(), {animate: false}); // reset map to fill world bounds
 			setTimeout(function() { map.fitBounds(RC.getMaxBounds(), {animate: true}) }, 1); // now actually reset it
 		} else {
-			print(mapState.coords);
-			print(this.toLatLngs(mapState.coords));
 			map.setView(this.toLatLngs(mapState.coords), mapState.zoom, {animate: false});
 		}
 
@@ -245,7 +241,7 @@ export default class Gamemap {
 		let mapState = new MapState();
 
 		if (getURLParams().has("zoom")){
-			mapState.zoom = getURLParams().get("zoom");
+			mapState.zoom = Number(getURLParams().get("zoom"));
 		} else {
 			mapState.zoom = this.mapConfig.defaultZoomLevel;
 		}
@@ -257,7 +253,9 @@ export default class Gamemap {
 		}
 
 		if (getURLParams().has("x") && getURLParams().has("y")) {
-			mapState.coords = [getURLParams().get("x"), getURLParams().get("y")];
+			let x = Number(getURLParams().get("x"));
+			let y = Number(getURLParams().get("y"));
+			mapState.coords = [x == 0 ? 0.001 : x, y == 0 ? 0.001 : y]; // prevent div by 0
 		}
 
 		if (getURLParams().has("grid")) {
@@ -342,6 +340,10 @@ export default class Gamemap {
 
 			if (this.mapWorlds.size === 0) {
 				getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+
+					print("printing worlds");
+					print(data);
+					print(error);
 
 					if (!error && data?.worlds) {
 						let worlds = data.worlds;
@@ -589,16 +591,13 @@ export default class Gamemap {
 			}
 
 		} else if (Array.isArray(coords)) {
-
-			print("are we going here for some reason?");
-
-			if (coords[0].x != null) { // are we given an array of coord objects?
+			if (coords[0]?.x) { // are we given an array of coord objects?
 				if (coords.length == 1) { // are we given a single coord object? (marker, point)
 					return this.toLatLngs(coords[0]);
 				}
 
 			} else if (coords.length > 1) { // else we are just given a coord array [x, y]
-				return this.toLatLngs(new Point(coords[0], coords[1], this.mapConfig.coordType));
+				return this.toLatLngs(new Point(coords[0] == 0 ? 0.001 : coords[0], coords[1] == 0 ? 0.001 : coords[1], this.mapConfig.coordType));
 			}
 		}
 	}
@@ -1298,11 +1297,42 @@ export default class Gamemap {
 		})
 
 		map.on("zoom", function() {
-
 			if (!self.mapLock && self.mapLock != "full") {
 				self.mapCallbacks?.onZoom(map.getZoom());
+				map.dragging.enable();
+			}
+		})
+
+		const el = document.getElementById("gamemap");
+		el.addEventListener("touchstart", test);
+		el.addEventListener("touchend", test);
+		el.addEventListener("touchcancel", test);
+		el.addEventListener("touchmove", test);
+
+		function test(event) {
+			//print(event);
+			let target = event.target;
+
+			if (self.mapLock == MAPLOCK.FULL || target != self.mapRoot && !target?.classList?.contains("leaflet-interactive")) {
+				event?.originalEvent?.preventDefault();
+				map.dragging.disable();
+				//print("should be being disabled");
 			} else {
-				//self.reset(true, 50);
+				map.dragging.enable();
+				//print("should be being enabled");
+			}
+		}
+
+		map.on("mousemove mousedown touchstart touchmove touchcancel touchend", function(event) {
+			//print(event);
+			let target = event.originalEvent?.target ?? event?.originalEvent?.explicitOriginalTarget ?? event?.sourceTarget?._container;
+			if (self.mapLock == MAPLOCK.FULL || target != self.mapRoot && !target?.classList?.contains("leaflet-interactive")) {
+				event?.originalEvent?.preventDefault();
+				map.dragging.disable();
+				//print("should be being disabled");
+			} else {
+				map.dragging.enable();
+				//print("should be being enabled");
 			}
 		})
 
@@ -1313,16 +1343,6 @@ export default class Gamemap {
 			}
 			print(target);
 		})
-
-		map.on("mousemove", function(event) {
-			let target = event.originalEvent?.target ?? event?.originalEvent?.explicitOriginalTarget;
-			if (target != self.mapRoot && !target?.classList?.contains("leaflet-interactive")) {
-				map.dragging.disable();
-			} else {
-				map.dragging.enable();
-			}
-		});
-
 	}
 
 	onMarkerClicked(marker, shift, ctrl) {
@@ -1477,7 +1497,7 @@ export default class Gamemap {
 	}
 
 	getCurrentMapBounds() {
-		return mapBounds = map.getBounds();
+		return map.getBounds();
 	}
 
 	getMaxBoundsZoom() {

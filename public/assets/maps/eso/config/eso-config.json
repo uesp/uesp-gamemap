@@ -21,6 +21,17 @@
     "minWorldID" : 50,
     "maxWorldID" : 20000,
 
+    "editTemplates" : {
+        "location" : { //object type
+            "chest" : { // object name
+                "name" : "Chest",
+                "icon" : 83,
+                "displayLevel" : 5,
+                "labelPos" : 0
+            }
+        }
+    },
+
     // Map icon info
     "iconSize" : 32,
     "labelOffset" : 9,

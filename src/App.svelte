@@ -351,7 +351,7 @@
 								<IconButton icon="link" label="Copy Link" lock={mapLock} tooltip="Copy link to current map view" on:click={() => {
 									print("Copying link to clipboard...");
 									M.toast({html: 'Map link copied to clipboard!'});
-									navigator.clipboard.writeText(window.location);
+									navigator?.clipboard?.writeText(window.location);
 								}}/>
 
 							</slot:template>

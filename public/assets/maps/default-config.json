@@ -20,6 +20,16 @@
     // 2: Worldspace
     "coordType" : 0,
 
+    // edit templates (auto fill in forms based on the name)
+    "editTemplates" : {
+        "world" : { //object type
+            // world templates go here
+        },
+        "location" : { //object type
+            // location templates go here
+        }
+    },
+
     // Map world info
     "defaultWorldID" : 1,
     "minWorldID" : 0,
@@ -35,10 +45,8 @@
     // Default styling for polygon/polylines
     "defaultFillColour": "rgba(255,255,255,0.05)",
     "defaultFillColourHover": "rgba(255,255,255,0.25)",
-
     "defaultStrokeColour": "rgba(0,0,0,0.5)",
     "defaultStrokeColourHover": "rgba(0,0,0,1)",
-
     "defaultStrokeWidth": 2,
     "defaultStrokeWidthHover": 2,
 
