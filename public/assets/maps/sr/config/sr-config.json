@@ -111,6 +111,17 @@
         "94": "Workbench"
     },
 
+    "editTemplates" : {
+        "location" : { // object type
+            "imperial camp" : { // object name
+                "name" : "Imperial Camp",
+                "icon" : 16,
+                "labelPos" : 6,
+                "displayLevel" : "$gamemap.getMaxZoom() - 1;"
+            }
+        }
+    },
+
     // cell resource info
     "gridShowLabelZoom" : 3,
     "gridLabelCellBgColour" : "rgba(0, 0, 0, 0.20)",

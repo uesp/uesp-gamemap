@@ -1,5 +1,13 @@
 ## last week
 
+
+
+
+
+
+- ask dave does he prefer cliffnotes of stuff done or detailed line by line like usual
+
+
 ## polish
 - added the edit history feature for worlds/locs
 - added the edit templates/suggestions feature
@@ -15,10 +23,15 @@
 - fixed not being able to centre on paths (error/hang)
 - fixed locations not loading on mobile
 - fix div by 0 causing map not to load when x or y was 0
+- fixed page hanging if you tried to add a location when locations werent loaded yet
+- fixed forms not updating when data remotely changed (was preventing editable coordinates working)
 
 
-## problems
+## problems / reminders
 
+- reminder about skyrim/beyond skyrim/solstheim tiles from BS guy
+- Skyrim and Solstheim at 512 x 512 per cell
+> https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=drive_link
 - wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 
 
@@ -74,8 +87,6 @@ if adding location, close button is always "cancel"
 
 - -0.5 on all locations client side
 
-- reminder about skyrim/beyond skyrim/solstheim tiles from BS guy
-
 "goto article" button doesnt update when world wiki link updated
 
 - fix RC inconsistently being resized after coming back from editing location
@@ -128,10 +139,6 @@ if adding location, close button is always "cancel"
 - make maps in game release order
 - use similar centre of polygon algorithm as leaflet does for locations/latlng conversion
 - organise styles.css and comment gamemap js
-
-- Skyrim and Solstheim at 512 x 512 per cell
-> https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=drive_link
-
 
 
 

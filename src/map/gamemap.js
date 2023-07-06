@@ -1251,7 +1251,7 @@ export default class Gamemap {
 				locType:  (isMarker) ? LOCTYPES.MARKER : (shape == "Polygon") ? LOCTYPES.AREA : LOCTYPES.PATH,
 				coords: self.toCoords(layer.getCoordinates()),
 			});
-			this.getCurrentWorld().locations.set(location.id, location);
+			this.getCurrentWorld()?.locations?.set(location.id, location);
 			this.edit(location);
 		});
 

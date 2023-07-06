@@ -39,7 +39,7 @@
     let PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     const ANIMATION_DURATION = 350;
     const RESIZE_OBSERVER = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
-
+    const MIN_PANEL_WIDTH = 350;
 
     // state vars
     export let shown = false; // whether the editor panel is visible
@@ -68,7 +68,7 @@
     $: objectType = isWorld ? "world" : "location";
     $: isEditing = editObject && isLocation || isWorld;
     $: name = (isWorld ? modEditObject?.displayName : modEditObject?.name);
-    $: linkWikiPage = editObject?.wikiPage == name;
+    $: linkWikiPage = modEditObject?.wikiPage == name || modEditObject?.wikiPage == null;
 
     $: { // prevent leaving the page on unsaved changes
         if (unsavedChanges || editObject?.unsavedLocation) {
@@ -313,16 +313,18 @@
         }
     }
 
-
     function fillFromTemplate(template) {
         print("printing template");
         print(template);
 
         // fill in data from template
         for (let [key, value] of Object.entries(template)) {
-            if (!key.includes("$")) {
-                print(key, value);
-                modify(key, value);
+            if (!key?.startsWith("$")) {
+                if (isNaN(value) && value.startsWith("$")) { // if value starts with $, consider it javascript code and execute it
+                    modify(key, eval(value.substring(1)));
+                } else {
+                    modify(key, value);
+                }
             }
         }
 
@@ -335,8 +337,9 @@
     function onResizerUp() { document.removeEventListener('mousemove', onResizerDrag); }
     function onResizerDrag(event) {
         let width = (window.innerWidth - event.pageX + 150);
-        width = (width < 350) ? 350 : width;
-        editPanel.style.width = width + "px";
+        width = (width < MIN_PANEL_WIDTH) ? MIN_PANEL_WIDTH : width;
+        editPanel.style.width = `${width}px`;
+        editPanel.style.maxWidth = `${width}px`;
         setPrefs("editpanelwidth", width); // save user's edit panel width preference
         PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     }
@@ -492,7 +495,7 @@
                                             <Textbox
                                                 text={isWorld ? modEditObject.displayName : modEditObject.name }
                                                 hint={(isWorld ? "Display " : "") + "Name"}
-                                                tooltip="User facing {objectType} name"
+                                                tooltip="{objectType.toSentenceCase()} name"
                                                 on:change={(e) => {
                                                     if (linkWikiPage) {
                                                         modify("wikiPage", e.detail)
@@ -541,7 +544,6 @@
                                                 } else {
                                                     modify("wikiPage", null);
                                                 }
-                                                linkWikiPage = e.detail;
                                         }}>
                                         <Textbox label="Wiki Page"
                                             text={modEditObject.wikiPage}

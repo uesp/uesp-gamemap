@@ -17,6 +17,7 @@
     export let tooltip;
     export let align = "left";
     export let invisible;
+    export let selected;
     let id = Math.random().toString(36).substr(2, 10); // generate unique random string
     let dropdown;
     let selectedIcon;
@@ -30,6 +31,7 @@
             dropdownOptions : {alignment: align, constrainWidth: false}
         });
         onChanged();
+        print(dropdown);
     });
 
     function onChanged(event) {

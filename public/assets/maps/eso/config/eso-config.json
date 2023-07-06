@@ -22,12 +22,306 @@
     "maxWorldID" : 20000,
 
     "editTemplates" : {
-        "location" : { //object type
+        "location" : { // object type
             "chest" : { // object name
                 "name" : "Chest",
                 "icon" : 83,
-                "displayLevel" : 5,
-                "labelPos" : 0
+                "displayLevel" : "$gamemap.getMaxZoom() - 1;",
+                "labelPos" : 0,
+                "wikiPage" : "Online: Treasure Chests"
+            },
+
+            "skyshard" : {
+                "name" : "Skyshard",
+                "icon" : 75,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "fishing hole" : {
+                "name" : "Fishing Hole",
+                "icon" : 36,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "ayleid well" : {
+                "name" : "Ayleid Well",
+                "icon" : 131,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
+            },
+
+            "heavy sack" : {
+                "name" : "Heavy Sack",
+                "icon" : 89,
+                "labelPos" : 0,
+                "wikiPage" : "Heavy Sack",
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "cooking fire" : {
+                "name" : "Cooking Fire",
+                "icon" : 28,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "alchemy station" : {
+                "name": "Alchemy Station",
+                "icon" : 84,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "enchanting station" : {
+                "name": "Enchanting Station",
+                "icon" : 85,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "enchanting table" : {
+                "name": "Enchanting Station", // To be consistent with everything else named as "station"
+                "icon" : 85,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "jewelry station" : {
+                "name": "Jewelry Crafting Station",
+                "icon" : 215,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "jewellery station" : {
+                "name": "Jewelry Crafting Station",
+                "icon" : 215,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "jewel station" : {
+                "name": "Jewelry Crafting Station",
+                "icon" : 215,
+                "wikiPage" : null,
+                "labelPos" : 0,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "jewelry crafting station" : {
+                "name": "Jewelry Crafting Station",
+                "icon" : 215,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "blacksmith station" : {
+                "name": "Blacksmith Station",
+                "icon" : 86,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "clothing station" : {
+                "name": "Clothing Station",
+                "icon" : 88,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "woodworking station" : {
+                "name": "Woodworking Station",
+                "icon" : 87,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "lorebook" : {
+                "name": "Lorebook",
+                "icon" : 76,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom() -2;"
+            },
+
+            "wayshrine" : {
+                "name": "Wayshrine",
+                "icon" : 19,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : 0
+            },
+
+            "world event" : {
+                "name": "World Event",
+                "icon" : 140,
+                "labelPos" : 0,
+                "displayLevel" : "$gamemap.getMaxZoom();",
+                "wikiPage": "Online: World Event"
+            },
+
+            "crafting node" : {
+                "name": "Crafting Node",
+                "icon" : 90,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "container" : {
+                "name": "container",
+                "icon" : 91,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "treasure map" : {
+                "name": "Treasure Map",
+                "icon" : 79,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
+            },
+
+            "dolmen" : {
+                "name": "Dolmen",
+                "icon" : 69,
+                "labelPos" : 0,
+                "displayLevel" : "$gamemap.getMinZoom() + 2;",
+                "wikiPage" : "Dolmen"
+            },
+
+            "dark fissure" : {
+                "name": "Dark Fissure",
+                "icon" : 129,
+                "labelPos" : 0,
+                "displayLevel" : "$gamemap.getMaxZoom();",
+                "wikiPage" : "Dark Fissure"
+            },
+
+            "celestial rift" : {
+                "name": "Celestial Rift",
+                "icon" : 128,
+                "labelPos" : 0,
+                "displayLevel" : "$gamemap.getMaxZoom();",
+                "wikiPage" : "Celestial Rift"
+            },
+
+            "fighters guild" : {
+                "name": "Fighters Guild",
+                "icon" : 30,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMinZoom() + 2;"
+            },
+
+            "mages guild" : {
+                "name": "Mages Guild",
+                "icon" : 35,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMinZoom() + 2;"
+            },
+
+            "strongbox" : {
+                "name": "Safebox",
+                "icon" : 143,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "safebox" : {
+                "name": "Safebox",
+                "icon" : 143,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "lockbox" : {
+                "name": "Safebox",
+                "icon" : 143,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "outfit station" : {
+                "name": "Outfit Station",
+                "icon" : 135,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "dye station" : {
+                "name": "Outfit Station",
+                "icon" : 135,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "fence" : {
+                "name": "Fence",
+                "icon" : 133,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "hiding spot" : {
+                "name": "Hiding Spot",
+                "icon" : 170,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "thieves trove" : {
+                "name": "Thieves Trove",
+                "icon" : 167,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "psijic portal" : {
+                "name": "Psijic Portal",
+                "icon" : 204,
+                "labelPos" : 0,
+                "wikiPage" : null,
+                "displayLevel" : "$gamemap.getMaxZoom();"
+            },
+
+            "zone" : {
+                "name": "Zone Name",
+                "displayLevel": 1,
+                "labelPos": 5,
+                "wikiPage" : null,
+                "fillColour": "rgba(255,255,255,0.05)",
+                "fillColourHover": "rgba(255,255,255,0.25)",
+                "strokeColour": null,
+                "strokeColourHover": null,
+                "strokeWidth": 0,
+                "strokeWidthHover": 0
             }
         }
     },
