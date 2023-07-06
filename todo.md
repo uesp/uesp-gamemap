@@ -8,14 +8,24 @@
 - ask dave does he prefer cliffnotes of stuff done or detailed line by line like usual
 
 
-## polish
+## editing
 - added the edit history feature for worlds/locs
 - added the edit templates/suggestions feature
->> templates are declared in mapconfig
+
+## edit templates
+- templates are declared in mapconfig
+- imported all  old ones
+- when user types in the right name "chest" (case insensitive) a prompt asks whether they want to fill in the info from the template
+- also added a new one, "zone", for adding new cities/zones as the default one with hard outline is annoying to remove each time
+
+technical info:
 >> each template is sorted under mapconfig.editTemplates[objectType][objectName]
 >> where object type is whether it is a location or world ("location", "world") and the latter is just the name
 >> means you can declare templates for both worlds and locations separately per map
->> when user types in the right name "chest" (case insensitive) a prompt asks whether they want to fill in the info from the template
+>> to do the dynamic stuff like get world max/min zoom, and arbitary +/-, any prop that begins with "$" will get executed as eval(javascript code)
+
+## polish
+- made the name of the location/world in the editor titlebar update live as you type
 
 ## bug fixes
 - toFixed(3) all output to server for displayData and xy
@@ -27,6 +37,9 @@
 - fixed forms not updating when data remotely changed (was preventing editable coordinates working)
 
 
+# questions
+is having a request to the server each time you edit a loc/world going to be a problem?
+
 ## problems / reminders
 
 - reminder about skyrim/beyond skyrim/solstheim tiles from BS guy
@@ -36,6 +49,8 @@
 
 
 ## todo
+
+fix dropdowns not updating with edit templates
 
 
 - refude min width for edit panel to fix rc height on animate problem

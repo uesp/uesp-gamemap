@@ -327,7 +327,6 @@
                 }
             }
         }
-
         // mark suggestion as accepted
         modify("acceptedSuggestion", true);
     }
@@ -409,7 +408,7 @@
             action: data.editAction,
             worldID: data.worldId,
             isWorld: isWorld,
-            subtitle: isWorld ? null : data.worldDisplayName,
+            subtitle: isWorld ? null : data.worldDisplayName ?? gamemap.getWorldDisplayNameFromID(data.worldId),
         }
     }
 
@@ -425,7 +424,7 @@
                 {@const locType = Object.keys(LOCTYPES).find(key => LOCTYPES[key] === overlay)}
                  <div id="edit-overlay" in:fade={{ duration: 100 }}>
                     <b class="subheading">Adding {locType.toSentenceCase()}</b>
-                    <p style="color: white; text-align: center; margin: 12px;">Begin adding your {locType.toLowerCase()} to the map.</p>
+                    <p style="color: white; text-align: center; margin: 12px;">Begin adding the new {locType.toLowerCase()} to the map.</p>
                     <div id="arrow_container">
                         <div class="arrow"><span></span><span></span><span></span></div>
                     </div>
@@ -440,7 +439,7 @@
 
              <!-- edit panel appbar -->
              <AppBar title={!isEditing ? "Map Editor" : ((modEditObject.id > 0) ? "Editing" : "Adding") + " " + objectType.toSentenceCase()}
-                subtitle={isEditing ? (isWorld) ? editObject.displayName + " ("+editObject.name+")" : editObject.name : null} unsavedChanges={unsavedChanges}
+                subtitle={isEditing ? (isWorld) ? modEditObject.displayName + " ("+modEditObject.name+")" : modEditObject.name : null} unsavedChanges={unsavedChanges}
                 icon={isEditing && !directEdit ? "arrow_back" : "close"} on:back={onBackPressed} tooltip={unsavedChanges ? "You have unsaved changes" : null}
              />
 
@@ -480,15 +479,13 @@
                         <div class="editor_window" bind:this={editorWindow}>
 
                             <!-- show edit suggestions if available -->
-                            {#if MAPCONFIG?.editTemplates[objectType][name.toLowerCase()] && unsavedChanges && !modEditObject?.acceptedSuggestion}
+                            {#if MAPCONFIG?.editTemplates[objectType]?.[name.toLowerCase()] && unsavedChanges && !modEditObject?.acceptedSuggestion}
                                 {@const template = MAPCONFIG.editTemplates[objectType][name.toLowerCase()]}
-                                <SuggestionBar suggestion={name.toSentenceCase()} on:confirm={() => fillFromTemplate(template)}/>
+                                <SuggestionBar suggestion={name.toTitleCase()} on:confirm={() => fillFromTemplate(template)}/>
                             {/if}
 
                             <div id="editor_pane">
-
                                 <FormGroup title="General" icon="description">
-
                                     <header class="header">
                                         <AvatarComponent icon={modEditObject.icon} locType={modEditObject.locType} isWorld={isWorld} on:change={(e) => modify("icon", e.detail)}>
                                             <!-- Name -->

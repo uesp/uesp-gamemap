@@ -21,7 +21,7 @@ export default class Location {
 		// set basic location info
 		this.id = data.id ?? -100;
 		this.unsavedLocation = (this.id < 0); // used when determining if this a new, unpublished location or not
-		this.name = (!this.unsavedLocation) ? data.name : (this.locType == LOCTYPES.MARKER) ? "New Marker" : (this.locType == LOCTYPES.AREA) ? "New Area" : "New Line";
+		this.name = (!this.unsavedLocation) ? data.name : (this.locType == LOCTYPES.MARKER) ? "New Marker" : (this.locType == LOCTYPES.AREA) ? "New Area" : "New Path";
 		this.revisionID = data.revisionId || 0;
 		this.worldID = data?.worldId ?? world.id;
 		this.destinationID = -(data?.destinationId) || null;

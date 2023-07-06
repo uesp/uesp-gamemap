@@ -452,6 +452,13 @@ Object.assign(String.prototype, {
     }
 });
 
+/** Transform string to title case
+ * @returns {String} string - the title case string
+ */
+String.prototype.toTitleCase = function() {
+	return this.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+};
+
 
 /** Encodes javascript data into a url-passable form
  * @param {Object} data - the data you want to encode

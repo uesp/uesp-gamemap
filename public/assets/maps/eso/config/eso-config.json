@@ -76,7 +76,7 @@
                 "icon" : 84,
                 "labelPos" : 0,
                 "wikiPage" : null,
-                "displayLevel" : "$gamemap.getMaxZoom();"
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
             },
 
             "enchanting station" : {
@@ -84,7 +84,7 @@
                 "icon" : 85,
                 "labelPos" : 0,
                 "wikiPage" : null,
-                "displayLevel" : "$gamemap.getMaxZoom();"
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
             },
 
             "enchanting table" : {
@@ -92,7 +92,7 @@
                 "icon" : 85,
                 "labelPos" : 0,
                 "wikiPage" : null,
-                "displayLevel" : "$gamemap.getMaxZoom();"
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
             },
 
             "jewelry station" : {
@@ -100,7 +100,7 @@
                 "icon" : 215,
                 "labelPos" : 0,
                 "wikiPage" : null,
-                "displayLevel" : "$gamemap.getMaxZoom();"
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
             },
 
             "jewellery station" : {
@@ -108,7 +108,7 @@
                 "icon" : 215,
                 "labelPos" : 0,
                 "wikiPage" : null,
-                "displayLevel" : "$gamemap.getMaxZoom();"
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
             },
 
             "jewel station" : {
@@ -116,7 +116,7 @@
                 "icon" : 215,
                 "wikiPage" : null,
                 "labelPos" : 0,
-                "displayLevel" : "$gamemap.getMaxZoom();"
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
             },
 
             "jewelry crafting station" : {
@@ -124,7 +124,7 @@
                 "icon" : 215,
                 "labelPos" : 0,
                 "wikiPage" : null,
-                "displayLevel" : "$gamemap.getMaxZoom();"
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
             },
 
             "blacksmith station" : {
@@ -132,7 +132,7 @@
                 "icon" : 86,
                 "labelPos" : 0,
                 "wikiPage" : null,
-                "displayLevel" : "$gamemap.getMaxZoom();"
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
             },
 
             "clothing station" : {
@@ -140,7 +140,7 @@
                 "icon" : 88,
                 "labelPos" : 0,
                 "wikiPage" : null,
-                "displayLevel" : "$gamemap.getMaxZoom();"
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
             },
 
             "woodworking station" : {
@@ -148,7 +148,7 @@
                 "icon" : 87,
                 "labelPos" : 0,
                 "wikiPage" : null,
-                "displayLevel" : "$gamemap.getMaxZoom();"
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
             },
 
             "lorebook" : {
@@ -308,11 +308,27 @@
                 "icon" : 204,
                 "labelPos" : 0,
                 "wikiPage" : null,
-                "displayLevel" : "$gamemap.getMaxZoom();"
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
+            },
+
+            "door" : {
+                "name": "Door",
+                "icon" : 236,
+                "labelPos" : 0,
+                "wikiPage" : "",
+                "displayLevel" : 2
+            },
+
+            "boss" : {
+                "name": "Boss Name Here",
+                "icon" : 63,
+                "labelPos" : 6,
+                "wikiPage" : null,
+                "displayLevel" : 1
             },
 
             "zone" : {
-                "name": "Zone Name",
+                "name": "Zone Name Here",
                 "displayLevel": 1,
                 "labelPos": 5,
                 "wikiPage" : null,
