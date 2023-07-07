@@ -1,4 +1,5 @@
-
+<!-- svelte-ignore a11y-missing-attribute -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- @component
 ### Description
  Dropdown menu component for the UESP gamemap.
@@ -19,29 +20,38 @@
     export let invisible;
     export let selected;
     let id = Math.random().toString(36).substr(2, 10); // generate unique random string
+    let container;
     let dropdown;
+    let dropdownWrapper;
     let selectedIcon;
 
+
     const dispatch = createEventDispatcher();
+    $: updateLabel(selected);
 
     // initiate dropdown menu
     onMount(async () => {
-
-        M.FormSelect.init(document.querySelectorAll(`#form-select-${id}`), {
-            dropdownOptions : {alignment: align, constrainWidth: false}
-        });
+        M.FormSelect.init(document.querySelectorAll(`#form-select-${id}`), { dropdownOptions : {alignment: align, constrainWidth: false}});
+        dropdownWrapper = container.querySelector('.select-dropdown.dropdown-trigger');
         onChanged();
-        print(dropdown);
+        updateLabel(selected);
     });
 
+    function updateLabel(selected) {
+        if (dropdownWrapper && selected != null) {
+            dropdown.value = selected;
+            dropdownWrapper.value = dropdown.querySelector(`[value='${selected}']`).innerText;
+        }
+    }
+
     function onChanged(event) {
+
         if (event && event.type != "click") {
-            print(event);
             dispatch("change", event.target.value);
         }
 
         // get dropdown selection icon if available
-        let selected = dropdown.querySelector('.selected');
+        let selected = container.querySelector('.selected');
         if (selected && selected.querySelector("img")) {
             let img = selected.querySelector("img");
             selectedIcon = img.src;
@@ -54,18 +64,15 @@
 </script>
 
 <markup>
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="input-field col s12" on:click={onChanged} bind:this={dropdown} class:invisible={invisible}>
+    <div class="input-field col s12" on:click={onChanged} bind:this={container} class:invisible={invisible}>
         {#if label}
              <label class="label truncate" title={tooltip} for="form-select-{id}">{label}</label>
         {/if}
-        <select id="form-select-{id}" on:change={onChanged}>
-            <!-- Hint -->
-            {#if hint != null}<option value="" disabled>{hint}</option>{/if}
+        <select id="form-select-{id}" bind:this={dropdown} on:change={onChanged}>
+            {#if hint}<option value="" disabled>{hint}</option>{/if}
             <slot> <!-- Menu items go here --> </slot>
         </select>
         {#if selectedIcon && !invisible}
-             <!-- svelte-ignore a11y-missing-attribute -->
              <img class="selected-icon" src={selectedIcon}>
         {/if}
       </div>

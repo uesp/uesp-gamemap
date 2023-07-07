@@ -554,7 +554,7 @@
                                     {#if modEditObject.locType != LOCTYPES.PATH && isLocation}
                                         {@const posIDs = Object.keys(LABEL_POSITIONS)}
                                         {@const posNames = Object.values(LABEL_POSITIONS)}
-                                        <DropdownMenu label="Label Direction" hint="Select label direction..." align="right" on:change={(e) => {modify("labelPos", Number(e.detail))}} >
+                                        <DropdownMenu label="Label Direction" hint="Select label direction..." align="right" selected={modEditObject.labelPos} on:change={(e) => {modify("labelPos", Number(e.detail))}} >
                                             {#each posNames as posName, i}
                                                 <option value={posIDs[i]} selected={modEditObject.labelPos == posIDs[i]}>{posName.toSentenceCase()}</option>
                                             {/each}

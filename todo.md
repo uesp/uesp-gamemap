@@ -52,6 +52,8 @@ is having a request to the server each time you edit a loc/world going to be a p
 
 fix dropdowns not updating with edit templates
 
+fix dropdowns always loading with "none"
+
 
 - refude min width for edit panel to fix rc height on animate problem
 
@@ -74,7 +76,6 @@ fix dropdowns not updating with edit templates
 
 - fix line colour preview showing fill colours from area
 
-- fix slow zooming on macbooks and laptops with pinch zoom gestures (NOT normal scroll gestures)
 - shift click on other locations while unsaved changes should immediately change to edit it
 
 - fix being able to close editor panel while in "add marker" mode
@@ -92,15 +93,17 @@ if adding location, close button is always "cancel"
 
 - fix cant set new marker to "none" / dropdown always selecting "none" on first load on any edit
 
+
+- make map lock for editing worlds actually work (no zooming allowed)
 - get live editing working for worlds
 
 
 - fix colour picker default colour to something sensible instead of the blue
 
-- add quick toggles for areas, "is zone" to get rid of outline for eso
-
-
 - -0.5 on all locations client side
+
+- show "position" in info when marker being added
+
 
 "goto article" button doesnt update when world wiki link updated
 
@@ -149,11 +152,11 @@ if adding location, close button is always "cancel"
 - show more columns on map key menu dynamically
 - fix cell resource colour intensity to make sense. deeper the colour the more stuff
 - fix pip on layer switcher ui being small
-- button to go up a map, right click isnt intuitive
 - make readme on how to create the favicon styles for maps for future developers
 - make maps in game release order
 - use similar centre of polygon algorithm as leaflet does for locations/latlng conversion
 - organise styles.css and comment gamemap js
+- comment/refactor all code
 
 
 
@@ -172,7 +175,7 @@ if adding location, close button is always "cancel"
 
 
 ## todo maps (future)
-- skyrim minecraft thing
+- skyrim minecraft map thing
 - cave interior maps for skyrim, ob, mw
 - some kind of tutorial on first non-cookie load to tell user how to use ui
 - divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)
@@ -183,8 +186,8 @@ if adding location, close button is always "cancel"
 - shower thought: could use the "Dev/Beta" versions of maps for eso as separate layers
 
 ## todo future general
-- wiki features
-- email thing
+- wiki features (hybrid news etc)
+- prettify uesp email thing
 - starfield wiki app
 - starfield map
 
