@@ -81,6 +81,11 @@ window.isFirefox = function isFirefox() {
 	return (navigator.userAgent.indexOf('Firefox') !== -1);
 }
 
+/** Returns whether current browser is chrome or not. */
+window.isChrome = function isChrome() {
+	return window.chrome != null;
+}
+
 /** Debug print function,disabled on release */
 if (isDebug || location.toString().includes("localhost") || location.toString().includes("devgame")) {
 	// override print function to be custom console log

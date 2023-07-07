@@ -15,6 +15,7 @@
     export let enabled = false;
     export let tooltip;
     export let expand;
+    $: print(expand);
 
     const dispatch = createEventDispatcher();
 
@@ -34,7 +35,7 @@
     </div>
 
     <!-- optional child UI component if togged -->
-    {#if (expand != null && expand == true || expand == null && enabled)}
+    {#if (!enabled)}
         <div class="optional-component" in:slide|local out:slide|local>
             <slot/>
         </div>

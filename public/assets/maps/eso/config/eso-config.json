@@ -344,28 +344,32 @@
                 "name": "Quest",
                 "icon" : 77,
                 "labelPos" : 0,
-                "wikiPage" : ""
+                "wikiPage" : "",
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
             },
 
             "quest main" : {
                 "name": "Main Quest",
                 "icon" : 229,
                 "labelPos" : 0,
-                "wikiPage" : ""
+                "wikiPage" : "",
+                "displayLevel" : "$gamemap.getMaxZoom() -1;"
             },
 
             "quest start" : {
                 "name": "Quest Start",
                 "icon" : 62,
                 "labelPos" : 0,
-                "wikiPage" : ""
+                "wikiPage" : "",
+                "displayLevel" : "$gamemap.getMaxZoom() -2;"
             },
 
             "quest start main" : {
                 "name": "Main Quest Start",
                 "icon" : 233,
                 "labelPos" : 0,
-                "wikiPage" : ""
+                "wikiPage" : "",
+                "displayLevel" : "$gamemap.getMaxZoom() -2;"
             }
 
         }

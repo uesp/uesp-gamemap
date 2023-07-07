@@ -39,7 +39,7 @@
     let PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     const ANIMATION_DURATION = 350;
     const RESIZE_OBSERVER = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
-    const MIN_PANEL_WIDTH = 0;
+    const MIN_PANEL_WIDTH = 350;
 
     // state vars
     export let shown = false; // whether the editor panel is visible
@@ -68,7 +68,7 @@
     $: objectType = isWorld ? "world" : "location";
     $: isEditing = editObject && isLocation || isWorld;
     $: name = (isWorld ? modEditObject?.displayName : modEditObject?.name);
-    $: linkWikiPage = modEditObject?.wikiPage == name || modEditObject?.wikiPage == null;
+    $: linkWikiPage = modEditObject?.wikiPage == name || (modEditObject?.wikiPage == null || modEditObject?.wikiPage == "");
 
     $: { // prevent leaving the page on unsaved changes
         if (unsavedChanges || editObject?.unsavedLocation) {
@@ -262,12 +262,17 @@
         gamemap.getMapObject().pm.disableGlobalEditMode();
         Array.from(document.querySelectorAll("[class*='editing']")).forEach(element => { element.classList.remove("editing"); })
 
-        // weird hack to stop recent changes list being wrong size
-        setTimeout(() => {
-            let oldRecentChanges = recentChanges;
-            recentChanges = [];
-            recentChanges = oldRecentChanges;
-        }, 10)
+        // weird hack to stop recent changes getting shrunk
+        let hacky = setInterval(() => {
+            let rcList = document.getElementsByClassName("virtual-list-wrapper")?.[0];
+            if (rcList?.clientHeight >= 1000 && rcList.children[0].childElementCount <= 4){
+                let oldRecentChanges = recentChanges;
+                recentChanges = [];
+                recentChanges = oldRecentChanges;
+            } else {
+                clearInterval(hacky);
+            }
+        }, 1);
     }
 
     // received updated marker coords from gamemap (via drag and dropping)
@@ -462,7 +467,7 @@
                             {#if recentChanges.length > 0}
                                 <VirtualList
                                     width="100%"
-                                    height={innerHeight - (refreshTitleBar?.getBoundingClientRect()?.bottom + 8)}
+                                    height={innerHeight - (refreshTitleBar?.getBoundingClientRect()?.bottom + 10)}
                                     itemCount={recentChanges.length}
                                     scrollToIndex={1}
                                     itemSize={60}>
@@ -534,12 +539,11 @@
                                     <!-- Wiki Page -->
                                     <Switch
                                         enabled={linkWikiPage}
-                                        expand={!linkWikiPage}
                                         label={"Use " + (isWorld ? "Display Name" : "Name") + " as Wiki Page"}
                                         tooltip={`Use this ${objectType}'s ${(isWorld ? "display name" : "name")} as its wiki page`}
                                         on:change={(e) => {
                                                 if (e.detail) {
-                                                    modify("wikiPage", isWorld ? modEditObject.displayName : modEditObject.name);
+                                                    modify("wikiPage", name);
                                                 } else {
                                                     modify("wikiPage", null);
                                                 }
