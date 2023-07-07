@@ -39,7 +39,7 @@
     let PANEL_WIDTH = getPrefs("editpanelwidth", 480);
     const ANIMATION_DURATION = 350;
     const RESIZE_OBSERVER = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
-    const MIN_PANEL_WIDTH = 350;
+    const MIN_PANEL_WIDTH = 0;
 
     // state vars
     export let shown = false; // whether the editor panel is visible
@@ -50,7 +50,7 @@
     let editorWindow;
     let overlay = null;
     let saveButton;
-    let refreshButton;
+    let refreshTitleBar;
     let innerHeight;
 
     let recentChanges = [];
@@ -446,21 +446,23 @@
              <!-- edit panel content -->
              <div id="edit-panel-content" bind:this={editPanelContent} class:isEditing={isEditing}>
                 {#if !isEditing}
-                     <b>Actions</b><br/>
-                     <div id="actions-container">
-                         <Button text="Add Marker" icon="add_location_alt" on:click={() => addNewLocation(LOCTYPES.MARKER)}></Button>
-                         <Button text="Add Area" icon="local_hospital" on:click={() => addNewLocation(LOCTYPES.AREA)}></Button>
-                         <Button text="Add Path" icon="timeline" on:click={() => addNewLocation(LOCTYPES.PATH)}></Button>
-                         <Button text="Edit World" icon="public" on:click={() => (edit(gamemap.getCurrentWorld()))}></Button>
-                     </div>
-                     <b>Recent Changes</b>
-                     <div id="refresh-button" title="Refresh the Recent Changes list" class="waves-effect" on:click={getRecentChanges} bind:this={refreshButton}><Icon name="refresh" size=20 /></div>
-                     <div id="recent-changes-container">
+                    <b>Actions</b><br/>
+                    <div id="actions-container">
+                        <Button text="Add Marker" icon="add_location_alt" on:click={() => addNewLocation(LOCTYPES.MARKER)}></Button>
+                        <Button text="Add Area" icon="local_hospital" on:click={() => addNewLocation(LOCTYPES.AREA)}></Button>
+                        <Button text="Add Path" icon="timeline" on:click={() => addNewLocation(LOCTYPES.PATH)}></Button>
+                        <Button text="Edit World" icon="public" on:click={() => (edit(gamemap.getCurrentWorld()))}></Button>
+                    </div>
+                    <div id="recent-changes-titlebar" bind:this={refreshTitleBar}>
+                        <b>Recent Changes</b>
+                        <div id="refresh-button" title="Refresh the Recent Changes list" class="waves-effect" on:click={getRecentChanges}><Icon name="refresh" size=20 /></div>
+                    </div>
+                    <div id="recent-changes-container">
                         {#key recentChanges}
                             {#if recentChanges.length > 0}
                                 <VirtualList
                                     width="100%"
-                                    height={innerHeight - (refreshButton?.getBoundingClientRect()?.bottom + 8)}
+                                    height={innerHeight - (refreshTitleBar?.getBoundingClientRect()?.bottom + 8)}
                                     itemCount={recentChanges.length}
                                     scrollToIndex={1}
                                     itemSize={60}>
@@ -776,6 +778,10 @@
 
     #refresh-button {
         float: right;
+    }
+
+    #recent-changes-titlebar {
+        white-space: nowrap;
     }
 
     #recent-changes-container {

@@ -1,10 +1,5 @@
 ## last week
 
-
-
-
-
-
 - ask dave does he prefer cliffnotes of stuff done or detailed line by line like usual
 
 
@@ -26,6 +21,7 @@ technical info:
 
 ## polish
 - made the name of the location/world in the editor titlebar update live as you type
+- fixed small padding offset for recent changes list on open
 
 ## bug fixes
 - toFixed(3) all output to server for displayData and xy
@@ -37,7 +33,6 @@ technical info:
 - fixed forms not updating when data remotely changed (was preventing editable coordinates working)
 - fixed icon dropdown defaulting to "none" even if icon selected
 - fixed not being able to select "none" to remove the icon because of the above bug
-
 
 # questions
 is having a request to the server each time you edit a loc/world going to be a problem?
@@ -52,13 +47,6 @@ is having a request to the server each time you edit a loc/world going to be a p
 
 ## todo
 
-fix dropdowns not updating with edit templates
-
-fix dropdowns always loading with "none"
-
-
-- refude min width for edit panel to fix rc height on animate problem
-
 - get dialogs working
 
 - fix focus on svelte elements mean cant move map (mobile specifically)
@@ -70,6 +58,8 @@ fix dropdowns always loading with "none"
 >> need to find a way to pass location.js reference to the current world
 
 - remember last icon used in the editor and auto select it next time
+
+- do edit templates for dawnstar per dcsg asked
 
 - direct edit "close" button isnt closing whole panel as expected
 - fix clicking X button "saving" changes unlike cancel button
