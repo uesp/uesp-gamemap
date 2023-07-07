@@ -21,10 +21,12 @@
     let canChangeIcon = true;
     let showOverlay = false;
     let iconTooltip;
+    let iconID;
 
     const dispatch = createEventDispatcher();
 
     $: {
+        iconID = icon;
         icon = (icon != null) ? icon = gamemap.getMapConfig().iconPath + icon + ".png" : isWorld ? "public" : (locType != LOCTYPES.PATH) ? "add" : "location_on";
         canChangeIcon = locType != LOCTYPES.PATH && !isWorld;
         iconTooltip = (canChangeIcon) ? icon.includes("/") ? gamemap.getMapConfig().icons.get(Number(icon.replace(/\D/g, ""))) : "Add Icon" : (isWorld) ? "World" : "Location";
@@ -63,9 +65,9 @@
             <!-- svelte-ignore missing-declaration -->
             {#if canChangeIcon}
                 <DropdownMenu hint="Select icon..." on:change={(e) => change(e.detail)} invisible={true}>
-                    <option value={null} selected={icon == null}>None</option>
+                    <option value={null} selected={iconID == null}>None</option>
                     {#each [...gamemap.getMapConfig().icons] as [id, name]}
-                        <option value={id} selected={icon.toString() == name} data-icon={gamemap.getMapConfig().iconPath + id + ".png"}>{name}</option>
+                        <option value={id} selected={id == iconID} data-icon={gamemap.getMapConfig().iconPath + id + ".png"}>{name}</option>
                     {/each}
                 </DropdownMenu>
             {/if}

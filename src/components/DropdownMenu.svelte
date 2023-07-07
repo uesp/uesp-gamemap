@@ -33,8 +33,27 @@
     onMount(async () => {
         M.FormSelect.init(document.querySelectorAll(`#form-select-${id}`), { dropdownOptions : {alignment: align, constrainWidth: false}});
         dropdownWrapper = container.querySelector('.select-dropdown.dropdown-trigger');
-        onChanged();
         updateLabel(selected);
+        onChanged();
+        print(dropdownWrapper);
+
+        if (selected != null) {
+            // now update selected
+            let dropdownParent = dropdownWrapper.parentElement;
+            let dropdownList = dropdownParent.querySelector('ul');
+            print(dropdownList);
+            Array.from(dropdownList.children).forEach((child) => {
+                // Do stuff
+                child.classList.remove("selected");
+                print(child);
+            });
+            // get dropdownwrapper parent, get first ul element
+            // iterate through it
+            // remove "selected" from all
+            // then find the span that has a text of dropdownWrapper.value
+            // get the parent of that, then set its class to selected
+        }
+
     });
 
     function updateLabel(selected) {

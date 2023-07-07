@@ -35,6 +35,8 @@ technical info:
 - fix div by 0 causing map not to load when x or y was 0
 - fixed page hanging if you tried to add a location when locations werent loaded yet
 - fixed forms not updating when data remotely changed (was preventing editable coordinates working)
+- fixed icon dropdown defaulting to "none" even if icon selected
+- fixed not being able to select "none" to remove the icon because of the above bug
 
 
 # questions
