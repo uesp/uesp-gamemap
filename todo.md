@@ -53,8 +53,6 @@ is having a request to the server each time you edit a loc/world going to be a p
 
 ## todo
 
-- get dialogs working
-
 - fix focus on svelte elements mean cant move map (mobile specifically)
 >> try re allowing map panning on the "zoom" or "move" events
 
@@ -121,10 +119,14 @@ if adding location, close button is always "cancel"
 - cell resource state in/from url
 - add zoom/pan in effects for markers when editing
 
+- make dialog backgrond start fading with the scale animation, dont make it just disappear when the animation is over
+
 - if location list button is overflowing, show the name of the world insated of "show location list"
 
 - add tooltip to editor back button/ close button "Back" "Close"
 - make editing polygons always the same colour (blue)
+
+
 
 - fix centreon going to the wrong place
 - fix clicking out while zoomed in zooming in to parent map as well

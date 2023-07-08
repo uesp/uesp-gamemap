@@ -111,10 +111,6 @@
             // check if current edit object is null
             if (data != true && editObject == null) {
                 initEditor(data);
-            } else if (editObject) {
-                print(editObject);
-                // TODO: are you sure you want to lose progress?
-                print("we should be overwriting current data here")
             }
 
         } else {
@@ -130,14 +126,26 @@
         gamemap.addLocation(locType);
     }
 
-    function onBackPressed() {
+    function back(force) {
+        force = (force != null) ? force : false;
         window.onbeforeunload = null;
         if (isEditing) {
-            if (directEdit) {
-                print("should be being dismissed")
-                dismiss();
-            } else {
-                cancel();
+
+            if (unsavedChanges && !force) {
+                discardDialog.showWithCallback((result) => {
+                    print(result);
+                    if (result == "confirm") {
+                        back(true);
+                    }
+                })
+            }
+
+            if (force || !unsavedChanges) {
+                if (directEdit) {
+                    dismiss();
+                } else {
+                    cancel();
+                }
             }
         } else {
             dismiss();
@@ -447,7 +455,7 @@
              <!-- edit panel appbar -->
              <AppBar title={!isEditing ? "Map Editor" : ((modEditObject.id > 0) ? "Editing" : "Adding") + " " + objectType.toSentenceCase()}
                 subtitle={isEditing ? (isWorld) ? modEditObject.displayName + " ("+modEditObject.name+")" : modEditObject.name : null} unsavedChanges={unsavedChanges}
-                icon={isEditing && !directEdit ? "arrow_back" : "close"} on:back={onBackPressed} tooltip={unsavedChanges ? "You have unsaved changes" : null}
+                icon={isEditing && !directEdit ? "arrow_back" : "close"} on:back={() => back()} tooltip={unsavedChanges ? "You have unsaved changes" : null}
              />
 
              <!-- edit panel content -->
@@ -710,7 +718,7 @@
                             </div>
                             <div class="footer-buttons">
                                 <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
-                                <Button text={!unsavedChanges && !modEditObject?.unsavedLocation ? "Close" : "Cancel"} icon="close" on:click={() => cancel(true)}/>
+                                <Button text={!unsavedChanges && !modEditObject?.unsavedLocation ? "Close" : "Cancel"} icon="close" on:click={() => back()}/>
                                 {#if isLocation && !modEditObject.unsavedLocation}
                                     <Button text="Delete" icon="delete" type="delete" on:click={() => doDelete()} on:shiftClick={() => doDelete(true)}/>
                                 {/if}
@@ -722,12 +730,14 @@
          </aside>
     {/if}
 
-    <Dialog title="Discard changes?" bind:this={discardDialog} dismissable={false} confirm={true}>
-        Are you sure you want to discard changes? This can't be undone.
+    <Dialog title="Discard changes?" bind:this={discardDialog} dismissible={false} confirm={true}>
+        Are you sure you want to discard your unsaved changes? This can't be undone.
     </Dialog>
 
-    <Dialog title="Delete location?" bind:this={deleteDialog} dismissable={false} confirm={true} on:confirm={() => doDelete(true)}>
-        Are you sure you want to delete this location? This can't be undone.
+    <Dialog title="Delete {objectType}?" bind:this={deleteDialog} dismissible={false} confirm={true} on:confirm={() => doDelete(true)}>
+        Are you sure you want to delete this {objectType}? This can't be undone.
+        <br>
+        <small style="color: var(--text_low_emphasis);"><b style="font-size: 0.8rem;">Tip:</b> Hold <code>Shift</code> while deleting to skip this message.</small>
     </Dialog>
 </markup>
 

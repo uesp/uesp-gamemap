@@ -23,8 +23,6 @@
     export let bold;
     export let tooltip;
 
-
-    print(flat);
     disabled = (icon == "loading") ? true : disabled;
 
     const dispatch = createEventDispatcher();

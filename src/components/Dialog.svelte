@@ -20,21 +20,42 @@
     export let dismissible = true;
     let isShown = false;
     let dialog;
+    let callback;
 
     const dispatch = createEventDispatcher();
 
-    export function show() {
+    export function show(callbackFn) {
         isShown = true;
-        setTimeout(() => { dialog?.showModal() }, 1);
+        callback = callbackFn;
+        setTimeout(() => {
+            dialog?.showModal();
+            if (dismissible) {
+                dialog.addEventListener('click', ({target:dialog}) => {
+                    if (dialog.nodeName === 'DIALOG') {
+                        dismiss();
+                    }
+                });
+            }
+        }, 1);
+    }
+
+    export function showWithCallback(callback) {
+        show(callback);
     }
 
     export function dismiss() {
         isShown = false;
         dispatch("dismiss");
+        if (callback) {
+            callback("dismiss");
+        }
     }
 
     function doConfirm() {
         isShown = false;
+        if (callback) {
+            callback("confirm");
+        }
         dispatch("confirm");
     }
 </script>

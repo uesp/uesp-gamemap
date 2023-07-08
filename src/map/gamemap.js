@@ -1365,8 +1365,8 @@ export default class Gamemap {
 				}
 			}
 		} else {
-			if (!this.mapLock) {
-				if (shift) { // if shift pressed, and can edit, show edit menu
+			if (shift) { // if shift pressed, and can edit, show edit menu
+				if (!this.mapLock) {
 					this.openPopup(marker, this.canEdit());
 				}
 			}
@@ -1386,19 +1386,11 @@ export default class Gamemap {
 	}
 
 	openPopup(marker, isEdit) {
-		let latlng;
-
-		try {
-			latlng = marker.getCenter();
-		} catch (e) {
-			latlng = marker.getLatLng();
-		}
-
 		if (!isEdit){
 			print("making popup");
 			print(marker);
 			print(marker.element);
-			L.popup(latlng, {content: marker.location.getPopupContent() }).openOn(map);
+			L.popup(marker.getCentre(), {content: marker.location.getPopupContent()}).openOn(map);
 		} else {
 			this.edit(marker.location);
 		}
