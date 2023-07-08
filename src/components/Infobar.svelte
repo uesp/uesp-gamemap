@@ -32,7 +32,7 @@
                 </span>
 
                 {#if lock == MAPLOCK.PARTIAL_MARKER}
-                    Drag the marker to move it to a new position.
+                    Click and drag selected markers to move them to a new position.
                 {/if}
 
                 {#if lock == MAPLOCK.PARTIAL_NEW_MARKER}

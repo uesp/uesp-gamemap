@@ -62,7 +62,7 @@
 
 <markup>
     {#if isShown}
-        <dialog bind:this={dialog} class="modal" class:modal-fixed-footer={fixedFooter} in:scale out:scale>
+        <dialog bind:this={dialog} class="modal" class:modal-fixed-footer={fixedFooter} in:scale out:scale={{duration: 250, opacity: 0}}>
             <div class="modal-content">
                 <h4>{title}</h4>
                 <slot>

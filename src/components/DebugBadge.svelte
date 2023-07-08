@@ -1,3 +1,4 @@
+<!-- svelte-ignore missing-declaration -->
 <!-- @component
 ### Description
  Debug tag component for the UESP gamemap.
@@ -6,7 +7,7 @@
 - Thal-J <thal-j@uesp.net> (10th Jan, 2023) -->
 
 <div id="debug_tag">
-    <b>Debug</b>
+    <b>{isDebug ? "Debug" : "Beta"}</b>
 </div>
 
 <style>

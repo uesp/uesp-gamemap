@@ -86,7 +86,7 @@
 
     // public functions to show/hide the panel, or edit an object
     export function edit(object) { show(object); overlay = null; }
-    export function dismiss() { show(false) }
+    export function dismiss() { show(false); window.onbeforeunload = null; }
     export function show(data) {
 
         // set edit data
@@ -128,7 +128,6 @@
 
     function back(force) {
         force = (force != null) ? force : false;
-        window.onbeforeunload = null;
         if (isEditing) {
 
             if (unsavedChanges && !force) {
@@ -139,13 +138,8 @@
                     }
                 })
             }
-
             if (force || !unsavedChanges) {
-                if (directEdit) {
-                    dismiss();
-                } else {
-                    cancel();
-                }
+                cancel();
             }
         } else {
             dismiss();
@@ -270,19 +264,25 @@
         gamemap.setMapLock(MAPLOCK.NONE);
         gamemap.getMapObject().pm.disableDraw();
         gamemap.getMapObject().pm.disableGlobalEditMode();
-        Array.from(document.querySelectorAll("[class*='editing']")).forEach(element => { element.classList.remove("editing"); })
+        Array.from(document.querySelectorAll("[class*='editing']")).forEach(element => { element.classList.remove("editing"); });
+        window.onbeforeunload = null;
 
         // weird hack to stop recent changes getting shrunk
-        let hacky = setInterval(() => {
-            let rcList = document.getElementsByClassName("virtual-list-wrapper")?.[0];
-            if (rcList?.clientHeight >= 1000 && rcList.children[0].childElementCount <= 4){
-                let oldRecentChanges = recentChanges;
-                recentChanges = [];
-                recentChanges = oldRecentChanges;
-            } else {
-                clearInterval(hacky);
-            }
-        }, 1);
+        if (!directEdit) {
+            let hacky = setInterval(() => {
+                let rcList = document.getElementsByClassName("virtual-list-wrapper")?.[0];
+                if (rcList?.clientHeight >= 1000 && rcList.children[0].childElementCount <= 4){
+                    let oldRecentChanges = recentChanges;
+                    recentChanges = [];
+                    recentChanges = oldRecentChanges;
+                } else {
+                    clearInterval(hacky);
+                }
+            }, 1);
+        } else if (directEdit) {
+            dismiss();
+        }
+
     }
 
     // received updated marker coords from gamemap (via drag and dropping)

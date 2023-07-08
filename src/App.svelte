@@ -415,9 +415,12 @@
 	{/if}
 
 	<!-- Show debug tag in top right corner if dev build -->
-	{#if isDebug}
+	<DebugBadge/>
+
+
+	<!-- {#if isDebug}
 		<DebugBadge/>
-	{/if}
+	{/if} -->
 
 </markup>
 

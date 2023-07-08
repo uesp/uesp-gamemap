@@ -44,6 +44,8 @@
                 }
             }
 
+            print(mapList);
+
             maps = mapList;
             print(maps);
         }
