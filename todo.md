@@ -23,7 +23,7 @@ technical info:
 - made the name of the location/world in the editor titlebar update live as you type
 - fixed small padding offset for recent changes list on open
 - fixed being able to close the editor while adding a new marker
-- fixed wiki switch not switchign
+- fixed wiki switch not switching
 
 ## bug fixes
 - toFixed(3) all output to server for displayData and xy
@@ -57,8 +57,6 @@ is having a request to the server each time you edit a loc/world going to be a p
 - the location coord mismatch is happening because you are converting a new location's coords based on the current world's dimensions
 >> need to find a way to pass location.js reference to the current world
 
-- remember last icon used in the editor and auto select it next time
-
 - do edit templates for dawnstar per dcsg asked
 
 - direct edit "close" button isnt closing whole panel as expected
@@ -70,6 +68,8 @@ is having a request to the server each time you edit a loc/world going to be a p
 
 - shift click on other locations while unsaved changes should immediately change to edit it
 
+
+- fix the "are you sure you want to leave page, unsaved changes" alert dialog
 
 
 - double clicking markers that arent clickable edits them
@@ -106,6 +106,8 @@ if adding location, close button is always "cancel"
 - make close button in edit panel always close the panel regardless of direct edit or not
 
 - fix not being able to click location dropdown while it's open to close it
+
+- make map key grid columns dynamic and fix overscrolling
 
 
 - check to make sure location and world editing works fine still

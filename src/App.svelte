@@ -1,3 +1,4 @@
+<!-- svelte-ignore missing-declaration -->
 <!-- @component
 ### Description
  The UESP Gamemap is web app for displaying Elder Scrolls games' maps.
@@ -42,7 +43,7 @@
 	import LocationList from './components/LocationList.svelte';
 	import IconBar from './components/IconBar.svelte';
 	import Icon from './components/Icon.svelte';
-	import Modal from './components/Modal.svelte';
+	import Dialog from './components/Dialog.svelte';
 	import EditPane from './components/Editor.svelte';
 
 	// import gamemap
@@ -80,8 +81,8 @@
 	let showLocationList = false;
 	let locationListTab = 0;
 	let showMaps = false;
-	let showHelp = false;
-	let showMapKey = false;
+	let helpDialog;
+	let mapKeyDialog;
 	$: gridEnabled = false;
 
 	// on app start
@@ -325,9 +326,9 @@
 								<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu' lock={mapLock}>
 									<!-- Menu Items -->
 									<ul id='overflow-menu' class='dropdown-content'>
-										<li class="waves-effect"><a class="modal-trigger" title="See help info" href="#help_modal" on:click={() => (showHelp = true)}><Icon name="help_outline"/>Help</a></li>
+										<li class="waves-effect"><a class="modal-trigger" title="See help info" href="#help_modal" on:click={() => helpDialog.show()}><Icon name="help_outline"/>Help</a></li>
 										<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>
-										<li class="waves-effect"><a class="modal-trigger" title="Show map key" href="#map_key_modal" on:click={() => (showMapKey = true)}><Icon name="list"/>Map Key</a></li>
+										<li class="waves-effect"><a class="modal-trigger" title="Show map key" href="#map_key_modal" on:click={() => mapKeyDialog.show()}><Icon name="list"/>Map Key</a></li>
 										<!-- svelte-ignore a11y-click-events-have-key-events -->
 										<li class="waves-effect"><a on:click={toggleFullscreen} id="fullscreen-toggle" title="Toggle fullscreen mode"><Icon name={(!isFullscreen) ? "fullscreen" : "fullscreen_exit"}/>{(!isFullscreen) ? "Fullscreen" : "Exit"}</a></li>
 									</ul>
@@ -387,23 +388,20 @@
 	{/if}
 
 	<!-- Help dialog -->
-	{#if showHelp}
-		<!-- svelte-ignore missing-declaration -->
-		<Modal title="Help" id="help_modal" fixedFooter="true" on:dismiss={() => (showMapKey = false)}>
-			{@const helpPromise = fetch(ASSETS_DIR+'help.md').then(response => response.text()).then((data) => { return data; })}
-			{#await helpPromise}
-				<p>Loading...</p>
-			{:then helpText}
-				{@html marked.parse(helpText)}
-			{:catch error}
-				<p style="color: red">{error.message}</p>
-			{/await}
-		</Modal>
-	{/if}
+	<Dialog title="Help" bind:this={helpDialog} fixedFooter={true}>
+		{@const helpPromise = fetch(ASSETS_DIR+'help.md').then(response => response.text()).then((data) => { return data; })}
+		{#await helpPromise}
+			<p>Loading...</p>
+		{:then helpText}
+			{@html marked.parse(helpText)}
+		{:catch error}
+			<p style="color: red">{error.message}</p>
+		{/await}
+	</Dialog>
 
 	<!-- Map key dialog -->
-	{#if showMapKey}
-		<Modal title="Map Key" id="map_key_modal" fixedFooter="true" on:dismiss={() => (showMapKey = false)}>
+	{#if mapConfig}
+		<Dialog title="Map Key" bind:this={mapKeyDialog} fixedFooter={true}>
 			<div id="map_key_container">
 				{#each [...mapConfig.icons] as [id, name]}
 					<div class="map_key_item left-align">
@@ -412,11 +410,10 @@
 					</div>
 				{/each}
 			</div>
-		</Modal>
+		</Dialog>
 	{/if}
 
 	<!-- Show debug tag in top right corner if dev build -->
-	<!-- svelte-ignore missing-declaration -->
 	{#if isDebug}
 		<DebugBadge/>
 	{/if}

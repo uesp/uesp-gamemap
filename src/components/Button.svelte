@@ -15,7 +15,7 @@
     // state vars
     export let icon;
     export let iconDirection = "left";
-    export let text = "button";
+    export let text;
     export let flat;
     export let size;
     export let disabled;
@@ -48,7 +48,14 @@
                 <div class="spinner"><LoadingSpinner size=36px/></div>
             {/if}
         {/if}
-        <p>{text}</p>
+
+        {#if text}
+             <p>{text}</p>
+        {:else}
+            <slot>
+                <!-- slot content goes here -->
+            </slot>
+        {/if}
     </a>
 </markup>
 

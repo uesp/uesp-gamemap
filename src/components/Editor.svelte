@@ -9,9 +9,8 @@
 
 <script>
     // import core svelte stuff
-    import { fade } from 'svelte/transition';
+    import { fade, fly } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-    import { fly } from 'svelte/transition';
     import { onMount } from 'svelte';
     import VirtualList from 'svelte-tiny-virtual-list';
 
