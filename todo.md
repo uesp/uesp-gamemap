@@ -48,6 +48,8 @@ technical info:
 
 - is sending a request to the server each time you edit a loc/world going to be a problem? (edit history)
 
+- will you be available to help get gamemap done this week? i'll probably need several pullovers to gamemap.uesp.net and testing with the wiki to ensure oncentre works
+
 > Was thinking recently of having a revert feature on the editor but didn't want to mention anything at the time to avoid delaying the existing work.
 > Would probably add a "mapadmin"  permission and only permit reverts for mapadmins.
 > You already have a list of recent revisions on the location edit screen. Add a "revert to" button or right click or something.
@@ -69,6 +71,7 @@ or you could implement the above revert_loc stuff but just redirect any set_locs
 
 - gamemap.uesp.net on firefox was not loading locations
 - on chrome, it was showing locations, but only if you reloaded the map with coord params ("gamemap.uesp.net/eso" was not showing any)
+- gamemap hanging/freezzing when cancelling out of editor (complains console.warn doesnt exist)
 - positions being messed up on save in bangkorai zone (but only on the western side)
 - eso not showing up on gamemap map list
 >> looked briefly into this. problem seems to be in the server response of get_maps funcion

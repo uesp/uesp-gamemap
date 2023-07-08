@@ -30,7 +30,7 @@
 		<div id="suggestion_container">
 			<Icon name="emoji_objects"/>
 			<b style="flex-grow: 1;">Use suggested settings for "{suggestion}"?</b>
-			<Button text="OK" on:click={confirm}></Button>
+			<Button text="OK" flat={true} on:click={confirm}></Button>
 		</div>
 		<hr in:scale out:scale>
 	</div>
