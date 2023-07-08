@@ -1,4 +1,6 @@
 <!-- svelte-ignore missing-declaration -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-missing-attribute -->
 <!-- @component
 ### Description
  The UESP Gamemap is web app for displaying Elder Scrolls games' maps.
@@ -326,10 +328,9 @@
 								<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu' lock={mapLock}>
 									<!-- Menu Items -->
 									<ul id='overflow-menu' class='dropdown-content'>
-										<li class="waves-effect"><a class="modal-trigger" title="See help info" href="#help_modal" on:click={() => helpDialog.show()}><Icon name="help_outline"/>Help</a></li>
+										<li class="waves-effect"><a title="See help info" on:click={() => helpDialog.show()}><Icon name="help_outline"/>Help</a></li>
 										<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>
-										<li class="waves-effect"><a class="modal-trigger" title="Show map key" href="#map_key_modal" on:click={() => mapKeyDialog.show()}><Icon name="list"/>Map Key</a></li>
-										<!-- svelte-ignore a11y-click-events-have-key-events -->
+										<li class="waves-effect"><a title="Show map key" on:click={() => mapKeyDialog.show()}><Icon name="list"/>Map Key</a></li>
 										<li class="waves-effect"><a on:click={toggleFullscreen} id="fullscreen-toggle" title="Toggle fullscreen mode"><Icon name={(!isFullscreen) ? "fullscreen" : "fullscreen_exit"}/>{(!isFullscreen) ? "Fullscreen" : "Exit"}</a></li>
 									</ul>
 								</IconButton>
@@ -388,7 +389,7 @@
 	{/if}
 
 	<!-- Help dialog -->
-	<Dialog title="Help" bind:this={helpDialog} fixedFooter={true}>
+	<Dialog title="Help" bind:this={helpDialog} fixedFooter={true} cancel="close">
 		{@const helpPromise = fetch(ASSETS_DIR+'help.md').then(response => response.text()).then((data) => { return data; })}
 		{#await helpPromise}
 			<p>Loading...</p>
@@ -401,7 +402,7 @@
 
 	<!-- Map key dialog -->
 	{#if mapConfig}
-		<Dialog title="Map Key" bind:this={mapKeyDialog} fixedFooter={true}>
+		<Dialog title="Map Key" bind:this={mapKeyDialog} fixedFooter={true} cancel="close">
 			<div id="map_key_container">
 				{#each [...mapConfig.icons] as [id, name]}
 					<div class="map_key_item left-align">

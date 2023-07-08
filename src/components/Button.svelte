@@ -23,6 +23,8 @@
     export let bold;
     export let tooltip;
 
+
+    print(flat);
     disabled = (icon == "loading") ? true : disabled;
 
     const dispatch = createEventDispatcher();
@@ -39,7 +41,7 @@
 <markup>
     <!-- svelte-ignore a11y-missing-attribute -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <a class="waves-effect waves-light btn{flat ? "-flat" : ""}{size ? "-"+{size} : ""}" class:disabled={disabled} class:saving={type=="save" && icon == "loading"} class:error={type=="save" && icon == "warning"} title={tooltip}
+    <a class="waves-effect waves-{flat ? "dark" : "light"} btn{flat ? "-flat" : ""}{size ? "-"+{size} : ""}" class:disabled={disabled} class:saving={type=="save" && icon == "loading"} class:error={type=="save" && icon == "warning"} title={tooltip} class:light={flat == "light"}
     on:click={onClicked} class:loadingButton={icon == "loading"} class:deleteButton={type == "delete"} class:saveButton={type=="save"} class:bold={bold}>
         {#if icon}
             {#if icon != "loading"}
@@ -70,10 +72,21 @@
 
     .btn-flat {
         background-color: unset;
-        color: var(--secondary_variant_light) !important;
+        color: var(--text_link);
+        text-decoration: none;
+        font-weight: bold;
     }
 
     .btn-flat:hover {
+        background-color: var(--selection);
+    }
+
+    .btn-flat.light {
+        background-color: unset;
+        color: var(--secondary_variant_light) !important;
+    }
+
+    .btn-flat.light:hover {
         background-color: var(--selection_variant) !important;
     }
 

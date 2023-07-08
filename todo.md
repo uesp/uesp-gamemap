@@ -6,6 +6,9 @@
 ## editing
 - added the edit history feature for worlds/locs
 - added the edit templates/suggestions feature
+- add confirmation dialogs for deleting and editing
+>> had to redo the way dialogs worked, becaue the material library im using doesn't really work well with svelte/procedurally
+>> now using native <dialog> elements with the same styling from before. looks same, behaves slightly different
 
 ## edit templates
 - templates are declared in mapconfig
@@ -24,6 +27,7 @@ technical info:
 - fixed small padding offset for recent changes list on open
 - fixed being able to close the editor while adding a new marker
 - fixed wiki switch not switching
+- aligned content of dialogs (text) with buttons below
 
 ## bug fixes
 - toFixed(3) all output to server for displayData and xy

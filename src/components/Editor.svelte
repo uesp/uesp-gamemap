@@ -33,6 +33,7 @@
     import AvatarComponent from "./AvatarComponent.svelte";
     import ColourPreview from "./ColourPreview.svelte";
     import SuggestionBar from './SuggestionBar.svelte';
+    import Dialog from './Dialog.svelte';
 
     // constants
     let PANEL_WIDTH = getPrefs("editpanelwidth", 480);
@@ -51,6 +52,8 @@
     let saveButton;
     let refreshTitleBar;
     let innerHeight;
+    let discardDialog;
+    let deleteDialog;
 
     let recentChanges = [];
     let editHistory = [];
@@ -172,9 +175,9 @@
 
     }
 
-    function doDelete(doConfirm) {
-        doConfirm = (doConfirm != null) ? doConfirm : false;
-        if (!doConfirm) {
+    function doDelete(force) {
+        force = (force != null) ? force : false;
+        if (force) {
             // visually delete location from the map
             print("deleting object...");
             gamemap.deleteLocation(modEditObject);
@@ -183,7 +186,7 @@
             getJSON(GAME_DATA_SCRIPT + query, () => { getRecentChanges();});
             cancel();
         } else {
-            alert("warning !! you are deleting a location! this cant be undone!")
+            deleteDialog.show();
         }
 
     }
@@ -433,7 +436,7 @@
                         <div class="arrow"><span></span><span></span><span></span></div>
                     </div>
                     <div style="display: flex; gap: var(--padding_medium); padding-top: 6px;">
-                        <Button text="Cancel" icon="close" flat={true} on:click={cancel}></Button>
+                        <Button text="Cancel" icon="close" flat="light" on:click={cancel}></Button>
                     </div>
                  </div>
              {/if}
@@ -709,7 +712,7 @@
                                 <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
                                 <Button text={!unsavedChanges && !modEditObject?.unsavedLocation ? "Close" : "Cancel"} icon="close" on:click={() => cancel(true)}/>
                                 {#if isLocation && !modEditObject.unsavedLocation}
-                                    <Button text="Delete" icon="delete" type="delete" on:click={() => doDelete(true)} on:shiftClick={() => doDelete(false)}/>
+                                    <Button text="Delete" icon="delete" type="delete" on:click={() => doDelete()} on:shiftClick={() => doDelete(true)}/>
                                 {/if}
                             </div>
                         </footer>
@@ -718,6 +721,14 @@
              </div>
          </aside>
     {/if}
+
+    <Dialog title="Discard changes?" bind:this={discardDialog} dismissable={false} confirm={true}>
+        Are you sure you want to discard changes? This can't be undone.
+    </Dialog>
+
+    <Dialog title="Delete location?" bind:this={deleteDialog} dismissable={false} confirm={true} on:confirm={() => doDelete(true)}>
+        Are you sure you want to delete this location? This can't be undone.
+    </Dialog>
 </markup>
 
 <style>

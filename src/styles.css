@@ -499,12 +499,22 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 }
 
 .modal-footer {
+	background-color: var(--primary) !important;
+}
+
+.modal.modal-fixed-footer .modal-footer {
 	background-color: var(--surface_variant) !important;
+}
+
+.modal .modal-content {
+	padding: var(--padding_medium) !important;
+	padding-bottom: var(--padding_minimum) !important;
 }
 
 .modal-content h4 {
 	font-weight: bold !important;
 	text-align: center !important;
+	font-size: 2rem !important;
 }
 
 .modal-content h5 {

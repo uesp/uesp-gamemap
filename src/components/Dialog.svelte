@@ -11,19 +11,17 @@
 	import { onMount } from 'svelte';
     import { createEventDispatcher } from "svelte";
     import { scale } from 'svelte/transition';
-  import Button from './Button.svelte';
+    import Button from './Button.svelte';
 
     export let title = "Dialog title";
     export let fixedFooter = false;
-    export let cancel = "Close";
+    export let cancel = "Cancel";
+    export let confirm;
     export let dismissible = true;
     let isShown = false;
     let dialog;
 
     const dispatch = createEventDispatcher();
-    // onMount(async () => {
-    //      dialog.showModal();
-    // });
 
     export function show() {
         isShown = true;
@@ -32,10 +30,12 @@
 
     export function dismiss() {
         isShown = false;
+        dispatch("dismiss");
     }
 
-    function onConfirm() {
-        dispatch("confirm", "confirmed");
+    function doConfirm() {
+        isShown = false;
+        dispatch("confirm");
     }
 </script>
 
@@ -45,19 +45,18 @@
             <div class="modal-content">
                 <h4>{title}</h4>
                 <slot>
-                    <!-- Default loading text when nothing provided -->
                     <p>Loading...</p>
                 </slot>
             </div>
             <div class="modal-footer">
 
-                <!-- confirm button -->
-
-                <!-- decline button -->
-
                 <!-- cancel button -->
-                <Button on:click={() => dismiss()}>{cancel}</Button>
-                <a href="#!" class="modal-close waves-effect btn-flat">{cancel}</a>
+                <Button on:click={() => dismiss()} flat={true}>{cancel?.toSentenceCase()}</Button>
+
+                <!-- confirm button -->
+                {#if confirm}
+                     <Button on:click={() => doConfirm()}>Confirm</Button>
+                {/if}
             </div>
         </dialog>
     {/if}
@@ -67,10 +66,25 @@
     .modal {
         display: block;
         border: 0;
+        width: fit-content;
+    }
+
+    .modal.modal-fixed-footer {
+        width: 55%;
     }
 
     dialog::backdrop {
         background-color: black;
         opacity: 0.5;
     }
+
+    .modal-footer {
+        display: flex;
+        flex-direction: row;
+        gap: var(--padding_minimum) !important;
+        padding-left: var(--padding_medium) !important;
+        padding-right: var(--padding_medium) !important;
+        justify-content: flex-end;
+    }
+
 </style>
