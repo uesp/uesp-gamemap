@@ -11,12 +11,13 @@
 
     export let title = "Form group";
     export let icon;
+    export let tooltip;
 </script>
 
 <markup>
 
     <div class="group">
-        <span class="title">
+        <span class="title" title={tooltip}>
             {#if icon}
                 <Icon name={icon} size=16/>
             {/if}

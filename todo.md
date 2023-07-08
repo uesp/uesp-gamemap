@@ -63,6 +63,8 @@ if server receives location data with already existing revID, then it ignores th
 
 RC shows new editAction "Reverted" and edit comment is something like "reverted to rev ### as of {timestamp}"
 
+(show mockup in browser tab)
+
 as far as client is concerned, it is saving using set_loc/set_world same as normal. just using the save button.
 
 or you could implement the above revert_loc stuff but just redirect any set_locs/worlds to that if they use an old revID. don't want to spent much time on UI for this in order to get bugs done
@@ -88,6 +90,8 @@ plan was to get gamemap done by this week, i was confident i could do all of the
  the only major feature work left in gamemap is getting centreon working (for compat with wiki map links)
 
  plan was bug blast this week, since all major features would have been completed by now
+
+- if dave still wants to get gamemap finished, ask about schedules, what needs to be done to convert all esomap to gamemap, compatibility with wiki etc
 
 ## other stuff:
 

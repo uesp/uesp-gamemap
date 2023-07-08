@@ -678,6 +678,21 @@
 
                                 <!-- General info -->
                                 {#if modEditObject.id > 0}
+                                    <!-- Recent edits for this object -->
+                                    {#if editObject.id > 0 && editObject.revisionID > 0}
+                                        <FormGroup title="Recent Edits" icon="history" tooltip="Shows the up to 5 of the most recent edits">
+                                            {@const type = isWorld ? "world" : "loc"}
+                                            {#if editHistory.length > 0}
+                                                {#each editHistory as rev}
+                                                    {@const entry = getRCItem(rev)}
+                                                    <ListItem {...entry} title={entry.name} bold={entry.isWorld} compact={true}/>
+                                                {/each}
+                                            {:else}
+                                                <LoadingSpinner/>
+                                            {/if}
+                                        </FormGroup>
+                                    {/if}
+
                                     <FormGroup title="Info" icon="info">
                                         <InfoTextPair name="{objectType.toSentenceCase()} ID" value={modEditObject.id} tooltip="This {objectType}'s ID"/>
                                         {#if isWorld}
@@ -693,20 +708,6 @@
                                         <InfoTextPair name="Revision ID" value={modEditObject.revisionID} tooltip="Current revision ID"/>
                                     </FormGroup>
 
-                                    <!-- Recent edits for this object -->
-                                    {#if editObject.id > 0 && editObject.revisionID > 0}
-                                        <FormGroup title="Edit History" icon="history">
-                                            {@const type = isWorld ? "world" : "loc"}
-                                            {#if editHistory.length > 0}
-                                                {#each editHistory as rev}
-                                                    {@const entry = getRCItem(rev)}
-                                                    <ListItem {...entry} title={entry.name} bold={entry.isWorld} compact={true}/>
-                                                {/each}
-                                            {:else}
-                                                <LoadingSpinner/>
-                                            {/if}
-                                        </FormGroup>
-                                    {/if}
 
                                 {/if}
                             </div>

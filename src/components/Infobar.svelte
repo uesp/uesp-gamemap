@@ -41,7 +41,7 @@
 
                 {#if lock == MAPLOCK.PARTIAL_POLYGON}
                      Drag handles to move them, right click to remove them.<br>
-                     Click the green plus (+) to add new handles.
+                     Click the green plus (+) to add new points.
                 {/if}
 
                 {#if lock == MAPLOCK.PARTIAL_NEW_POLYGON}
@@ -49,7 +49,7 @@
                 {/if}
 
                 {#if lock == MAPLOCK.PARTIAL_NEW_LINE}
-                    Click to add new points. Click the last point again when you're done.
+                    Click to add new points. Click any handle again when you're done.
                 {/if}
 
             {:else}
