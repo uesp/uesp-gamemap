@@ -1042,7 +1042,7 @@ class GameMap
 				}
 				
 					//Remove simple // comments on a line or at the end of line
-				$jsonContents = preg_replace('#[ \t]+//[^"]*#', "", $jsonContents);
+				$jsonContents = preg_replace('#[ \t]+//.*#', "", $jsonContents);
 				
 				$json = json_decode($jsonContents, JSON_OBJECT_AS_ARRAY);
 				
