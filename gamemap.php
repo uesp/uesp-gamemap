@@ -6,8 +6,18 @@
  *
  */
 
+	// Uncomment to enable error reporting
+// error_reporting(E_ALL);
+// ini_set('display_errors', '1');
 
-require '/home/uesp/secrets/gamemap.secrets';
+
+	// Return local secrets file if localhost or hosted version if on uesp servers
+if (in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1', "localhost"))) {
+	require 'gamemap.secrets';
+} else {
+	require '/home/uesp/secrets/gamemap.secrets';
+}
+
 require_once 'UespMemcachedSession.php';
 
 
@@ -67,6 +77,8 @@ class GameMap
 	public $worldEnabled = 1;
 	public $worldDisplayData = null;
 	
+	public $isLocalhost = false;
+	
 	public $limitBottom = 0;
 	public $limitTop    = 1000;
 	public $limitLeft   = 0;
@@ -104,6 +116,8 @@ class GameMap
 	{
 		if (self::USE_MEMCACHED_SESSIONS) UespMemcachedSession::install();
 		
+		$this->isLocalhost = in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1', "localhost"));
+		
 		$this->setInputParams();
 		$this->parseInputParams();
 		
@@ -129,20 +143,6 @@ class GameMap
 		
 		if ($userId > 0)
 		{
-			/*
-			if (UespMemcachedSession::readKey('UESP_AllMap_canEdit') === 1)
-			{
-				$this->canEdit = true;
-				$this->canEditESO = true;
-				$this->canEditTR = true;
-				$this->canEditOther = true;
-			}
-			
-			if (UespMemcachedSession::readKey('UESP_EsoMap_canEdit') === 1) $this->canEditESO = true;
-			if (UespMemcachedSession::readKey('UESP_TRMap_canEdit') === 1) $this->canEditTR = true;
-			if (UespMemcachedSession::readKey('UESP_OtherMap_canEdit') === 1) $this->canEditOther = true;
-			*/
-			
 			$this->wikiUserId = intval($userId);
 			$this->wikiUserName = UespMemcachedSession::readKey('wsUserName');
 			
@@ -231,6 +231,8 @@ class GameMap
 	
 	public function canEditMap($dbPrefix)
 	{
+		if ($this->isLocalhost) return true;
+		
 		if ($dbPrefix === null) return false;
 		
 		if ($this->canEdit) return true;
@@ -514,7 +516,7 @@ class GameMap
 		}
 		
 			//Special case for local edits or for dev/testing
-		if ($userName == "127.0.0.1") $userName = "Bot";
+		if ($this->isLocalhost) $userName = "Bot";
 		
 		$userName = $this->db->real_escape_string($userName);
 		
@@ -1018,8 +1020,8 @@ class GameMap
 	public function doGetMaps()
 	{
 			//TODO: Change for svelte path
-		//$path = '../assets/maps';
-		$path = './public/assets/maps';
+		$path = '../assets/maps';
+		//$path = './public/assets/maps';	// Only for testing on old gamemap
 		
 		$dirs = array();
 		$mapInfos = array();
