@@ -4,6 +4,7 @@
     "wikiNamespace": "Skyrim",
     "database" : "sr",
     "bgColor" : "#284358",
+    "releaseDate" : "11/11/2011", // for sorting games by release date in the map menu
 
     // Map options
     "hasCustomCSS" : true,

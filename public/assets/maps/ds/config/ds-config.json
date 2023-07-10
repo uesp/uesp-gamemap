@@ -3,6 +3,7 @@
     "mapTitle": "Dawnstar Gamemap",
     "wikiNamespace": "Dawnstar",
     "database" : "ds",
+    "releaseDate" : "26/08/2004", // for sorting games by release date in the map menu
 
     // Map options
     "hasCustomFavIcon" : true,

@@ -5,6 +5,7 @@
     "database" : "ob",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Oblivion_Map_Design",
     "bgColor" : "#615f46",
+    "releaseDate" : "24/03/2006", // for sorting games by release date in the map menu
 
     // Map options
     "hasCustomCSS" : true,

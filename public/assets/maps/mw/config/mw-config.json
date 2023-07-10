@@ -5,6 +5,7 @@
     "database" : "mw",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Morrowind_Map_Design",
     "bgColor" : "#7076AA",
+    "releaseDate" : "01/05/2003", // for sorting games by release date in the map menu
 
     // Map options
     "hasCustomFavIcon" : true,

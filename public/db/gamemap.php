@@ -6,18 +6,20 @@
  *
  */
 
-//  uncomment to enable error reporting
+	// Uncomment to enable error reporting
 // error_reporting(E_ALL);
 // ini_set('display_errors', '1');
 
-// return local secrets file if localhost or hosted version if on uesp servers
+
+	// Return local secrets file if localhost or hosted version if on uesp servers
 if (in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1', "localhost"))) {
-    require 'gamemap.secrets';
+	require 'gamemap.secrets';
 } else {
 	require '/home/uesp/secrets/gamemap.secrets';
 }
 
 require_once 'UespMemcachedSession.php';
+
 
 class GameMap
 {
@@ -30,8 +32,6 @@ class GameMap
 	const USE_MEMCACHED_SESSIONS = true;	//Must be true or session reading will break as of MW 1.27
 
 	public $inputParams = array();
-
-	public $isLocalhost;
 
 	public $action = 'default';
 	public $worldId = 0;
@@ -68,7 +68,6 @@ class GameMap
 	public $worldMissingTile = '';
 	public $worldParentId = 0;
 	public $worldMinZoom = 0;
-	public $worldDisplayData = null;
 	public $worldMaxZoom = 20;
 	public $worldZoomOffset = 0;
 	public $worldPosLeft = 0;
@@ -76,6 +75,9 @@ class GameMap
 	public $worldPosTop = 10000;
 	public $worldPosBottom = 0;
 	public $worldEnabled = 1;
+	public $worldDisplayData = null;
+
+	public $isLocalhost = false;
 
 	public $limitBottom = 0;
 	public $limitTop    = 1000;
@@ -114,14 +116,12 @@ class GameMap
 	{
 		if (self::USE_MEMCACHED_SESSIONS) UespMemcachedSession::install();
 
-
-		// determine if localhost or hosted
 		$this->isLocalhost = in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1', "localhost"));
 
 		$this->setInputParams();
 		$this->parseInputParams();
 
-		// Error on missing/unknown database
+			// Error on missing/unknown database
 		if ($this->dbPrefix === null)
 		{
 			if ($this->action != "get_maps")
@@ -143,13 +143,12 @@ class GameMap
 
 		if ($userId > 0)
 		{
-
 			$this->wikiUserId = intval($userId);
 			$this->wikiUserName = UespMemcachedSession::readKey('wsUserName');
 
 			$groups = $this->loadUserWikiGroups($userId);
 		}
-		// If session is not available, check the wiki token and user ID
+			// If session is not available, check the wiki token and user ID
 		else
 		{
 			$userId = $_COOKIE['uesp_net_wiki5UserID'];
@@ -180,8 +179,8 @@ class GameMap
 				$this->canEditOther = true;
 			}
 		}
-
 	}
+
 
 	public function loadUserWikiGroupsFromToken($userId, $token)
 	{
@@ -199,7 +198,6 @@ class GameMap
 		if ($user == null) return false;
 
 		if ($user['user_token'] != $token) return false;
-
 
 		$this->wikiUserId = $userId;
 		$this->wikiUserName = $user['user_name'];
@@ -230,9 +228,9 @@ class GameMap
 		return $groups;
 	}
 
+
 	public function canEditMap($dbPrefix)
 	{
-
 		if ($this->isLocalhost) return true;
 
 		if ($dbPrefix === null) return false;
@@ -289,12 +287,18 @@ class GameMap
 					`cellSize` INTEGER NOT NULL,
 					`minZoom` INTEGER NOT NULL,
 					`maxZoom` INTEGER NOT NULL,
+					`defaultZoom` INTEGER NOT NULL,
 					`zoomOffset` INTEGER NOT NULL,
-					`posLeft` INTEGER NOT NULL,
-					`posTop` INTEGER NOT NULL,
-					`posRight` INTEGER NOT NULL,
-					`posBottom` INTEGER NOT NULL,
+					`posLeft` FLOAT NOT NULL,
+					`posTop` FLOAT NOT NULL,
+					`posRight` FLOAT NOT NULL,
+					`posBottom` FLOAT NOT NULL,
 					`enabled` TINYINT NOT NULL,
+					`tilesX` INTEGER NOT NULL,
+					`tilesY` INTEGER NOT NULL,
+					`maxTilesX` INTEGER NOT NULL,
+					`maxTilesY` INTEGER NOT NULL,
+					`displayData` TEXT NOT NULL,
 					PRIMARY KEY ( id ),
 					FULLTEXT(displayName, description, wikiPage)
 				) ENGINE=MYISAM;";
@@ -314,13 +318,19 @@ class GameMap
 					cellSize INTEGER NOT NULL,
 					minZoom INTEGER NOT NULL,
 					maxZoom INTEGER NOT NULL,
+					defaultZoom INTEGER NOT NULL,
 					zoomOffset INTEGER NOT NULL,
-					posLeft INTEGER NOT NULL,
-					posTop INTEGER NOT NULL,
-					posRight INTEGER NOT NULL,
-					posBottom INTEGER NOT NULL,
+					posLeft FLOAT NOT NULL,
+					posTop FLOAT NOT NULL,
+					posRight FLOAT NOT NULL,
+					posBottom FLOAT NOT NULL,
 					enabled TINYINT NOT NULL,
-					PRIMARY KEY ( id ),
+					`tilesX` INTEGER NOT NULL,
+					`tilesY` INTEGER NOT NULL,
+					`maxTilesX` INTEGER NOT NULL,
+					`maxTilesY` INTEGER NOT NULL,
+					displayData TEXT NOT NULL,
+					PRIMARY KEY ( id )
 				) ENGINE=MYISAM;";
 
 		$result = $this->db->query($query);
@@ -332,10 +342,10 @@ class GameMap
 					revisionId BIGINT NOT NULL,
 					destinationId BIGINT NOT NULL,
 					locType TINYINT NOT NULL,
-					x INTEGER NOT NULL,
-					y INTEGER NOT NULL,
-					width INTEGER NOT NULL,
-					height INTEGER NOT NULL,
+					x FLOAT NOT NULL,
+					y FLOAT NOT NULL,
+					width FLOAT NOT NULL,
+					height FLOAT NOT NULL,
 					name TINYTEXT NOT NULL,
 					description TEXT NOT NULL,
 					iconType TINYINT NOT NULL,
@@ -344,7 +354,7 @@ class GameMap
 					displayLevel FLOAT NOT NULL,
 					visible TINYINT NOT NULL,
 					PRIMARY KEY ( id ),
-					FULLTEXT(name, description, wikiPage)
+					FULLTEXT (name, description, wikiPage)
 				) ENGINE=MYISAM;";
 
 		$result = $this->db->query($query);
@@ -357,10 +367,10 @@ class GameMap
 					worldId BIGINT NOT NULL,
 					destinationId BIGINT NOT NULL,
 					locType TINYINT NOT NULL,
-					x INTEGER NOT NULL,
-					y INTEGER NOT NULL,
-					width INTEGER NOT NULL,
-					height INTEGER NOT NULL,
+					x FLOAT NOT NULL,
+					y FLOAT NOT NULL,
+					width FLOAT NOT NULL,
+					height FLOAT NOT NULL,
 					name TINYTEXT NOT NULL,
 					description TEXT NOT NULL,
 					iconType TINYINT NOT NULL,
@@ -368,7 +378,7 @@ class GameMap
 					wikiPage TEXT NOT NULL,
 					displayLevel FLOAT NOT NULL,
 					visible TINYINT NOT NULL,
-					PRIMARY KEY ( id ),
+					PRIMARY KEY ( id )
 				) ENGINE=MYISAM;";
 
 		$result = $this->db->query($query);
@@ -384,8 +394,8 @@ class GameMap
 					editUserId BIGINT NOT NULL,
 					editUserText TEXT NOT NULL,
 					editTimestamp TIMESTAMP NOT NULL,
-					editComment TEXT NOT NULL,
 					editAction TINYTEXT NOT NULL,
+					editComment TEXT NOT NULL,
 					patrolled TINYINT NOT NULL,
 					PRIMARY KEY (id),
 					INDEX index_worldId(worldId),
@@ -476,10 +486,10 @@ class GameMap
 	public function doCreateTables ()
 	{
 		$result = $this->initDatabaseWrite();
-		if (!$result) return false;
+		if (!$result) return $this->reportError("Failed to initialize database!");
 
 		$result = $this->createTables();
-		if (!$result) return false;
+		if (!$result) return $this->reportError("Failed to create tables!");
 
 		$this->addOutputItem("result", "Successfully created tables!");
 		return true;
@@ -504,7 +514,8 @@ class GameMap
 			$userId = 0;
 			$userName = $_SERVER["REMOTE_ADDR"];
 		}
-		//Special case for local edits or for dev/testing
+
+			//Special case for local edits or for dev/testing
 		if ($this->isLocalhost) $userName = "Bot";
 
 		$userName = $this->db->real_escape_string($userName);
@@ -548,15 +559,15 @@ class GameMap
 		return true;
 	}
 
+
 	public function MakeEditComment($editAction, $oldRecord, $newRecord)
 	{
+		$comments = [];
 
 		if ($editAction == "add location") return "Added location";
 		if ($editAction == "add world")    return "Added world";
 		if ($editAction == "delete location") return "Deleted location";
 		if ($editAction == "delete world")    return "Deleted world";
-
-		$comments = [];
 
 		if ($oldRecord == null || $newRecord == null) return '';
 
@@ -571,12 +582,13 @@ class GameMap
 		return $comment;
 	}
 
+
 	public function copyToWorldHistory ()
 	{
 		if ($this->worldId == 0) return $this->reportError("Cannot copy empty world record to history!");
 
-		$query = "INSERT INTO world_history(worldId, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled)
-					SELECT id, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled
+		$query = "INSERT INTO world_history(worldId, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, defaultZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled, displayData, tilesX, tilesY, maxTilesX, maxTilesY)
+					SELECT id, revisionId, parentId, name, displayName, description, wikiPage, cellSize, minZoom, maxZoom, defaultZoom, zoomOffset, posLeft, posRight, posTop, posBottom, enabled, displayData, tilesX, tilesY, maxTilesX, maxTilesY
 					FROM world WHERE id={$this->worldId};";
 
 		$result = $this->db->query($query);
@@ -607,7 +619,6 @@ class GameMap
 
 	public function doTypeSearch ()
 	{
-
 		if ($this->worldId > 0)
 			$this->searchWorldId = $this->worldId;
 		else
@@ -635,10 +646,10 @@ class GameMap
 			settype($row['destinationId'], "integer");
 			settype($row['locType'], "integer");
 			settype($row['iconType'], "integer");
-			settype($row['x'], "integer");
-			settype($row['y'], "integer");
-			settype($row['width'], "integer");
-			settype($row['height'], "integer");
+			settype($row['x'], "float");
+			settype($row['y'], "float");
+			settype($row['width'], "float");
+			settype($row['height'], "float");
 			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 
@@ -652,41 +663,6 @@ class GameMap
 		return true;
 	}
 
-
-	public function doSearch ()
-	{
-		if ($this->searchType > 0)
-		{
-			return $this->doTypeSearch();
-		} else if ($this->searchName != '')
-		{
-			return $this->doNameSearch();
-		}
-
-		$matches = array();
-		preg_match_all('#([A-Za-z0-9_]+)([[:punct:]]+[A-Za-z0-9_]+)?\s*#', $this->unsafeSearch, $matches);
-		$this->searchWords = $matches[1];
-		$this->searchWordWildcard = implode('*', $this->searchWords);
-
-		if ($this->searchWordWildcard != '') $this->searchWordWildcard .= '*';
-
-		$this->safeSearchWordWildcard = $this->db->real_escape_string($this->searchWordWildcard);
-		$this->safeSearchWord = $this->db->real_escape_string($this->unsafeSearch);
-
-		$this->searchWorldId = $this->FindWorld($this->world, false);
-
-			/* Try an exact match first */
-		$worldCount = $this->doWorldSearch(true);
-		$locCount = $this->doLocationSearch(true);
-
-		if ($locCount == 0)
-		{
-			$worldCount = $this->doWorldSearch(false);
-			$locCount = $this->doLocationSearch(false);
-		}
-
-		return true;
-	}
 
 	public function doNameSearch ()
 	{
@@ -707,10 +683,10 @@ class GameMap
 			settype($row['parentId'], "integer");
 			settype($row['revisionId'], "integer");
 			settype($row['enabled'], "integer");
-			settype($row['posRight'], "integer");
-			settype($row['posLeft'], "integer");
-			settype($row['posTop'], "integer");
-			settype($row['posBottom'], "integer");
+			settype($row['posRight'], "float");
+			settype($row['posLeft'], "float");
+			settype($row['posTop'], "float");
+			settype($row['posBottom'], "float");
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
@@ -740,6 +716,47 @@ class GameMap
 
 		return true;
 	}
+
+
+	public function doSearch ()
+	{
+		if ($this->searchType > 0)
+		{
+			return $this->doTypeSearch();
+		}
+		else if ($this->searchName != '')
+		{
+			return $this->doNameSearch();
+		}
+
+		$matches = array();
+		preg_match_all('#([A-Za-z0-9_]+)([[:punct:]]+[A-Za-z0-9_]+)?\s*#', $this->unsafeSearch, $matches);
+		$this->searchWords = $matches[1];
+		$this->searchWordWildcard = implode('*', $this->searchWords);
+
+		if ($this->searchWordWildcard != '') $this->searchWordWildcard .= '*';
+
+		$this->safeSearchWordWildcard = $this->db->real_escape_string($this->searchWordWildcard);
+		$this->safeSearchWord = $this->db->real_escape_string($this->unsafeSearch);
+
+		if ($this->worldId > 0)
+			$this->searchWorldId = $this->worldId;
+		else
+			$this->searchWorldId = $this->FindWorld($this->world, false);
+
+			/* Try an exact match first */
+		$worldCount = $this->doWorldSearch(true);
+		$locCount = $this->doLocationSearch(true);
+
+		if ($locCount == 0)
+		{
+			$worldCount = $this->doWorldSearch(false);
+			$locCount = $this->doLocationSearch(false);
+		}
+
+		return true;
+	}
+
 
 	public function doWorldSearch ($doExactSearch)
 	{
@@ -773,15 +790,16 @@ class GameMap
 			settype($row['posRight'], "integer");
 			settype($row['posLeft'], "integer");
 			settype($row['posTop'], "integer");
-			settype($row['posBottom'], "integer");
-			settype($row['cellSize'], "integer");
-			settype($row['minZoom'], "integer");
-			settype($row['maxZoom'], "integer");
+			settype($row['posBottom'], "float");
+			settype($row['cellSize'], "float");
+			settype($row['minZoom'], "float");
+			settype($row['maxZoom'], "float");
+			settype($row['defaultZoom'], "integer");
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
 			settype($row['tilesY'], "integer");
-			settype($row['hasGrid'], "integer");
-			settype($row['hasCellOffset'], "integer");
+			settype($row['maxTilesX'], "integer");
+			settype($row['maxTilesY'], "integer");
 
 			$worlds[] = $row;
 			$count += 1;
@@ -826,15 +844,16 @@ class GameMap
 			settype($row['posRight'], "integer");
 			settype($row['posLeft'], "integer");
 			settype($row['posTop'], "integer");
-			settype($row['posBottom'], "integer");
-			settype($row['cellSize'], "integer");
-			settype($row['minZoom'], "integer");
-			settype($row['maxZoom'], "integer");
+			settype($row['posBottom'], "float");
+			settype($row['cellSize'], "float");
+			settype($row['minZoom'], "float");
+			settype($row['maxZoom'], "float");
+			settype($row['defaultZoom'], "integer");
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
 			settype($row['tilesY'], "integer");
-			settype($row['hasGrid'], "integer");
-			settype($row['hasCellOffset'], "integer");
+			settype($row['maxTilesX'], "integer");
+			settype($row['maxTilesY'], "integer");
 
 			$worlds[] = $row;
 			$count += 1;
@@ -881,10 +900,10 @@ class GameMap
 			settype($row['destinationId'], "integer");
 			settype($row['locType'], "integer");
 			settype($row['iconType'], "integer");
-			settype($row['x'], "integer");
-			settype($row['y'], "integer");
-			settype($row['width'], "integer");
-			settype($row['height'], "integer");
+			settype($row['x'], "float");
+			settype($row['y'], "float");
+			settype($row['width'], "float");
+			settype($row['height'], "float");
 			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 
@@ -945,10 +964,10 @@ class GameMap
 			settype($row['destinationId'], "integer");
 			settype($row['locType'], "integer");
 			settype($row['iconType'], "integer");
-			settype($row['x'], "integer");
-			settype($row['y'], "integer");
-			settype($row['width'], "integer");
-			settype($row['height'], "integer");
+			settype($row['x'], "float");
+			settype($row['y'], "float");
+			settype($row['width'], "float");
+			settype($row['height'], "float");
 			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 
@@ -997,10 +1016,13 @@ class GameMap
 		return true;
 	}
 
+
 	public function doGetMaps()
 	{
-
+			//TODO: Change for svelte path
 		$path = '../assets/maps';
+		//$path = './public/assets/maps';	// Only for testing on old gamemap
+
 		$dirs = array();
 		$mapInfos = array();
 
@@ -1022,7 +1044,7 @@ class GameMap
 				}
 
 					//Remove simple // comments on a line or at the end of line
-				$jsonContents = preg_replace('#[ \t]+//[^"]*#', "", $jsonContents);
+				$jsonContents = preg_replace('#[ \t]+//.*#', "", $jsonContents);
 
 				$json = json_decode($jsonContents, JSON_OBJECT_AS_ARRAY);
 
@@ -1037,8 +1059,11 @@ class GameMap
 				$mapInfo['wikiNamespace'] = $json['wikiNamespace'];
 				$mapInfo['database'] = $json['database'];
 
+				$mapInfo['bgColor'] = $json['bgColor'];
+				if ($mapInfo['bgColor'] === null) $mapInfo['bgColor'] = "";
+
 				$mapInfo['isModded'] = $json['isModded'];
-				if ($mapInfo['isModded'] === null) $mapInfo['isModded'] = false;
+				if ($mapInfo['isModded'] === null) $mapInfo['isModded'] = 0;
 
 				$mapInfos[$map] = $mapInfo;
 			}
@@ -1048,6 +1073,7 @@ class GameMap
 		$this->addOutputItem("mapInfos", $mapInfos);
 		return true;
 	}
+
 
 	public function doGetCellResource()
 	{
@@ -1130,10 +1156,10 @@ class GameMap
 			settype($row['destinationId'], "integer");
 			settype($row['locType'], "integer");
 			settype($row['iconType'], "integer");
-			settype($row['x'], "integer");
-			settype($row['y'], "integer");
-			settype($row['width'], "integer");
-			settype($row['height'], "integer");
+			settype($row['x'], "float");
+			settype($row['y'], "float");
+			settype($row['width'], "float");
+			settype($row['height'], "float");
 			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 
@@ -1147,6 +1173,7 @@ class GameMap
 		if ($this->includeWorld != 0) return $this->doGetWorld();
 		return true;
 	}
+
 
 	public function doGetWorldRevisions()
 	{
@@ -1340,6 +1367,7 @@ class GameMap
 		return true;
 	}
 
+
 	public function doEnableWorld ()
 	{
 		if ($this->worldId <= 0) return $this->reportError("Cannot create worlds yet!");
@@ -1410,6 +1438,11 @@ class GameMap
 		$query .= "posTop={$this->worldPosTop}, ";
 		$query .= "posBottom={$this->worldPosBottom}, ";
 		$query .= "enabled={$this->worldEnabled} ";
+			//TODO: tilesX/Y, maxTilesX/Y, defaultZoom
+
+			// Should enable this when editing for it is added on the client side
+		//if ($this->worldDisplayData) $query .= ", displayData='{$this->worldDisplayData}' ";
+
 		$query .= " WHERE id={$this->worldId};";
 
 		$result = $this->db->query($query);
@@ -1481,6 +1514,7 @@ class GameMap
 
 		return true;
 	}
+
 
 	public function doEnableLocation ()
 	{
@@ -1606,10 +1640,10 @@ class GameMap
 			settype($row['revisionId'], "integer");
 			settype($row['locType'], "integer");
 			settype($row['iconType'], "integer");
-			settype($row['x'], "integer");
-			settype($row['y'], "integer");
-			settype($row['width'], "integer");
-			settype($row['height'], "integer");
+			settype($row['x'], "float");
+			settype($row['y'], "float");
+			settype($row['width'], "float");
+			settype($row['height'], "float");
 			settype($row['displayLevel'], "float");
 			settype($row['visible'], "integer");
 
@@ -1652,18 +1686,19 @@ class GameMap
 			settype($row['parentId'], "integer");
 			settype($row['revisionId'], "integer");
 			settype($row['enabled'], "integer");
-			settype($row['posRight'], "integer");
-			settype($row['posLeft'], "integer");
-			settype($row['posTop'], "integer");
-			settype($row['posBottom'], "integer");
+			settype($row['posRight'], "float");
+			settype($row['posLeft'], "float");
+			settype($row['posTop'], "float");
+			settype($row['posBottom'], "float");
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
+			settype($row['defaultZoom'], "integer");
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
 			settype($row['tilesY'], "integer");
-			settype($row['hasCellResource'], "integer");
-			settype($row['hasGrid'], "integer");
+			settype($row['maxTilesX'], "integer");
+			settype($row['maxTilesY'], "integer");
 
 			$worlds[] = $row;
 			$count += 1;
@@ -1708,18 +1743,19 @@ class GameMap
 			settype($row['parentId'], "integer");
 			settype($row['revisionId'], "integer");
 			settype($row['enabled'], "integer");
-			settype($row['posRight'], "integer");
-			settype($row['posLeft'], "integer");
-			settype($row['posTop'], "integer");
-			settype($row['posBottom'], "integer");
+			settype($row['posRight'], "float");
+			settype($row['posLeft'], "float");
+			settype($row['posTop'], "float");
+			settype($row['posBottom'], "float");
 			settype($row['cellSize'], "integer");
 			settype($row['minZoom'], "integer");
 			settype($row['maxZoom'], "integer");
+			settype($row['defaultZoom'], "integer");
 			settype($row['zoomOffset'], "float");
 			settype($row['tilesX'], "integer");
 			settype($row['tilesY'], "integer");
-			settype($row['hasCellResource'], "integer");
-			settype($row['hasGrid'], "integer");
+			settype($row['maxTilesX'], "integer");
+			settype($row['maxTilesY'], "integer");
 
 			$worlds[] = $row;
 			$count += 1;
@@ -1842,11 +1878,11 @@ class GameMap
 				case 'si':
 					$this->dbPrefix = "si";
 					break;
-				case 'ds':
-					$this->dbPrefix = "ds";
-					break;
 				case 'test':
 					$this->dbPrefix = "test";
+					break;
+				case 'ds':
+					$this->dbPrefix = "ds";
 					break;
 			}
 		}
@@ -1904,26 +1940,32 @@ class GameMap
 
 		if (array_key_exists('visible',  $this->inputParams)) $this->locVisible = intval($this->inputParams['visible']);
 		if (array_key_exists('destid',  $this->inputParams)) $this->locDestId = intval($this->inputParams['destid']);
-		if (array_key_exists('x',  $this->inputParams)) $this->locX = intval($this->inputParams['x']);
-		if (array_key_exists('y',  $this->inputParams)) $this->locY = intval($this->inputParams['y']);
-		if (array_key_exists('locwidth',  $this->inputParams)) $this->locWidth = intval($this->inputParams['locwidth']);
-		if (array_key_exists('locheight',  $this->inputParams)) $this->locHeight = intval($this->inputParams['locheight']);
+		if (array_key_exists('x',  $this->inputParams)) $this->locX = floatval($this->inputParams['x']);
+		if (array_key_exists('y',  $this->inputParams)) $this->locY = floatval($this->inputParams['y']);
+		if (array_key_exists('locwidth',  $this->inputParams)) $this->locWidth = floatval($this->inputParams['locwidth']);
+		if (array_key_exists('locheight',  $this->inputParams)) $this->locHeight = floatval($this->inputParams['locheight']);
 		if (array_key_exists('loctype',  $this->inputParams)) $this->locType = intval($this->inputParams['loctype']);
 		if (array_key_exists('icontype',  $this->inputParams)) $this->locIconType = intval($this->inputParams['icontype']);
 		if (array_key_exists('name', $this->inputParams)) $this->locName = $this->db->real_escape_string($this->inputParams['name']);
 		if (array_key_exists('description', $this->inputParams)) $this->locDescription = $this->db->real_escape_string($this->inputParams['description']);
 		if (array_key_exists('wikipage', $this->inputParams)) $this->locWikiPage = $this->db->real_escape_string($this->inputParams['wikipage']);
-		if (array_key_exists('displaydata', $this->inputParams)) $this->locDisplayData = $this->db->real_escape_string($this->inputParams['displaydata']);
+
+		if (array_key_exists('displaydata', $this->inputParams))
+		{
+			$this->locDisplayData = $this->db->real_escape_string($this->inputParams['displaydata']);
+			$this->worldDisplayData = $this->db->real_escape_string($this->inputParams['displaydata']);
+		}
+
 		if (array_key_exists('displayname', $this->inputParams)) $this->worldDisplayName = $this->db->real_escape_string($this->inputParams['displayname']);
 		if (array_key_exists('missingtile', $this->inputParams)) $this->worldMissingTile = $this->db->real_escape_string($this->inputParams['missingtile']);
 		if (array_key_exists('enabled',  $this->inputParams)) $this->worldEnabled = intval($this->inputParams['enabled']);
 		if (array_key_exists('minzoom',  $this->inputParams)) $this->worldMinZoom = intval($this->inputParams['minzoom']);
 		if (array_key_exists('maxzoom',  $this->inputParams)) $this->worldMaxZoom = intval($this->inputParams['maxzoom']);
 		if (array_key_exists('zoomoffset',  $this->inputParams)) $this->worldZoomOffset = intval($this->inputParams['zoomoffset']);
-		if (array_key_exists('posleft',  $this->inputParams)) $this->worldPosLeft = intval($this->inputParams['posleft']);
-		if (array_key_exists('posright',  $this->inputParams)) $this->worldPosRight = intval($this->inputParams['posright']);
-		if (array_key_exists('postop',  $this->inputParams)) $this->worldPosTop = intval($this->inputParams['postop']);
-		if (array_key_exists('posbottom',  $this->inputParams)) $this->worldPosBottom = intval($this->inputParams['posbottom']);
+		if (array_key_exists('posleft',  $this->inputParams)) $this->worldPosLeft = floatval($this->inputParams['posleft']);
+		if (array_key_exists('posright',  $this->inputParams)) $this->worldPosRight = floatval($this->inputParams['posright']);
+		if (array_key_exists('postop',  $this->inputParams)) $this->worldPosTop = floatval($this->inputParams['postop']);
+		if (array_key_exists('posbottom',  $this->inputParams)) $this->worldPosBottom = floatval($this->inputParams['posbottom']);
 		if (array_key_exists('parentid',  $this->inputParams)) $this->worldParentId = intval($this->inputParams['parentid']);
 		if (array_key_exists('revisionid',  $this->inputParams)) $this->revisionId = intval($this->inputParams['revisionid']);
 
@@ -2005,6 +2047,7 @@ class GameMap
 
 		error_log("Error: " . $errorMsg);
 		if ($this->db->error) error_log($this->db->error);
+
 		return false;
 	}
 

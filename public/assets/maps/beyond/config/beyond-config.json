@@ -5,6 +5,7 @@
     "database" : "beyond",
     "tileURLName" : "bsmap",
     "bgColor" : "#284358",
+    "releaseDate" : "01/07/2017", // for sorting games by release date in the map menu
     "isModded" : true,
 
     // Map options

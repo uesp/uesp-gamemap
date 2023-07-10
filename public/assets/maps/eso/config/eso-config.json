@@ -4,6 +4,7 @@
     "wikiNamespace": "Online",
     "database" : "eso",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:ESO_Map_Design",
+    "releaseDate" : "04/04/2014", // for sorting games by release date in the map menu
 
     // Map options
     "hasCustomFavIcon" : true,
@@ -608,6 +609,5 @@
         "231": "Dolmen (Group)",
         "232": "Telvanni Tower",
         "236": "Door"
-
     }
 }
