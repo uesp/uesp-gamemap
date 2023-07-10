@@ -28,7 +28,7 @@
             {:else if lock >= MAPLOCK.PARTIAL_MARKER}
                 <span class="highlight">
                     <Icon name="info" size={16}/>
-                    <small><b>Editing Help</b></small>
+                    <small><b>Editing Tip</b></small>
                 </span>
 
                 {#if lock == MAPLOCK.PARTIAL_MARKER}

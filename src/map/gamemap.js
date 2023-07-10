@@ -1657,7 +1657,7 @@ L.Layer.include({
 
 	edit() {
 		this.editing = true;
-		this.pm.enable({ allowEditing: true, snapDistance: self.mapConfig.markerSnapDistance, draggable: true });
+		this.pm.enable({ allowEditing: true, snapDistance: self.mapConfig.markerSnapDistance, draggable: true, preventMarkerRemoval: this.getCoordinates().length == 1});
 		this.on('pm:markerdragend pm:vertexremoved pm:edit', (e) => {
 			if ((e.shape == "Marker") || ((e.shape == "Polygon" || e.shape == "Line") && (e.type == "pm:markerdragend" || e.type == "pm:vertexremoved"))) {
 				updateMarkerCoords(self.toCoords(e.layer.getCoordinates()));

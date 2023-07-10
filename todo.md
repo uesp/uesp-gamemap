@@ -1,17 +1,32 @@
 ## last week
 
+## bug fixes
+
+- fixed being able to right click to remove markers
+- fix console.warn error when cancelling new location on gamemap
+- fix eso icons not loading on firefox on gamemap.uesp.net
+
 ## todo
 
-- postjson to get around greymoor caverns uri too long error
 
 
-- date in mapconfig
+- add location.openPopup() method in location.js that finds marker by location and opens its popups
 
 
-- fix being able to right click on markers to delete them
+pendingJump = object {data: {}, edit: true}
 
-- fix console.warn error when cancelling new location on gamemap
-- fix eso icons not showing up on load in eso on gamemap
+refactor getLocation to be await function
+
+
+add search by location name in getLocation() and locationid
+
+
+put pm:create event inside addLocation by map.on("pm.create");
+
+
+
+- dave edit history icon bug fix
+
 
 - fix focus on svelte elements mean cant move map (mobile specifically)
 >> try re allowing map panning on the "zoom" or "move" events
@@ -46,6 +61,12 @@
 if adding location, save will dismiss the editor window
 if adding location, close button is always "cancel"
 
+- sort map menu by release date (ask dave to implement backend)
+
+- click thing in edit history, prompt to revert, then do network call (ask dave to implement backend)
+
+
+- fix lag in opening big search results (use virtual list)
 
 - fix escape key bugging out dialogs
 >> also make sure you cant escape out of dialogs that are dismissible false
@@ -66,12 +87,17 @@ if adding location, close button is always "cancel"
 
 - fix long edit history items causing editor to resize - should truncate
 
+- use eso dev maps as separate layers
 
 "goto article" button doesnt update when world wiki link updated
 
 - fix RC inconsistently being resized after coming back from editing location
 - fix RC not going all the way down on initial edit pane open
 - make "grouped/abc" symmetrical
+
+
+- fix high res icons being clipped on icon in ListITem
+- fix location dropdown being laggy on open, remember existing location data somehow
 
 - make close button in edit panel always close the panel regardless of direct edit or not
 
@@ -95,6 +121,7 @@ if adding location, close button is always "cancel"
 
 - check to make sure world editing still works
 
+- fix description field misbehaving, being too big
 
 - wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 
@@ -114,6 +141,10 @@ if adding location, close button is always "cancel"
 - make going to location centre zoom dynamically instead of always zoom level 5
 - add way to show popups on centreon, optional param
 - fix losing grid on resize
+
+- do common.js getIcon() for worlds,locations, to switch between actual icon, polyline, area, world, and point
+to be consistent icons (an area doesnt make sense to have a pin icon)
+
 - fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af when zooming out
 - shift click in RC to travel to and edit world/location

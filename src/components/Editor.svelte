@@ -459,7 +459,7 @@
              />
 
              <!-- edit panel content -->
-             <div id="edit-panel-content" bind:this={editPanelContent} class:isEditing={isEditing}>
+             <div id="edit-panel-content" style="max-width: inherit; width: inherit;" bind:this={editPanelContent} class:isEditing={isEditing}>
                 {#if !isEditing}
                     <b>Actions</b><br/>
                     <div id="actions-container">
@@ -492,8 +492,8 @@
                         {/key}
                      </div>
                 {:else}
-                    <div id="editor" in:fixEditor out:cancel bind:this={editor}>
-                        <div class="editor_window" bind:this={editorWindow}>
+                    <div id="editor" in:fixEditor out:cancel bind:this={editor} style="max-width: inherit; width: inherit;">
+                        <div class="editor_window" bind:this={editorWindow} style="max-width: inherit; width: inherit;">
 
                             <!-- show edit suggestions if available -->
                             {#if MAPCONFIG?.editTemplates[objectType]?.[name.toLowerCase()] && unsavedChanges && !modEditObject?.acceptedSuggestion}
@@ -501,7 +501,7 @@
                                 <SuggestionBar suggestion={name.toTitleCase()} on:confirm={() => fillFromTemplate(template)}/>
                             {/if}
 
-                            <div id="editor_pane">
+                            <div id="editor_pane" style="max-width: inherit; width: inherit;">
                                 <FormGroup title="General" icon="description">
                                     <header class="header">
                                         <AvatarComponent icon={modEditObject.icon} locType={modEditObject.locType} isWorld={isWorld} on:change={(e) => modify("icon", e.detail)}>
@@ -830,6 +830,7 @@
     #editor {
         display: flex;
         flex-flow: column;
+        max-width: inherit;
     }
 
     .editor_window {

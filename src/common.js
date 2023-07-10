@@ -88,10 +88,8 @@ window.isChrome = function isChrome() {
 if (isDebug || location.toString().includes("localhost") || location.toString().includes("devgame")) {
 	// override print function to be custom console log
 
-	window.addEventListener('beforeprint', function(event) {
-		// Prevent the default print action from occurring
-		event.preventDefault();
-	});
+	// Prevent the default print action from occurring
+	window.addEventListener('beforeprint', function(event) {event.preventDefault() });
 	let print = {};
 	print = function(){};
 	window.print = print;
@@ -102,17 +100,18 @@ if (isDebug || location.toString().includes("localhost") || location.toString().
 	window.print.warn = print.warn;
 	window.print.error = print.error;
 } else {
-	// disable console logging entirely
+	// disable console logging on release builds
 	let console = {};
 	console.log = function(){};
 	window.console = console;
-	let print = {};
-	print = function(){};
+	let print = function(){};
 	window.print = print;
 	print = console.log.bind(console);
-	window.print = print;
-	window.print.warn = print;
-	window.print.error = print;
+	window.print = function(){};
+	window.print.warn = function(){};
+	window.print.error = function(){};
+	window.console.warn = function(){};
+	console.warn = function(){};
 }
 
 /** Function to return JSON data from endpoint as JSON object

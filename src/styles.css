@@ -507,7 +507,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 }
 
 .modal .modal-content {
-	padding: var(--padding_medium) !important;
+	padding: 24px !important;
 	padding-bottom: var(--padding_minimum) !important;
 }
 
