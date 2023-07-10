@@ -886,6 +886,20 @@ export default class Gamemap {
 			}
 		}
 
+		map.on("pm:create", ({ shape, layer }) => {
+			print(shape);
+			print(layer);
+			let isMarker = shape == "Marker";
+			layer.remove();
+			print(isMarker);
+			let location = new Location({
+				locType:  (isMarker) ? LOCTYPES.MARKER : (shape == "Polygon") ? LOCTYPES.AREA : LOCTYPES.PATH,
+				coords: self.toCoords(layer.getCoordinates()),
+			});
+			this.getCurrentWorld()?.locations?.set(location.id, location);
+			this.edit(location);
+		});
+
 	}
 
 	getLocations(world) {
@@ -1240,20 +1254,6 @@ export default class Gamemap {
 	================================================*/
 
 	bindMapEvents() {
-
-		map.on("pm:create", ({ shape, layer }) => {
-			print(shape);
-			print(layer);
-			let isMarker = shape == "Marker";
-			layer.remove();
-			print(isMarker);
-			let location = new Location({
-				locType:  (isMarker) ? LOCTYPES.MARKER : (shape == "Polygon") ? LOCTYPES.AREA : LOCTYPES.PATH,
-				coords: self.toCoords(layer.getCoordinates()),
-			});
-			this.getCurrentWorld()?.locations?.set(location.id, location);
-			this.edit(location);
-		});
 
 		map.on('resize moveend zoomend', function() {
 

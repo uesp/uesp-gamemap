@@ -5,6 +5,14 @@
 - fixed being able to right click to remove markers
 - fix console.warn error when cancelling new location on gamemap
 - fix eso icons not loading on firefox on gamemap.uesp.net
+- fixed locations being edited before they should be (bangkorai was being marked as edited on open)
+>> added bonus, perf fix as not spam edits as soon as you open editor
+
+## polish
+
+- fixed edit history items with long titles expanding the editor div (not respecting user-chosen width)
+- made resizing the editor track the mouse more accurately
+- added a max width to editor
 
 ## todo
 
@@ -15,40 +23,32 @@
 
 pendingJump = object {data: {}, edit: true}
 
-refactor getLocation to be await function
-
 
 add search by location name in getLocation() and locationid
 
 
-put pm:create event inside addLocation by map.on("pm.create");
+- after moving dodgy location, it went even further north than it already was
 
-
-
-- dave edit history icon bug fix
-
+dodgy request:
+db/gamemap.php?action=set_loc&name=Hall%20of%20Heroes&description=&wikipage=Hall%20of%20Heroes&loctype=1&locid=1813&worldid=168&destid=5245&revisionid=89142&db=eso&visible=1&x=468000.000&y=108000.000&locwidth=32.000&locheight=32.000&displaylevel=10&displaydata=%7B%22labelPos%22%3A10%2C%22points%22%3A%5B%22468000.000%22%2C%22108000.000%22%5D%7D&icontype=57
 
 - fix focus on svelte elements mean cant move map (mobile specifically)
 >> try re allowing map panning on the "zoom" or "move" events
-
-- fix  editing bangkorai blob already starting as edited/unsaved changes
 
 - the location coord mismatch is happening because you are converting a new location's coords based on the current world's dimensions
 >> need to find a way to pass location.js reference to the current world
 
 - do edit templates for dawnstar per dcsg asked
 
-- direct edit "close" button isnt closing whole panel as expected
-- fix clicking X button "saving" changes unlike cancel button
+- fix entering negative locIDs for destIDs being obnoxious (entering minus makes it 0)
+> Entering negative numbers is most definitely not a fluid, natural function. The computer fights me, enteriong a zero or ignoring the negative sign.
 
-- deleting markers still adds edit-version marked with "click to drag" back to map on map move
 
 - fix line colour preview showing fill colours from area
 
 - shift click on other locations while unsaved changes should immediately change to edit it
 
-
-- fix the "are you sure you want to leave page, unsaved changes" alert dialog
+- do some MAPLOCK.isPartial() function
 
 - make waves light/dark configurable by prop (for adding new loc "cancel" button)
 
@@ -63,7 +63,11 @@ if adding location, close button is always "cancel"
 
 - sort map menu by release date (ask dave to implement backend)
 
+- wiki links to skyshards used positive id for locations instead of negative (need to be changed)
+https://esomap.uesp.net/?centeron=24972
+
 - click thing in edit history, prompt to revert, then do network call (ask dave to implement backend)
+- remove edit history being clickable with ripple
 
 
 - fix lag in opening big search results (use virtual list)
@@ -73,7 +77,6 @@ if adding location, close button is always "cancel"
 
 - be able to hotswap to edit different locations with popup edit or shift edit, as long as not unsaved or not new location
 
-- remove edit history being clickable with ripple
 
 - make map lock for editing worlds actually work (no zooming allowed)
 - get live editing working for worlds
@@ -82,10 +85,6 @@ if adding location, close button is always "cancel"
 - fix colour picker default colour to something sensible instead of the blue
 
 - -0.5 on all locations client side
-
-- show "position" in info when marker being added
-
-- fix long edit history items causing editor to resize - should truncate
 
 - use eso dev maps as separate layers
 

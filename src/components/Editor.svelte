@@ -40,6 +40,7 @@
     const ANIMATION_DURATION = 350;
     const RESIZE_OBSERVER = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
     const MIN_PANEL_WIDTH = 350;
+    const MAX_PANEL_WIDTH = 700;
 
     // state vars
     export let shown = false; // whether the editor panel is visible
@@ -159,7 +160,7 @@
         modEditObject = Object.assign(Object.create(Object.getPrototypeOf(data)), data);
         isLocation = editObject instanceof Location;
         isWorld = editObject instanceof World;
-        liveEdit = true;
+        setTimeout(() => {liveEdit = true}, 1);
         if (!editObject?.unsavedLocation) { getEditHistory(editObject) }
 
         // do state changes to map
@@ -300,6 +301,8 @@
             modEditObject = modEditObject;
             editObject = editObject;
 
+            print(`editing ${property} with value ${value}`)
+
             print("before edit");
             print(editObject);
             print("after edit");
@@ -350,12 +353,15 @@
     function onResizerDown() { document.addEventListener('mousemove', onResizerDrag);}
     function onResizerUp() { document.removeEventListener('mousemove', onResizerDrag); }
     function onResizerDrag(event) {
-        let width = (window.innerWidth - event.pageX + 150);
+        let width = (window.innerWidth - event.pageX);
         width = (width < MIN_PANEL_WIDTH) ? MIN_PANEL_WIDTH : width;
-        editPanel.style.width = `${width}px`;
-        editPanel.style.maxWidth = `${width}px`;
-        setPrefs("editpanelwidth", width); // save user's edit panel width preference
-        PANEL_WIDTH = getPrefs("editpanelwidth", 480);
+
+        if (width < MAX_PANEL_WIDTH) {
+            editPanel.style.width = `${width}px`;
+            editPanel.style.maxWidth = `${width}px`;
+            setPrefs("editpanelwidth", width); // save user's edit panel width preference
+            PANEL_WIDTH = getPrefs("editpanelwidth", 480);
+        }
     }
 
     // slide in/out animation
@@ -835,7 +841,8 @@
 
     .editor_window {
         flex: 1;
-        overflow-y: auto;
+        overflow-y: scroll;
+        overflow-x: clip;
         position: relative;
     }
 

@@ -29,7 +29,6 @@
 
 	$: { // on colour update, do stuff
 		if (picker) {
-			print(`current colour is: ${colour}`);
 			picker.setColour(colour);
 			dispatch("change", colour);
 		}
