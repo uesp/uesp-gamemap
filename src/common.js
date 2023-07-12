@@ -116,26 +116,27 @@ if (isDebug || location.toString().includes("localhost") || location.toString().
 
 /** Function to return JSON data from endpoint as JSON object
  * @param {String} url - The endpoint url, as a string
- * @param {Function} callback - The callback function to be executed on successful data return
+ * @param {String} requestType - The type of request to do (GET or POST)
  * @returns {Object} data - JSON object that is a result of the api call
  */
-window.getJSON = function getJSON(url, callback) {
-	try {
-		fetch(url)
-			.then((response) => response.text())
-			.then((data) => {
-				try {
-					// remove comments before parsing
-					callback?.(null, JSON.parse((data.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m))));
-				} catch (error) {
-					console.log(error);
-					callback?.(error, null);
-				}
-			});
-
-	} catch (error){
-		callback?.(error, null);
-	}
+window.getJSON = function getJSON(url, requestType) {
+	return new Promise((resolve, reject) => {
+		try {
+			fetch(url)
+				.then((response) => response.text())
+				.then((data) => {
+					try {
+						// remove comments before parsing
+						resolve(JSON.parse((data.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m))))
+					} catch (error) {
+						print(error);
+						reject(error);
+					}
+				});
+		} catch (error){
+			reject(error);
+		}
+	})
 }
 
 /** Function to parse the parameters in the current URL object

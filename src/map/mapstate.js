@@ -5,14 +5,15 @@
  */
 
  export default class MapState {
-    constructor(coords) {
+    constructor(data) {
         //set default state
-		this.coords = coords;
-        this.zoom = coords?.zoom ?? coords?.[0]?.zoom ?? DEFAULT_MAP_CONFIG.zoomLevel;
-        this.world = null;
+		this.coords = data?.coords ?? null;
+        this.zoom = data?.zoom ?? data?.[0]?.zoom ?? DEFAULT_MAP_CONFIG.zoomLevel;
+        this.world = data?.world ?? gamemap.getWorldFromID(MAPCONFIG.defaultWorldID || 0);
         this.showGrid = false;
         this.cellResource = "";
 		this.layerIndex = 0;
+        this.pendingJump = null;
     }
 
 }

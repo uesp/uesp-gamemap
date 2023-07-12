@@ -6,14 +6,8 @@
 
 import Point from "./point.js";
 
-let mapConfig;
-let world;
-
 export default class Location {
-	constructor(data) {
-
-		world = gamemap.getCurrentWorld();
-		mapConfig = gamemap.getMapConfig() ?? DEFAULT_MAP_CONFIG;
+	constructor(data, world) {
 
 		// set location type
 		this.locType = data?.locType ?? LOCTYPES.MARKER;
@@ -23,7 +17,7 @@ export default class Location {
 		this.unsavedLocation = (this.id < 0); // used when determining if this a new, unpublished location or not
 		this.name = (!this.unsavedLocation) ? data.name : (this.locType == LOCTYPES.MARKER) ? "New Marker" : (this.locType == LOCTYPES.AREA) ? "New Area" : "New Path";
 		this.revisionID = data.revisionId || 0;
-		this.worldID = data?.worldId ?? world.id;
+		this.worldID = world?.id ?? data?.worldId ?? gamemap.getCurrentWorld().id;
 		this.destinationID = -(data?.destinationId) || null;
 		this.editing = this.unsavedLocation ?? false; // whether this location is currently being edited
 		this.wasVisible = this.editing ?? null;
@@ -33,13 +27,13 @@ export default class Location {
 		this.wikiPage = data?.wikiPage || null;
 		this.description = data?.description || null;
 		this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : {};
-		this.displayLevel = (this.unsavedLocation) ? Number((Math.floor(gamemap.getCurrentZoom()))) : parseFloat(data.displayLevel - world.zoomOffset || 0);
+		this.displayLevel = (this.unsavedLocation) ? Number((Math.floor(gamemap.getCurrentZoom()))) : parseFloat(data.displayLevel - gamemap.getWorldFromID(this.worldID).zoomOffset || 0);
 		this.bounds = null; // bounds are generated when asked
 
 		// set location icon info
-		this.icon = (this.unsavedLocation && this.locType == LOCTYPES.MARKER) ? Math.min(...Array.from(mapConfig.icons.keys())) : data.iconType || null;
-		this.width = (this.icon) ? data.width || mapConfig.iconSize : data.width;
-		this.height = (this.icon) ? data.height || mapConfig.iconSize : data.height;
+		this.icon = (this.unsavedLocation && this.locType == LOCTYPES.MARKER) ? Math.min(...Array.from(MAPCONFIG.icons.keys())) : data.iconType || null;
+		this.width = (this.icon) ? data.width || MAPCONFIG.iconSize : data.width;
+		this.height = (this.icon) ? data.height || MAPCONFIG.iconSize : data.height;
 
 		// set up coords
 		this.coords = (() => {
@@ -114,14 +108,14 @@ export default class Location {
 			if (!this.displayData?.lineWidth) { this.displayData.lineWidth = 0 } else {}
 			if (!this.displayData?.hover) { this.displayData.hover = structuredClone(this.displayData) }
 
-			this.fillColour = this.displayData?.fillStyle ?? mapConfig.defaultFillColour;
-			this.fillColourHover = this.displayData?.hover.fillStyle ?? mapConfig.defaultFillColourHover;
+			this.fillColour = this.displayData?.fillStyle ?? MAPCONFIG.defaultFillColour;
+			this.fillColourHover = this.displayData?.hover.fillStyle ?? MAPCONFIG.defaultFillColourHover;
 
-			this.strokeColour = this.displayData?.strokeStyle ?? mapConfig.defaultStrokeColour;
-			this.strokeColourHover = this.displayData?.hover.strokeStyle ?? mapConfig.defaultStrokeColourHover;
+			this.strokeColour = this.displayData?.strokeStyle ?? MAPCONFIG.defaultStrokeColour;
+			this.strokeColourHover = this.displayData?.hover.strokeStyle ?? MAPCONFIG.defaultStrokeColourHover;
 
-			this.strokeWidth = this.unsavedLocation ? mapConfig.defaultStrokeWidth : this.displayData?.lineWidth;
-			this.strokeWidthHover = this.unsavedLocation ? mapConfig.defaultStrokeWidthHover : this.displayData?.hover?.lineWidth;
+			this.strokeWidth = this.unsavedLocation ? MAPCONFIG.defaultStrokeWidth : this.displayData?.lineWidth;
+			this.strokeWidthHover = this.unsavedLocation ? MAPCONFIG.defaultStrokeWidthHover : this.displayData?.hover?.lineWidth;
 		}
 	}
 
@@ -146,7 +140,7 @@ export default class Location {
 				centreY = centreY + parseFloat(ys[i]);
 			}
 
-			return new Point((centreX / xs.length).toFixed(3), (centreY / ys.length).toFixed(3), gamemap.getMapConfig().coordType);
+			return new Point((centreX / xs.length).toFixed(3), (centreY / ys.length).toFixed(3), MAPCONFIG.coordType);
 		} else {
 			return coords[0]; // if not, just return the first one
 		}
@@ -158,7 +152,8 @@ export default class Location {
 		let y = coords[1];
 
 		// convert eso coordinates to be normalised
-		if (mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) {
+		if (MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) {
+			let world = gamemap.getWorldFromID(this.worldID);
 
 			// get normalised value of x and y in range
             x = (x - world.minX) / world.maxRangeX;
@@ -169,7 +164,7 @@ export default class Location {
 			y = (y * nextPowerOfTwo(world.dbNumTilesY) / world.dbNumTilesY).toFixed(3);
 		}
 
-		return new Point(x, y, mapConfig.coordType);
+		return new Point(x, y, MAPCONFIG.coordType);
 	}
 
 	getTooltipContent() {
@@ -194,7 +189,7 @@ export default class Location {
 			popupContent += `<div class='popupInfo'><b>Destination ID:</b> ${this.destinationID} ${(this.destinationID < 0) ? ' (Location)' : ' (World)'} </div>`;
 		}
 
-		if (mapConfig.editingEnabled) {
+		if (MAPCONFIG.editingEnabled) {
 			let buttonStyle = "text-align: center; height: unset; margin-bottom: -8px; width: inherit; line-height: 26px;";
 			popupContent += `<hr/> <a style='${buttonStyle}' class='btn-flat waves-effect' onclick="gamemap.getLocation(${this.id}, function (location) { gamemap.edit(location); gamemap.getMapObject().closePopup() })">Edit</a>`;
 		}
@@ -227,17 +222,17 @@ export default class Location {
 
 		let wikiLink = "";
 
-		if (mapConfig.wikiNamespace != null && mapConfig.wikiNamespace.length > 0) {
+		if (MAPCONFIG.wikiNamespace != null && MAPCONFIG.wikiNamespace.length > 0) {
 
 			if (this.wikiPage) {
 				if (this.wikiPage.indexOf(":") >= 0) {
-					wikiLink = mapConfig.wikiURL + encodeURIComponent(this.wikiPage).replace("%3A", ":").replace("%2F", "/");;
+					wikiLink = MAPCONFIG.wikiURL + encodeURIComponent(this.wikiPage).replace("%3A", ":").replace("%2F", "/");;
 				} else {
-					wikiLink = mapConfig.wikiURL + mapConfig.wikiNamespace + ':' + encodeURIComponent(this.wikiPage);
+					wikiLink = MAPCONFIG.wikiURL + MAPCONFIG.wikiNamespace + ':' + encodeURIComponent(this.wikiPage);
 				}
 			}
 		} else {
-			wikiLink = mapConfig.wikiURL + encodeURIComponent(this.wikiPage);
+			wikiLink = MAPCONFIG.wikiURL + encodeURIComponent(this.wikiPage);
 		}
 
 		if (wikiLink != "") {
@@ -281,7 +276,7 @@ export default class Location {
 	getSaveQuery() {
 
 		var query = 'action=set_loc';
-		let coords = (mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.convPseudoNormalisedCoords(this.coords) : this.coords;
+		let coords = (MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.convPseudoNormalisedCoords(this.coords) : this.coords;
 
 		query += `&name=${encodeURI(this.name)}`;
 		query += `&description=${encodeURI(this.description)}`;
@@ -292,14 +287,14 @@ export default class Location {
 		query += `&worldid=${this.worldID}`;
 		query += `&destid=${-(this.destinationID)}`;
 		query += `&revisionid=${this.revisionID}`;
-		query += `&db=${gamemap.getMapConfig().database}&visible=1`;
+		query += `&db=${MAPCONFIG.database}&visible=1`;
 
 		this.updateDisplayData(coords);
 		query += `&x=${((this.isPolygon()) ? this.getMaxBounds().minX: coords[0].x).toFixed(3)}`;
 		query += `&y=${((this.isPolygon()) ? this.getMaxBounds().maxY: coords[0].y).toFixed(3)}`;
 		query += `&locwidth=${this.width.toFixed(3)}&locheight=${this.height.toFixed(3)}`;
 
-		query += `&displaylevel=${+this.displayLevel + +world.zoomOffset}`;
+		query += `&displaylevel=${+this.displayLevel + +gamemap.getWorldFromID(this.worldID).zoomOffset}`;
 		query += `&displaydata=${encodeURI(JSON.stringify(this.displayData))}`;
 		if (this.hasIcon()) { query += `&icontype=${encodeURI(this.icon)}` }
 
@@ -314,7 +309,7 @@ export default class Location {
 
 		query += `&locid=${this.id}`;
 		query += `&worldid=${this.worldID}`;
-		query += `&db=${gamemap.getMapConfig().database}&visible=0`;
+		query += `&db=${MAPCONFIG.database}&visible=0`;
 
 		return query;
 
@@ -347,6 +342,7 @@ export default class Location {
 
 	// convert pseudo normalised coordinates (eso)
 	convPseudoNormalisedCoords(coords) {
+		let world = gamemap.getWorldFromID(this.worldID);
 		coords = (!Array.isArray(coords)) ? [structuredClone(coords)] : structuredClone(coords);
 
 		coords.forEach(coord => {
@@ -362,7 +358,7 @@ export default class Location {
 	// get max bounds of the current location
 	getMaxBounds(regen) {
 		if (regen ?? this.bounds == null) {
-			let coords = (mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.convPseudoNormalisedCoords(this.coords) : this.coords;
+			let coords = (MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.convPseudoNormalisedCoords(this.coords) : this.coords;
 			let bounds = {};
 			[bounds.minX, bounds.maxX, bounds.minY, bounds.maxY] = [coords[0].x, coords[0].x, coords[0].y, coords[0].y];
 			coords.forEach(coord => {

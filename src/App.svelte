@@ -111,48 +111,43 @@
 			print("Game parameter was: " + gameParam);
 
 			// begin getting map config
-			getJSON(DEFAULT_MAP_CONFIG_DIR, function(error, defaultMapConfig) {
-				if (!error) {
+			getJSON(DEFAULT_MAP_CONFIG_DIR).then(defaultMapConfig => {
 
-					// set up default map config
-					window.DEFAULT_MAP_CONFIG = defaultMapConfig;
+				// set up default map config
+				window.DEFAULT_MAP_CONFIG = defaultMapConfig;
 
-					// example: /assets/maps/eso/config/eso-config.json
-					let configURL = (MAP_ASSETS_DIR + gameParam + "/config/" + gameParam + "-" + MAP_CONFIG_FILENAME);
-					setLoading("Loading config");
-					print("Getting map config at " + configURL + "...");
+				// example: /assets/maps/eso/config/eso-config.json
+				let configURL = (MAP_ASSETS_DIR + gameParam + "/config/" + gameParam + "-" + MAP_CONFIG_FILENAME);
+				setLoading("Loading config");
+				print("Getting map config at " + configURL + "...");
+				getJSON(configURL).then(object => {
+					print("Imported map config successfully.");
+					mapConfig = object;
 
-					getJSON(configURL, function(error, object) {
-						if (!error) {
-							print("Imported map config successfully.");
-							mapConfig = object;
+					print("Merging with default map config...")
+					let mergedMapConfig = mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
+					mapConfig = mergedMapConfig;
 
-							print("Merging with default map config...")
-							let mergedMapConfig = mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
-							mapConfig = mergedMapConfig;
+					// set up map config assets
+					mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
+					mapConfig.iconPath = mapConfig.assetsPath + "icons/";
+					// sometimes tileURLs on the server are not consistent with the dbName+"map" schema, so you can define an tileURLName in the map config to override this
+					mapConfig.tileURL = (mapConfig.tileURLName) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/";
 
-							// set up map config assets
-							mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
-							mapConfig.iconPath = mapConfig.assetsPath + "icons/";
-							// sometimes tileURLs on the server are not consistent with the dbName+"map" schema, so you can define an tileURLName in the map config to override this
-							mapConfig.tileURL = (mapConfig.tileURLName) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/";
+					// sort icon list to be alphabetical
+					let icons = Object.entries(mapConfig.icons).map(( [k, v] ) => ({ [k]: v }));
+					icons.sort((a, b) => Object.values(a)[0].localeCompare(Object.values(b)[0], 'en', {'sensitivity': 'base'}));
+					mapConfig.icons = new Map(icons.map(obj => [Number(Object.keys(obj)[0]), Object.values(obj)[0]]));
 
-							// sort icon list to be alphabetical
-							let icons = Object.entries(mapConfig.icons).map(( [k, v] ) => ({ [k]: v }));
-							icons.sort((a, b) => Object.values(a)[0].localeCompare(Object.values(b)[0], 'en', {'sensitivity': 'base'}));
-							mapConfig.icons = new Map(icons.map(obj => [Number(Object.keys(obj)[0]), Object.values(obj)[0]]));
+					print("Completed merged map config:")
+					print(mapConfig);
+					window.MAPCONFIG = mapConfig; // make global
 
-							print("Completed merged map config:")
-							print(mapConfig);
-							window.MAPCONFIG = mapConfig; // make global
+					// load map
+					loadGamemap(mapConfig);
 
-							// load map
-							loadGamemap(mapConfig);
-
-						} else {
-							error.toString().includes("JSON.parse") ? setError("Provided game doesn't exist. Please check the URL.") : setError("Could not load map: " + error);
-						}});
-				} else { setError("There was an error getting the default map config." + error);}})
+				}).catch(error => error.toString().includes("JSON.parse") ? setError("Provided game doesn't exist. Please check the URL.") : setError(`Could not load map: ${error}`));
+			}).catch(error => setError(`There was an error getting the default map config: ${error}`));
 		} else {
 			// hide loading spinner and show map selector
 			setLoading(false);

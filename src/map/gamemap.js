@@ -71,7 +71,7 @@ export default class Gamemap {
 			if (this.mapConfig.bgColor) { mapRoot.style.backgroundColor = mapConfig.bgColor; }
 			if (this.mapConfig.hasCustomCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; print("Loading custom map css: " + cssPath); injectCSS(cssPath);}
 
-			// set the default map world info
+			// set the default map info
 			this.mapWorlds = new Map();
 			this.gridEnabled = false;
 			this.mapLock = null;
@@ -118,12 +118,7 @@ export default class Gamemap {
 
 		// create inital mapState object
 		let mapState = new MapState();
-		mapState.world = this.getWorldFromID(mapConfig.defaultWorldID || 0);
-
-		if (getURLParams().has("centeron")) { // check if URL has "centeron" param
-			// TODO: find location and centre on it
-		} else if (this.hasURLParams()) { // else check if has url params
-			// load state from URL
+		if (this.hasURLParams()) { // check if URL has data params
 			mapState = this.getMapStateFromURL();
 		}
 
@@ -149,7 +144,7 @@ export default class Gamemap {
 	 * @param {Object} mapState - Object that controls the state and view of the map.
 	 * @param {Boolean} onlyUpdateTiles - Flag to only update map tiles. Default: false (overrides everything).
 	 */
-	setMapState(mapState, onlyUpdateTiles) {
+	async setMapState(mapState, onlyUpdateTiles) {
 
 		print("Setting map state!");
 		onlyUpdateTiles = onlyUpdateTiles ?? false;
@@ -162,9 +157,24 @@ export default class Gamemap {
 			}
 		}
 
+		// if pendingJump is centeron, we wait until we get centreon data
+		if (mapState?.pendingJump == "centeron") {
+			print("pending centeron")
+			try {
+				let location = await this.getLocation(getURLParams().get("centeron"));
+				print(location);
+				mapState.world = this.getWorldFromID(location.worldID);
+				mapState.zoom = mapState.world.maxZoomLevel
+				mapState.pendingJump = {data: location};
+			} catch {
+				mapState.pendingJump = null;
+				M.toast({html: "Centeron failed!"});
+			}
+		}
+
 		// make sure the map state is valid
 		if (mapState.world == null) {
-			throw new Error("Map was provided an invalid/null world!");
+			throw new Error("Map was provided an invalid world!");
 		}
 
 		// update world
@@ -181,6 +191,11 @@ export default class Gamemap {
 
 		// calculate raster coords
 		RC = new RasterCoords(map, this.mapImage);
+
+		// calculate centreon coordinates if available
+		if (mapState?.pendingJump?.data && mapState.pendingJump.data instanceof Location) {
+			mapState.coords = mapState.pendingJump.data.getCentre();
+		}
 
 		// default tilelayer options
 		let tileOptions = {
@@ -200,8 +215,10 @@ export default class Gamemap {
 		}
 		tileLayer.addTo(map);
 
+		print(mapState);
+
 		// set map view
-		if(mapState.coords == null || mapState.zoom == null) {
+		if (mapState.coords == null || mapState.zoom == null) {
 			map.fitBounds(RC.getMaxBounds(), {animate: false}); // reset map to fill world bounds
 			setTimeout(function() { map.fitBounds(RC.getMaxBounds(), {animate: true}) }, 1); // now actually reset it
 		} else {
@@ -250,6 +267,10 @@ export default class Gamemap {
 			mapState.world = isNaN(parseInt(getURLParams().get("world"))) ? (getURLParams().get("world") != "undefined" ? this.getWorldFromName(getURLParams().get("world")) : this.getWorldFromID(this.mapConfig.defaultWorldID)) : this.getWorldFromID(getURLParams().get("world"));
 		} else {
 			mapState.world = this.getWorldFromID(this.mapConfig.defaultWorldID);
+		}
+
+		if (getURLParams().has("centeron")) {
+			mapState.pendingJump = "centeron"; // tell the map when we load to expect a centeron
 		}
 
 		if (getURLParams().has("x") && getURLParams().has("y")) {
@@ -338,32 +359,22 @@ export default class Gamemap {
 			queryParams.db = mapConfig.database;
 			self.mapCallbacks?.setLoading("Loading world(s)");
 
-			if (this.mapWorlds.size === 0) {
-				getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+			if (this.mapWorlds.size == 0) {
+				getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
+					let worlds = data.worlds;
 
-					print("printing worlds");
-					print(data);
-					print(error);
+					// parse worlds
+					worlds.forEach(world => {
+						if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name) {
+							self.mapWorlds.set(world.id, new World(world));
+						}
+					});
 
-					if (!error && data?.worlds) {
-						let worlds = data.worlds;
-
-						// parse worlds
-						worlds.forEach(world => {
-							if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name) {
-								self.mapWorlds.set(world.id, new World(world, mapConfig));
-							}
-						});
-
-						// initialise map
-						print(`Loaded ${worlds.length} worlds!`);
-						print(worlds);
-						self.initialiseMap(mapConfig);
-
-					} else {
-						throw new Error("Could not retrieve world data.");
-					}
-				});
+					// initialise map
+					print(`Loaded ${worlds.length} worlds!`);
+					print(worlds);
+					self.initialiseMap(mapConfig);
+				}).catch((error) => {throw new Error(`Could not retrieve world data: ${error}`)});
 			}
 		} else {
 			return this.mapWorlds;
@@ -466,18 +477,13 @@ export default class Gamemap {
 			if (place >= 0) { // is destination a worldID?
 				gotoWorld(place);
 			} else { // it is a locationID
-				let locationID = Math.abs(place);
 				print("going to location");
-				this.getLocation(locationID, onGetLocation);
-				function onGetLocation(location) {
-					if (location != null) {
-						print(location);
-						self.goto(location);
-					} else {
-						M.toast({html: "That location doesn't exist!"});
-						self.mapCallbacks?.setLoading(false);
-					}
-				}
+				this.getLocation(Math.abs(place)).then(location => {
+					self.goto(location);
+				}).catch(() => {
+					M.toast({html: "That location doesn't exist!"});
+					self.mapCallbacks?.setLoading(false);
+				});
 			}
 		}
 
@@ -494,7 +500,7 @@ export default class Gamemap {
 					self.mapCallbacks?.setLoading(false);
 				} else { // else load up the new world
 					self.clearLocations();
-					let mapState = new MapState(coords);
+					let mapState = new MapState({coords: coords});
 					let world = self.getWorldFromID(worldID);
 					print(`Going to world... ${world.displayName} (${world.id});`);
 					print(world);
@@ -617,12 +623,11 @@ export default class Gamemap {
 
 		// if cellResource is a string, then get cellResource array data and call ourselves again
 		if (cellResources != null && !Array.isArray(cellResources)) {
-			function loadCellResources(array) {
+			this.getCellResourceData(cellResources).then(array => {
 				if (self.isGridShown()) {
 					self.toggleGrid(self.isGridShown(), cellBounds, array);
 				}
-			}
-			this.getCellResourceData(cellResources, loadCellResources);
+			});
 		}
 
 		if (toggle) { // if draw grid == true
@@ -756,27 +761,23 @@ export default class Gamemap {
 		return this.getMapState().showGrid;
 	}
 
-	getCellResourceData(resourceID, callback) {
-
+	// async function to get cell resource data
+	async getCellResourceData(resourceID) {
 		if (resourceID != null || resourceID != "") {
 
 			var queryParams = {};
 			queryParams.action = "get_cellresource";
-			queryParams.db = this.mapConfig.database;
+			queryParams.db = MAPCONFIG.database;
 			queryParams.worldid = this.getCurrentWorldID();
 			queryParams.editorid = resourceID;
 
-			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-				if (!error && data != null) {
-
-					// y flip
-					let array = data.resources[0].data;
-					for (let i in array) {
-						array[i] = array[i].reverse();
-					}
-					callback(array);
-				}
-			});
+			// get result and flip it
+			let result = await getJSON(GAME_DATA_SCRIPT + queryify(queryParams));
+			let array = result.resources[0].data;
+			for (let i in array) {
+				array[i] = array[i].reverse();
+			}
+			return array;
 		}
 	}
 
@@ -895,7 +896,7 @@ export default class Gamemap {
 			let location = new Location({
 				locType:  (isMarker) ? LOCTYPES.MARKER : (shape == "Polygon") ? LOCTYPES.AREA : LOCTYPES.PATH,
 				coords: self.toCoords(layer.getCoordinates()),
-			});
+			}, this.getCurrentWorld());
 			this.getCurrentWorld()?.locations?.set(location.id, location);
 			this.edit(location);
 		});
@@ -926,77 +927,85 @@ export default class Gamemap {
 		queryParams.db = this.mapConfig.database;
 
 		// make api query
-		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-			if (!error && data?.locations) {
-				let locations = data.locations;
-				let locationMap = new Map();
+		getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
+			let locations = data.locations;
+			let locationMap = new Map();
 
-				print(`Got ${data.locationCount} locations!`);
-				print(locations);
+			print(`Got ${data.locationCount} locations!`);
+			print(locations);
 
-				locations.forEach(location => {
-					if (location.id && location.visible == 1 && !location.description.includes("teleport dest")) {
-						locationMap.set(location.id, new Location(location, world));
-					}
-				});
-
-				// update world
-				self.mapWorlds.get(world.id).locations = locationMap;
-
-				// make sure we're in the right world before overwriting all locations
-				if (self.getCurrentWorldID() == world.id) {
-					self.updateMapState();
-					self.redrawLocations(locationMap);
+			locations.forEach(location => {
+				if (location.id && location.visible == 1 && !location.description.includes("teleport dest")) {
+					locationMap.set(location.id, new Location(location, world));
 				}
-			} else {
-				print.warn("There was an error getting locations for this world!");
-			}
-		});
+			});
 
+			// update world
+			self.mapWorlds.get(world.id).locations = locationMap;
+
+			// make sure we're in the right world before overwriting all locations
+			if (self.getCurrentWorldID() == world.id) {
+				self.redrawLocations(locationMap);
+			}
+
+		}).catch(error => {throw new Error(`There was an error getting locations: ${error}`)});
 	}
 
-	getLocation(locationID, onLoadFunction) {
+	// async function to get location from cache or from server
+	async getLocation(identifier) {
 
-		locationID = Math.abs(locationID);
-		let hasSearchedLocal = false;
-		let callback = function(location) {
-			onLoadFunction.call(null, location);
-		}
+		// reject if null
+		if (identifier == null) { return Promise.reject("Location identifier was null") }
 
-		print(`Getting info for locationID: ${locationID}`);
+		// get location ID from identifier
+		let isNumerical = !isNaN(identifier) || identifier instanceof Location;
+		let isString = identifier instanceof String || typeof identifier === "string";
+		let locationID = identifier?.id ?? identifier;
+		let locationName = isString ? identifier?.toLowerCase() : null;
+		let localLocation;
 
-		// iterate through local world list to see if locationID exists in them
-		this.mapWorlds?.forEach(world => {
-			if (world?.locations?.has(locationID)) {
-				hasSearchedLocal = true;
-				callback(world.locations.get(locationID));
-			}
-		});
+		print(`Getting info for location: ${isNumerical ? locationID : locationName}`);
 
-		// if no local copies of that locationID exist, search the online db
-		if (!hasSearchedLocal) {
-			let queryParams = {};
-			queryParams.action = "get_loc";
-			queryParams.locid = locationID;
-			queryParams.db = this.mapConfig.database;
-
-			getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-
-				print(data);
-
-				if (!error && data?.locations[0] != null) {
-					print("Got location info!");
-					let world = self.getWorldFromID(data?.locations[0]?.worldId);
-					print(data.locations[0]);
-					let location = new Location(data.locations[0], world)
-					callback(location);
-				} else {
-					print("LocationID " + locationID + " was invalid.");
-					callback(null);
+		// search local cache for location first
+		if (isNumerical) { // check locations for matching numerical id
+			this.mapWorlds?.forEach(world => {
+				if (world?.locations?.has(locationID)) {
+					localLocation = world?.locations?.get(locationID);
 				}
+			});
+		} else if (isString && !localLocation) { // search locations for matching name
+			this.mapWorlds?.forEach(world => {
+				world?.locations?.forEach(location => {
+					if (location.name.toLowerCase() == locationName) {
+						localLocation = location;
+					}
+				});
 			});
 		}
 
+		if (localLocation) { // return local location if we found any
+			return Promise.resolve(localLocation);
+		} else { // if no local copies were found, search the online db
+			let queryParams = {};
+			queryParams.action = isNumerical ? "get_loc" : "get_centeron";
+			queryParams.db = MAPCONFIG.database;
+			if (isNumerical) {
+				queryParams.locid = locationID;
+			} else if (isString) {
+				queryParams.centeron = locationName;
+			}
+
+			let response = await getJSON(GAME_DATA_SCRIPT + queryify(queryParams));
+			if (response && response.locations.length > 0) {
+				print("Got location info!");
+				let world = self.getWorldFromID(response?.locations[0]?.worldId);
+				let location = new Location(response.locations[0], world);
+				print(location);
+				return location;
+			} else {
+				return Promise.reject(`Location ${locationID} was invalid.`);
+			}
+		}
 	}
 
 	clearLocations() {
@@ -1010,12 +1019,16 @@ export default class Gamemap {
 
 	getLocTypeByName(locTypeName) {
 
-		locTypeName = locTypeName.trim().toLowerCase() + "";
+		locTypeName = locTypeName?.trim()?.toLowerCase();
 
-		if (this.mapConfig != null && this.mapConfig.icons != null && locTypeName != "") {
-			for (let locType in this.mapConfig.icons) {
-				if (locTypeName === this.mapConfig.icons[locType].toLowerCase()) {
-					return locType;
+		if (MAPCONFIG.icons && locTypeName != "") {
+			print(locTypeName);
+
+			for (const [key, value] of MAPCONFIG.icons) {
+				print(key, value);
+				if (locTypeName == value?.toLowerCase()) {
+					print("found it");
+					return key;
 				}
 			}
 		} else {
@@ -1283,7 +1296,9 @@ export default class Gamemap {
 
 			});
 
-			self.updateMapState();
+			if (self.getMapState()) {
+				self.updateMapState();
+			}
 			self.clearTooltips();
 		});
 
@@ -1358,10 +1373,7 @@ export default class Gamemap {
 					this.goto(location.destinationID);
 				} else { // it is a location ID
 					print(location.destinationID)
-					function onGetLocation(location) {
-						self.goto(-location.id);
-					}
-					this.getLocation(location.destinationID, onGetLocation);
+					this.getLocation(location.destinationID).then((location) => self.goto(location));
 				}
 			}
 		} else {
@@ -1531,7 +1543,7 @@ export default class Gamemap {
 		queryParams.db = this.mapConfig.database;
 		this.mapCallbacks?.setLoading("Getting permissions");
 
-		getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(_, data) {
+		getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
 			let canEdit = data?.canEdit;
 			self.mapConfig.editingEnabled = ((canEdit || isDebug) && (!self.isEmbedded() && !isMobile()));
 			self.mapCallbacks?.onPermissionsLoaded(self.mapConfig.editingEnabled);

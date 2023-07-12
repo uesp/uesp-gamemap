@@ -58,7 +58,7 @@
 
     let recentChanges = [];
     let editHistory = [];
-    let currentZoom = gamemap.getCurrentZoom().toFixed(3);
+    let currentZoom = gamemap.getCurrentZoom()?.toFixed(3);
 
     let liveEdit = false;
     let directEdit = null;

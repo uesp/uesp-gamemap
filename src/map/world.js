@@ -5,32 +5,32 @@
  */
 
 export default class World {
-	constructor(world, mapConfig) {
+	constructor(data) {
 
-		if (world != null) {
-			this.displayName = world.displayName;
-			this.name = world.name.toLowerCase();
-			this.description = world.description || "";
+		if (data != null) {
+			this.displayName = data.displayName;
+			this.name = data.name.toLowerCase();
+			this.description = data.description || "";
 
 			// locations are loaded async after the world is created
 			this.locations = null;
 
-			this.id = world.id || 0;
-			this.parentID = (world?.parentId == -1) ? null : world.parentId ?? null;
-			this.revisionID = world.revisionId || 0;
+			this.id = data.id || 0;
+			this.parentID = (data?.parentId == -1) ? null : data.parentId ?? null;
+			this.revisionID = data.revisionId || 0;
 
-			this.wikiPage = world.wikiPage || null;
-			this.cellSize = world.cellSize || -1;
+			this.wikiPage = data.wikiPage || null;
+			this.cellSize = data.cellSize || -1;
 
-			this.zoomOffset = mapConfig.zoomOffset ?? world.zoomOffset;
-			this.defaultZoom = world.defaultZoom - this.zoomOffset;
-			this.maxZoomLevel = world.maxZoom - this.zoomOffset;
-			this.minZoomLevel = world.minZoom - this.zoomOffset || 0;
+			this.zoomOffset = MAPCONFIG.zoomOffset ?? data.zoomOffset;
+			this.defaultZoom = data.defaultZoom - this.zoomOffset;
+			this.maxZoomLevel = data.maxZoom - this.zoomOffset;
+			this.minZoomLevel = data.minZoom - this.zoomOffset || 0;
 
-			this.minX = mapConfig.minX ?? world.posLeft;
-			this.maxX = mapConfig.maxX ?? world.posRight;
-			this.minY = mapConfig.minY ?? world.posBottom;
-			this.maxY = mapConfig.maxY ?? world.posTop;
+			this.minX = MAPCONFIG.minX ?? data.posLeft;
+			this.maxX = MAPCONFIG.maxX ?? data.posRight;
+			this.minY = MAPCONFIG.minY ?? data.posBottom;
+			this.maxY = MAPCONFIG.maxY ?? data.posTop;
 
 			// get max range of x and y, assure it is a positive number
 			this.maxRangeX = Math.abs(this.maxX - this.minX);
@@ -38,14 +38,14 @@ export default class World {
 
 			this.numTilesX = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the X direction
 			this.numTilesY = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the Y direction
-			this.dbNumTilesX = world.maxTilesX; //actual number of tiles in the X direction
-			this.dbNumTilesY = world.maxTilesY; //actual number of tiles in the Y direction
+			this.dbNumTilesX = data.maxTilesX; //actual number of tiles in the X direction
+			this.dbNumTilesY = data.maxTilesY; //actual number of tiles in the Y direction
 
-			this.legacy = world; // legacy attributes from server
+			this.legacy = data; // legacy attributes from server
 
 			// world display data (grids and layers)
-			this.displayData = (world?.displayData) ? JSON.parse(world.displayData) : null;
-			this.layers = this.displayData?.layers ?? mapConfig.layers;
+			this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : null;
+			this.layers = this.displayData?.layers ?? MAPCONFIG.layers;
 			this.gridStart = this.displayData?.gridStart;
 		} else {
 			throw new Error("World cannot be null!");
@@ -68,8 +68,8 @@ export default class World {
 	getWorldDimensions() {
 
 		let dimens = {};
-		let width  = ((gamemap.getMapConfig().coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.dbNumTilesX : this.numTilesX * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
-		let height = ((gamemap.getMapConfig().coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.dbNumTilesY : this.numTilesY * gamemap.getMapConfig().tileSize) * Math.pow(2, 0);
+		let width  = ((MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.dbNumTilesX : this.numTilesX * MAPCONFIG.tileSize) * Math.pow(2, 0);
+		let height = ((MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.dbNumTilesY : this.numTilesY * MAPCONFIG.tileSize) * Math.pow(2, 0);
 
 		dimens.width = width;
 		dimens.height = height;
@@ -86,7 +86,7 @@ export default class World {
 		var query = 'action=set_world';
 
 		query += '&worldid=' + this.id;
-		query += '&db=' + gamemap.getMapConfig().database;
+		query += '&db=' + MAPCONFIG.database;
 		query += '&parentid=' + encodeURI(this.parentID);
 		query += '&revisionid=' + this.revisionID;
 		query += '&name=' + encodeURI(this.name);
@@ -110,7 +110,7 @@ export default class World {
 		var query = 'action=enable_world';
 
 		query += '&worldid=' + this.id;
-		query += '&db=' + gamemap.getMapConfig().database;
+		query += '&db=' + MAPCONFIG.database;
 		query += '&enabled=0';
 
 		return query;

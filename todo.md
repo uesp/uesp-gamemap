@@ -7,30 +7,40 @@
 - fix eso icons not loading on firefox on gamemap.uesp.net
 - fixed locations being edited before they should be (bangkorai was being marked as edited on open)
 >> added bonus, perf fix as not spam edits as soon as you open editor
+- fixed type:wayshrine search not working (broke with the change to Maps a while ago)
+- fixed location drifting
 
 ## polish
 
 - fixed edit history items with long titles expanding the editor div (not respecting user-chosen width)
 - made resizing the editor track the mouse more accurately
-- added a max width to editor
+- added max width to editor
+
+## technical
+- rewrote getLocation() and getJSON() functions to use async/promises instead of callbacks
+>> allows function chaining, for example ``getLocation(50).then(goto(50))``
+- added search by location name and object to getLocation as well
+
+- fixed edit history items with long titles expanding the editor div (not respecting user-chosen width)
+- made resizing the editor track the mouse more accurately
+- added max width to editor
+
+## location drifting
+
+clues:
+- whenever it happened, the display level was changed
+- it could be replicated sometimes by editing affected locations
+- it could be triggered by going in and out of dungeon maps
+- from the user provided logs, the xy coordinates lined up to where they were on live, so it is a client issue
+- only happened on save, the location stayed the same in the client
+
+analysis: was a location.js issue, the eso specific coord conversion
+uses a global "world" ref inside the file to do that, if you go into a new map with new locations
+as new locations are made, it changed that global world ref and affected existing locs on save
 
 ## todo
 
-
-
 - add location.openPopup() method in location.js that finds marker by location and opens its popups
-
-
-pendingJump = object {data: {}, edit: true}
-
-
-add search by location name in getLocation() and locationid
-
-
-- after moving dodgy location, it went even further north than it already was
-
-dodgy request:
-db/gamemap.php?action=set_loc&name=Hall%20of%20Heroes&description=&wikipage=Hall%20of%20Heroes&loctype=1&locid=1813&worldid=168&destid=5245&revisionid=89142&db=eso&visible=1&x=468000.000&y=108000.000&locwidth=32.000&locheight=32.000&displaylevel=10&displaydata=%7B%22labelPos%22%3A10%2C%22points%22%3A%5B%22468000.000%22%2C%22108000.000%22%5D%7D&icontype=57
 
 - fix focus on svelte elements mean cant move map (mobile specifically)
 >> try re allowing map panning on the "zoom" or "move" events
@@ -43,6 +53,10 @@ db/gamemap.php?action=set_loc&name=Hall%20of%20Heroes&description=&wikipage=Hall
 - fix entering negative locIDs for destIDs being obnoxious (entering minus makes it 0)
 > Entering negative numbers is most definitely not a fluid, natural function. The computer fights me, enteriong a zero or ignoring the negative sign.
 
+- update map channel that you fixed loc drift
+
+- make getjson use promises
+- getjson post for greymoor caverns blackreach
 
 - fix line colour preview showing fill colours from area
 
@@ -88,6 +102,9 @@ https://esomap.uesp.net/?centeron=24972
 
 - use eso dev maps as separate layers
 
+- return locationID to positive an world to negative
+- change ui to have "world/location" switch under icon for destID
+
 "goto article" button doesnt update when world wiki link updated
 
 - fix RC inconsistently being resized after coming back from editing location
@@ -131,7 +148,6 @@ https://esomap.uesp.net/?centeron=24972
 - add middle click event listener to button and listItem
 >> allow middle click to open in new tab for goto article button
 >> and add middle click on listitems to open in a new tab w/ centreon link
-- fix recent changes list overflowing downwards
 - fix location list dropdown not being centred properly
 - bring back editing throbbing animation for locations
 - fix live edit on world name location switcher
