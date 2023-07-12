@@ -15,6 +15,7 @@
 - fixed edit history items with long titles expanding the editor div (not respecting user-chosen width)
 - made resizing the editor track the mouse more accurately
 - added max width to editor
+- added centreon url feature
 
 ## technical
 - rewrote getLocation() and getJSON() functions to use async/promises instead of callbacks

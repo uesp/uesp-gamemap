@@ -960,7 +960,7 @@ export default class Gamemap {
 		// get location ID from identifier
 		let isNumerical = !isNaN(identifier) || identifier instanceof Location;
 		let isString = identifier instanceof String || typeof identifier === "string";
-		let locationID = identifier?.id ?? identifier;
+		let locationID = Math.abs(identifier?.id ?? identifier);
 		let locationName = isString ? identifier?.toLowerCase() : null;
 		let localLocation;
 
