@@ -22,6 +22,7 @@
 - added max width to editor
 - reallowed console logging for release builds, but disabled on mobile (was causing issues on iphone)
 - added tooltips to various things that didnt have any before (editor buttons, sections)
+- polygons now use visual centre instead of mathematical centre (mean) for stuff like labels, icons, tooltips
 
 ## technical
 - rewrote getLocation() and getJSON() functions to use async/promises instead of callbacks

@@ -491,9 +491,9 @@ window.polygonCenter = function polygonCenter(points) {
 		p1 = points[i];
 		p2 = points[j];
 
-		f = p1.y * p2.x - p2.y * p1.x;
-		x += (p1.x + p2.x) * f;
-		y += (p1.y + p2.y) * f;
+		f = Number(p1.y) * Number(p2.x) - Number(p2.y) * Number(p1.x);
+		x += (Number(p1.x) + Number(p2.x)) * f;
+		y += (Number(p1.y) + Number(p2.y)) * f;
 		area += f * 3;
 	}
 
