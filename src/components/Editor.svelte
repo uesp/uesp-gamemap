@@ -450,7 +450,7 @@
              <!-- edit panel appbar -->
              <AppBar title={!isEditing ? "Map Editor" : ((modEditObject.id > 0) ? "Editing" : "Adding") + " " + objectType.toSentenceCase()}
                 subtitle={isEditing ? (isWorld) ? modEditObject.displayName + " ("+modEditObject.name+")" : modEditObject.name : null} unsavedChanges={unsavedChanges}
-                icon={isEditing && !directEdit ? "arrow_back" : "close"} on:back={() => back()} tooltip={unsavedChanges ? "You have unsaved changes" : null}
+                icon={isEditing && !directEdit ? "arrow_back" : "close"} on:back={() => back()} tooltip={unsavedChanges ? "You have unsaved changes" : null} buttonTooltip={isEditing && !directEdit ? "Go back" : "Close"}
              />
 
              <!-- edit panel content -->

@@ -1,7 +1,6 @@
 ## last week
 
 ## bug fixes
-
 - fixed being able to right click to remove markers
 - fix console.warn error when cancelling new location on gamemap
 - fix eso icons not loading on firefox on gamemap.uesp.net
@@ -13,7 +12,6 @@
 >> as new locations are made, it changed that global world ref and affected existing locs on save
 
 ## polish
-
 - fixed edit history items with long titles expanding the editor div (not respecting user-chosen width)
 - made resizing the editor track the mouse more accurately
 - themed scrollbars to be more minimal (on chrome) to get out of the way
@@ -22,6 +20,8 @@
 - fixed edit history items with long titles expanding the editor div (not respecting user-chosen width)
 - made resizing the editor track the mouse more accurately
 - added max width to editor
+- reallowed console logging for release builds, but disabled on mobile (was causing issues on iphone)
+- added tooltips to various things that didnt have any before (editor buttons, sections)
 
 ## technical
 - rewrote getLocation() and getJSON() functions to use async/promises instead of callbacks
@@ -50,8 +50,13 @@ https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=dri
 
 - do edit templates for dawnstar per dcsg asked
 
+- make centring on locations open their popups
+
 - fix entering negative locIDs for destIDs being obnoxious (entering minus makes it 0)
 > Entering negative numbers is most definitely not a fluid, natural function. The computer fights me, enteriong a zero or ignoring the negative sign.
+- revert the negative loc id/world id stuff
+- make adding new location count as unsaved changes (unsaved changes == false or location is unsaved)
+>> maybe tweak wording of popup "discard adding new location?"
 
 - getjson post for greymoor caverns blackreach
 
@@ -71,19 +76,13 @@ https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=dri
 - double clicking markers that arent clickable edits them
 - fix having to load new world once, then click RC item again to jump to centre of it
 
-- make adding new location count as unsaved changes (unsaved changes == false or location is unsaved)
 
 if adding location, save will dismiss the editor window
 if adding location, close button is always "cancel"
 
 - sort map menu by release date (ask dave to implement backend)
 
-- wiki links to skyshards used positive id for locations instead of negative (need to be changed)
-https://esomap.uesp.net/?centeron=24972
-
 - click thing in edit history, prompt to revert, then do network call (ask dave to implement backend)
-- remove edit history being clickable with ripple
-
 
 - fix lag in opening big search results (use virtual list)
 
@@ -100,7 +99,7 @@ https://esomap.uesp.net/?centeron=24972
 
 - fix colour picker default colour to something sensible instead of the blue
 
-- -0.5 on all locations client side
+- make max zoom of all locations -0.5 on all locations client side
 
 
 - return locationID to positive an world to negative
@@ -125,10 +124,6 @@ https://esomap.uesp.net/?centeron=24972
 - cell resource state in/from url
 - add zoom/pan in effects for markers when editing
 
-- add tooltip to editor back button/ close button "Back" "Close"
-
-
-
 
 - fix description field misbehaving, being too big
 
@@ -140,7 +135,6 @@ https://esomap.uesp.net/?centeron=24972
 >> allow middle click to open in new tab for goto article button
 >> and add middle click on listitems to open in a new tab w/ centreon link
 - fix location list dropdown not being centred properly
-- bring back editing throbbing animation for locations
 - fix live edit on world name location switcher
 - fix live edit on worlds (every change changes the current world in map object)
 - make embeded map watermark actually open in new tab

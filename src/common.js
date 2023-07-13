@@ -4,6 +4,9 @@
  * @summary Contains common functions and constants for the gamemap.
  */
 
+// import data classes
+import Point from "./map/point.js";
+
 /*================================================
 					Constants
 ================================================*/
@@ -84,9 +87,8 @@ window.isChrome = function isChrome() {
 	return window.chrome != null;
 }
 
-/** Debug print function,disabled on release */
-if (true || isDebug || location.toString().includes("localhost") || location.toString().includes("devgame")) {
-	// override print function to be custom console log
+/** Debug print function, disabled for mobile */
+if (!isMobile() || isDebug || location.toString().includes("localhost") || location.toString().includes("devgame")) {
 
 	// Prevent the default print action from occurring
 	window.addEventListener('beforeprint', function(event) {event.preventDefault() });
@@ -472,4 +474,34 @@ window.encodeURI = function encodeURI(data) {
 	} else {
 		return "";
 	}
+}
+
+/** Function that gets the visual centre of a polygon
+ * @param {Array} points - an array of Point objects that represents the polygon
+ * @returns {Object} centre - the center ([centroid](http://en.wikipedia.org/wiki/Centroid)) of the passed LatLngs (first ring) from a polygon.
+ */
+window.polygonCenter = function polygonCenter(points) {
+	var i, j, p1, p2, f, area, x, y, centre;
+
+	var len = points.length;
+	area = x = y = 0;
+
+	// polygon centroid algorithm;
+	for (i = 0, j = len - 1; i < len; j = i++) {
+		p1 = points[i];
+		p2 = points[j];
+
+		f = p1.y * p2.x - p2.y * p1.x;
+		x += (p1.x + p2.x) * f;
+		y += (p1.y + p2.y) * f;
+		area += f * 3;
+	}
+
+	if (area === 0) {
+		// Polygon is so small that all points are on same pixel.
+		centre = points[0];
+	} else {
+		centre = new Point(x / area, y / area, MAPCONFIG.coordType);
+	}
+	return centre;
 }

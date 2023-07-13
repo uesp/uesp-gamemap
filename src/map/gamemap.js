@@ -1133,7 +1133,7 @@ export default class Gamemap {
 
 				if (location.hasIcon()) {
 					marker.setIsIconPolygon(true);
-					polygonIcon = this.makeMarker(location, marker.getCentre());
+					polygonIcon = this.makeMarker(location, this.toLatLngs(location.getCentre()));
 				}
 			}
 

@@ -18,6 +18,7 @@
     export let title = "This is an appbar."
     export let subtitle;
     export let tooltip;
+    export let buttonTooltip;
     export let unsavedChanges;
 
     const dispatch = createEventDispatcher();
@@ -30,7 +31,7 @@
 
 <markup>
     <div class="appbar">
-        <IconButton icon={icon} hasBackground="false" on:click={onBackClicked}></IconButton>
+        <IconButton icon={icon} hasBackground="false" on:click={onBackClicked} tooltip={buttonTooltip}></IconButton>
         <div class="title-container">
             <b class="appbar-title" title={tooltip}>{title} {unsavedChanges ? " *" : ""}</b>
             {#if subtitle != null}
