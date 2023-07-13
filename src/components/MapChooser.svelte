@@ -20,35 +20,33 @@
     print("Getting available maps...");
     let queryParams = {};
 	queryParams.action = "get_maps";
-    getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-        if (!error && data) {
+    getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
+        print(data);
 
-            print(data);
+        // sort data in alphabetical order
+        const sortObject = o => Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {})
+        let mapInfos = sortObject(data.mapInfos);
 
-            // sort data in alphabetical order
-            const sortObject = o => Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {})
-            let mapInfos = sortObject(data.mapInfos);
+        // define map list object
+        let mapList = { official: [], mods: [] };
 
-            // define map list object
-            let mapList = { official: [], mods: [] };
+        for (let [key, object] of Object.entries(mapInfos)) {
+            let map = {};
+            map.database = key;
+            map.name = object.mapTitle.replace('Gamemap', '').replace('Map', '').trim();
 
-            for (let [key, object] of Object.entries(mapInfos)) {
-                let map = {};
-                map.database = key;
-                map.name = object.mapTitle.replace('Gamemap', '').replace('Map', '').trim();
-
-                if (!object.isModded) {
-                    mapList.official.push(map);
-                } else {
-                    mapList.mods.push(map);
-                }
+            if (!object.isModded) {
+                mapList.official.push(map);
+            } else {
+                mapList.mods.push(map);
             }
-
-            print(mapList);
-
-            maps = mapList;
-            print(maps);
         }
+
+        print(mapList);
+
+        maps = mapList;
+        print(maps);
+
     });
 
 </script>

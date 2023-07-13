@@ -306,9 +306,9 @@ export default class Gamemap {
 
 		// update map state
 		mapState = mapState ?? this.getMapState();
-		let x = Number(this.toCoords(map.getCenter()).x, this.mapConfig.coordType).toFixed(3);
-		let y = Number(this.toCoords(map.getCenter()).y, this.mapConfig.coordType).toFixed(3);
-		mapState.coords = (this.mapConfig.coordType == COORD_TYPES.NORMALISED || this.mapConfig.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? [x, y] : [Math.floor(x), Math.floor(y)];
+		let x = Number(this.toCoords(map.getCenter()).x, MAPCONFIG.coordType).toFixed(3);
+		let y = Number(this.toCoords(map.getCenter()).y, MAPCONFIG.coordType).toFixed(3);
+		mapState.coords = (MAPCONFIG.coordType == COORD_TYPES.NORMALISED || MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? [x, y] : [Math.floor(x), Math.floor(y)];
 		mapState.zoom = parseFloat(map.getZoom().toFixed(3));
 		mapState.world = this.getWorldFromID(this.currentWorldID);
 		this.currentMapState = mapState;
@@ -316,7 +316,7 @@ export default class Gamemap {
 		// update url
 		let mapLink;
 		if (!location.href.includes("localhost")) { // use server schema if hosted
-			mapLink = (window.location.href.includes("/"+this.mapConfig.database+"/")) ? "?" : (this.mapConfig.database+"/?");
+			mapLink = (window.location.href.includes("/"+MAPCONFIG.database+"/")) ? "?" : (MAPCONFIG.database+"/?");
 		} else {
 			mapLink = "?";
 		}
@@ -471,8 +471,6 @@ export default class Gamemap {
 		} else if (isLocation) {
 			let location = place;
 			gotoWorld(location.worldID, location.getCentre());
-			//openPopup(location); //TODO
-
 		} else if (isID) {
 			if (place >= 0) { // is destination a worldID?
 				gotoWorld(place);
@@ -1379,7 +1377,7 @@ export default class Gamemap {
 		} else {
 			if (shift) { // if shift pressed, and can edit, show edit menu
 				if (!this.mapLock) {
-					this.openPopup(marker, this.canEdit());
+					marker.openPopup(this.canEdit());
 				}
 			}
 		}
@@ -1390,23 +1388,14 @@ export default class Gamemap {
 			if (canJumpTo && !ctrl){
 				// do nothing
 			} else {
-				this.openPopup(marker);
+				marker.openPopup();
 			}
 
 		}
 
 	}
 
-	openPopup(marker, isEdit) {
-		if (!isEdit){
-			print("making popup");
-			print(marker);
-			print(marker.element);
-			L.popup(marker.getCentre(), {content: marker.location.getPopupContent()}).openOn(map);
-		} else {
-			this.edit(marker.location);
-		}
-	}
+
 
 	setZoomTo(zoom) {
 		map.setZoom(zoom, {animate: true})
@@ -1528,6 +1517,7 @@ export default class Gamemap {
 	edit(object) {
 		// tell the editor we're editing this object
 		this.mapCallbacks?.edit(object);
+		this.getMapObject().closePopup();
 	}
 
 	// get if editing is enabled on this map
@@ -1675,5 +1665,17 @@ L.Layer.include({
 				updateMarkerCoords(self.toCoords(e.layer.getCoordinates()));
 			}
 		});
-	}
+	},
+
+	// open marker popup
+	openPopup(doEdit) {
+		if (!doEdit){
+			print("making popup");
+			print(this);
+			print(this.getElement());
+			L.popup(this.getCentre(), {content: this.getLocation().getPopupContent()}).openOn(map);
+		} else {
+			gamemap.edit(this.location);
+		}
+	},
 });

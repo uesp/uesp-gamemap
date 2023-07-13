@@ -14,8 +14,6 @@
     export let label;
     export let enabled = false;
     export let tooltip;
-    export let expand;
-    $: print(expand);
 
     const dispatch = createEventDispatcher();
 

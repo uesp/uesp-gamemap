@@ -186,7 +186,7 @@
             gamemap.deleteLocation(modEditObject);
             let query = queryify(objectify(modEditObject.getDeleteQuery()));
             // do async api request to actually delete the location
-            getJSON(GAME_DATA_SCRIPT + query, () => { getRecentChanges();});
+            getJSON(GAME_DATA_SCRIPT + query).then(() => getRecentChanges());
             cancel();
         } else {
             deleteDialog.show();
@@ -205,36 +205,31 @@
         saveButton.$set({ text: "Saving...", icon: "loading" });
 
         print(query);
-        getJSON(query, function(error, data) {
-
-            if (!error && data) {
-                if (!data?.isError) {
-                    // modify location with new attributes if available
-                    if (modEditObject?.unsavedLocation) {
-                        modify("unsavedLocation", false);
-                        modify("id", data.newLocId);
-                    }
-                    modify("revisionID", data?.newRevisionId);
-                    if (isLocation) { gamemap.updateLocation(modEditObject) }
-
-                    // overwrite existing object with deep clone of modified one
-                    editObject = Object.assign(Object.create(Object.getPrototypeOf(modEditObject)), modEditObject);
-
-                    // update edit history lists
-                    getEditHistory(editObject);
-                    getRecentChanges()
-
-                    // reset save button
-                    unsavedChanges = false;
-                    saveButton.$set({ text: "Save", icon: "save" });
-                } else {
-                    print(data.errorMsg);
-                    saveButton.$set({ text: data.errorMsg.includes("permissions") ? "Insufficient permissions!" : data.errorMsg, icon: "warning" });
+        getJSON(query).then(data => {
+            if (!data?.isError) {
+                // modify location with new attributes if available
+                if (modEditObject?.unsavedLocation) {
+                    modify("unsavedLocation", false);
+                    modify("id", data.newLocId);
                 }
+                modify("revisionID", data?.newRevisionId);
+                if (isLocation) { gamemap.updateLocation(modEditObject) }
+
+                // overwrite existing object with deep clone of modified one
+                editObject = Object.assign(Object.create(Object.getPrototypeOf(modEditObject)), modEditObject);
+
+                // update edit history lists
+                getEditHistory(editObject);
+                getRecentChanges()
+
+                // reset save button
+                unsavedChanges = false;
+                saveButton.$set({ text: "Save", icon: "save" });
             } else {
-                saveButton.$set({ text: `Error saving ${objectType}!`, icon: "warning" });
+                print(data.errorMsg);
+                saveButton.$set({ text: data.errorMsg.includes("permissions") ? "Insufficient permissions!" : data.errorMsg, icon: "warning" });
             }
-        });
+        }).catch(() => saveButton.$set({ text: `Error saving ${objectType}!`, icon: "warning" }));
     }
 
     // cancel editing
@@ -386,20 +381,16 @@
         queryParams.action = "get_rc";
         queryParams.db = MAPCONFIG.database;
 
-        getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
-            if (!error && data?.recentChanges) {
-
-                print("parsing data...");
-                let tempList = [];
-                for (let i = 0; i < data.recentChanges.length; i++) {
-                    tempList.push(getRCItem(data.recentChanges[i]));
-                }
-                recentChanges = tempList;
-
-                print("got recent changes: ");
-                print(recentChanges);
-
+        getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
+            print("parsing data...");
+            let tempList = [];
+            for (let i = 0; i < data.recentChanges.length; i++) {
+                tempList.push(getRCItem(data.recentChanges[i]));
             }
+            recentChanges = tempList;
+
+            print("got recent changes: ");
+            print(recentChanges);
         });
     }
 
@@ -407,10 +398,8 @@
     function getEditHistory(object) {
         editHistory = [];
         let type = (isWorld) ? "world" : "loc";
-        getJSON(GAME_DATA_SCRIPT + `?db=${MAPCONFIG.database}&action=get_${type}rev&${type}id=${object.id}`, function(error, data) {
-            print(data);
-            print(error);
-            if (!error && data) { editHistory = data.revisions ? Object.values(data.revisions) : []}
+        getJSON(GAME_DATA_SCRIPT + `?db=${MAPCONFIG.database}&action=get_${type}rev&${type}id=${object.id}`).then(data => {
+            editHistory = data.revisions ? Object.values(data.revisions) : [];
         });
     }
 

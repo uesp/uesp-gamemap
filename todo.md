@@ -6,42 +6,41 @@
 - fix console.warn error when cancelling new location on gamemap
 - fix eso icons not loading on firefox on gamemap.uesp.net
 - fixed locations being edited before they should be (bangkorai was being marked as edited on open)
->> added bonus, perf fix as not spam edits as soon as you open editor
+>> added bonus, performance fix as not spam edits as soon as you open editor
 - fixed type:wayshrine search not working (broke with the change to Maps a while ago)
 - fixed location drifting
+>> was a location.js issue, the eso specific coord conversion used a global "world" ref inside the file
+>> as new locations are made, it changed that global world ref and affected existing locs on save
 
 ## polish
 
 - fixed edit history items with long titles expanding the editor div (not respecting user-chosen width)
 - made resizing the editor track the mouse more accurately
+- themed scrollbars to be more minimal (on chrome) to get out of the way
 - added max width to editor
 - added centreon url feature
+- fixed edit history items with long titles expanding the editor div (not respecting user-chosen width)
+- made resizing the editor track the mouse more accurately
+- added max width to editor
 
 ## technical
 - rewrote getLocation() and getJSON() functions to use async/promises instead of callbacks
 >> allows function chaining, for example ``getLocation(50).then(goto(50))``
 - added search by location name and object to getLocation as well
 
-- fixed edit history items with long titles expanding the editor div (not respecting user-chosen width)
-- made resizing the editor track the mouse more accurately
-- added max width to editor
-
-## location drifting
-
-clues:
-- whenever it happened, the display level was changed
-- it could be replicated sometimes by editing affected locations
-- it could be triggered by going in and out of dungeon maps
-- from the user provided logs, the xy coordinates lined up to where they were on live, so it is a client issue
-- only happened on save, the location stayed the same in the client
-
-analysis: was a location.js issue, the eso specific coord conversion
-uses a global "world" ref inside the file to do that, if you go into a new map with new locations
-as new locations are made, it changed that global world ref and affected existing locs on save
+## dave todo
+- Exovian wants gamemap edit access (TR editor)
+- also asked if we can  do a project tamriel map (different from tamriel rebuilt)
+- make maps in game release order
+- pt / pc maps and ask in #cross-project to add locs
+https://drive.google.com/drive/folders/1zAEvR4l_1BND0p6ULA-Ii93oX1mKsYnj
+- use eso dev maps as separate layers for eso
+- edit history revert backend stuff
+- do updated skyrim/beyond skyrim/solstheim tiles from BS guy
+https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=drive_link
+- delete bangkorai test
 
 ## todo
-
-- add location.openPopup() method in location.js that finds marker by location and opens its popups
 
 - fix focus on svelte elements mean cant move map (mobile specifically)
 >> try re allowing map panning on the "zoom" or "move" events
@@ -54,14 +53,15 @@ as new locations are made, it changed that global world ref and affected existin
 - fix entering negative locIDs for destIDs being obnoxious (entering minus makes it 0)
 > Entering negative numbers is most definitely not a fluid, natural function. The computer fights me, enteriong a zero or ignoring the negative sign.
 
-- update map channel that you fixed loc drift
-
-- make getjson use promises
 - getjson post for greymoor caverns blackreach
 
 - fix line colour preview showing fill colours from area
 
 - shift click on other locations while unsaved changes should immediately change to edit it
+
+- tweak blue marker shading to be smaller
+
+- fix tooltips hanging around when dragging marker
 
 - do some MAPLOCK.isPartial() function
 
@@ -92,6 +92,7 @@ https://esomap.uesp.net/?centeron=24972
 
 - be able to hotswap to edit different locations with popup edit or shift edit, as long as not unsaved or not new location
 
+- make clicking save dismiss editor
 
 - make map lock for editing worlds actually work (no zooming allowed)
 - get live editing working for worlds
@@ -101,50 +102,39 @@ https://esomap.uesp.net/?centeron=24972
 
 - -0.5 on all locations client side
 
-- use eso dev maps as separate layers
 
 - return locationID to positive an world to negative
 - change ui to have "world/location" switch under icon for destID
 
 "goto article" button doesnt update when world wiki link updated
 
-- fix RC inconsistently being resized after coming back from editing location
-- fix RC not going all the way down on initial edit pane open
 - make "grouped/abc" symmetrical
 
 
 - fix high res icons being clipped on icon in ListITem
 - fix location dropdown being laggy on open, remember existing location data somehow
 
-- make close button in edit panel always close the panel regardless of direct edit or not
-
 - fix not being able to click location dropdown while it's open to close it
 
 - make map key grid columns dynamic and fix overscrolling
 
 
-- check to make sure location and world editing works fine still
 - make iconbar and resizing dynamic, dont rely on css for mobile mode, do it in javascript based on map size
 
 - fix centring on locations not working, use leaflet moveto marker api to ensure centred
 - cell resource state in/from url
 - add zoom/pan in effects for markers when editing
 
-- make dialog backgrond start fading with the scale animation, dont make it just disappear when the animation is over
-
-- if location list button is overflowing, show the name of the world insated of "show location list"
-
 - add tooltip to editor back button/ close button "Back" "Close"
 
-- check to make sure world editing still works
+
+
 
 - fix description field misbehaving, being too big
 
-- wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 
 - fix centreon going to the wrong place
 - fix clicking out while zoomed in zooming in to parent map as well
-- fix type:blah not working after the icon list to js map change
 - fix requesting /null in layerbutton
 - add middle click event listener to button and listItem
 >> allow middle click to open in new tab for goto article button
@@ -169,23 +159,10 @@ to be consistent icons (an area doesnt make sense to have a pin icon)
 - fix cell resource colour intensity to make sense. deeper the colour the more stuff
 - fix pip on layer switcher ui being small
 - make readme on how to create the favicon styles for maps for future developers
-- make maps in game release order
 - use similar centre of polygon algorithm as leaflet does for locations/latlng conversion
 - organise styles.css and comment gamemap js
 - comment/refactor all code
-
-
-
-
-
-
-
-
-
-
-
-
-
+- wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 
 
 

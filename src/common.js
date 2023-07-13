@@ -85,7 +85,7 @@ window.isChrome = function isChrome() {
 }
 
 /** Debug print function,disabled on release */
-if (isDebug || location.toString().includes("localhost") || location.toString().includes("devgame")) {
+if (true || isDebug || location.toString().includes("localhost") || location.toString().includes("devgame")) {
 	// override print function to be custom console log
 
 	// Prevent the default print action from occurring
@@ -129,7 +129,7 @@ window.getJSON = function getJSON(url, requestType) {
 						// remove comments before parsing
 						resolve(JSON.parse((data.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m))))
 					} catch (error) {
-						print(error);
+						console.error(error);
 						reject(error);
 					}
 				});

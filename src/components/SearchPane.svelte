@@ -95,45 +95,40 @@
             if (name != null && name != '') queryParams.searchname = name;
 	    }
 
-        getJSON(GAME_DATA_SCRIPT + queryify(queryParams), function(error, data) {
+        getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
+            // merge both locations and worlds into a single array
+            let tempResults = [].concat(data.worlds, data.locations);
+            let tempSearchResults = []; // search results go in here
 
-            if (!error && data != null) {
+            for (let i in tempResults) {
 
-                // merge both locations and worlds into a single array
-                let tempResults = [].concat(data.worlds, data.locations);
-                let tempSearchResults = []; // search results go in here
+                let result = tempResults[i];
 
-                for (let i in tempResults) {
+                if (result != null) {
+                    let searchResult;
 
-                    let result = tempResults[i];
-
-                    if (result != null) {
-                        let searchResult;
-
-                        // check if this is a world or a location
-                        if (result.tilesX != null) {
-                            // if true, then we are a world
-                            searchResult = new SearchResult(result.displayName, null,  null, result.id);
-                        } else {
-                            // if not, this is a location
-                            let world = gamemap.getWorldFromID(result.worldId);
-                            if (world != null) {
-                                searchResult = new SearchResult(result.name, world.displayName, result.iconType, -result.id);
-                            }
-                        }
-
-                        if (searchResult != null) {
-                            tempSearchResults.push(searchResult);
+                    // check if this is a world or a location
+                    if (result.tilesX != null) {
+                        // if true, then we are a world
+                        searchResult = new SearchResult(result.displayName, null,  null, result.id);
+                    } else {
+                        // if not, this is a location
+                        let world = gamemap.getWorldFromID(result.worldId);
+                        if (world != null) {
+                            searchResult = new SearchResult(result.name, world.displayName, result.iconType, -result.id);
                         }
                     }
+
+                    if (searchResult != null) {
+                        tempSearchResults.push(searchResult);
+                    }
                 }
-                searchResults = tempSearchResults;
-                isLoading = false;
-                print(searchResults);
-            } else {
-                print.warn("There was an error getting search results.");
             }
-        });
+            searchResults = tempSearchResults;
+            isLoading = false;
+            print(searchResults);
+
+        }).catch((error) => print.warn(`There was an error getting search results: ${error}`));
     }
 
     // on search pane focused
