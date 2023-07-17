@@ -506,19 +506,38 @@ export default class Gamemap {
 					self.setMapState(mapState);
 				}
 
-			} else {
-				throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
-			}
+		} else {
+			throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
 		}
+	}
+
+	gotoLocation(id) {
+		print(`going to location: ${id}`);
+		this.mapCallbacks?.setLoading(true);
+		this.getLocation(id).then((location) => {
+			if (location.worldID == self.getCurrentWorldID()) {
+				map.setZoom(self.getCurrentZoom() - 0.0001, {animate: false}) // fix pan animation bug
+				map.setView(self.toLatLngs(location.getCentre()), self.getCurrentWorld().maxZoomLevel, {animate: true});
+				this.mapCallbacks?.setLoading(false);
+				this.mapState.pendingJump = null;
+				location.openPopup();
+			} else {
+				let mapState = new MapState({pendingJump: location});
+				self.setMapState(mapState);
+			}
+		}).catch((error) => {
+			print(error);
+			M.toast({html: "That location doesn't exist!"});
+			self.mapCallbacks?.setLoading(false);
+		});
 	}
 
 	/**
 	 * Convert leaflet LatLngs to human readable map coordinates coordinates.
 	 * @param {Object} latLngs - the leaflet latLng coordinate object
 	 * @param {Object} coordType - the coordinate system type to convert to
-	 * @param {Object} world - optional world parameter to converted based on
 	 */
-	toCoords(latLngs, coordType, world) {
+	toCoords(latLngs, coordType) {
 
 		var coords;
 		latLngs = structuredClone(latLngs);
@@ -999,7 +1018,7 @@ export default class Gamemap {
 				let world = self.getWorldFromID(response?.locations[0]?.worldId);
 				let location = new Location(response.locations[0], world);
 				print(location);
-				return location;
+				return Promise.resolve(location);
 			} else {
 				return Promise.reject(`Location ${locationID} was invalid.`);
 			}
@@ -1091,6 +1110,13 @@ export default class Gamemap {
 					// add markers to the map
 					this.getMarkers(location).forEach(marker => { marker.addTo(map) });
 					location.setWasVisible(true);
+
+					// centre to location if we have a pendingjump for it
+					if (this.mapState?.pendingJump && this.mapState.pendingJump instanceof Location) {
+						let location = this.mapState.pendingJump;
+						this.goto(location);
+					}
+
 				}
 			});
 		}
