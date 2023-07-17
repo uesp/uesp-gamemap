@@ -568,7 +568,7 @@ class GameMap
 		$result = $this->db->query($query);
 		
 		if ($result === FALSE) {
-			error_log($this->db->error);
+			//error_log($this->db->error);
 			return $this->reportError("Failed to create new revision record!");
 		}
 		
@@ -1381,8 +1381,8 @@ class GameMap
 		$result = $this->db->query($query);
 		
 		if ($result === FALSE) {
-			error_log($query);
-			error_log($this->db->error);
+			//error_log($query);
+			//error_log($this->db->error);
 			return $this->reportError("Failed to save new location data!");
 		}
 		
@@ -1418,8 +1418,8 @@ class GameMap
 		$result = $this->db->query($query);
 		
 		if ($result === FALSE) {
-			error_log($query);
-			error_log($this->db->error);
+			//error_log($query);
+			//error_log($this->db->error);
 			return $this->reportError("Failed to save world data!");
 		}
 		
@@ -1614,8 +1614,8 @@ class GameMap
 		$result = $this->db->query($query);
 		
 		if ($result === FALSE) {
-			error_log($query);
-			error_log($this->db->error);
+			//error_log($query);
+			//error_log($this->db->error);
 			return $this->reportError("Failed to enable location data!");
 		}
 		
@@ -1720,8 +1720,8 @@ class GameMap
 		$result = $this->db->query($query);
 		
 		if ($result === FALSE) {
-			error_log($query);
-			error_log($this->db->error);
+			//error_log($query);
+			//error_log($this->db->error);
 			return $this->reportError("Failed to save location data!");
 		}
 		
@@ -2175,7 +2175,7 @@ class GameMap
 		$this->addOutputItem("isError", true);
 		$this->addOutputItem("errorMsg", $errorMsg);
 		
-		error_log("Error: " . $errorMsg);
+		error_log("Map {$this->dbPrefix }Error: " . $errorMsg);
 		if ($this->db->error) error_log($this->db->error);
 		
 		return false;
