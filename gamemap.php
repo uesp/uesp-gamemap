@@ -190,6 +190,26 @@ class GameMap
 	}
 	
 	
+	public static function sortMapInfosByReleaseDate($a, $b)
+	{
+		$date1 = $a['releaseDate'];
+		$date2 = $b['releaseDate'];
+		
+		if ($date1 == null) return 0;
+		if ($date2 == null) return 0;
+		
+		$time1 = DateTime::createFromFormat('d/m/Y', $date1);
+		$time2 = DateTime::createFromFormat('d/m/Y', $date2);
+		
+		if ($time1 == false) return 0;
+		if ($time2 == false) return 0;
+		
+		if ($time1 == $time2) return 0;
+		if ($time1 > $time2) return 1;
+		return -1;
+	}
+	
+	
 	public function loadUserWikiGroupsFromToken($userId, $token)
 	{
 		if ($userId == null || $userId === '') return false;
@@ -1051,8 +1071,8 @@ class GameMap
 	public function doGetMaps()
 	{
 			//TODO: Change for svelte path
-		$path = '../assets/maps';
-		//$path = './public/assets/maps';	// Only for testing on old gamemap
+		//$path = '../assets/maps';
+		$path = './public/assets/maps';	// Only for testing on old gamemap
 		
 		$dirs = array();
 		$mapInfos = array();
@@ -1089,6 +1109,7 @@ class GameMap
 				$mapInfo['mapTitle'] = $json['mapTitle'];
 				$mapInfo['wikiNamespace'] = $json['wikiNamespace'];
 				$mapInfo['database'] = $json['database'];
+				$mapInfo['releaseDate'] = $json['releaseDate'];
 				
 				$mapInfo['bgColor'] = $json['bgColor'];
 				if ($mapInfo['bgColor'] === null) $mapInfo['bgColor'] = "";
@@ -1099,6 +1120,8 @@ class GameMap
 				$mapInfos[$map] = $mapInfo;
 			}
 		}
+		
+		uasort($mapInfos, ['GameMap', 'sortMapInfosByReleaseDate']);
 		
 		$this->addOutputItem("maps", $dirs);
 		$this->addOutputItem("mapInfos", $mapInfos);
