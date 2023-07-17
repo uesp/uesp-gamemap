@@ -539,6 +539,7 @@ class GameMap
 	public function doGetPermissions ()
 	{
 		$this->addOutputItem("canEdit", $this->canEditMap($this->dbPrefix));
+		$this->addOutputItem("isAdmin", $this->canAdminMap($this->dbPrefix));
 		return true;
 	}
 	
@@ -1071,8 +1072,8 @@ class GameMap
 	public function doGetMaps()
 	{
 			//TODO: Change for svelte path
-		//$path = '../assets/maps';
-		$path = './public/assets/maps';	// Only for testing on old gamemap
+		$path = '../assets/maps';
+		//$path = './public/assets/maps';	// Only for testing on old gamemap
 		
 		$dirs = array();
 		$mapInfos = array();
