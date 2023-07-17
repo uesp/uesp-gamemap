@@ -420,7 +420,7 @@
 </markup>
 
 <!-- Stylesheet -->
-<style global src="./styles.css"></style>
+<style global src="./app.css"></style>
 
 <!-- Global event listeners -->
 <svelte:window on:keydown={onKeyPressed} on:fullscreenchange={toggleFullscreen}/>

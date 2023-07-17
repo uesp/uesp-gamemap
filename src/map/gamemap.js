@@ -469,46 +469,15 @@ export default class Gamemap {
 		if (isWorld) {
 			gotoWorld(place.id, coords);
 		} else if (isLocation) {
-			let location = place;
-			gotoWorld(location.worldID, location.getCentre());
+			this.gotoLocation(place);
 		} else if (isID) {
 			if (place >= 0) { // is destination a worldID?
 				gotoWorld(place);
 			} else { // it is a locationID
-				print("going to location");
-				this.getLocation(Math.abs(place)).then(location => {
-					self.goto(location);
-				}).catch(() => {
-					M.toast({html: "That location doesn't exist!"});
-					self.mapCallbacks?.setLoading(false);
-				});
+				this.gotoLocation(location);
 			}
 		}
 
-		function gotoWorld(worldID, coords) {
-			print(worldID);
-			if (self.isWorldValid(worldID)) {
-				// if we are in the same world, just pan to the provided location (or just reset map)
-				if (worldID == self.getCurrentWorldID()) {
-					if (coords) {
-						map.setView(self.toLatLngs(coords), self.getCurrentWorld().maxZoomLevel);
-					} else {
-						self.reset(true);
-					}
-					self.mapCallbacks?.setLoading(false);
-				} else { // else load up the new world
-					self.clearLocations();
-					let mapState = new MapState({coords: coords});
-					let world = self.getWorldFromID(worldID);
-					print(`Going to world... ${world.displayName} (${world.id});`);
-					print(world);
-					mapState.world = world;
-					self.setMapState(mapState);
-				}
-
-		} else {
-			throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
-		}
 	}
 
 	gotoLocation(id) {
@@ -530,6 +499,32 @@ export default class Gamemap {
 			M.toast({html: "That location doesn't exist!"});
 			self.mapCallbacks?.setLoading(false);
 		});
+	}
+
+	gotoWorld(worldID, coords) {
+		print(worldID);
+		if (self.isWorldValid(worldID)) {
+			// if we are in the same world, just pan to the provided location (or just reset map)
+			if (worldID == self.getCurrentWorldID()) {
+				if (coords) {
+					map.setView(self.toLatLngs(coords), self.getCurrentWorld().maxZoomLevel);
+				} else {
+					self.reset(true);
+				}
+				self.mapCallbacks?.setLoading(false);
+			} else { // else load up the new world
+				self.clearLocations();
+				let mapState = new MapState({coords: coords});
+				let world = self.getWorldFromID(worldID);
+				print(`Going to world... ${world.displayName} (${world.id});`);
+				print(world);
+				mapState.world = world;
+				self.setMapState(mapState);
+			}
+
+		} else {
+			throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
+		}
 	}
 
 	/**

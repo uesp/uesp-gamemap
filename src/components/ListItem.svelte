@@ -51,8 +51,8 @@
                     <i class="material-icons circle" title={iconTooltip}>{icon}</i>
                 {/if}
                 {#if action}
-                    {@const icon = (action.includes("edit") ? "edit" : action.includes("delete") ? "delete_forever" : "add")}
-                    <div title={comment} class="action" class:add={action.includes("add")} class:delete={action.includes("delete")} class:edit={action.includes("edit")}>
+                    {@const icon = (action.includes("edit") ? "edit" : action.includes("delete") ? "delete_forever" : action.includes("add") ? "add" : action.includes("revert") ? "undo" : "question_mark")}
+                    <div title={comment} class="action" class:add={action.includes("add")} class:delete={action.includes("delete")} class:edit={action.includes("edit")} class:revert={action.includes("revert")}>
                         <Icon name={icon} size=13></Icon>
                     </div>
                 {/if}
@@ -164,5 +164,9 @@
 
     .action.add {
         background-color: var(--add);
+    }
+
+    .action.revert {
+        background-color: #c1e8e8;
     }
 </style>

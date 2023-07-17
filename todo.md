@@ -77,7 +77,7 @@ https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=dri
 - double clicking markers that arent clickable edits them
 - fix having to load new world once, then click RC item again to jump to centre of it
 
-
+- make shit clicking RC items go straight to editing them
 if adding location, save will dismiss the editor window
 if adding location, close button is always "cancel"
 
