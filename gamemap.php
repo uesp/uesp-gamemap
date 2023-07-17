@@ -39,6 +39,7 @@ class GameMap
 	public $world = '';
 	public $locationId = 0;
 	public $revisionId = 0;
+	public $revertId = 0;
 	public $worldHistoryId = 0;
 	public $locHistoryId = 0;
 	public $newRevisionId = 0;
@@ -103,6 +104,7 @@ class GameMap
 	public $dbWriteInitialized = false;
 	public $startedSession = false;
 	
+	public $isAdmin = false;
 	public $canEdit = false;
 	public $canEditESO = false;
 	public $canEditTR = false;
@@ -165,6 +167,12 @@ class GameMap
 				$this->canEditTR = true;
 				$this->canEditOther = true;
 			}
+			
+			if ($groups['mapadmin'])
+			{
+				$this->isAdmin = true;
+			}
+			
 				//TODO: Remove old groups once merged into cartographer
 			if ($groups['esocartographer'])
 			{
@@ -232,6 +240,7 @@ class GameMap
 	public function canEditMap($dbPrefix)
 	{
 		if ($this->isLocalhost) return true;
+		if ($this->isAdmin) return true;
 		
 		if ($dbPrefix === null) return false;
 		
@@ -246,6 +255,13 @@ class GameMap
 		}
 		
 		return false;
+	}
+	
+	
+	public function canAdminMap($dbPrefix)
+	{
+		if ($this->isLocalhost) return true;
+		return $this->isAdmin;
 	}
 	
 	
@@ -348,7 +364,7 @@ class GameMap
 					height FLOAT NOT NULL,
 					name TINYTEXT NOT NULL,
 					description TEXT NOT NULL,
-					iconType TINYINT NOT NULL,
+					iconType INTEGER(6) NOT NULL,
 					displayData TEXT NOT NULL,
 					wikiPage TEXT NOT NULL,
 					displayLevel FLOAT NOT NULL,
@@ -373,7 +389,7 @@ class GameMap
 					height FLOAT NOT NULL,
 					name TINYTEXT NOT NULL,
 					description TEXT NOT NULL,
-					iconType TINYINT NOT NULL,
+					iconType INTEGER(6) NOT NULL,
 					displayData TEXT NOT NULL,
 					wikiPage TEXT NOT NULL,
 					displayLevel FLOAT NOT NULL,
@@ -473,6 +489,10 @@ class GameMap
 				return $this->doGetCellResource();
 			case 'get_maps':
 				return $this->doGetMaps();
+			case 'revert_world':
+				return $this->doRevertWorld();
+			case 'revert_loc':
+				return $this->doRevertLocation();
 			case 'default':
 			default:
 				break;
@@ -563,6 +583,17 @@ class GameMap
 	public function MakeEditComment($editAction, $oldRecord, $newRecord)
 	{
 		$comments = [];
+		
+		if ($editAction == "revert location")
+		{
+			//reverted to rev ### as of {timestamp}"
+			return "Reverted to location revision {$newRecord['revisionId']}";
+		}
+		
+		if ($editAction == "revert world")
+		{
+			return "Reverted to world revision {$newRecord['revisionId']}";
+		}
 		
 		if ($editAction == "add location") return "Added location";
 		if ($editAction == "add world")    return "Added world";
@@ -1411,6 +1442,54 @@ class GameMap
 	}
 	
 	
+	public function doRevertWorld()
+	{
+		if ($this->worldId <= 0 || $this->revertId <= 0) return $this->reportError('Missing required parameters!');
+		
+		if (!$this->canAdminMap($this->dbPrefix)) return $this->reportError('You do not have sufficient permissions!');
+		if (!$this->initDatabaseWrite()) return false;
+		
+		$query = "SELECT * FROM world_history WHERE revisionId='{$this->revertId}';";
+		$result = $this->db->query($query);
+		if (!$result) return $this->reportError("Failed to load world revision {$this->revertId}!");
+		
+		$oldWorld = $result->fetch_assoc();
+		if ($oldWorld == null) return $this->reportError("Failed to load world revision {$this->revertId}!");
+		
+		if ($oldWorld['worldId'] != $this->worldId) return $this->reportError("World IDs for revision {$this->revertId} do not match ({$oldWorld['worldId']} : {$this->worldId})!");
+		
+		$this->revisionId = $oldWorld['revisionId'];
+		
+		$cols = ['parentId', 'name', 'displayName', 'description', 'wikiPage', 'cellSize', 'minZoom', 'maxZoom', 'zoomOffset', 'posLeft', 'posTop', 'posRight', 'posBottom', 'enabled', 'tilesX', 'tilesY', 'displayData', 'maxTilesX', 'maxTilesY', 'defaultZoom' ];
+		$values = [];
+		
+		foreach ($cols as $col)
+		{
+			$safeValue = $this->db->real_escape_string($oldWorld[$col]);
+			$values[] = "$col='$safeValue'";
+		}
+		
+		$values = implode(',', $values);
+		
+		//$query = "UPDATE world (SELECT * FROM world_history WHERE revisionId='{$this->revertId}') SET $values WHERE id='{$this->worldId}';";
+		$query = "UPDATE world SET $values WHERE id='{$this->worldId}';";
+		$result = $this->db->query($query);
+		if (!$result) return $this->reportError("Failed to revert world {$this->worldId}!");
+		
+		$editAction = "revert world";
+		
+		if (!$this->addRevision($editAction, null, $oldWorld)) return false;
+		if (!$this->updateWorldRevision($this->worldId)) return false;
+		if (!$this->copyToWorldHistory()) return false;
+		if (!$this->updateRevisionWorldHistory($this->newRevisionId)) return false;
+		
+		$this->addOutputItem('success', True);
+		$this->addOutputItem('worldId', $this->worldId);
+		
+		return true;
+	}
+	
+	
 	public function doSetWorld ()
 	{
 		if ($this->worldId <= 0) return $this->reportError("Cannot create worlds yet!");
@@ -1448,8 +1527,8 @@ class GameMap
 		$result = $this->db->query($query);
 		
 		if ($result === FALSE) {
-			error_log($query);
-			error_log($this->db->error);
+			//error_log($query);
+			//error_log($this->db->error);
 			return $this->reportError("Failed to save world data!");
 		}
 		
@@ -1555,6 +1634,56 @@ class GameMap
 		
 		$this->addOutputItem('success', True);
 		$this->addOutputItem('locationId', $this->locationId);
+		return true;
+	}
+	
+	
+	
+	public function doRevertLocation()
+	{
+		if ($this->locationId <= 0 || $this->revertId <= 0) return $this->reportError("Missing required parameters ({$this->locationId} : {$this->revertId})!");
+		
+		if (!$this->canAdminMap($this->dbPrefix)) return $this->reportError('You do not have sufficient permissions!');
+		if (!$this->initDatabaseWrite()) return false;
+		
+		$query = "SELECT * FROM location_history WHERE revisionId='{$this->revertId}';";
+		$result = $this->db->query($query);
+		if (!$result) return $this->reportError("Failed to load location revision {$this->revertId}!");
+		
+		$oldLocation = $result->fetch_assoc();
+		if ($oldLocation == null) return $this->reportError("Failed to load location revision {$this->revertId}!");
+		
+		if ($oldLocation['locationId'] != $this->locationId) return $this->reportError("Location IDs for revision {$this->revertId} do not match ({$oldLocation['locationId']} : {$this->locationId})!");
+		
+		$this->worldId = $oldLocation['worldId'];
+		$this->revisionId = $oldLocation['revisionId'];
+		
+		$cols = ['worldId', 'destinationId', 'locType', 'x', 'y', 'width', 'height', 'name', 'description', 'iconType', 'displayData', 'wikiPage', 'displayLevel', 'visible' ];
+		$values = [];
+		
+		foreach ($cols as $col)
+		{
+			$safeValue = $this->db->real_escape_string($oldLocation[$col]);
+			$values[] = "$col='$safeValue'";
+		}
+		
+		$values = implode(',', $values);
+		
+		//$query = "UPDATE location (SELECT * FROM location_history WHERE revisionId='{$this->revertId}') SET $values WHERE id='{$this->locationId}';";
+		$query = "UPDATE location SET $values WHERE id='{$this->locationId}';";
+		$result = $this->db->query($query);
+		if (!$result) return $this->reportError("Failed to revert location {$this->locationId}! " . $query);
+		
+		$editAction = "revert location";
+		
+		if (!$this->addRevision($editAction, null, $oldLocation)) return false;
+		if (!$this->updateLocationRevision($this->locationId)) return false;
+		if (!$this->copyToLocationHistory()) return false;
+		if (!$this->updateRevisionLocationHistory($this->newRevisionId)) return false;
+		
+		$this->addOutputItem('success', True);
+		$this->addOutputItem('locationId', $this->locationId);
+		
 		return true;
 	}
 	
@@ -1968,6 +2097,7 @@ class GameMap
 		if (array_key_exists('posbottom',  $this->inputParams)) $this->worldPosBottom = floatval($this->inputParams['posbottom']);
 		if (array_key_exists('parentid',  $this->inputParams)) $this->worldParentId = intval($this->inputParams['parentid']);
 		if (array_key_exists('revisionid',  $this->inputParams)) $this->revisionId = intval($this->inputParams['revisionid']);
+		if (array_key_exists('revertid',  $this->inputParams)) $this->revertId = intval($this->inputParams['revertid']);
 		
 		if (array_key_exists('search',  $this->inputParams))
 		{
