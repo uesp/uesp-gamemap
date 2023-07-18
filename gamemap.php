@@ -92,6 +92,7 @@ class GameMap
 	public $outputItems = array();
 	
 	public $limitCount = 10000;
+	public $recentChangeCount = 1000;
 	public $searchLimitCount = 100;
 	public $revLimitCount = 5;
 	
@@ -1342,7 +1343,7 @@ class GameMap
 	{
 		if (!$this->initDatabase()) return false;
 		
-		$query  = "SELECT revision.*, world.name as worldName, world.displayName as worldDisplayName, location.iconType as iconType, location.name as locationName from revision LEFT JOIN location ON location.id=revision.locationId LEFT JOIN world ON world.id=revision.worldId ORDER BY editTimestamp DESC LIMIT {$this->limitCount};";
+		$query  = "SELECT revision.*, world.name as worldName, world.displayName as worldDisplayName, location.iconType as iconType, location.name as locationName from revision LEFT JOIN location ON location.id=revision.locationId LEFT JOIN world ON world.id=revision.worldId ORDER BY editTimestamp DESC LIMIT {$this->recentChangeCount};";
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve recent changes data!");
 		
@@ -1382,7 +1383,7 @@ class GameMap
 	{
 		if (!$this->initDatabase()) return false;
 		
-		$query = "SELECT world_history.*, world_history.name as worldName, world_history.description as worldDescription, world_history.displayData as worldDisplayData, location_history.*, revision.* from revision LEFT JOIN world_history ON world_history.revisionId=revision.id LEFT JOIN location_history ON location_history.revisionId=revision.id ORDER BY editTimestamp DESC LIMIT {$this->limitCount};";
+		$query = "SELECT world_history.*, world_history.name as worldName, world_history.description as worldDescription, world_history.displayData as worldDisplayData, location_history.*, revision.* from revision LEFT JOIN world_history ON world_history.revisionId=revision.id LEFT JOIN location_history ON location_history.revisionId=revision.id ORDER BY editTimestamp DESC LIMIT {$this->recentChangeCount};";
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve recent changes data!");
 		
