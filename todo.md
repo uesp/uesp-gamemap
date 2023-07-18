@@ -7,13 +7,18 @@
 
 ## todo
 
+- map by release date
+- for map list, parse mapList, and if it exists but doesnt have a corresponding mapInfos, do disabled = true and tooltip "this map isnt available yet"
+
+
+
+
 - get popups working again
 
-- map by release date
-
-- eso antiquity icon
 
 - fix jumping to location
+
+
 
 
 - refactor tabbars to their oown components
@@ -22,6 +27,8 @@
 - make tabbars flush with appbar
 - add support for reverting
 
+
+- fix wikilink name being weird (solomon's pinned message)
 
 - add wikiLink switch to location.js and make doLinkWikistuff a const function under location.js which editor svelte uses as well as onSaveQuery()
 
@@ -32,6 +39,11 @@
 
 - do edit templates for dawnstar per dcsg asked
 
+
+
+- change "add area" icon in editor to be something more fitting to polygon
+
+
 - make centring on locations open their popups
 
 - fix entering negative locIDs for destIDs being obnoxious (entering minus makes it 0)
@@ -39,8 +51,6 @@
 - revert the negative loc id/world id stuff
 - make adding new location count as unsaved changes (unsaved changes == false or location is unsaved)
 >> maybe tweak wording of popup "discard adding new location?"
-
-- getjson post for greymoor caverns blackreach
 
 - fix line colour preview showing fill colours from area
 
@@ -53,7 +63,6 @@
 ## poke dave about
 
 - delete bangkorai test
-- Exovian (TR editor) wants gamemap edit access
 - use eso dev maps as separate layers for eso
 
 - do updated skyrim/beyond skyrim/solstheim tiles from BS guy

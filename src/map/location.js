@@ -124,25 +124,7 @@ export default class Location {
 		coords = coords ?? this.coords;
 
 		if (coords.length > 1) { // do we have multiple points?
-			let xs = [];
-			let ys = [];
-
-			for (let i in coords) {
-				xs.push(coords[i].x);
-				ys.push(coords[i].y);
-			}
-
-			let centreX = 0;
-			let centreY = 0;
-
-			for (let i in xs) {
-				centreX = centreX + parseFloat(xs[i]);
-				centreY = centreY + parseFloat(ys[i]);
-			}
-
-			return new Point((centreX / xs.length).toFixed(3), (centreY / ys.length).toFixed(3), MAPCONFIG.coordType);
-
-			// return polygonCenter(coords);
+			return polygonCenter(coords);
 		} else {
 			return coords[0]; // if not, just return the first one
 		}

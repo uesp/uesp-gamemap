@@ -17,6 +17,7 @@
     export let checked;
     export let dark = false;
     export let big;
+    export let disabled;
 
     const dispatch = createEventDispatcher();
 
@@ -37,7 +38,7 @@
 
 <markup>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div id="btn_toggle_grid" class='btn_layer_toggle layer-button waves-effect' title={tooltip} class:hasImage={!hasIcon} class:dark={dark} class:isChecked={checked} style="background-image: url({image});" on:click={onClick} class:big={big} on:contextmenu={(e) => e.stopPropagation()}>
+    <div id="btn_toggle_grid" class='btn_layer_toggle layer-button waves-effect' title={tooltip} class:hasImage={!hasIcon} class:dark={dark} class:isChecked={checked} style="background-image: url({image});" on:click={onClick} class:big={big} on:contextmenu={(e) => e.stopPropagation()} class:disabled={disabled}>
         {#if hasIcon}
             {#if iconIsURL}
                 <div style="width:100%; height:100%;">
@@ -162,6 +163,11 @@
 
     .isChecked:hover {
         background-color: var(--secondary_variant_dark);
+    }
+
+    .disabled {
+        opacity: 0.5;
+        pointer-events: none;
     }
 
 </style>

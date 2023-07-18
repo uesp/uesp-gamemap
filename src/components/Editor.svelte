@@ -407,14 +407,15 @@
     // make RC object function
     function getRCItem(data) {
         let destinationID = (data.worldHistoryId != 0) ? data.worldId : -data.locationId;
-        let isWorld = data.displayName != null || data.worldHistoryId != null;
+        let isWorld = data.displayName != null || data.cellSize != null;
+
         return {
             icon: (data.iconType != 0 && data.iconType) ? MAPCONFIG.iconPath + data.iconType + ".png" : (isWorld) ? "public" : "location_on",
             editID: data.id,
             user: data.editUserText,
             timestamp: data.editTimestamp,
             destinationID: destinationID,
-            name: (isWorld) ? data.worldDisplayName ?? data.displayName : data.locationName ?? data.name,
+            name: (isWorld) ? data.worldDisplayName ?? ((data.displayName) ? data.displayName : gamemap.getWorldDisplayNameFromID(data.worldId)) : data.locationName ?? data.name,
             comment: data.editComment,
             action: data.editAction,
             worldID: data.worldId,

@@ -23,28 +23,24 @@
     getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
         print(data);
 
-        // sort data in alphabetical order
-        const sortObject = o => Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {})
-        let mapInfos = sortObject(data.mapInfos);
+        maps = [];
 
         // define map list object
-        let mapList = { official: [], mods: [] };
-
-        for (let [key, object] of Object.entries(mapInfos)) {
+        data.maps.forEach(name => {
             let map = {};
-            map.database = key;
-            map.name = object.mapTitle.replace('Gamemap', '').replace('Map', '').trim();
+            let mapInfo = data.mapInfos[name];
 
-            if (!object.isModded) {
-                mapList.official.push(map);
-            } else {
-                mapList.mods.push(map);
-            }
-        }
+            map.name = mapInfo?.mapTitle.replace('Gamemap', '').replace('Map', '').trim() ?? name.toUpperCase();
+            map.database = name;
+            map.disabled = mapInfo == null;
+            map.isModded = mapInfo?.isModded == true || map.disabled;
+            map.releaseDate = (mapInfo) ? Date.parse(new Date(mapInfo.releaseDate.split('/')[2], mapInfo.releaseDate.split('/')[1] - 1, mapInfo.releaseDate.split('/')[0])) : 0;
 
-        print(mapList);
+            print(map);
+            maps.push(map);
+        })
+        maps.sort((a,b)=> new Date(b.releaseDate).getTime()-new Date(a.releaseDate).getTime());
 
-        maps = mapList;
         print(maps);
 
     });
@@ -63,24 +59,30 @@
         <p/>
         Please choose a game from the options below.
         <p/>
-        {#if maps != null}
-            {#if maps.official.length > 0}
+        {#if maps?.length > 0}
+
+                <!-- Official maps -->
                 <div class="options_container">
-                    {#each maps.official as map}
-                        <LayerButton label={map.name} icon="assets/maps/{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)}/>
+                    {#each maps as map}
+                        {#if !map.isModded}
+                            <LayerButton label={map.name} icon="assets/maps/{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)} disabled={map.disabled}/>
+                        {/if}
                     {/each}
                 </div>
-            {/if}
-            <div style="margin:10px;">
-                <Divider direction="horizontal"/><p/>
-            </div>
-            {#if maps.mods.length > 0}
+
+                <div style="margin:10px;">
+                    <Divider direction="horizontal"/><p/>
+                </div>
+
+                <!-- Modded maps -->
                 <div class="options_container">
-                    {#each maps.mods as map}
-                        <LayerButton label={map.name} icon="assets/maps/{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)}/>
+                    {#each maps as map}
+                        {#if map.isModded}
+                            <LayerButton label={map.name} icon="assets/maps/{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)} disabled={map.disabled}/>
+                        {/if}
                     {/each}
                 </div>
-            {/if}
+
         {:else}
             <LoadingSpinner/>
         {/if}

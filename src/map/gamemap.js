@@ -467,12 +467,12 @@ export default class Gamemap {
 		let isLocation = place instanceof Location || place.coords;
 
 		if (isWorld) {
-			gotoWorld(place.id, coords);
+			this.gotoWorld(place.id, coords);
 		} else if (isLocation) {
 			this.gotoLocation(place);
 		} else if (isID) {
 			if (place >= 0) { // is destination a worldID?
-				gotoWorld(place);
+				this.gotoWorld(place);
 			} else { // it is a locationID
 				this.gotoLocation(location);
 			}
@@ -1154,7 +1154,7 @@ export default class Gamemap {
 
 				if (location.hasIcon()) {
 					marker.setIsIconPolygon(true);
-					polygonIcon = this.makeMarker(location, marker.getCentre());
+					polygonIcon = this.makeMarker(location, self.toLatLngs(location.getCentre()));
 				}
 			}
 
@@ -1201,10 +1201,9 @@ export default class Gamemap {
 				// on marker hovered over
 				marker.on('mouseover', function () {
 
-					let isPolygon = marker.location.isPolygon() && marker._path;
-					let latLngs = marker.getCentre();
+					let isPolygon = location.isPolygon() && marker._path;
 
-					L.tooltip(latLngs, {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
+					L.tooltip(self.toLatLngs(location.getCentre()), {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
 
 					if (isPolygon){
 						this.setStyle({
@@ -1543,7 +1542,7 @@ export default class Gamemap {
 
 	// get if editing is enabled on this map
 	canEdit() {
-		return this.mapConfig.editingEnabled;
+		return MAPCONFIG.editingEnabled;
 	}
 
 	checkEditingPermissions() {
@@ -1551,13 +1550,14 @@ export default class Gamemap {
 		let queryParams = {};
 		let self = this;
 		queryParams.action = "get_perm";
-		queryParams.db = this.mapConfig.database;
+		queryParams.db = MAPCONFIG.database;
 		this.mapCallbacks?.setLoading("Getting permissions");
 
 		getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
 			let canEdit = data?.canEdit;
-			self.mapConfig.editingEnabled = ((canEdit || isDebug) && (!self.isEmbedded() && !isMobile()));
-			self.mapCallbacks?.onPermissionsLoaded(self.mapConfig.editingEnabled);
+			MAPCONFIG.editingEnabled = ((canEdit || isDebug) && (!self.isEmbedded() && !isMobile()));
+			MAPCONFIG.isAdmin = data.isAdmin;
+			self.mapCallbacks?.onPermissionsLoaded(MAPCONFIG.editingEnabled);
 		});
 
 	}
@@ -1642,7 +1642,7 @@ L.Layer.include({
 
 	// getters
 	getLocation: function() { return this.location },
-	getCentre: function(latLngs) { return this.getLatLng?.() ?? L.latLngBounds((latLngs && Array.isArray(latLngs)) ? latLngs : this.getCoordinates()).getCenter() },
+	getCentre: function() { return gamemap.toLatLngs(this.getLocation.getCentre()) },
 	getElement() { return this.element = this?._icon ?? this?._path },
 	getTooltip() { return document.getElementById(this.getElement()?.getAttribute('aria-describedby')) },
 	isIconPolygon() { return this.isIconPoly },
@@ -1660,13 +1660,6 @@ L.Layer.include({
 			let latLngs = structuredClone(this.getLatLngs());
 			return (latLngs.length > 1) ? latLngs : latLngs[0];
 		}
-	},
-
-	// get layer latlngs as well as estimated centre point as an array
-	getCoordinatesAndCentre() {
-		let latlngs = this.getCoordinates();
-		if (this.getLatLngs) {latlngs.push(this.getCentre(latlngs))}
-		return latlngs;
 	},
 
 	setEditingEffect(doEffect) {
