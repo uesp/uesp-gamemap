@@ -21,7 +21,6 @@
     let queryParams = {};
 	queryParams.action = "get_maps";
     getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
-        print(data);
 
         maps = [];
 
@@ -36,10 +35,9 @@
             map.isModded = mapInfo?.isModded == true || map.disabled;
             map.releaseDate = (mapInfo) ? Date.parse(new Date(mapInfo.releaseDate.split('/')[2], mapInfo.releaseDate.split('/')[1] - 1, mapInfo.releaseDate.split('/')[0])) : 0;
 
-            print(map);
             maps.push(map);
         })
-        maps.sort((a,b)=> new Date(b.releaseDate).getTime()-new Date(a.releaseDate).getTime());
+        maps.sort((a,b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime());
 
         print(maps);
 

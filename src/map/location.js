@@ -183,7 +183,12 @@ export default class Location {
 	}
 
 	openPopup() {
-		gamemap.getMarkersFromLocation(this)[0].openPopup();
+		marker = gamemap.getMarkersFromLocation(this)[0];
+		if (marker) {
+			marker.openPopup();
+		} else {
+			L.popup(gamemap.toLatLngs(this.getCentre()), {content: this.getPopupContent()}).openOn(map);
+		}
 	}
 
 	isPolygon(){

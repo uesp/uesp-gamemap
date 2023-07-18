@@ -2,13 +2,14 @@
 
 
 
-# bug fixes:
+# bug fixes
 - fixed not being able to right click on location list popup
 
-## todo
 
-- map by release date
-- for map list, parse mapList, and if it exists but doesnt have a corresponding mapInfos, do disabled = true and tooltip "this map isnt available yet"
+# technical
+- added a bunch of shortcut functions for getWorldByID as i kept typing them wrong
+
+## todo
 
 
 
@@ -103,6 +104,8 @@ if adding location, close button is always "cancel"
 - fix colour picker default colour to something sensible instead of the blue
 
 - make max zoom of all locations -0.5 on all locations client side
+
+- fix location drifting in craglorn and alikr
 
 
 - return locationID to positive an world to negative

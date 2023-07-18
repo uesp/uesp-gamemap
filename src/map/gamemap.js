@@ -392,6 +392,7 @@ export default class Gamemap {
 	/** Get the current world object
 	 * @returns {Object} world - An object that represents the current map world.
 	 */
+	getWorld() { return this.getCurrentWorld() }
 	getCurrentWorld() {
 		return this.getMapState()?.world ?? this.getWorldFromID(this.currentWorldID ?? this.mapConfig.defaultWorldID);
 	}
@@ -407,6 +408,7 @@ export default class Gamemap {
 	 * @param {int} worldID - ID that represents a world in the database.
 	 * @returns {Object} world - A world object that contains map info for the gamemap.
 	 */
+	getWorldByID(worldID) { return this.getWorldFromID(worldID) }
 	getWorldFromID(worldID) {
 		return this.mapWorlds.get(Number(worldID));
 	}
@@ -415,6 +417,7 @@ export default class Gamemap {
 	 * @param {Object} world - An object that represents the current map world.
 	 * @returns {String} worldName - The internal name of the world.
 	 */
+	getWorldNameByID(worldID) { return this.getWorldFromID(worldID) }
 	getWorldNameFromID(worldID) {
 		return this.getWorldFromID(worldID)?.name;
 	}
@@ -423,6 +426,7 @@ export default class Gamemap {
 	 * @param {Int} worldID - A world ID.
 	 * @returns {String} displayName - The user facing display name of the world.
 	 */
+	getWorldDisplayNameByID(worldID) { return this.getWorldDisplayNameFromID(worldID) }
 	getWorldDisplayNameFromID(worldID) {
 		return this.getWorldFromID(worldID)?.displayName;
 	}
@@ -431,6 +435,7 @@ export default class Gamemap {
 	 * @param {String} worldName - An internal worldName as a string.
 	 * @returns {Object} world - A world object.
 	 */
+	getWorldByName(worldName) { return this.getWorldFromName(worldName) }
 	getWorldFromName(worldName){
 		return [...this.mapWorlds.values()].find(prop => prop.name == worldName);
 	}
@@ -439,6 +444,7 @@ export default class Gamemap {
 	 * @param {String} worldDisplayName - A world's display name.
 	 * @returns {Object} world - A world object.
 	 */
+	getWorldByDisplayName(worldDisplayName) { return this.getWorldFromDisplayName(worldDisplayName) }
 	getWorldFromDisplayName(worldDisplayName){
 		return [...this.mapWorlds.values()].find(prop => prop.displayName == worldDisplayName);
 	}
@@ -1642,7 +1648,7 @@ L.Layer.include({
 
 	// getters
 	getLocation: function() { return this.location },
-	getCentre: function() { return gamemap.toLatLngs(this.getLocation.getCentre()) },
+	getCentre: function() { return gamemap.toLatLngs(this.getLocation().getCentre()) },
 	getElement() { return this.element = this?._icon ?? this?._path },
 	getTooltip() { return document.getElementById(this.getElement()?.getAttribute('aria-describedby')) },
 	isIconPolygon() { return this.isIconPoly },
@@ -1686,7 +1692,6 @@ L.Layer.include({
 		if (!doEdit){
 			print("making popup");
 			print(this);
-			print(this.getElement());
 			L.popup(this.getCentre(), {content: this.getLocation().getPopupContent()}).openOn(map);
 		} else {
 			gamemap.edit(this.location);
