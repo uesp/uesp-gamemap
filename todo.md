@@ -1,53 +1,34 @@
 ## last week
 
-## bug fixes
-- fixed being able to right click to remove markers
-- fix console.warn error when cancelling new location on gamemap
-- fix eso icons not loading on firefox on gamemap.uesp.net
-- fixed locations being edited before they should be (bangkorai was being marked as edited on open)
->> added bonus, performance fix as not spam edits as soon as you open editor
-- fixed type:wayshrine search not working (broke with the change to Maps a while ago)
-- fixed location drifting
->> was a location.js issue, the eso specific coord conversion used a global "world" ref inside the file
->> as new locations are made, it changed that global world ref and affected existing locs on save
 
-## polish
-- fixed edit history items with long titles expanding the editor div (not respecting user-chosen width)
-- made resizing the editor track the mouse more accurately
-- themed scrollbars to be more minimal (on chrome) to get out of the way
-- added max width to editor
-- added centreon url feature
-- fixed edit history items with long titles expanding the editor div (not respecting user-chosen width)
-- made resizing the editor track the mouse more accurately
-- added max width to editor
-- reallowed console logging for release builds, but disabled on mobile (was causing issues on iphone)
-- added tooltips to various things that didnt have any before (editor buttons, sections)
-- polygons now use visual centre instead of mathematical centre (mean) for stuff like labels, icons, tooltips
 
-## technical
-- rewrote getLocation() and getJSON() functions to use async/promises instead of callbacks
->> allows function chaining, for example ``getLocation(50).then(goto(50))``
-- added search by location name and object to getLocation as well
-
-## dave todo
-- Exovian wants gamemap edit access (TR editor)
-- also asked if we can  do a project tamriel map (different from tamriel rebuilt)
-- make maps in game release order
-- pt / pc maps and ask in #cross-project to add locs
-https://drive.google.com/drive/folders/1zAEvR4l_1BND0p6ULA-Ii93oX1mKsYnj
-- use eso dev maps as separate layers for eso
-- edit history revert backend stuff
-- do updated skyrim/beyond skyrim/solstheim tiles from BS guy
-https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=drive_link
-- delete bangkorai test
+# bug fixes:
+- fixed not being able to right click on location list popup
 
 ## todo
 
-- fix focus on svelte elements mean cant move map (mobile specifically)
->> try re allowing map panning on the "zoom" or "move" events
+- get popups working again
 
-- the location coord mismatch is happening because you are converting a new location's coords based on the current world's dimensions
->> need to find a way to pass location.js reference to the current world
+- map by release date
+
+- eso antiquity icon
+
+- fix jumping to location
+
+
+- refactor tabbars to their oown components
+- add tabs to appbar for editing objects "Edit    |      History"
+- make tabbars centred again (location list)
+- make tabbars flush with appbar
+- add support for reverting
+
+
+- add wikiLink switch to location.js and make doLinkWikistuff a const function under location.js which editor svelte uses as well as onSaveQuery()
+
+- add live edit to worlds
+
+- if is map admin, (check in mapconfig), then enable delete world in world edit
+
 
 - do edit templates for dawnstar per dcsg asked
 
@@ -69,6 +50,17 @@ https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=dri
 
 - fix tooltips hanging around when dragging marker
 
+## poke dave about
+
+- delete bangkorai test
+- Exovian (TR editor) wants gamemap edit access
+- use eso dev maps as separate layers for eso
+
+- do updated skyrim/beyond skyrim/solstheim tiles from BS guy
+https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=drive_link
+
+-----------------------------------------------
+
 - do some MAPLOCK.isPartial() function
 
 - make waves light/dark configurable by prop (for adding new loc "cancel" button)
@@ -81,7 +73,8 @@ https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=dri
 if adding location, save will dismiss the editor window
 if adding location, close button is always "cancel"
 
-- sort map menu by release date (ask dave to implement backend)
+- reduce size of blue blob effect
+- fix tooltips not going away
 
 - click thing in edit history, prompt to revert, then do network call (ask dave to implement backend)
 
@@ -118,6 +111,7 @@ if adding location, close button is always "cancel"
 
 - make map key grid columns dynamic and fix overscrolling
 
+- shower thought: could use the "Dev/Beta" versions of maps for eso as separate layers
 
 - make iconbar and resizing dynamic, dont rely on css for mobile mode, do it in javascript based on map size
 
@@ -147,15 +141,13 @@ if adding location, close button is always "cancel"
 to be consistent icons (an area doesnt make sense to have a pin icon)
 
 - fix regaining grid on day/night mode switch
-- fix canvas grid layer being laggy af when zooming out
+- fix canvas grid layer being laggy af on firefox when zooming out
 - shift click in RC to travel to and edit world/location
 - show more columns on map key menu dynamically
-- make centre of polygons visual centre not mathematical centre
 - fix cell resource colour intensity to make sense. deeper the colour the more stuff
 - fix pip on layer switcher ui being small
 - make readme on how to create the favicon styles for maps for future developers
-- use similar centre of polygon algorithm as leaflet does for locations/latlng conversion
-- organise styles.css and comment gamemap js
+- organise app.css and comment gamemap js
 - comment/refactor all code
 - wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 
@@ -165,13 +157,12 @@ to be consistent icons (an area doesnt make sense to have a pin icon)
 ## todo maps (future)
 - skyrim minecraft map thing
 - cave interior maps for skyrim, ob, mw
-- some kind of tutorial on first non-cookie load to tell user how to use ui
 - divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)
+- some kind of tutorial on first non-cookie load to tell user how to use ui
 - drag and edit polygon at the same time
 >> https://jsfiddle.net/Razielwar/hmqgn69r/14/
 - allow shiftclick/ctrl click to add/remove vertices
 - be able to search the icon list in editor
-- shower thought: could use the "Dev/Beta" versions of maps for eso as separate layers
 
 ## todo future general
 - wiki features (hybrid news etc)

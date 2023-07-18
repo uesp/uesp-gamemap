@@ -378,12 +378,13 @@
         print("getting recent changes...")
         recentChanges = [];
         let queryParams = {};
-        queryParams.action = "get_rc";
+        queryParams.action = "get_fullrc";
         queryParams.db = MAPCONFIG.database;
 
         getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
             print("parsing data...");
             let tempList = [];
+            print(data);
             for (let i = 0; i < data.recentChanges.length; i++) {
                 tempList.push(getRCItem(data.recentChanges[i]));
             }
@@ -406,7 +407,7 @@
     // make RC object function
     function getRCItem(data) {
         let destinationID = (data.worldHistoryId != 0) ? data.worldId : -data.locationId;
-        let isWorld = destinationID > 0;
+        let isWorld = data.displayName != null || data.worldHistoryId != null;
         return {
             icon: (data.iconType != 0 && data.iconType) ? MAPCONFIG.iconPath + data.iconType + ".png" : (isWorld) ? "public" : "location_on",
             editID: data.id,

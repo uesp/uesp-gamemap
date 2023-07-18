@@ -92,6 +92,7 @@ class GameMap
 	public $outputItems = array();
 	
 	public $limitCount = 10000;
+	public $recentChangeCount = 1000;
 	public $searchLimitCount = 100;
 	public $revLimitCount = 5;
 	
@@ -336,6 +337,7 @@ class GameMap
 					`maxTilesY` INTEGER NOT NULL,
 					`displayData` TEXT NOT NULL,
 					PRIMARY KEY ( id ),
+					INDEX revisionId(revisionId),
 					FULLTEXT(displayName, description, wikiPage)
 				) ENGINE=MYISAM;";
 		
@@ -366,7 +368,8 @@ class GameMap
 					`maxTilesX` INTEGER NOT NULL,
 					`maxTilesY` INTEGER NOT NULL,
 					displayData TEXT NOT NULL,
-					PRIMARY KEY ( id )
+					PRIMARY KEY ( id ),
+					INDEX revisionId(revisionId)
 				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
@@ -390,6 +393,7 @@ class GameMap
 					displayLevel FLOAT NOT NULL,
 					visible TINYINT NOT NULL,
 					PRIMARY KEY ( id ),
+					INDEX revisionId(revisionId),
 					FULLTEXT (name, description, wikiPage)
 				) ENGINE=MYISAM;";
 		
@@ -414,7 +418,8 @@ class GameMap
 					wikiPage TEXT NOT NULL,
 					displayLevel FLOAT NOT NULL,
 					visible TINYINT NOT NULL,
-					PRIMARY KEY ( id )
+					PRIMARY KEY ( id ),
+					INDEX revisionId(revisionId)
 				) ENGINE=MYISAM;";
 		
 		$result = $this->db->query($query);
@@ -501,6 +506,9 @@ class GameMap
 			case 'get_rc':
 			case 'get_rev':
 				return $this->doGetRecentChanges();
+			case 'get_fullrc':
+			case 'get_fullrev':
+				return $this->doGetFullRecentChanges();
 			case 'get_worldrev':
 				return $this->doGetWorldRevisions();
 			case 'get_locrev':
@@ -1335,28 +1343,13 @@ class GameMap
 	{
 		if (!$this->initDatabase()) return false;
 		
-		//select * from revision join location on location.id=revision.locationId join world on world.id=revision.worldId limit 10;
-		$query  = "SELECT revision.*, world.name as worldName, world.displayName as worldDisplayName, location.iconType as iconType, location.name as locationName from revision LEFT JOIN location ON location.id=revision.locationId LEFT JOIN world ON world.id=revision.worldId ORDER BY editTimestamp DESC LIMIT {$this->limitCount};";
+		$query  = "SELECT revision.*, world.name as worldName, world.displayName as worldDisplayName, location.iconType as iconType, location.name as locationName from revision LEFT JOIN location ON location.id=revision.locationId LEFT JOIN world ON world.id=revision.worldId ORDER BY editTimestamp DESC LIMIT {$this->recentChangeCount};";
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve recent changes data!");
 		
 		$recentChanges = Array();
 		$count = 0;
 		$result->data_seek(0);
-		/*
-		 * id BIGINT NOT NULL AUTO_INCREMENT,
-					parentId BIGINT,
-					worldId BIGINT,
-					locationId BIGINT,
-					worldHistoryId BIGINT,
-					locationHistoryId BIGINT,
-					editUserId BIGINT NOT NULL,
-					editUserText TEXT NOT NULL,
-					editTimestamp TIMESTAMP NOT NULL,
-					editComment TEXT NOT NULL,
-					patrolled TINYINT NOT NULL,
-					PRIMARY KEY (id)
-		*/
 		
 		while ( ($row = $result->fetch_assoc()) )
 		{
@@ -1367,6 +1360,85 @@ class GameMap
 			settype($row['worldHistoryId'], "integer");
 			settype($row['locationHistoryId'], "integer");
 			settype($row['editUserId'], "integer");
+			
+			$recentChanges[] = $row;
+			$count += 1;
+		}
+		
+		$this->addOutputItem("recentChanges", $recentChanges);
+		$this->addOutputItem("recentChangeCount", $count);
+		
+		return true;
+	}
+	
+	
+	public function setTypeNull(&$var, $type)
+	{
+		if ($var === null) return;
+		settype($var, $type);
+	}
+	
+	
+	public function doGetFullRecentChanges ()
+	{
+		if (!$this->initDatabase()) return false;
+		
+		$query = "SELECT world_history.*, world_history.name as worldName, world_history.description as worldDescription, world_history.displayData as worldDisplayData, location_history.*, revision.* from revision LEFT JOIN world_history ON world_history.revisionId=revision.id LEFT JOIN location_history ON location_history.revisionId=revision.id ORDER BY editTimestamp DESC LIMIT {$this->recentChangeCount};";
+		$result = $this->db->query($query);
+		if ($result === FALSE) return $this->reportError("Failed to retrieve recent changes data!");
+		
+		$recentChanges = Array();
+		$count = 0;
+		$result->data_seek(0);
+		
+		while ( ($row = $result->fetch_assoc()) )
+		{
+				// Special case for world revisions
+			if ($row['revisionId'] == null)
+			{
+				$row['revisionId'] = $row['id'];
+				$row['name'] = $row['worldName'];
+				$row['description'] = $row['worldDescription'];
+				$row['displayData'] = $row['worldDisplayData'];
+			}
+			
+			unset($row['worldName']);
+			unset($row['worldDescription']);
+			unset($row['worldDisplayData']);
+			
+			$this->setTypeNull($row['id'], "integer");
+			$this->setTypeNull($row['worldId'], "integer");
+			$this->setTypeNull($row['locationId'], "integer");
+			$this->setTypeNull($row['revisionId'], "integer");
+			$this->setTypeNull($row['parentId'], "integer");
+			$this->setTypeNull($row['destinationId'], "integer");
+			$this->setTypeNull($row['worldHistoryId'], "integer");
+			$this->setTypeNull($row['locationHistoryId'], "integer");
+			$this->setTypeNull($row['editUserId'], "integer");
+			$this->setTypeNull($row['cellSize'], "integer");
+			$this->setTypeNull($row['minZoom'], "integer");
+			$this->setTypeNull($row['maxZoom'], "integer");
+			$this->setTypeNull($row['defaultZoom'], "integer");
+			$this->setTypeNull($row['zoomOffset'], "integer");
+			$this->setTypeNull($row['posLeft'], "integer");
+			$this->setTypeNull($row['posRight'], "integer");
+			$this->setTypeNull($row['posTop'], "integer");
+			$this->setTypeNull($row['posBottom'], "integer");
+			$this->setTypeNull($row['enabled'], "integer");
+			$this->setTypeNull($row['tilesX'], "integer");
+			$this->setTypeNull($row['tilesY'], "integer");
+			$this->setTypeNull($row['maxTilesX'], "integer");
+			$this->setTypeNull($row['maxTilesY'], "integer");
+			$this->setTypeNull($row['locType'], "integer");
+			$this->setTypeNull($row['x'], "integer");
+			$this->setTypeNull($row['y'], "integer");
+			$this->setTypeNull($row['width'], "integer");
+			$this->setTypeNull($row['height'], "integer");
+			$this->setTypeNull($row['iconType'], "integer");
+			$this->setTypeNull($row['displayLevel'], "integer");
+			$this->setTypeNull($row['visible'], "integer");
+			$this->setTypeNull($row['editUserId'], "integer");
+			$this->setTypeNull($row['patrolled'], "integer");
 			
 			$recentChanges[] = $row;
 			$count += 1;

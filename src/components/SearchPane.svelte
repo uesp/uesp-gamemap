@@ -258,7 +258,7 @@
                             <!-- svelte-ignore missing-declaration -->
                             {#if gamemap.hasMultipleWorlds()}<Checkbox label="Only show results from this map" title="Toggle to only search locations in the current map" checked={searchCurrentMap} on:change={(e) => {searchCurrentMap = e.detail; updateSearch(searchQuery, searchCurrentMap)}}></Checkbox>{/if}
                             <!-- svelte-ignore missing-declaration -->
-                            <Checkbox label="Pin search pane" title="Toggle to pin the search window over the map" checked={doPinSearch} on:change={(e) => {setPrefs("pinsearch", e.detail); doPinSearch = getPrefs("pinsearch");}}></Checkbox>
+                            <Checkbox label="Pin search window over map" title="Toggle to pin the search window over the map" checked={doPinSearch} on:change={(e) => {setPrefs("pinsearch", e.detail); doPinSearch = getPrefs("pinsearch");}}></Checkbox>
                         {/if}
 
                     </div>
