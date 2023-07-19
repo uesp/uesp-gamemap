@@ -406,8 +406,8 @@
 
     // make RC object function
     function getRCItem(data) {
-        let destinationID = (data.worldHistoryId != 0) ? data.worldId : -data.locationId;
         let isWorld = data.displayName != null || data.cellSize != null;
+        let destinationID = isWorld ? data.worldId : -data.locationId;
 
         return {
             icon: (data.iconType != 0 && data.iconType) ? MAPCONFIG.iconPath + data.iconType + ".png" : (isWorld) ? "public" : "location_on",
@@ -480,7 +480,7 @@
                                     itemSize={60}>
                                     <div slot="item" let:index let:style {style}>
                                         {@const data = recentChanges[index]}
-                                        <ListItem {...data} title={data.name} bold={data.isWorld} compact={true} on:click={() => gamemap.goto(data.destinationID)} />
+                                        <ListItem {...data} title={data.name} bold={data.isWorld} compact={true} on:shiftClick={() => gamemap.edit(data.destinationID)} on:click={() => gamemap.goto(data.destinationID)} />
                                     </div>
                                 </VirtualList>
                             {:else}

@@ -6,12 +6,26 @@
 
 // import data classes
 import Location from "./location.js";
+import World from "./world.js";
 export default class MapState {
     constructor(data) {
         //set default state
         this.pendingJump = data?.pendingJump ?? null;
-        this.coords = data?.coords ?? this.pendingJump?.getCentre() ?? null;
-        this.world = data?.world ?? gamemap.getWorldByID(this.pendingJump?.worldID) ?? gamemap.getWorldByID(MAPCONFIG.defaultWorldID || 0);
+        this.coords = data?.coords ?? this.pendingJump instanceof Location ? this.pendingJump?.getCentre() : null
+        this.world = (() => {
+            if (data?.world) {
+                return data.world;
+            } else if (this.pendingJump != null) {
+                let jump = this.pendingJump;
+                if (jump instanceof Location) {
+                    return gamemap.getWorldByID(jump.worldID)
+                } else if (jump instanceof World) {
+                    return jump;
+                }
+            } else {
+                return gamemap.getWorldByID(MAPCONFIG.defaultWorldID || 0);
+            }
+		})();
         this.zoom = data?.zoom ?? (this.pendingJump instanceof Location ? gamemap.getWorldByID(this.pendingJump?.worldID).maxZoomLevel : DEFAULT_MAP_CONFIG.zoomLevel);
         this.showGrid = data?.showGrid ?? false;
         this.cellResource = data?.cellResource ?? "";

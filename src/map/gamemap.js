@@ -224,6 +224,12 @@ export default class Gamemap {
 			}, 1);
 		}
 
+		// if received a world edit pending jump, begin editing
+		if (mapState.pendingJump instanceof World && mapState.pendingJump.editing) {
+			this.edit(mapState.pendingJump);
+			mapState.pendingJump = null;
+		}
+
 		// set background colour
 		if (mapState.world.layers[mapState.layerIndex].bg_color != null) { this.mapRoot.style.backgroundColor = mapState.world.layers[mapState.layerIndex].bg_color; }
 
@@ -499,7 +505,7 @@ export default class Gamemap {
 			if (location.worldID == self.getCurrentWorldID()) {
 				map.setZoom(self.getCurrentZoom() - 0.0001, {animate: false}) // fix pan animation bug
 				map.setView(self.toLatLngs(location.getCentre()), self.getCurrentWorld().maxZoomLevel, {animate: true});
-				location.openPopup();
+				if (!id?.editing) setTimeout(() => location.openPopup(), 1);
 				this.mapCallbacks?.setLoading(false);
 			} else {
 				self.mapState.pendingJump = location;
@@ -1074,6 +1080,7 @@ export default class Gamemap {
 		// remove existing marker(s)
 		let markers = this.getMarkersFromLocation(location);
 		markers.forEach(function(marker) { marker.remove() });
+		map.closePopup();
 
 		// update location data
 		this.getCurrentWorld().locations?.set(location.id, location);
@@ -1117,11 +1124,12 @@ export default class Gamemap {
 					// centre to location if we have a pendingjump for it
 					let jump = this.mapState?.pendingJump;
 					if (jump instanceof Location && jump.id == location.id) {
-						this.goto(this.mapState.pendingJump);
-						if (this.mapState.pendingJump?.editing) { this.edit(location) }
 						this.mapState.pendingJump = null;
+						this.gotoLocation(jump);
+						if (jump?.editing) {
+							this.edit(location);
+						}
 					}
-
 				}
 			});
 		}
@@ -1543,14 +1551,19 @@ export default class Gamemap {
 		return markers;
 	}
 
-	edit(object) {
-		// tell the editor we're editing this object
+	async edit(object) {
+
+		if (!isNaN(object)) {
+			object = (object > 0) ? this.getWorldByID(object) : await this.getLocation(object);
+		}
+
 		let isWorld = object instanceof World;
 		let isLocation = object instanceof Location;
 
 		if (isWorld && object.id != this.getCurrentWorldID() || isLocation && object.worldID != this.getCurrentWorldID()) {
 			object.editing = true;
-			this.goto(object);
+			self.mapState.pendingJump = object;
+			self.setMapState(new MapState({pendingJump: object}));
 		} else {
 			this.mapCallbacks?.edit(object);
 			map.closePopup();
