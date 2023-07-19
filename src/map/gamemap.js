@@ -215,9 +215,10 @@ export default class Gamemap {
 		// set map view
 		if (mapState.coords == null || mapState.zoom == null) {
 			map.fitBounds(RC.getMaxBounds(), {animate: false}); // reset map to fill world bounds
-			setTimeout(function() { map.fitBounds(RC.getMaxBounds(), {animate: true}) }, 1); // now actually reset it
+			setTimeout(() => map.fitBounds(RC.getMaxBounds(), { animate: true }), 1); // now actually reset it
 		} else {
 			map.setView(this.toLatLngs(mapState.coords), mapState.zoom, {animate: false});
+			setTimeout(() => map.setView(this.toLatLngs(mapState.coords), mapState.zoom, {animate: true}), 1); // now actually set view
 		}
 
 		// set background colour
@@ -229,7 +230,7 @@ export default class Gamemap {
 				// get locations for this map
 				this.getLocations(mapState.world.id);
 			} else {
-				//redraw locations from cache
+				//draw locations from cache
 				this.drawLocations(mapState.world.locations);
 			}
 		}
@@ -493,7 +494,7 @@ export default class Gamemap {
 			if (location.worldID == self.getCurrentWorldID()) {
 				map.setZoom(self.getCurrentZoom() - 0.0001, {animate: false}) // fix pan animation bug
 				map.setView(self.toLatLngs(location.getCentre()), self.getCurrentWorld().maxZoomLevel, {animate: true});
-				setTimeout(() => location.openPopup(), 100);
+				setTimeout(() => location.openPopup(), 1);
 				this.mapCallbacks?.setLoading(false);
 			} else {
 				self.setMapState(new MapState({pendingJump: location}));
@@ -518,12 +519,9 @@ export default class Gamemap {
 				self.mapCallbacks?.setLoading(false);
 			} else { // else load up the new world
 				self.clearLocations();
-				let mapState = new MapState({coords: coords});
 				let world = self.getWorldFromID(worldID);
 				print(`Going to world... ${world.displayName} (${world.id});`);
-				print(world);
-				mapState.world = world;
-				self.setMapState(mapState);
+				self.setMapState(new MapState({coords: coords, world: world, pendingJump: world?.editing ? world : null}));
 			}
 
 		} else {
@@ -1113,10 +1111,10 @@ export default class Gamemap {
 					print(`pendingJump status: ${this.mapState?.pendingJump}`)
 
 					// centre to location if we have a pendingjump for it
-					if (this.mapState?.pendingJump?.id == location.id) {
-						print("pending state popped!");
+					let jump = this.mapState?.pendingJump;
+					if (jump instanceof Location && jump.id == location.id) {
 						this.goto(this.mapState.pendingJump);
-						if (this.mapState.pendingJump.edit) { this.edit(location) }
+						if (this.mapState.pendingJump?.editing) { this.edit(location) }
 						this.mapState.pendingJump = null;
 					}
 
@@ -1544,8 +1542,16 @@ export default class Gamemap {
 
 	edit(object) {
 		// tell the editor we're editing this object
-		this.mapCallbacks?.edit(object);
-		map.closePopup();
+		let isWorld = object instanceof World;
+		let isLocation = object instanceof Location;
+
+		if (isWorld && object.id != this.getCurrentWorldID() || isLocation && object.worldID != this.getCurrentWorldID()) {
+			object.editing = true;
+			this.goto(object);
+		} else {
+			this.mapCallbacks?.edit(object);
+			map.closePopup();
+		}
 	}
 
 	// get if editing is enabled on this map

@@ -13,9 +13,19 @@
 
 ## todo
 
-- fix jumping to locations
 
-- get popups working again
+
+- fix popups not showing if both worlds and locations are cached and you switch between them
+
+- fix location centreon being offset if you zoom out slightly before you click
+
+
+
+
+
+
+
+
 
 - make dialog.svelte overwrite all <a> tags href by removing location.hostname from links
 

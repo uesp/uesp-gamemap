@@ -7,49 +7,47 @@
 export default class World {
 	constructor(data) {
 
-		if (data != null) {
-			this.displayName = data.displayName;
-			this.name = data.name.toLowerCase();
-			this.description = data.description || "";
+		this.displayName = data?.displayName ?? "";
+		this.name = data?.name?.toLowerCase() ?? "";
+		this.description = data?.description ?? "";
 
-			// locations are loaded async after the world is created
-			this.locations = null;
+		// locations are loaded async after the world is created
+		this.locations = null;
 
-			this.id = data.id || 0;
-			this.parentID = (data?.parentId == -1) ? null : data.parentId ?? null;
-			this.revisionID = data.revisionId || 0;
+		this.id = data?.id ?? 0;
+		this.parentID   = (data?.parentId == -1) ? null : data?.parentId ?? null;
+		this.revisionID = data?.revisionId ?? 0;
 
-			this.wikiPage = data.wikiPage || null;
-			this.cellSize = data.cellSize || -1;
+		this.wikiPage = data?.wikiPage ?? null;
+		this.cellSize = data?.cellSize ?? -1;
 
-			this.zoomOffset = MAPCONFIG.zoomOffset ?? data.zoomOffset;
-			this.defaultZoom = data.defaultZoom - this.zoomOffset;
-			this.maxZoomLevel = data.maxZoom - this.zoomOffset;
-			this.minZoomLevel = data.minZoom - this.zoomOffset || 0;
+		this.zoomOffset   = MAPCONFIG.zoomOffset ?? data?.zoomOffset;
+		this.defaultZoom  = data?.defaultZoom - this.zoomOffset;
+		this.maxZoomLevel = data?.maxZoom - this.zoomOffset;
+		this.minZoomLevel = data?.minZoom - this.zoomOffset ?? 0;
 
-			this.minX = MAPCONFIG.minX ?? data.posLeft;
-			this.maxX = MAPCONFIG.maxX ?? data.posRight;
-			this.minY = MAPCONFIG.minY ?? data.posBottom;
-			this.maxY = MAPCONFIG.maxY ?? data.posTop;
+		this.minX = MAPCONFIG.minX ?? data.posLeft;
+		this.maxX = MAPCONFIG.maxX ?? data.posRight;
+		this.minY = MAPCONFIG.minY ?? data.posBottom;
+		this.maxY = MAPCONFIG.maxY ?? data.posTop;
 
-			// get max range of x and y, assure it is a positive number
-			this.maxRangeX = Math.abs(this.maxX - this.minX);
-			this.maxRangeY = Math.abs(this.maxY - this.minY);
+		// get max range of x and y, assure it is a positive number
+		this.maxRangeX = Math.abs(this.maxX - this.minX);
+		this.maxRangeY = Math.abs(this.maxY - this.minY);
 
-			this.numTilesX = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the X direction
-			this.numTilesY = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the Y direction
-			this.dbNumTilesX = data.maxTilesX; //actual number of tiles in the X direction
-			this.dbNumTilesY = data.maxTilesY; //actual number of tiles in the Y direction
+		this.numTilesX = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the X direction
+		this.numTilesY = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the Y direction
+		this.dbNumTilesX = data?.maxTilesX; //actual number of tiles in the X direction
+		this.dbNumTilesY = data?.maxTilesY; //actual number of tiles in the Y direction
 
-			this.legacy = data; // legacy attributes from server
+		this.legacy = data; // legacy attributes from server
 
-			// world display data (grids and layers)
-			this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : null;
-			this.layers = this.displayData?.layers ?? MAPCONFIG.layers;
-			this.gridStart = this.displayData?.gridStart;
-		} else {
-			throw new Error("World cannot be null!");
-		}
+		// world display data (grids and layers)
+		this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : null;
+		this.layers = this.displayData?.layers ?? MAPCONFIG.layers;
+		this.gridStart = this.displayData?.gridStart;
+
+		this.editing = false; // whether this world is currently being edited
 	}
 
 	hasGrid() {
