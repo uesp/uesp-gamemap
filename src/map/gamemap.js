@@ -218,7 +218,10 @@ export default class Gamemap {
 			setTimeout(() => map.fitBounds(RC.getMaxBounds(), { animate: true }), 1); // now actually reset it
 		} else {
 			map.setView(this.toLatLngs(mapState.coords), mapState.zoom, {animate: false});
-			setTimeout(() => map.setView(this.toLatLngs(mapState.coords), mapState.zoom, {animate: true}), 1); // now actually set view
+			setTimeout(() => { // now actually set view
+				map.setView(this.toLatLngs(mapState.coords), mapState.zoom, {animate: true});
+				this.updateMapState(mapState); // update map state
+			}, 1);
 		}
 
 		// set background colour
@@ -488,15 +491,18 @@ export default class Gamemap {
 
 	gotoLocation(id) {
 		print(`going to location: ${id}`);
-		this.mapState.pendingJump = null;
+
 		this.mapCallbacks?.setLoading(true);
+		this.mapState.pendingJump = null;
+
 		this.getLocation(id).then((location) => {
 			if (location.worldID == self.getCurrentWorldID()) {
 				map.setZoom(self.getCurrentZoom() - 0.0001, {animate: false}) // fix pan animation bug
 				map.setView(self.toLatLngs(location.getCentre()), self.getCurrentWorld().maxZoomLevel, {animate: true});
-				setTimeout(() => location.openPopup(), 1);
+				location.openPopup();
 				this.mapCallbacks?.setLoading(false);
 			} else {
+				self.mapState.pendingJump = location;
 				self.setMapState(new MapState({pendingJump: location}));
 			}
 		}).catch((error) => {
@@ -1059,7 +1065,7 @@ export default class Gamemap {
 
 		// delete location from data as well
 		let locations = this.getCurrentWorld().locations;
-		locations.delete(location.id);
+		locations?.delete(location.id);
 	}
 
 	// update location on the map
@@ -1070,7 +1076,7 @@ export default class Gamemap {
 		markers.forEach(function(marker) { marker.remove() });
 
 		// update location data
-		this.getCurrentWorld().locations.set(location.id, location);
+		this.getCurrentWorld().locations?.set(location.id, location);
 
 		// create new markers
 		markers = this.getMarkers(location);
@@ -1107,8 +1113,6 @@ export default class Gamemap {
 					// add markers to the map
 					this.getMarkers(location).forEach(marker => { marker.addTo(map) });
 					location.setWasVisible(true);
-
-					print(`pendingJump status: ${this.mapState?.pendingJump}`)
 
 					// centre to location if we have a pendingjump for it
 					let jump = this.mapState?.pendingJump;
@@ -1410,7 +1414,6 @@ export default class Gamemap {
 
 		// if normally clicked or pressing ctrl, show popup
 		if (!shift || ctrl ) {
-
 			if (canJumpTo && !ctrl){
 				// do nothing
 			} else {

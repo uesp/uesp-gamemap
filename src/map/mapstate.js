@@ -12,7 +12,7 @@ export default class MapState {
         this.pendingJump = data?.pendingJump ?? null;
         this.coords = data?.coords ?? this.pendingJump?.getCentre() ?? null;
         this.world = data?.world ?? gamemap.getWorldByID(this.pendingJump?.worldID) ?? gamemap.getWorldByID(MAPCONFIG.defaultWorldID || 0);
-        this.zoom = data?.zoom ?? (this.pendingJump ? gamemap.getWorldByID(this.pendingJump?.worldID).maxZoomLevel : DEFAULT_MAP_CONFIG.zoomLevel);
+        this.zoom = data?.zoom ?? (this.pendingJump instanceof Location ? gamemap.getWorldByID(this.pendingJump?.worldID).maxZoomLevel : DEFAULT_MAP_CONFIG.zoomLevel);
         this.showGrid = data?.showGrid ?? false;
         this.cellResource = data?.cellResource ?? "";
 		this.layerIndex = data?.layerIndex ?? 0;

@@ -18,13 +18,15 @@
 - fix popups not showing if both worlds and locations are cached and you switch between them
 
 - fix location centreon being offset if you zoom out slightly before you click
+- fix location centreon being offset if you go from full zoom (5) to a small dungeon (4) and it does the zoom glitch
 
 
 
 
+- allow editing from shift click in RC for both worlds and locations
 
 
-
+- fix clicking from RC just going to world for some reason
 
 
 - make dialog.svelte overwrite all <a> tags href by removing location.hostname from links
@@ -116,13 +118,11 @@ if adding location, close button is always "cancel"
 
 - fix location drifting in craglorn and alikr
 
-
-- return locationID to positive an world to negative
-- change ui to have "world/location" switch under icon for destID
-
 "goto article" button doesnt update when world wiki link updated
 
 - make "grouped/abc" symmetrical
+
+- fix darker blocks in grid for sr going off by one at the ends
 
 
 - fix high res icons being clipped on icon in ListITem
@@ -144,7 +144,6 @@ if adding location, close button is always "cancel"
 - fix description field misbehaving, being too big
 
 
-- fix centreon going to the wrong place
 - fix clicking out while zoomed in zooming in to parent map as well
 - fix requesting /null in layerbutton
 - add middle click event listener to button and listItem
@@ -153,9 +152,6 @@ if adding location, close button is always "cancel"
 - fix location list dropdown not being centred properly
 - fix live edit on world name location switcher
 - fix live edit on worlds (every change changes the current world in map object)
-- make embeded map watermark actually open in new tab
-- make going to location centre zoom dynamically instead of always zoom level 5
-- add way to show popups on centreon, optional param
 - fix losing grid on resize
 
 - do common.js getIcon() for worlds,locations, to switch between actual icon, polyline, area, world, and point
