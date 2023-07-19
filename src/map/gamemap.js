@@ -137,7 +137,7 @@ export default class Gamemap {
 	 * @returns {Object} mapState - Object that controls the state and view of the map.
 	 */
 	getMapState() {
-		return this.currentMapState;
+		return this.mapState;
 	}
 
 	/** Override mapState to provided map state (use to load from URL or from saved state).
@@ -148,6 +148,8 @@ export default class Gamemap {
 
 		print("Setting map state!");
 		onlyUpdateTiles = onlyUpdateTiles ?? false;
+
+		print(mapState);
 
 		// remove previous tiles
 		if (tileLayer != null) {
@@ -162,10 +164,10 @@ export default class Gamemap {
 			print("pending centeron")
 			try {
 				let location = await this.getLocation(getURLParams().get("centeron"));
-				print(location);
 				mapState.world = this.getWorldFromID(location.worldID);
-				mapState.zoom = mapState.world.maxZoomLevel
-				mapState.pendingJump = {data: location};
+				mapState.zoom = mapState.world.maxZoomLevel;
+				mapState.pendingJump = location;
+				mapState.coords = location.getCentre();
 			} catch {
 				mapState.pendingJump = null;
 				M.toast({html: "Centeron failed!"});
@@ -192,11 +194,6 @@ export default class Gamemap {
 		// calculate raster coords
 		RC = new RasterCoords(map, this.mapImage);
 
-		// calculate centreon coordinates if available
-		if (mapState?.pendingJump?.data && mapState.pendingJump.data instanceof Location) {
-			mapState.coords = mapState.pendingJump.data.getCentre();
-		}
-
 		// default tilelayer options
 		let tileOptions = {
 			noWrap: true,
@@ -214,8 +211,6 @@ export default class Gamemap {
 			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, mapState.layerIndex), tileOptions);
 		}
 		tileLayer.addTo(map);
-
-		print(mapState);
 
 		// set map view
 		if (mapState.coords == null || mapState.zoom == null) {
@@ -235,7 +230,7 @@ export default class Gamemap {
 				this.getLocations(mapState.world.id);
 			} else {
 				//redraw locations from cache
-				this.redrawLocations(mapState.world.locations);
+				this.drawLocations(mapState.world.locations);
 			}
 		}
 
@@ -311,7 +306,7 @@ export default class Gamemap {
 		mapState.coords = (MAPCONFIG.coordType == COORD_TYPES.NORMALISED || MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? [x, y] : [Math.floor(x), Math.floor(y)];
 		mapState.zoom = parseFloat(map.getZoom().toFixed(3));
 		mapState.world = this.getWorldFromID(this.currentWorldID);
-		this.currentMapState = mapState;
+		this.mapState = mapState;
 
 		// update url
 		let mapLink;
@@ -462,10 +457,14 @@ export default class Gamemap {
 
 	/** Convenience method to quickly "goto" a location, world, or certain coordinates.
 	 * @param {Object} place - Either a world, a location, or ID of one of those two.
-	 * @param {Object} coords - Coord object (can also contain zoom)
 	 */
-	goto(place, coords) {
+	goto(place) {
 		// figure out what data we're being passed
+
+		if (place == null) { return }
+
+		let isNumerical = !isNaN(place);
+
 		this.mapCallbacks?.setLoading(true);
 		place = (place) ? (isString(place)) ? parseInt(place) : place : this.getCurrentWorldID();
 		let isWorld = place instanceof World || place.numTilesX;
@@ -480,7 +479,7 @@ export default class Gamemap {
 			if (place >= 0) { // is destination a worldID?
 				this.gotoWorld(place);
 			} else { // it is a locationID
-				this.gotoLocation(location);
+				this.gotoLocation(place);
 			}
 		}
 
@@ -488,17 +487,16 @@ export default class Gamemap {
 
 	gotoLocation(id) {
 		print(`going to location: ${id}`);
+		this.mapState.pendingJump = null;
 		this.mapCallbacks?.setLoading(true);
 		this.getLocation(id).then((location) => {
 			if (location.worldID == self.getCurrentWorldID()) {
 				map.setZoom(self.getCurrentZoom() - 0.0001, {animate: false}) // fix pan animation bug
 				map.setView(self.toLatLngs(location.getCentre()), self.getCurrentWorld().maxZoomLevel, {animate: true});
+				setTimeout(() => location.openPopup(), 100);
 				this.mapCallbacks?.setLoading(false);
-				this.mapState.pendingJump = null;
-				location.openPopup();
 			} else {
-				let mapState = new MapState({pendingJump: location});
-				self.setMapState(mapState);
+				self.setMapState(new MapState({pendingJump: location}));
 			}
 		}).catch((error) => {
 			print(error);
@@ -538,6 +536,7 @@ export default class Gamemap {
 	 * @param {Object} latLngs - the leaflet latLng coordinate object
 	 * @param {Object} coordType - the coordinate system type to convert to
 	 */
+	getCoords(...args) { return this.toCoords(...args) }
 	toCoords(latLngs, coordType) {
 
 		var coords;
@@ -580,6 +579,7 @@ export default class Gamemap {
 	 * Convert XY/Normalised/Worldspace coordinates to leaflet's LatLongs.
 	 * @param {Object} coords - the coordinate/point object
 	 */
+	getLatLngs(...args) { return this.toLatLngs(...args) }
 	toLatLngs(coords) {
 
 		coords = structuredClone(coords) // make distinct
@@ -934,15 +934,13 @@ export default class Gamemap {
 		}
 
 		// make sure we're being given a valid world state
-		if (world == null || world.id == null || world.id < 0 ) {
-			return;
-		}
+		if (world == null || world.id == null || world.id < 0 ) { return }
 
 		// generate api query
 		var queryParams = {};
 		queryParams.action = "get_locs";
 		queryParams.world  = world.id;
-		queryParams.db = this.mapConfig.database;
+		queryParams.db = MAPCONFIG.database;
 
 		// make api query
 		getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
@@ -963,7 +961,7 @@ export default class Gamemap {
 
 			// make sure we're in the right world before overwriting all locations
 			if (self.getCurrentWorldID() == world.id) {
-				self.redrawLocations(locationMap);
+				self.drawLocations(locationMap);
 			}
 
 		}).catch(error => {throw new Error(`There was an error getting locations: ${error}`)});
@@ -1092,7 +1090,7 @@ export default class Gamemap {
 
 	}
 
-	redrawLocations(locations) {
+	drawLocations(locations) {
 
 		// delete any existing location layers
 		this.clearLocations();
@@ -1112,10 +1110,14 @@ export default class Gamemap {
 					this.getMarkers(location).forEach(marker => { marker.addTo(map) });
 					location.setWasVisible(true);
 
+					print(`pendingJump status: ${this.mapState?.pendingJump}`)
+
 					// centre to location if we have a pendingjump for it
-					if (this.mapState?.pendingJump && this.mapState.pendingJump instanceof Location) {
-						let location = this.mapState.pendingJump;
-						this.goto(location);
+					if (this.mapState?.pendingJump?.id == location.id) {
+						print("pending state popped!");
+						this.goto(this.mapState.pendingJump);
+						if (this.mapState.pendingJump.edit) { this.edit(location) }
+						this.mapState.pendingJump = null;
 					}
 
 				}
@@ -1393,10 +1395,10 @@ export default class Gamemap {
 
 			let location = marker.location;
 			if (location != null) {
+				this.mapCallbacks?.setLoading(true);
 				if (location.destinationID > 0) { // is destinationID a worldID
 					this.goto(location.destinationID);
 				} else { // it is a location ID
-					print(location.destinationID)
 					this.getLocation(location.destinationID).then((location) => self.goto(location));
 				}
 			}
@@ -1543,7 +1545,7 @@ export default class Gamemap {
 	edit(object) {
 		// tell the editor we're editing this object
 		this.mapCallbacks?.edit(object);
-		this.getMapObject().closePopup();
+		map.closePopup();
 	}
 
 	// get if editing is enabled on this map
@@ -1583,6 +1585,7 @@ export default class Gamemap {
 		return this.mapConfig;
 	}
 
+	getZoom() { return this.getCurrentZoom() }
 	getCurrentZoom() {
 		return (map != null) ? map.getZoom() : 0;
 	}
@@ -1625,9 +1628,9 @@ export default class Gamemap {
 		return 0;
 	}
 
-	getMapObject() {
-		return map;
-	}
+	getMap() { return map }
+	getMapObject() { return map }
+	getElement() { return this.mapRoot }
 
 	hasURLParams() {
 		return (Array.from(getURLParams().values())).length >= 1;

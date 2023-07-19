@@ -1,24 +1,23 @@
 ## last week
 
-
-
 # bug fixes
 - fixed not being able to right click on location list popup
-
+- fix performance issues on jumping between locations
+- fixed issue where mapState pendingJump would stick around between maps
 
 # technical
 - added a bunch of shortcut functions for getWorldByID as i kept typing them wrong
+- tried to revert world being positive, location being negative, but too deeply ingrained now and would take too much time
+- simplified the way pendingJumps work (telling the map to jump to a loc after loading a world) a lot
+>> all the conversion is done in MapSate class instead of done on initialisation
 
 ## todo
 
-
-
+- fix jumping to locations
 
 - get popups working again
 
-
-- fix jumping to location
-
+- make dialog.svelte overwrite all <a> tags href by removing location.hostname from links
 
 
 
@@ -49,7 +48,6 @@
 
 - fix entering negative locIDs for destIDs being obnoxious (entering minus makes it 0)
 > Entering negative numbers is most definitely not a fluid, natural function. The computer fights me, enteriong a zero or ignoring the negative sign.
-- revert the negative loc id/world id stuff
 - make adding new location count as unsaved changes (unsaved changes == false or location is unsaved)
 >> maybe tweak wording of popup "discard adding new location?"
 
@@ -100,6 +98,7 @@ if adding location, close button is always "cancel"
 - make map lock for editing worlds actually work (no zooming allowed)
 - get live editing working for worlds
 
+- fix entering negative numbers into the destID being a pain
 
 - fix colour picker default colour to something sensible instead of the blue
 

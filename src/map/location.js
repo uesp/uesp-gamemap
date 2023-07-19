@@ -183,11 +183,12 @@ export default class Location {
 	}
 
 	openPopup() {
-		marker = gamemap.getMarkersFromLocation(this)[0];
+		print("doing location popup");
+		let marker = gamemap.getMarkersFromLocation(this)[0];
 		if (marker) {
 			marker.openPopup();
 		} else {
-			L.popup(gamemap.toLatLngs(this.getCentre()), {content: this.getPopupContent()}).openOn(map);
+			gamemap.getMap().openPopup(this.getPopupContent(), gamemap.getLatLngs(this.getCentre()));
 		}
 	}
 

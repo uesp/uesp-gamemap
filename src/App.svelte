@@ -131,6 +131,7 @@
 					// set up map config assets
 					mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
 					mapConfig.iconPath = mapConfig.assetsPath + "icons/";
+					mapConfig.db = mapConfig.database;
 					// sometimes tileURLs on the server are not consistent with the dbName+"map" schema, so you can define an tileURLName in the map config to override this
 					mapConfig.tileURL = (mapConfig.tileURLName) ? mapConfig.baseTileURL + mapConfig.tileURLName + "/" : mapConfig.baseTileURL + mapConfig.database + "map/";
 

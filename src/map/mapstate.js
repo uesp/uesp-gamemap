@@ -4,16 +4,18 @@
  * @summary Data class for the map's state.
  */
 
- export default class MapState {
+// import data classes
+import Location from "./location.js";
+export default class MapState {
     constructor(data) {
         //set default state
-		this.coords = data?.coords ?? null;
-        this.zoom = data?.zoom ?? data?.[0]?.zoom ?? DEFAULT_MAP_CONFIG.zoomLevel;
-        this.world = data?.world ?? gamemap.getWorldFromID(MAPCONFIG.defaultWorldID || 0);
-        this.showGrid = false;
-        this.cellResource = "";
-		this.layerIndex = 0;
-        this.pendingJump = null;
+        this.pendingJump = data?.pendingJump ?? null;
+        this.coords = data?.coords ?? this.pendingJump?.getCentre() ?? null;
+        this.world = data?.world ?? gamemap.getWorldByID(this.pendingJump?.worldID) ?? gamemap.getWorldByID(MAPCONFIG.defaultWorldID || 0);
+        this.zoom = data?.zoom ?? (this.pendingJump ? gamemap.getWorldByID(this.pendingJump?.worldID).maxZoomLevel : DEFAULT_MAP_CONFIG.zoomLevel);
+        this.showGrid = data?.showGrid ?? false;
+        this.cellResource = data?.cellResource ?? "";
+		this.layerIndex = data?.layerIndex ?? 0;
     }
 
 }
