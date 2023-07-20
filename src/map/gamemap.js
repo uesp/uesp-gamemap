@@ -505,7 +505,13 @@ export default class Gamemap {
 			if (location.worldID == self.getCurrentWorldID()) {
 				map.setZoom(self.getCurrentZoom() - 0.0001, {animate: false}) // fix pan animation bug
 				map.setView(self.toLatLngs(location.getCentre()), self.getCurrentWorld().maxZoomLevel, {animate: true});
-				if (!id?.editing) setTimeout(() => location.openPopup(), 1);
+				setTimeout(() => {
+					if (id?.editing) {
+						this.edit(location);
+					} else {
+						location.openPopup();
+					}
+				}, 1);
 				this.mapCallbacks?.setLoading(false);
 			} else {
 				self.mapState.pendingJump = location;
@@ -513,7 +519,6 @@ export default class Gamemap {
 			}
 		}).catch((error) => {
 			print(error);
-			M.toast({html: "That location doesn't exist!"});
 			self.mapCallbacks?.setLoading(false);
 		});
 	}
@@ -1029,6 +1034,7 @@ export default class Gamemap {
 				print(location);
 				return Promise.resolve(location);
 			} else {
+				M.toast({html: "That location doesn't exist!"});
 				return Promise.reject(`Location ${locationID} was invalid.`);
 			}
 		}
@@ -1126,9 +1132,6 @@ export default class Gamemap {
 					if (jump instanceof Location && jump.id == location.id) {
 						this.mapState.pendingJump = null;
 						this.gotoLocation(jump);
-						if (jump?.editing) {
-							this.edit(location);
-						}
 					}
 				}
 			});

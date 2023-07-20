@@ -45,6 +45,8 @@
 	--delete_light: rgb(207, 47, 76);
 	--save: #5e8735;
 	--save_light: #679638;
+	--revert: #b6dcdc;
+	--revert_dark: #a8c9c9;
 
 	/* text colours */
 	--text_loc_name: #33ff33;

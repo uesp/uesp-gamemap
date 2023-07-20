@@ -22,6 +22,7 @@
     export let type;
     export let bold;
     export let tooltip;
+    export let ripple = "light";
 
     disabled = (icon == "loading") ? true : disabled;
 
@@ -39,8 +40,8 @@
 <markup>
     <!-- svelte-ignore a11y-missing-attribute -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <a class="waves-effect waves-{flat ? "dark" : "light"} btn{flat ? "-flat" : ""}{size ? "-"+{size} : ""}" class:disabled={disabled} class:saving={type=="save" && icon == "loading"} class:error={type=="save" && icon == "warning"} title={tooltip} class:light={flat == "light"}
-    on:click={onClicked} class:loadingButton={icon == "loading"} class:deleteButton={type == "delete"} class:saveButton={type=="save"} class:bold={bold}>
+    <a class="waves-effect waves-{ripple} btn{flat ? "-flat" : ""}{size ? "-"+{size} : ""}" class:disabled={disabled} class:saving={type=="save" && icon == "loading"} class:error={type && icon == "warning"} title={tooltip} class:light={flat == "light"}
+    on:click={onClicked} class:loadingButton={icon == "loading"} class:deleteButton={type == "delete"} class:saveButton={type=="save"} class:revertButton={type=="revert"} class:bold={bold}>
         {#if icon}
             {#if icon != "loading"}
                  <i class="material-icons {iconDirection}">{icon}</i>
@@ -147,6 +148,8 @@
 
     .disabled {
         color: var(--text_low_emphasis) !important;
+        opacity: 0.5;
+        pointer-events: none;
     }
 
     .saveButton {
@@ -197,6 +200,15 @@
         40%, 60% {
             transform: translate3d(4px, 0, 0);
         }
+    }
+
+    .revertButton {
+        background-color: var(--revert);
+        color: black;
+    }
+
+    .revertButton:hover {
+        background-color: var(--revert_dark);
     }
 
 </style>

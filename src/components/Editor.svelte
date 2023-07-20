@@ -53,8 +53,11 @@
     let saveButton;
     let refreshTitleBar;
     let innerHeight;
+
+    // dialogs
     let discardDialog;
     let deleteDialog;
+    let revertDialog;
 
     let recentChanges = [];
     let editHistory = [];
@@ -72,6 +75,7 @@
     $: isEditing = editObject && isLocation || isWorld;
     $: name = (isWorld ? modEditObject?.displayName : modEditObject?.name);
     $: linkWikiPage = modEditObject?.wikiPage == name || (modEditObject?.wikiPage == null || modEditObject?.wikiPage == "");
+    $: editType = (modEditObject?.revertID) ? EDIT_TYPES.REVERT : (modEditObject?.id > 0) ? EDIT_TYPES.EDIT : EDIT_TYPES.ADD;
 
     $: { // prevent leaving the page on unsaved changes
         if (unsavedChanges || editObject?.unsavedLocation) {
@@ -190,6 +194,28 @@
             cancel();
         } else {
             deleteDialog.show();
+        }
+
+    }
+
+    // load specific revision of object into editor
+    function loadRevision(revision, force) {
+        force = (force != null) ? force : false;
+        let object = (revision.isWorld) ? new World(revision.rev) : new Location(revision.rev);
+        print(revision);
+
+        if (modEditObject.revisionID != object.revisionID) {
+            // prompt user if they want to load old revision, then overwrite current object with new data;
+            if (unsavedChanges && !force) {
+                revertDialog.showWithCallback((result) => {
+                    if (result == "confirm") loadRevision(revision, force);
+                })
+            } else if (force || !unsavedChanges) {
+                print(object);
+                editType = EDIT_TYPES.REVERT;
+            }
+        } else {
+            M.toast({html: "That is the current revision!"});
         }
 
     }
@@ -421,6 +447,7 @@
             worldID: data.worldId,
             isWorld: isWorld,
             subtitle: isWorld ? null : data.worldDisplayName ?? gamemap.getWorldDisplayNameFromID(data.worldId),
+            rev: data,
         }
     }
 
@@ -437,11 +464,10 @@
                  <div id="edit-overlay" in:fade={{ duration: 100 }}>
                     <b class="subheading">Adding {locType.toSentenceCase()}</b>
                     <p style="color: white; text-align: center; margin: 12px;">Begin adding the new {locType.toLowerCase()} to the map.</p>
-                    <div id="arrow_container">
-                        <div class="arrow"><span></span><span></span><span></span></div>
-                    </div>
+                    <div id="arrow_container"><div class="arrow"><span></span><span></span><span></span></div></div>
+
                     <div style="display: flex; gap: var(--padding_medium); padding-top: 6px;">
-                        <Button text="Cancel" icon="close" flat="light" on:click={cancel}></Button>
+                        <Button text="Cancel" icon="close" flat="light" ripple="light" on:click={cancel}></Button>
                     </div>
                  </div>
              {/if}
@@ -450,7 +476,7 @@
              <div id="window-resizer" on:mousedown={onResizerDown}/>
 
              <!-- edit panel appbar -->
-             <AppBar title={!isEditing ? "Map Editor" : ((modEditObject.id > 0) ? "Editing" : "Adding") + " " + objectType.toSentenceCase()}
+             <AppBar title={!isEditing ? "Map Editor" : `${EDIT_TYPES[editType].toSentenceCase()} ${objectType.toSentenceCase()}`}
                 subtitle={isEditing ? (isWorld) ? modEditObject.displayName + " ("+modEditObject.name+")" : modEditObject.name : null} unsavedChanges={unsavedChanges}
                 icon={isEditing && !directEdit ? "arrow_back" : "close"} on:back={() => back()} tooltip={unsavedChanges ? "You have unsaved changes" : null} buttonTooltip={isEditing && !directEdit ? "Go back" : "Close"}
              />
@@ -674,7 +700,7 @@
                                 {/if}
 
                                 <!-- General info -->
-                                {#if modEditObject.id > 0}
+                                {#if editType == EDIT_TYPES.EDIT || editType == EDIT_TYPES.REVERT}
                                     <!-- Recent edits for this object -->
                                     {#if editObject.id > 0 && editObject.revisionID > 0}
                                         <FormGroup title="Recent Edits" icon="history" tooltip="Shows the up to 5 of the most recent edits">
@@ -682,7 +708,8 @@
                                             {#if editHistory.length > 0}
                                                 {#each editHistory as rev}
                                                     {@const entry = getRCItem(rev)}
-                                                    <ListItem {...entry} title={entry.name} bold={entry.isWorld} compact={true}/>
+                                                    {@const selected = rev.revisionId == modEditObject.revisionID}
+                                                    <ListItem {...entry} title={entry.name} bold={entry.isWorld} compact={true} selected={selected} tooltip={selected ? "This is the current revision" : ""} on:click={() => loadRevision(entry)}/>
                                                 {/each}
                                             {:else}
                                                 <LoadingSpinner/>
@@ -694,17 +721,16 @@
                                         <InfoTextPair name="{objectType.toSentenceCase()} ID" value={modEditObject.id} tooltip="This {objectType}'s ID"/>
                                         {#if isWorld}
                                             <InfoTextPair name="World Name" value={modEditObject.name} tooltip="This world's internal name"/>
-                                            <InfoTextPair name="Tiles" value={modEditObject.dbNumTilesX + " x " + modEditObject.dbNumTilesY} tooltip="Number of tiles at full zoom"/>
+                                            <InfoTextPair name="Tiles" value={`${modEditObject.dbNumTilesX} x ${modEditObject.dbNumTilesY}`} tooltip="Number of tiles at full zoom"/>
                                         {/if}
                                         {#if isLocation}
                                             <InfoTextPair name="Location Type" value={Object.keys(LOCTYPES).find(key => LOCTYPES[key] === modEditObject.locType).toLowerCase()} tooltip="The type of location this is"/>
                                             <InfoTextPair name="In World" value={gamemap.getWorldNameFromID(modEditObject.worldID)} tooltip="The world this location is in"/>
-                                            <InfoTextPair name="Position" value={"X: "+modEditObject.getCentre().x + ", Y: " +modEditObject.getCentre().y} tooltip="This location's coordinates"/>
+                                            <InfoTextPair name="Position" value={`X: ${modEditObject?.getCentre()?.x}, Y: ${modEditObject?.getCentre()?.y}`} tooltip="This location's coordinates"/>
                                         {/if}
                                         <InfoTextPair name="Coord Type" value={Object.keys(COORD_TYPES).find(i=>COORD_TYPES[i] === MAPCONFIG.coordType).toLowerCase()} tooltip="Coordinate system that this {objectType} is using"/>
                                         <InfoTextPair name="Revision ID" value={modEditObject.revisionID} tooltip="Current revision ID"/>
                                     </FormGroup>
-
 
                                 {/if}
                             </div>
@@ -712,13 +738,13 @@
 
                         <footer id="footer" in:fly={{ y: 10, duration: 250 }}>
                             <div class="footer-buttons">
-                                <Button text="Save" icon="save" type="save" bold="true" bind:this={saveButton} on:click={() => doSave((isWorld) ? "world" : "location")}/>
+                                <Button text={editType != EDIT_TYPES.REVERT ? "Save" : "Revert"} icon={editType != EDIT_TYPES.REVERT ? "save" : "history"} type={editType != EDIT_TYPES.REVERT ? "save" : "revert"} bold="true" bind:this={saveButton} on:click={() => doSave((isWorld) ? "world" : "location")} ripple={editType == EDIT_TYPES.REVERT ? "dark" : null}/>
                             </div>
                             <div class="footer-buttons">
                                 <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
                                 <Button text={!unsavedChanges && !modEditObject?.unsavedLocation ? "Close" : "Cancel"} icon="close" on:click={() => back()}/>
                                 {#if isLocation && !modEditObject.unsavedLocation}
-                                    <Button text="Delete" icon="delete" type="delete" on:click={() => doDelete()} on:shiftClick={() => doDelete(true)}/>
+                                    <Button text="Delete" icon="delete" disabled={editType == EDIT_TYPES.REVERT} type="delete" on:click={() => doDelete()} on:shiftClick={() => doDelete(true)}/>
                                 {/if}
                             </div>
                         </footer>
@@ -728,8 +754,12 @@
          </aside>
     {/if}
 
-    <Dialog title="Discard changes?" bind:this={discardDialog} dismissible={false} confirm={true}>
+    <Dialog title="Discard changes?" bind:this={discardDialog} confirm={true}>
         Are you sure you want to discard your unsaved changes? This can't be undone.
+    </Dialog>
+
+    <Dialog title="Load older revision?" bind:this={revertDialog} dismissible={false} confirm={true}>
+        Are you sure you want to load an older revision of this {objectType}? This will replace your current edits.
     </Dialog>
 
     <Dialog title="Delete {objectType}?" bind:this={deleteDialog} dismissible={false} confirm={true} on:confirm={() => doDelete(true)}>

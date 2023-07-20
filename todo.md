@@ -1,9 +1,19 @@
 ## last week
 
+## editing
+- shift click on RC items to jump straight to editing them
+>> changed from single click like on live as single click to centreon is more consistent
+>> works for both worlds and locations
+
+## polish
+- made edit history in editor highlight the current revision (changes as you go between older revisions)
+- made going into "revert mode" visually different from normal editing to show you cant edit an older revision
+
 # bug fixes
 - fixed not being able to right click on location list popup
 - fix performance issues on jumping between locations
 - fixed issue where mapState pendingJump would stick around between maps
+- fixed links in help dialog being appended to domain (gamemap.uesp.net/https://www.uesp.net....)
 
 # technical
 - added a bunch of shortcut functions for getWorldByID as i kept typing them wrong
@@ -13,31 +23,15 @@
 
 ## todo
 
-
-
-- fix popups not showing if both worlds and locations are cached and you switch between them
-
-- fix location centreon being offset if you zoom out slightly before you click
-- fix location centreon being offset if you go from full zoom (5) to a small dungeon (4) and it does the zoom glitch
-
-
-
-
-- allow editing from shift click in RC for both worlds and locations
-
-
-- fix clicking from RC just going to world for some reason
-
-
-- make dialog.svelte overwrite all <a> tags href by removing location.hostname from links
-
-
-
-- refactor tabbars to their oown components
-- add tabs to appbar for editing objects "Edit    |      History"
-- make tabbars centred again (location list)
-- make tabbars flush with appbar
-- add support for reverting
+on reverting:
+- clicking any recent edits item will load into "revert mode"
+- if unsaved changes, warn about discard changes when clicking on history item
+- titlebar changes to "reverting Location"
+- message up top appears "you are now in revert mode, you are seeing how this {object} looked in the past"
+- save button becomes blue revert "revert" with revert icon
+- click revert does fancy new revert api
+- after revert, it changes to editing the current location (the reverted one)
+- in revert menu everything is read only, delete and all forms, except cancel button
 
 
 - fix wikilink name being weird (solomon's pinned message)
@@ -56,14 +50,10 @@
 - change "add area" icon in editor to be something more fitting to polygon
 
 
-- make centring on locations open their popups
-
 - fix entering negative locIDs for destIDs being obnoxious (entering minus makes it 0)
 > Entering negative numbers is most definitely not a fluid, natural function. The computer fights me, enteriong a zero or ignoring the negative sign.
 - make adding new location count as unsaved changes (unsaved changes == false or location is unsaved)
 >> maybe tweak wording of popup "discard adding new location?"
-
-- fix line colour preview showing fill colours from area
 
 - shift click on other locations while unsaved changes should immediately change to edit it
 
@@ -85,9 +75,7 @@ https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=dri
 
 - make waves light/dark configurable by prop (for adding new loc "cancel" button)
 
-
 - double clicking markers that arent clickable edits them
-- fix having to load new world once, then click RC item again to jump to centre of it
 
 - make shit clicking RC items go straight to editing them
 if adding location, save will dismiss the editor window
@@ -116,11 +104,9 @@ if adding location, close button is always "cancel"
 
 - make max zoom of all locations -0.5 on all locations client side
 
-- fix location drifting in craglorn and alikr
 
 "goto article" button doesnt update when world wiki link updated
 
-- make "grouped/abc" symmetrical
 
 - fix darker blocks in grid for sr going off by one at the ends
 
@@ -141,6 +127,7 @@ if adding location, close button is always "cancel"
 - add zoom/pan in effects for markers when editing
 
 
+- fix location drifting in craglorn and alikr
 - fix description field misbehaving, being too big
 
 
@@ -159,7 +146,6 @@ to be consistent icons (an area doesnt make sense to have a pin icon)
 
 - fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af on firefox when zooming out
-- shift click in RC to travel to and edit world/location
 - show more columns on map key menu dynamically
 - fix cell resource colour intensity to make sense. deeper the colour the more stuff
 - fix pip on layer switcher ui being small
@@ -167,8 +153,6 @@ to be consistent icons (an area doesnt make sense to have a pin icon)
 - organise app.css and comment gamemap js
 - comment/refactor all code
 - wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
-
-
 
 
 ## todo maps (future)

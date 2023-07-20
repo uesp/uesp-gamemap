@@ -22,6 +22,7 @@
     export let user;
     export let action;
     export let comment;
+    export let tooltip;
 
     // create event dispatcher
     const dispatch = createEventDispatcher();
@@ -37,7 +38,7 @@
 </script>
 
 <markup>
-    <div class='collection' class:selected={selected}>
+    <div class='collection' class:selected={selected} title={tooltip}>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-missing-attribute -->
         <a class='collection-item waves-effect mdc-ripple-surface list-item' class:avatar={icon != null} on:click={onClicked} class:compact={compact}>
@@ -51,7 +52,7 @@
                     <i class="material-icons circle" title={iconTooltip}>{icon}</i>
                 {/if}
                 {#if action}
-                    {@const icon = (action.includes("edit") ? "edit" : action.includes("delete") ? "delete_forever" : action.includes("add") ? "add" : action.includes("revert") ? "undo" : "question_mark")}
+                    {@const icon = (action.includes("edit") ? "edit" : action.includes("delete") ? "delete_forever" : action.includes("add") ? "add" : action.includes("revert") ? "history" : "add")}
                     <div title={comment} class="action" class:add={action.includes("add")} class:delete={action.includes("delete")} class:edit={action.includes("edit")} class:revert={action.includes("revert")}>
                         <Icon name={icon} size=13></Icon>
                     </div>
@@ -167,6 +168,6 @@
     }
 
     .action.revert {
-        background-color: #c1e8e8;
+        background-color: var(--revert);
     }
 </style>

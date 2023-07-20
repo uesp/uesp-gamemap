@@ -40,6 +40,17 @@ window.COORD_TYPES = {
     WORLDSPACE : 2,
 }
 
+window.EDIT_TYPES = {
+	0 : "adding",
+	1 : "editing",
+	2 : "reverting",
+	3 : "deleting",
+	ADD : 0,
+	EDIT : 1,
+	REVERT: 2,
+	DELETE : 3,
+}
+
 window.MAPLOCK = {
 	NONE: false,
 	FULL : 1,
@@ -497,11 +508,18 @@ window.polygonCenter = function polygonCenter(points) {
 		area += f * 3;
 	}
 
-	if (area === 0) {
-		// Polygon is so small that all points are on same pixel.
-		centre = points[0];
+	if (area === 0) { // Polygon is so small that all points are on same pixel.
+		centre = new Point(Number(points[0].x).toFixed(3), Number(points[0].y).toFixed(3), points[0].coordType);
 	} else {
-		centre = new Point(x / area, y / area, MAPCONFIG.coordType);
+		centre = new Point(Number(x / area).toFixed(3), Number(y / area).toFixed(3), MAPCONFIG.coordType);
 	}
 	return centre;
 }
+
+/*================================================
+					  Hacks
+================================================*/
+
+// quick hack to make nodeLists iterable
+NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
+HTMLCollection.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];

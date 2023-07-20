@@ -27,16 +27,28 @@
     export function show(callbackFn) {
         isShown = true;
         callback = callbackFn;
+        setTimeout(() => { init() }, 1);
+    }
+
+    function init() {
+        dialog?.showModal();
+        if (dismissible) {
+            dialog.addEventListener('click', ({target:dialog}) => {
+                if (dialog.nodeName === 'DIALOG') {
+                    dismiss();
+                }
+            });
+        }
+
+        // hack to fix urls
         setTimeout(() => {
-            dialog?.showModal();
-            if (dismissible) {
-                dialog.addEventListener('click', ({target:dialog}) => {
-                    if (dialog.nodeName === 'DIALOG') {
-                        dismiss();
-                    }
-                });
+            let links = dialog.querySelectorAll('[href]')
+            for (let element of links) {
+                let link = element.href.replace(location.origin, "");
+                element.href = decodeURIComponent(link).substring(1);
             }
-        }, 1);
+         }, 500);
+
     }
 
     export function showWithCallback(callback) {
@@ -72,7 +84,7 @@
             <div class="modal-footer">
 
                 <!-- cancel button -->
-                <Button on:click={() => dismiss()} flat={true}>{cancel?.toSentenceCase()}</Button>
+                <Button on:click={() => dismiss()} flat={true} ripple="dark">{cancel?.toSentenceCase()}</Button>
 
                 <!-- confirm button -->
                 {#if confirm}

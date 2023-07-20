@@ -22,6 +22,7 @@ export default class Location {
 		this.editing = this.unsavedLocation ?? false; // whether this location is currently being edited
 		this.wasVisible = this.editing ?? null;
 		this.legacy = data;
+		this.revertID = null; // used when reverting locations;
 
 		// display attributes
 		this.wikiPage = data?.wikiPage || null;
@@ -183,7 +184,6 @@ export default class Location {
 	}
 
 	openPopup() {
-		print("doing location popup");
 		let marker = gamemap.getMarkersFromLocation(this)[0];
 		if (marker) {
 			marker.openPopup();
