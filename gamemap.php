@@ -1245,7 +1245,7 @@ class GameMap
 		$worldId = intval($this->worldId);
 		if ($worldId <= 0) return $this->reportError("No world to get revisions for!");
 		
-		$query  = "SELECT world_history.*, revision.* FROM revision LEFT JOIN world_history ON world_history.id=revision.worldHistoryId WHERE revision.worldId='$worldId' AND revision.locationID IS NULL ORDER BY editTimestamp DESC LIMIT {$this->revLimitCount};";
+		$query  = "SELECT world_history.*, world_history.parentId as worldParentId, revision.* FROM revision LEFT JOIN world_history ON world_history.id=revision.worldHistoryId WHERE revision.worldId='$worldId' AND revision.locationID IS NULL ORDER BY editTimestamp DESC LIMIT {$this->revLimitCount};";
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve revisions for world '$worldId'!");
 		
@@ -1383,7 +1383,7 @@ class GameMap
 	{
 		if (!$this->initDatabase()) return false;
 		
-		$query = "SELECT world_history.*, world_history.name as worldName, world_history.description as worldDescription, world_history.displayData as worldDisplayData, location_history.*, revision.* from revision LEFT JOIN world_history ON world_history.revisionId=revision.id LEFT JOIN location_history ON location_history.revisionId=revision.id ORDER BY editTimestamp DESC LIMIT {$this->recentChangeCount};";
+		$query = "SELECT world_history.*, world_history.parentId as worldParentId, world_history.name as worldName, world_history.description as worldDescription, world_history.displayData as worldDisplayData, location_history.*, revision.* from revision LEFT JOIN world_history ON world_history.revisionId=revision.id LEFT JOIN location_history ON location_history.revisionId=revision.id ORDER BY editTimestamp DESC LIMIT {$this->recentChangeCount};";
 		$result = $this->db->query($query);
 		if ($result === FALSE) return $this->reportError("Failed to retrieve recent changes data!");
 		
@@ -1411,6 +1411,7 @@ class GameMap
 			$this->setTypeNull($row['locationId'], "integer");
 			$this->setTypeNull($row['revisionId'], "integer");
 			$this->setTypeNull($row['parentId'], "integer");
+			$this->setTypeNull($row['worldParentId'], "integer");
 			$this->setTypeNull($row['destinationId'], "integer");
 			$this->setTypeNull($row['worldHistoryId'], "integer");
 			$this->setTypeNull($row['locationHistoryId'], "integer");
