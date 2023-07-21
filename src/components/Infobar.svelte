@@ -1,3 +1,5 @@
+<!-- svelte-ignore missing-declaration -->
+<!-- svelte-ignore a11y-invalid-attribute -->
 <!-- @component
 ### Description
  Infobar component for the UESP gamemap.
@@ -18,13 +20,12 @@
 <markup>
     <div id="watermark" class:watermark={!embedded && !lock} on:contextmenu={(e) => e.stopPropagation()}>
         {#if !embedded}
-            <!-- svelte-ignore missing-declaration -->
             {#if lock == MAPLOCK.FULL}
                 <Icon name = "lock" size={16}/>
                 <b title="Map is locked whilst editing worlds.">Map locked</b>
             {:else if lock == MAPLOCK.PARTIAL}
                 <Icon name = "lock" size={16}/>
-                <b title="Map is partially locked whilst editing locations.">Map partially locked</b>
+                <b title="Map is partially locked whilst reverting locations.">Map locked</b>
             {:else if lock >= MAPLOCK.PARTIAL_MARKER}
                 <span class="highlight">
                     <Icon name="info" size={16}/>
@@ -53,7 +54,6 @@
                 {/if}
 
             {:else}
-                <!-- svelte-ignore a11y-invalid-attribute -->
                 <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home" target='_top'>UESP</a></span> • <a title="Reset this map" href="javascript:void(0);" onclick="gamemap.reset();">{mapName}</a></b>
             {/if}
         {:else}

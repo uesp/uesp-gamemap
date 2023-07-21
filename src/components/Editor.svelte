@@ -164,19 +164,17 @@
         modEditObject = Object.assign(Object.create(Object.getPrototypeOf(data)), data);
         isLocation = editObject instanceof Location;
         isWorld = editObject instanceof World;
-        setTimeout(() => {liveEdit = true}, 1);
+        setTimeout(() => {liveEdit = true}, 10);
         if (!editObject?.unsavedLocation) { getEditHistory(editObject) }
 
         // do state changes to map
+        editObject.setEditing(true);
+        modEditObject.setEditing(true);
         if (isWorld && editObject.id == gamemap.getCurrentWorld().id) {
             gamemap.reset(true, 30); // zoom out world map
             gamemap.setMapLock(MAPLOCK.FULL); // lock the world map
-            gamemap.mapRoot.classList.add("editing"); // add editing effect
         } else if (isLocation) {
-            print("being called to edit location")
             gamemap.setMapLock(modEditObject.isPolygon() ? MAPLOCK.PARTIAL_POLYGON : MAPLOCK.PARTIAL_MARKER);
-            editObject.setEditing(true);
-            modEditObject.setEditing(true);
             gamemap.updateLocation(modEditObject);
         }
 
@@ -201,21 +199,36 @@
     // load specific revision of object into editor
     function loadRevision(revision, force) {
         force = (force != null) ? force : false;
+        revision.rev.id = revision.rev.locationId != 0 ? revision.rev.locationId : revision.rev.worldId;
+        revision.rev.revertId = revision.rev.revisionId;
         let object = (revision.isWorld) ? new World(revision.rev) : new Location(revision.rev);
         print(revision);
 
-        if (modEditObject.revisionID != object.revisionID) {
+        if (object.revisionID != editObject.revisionID) {
             // prompt user if they want to load old revision, then overwrite current object with new data;
             if (unsavedChanges && !force) {
                 revertDialog.showWithCallback((result) => {
-                    if (result == "confirm") loadRevision(revision, force);
+                    if (result == "confirm") loadRevision(revision, true);
                 })
-            } else if (force || !unsavedChanges) {
-                print(object);
-                editType = EDIT_TYPES.REVERT;
+            } else if (!unsavedChanges || force) {
+                // lock the map and the editor
+                gamemap.getMap().pm.disableDraw();
+                gamemap.getMap().pm.disableGlobalEditMode();
+                object.editing = true;
+                // display the older revision
+                modEditObject = Object.assign(Object.create(Object.getPrototypeOf(object)), object);
+                unsavedChanges = false;
+                modify();
             }
         } else {
-            M.toast({html: "That is the current revision!"});
+            if (modEditObject.revisionID == object.revisionID) {
+                M.toast({html: "That is the current revision!"});
+            } else {
+                // go back to current revision
+                modEditObject = Object.assign(Object.create(Object.getPrototypeOf(editObject)), editObject);
+                unsavedChanges = false;
+                modify();
+            }
         }
 
     }
@@ -284,8 +297,8 @@
         hasBeenModified = false;
         unsavedChanges = false;
         gamemap.setMapLock(MAPLOCK.NONE);
-        gamemap.getMapObject().pm.disableDraw();
-        gamemap.getMapObject().pm.disableGlobalEditMode();
+        gamemap.getMap().pm.disableDraw();
+        gamemap.getMap().pm.disableGlobalEditMode();
         Array.from(document.querySelectorAll("[class*='editing']")).forEach(element => { element.classList.remove("editing"); });
         window.onbeforeunload = null;
 
@@ -318,7 +331,7 @@
     function modify(property, value) {
         if (liveEdit) {
             // update svelte reactivity
-            modEditObject[property] = value;
+            if (property) modEditObject[property] = value;
             modEditObject = modEditObject;
             editObject = editObject;
 
@@ -330,18 +343,14 @@
             print(modEditObject);
 
             // are there any unsaved changes
-            unsavedChanges = !(JSON.stringify(modEditObject) === JSON.stringify(editObject));
-            hasBeenModified = (unsavedChanges) ? true : hasBeenModified;
+            unsavedChanges = modEditObject.revertID ? false : !(JSON.stringify(modEditObject) === JSON.stringify(editObject));
+            hasBeenModified = (unsavedChanges) ? true : modEditObject.revertID ? true : hasBeenModified;
+            gamemap.setMapLock(isWorld ? MAPLOCK.FULL : modEditObject.revertID ? MAPLOCK.PARTIAL : modEditObject.isPolygon() ? MAPLOCK.PARTIAL_POLYGON : MAPLOCK.PARTIAL_MARKER);
 
             if (isLocation) {
-
-                gamemap.setMapLock(modEditObject.isPolygon() ? MAPLOCK.PARTIAL_POLYGON : MAPLOCK.PARTIAL_MARKER);
-
                 if (hasBeenModified) {
                     // editing debouncing
-                    if (timer != null){
-                        clearTimeout(timer);
-                    }
+                    if (timer != null) clearTimeout(timer);
                     timer = setTimeout(() => {
                         // redraw location with new changes
                         gamemap.updateLocation(modEditObject);
@@ -487,8 +496,8 @@
                     <b>Actions</b><br/>
                     <div id="actions-container">
                         <Button text="Add Marker" icon="add_location_alt" on:click={() => addNewLocation(LOCTYPES.MARKER)}></Button>
-                        <Button text="Add Area" icon="local_hospital" on:click={() => addNewLocation(LOCTYPES.AREA)}></Button>
-                        <Button text="Add Path" icon="timeline" on:click={() => addNewLocation(LOCTYPES.PATH)}></Button>
+                        <Button text="Add Area" icon="add_circle" on:click={() => addNewLocation(LOCTYPES.AREA)}></Button>
+                        <Button text="Add Path" icon="polyline" on:click={() => addNewLocation(LOCTYPES.PATH)}></Button>
                         <Button text="Edit World" icon="public" on:click={() => (edit(gamemap.getCurrentWorld()))}></Button>
                     </div>
                     <div id="recent-changes-titlebar" bind:this={refreshTitleBar}>
@@ -525,7 +534,7 @@
                             {/if}
 
                             <div id="editor_pane" style="max-width: inherit; width: inherit;">
-                                <FormGroup title="General" icon="description">
+                                <FormGroup title="General" icon="description" disabled={editType == EDIT_TYPES.REVERT}>
                                     <header class="header">
                                         <AvatarComponent icon={modEditObject.icon} locType={modEditObject.locType} isWorld={isWorld} on:change={(e) => modify("icon", e.detail)}>
                                             <!-- Name -->
@@ -540,7 +549,6 @@
                                                     modify(isWorld ? "displayName" : "name", e.detail)
                                                 }}>
                                             </Textbox>
-
 
                                             <!-- Parent ID (for World) -->
                                             {#if isWorld}
@@ -613,7 +621,7 @@
 
                                 <!-- Zoom Levels (for World) -->
                                 {#if isWorld}
-                                    <FormGroup title="Zoom" icon="zoom_in">
+                                    <FormGroup title="Zoom" icon="zoom_in" disabled={editType == EDIT_TYPES.REVERT}>
                                         <div class="row">
                                             <Textbox text={modEditObject.minZoomLevel} type="number" hint="Min Zoom" tooltip="Minimum zoom level for this world" on:change={(e) => modify("minZoomLevel", e.detail)} min=0/>
                                             <Textbox text={modEditObject.maxZoomLevel} type="number" hint="Max Zoom" tooltip="Maximum zoom level for this world" on:change={(e) => modify("maxZoomLevel", e.detail)} min=0/>
@@ -623,7 +631,7 @@
 
                                 <!-- World Bounds (for World) -->
                                 {#if isWorld}
-                                    <FormGroup title="Bounds" icon="crop_free">
+                                    <FormGroup title="Bounds" icon="crop_free" disabled={editType == EDIT_TYPES.REVERT}>
                                         <div class="row">
                                             <Textbox text={modEditObject.minX} hint="Minimum X" type="number" hideSpinner={true} on:change={(e) => modify("minX", e.detail)} tooltip="Minimum X bounds for this world"/>
                                             <Textbox text={modEditObject.maxX} hint="Maximum X" type="number" hideSpinner={true} on:change={(e) => modify("maxY", e.detail)} tooltip="Maximum X bounds for this world"/>
@@ -637,7 +645,7 @@
 
                                 <!-- Display Data (for Locations) -->
                                 {#if isLocation}
-                                    <FormGroup title="Display" icon="light_mode">
+                                    <FormGroup title="Display" icon="light_mode" disabled={editType == EDIT_TYPES.REVERT}>
 
                                         {#if modEditObject.isPolygon()}
 
@@ -717,7 +725,7 @@
                                         </FormGroup>
                                     {/if}
 
-                                    <FormGroup title="Info" icon="info">
+                                    <FormGroup title="Info" icon="info" disabled={editType == EDIT_TYPES.REVERT}>
                                         <InfoTextPair name="{objectType.toSentenceCase()} ID" value={modEditObject.id} tooltip="This {objectType}'s ID"/>
                                         {#if isWorld}
                                             <InfoTextPair name="World Name" value={modEditObject.name} tooltip="This world's internal name"/>

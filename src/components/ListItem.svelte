@@ -168,6 +168,6 @@
     }
 
     .action.revert {
-        background-color: var(--revert);
+        background-color: var(--revert_light);
     }
 </style>

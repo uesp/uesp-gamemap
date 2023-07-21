@@ -115,4 +115,9 @@ export default class World {
 
 	}
 
+	setEditing(editing) {
+		this.editing = editing;
+		gamemap.getElement().classList.add("editing"); // add editing effect
+	}
+
 }

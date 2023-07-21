@@ -20,9 +20,9 @@ export default class Location {
 		this.worldID = world?.id ?? data?.worldId ?? gamemap.getCurrentWorld().id;
 		this.destinationID = -(data?.destinationId) || null;
 		this.editing = this.unsavedLocation ?? false; // whether this location is currently being edited
-		this.wasVisible = this.editing ?? null;
+		this.revertID = data?.revertId; // used when reverting locations;
+		this.wasVisible = this.editing ?? this.revertID != null ?? null;
 		this.legacy = data;
-		this.revertID = null; // used when reverting locations;
 
 		// display attributes
 		this.wikiPage = data?.wikiPage || null;
@@ -158,7 +158,7 @@ export default class Location {
 					${this.description ? (this.name != this.wikiPage && this.wikiPage) ? this.description + "</br>" + this.wikiPage : this.description : "" }
 				</div>
 				${this.isClickable() ? "<small class='tooltip-tip'>Click to enter</small>" : ""}
-				${this.editing && !this.isPolygon() ? "<small class='tooltip-tip'>Click to drag</small>" : ""}`;
+				${this.editing && !this.isPolygon() && gamemap.getMapLock() != MAPLOCK.PARTIAL ? "<small class='tooltip-tip'>Click to drag</small>" : ""}`;
 	}
 
 	getPopupContent() {

@@ -46,10 +46,6 @@ on reverting:
 - do edit templates for dawnstar per dcsg asked
 
 
-
-- change "add area" icon in editor to be something more fitting to polygon
-
-
 - fix entering negative locIDs for destIDs being obnoxious (entering minus makes it 0)
 > Entering negative numbers is most definitely not a fluid, natural function. The computer fights me, enteriong a zero or ignoring the negative sign.
 - make adding new location count as unsaved changes (unsaved changes == false or location is unsaved)

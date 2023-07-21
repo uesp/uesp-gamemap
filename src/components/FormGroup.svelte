@@ -12,11 +12,12 @@
     export let title = "Form group";
     export let icon;
     export let tooltip;
+    export let disabled;
 </script>
 
 <markup>
 
-    <div class="group">
+    <div class="group" class:disabled={disabled}>
         <span class="title" title={tooltip}>
             {#if icon}
                 <Icon name={icon} size=16/>
@@ -27,6 +28,7 @@
         <slot>
             <!-- forms go here -->
         </slot>
+
     </div>
 
 </markup>
@@ -63,4 +65,10 @@
         display: flex;
         gap: 4px;
     }
+
+    .disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
 </style>

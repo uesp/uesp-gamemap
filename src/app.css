@@ -45,8 +45,9 @@
 	--delete_light: rgb(207, 47, 76);
 	--save: #5e8735;
 	--save_light: #679638;
-	--revert: #b6dcdc;
-	--revert_dark: #a8c9c9;
+	--revert_light: #c6e8e8;;
+	--revert: #b7d7d7;
+	--revert_dark: #accfcf;
 
 	/* text colours */
 	--text_loc_name: #33ff33;
@@ -842,6 +843,9 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 
 .leaflet-container.editing {
 	animation: throb-inner 2.5s infinite !important;
+}
+
+.locked {
 	cursor: not-allowed !important;
 }
 

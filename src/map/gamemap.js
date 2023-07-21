@@ -843,14 +843,20 @@ export default class Gamemap {
 		// set map lock state
 		if (mapLock && mapLock == MAPLOCK.FULL)  {
 			map.dragging.disable();
+			this.mapRoot.classList.add("locked"); // add locked css
 			//map.options = {smoothWheelZoom : false};
 		} else {
 			map.dragging.enable();
+			this.mapRoot.classList.remove("locked"); // remove locked css
 		}
 
 		// callback back to UI
 		this.mapLock = mapLock;
 		this.mapCallbacks?.onMapLockChanged(this.mapLock);
+	}
+
+	getMapLock() {
+		return this.mapLock;
 	}
 
 	getCurrentTileLayerIndex() {
@@ -1097,10 +1103,12 @@ export default class Gamemap {
 
 		// enable edit mode on marker if needed
 		if (location.editing) {
-			if (location.locType == LOCTYPES.MARKER) { // race condition if marker isnt actually added yet
-				setTimeout(() => { markers[0].edit() }, 0);
-			} else {
-				markers[0].edit();
+			if (!location.revertID) {
+				if (location.locType == LOCTYPES.MARKER) { // race condition if marker isnt actually added yet
+					setTimeout(() => { markers[0].edit() }, 0);
+				} else {
+					markers[0].edit();
+				}
 			}
 			markers.forEach(function(marker) { marker.setEditingEffect(true) });
 		}
