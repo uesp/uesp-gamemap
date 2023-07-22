@@ -279,7 +279,7 @@ export default class Gamemap {
 		if (getURLParams().has("x") && getURLParams().has("y")) {
 			let x = Number(getURLParams().get("x"));
 			let y = Number(getURLParams().get("y"));
-			mapState.coords = [x == 0 ? 0.001 : x, y == 0 ? 0.001 : y]; // prevent div by 0
+			mapState.coords = [x == 0 || isNaN(x) ? 0.001 : x, y == 0 || isNaN(y) ? 0.001 : y]; // prevent div by 0
 		}
 
 		if (getURLParams().has("grid")) {
@@ -1014,7 +1014,6 @@ export default class Gamemap {
 		let localLocation;
 
 		print(`Getting info for location: ${isNumerical ? locationID : locationName}`);
-		this.mapCallbacks?.setLoading(true);
 
 		// search local cache for location first
 		if (isNumerical) { // check locations for matching numerical id

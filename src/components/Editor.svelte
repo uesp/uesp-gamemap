@@ -195,7 +195,7 @@
         revision.rev.id = revision.rev.locationId != 0 ? revision.rev.locationId : revision.rev.worldId;
         revision.rev.revertId = revision.rev.revisionId;
         let object = (revision.isWorld) ? new World(revision.rev) : new Location(revision.rev);
-        print(revision);
+        print(object);
 
         if (object.revisionID != editObject.revisionID) {
             // prompt user if they want to load old revision, then overwrite current object with new data;

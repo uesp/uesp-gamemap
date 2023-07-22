@@ -38,8 +38,8 @@ export default class World {
 
 		this.numTilesX = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the X direction
 		this.numTilesY = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the Y direction
-		this.dbNumTilesX = data?.maxTilesX; //actual number of tiles in the X direction
-		this.dbNumTilesY = data?.maxTilesY; //actual number of tiles in the Y direction
+		this.dbNumTilesX = (data?.maxTilesX != 0) ? data?.maxTilesX : this.numTilesX; //actual number of tiles in the X direction
+		this.dbNumTilesY = (data?.maxTilesY != 0) ? data?.maxTilesY : this.numTilesY; //actual number of tiles in the Y direction
 
 		this.legacy = data; // legacy attributes from server
 

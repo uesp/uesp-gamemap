@@ -29,6 +29,7 @@
 - fixed popups not showing up consistently when goto locations
 - fixed links in help dialog being appended to domain (gamemap.uesp.net/https://www.uesp.net....)
 - world edit was using maxY for maxX
+- fix div by 0/infinity on switching worlds that didnt have numTiles
 
 # technical
 - added a bunch of shortcut functions for getWorldByID as i kept typing them wrong
@@ -42,6 +43,8 @@
 - use eso dev maps as separate layers for eso
 
 ## todo
+
+- fix white spinner in reverting button
 
 
 - fix reverted locs being added twice on map move
@@ -69,18 +72,16 @@
 
 - do some MAPLOCK.isPartial() function
 
-- make waves light/dark configurable by prop (for adding new loc "cancel" button)
-
 - double clicking markers that arent clickable edits them
 
 - make shit clicking RC items go straight to editing them
-if adding location, save will dismiss the editor window
-if adding location, close button is always "cancel"
+
+- make adding loc not do unsaved changes
 
 - reduce size of blue blob effect
 - fix tooltips not going away
 
-- click thing in edit history, prompt to revert, then do network call (ask dave to implement backend)
+- fix infinity/nan/latlng null while switching world revert history, maybe use timeouts
 
 - fix lag in opening big search results (use virtual list)
 
@@ -129,6 +130,7 @@ if adding location, close button is always "cancel"
 to be consistent icons (an area doesnt make sense to have a pin icon)
 
 - fix regaining grid on day/night mode switch
+- do centreon with world?= as well
 - fix canvas grid layer being laggy af on firefox when zooming out
 - show more columns on map key menu dynamically
 - fix cell resource colour intensity to make sense. deeper the colour the more stuff
