@@ -105,9 +105,7 @@ export default class World {
 
 	// get query for deleting this world
 	getDeleteQuery() {
-
 		var query = 'action=enable_world';
-
 		query += '&worldid=' + this.id;
 		query += '&db=' + MAPCONFIG.database;
 		query += '&enabled=0';

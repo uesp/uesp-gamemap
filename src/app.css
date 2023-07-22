@@ -677,6 +677,10 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
         overflow-y: unset !important;
 	}
 
+	.modal.modal-fixed-footer {
+		width: 70% !important;
+	}
+
 }
 
 /*================================================

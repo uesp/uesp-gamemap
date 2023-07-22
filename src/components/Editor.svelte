@@ -126,11 +126,6 @@
 
     }
 
-    function addNewLocation(locType) {
-        overlay = locType;
-        gamemap.addLocation(locType);
-    }
-
     function back(force) {
         force = (force != null) ? force : false;
         if (isEditing) {
@@ -165,7 +160,7 @@
         isLocation = editObject instanceof Location;
         isWorld = editObject instanceof World;
         setTimeout(() => {liveEdit = true}, 10);
-        if (!editObject?.unsavedLocation) { getEditHistory(editObject) }
+        if (!editObject.unsavedLocation) getEditHistory(editObject);
 
         // do state changes to map
         editObject.setEditing(true);
@@ -183,17 +178,15 @@
     function doDelete(force) {
         force = (force != null) ? force : false;
         if (force) {
-            // visually delete location from the map
-            print("deleting object...");
-            gamemap.deleteLocation(modEditObject);
+            print(`deleting ${objectType}...`);
+            if (isLocation) gamemap.deleteLocation(modEditObject);
+            if (isWorld) gamemap.deleteWorld(modEditObject);
             let query = queryify(objectify(modEditObject.getDeleteQuery()));
-            // do async api request to actually delete the location
             getJSON(GAME_DATA_SCRIPT + query).then(() => getRecentChanges());
             cancel();
         } else {
             deleteDialog.show();
         }
-
     }
 
     // load specific revision of object into editor
@@ -250,14 +243,15 @@
                     modify("unsavedLocation", false);
                     modify("id", data.newLocId);
                 }
-                modify("revisionID", data?.newRevisionId);
-                modify("revertID", null);
-                if (isLocation) { gamemap.updateLocation(modEditObject) }
 
                 // overwrite existing object with deep clone of modified one
+                modify("revisionID", data?.newRevisionId);
+                modify("revertID", null);
                 editObject = Object.assign(Object.create(Object.getPrototypeOf(modEditObject)), modEditObject);
+                if (isLocation) { gamemap.updateLocation(editObject) }
+                if (isWorld) { gamemap.updateWorld(editObject) }
 
-                // update edit history lists
+                // update recent changes
                 getRecentChanges();
 
                 // reset save button
@@ -271,12 +265,18 @@
         }).catch(() => saveButton.$set({ text: `Error saving ${objectType}!`, icon: "warning" }));
     }
 
+    function addNewLocation(locType) {
+        overlay = locType;
+        gamemap.addLocation(locType);
+    }
+
     // cancel editing
     function cancel() {
 
         // clean up
         if (isWorld) {
             gamemap.reset(true);
+            gamemap.updateWorld(editObject);
         } else if (isLocation) { // if it was an unadded location, delete it
             editObject.setEditing(false);
             if (editObject?.unsavedLocation) {
@@ -349,16 +349,13 @@
             hasBeenModified = (unsavedChanges) ? true : modEditObject.revertID ? true : hasBeenModified;
             gamemap.setMapLock(isWorld ? MAPLOCK.FULL : modEditObject.revertID ? MAPLOCK.PARTIAL : modEditObject.isPolygon() ? MAPLOCK.PARTIAL_POLYGON : MAPLOCK.PARTIAL_MARKER);
 
-            if (isLocation) {
-                if (hasBeenModified) {
-                    // editing debouncing
-                    if (timer != null) clearTimeout(timer);
-                    timer = setTimeout(() => {
-                        // redraw location with new changes
-                        gamemap.updateLocation(modEditObject);
-                    }, DEBOUNCE_AMOUNT)
-                }
-
+            if (hasBeenModified) {
+                // editing debouncing
+                if (timer != null) clearTimeout(timer);
+                timer = setTimeout(() => {
+                    if (isLocation) gamemap.updateLocation(modEditObject);
+                    if (isWorld) gamemap.updateWorld(modEditObject);
+                }, DEBOUNCE_AMOUNT)
             }
         }
     }
@@ -636,7 +633,7 @@
                                     <FormGroup title="Bounds" icon="crop_free" disabled={editType == EDIT_TYPES.REVERT}>
                                         <div class="row">
                                             <Textbox text={modEditObject.minX} hint="Minimum X" type="number" hideSpinner={true} on:change={(e) => modify("minX", e.detail)} tooltip="Minimum X bounds for this world"/>
-                                            <Textbox text={modEditObject.maxX} hint="Maximum X" type="number" hideSpinner={true} on:change={(e) => modify("maxY", e.detail)} tooltip="Maximum X bounds for this world"/>
+                                            <Textbox text={modEditObject.maxX} hint="Maximum X" type="number" hideSpinner={true} on:change={(e) => modify("maxX", e.detail)} tooltip="Maximum X bounds for this world"/>
                                         </div>
                                         <div class="row">
                                             <Textbox text={modEditObject.minY} hint="Minimum Y" type="number" hideSpinner={true} on:change={(e) => modify("minY", e.detail)} tooltip="Minimum Y bounds for this world"/>
@@ -753,8 +750,8 @@
                             <div class="footer-buttons">
                                 <!-- todo: make the done button close edit panel entirely if summoned from gamemap -->
                                 <Button text={!unsavedChanges && !modEditObject?.unsavedLocation ? "Close" : "Cancel"} icon="close" on:click={() => back()}/>
-                                {#if isLocation && !modEditObject.unsavedLocation}
-                                    <Button text="Delete" icon="delete" disabled={editType == EDIT_TYPES.REVERT} type="delete" on:click={() => doDelete()} on:shiftClick={() => doDelete(true)}/>
+                                {#if isLocation && !modEditObject.unsavedLocation || isWorld && MAPCONFIG.isAdmin}
+                                    <Button text="Delete" icon="delete" disabled={editType == EDIT_TYPES.REVERT || isWorld && editObject.id == MAPCONFIG.defaultWorldID} type="delete" on:click={() => doDelete()} on:shiftClick={() => doDelete(true)}/>
                                 {/if}
                             </div>
                         </footer>

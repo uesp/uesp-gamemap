@@ -149,8 +149,6 @@ export default class Gamemap {
 		print("Setting map state!");
 		onlyUpdateTiles = onlyUpdateTiles ?? false;
 
-		print(mapState);
-
 		// remove previous tiles
 		if (tileLayer != null) {
 			tileLayer.remove();
@@ -459,6 +457,20 @@ export default class Gamemap {
 	 */
 	hasMultipleWorlds() {
 		return this.mapWorlds.size > 1;
+	}
+
+	// update world
+	updateWorld(world) {
+		// update world data
+		this.getWorlds().set(world?.id, world);
+		this.setMapState(this.getMapState(), true);
+	}
+
+	// delete world
+	deleteWorld(world) {
+		// delete selected world from cache
+		this.getWorlds()?.delete(world.id);
+		this.goto(MAPCONFIG.defaultWorldID);
 	}
 
 	/*================================================

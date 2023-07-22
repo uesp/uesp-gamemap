@@ -9,6 +9,12 @@
 - added reverting
 >> clicking an item in edit history will load how it looked in the past
 >> everything is locked when reverting, since you cant change how things were in the past
+- added world deleting, if mapAdmin
+>> guard rails: cant delete the defaultWorldID world specified in mapconfig
+>> cant really show without messing stuff up, but deleting world will return you to default world
+- added live edit for worlds (finally got around to it)
+>> editing maxzoom and stuff updates live
+>> fixes a bunch of bugs along with, such as name not being updated in the list, goto wiki page not updating etc
 
 ## polish
 - made edit history in editor highlight the current revision (changes as you go between older revisions)
@@ -22,6 +28,7 @@
 - fixed issue where mapState pendingJump would stick around between maps
 - fixed popups not showing up consistently when goto locations
 - fixed links in help dialog being appended to domain (gamemap.uesp.net/https://www.uesp.net....)
+- world edit was using maxY for maxX
 
 # technical
 - added a bunch of shortcut functions for getWorldByID as i kept typing them wrong
@@ -32,23 +39,18 @@
 ## dave stuff
 - make "revert" a normal user action
 - but keep "map admin" as deleting worlds uses it on the client side
+- use eso dev maps as separate layers for eso
 
 ## todo
 
 
-- fix world reverting, parentID being whacky (seems to use revisionID)
+- fix reverted locs being added twice on map move
 
-
-on reverting:
-- click revert does fancy new revert api
 
 - fix wikilink name being weird (solomon's pinned message)
 
 - add wikiLink switch to location.js and make doLinkWikistuff a const function under location.js which editor svelte uses as well as onSaveQuery()
 
-- add live edit to worlds
-
-- if is map admin, (check in mapconfig), then enable delete world in world edit
 
 
 - do edit templates for dawnstar per dcsg asked
@@ -64,13 +66,6 @@ on reverting:
 - tweak blue marker shading to be smaller
 
 - fix tooltips hanging around when dragging marker
-
-## poke dave about
-
-- delete bangkorai test
-- use eso dev maps as separate layers for eso
-
------------------------------------------------
 
 - do some MAPLOCK.isPartial() function
 
@@ -94,20 +89,13 @@ if adding location, close button is always "cancel"
 
 - be able to hotswap to edit different locations with popup edit or shift edit, as long as not unsaved or not new location
 
-- make clicking save dismiss editor
-
 - make map lock for editing worlds actually work (no zooming allowed)
-- get live editing working for worlds
 
 - fix entering negative numbers into the destID being a pain
 
 - fix colour picker default colour to something sensible instead of the blue
 
 - make max zoom of all locations -0.5 on all locations client side
-
-
-"goto article" button doesnt update when world wiki link updated
-
 
 - fix darker blocks in grid for sr going off by one at the ends
 
@@ -123,10 +111,7 @@ if adding location, close button is always "cancel"
 
 - make iconbar and resizing dynamic, dont rely on css for mobile mode, do it in javascript based on map size
 
-- fix centring on locations not working, use leaflet moveto marker api to ensure centred
 - cell resource state in/from url
-- add zoom/pan in effects for markers when editing
-
 
 - fix location drifting in craglorn and alikr
 - fix description field misbehaving, being too big
@@ -138,8 +123,6 @@ if adding location, close button is always "cancel"
 >> allow middle click to open in new tab for goto article button
 >> and add middle click on listitems to open in a new tab w/ centreon link
 - fix location list dropdown not being centred properly
-- fix live edit on world name location switcher
-- fix live edit on worlds (every change changes the current world in map object)
 - fix losing grid on resize
 
 - do common.js getIcon() for worlds,locations, to switch between actual icon, polyline, area, world, and point

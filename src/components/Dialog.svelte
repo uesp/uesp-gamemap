@@ -103,7 +103,7 @@
     }
 
     .modal.modal-fixed-footer {
-        width: 55%;
+        width: 65%;
     }
 
     dialog::backdrop {
