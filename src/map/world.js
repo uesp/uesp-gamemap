@@ -17,6 +17,7 @@ export default class World {
 		this.id = data?.id ?? 0;
 		this.parentID   = (data?.parentId == -1) ? null : data?.parentId ?? null;
 		this.revisionID = data?.revisionId ?? 0;
+		this.revertID = data?.revertId ?? null;
 
 		this.wikiPage = data?.wikiPage ?? null;
 		this.cellSize = data?.cellSize ?? -1;
@@ -113,6 +114,11 @@ export default class World {
 
 		return query;
 
+	}
+
+	// get query for reverting this world
+	getRevertQuery() {
+		return encodeURI(`action=revert_world&db=${MAPCONFIG.db}&worldid=${this.id}&revertid=${this.revertID ?? this.revisionID}`);
 	}
 
 	setEditing(editing) {

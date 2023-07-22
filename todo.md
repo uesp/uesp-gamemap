@@ -1,18 +1,26 @@
 ## last week
 
+- added reverting, world deleting, bug fixes
+
 ## editing
 - shift click on RC items to jump straight to editing them
 >> changed from single click like on live as single click to centreon is more consistent
 >> works for both worlds and locations
+- added reverting
+>> clicking an item in edit history will load how it looked in the past
+>> everything is locked when reverting, since you cant change how things were in the past
 
 ## polish
 - made edit history in editor highlight the current revision (changes as you go between older revisions)
 - made going into "revert mode" visually different from normal editing to show you cant edit an older revision
+- added dialog for revert mode when you already have existing edits (warning to overwrite them)
+- made click save/revert close the editor
 
 # bug fixes
-- fixed not being able to right click on location list popup
+- fixed not being able to right click on location list dropdown
 - fix performance issues on jumping between locations
 - fixed issue where mapState pendingJump would stick around between maps
+- fixed popups not showing up consistently when goto locations
 - fixed links in help dialog being appended to domain (gamemap.uesp.net/https://www.uesp.net....)
 
 # technical
@@ -21,18 +29,18 @@
 - simplified the way pendingJumps work (telling the map to jump to a loc after loading a world) a lot
 >> all the conversion is done in MapSate class instead of done on initialisation
 
+## dave stuff
+- make "revert" a normal user action
+- but keep "map admin" as deleting worlds uses it on the client side
+
 ## todo
 
-on reverting:
-- clicking any recent edits item will load into "revert mode"
-- if unsaved changes, warn about discard changes when clicking on history item
-- titlebar changes to "reverting Location"
-- message up top appears "you are now in revert mode, you are seeing how this {object} looked in the past"
-- save button becomes blue revert "revert" with revert icon
-- click revert does fancy new revert api
-- after revert, it changes to editing the current location (the reverted one)
-- in revert menu everything is read only, delete and all forms, except cancel button
 
+- fix world reverting, parentID being whacky (seems to use revisionID)
+
+
+on reverting:
+- click revert does fancy new revert api
 
 - fix wikilink name being weird (solomon's pinned message)
 
@@ -61,9 +69,6 @@ on reverting:
 
 - delete bangkorai test
 - use eso dev maps as separate layers for eso
-
-- do updated skyrim/beyond skyrim/solstheim tiles from BS guy
-https://drive.google.com/drive/folders/1jfzur-HgTd5Dwim02OwSrlBbsXQa5ltb?usp=drive_link
 
 -----------------------------------------------
 

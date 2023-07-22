@@ -296,6 +296,11 @@ export default class Location {
 		return encodeURI(query);
 	}
 
+	// get query for reverting this location
+	getRevertQuery() {
+		return encodeURI(`action=revert_loc&db=${MAPCONFIG.db}&locid=${this.id}&revertid=${this.revertID ?? this.revisionID}`);
+	}
+
 	// get query for deleting this location
 	getDeleteQuery() {
 

@@ -46,7 +46,7 @@
 	--save: #5e8735;
 	--save_light: #679638;
 	--revert_light: #c6e8e8;;
-	--revert: #b7d7d7;
+	--revert: #bedcdc;
 	--revert_dark: #accfcf;
 
 	/* text colours */
@@ -1073,8 +1073,6 @@ textarea.materialize-textarea {
 
 .marker-icon.marker-icon-middle {
 	background-image: url(../assets/images/plus.svg) !important;
-	content: "Joe's Task:" !important;
-	color: pink;
 	height: 12px !important;
 	width: 12px !important;
 	background-color: var(--add) !important;

@@ -1002,6 +1002,7 @@ export default class Gamemap {
 		let localLocation;
 
 		print(`Getting info for location: ${isNumerical ? locationID : locationName}`);
+		this.mapCallbacks?.setLoading(true);
 
 		// search local cache for location first
 		if (isNumerical) { // check locations for matching numerical id
@@ -1095,14 +1096,14 @@ export default class Gamemap {
 		map.closePopup();
 
 		// update location data
-		this.getCurrentWorld().locations?.set(location.id, location);
+		this.getCurrentWorld().locations?.set(location?.id, location);
 
 		// create new markers
 		markers = this.getMarkers(location);
 		markers.forEach(function(marker) { marker.addTo(map) });
 
 		// enable edit mode on marker if needed
-		if (location.editing) {
+		if (location?.editing) {
 			if (!location.revertID) {
 				if (location.locType == LOCTYPES.MARKER) { // race condition if marker isnt actually added yet
 					setTimeout(() => { markers[0].edit() }, 0);
@@ -1130,7 +1131,7 @@ export default class Gamemap {
 			print("Adding location markers to map...")
 			locations.forEach(location => {
 
-				if (location.isVisible()) {
+				if (location?.isVisible()) {
 					// add markers to the map
 					this.getMarkers(location).forEach(marker => { marker.addTo(map) });
 					location.setWasVisible(true);
@@ -1153,6 +1154,9 @@ export default class Gamemap {
 
 	// create marker(s) for location
 	getMarkers(location) {
+
+		// return early if missing required attributes
+		if (location == null || location.coords == null) { return [] }
 
 		// make generic fallback marker
 		let polygonIcon = null;
@@ -1319,8 +1323,8 @@ export default class Gamemap {
 
 			self.getCurrentWorld()?.locations?.forEach(location => {
 
-				let isVisible = location.isVisible();
-				let wasVisible = location.getWasVisible();
+				let isVisible = location?.isVisible() ?? false;
+				let wasVisible = location?.getWasVisible() ?? false;
 
 				// add/remove from DOM on marker visibility change
 				if (isVisible != wasVisible) {
@@ -1552,11 +1556,8 @@ export default class Gamemap {
 	getMarkersFromLocation(location) {
 		let markers = []; //sometimes locations can have multiple markers
 		map.eachLayer((layer) => {
-			if (layer.location != null) {
-				if (layer.location.id == location.id) {
-					layer.element = layer._icon || layer._path;
-					markers.push(layer);
-				}
+			if (layer?.location && layer.location?.id == location?.id) {
+				markers.push(layer);
 			}
 		});
 		return markers;

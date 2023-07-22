@@ -235,35 +235,35 @@
 
     function doSave() {
 
-        print("saving object...");
-        print(editObject)
-        print(modEditObject)
+        let isRevert = modEditObject.revertID != null;
+        print(`${!isRevert ? "Saving" : "Reverting"} ${objectType}...`);
 
-        let queryParams = objectify(modEditObject.getSaveQuery());
-        let query = (GAME_DATA_SCRIPT + queryify(queryParams)).replace(/=\s*$/, "");
-        saveButton.$set({ text: "Saving...", icon: "loading" });
+        let queryParams = objectify(!isRevert ? modEditObject.getSaveQuery() : modEditObject.getRevertQuery());
+        saveButton.$set({ text: `${!isRevert ? "Saving..." : "Reverting..."}`, icon: "loading" });
+        print(queryParams);
 
-        print(query);
-        getJSON(query).then(data => {
+        getJSON((GAME_DATA_SCRIPT + queryify(queryParams)).replace(/=\s*$/, "")).then(data => {
             if (!data?.isError) {
                 // modify location with new attributes if available
                 if (modEditObject?.unsavedLocation) {
+                    gamemap.deleteLocation(modEditObject);
                     modify("unsavedLocation", false);
                     modify("id", data.newLocId);
                 }
                 modify("revisionID", data?.newRevisionId);
+                modify("revertID", null);
                 if (isLocation) { gamemap.updateLocation(modEditObject) }
 
                 // overwrite existing object with deep clone of modified one
                 editObject = Object.assign(Object.create(Object.getPrototypeOf(modEditObject)), modEditObject);
 
                 // update edit history lists
-                getEditHistory(editObject);
-                getRecentChanges()
+                getRecentChanges();
 
                 // reset save button
                 unsavedChanges = false;
-                saveButton.$set({ text: "Save", icon: "save" });
+                saveButton.$set({ text: "Save", icon: "save", type: "save" });
+                cancel();
             } else {
                 print(data.errorMsg);
                 saveButton.$set({ text: data.errorMsg.includes("permissions") ? "Insufficient permissions!" : data.errorMsg, icon: "warning" });
@@ -331,16 +331,18 @@
     function modify(property, value) {
         if (liveEdit) {
             // update svelte reactivity
-            if (property) modEditObject[property] = value;
             modEditObject = modEditObject;
             editObject = editObject;
 
-            print(`editing ${property} with value ${value}`)
-
-            print("before edit");
-            print(editObject);
-            print("after edit");
-            print(modEditObject);
+            // update provided property
+            if (property) {
+                print(`editing ${property} with value ${value}`)
+                modEditObject[property] = value;
+                print("before edit");
+                print(editObject);
+                print("after edit");
+                print(modEditObject);
+            }
 
             // are there any unsaved changes
             unsavedChanges = modEditObject.revertID ? false : !(JSON.stringify(modEditObject) === JSON.stringify(editObject));

@@ -147,7 +147,6 @@
     }
 
     .disabled {
-        color: var(--text_low_emphasis) !important;
         opacity: 0.5;
         pointer-events: none;
     }
@@ -165,7 +164,7 @@
     }
 
     .deleteButton {
-        background-color: var(--delete);
+        background-color: var(--delete) !important;
     }
 
     .deleteButton:hover {
