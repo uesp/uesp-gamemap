@@ -1501,6 +1501,7 @@ class GameMap
 		if ($this->worldId <= 0) return $this->reportError("Cannot create worlds yet!");
 		if (!$this->initDatabaseWrite()) return false;
 		
+		if (!$this->canAdminMap($this->dbPrefix)) return $this->reportError('You do not have sufficient permissions!');
 		if (!$this->CanViewWorldId($this->worldId)) return false;
 		
 		$query = "SELECT * FROM world WHERE id='{$this->worldId}'";
