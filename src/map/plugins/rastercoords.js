@@ -56,29 +56,18 @@ export default class RasterCoords {
 
 	/**
      * get the max bounds of the image
+	 * optional: provided padding
      */
-	getMaxBounds() {
+	getMaxBounds(padding) {
 		let southWest = this.unproject([0, this.height]);
 		let northEast = this.unproject([this.width, 0]);
-		return new L.LatLngBounds(southWest, northEast);
-	}
 
-	/**
-     * get the max bounds of the image with some provided padding
-    */
-	getMaxBoundsWithPadding(padding){
-
-		padding = (padding != null) ? padding : 130;
-
-		let bounds = this.getMaxBounds();
-		let southWest = bounds._southWest;
-		let northEast = bounds._northEast;
-
-		southWest.lng = southWest.lng - padding;
-		southWest.lat = southWest.lat - padding;
-		northEast.lng = northEast.lng + padding;
-		northEast.lat = northEast.lat + padding;
-
+		if (padding) {
+			southWest.lng = southWest.lng - padding;
+			southWest.lat = southWest.lat - padding;
+			northEast.lng = northEast.lng + padding;
+			northEast.lat = northEast.lat + padding;
+		}
 		return new L.LatLngBounds(southWest, northEast);
 	}
 

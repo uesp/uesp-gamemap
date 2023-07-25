@@ -38,6 +38,31 @@
         "13": "Arrow (Right)",
         "14": "Arrow (Down)",
         "15": "Arrow (Left)"
+    },
+
+    "editTemplates" : {
+        "location" : { // object type
+            "chest" : { // object name
+                "name" : "Chest",
+                "icon" : 2,
+                "labelPos" : 6,
+                "displayLevel" : 0
+            },
+
+            "gate" : { // object name
+                "name" : "Gate",
+                "icon" : 1,
+                "labelPos" : 6,
+                "displayLevel" : 0
+            },
+
+            "warp" : { // object name
+                "name" : "Warp",
+                "icon" : null,
+                "labelPos" : 5,
+                "displayLevel" : 0
+            }
+        }
     }
 }
 

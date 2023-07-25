@@ -280,7 +280,7 @@
                                     {#each searchResults as result}
                                         <!-- svelte-ignore missing-declaration -->
                                         {@const isWorld = result.destinationID > 0}
-                                        <ListItem title={result.name} subtitle={(!isWorld && gamemap.hasMultipleWorlds()) ? result.description : null} icon={(result.icon != null) ? gamemap.getMapConfig().iconPath + result.icon + ".png" : (isWorld) ? "public" : "location_on"} destinationID={result.destinationID} bold={isWorld} on:click={(e) => {goto(e.detail)}}/>
+                                        <ListItem title={result.name} subtitle={(!isWorld && gamemap.hasMultipleWorlds()) ? result.description : null} icon={(result.icon != null) ? gamemap.getMapConfig().iconPath + result.icon + ".png" : (isWorld) ? "public" : "location_on"} destinationID={result.destinationID} bold={isWorld} on:click={(e) => {goto(e.detail)}} on:middleClick={(e) => {window.open(`${location.origin}${location.pathname}?${e.detail > 0 ? `world=${e.detail}` : `centeron=${Math.abs(e.detail)}`}`)}}/>
                                     {/each}
                                 {:else}
                                     <b style='font-size: 1.0rem; width: 100%; text-align: center; display: inline-block; padding: var(--padding_small);'>No results found.</b>

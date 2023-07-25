@@ -66,7 +66,6 @@
     let liveEdit = false;
     let directEdit = null;
     let unsavedChanges = false;
-    let hasBeenModified = false;
     let editObject = null;
     let modEditObject = null;
     $: isLocation = editObject instanceof Location;
@@ -74,7 +73,6 @@
     $: objectType = isWorld ? "world" : "location";
     $: isEditing = editObject && isLocation || isWorld;
     $: name = (isWorld ? modEditObject?.displayName : modEditObject?.name);
-    $: linkWikiPage = modEditObject?.wikiPage == name || (modEditObject?.wikiPage == null || modEditObject?.wikiPage == "");
     $: editType = (modEditObject?.revertID) ? EDIT_TYPES.REVERT : (modEditObject?.id > 0) ? EDIT_TYPES.EDIT : EDIT_TYPES.ADD;
 
     $: { // prevent leaving the page on unsaved changes
@@ -94,7 +92,6 @@
     export function dismiss() { show(false); window.onbeforeunload = null; }
     export function show(data) {
 
-        // set edit data
         data = (data == null) ? true : data;
         if (data) {
 
@@ -116,6 +113,16 @@
             // check if current edit object is null
             if (data != true && editObject == null) {
                 initEditor(data);
+            } else if (data != true && editObject) {
+                if (unsavedChanges) {
+                    discardDialog.showWithCallback((result) => {
+                        if (result == "confirm") {
+                            initEditor(data);
+                        }
+                    })
+                } else {
+                    initEditor(data);
+                }
             }
 
         } else {
@@ -146,6 +153,34 @@
         }
     }
 
+    // handle resizing the editor panel
+    function onResizerDown() { document.addEventListener('mousemove', onResizerDrag);}
+    function onResizerUp() { document.removeEventListener('mousemove', onResizerDrag); }
+    function onResizerDrag(event) {
+        let width = (window.innerWidth - event.pageX);
+        width = (width < MIN_PANEL_WIDTH) ? MIN_PANEL_WIDTH : width;
+
+        if (width < MAX_PANEL_WIDTH) {
+            editPanel.style.width = `${width}px`;
+            editPanel.style.maxWidth = `${width}px`;
+            setPrefs("editpanelwidth", width); // save user's edit panel width preference
+            PANEL_WIDTH = getPrefs("editpanelwidth", 480);
+        }
+    }
+
+    // slide in/out animation
+    function slide() {
+        gamemap.getMapObject().invalidateSize();
+        return {
+            duration: ANIMATION_DURATION,
+            easing: cubicInOut,
+            css: (t) => {
+                if (t == 1) { editPanel.style.width = `${PANEL_WIDTH}px`;}
+                return `width: ${PANEL_WIDTH * t}px; opacity: ${t};)`;
+            }
+        }
+    }
+
     /*================================================
 					  Editor Window
     ================================================*/
@@ -153,10 +188,12 @@
     // initalise editor
     function initEditor(data) {
 
+        // clean up editor and map state
+        cleanUp();
+
         // begin editing provided data
-        unsavedChanges = false;
-        editObject = Object.assign(Object.create(Object.getPrototypeOf(data)), data);
-        modEditObject = Object.assign(Object.create(Object.getPrototypeOf(data)), data);
+        editObject = deepClone(data);
+        modEditObject = deepClone(data);
         isLocation = editObject instanceof Location;
         isWorld = editObject instanceof World;
         setTimeout(() => {liveEdit = true}, 10);
@@ -209,7 +246,7 @@
                 gamemap.getMap().pm.disableGlobalEditMode();
                 object.editing = true;
                 // display the older revision
-                modEditObject = Object.assign(Object.create(Object.getPrototypeOf(object)), object);
+                modEditObject = deepClone(object);
                 unsavedChanges = false;
                 modify();
             }
@@ -218,7 +255,7 @@
                 M.toast({html: "That is the current revision!"});
             } else {
                 // go back to current revision
-                modEditObject = Object.assign(Object.create(Object.getPrototypeOf(editObject)), editObject);
+                modEditObject = deepClone(editObject);
                 unsavedChanges = false;
                 modify();
             }
@@ -242,19 +279,22 @@
                     gamemap.deleteLocation(modEditObject);
                     modify("unsavedLocation", false);
                     modify("id", data.newLocId);
+                } else if (isRevert) {
+                    gamemap.deleteLocation(modEditObject);
+                    modify("revertID", null);
+                    modify("wasVisible", false);
                 }
 
                 // overwrite existing object with deep clone of modified one
                 modify("revisionID", data?.newRevisionId);
-                modify("revertID", null);
-                editObject = Object.assign(Object.create(Object.getPrototypeOf(modEditObject)), modEditObject);
+                editObject = deepClone(modEditObject);
                 if (isLocation) { gamemap.updateLocation(editObject) }
                 if (isWorld) { gamemap.updateWorld(editObject) }
 
                 // update recent changes
                 getRecentChanges();
 
-                // reset save button
+                // close editor
                 unsavedChanges = false;
                 saveButton.$set({ text: "Save", icon: "save", type: "save" });
                 cancel();
@@ -270,37 +310,45 @@
         gamemap.addLocation(locType);
     }
 
-    // cancel editing
-    function cancel() {
+    // reset editor and map environment to default settings
+    function cleanUp() {
 
-        // clean up
-        if (isWorld) {
-            gamemap.reset(true);
-            gamemap.updateWorld(editObject);
-        } else if (isLocation) { // if it was an unadded location, delete it
+        // update/reset current data with live changes
+        if (editObject) {
             editObject.setEditing(false);
-            if (editObject?.unsavedLocation) {
-                gamemap.deleteLocation(editObject)
-            } else { // else revert to how it was, if it still exists
-                if (gamemap.getCurrentWorld().locations.get(editObject.id)) {
-                    gamemap.updateLocation(editObject);
+            if (isWorld) {
+                gamemap.reset(true);
+                gamemap.updateWorld(editObject);
+            } else if (isLocation) { // if it was an unadded location, delete it
+                if (editObject?.unsavedLocation) {
+                    gamemap.deleteLocation(editObject)
+                } else { // else revert to how it was, if it still exists
+                    if (gamemap.getCurrentWorld().locations.get(editObject.id)) {
+                        gamemap.updateLocation(editObject);
+                    }
                 }
             }
         }
 
-        // turn off editing
+        // reset state vars to default
         editHistory = [];
         overlay = null;
         editObject = null;
         modEditObject = null;
         liveEdit = false;
-        hasBeenModified = false;
         unsavedChanges = false;
         gamemap.setMapLock(MAPLOCK.NONE);
         gamemap.getMap().pm.disableDraw();
         gamemap.getMap().pm.disableGlobalEditMode();
         Array.from(document.querySelectorAll("[class*='editing']")).forEach(element => { element.classList.remove("editing"); });
         window.onbeforeunload = null;
+    }
+
+    // cancel editing
+    function cancel() {
+
+        // clean up
+        cleanUp();
 
         // weird hack to stop recent changes getting shrunk
         if (!directEdit) {
@@ -318,12 +366,6 @@
             dismiss();
         }
 
-    }
-
-    // received updated marker coords from gamemap (via drag and dropping)
-    window.updateMarkerCoords = function updateMarkerCoords(coords) {
-        print(coords)
-        modify("coords", coords);
     }
 
     let timer;
@@ -345,18 +387,15 @@
             }
 
             // are there any unsaved changes
-            unsavedChanges = modEditObject.revertID ? false : !(JSON.stringify(modEditObject) === JSON.stringify(editObject));
-            hasBeenModified = (unsavedChanges) ? true : modEditObject.revertID ? true : hasBeenModified;
+            unsavedChanges = modEditObject.revertID || modEditObject.unsavedLocation ? false : !(JSON.stringify(modEditObject) === JSON.stringify(editObject));
             gamemap.setMapLock(isWorld ? MAPLOCK.FULL : modEditObject.revertID ? MAPLOCK.PARTIAL : modEditObject.isPolygon() ? MAPLOCK.PARTIAL_POLYGON : MAPLOCK.PARTIAL_MARKER);
 
-            if (hasBeenModified) {
-                // editing debouncing
-                if (timer != null) clearTimeout(timer);
-                timer = setTimeout(() => {
-                    if (isLocation) gamemap.updateLocation(modEditObject);
-                    if (isWorld) gamemap.updateWorld(modEditObject);
-                }, DEBOUNCE_AMOUNT)
-            }
+            // editing debouncing
+            if (timer != null) clearTimeout(timer);
+            timer = setTimeout(() => {
+                if (isLocation) gamemap.updateLocation(modEditObject);
+                if (isWorld) gamemap.updateWorld(modEditObject);
+            }, DEBOUNCE_AMOUNT)
         }
     }
 
@@ -376,34 +415,6 @@
         }
         // mark suggestion as accepted
         modify("acceptedSuggestion", true);
-    }
-
-    // handle resizing the editor panel
-    function onResizerDown() { document.addEventListener('mousemove', onResizerDrag);}
-    function onResizerUp() { document.removeEventListener('mousemove', onResizerDrag); }
-    function onResizerDrag(event) {
-        let width = (window.innerWidth - event.pageX);
-        width = (width < MIN_PANEL_WIDTH) ? MIN_PANEL_WIDTH : width;
-
-        if (width < MAX_PANEL_WIDTH) {
-            editPanel.style.width = `${width}px`;
-            editPanel.style.maxWidth = `${width}px`;
-            setPrefs("editpanelwidth", width); // save user's edit panel width preference
-            PANEL_WIDTH = getPrefs("editpanelwidth", 480);
-        }
-    }
-
-    // slide in/out animation
-    function slide() {
-        gamemap.getMapObject().invalidateSize();
-        return {
-            duration: ANIMATION_DURATION,
-            easing: cubicInOut,
-            css: (t) => {
-                if (t == 1) { editPanel.style.width = `${PANEL_WIDTH}px`;}
-                return `width: ${PANEL_WIDTH * t}px; opacity: ${t};)`;
-            }
-        }
     }
 
     // get recent changes function
@@ -433,8 +444,11 @@
     function getEditHistory(object) {
         editHistory = [];
         let type = (isWorld) ? "world" : "loc";
+        let currentData = editObject;
         getJSON(GAME_DATA_SCRIPT + `?db=${MAPCONFIG.database}&action=get_${type}rev&${type}id=${object.id}`).then(data => {
-            editHistory = data.revisions ? Object.values(data.revisions) : [];
+            if (currentData == editObject) {
+                editHistory = data.revisions ? Object.values(data.revisions) : [];
+            }
         });
     }
 
@@ -462,6 +476,7 @@
     // on editor load
 	onMount(() => { window.onpopstate = () => currentZoom = gamemap.getCurrentZoom().toFixed(3);});
     function fixEditor() {editor.style.height = `${editor?.parentElement?.clientHeight}px`; editorWindow.scrollTop = 0;}
+    window.updateMarkerCoords = function updateMarkerCoords(coords) { modify("coords", coords) }
 </script>
 
 <markup>
@@ -514,7 +529,7 @@
                                     itemSize={60}>
                                     <div slot="item" let:index let:style {style}>
                                         {@const data = recentChanges[index]}
-                                        <ListItem {...data} title={data.name} bold={data.isWorld} compact={true} on:shiftClick={() => gamemap.edit(data.destinationID)} on:click={() => gamemap.goto(data.destinationID)} />
+                                        <ListItem {...data} title={data.name} bold={data.isWorld} compact={true} on:shiftClick={() => gamemap.edit(data.destinationID)} on:click={() => gamemap.goto(data.destinationID)} on:middleClick={(e) => {window.open(`${location.origin}${location.pathname}?${e.detail > 0 ? `world=${e.detail}` : `centeron=${Math.abs(e.detail)}`}`)}}/>
                                     </div>
                                 </VirtualList>
                             {:else}
@@ -527,7 +542,7 @@
                         <div class="editor_window" bind:this={editorWindow} style="max-width: inherit; width: inherit;">
 
                             <!-- show edit suggestions if available -->
-                            {#if MAPCONFIG?.editTemplates[objectType]?.[name.toLowerCase()] && unsavedChanges && !modEditObject?.acceptedSuggestion}
+                            {#if MAPCONFIG?.editTemplates[objectType]?.[name.toLowerCase()] && unsavedChanges && !modEditObject?.acceptedSuggestion && name.toLowerCase() != (isWorld ? editObject.displayName : editObject.name).toLowerCase()}
                                 {@const template = MAPCONFIG.editTemplates[objectType][name.toLowerCase()]}
                                 <SuggestionBar suggestion={name.toTitleCase()} on:confirm={() => fillFromTemplate(template)}/>
                             {/if}
@@ -542,7 +557,7 @@
                                                 hint={(isWorld ? "Display " : "") + "Name"}
                                                 tooltip="{objectType.toSentenceCase()} name"
                                                 on:change={(e) => {
-                                                    if (linkWikiPage) {
+                                                    if (modEditObject.linkWikiPage()) {
                                                         modify("wikiPage", e.detail)
                                                     }
                                                     modify(isWorld ? "displayName" : "name", e.detail)
@@ -578,14 +593,14 @@
 
                                     <!-- Wiki Page -->
                                     <Switch
-                                        enabled={linkWikiPage}
+                                        enabled={modEditObject.linkWikiPage()}
                                         label={"Use " + (isWorld ? "Display Name" : "Name") + " as Wiki Page"}
                                         tooltip={`Use this ${objectType}'s ${(isWorld ? "display name" : "name")} as its wiki page`}
                                         on:change={(e) => {
                                                 if (e.detail) {
                                                     modify("wikiPage", name);
                                                 } else {
-                                                    modify("wikiPage", null);
+                                                    modify("wikiPage", "");
                                                 }
                                         }}>
                                         <Textbox label="Wiki Page"

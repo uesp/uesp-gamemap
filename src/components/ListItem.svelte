@@ -30,6 +30,8 @@
     function onClicked(event) {
         if (event.shiftKey) {
             dispatch("shiftClick", destinationID);
+        } else if (event.type == "auxclick") {
+            dispatch("middleClick", destinationID);
         } else {
             dispatch("click", destinationID);
         }
@@ -41,7 +43,7 @@
     <div class='collection' class:selected={selected} title={tooltip}>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-missing-attribute -->
-        <a class='collection-item waves-effect mdc-ripple-surface list-item' class:avatar={icon != null} on:click={onClicked} class:compact={compact}>
+        <a class='collection-item waves-effect mdc-ripple-surface list-item' class:avatar={icon != null} on:click={onClicked} on:auxclick={onClicked} class:compact={compact}>
             <!-- svelte-ignore missing-declaration -->
             {#if icon}
                 {@const iconTooltip = (icon.includes("/")) ? gamemap.getMapConfig().icons.get(Number(icon.replace(/\D/g, ""))) : (destinationID > 0) ? "World" : "Location"}

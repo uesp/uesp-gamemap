@@ -206,6 +206,10 @@
         color: black;
     }
 
+    .revertButton .spinner {
+        filter: brightness(0);
+    }
+
     .revertButton:hover {
         background-color: var(--revert_dark);
     }

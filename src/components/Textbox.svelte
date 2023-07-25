@@ -49,13 +49,9 @@
         var keyboardEvent = document.createEvent('KeyboardEvent');
         var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? 'initKeyboardEvent' : 'initKeyEvent';
 
-
         keyboardEvent[initMethod]('keydown', true, true, window, false, false, false, false, 40, 0);
         textbox.dispatchEvent(keyboardEvent);
     }
-
-    // on component load
-    onMount(async() => { expand() });
 
     function typeAction(node) {node.type = type}
 </script>
@@ -82,7 +78,7 @@
                     class:hideSpinner={hideSpinner}>
             {/if}
             {#if !placeholder}
-                 <label for={id} class:active={value != null || (textbox != null && textbox === document.activeElement)}>{hint}</label>
+                 <label for={id} class:active={text != null || (textbox != null && textbox === document.activeElement)}>{hint}</label>
             {/if}
             {#if subtext}<span class="supporting-text subtext" title={subtext}>{subtext}</span>{/if}
         </div>
@@ -193,6 +189,3 @@
     }
 
 </style>
-
-<!-- Global event listeners -->
-<svelte:window on:resize={() => {if(textArea) {expand()}}}/>

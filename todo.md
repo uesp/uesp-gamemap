@@ -1,137 +1,65 @@
 ## last week
 
-- added reverting, world deleting, bug fixes
-
-## editing
-- shift click on RC items to jump straight to editing them
->> changed from single click like on live as single click to centreon is more consistent
->> works for both worlds and locations
-- added reverting
->> clicking an item in edit history will load how it looked in the past
->> everything is locked when reverting, since you cant change how things were in the past
-- added world deleting, if mapAdmin
->> guard rails: cant delete the defaultWorldID world specified in mapconfig
->> cant really show without messing stuff up, but deleting world will return you to default world
-- added live edit for worlds (finally got around to it)
->> editing maxzoom and stuff updates live
->> fixes a bunch of bugs along with, such as name not being updated in the list, goto wiki page not updating etc
-
 ## polish
-- made edit history in editor highlight the current revision (changes as you go between older revisions)
-- made going into "revert mode" visually different from normal editing to show you cant edit an older revision
-- added dialog for revert mode when you already have existing edits (warning to overwrite them)
-- made click save/revert close the editor
+- added ability to shift click other locations while editing existing ones to jump to editing them
+>> if unsaved changes on the current one, will warn you first
+- added double click to edit on locs
+- made middle click on article button open in new tab
+- middle click on location/world list items opens them in new tab too
 
-# bug fixes
-- fixed not being able to right click on location list dropdown
-- fix performance issues on jumping between locations
-- fixed issue where mapState pendingJump would stick around between maps
-- fixed popups not showing up consistently when goto locations
-- fixed links in help dialog being appended to domain (gamemap.uesp.net/https://www.uesp.net....)
-- world edit was using maxY for maxX
-- fix div by 0/infinity on switching worlds that didnt have numTiles
-
-# technical
-- added a bunch of shortcut functions for getWorldByID as i kept typing them wrong
-- tried to revert world being positive, location being negative, but too deeply ingrained now and would take too much time
-- simplified the way pendingJumps work (telling the map to jump to a loc after loading a world) a lot
->> all the conversion is done in MapSate class instead of done on initialisation
-
-## dave stuff
-- make "revert" a normal user action
-- but keep "map admin" as deleting worlds uses it on the client side
-- use eso dev maps as separate layers for eso
+## bug fixes
+- fixed tooltips getting in the way when dragging markers
+- fixed worlds still having the "editing" tag added after cancelling (going back into worlds was showing edit menu)
+- fixed opening colour picker on blobs with null colours setting the colour to a bright blue
 
 ## todo
 
-- fix white spinner in reverting button
-
-
-- fix reverted locs being added twice on map move
-
-
-- fix wikilink name being weird (solomon's pinned message)
-
-- add wikiLink switch to location.js and make doLinkWikistuff a const function under location.js which editor svelte uses as well as onSaveQuery()
-
-
-
-- do edit templates for dawnstar per dcsg asked
-
-
-- fix entering negative locIDs for destIDs being obnoxious (entering minus makes it 0)
-> Entering negative numbers is most definitely not a fluid, natural function. The computer fights me, enteriong a zero or ignoring the negative sign.
-- make adding new location count as unsaved changes (unsaved changes == false or location is unsaved)
->> maybe tweak wording of popup "discard adding new location?"
-
-- shift click on other locations while unsaved changes should immediately change to edit it
-
-- tweak blue marker shading to be smaller
-
-- fix tooltips hanging around when dragging marker
-
-- do some MAPLOCK.isPartial() function
-
-- double clicking markers that arent clickable edits them
-
-- make shit clicking RC items go straight to editing them
-
-- make adding loc not do unsaved changes
-
-- reduce size of blue blob effect
-- fix tooltips not going away
-
-- fix infinity/nan/latlng null while switching world revert history, maybe use timeouts
+- fix popups not going away when editing world
 
 - fix lag in opening big search results (use virtual list)
 
 - fix escape key bugging out dialogs
 >> also make sure you cant escape out of dialogs that are dismissible false
 
-- be able to hotswap to edit different locations with popup edit or shift edit, as long as not unsaved or not new location
-
 - make map lock for editing worlds actually work (no zooming allowed)
 
-- fix entering negative numbers into the destID being a pain
-
-- fix colour picker default colour to something sensible instead of the blue
 
 - make max zoom of all locations -0.5 on all locations client side
 
-- fix darker blocks in grid for sr going off by one at the ends
+
+- ask dave for help on craglorn pow coord conversion
+- craglorn and alikr have weird negative bounds instead of 0, 100000, maybe cause of loc drift
+>> ask dave why alikr have weird negative bounds instead of 0 100000, and are there any others like that in esomap to test for loc drift
 
 
-- fix high res icons being clipped on icon in ListITem
 - fix location dropdown being laggy on open, remember existing location data somehow
 
 - fix not being able to click location dropdown while it's open to close it
 
 - make map key grid columns dynamic and fix overscrolling
 
-- shower thought: could use the "Dev/Beta" versions of maps for eso as separate layers
-
 - make iconbar and resizing dynamic, dont rely on css for mobile mode, do it in javascript based on map size
 
+- do centreon with checking world?= as well
 - cell resource state in/from url
 
-- fix location drifting in craglorn and alikr
-- fix description field misbehaving, being too big
-
+- double markers for reverted locations
 
 - fix clicking out while zoomed in zooming in to parent map as well
 - fix requesting /null in layerbutton
-- add middle click event listener to button and listItem
->> allow middle click to open in new tab for goto article button
->> and add middle click on listitems to open in a new tab w/ centreon link
+
 - fix location list dropdown not being centred properly
 - fix losing grid on resize
+
+- ask dave if should remove beta tag before launch
+- and then remove it anyway
 
 - do common.js getIcon() for worlds,locations, to switch between actual icon, polyline, area, world, and point
 to be consistent icons (an area doesnt make sense to have a pin icon)
 
 - fix regaining grid on day/night mode switch
-- do centreon with world?= as well
 - fix canvas grid layer being laggy af on firefox when zooming out
+- fix darker blocks in grid for sr going off by one at the ends
 - show more columns on map key menu dynamically
 - fix cell resource colour intensity to make sense. deeper the colour the more stuff
 - fix pip on layer switcher ui being small
@@ -142,6 +70,7 @@ to be consistent icons (an area doesnt make sense to have a pin icon)
 
 
 ## todo maps (future)
+- use the "Dev/Beta" versions of maps for eso as separate layers
 - skyrim minecraft map thing
 - cave interior maps for skyrim, ob, mw
 - divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)
@@ -150,6 +79,7 @@ to be consistent icons (an area doesnt make sense to have a pin icon)
 >> https://jsfiddle.net/Razielwar/hmqgn69r/14/
 - allow shiftclick/ctrl click to add/remove vertices
 - be able to search the icon list in editor
+- use quadtrees as map optimisation
 
 ## todo future general
 - wiki features (hybrid news etc)

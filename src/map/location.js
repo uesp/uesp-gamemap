@@ -25,7 +25,7 @@ export default class Location {
 		this.legacy = data;
 
 		// display attributes
-		this.wikiPage = data?.wikiPage || null;
+		this.wikiPage = data?.wikiPage || this.name;
 		this.description = data?.description || null;
 		this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : {};
 		this.displayLevel = (this.unsavedLocation) ? Number((Math.floor(gamemap.getCurrentZoom()))) : parseFloat(data.displayLevel - gamemap.getWorldFromID(this.worldID).zoomOffset || 0);
@@ -274,7 +274,7 @@ export default class Location {
 
 		query += `&name=${encodeURI(this.name)}`;
 		query += `&description=${encodeURI(this.description)}`;
-		query += `&wikipage=${encodeURI(this.wikiPage)}`;
+		query += `&wikipage=${encodeURI(this.linkWikiPage() ? this.name : this.wikiPage)}`;
 
 		query += `&loctype=${this.locType}`;
 		query += `&locid=${this.id}`;
@@ -284,8 +284,8 @@ export default class Location {
 		query += `&db=${MAPCONFIG.database}&visible=1`;
 
 		this.updateDisplayData(coords);
-		query += `&x=${((this.isPolygon()) ? this.getMaxBounds().minX: coords[0].x).toFixed(3)}`;
-		query += `&y=${((this.isPolygon()) ? this.getMaxBounds().maxY: coords[0].y).toFixed(3)}`;
+		query += `&x=${Number(((this.isPolygon()) ? this.getMaxBounds().minX: coords[0].x)).toFixed(3)}`;
+		query += `&y=${Number(((this.isPolygon()) ? this.getMaxBounds().maxY: coords[0].y)).toFixed(3)}`;
 		query += `&locwidth=${this.width.toFixed(3)}&locheight=${this.height.toFixed(3)}`;
 
 		query += `&displaylevel=${+this.displayLevel + +gamemap.getWorldFromID(this.worldID).zoomOffset}`;
@@ -319,7 +319,7 @@ export default class Location {
 		this.displayData.labelPos = this.labelPos;
 		this.displayData.points = (() => {
 			let points = [];
-			coords.forEach(coord => { points.push(coord.x.toFixed(3), coord.y.toFixed(3)) });
+			coords.forEach(coord => { points.push(Number(coord.x).toFixed(3), Number(coord.y).toFixed(3)) });
 			return points;
 		})();
 
@@ -344,10 +344,26 @@ export default class Location {
 		let world = gamemap.getWorldFromID(this.worldID);
 		coords = (!Array.isArray(coords)) ? [structuredClone(coords)] : structuredClone(coords);
 
+		print(world);
+
 		coords.forEach(coord => {
+			print("x coord");
+			print(coord.x);
+			print("num tiles");
+			print(world.dbNumTilesX);
+			print("pow 2 num tiles");
+			print(nextPowerOfTwo(world.dbNumTilesX));
+			print("pow 2 calculation")
+			print(nextPowerOfTwo(world.dbNumTilesX) * world.dbNumTilesX)
 			coord.x = coord.x / nextPowerOfTwo(world.dbNumTilesX) * world.dbNumTilesX;
+			print("x coord after pow 2 clamp")
+			print(coord.x);
 			coord.y = coord.y / nextPowerOfTwo(world.dbNumTilesY) * world.dbNumTilesY;
+			print("max rangeX")
+			print(world.maxRangeX);
 			coord.x = coord.x * world.maxRangeX;
+			print("x coord denormalised")
+			print(coord.x);
 			coord.y = (1 - coord.y) * world.maxRangeY;
 		})
 
@@ -372,5 +388,10 @@ export default class Location {
 			return this.bounds;
 		}
 	}
+
+	linkWikiPage() {
+		return this.wikiPage?.toLowerCase() == this.name.toLowerCase() || this.wikiPage == null;
+	}
+
 
 }

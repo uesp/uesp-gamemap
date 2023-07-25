@@ -43,13 +43,15 @@
 			parent: colourPickerAnchor,
 			popup : "left",
 			editorFormat : "rgb",
-			color : colour,
 		});
+
+		picker.setColor(colour != "" ? colour : "rgba(0, 0, 0, 0)");
 
 		picker.onChange = function(color) {
 			colourPickerPreview.style.background = color.rgbaString;
 			colour = color.rgbaString;
 		};
+
 	});
 
 

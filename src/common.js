@@ -60,6 +60,8 @@ window.MAPLOCK = {
 	PARTIAL_POLYGON : 4,
 	PARTIAL_NEW_POLYGON : 4.5,
 	PARTIAL_NEW_LINE : 5,
+	isPartial : mapLock => mapLock >= MAPLOCK.PARTIAL,
+	isPartialNoNew : mapLock => MAPLOCK.isPartial(mapLock) && !Object.keys(MAPLOCK).find(key => MAPLOCK[key] === mapLock).toLowerCase().includes("new"),
 }
 
 window.LABEL_POSITIONS = {
@@ -514,6 +516,14 @@ window.polygonCenter = function polygonCenter(points) {
 		centre = new Point(Number(x / area).toFixed(3), Number(y / area).toFixed(3), MAPCONFIG.coordType);
 	}
 	return centre;
+}
+
+/** Function that creates a deep clone of the provided object (methods, data, and prototypes) the visual centre of a polygon
+ * @param {Object} object - the object to be cloned
+ * @returns {Object}  - The cloned object.
+ */
+window.deepClone = function deepClone(object) {
+	return Object.assign(Object.create(Object.getPrototypeOf(object)), object);
 }
 
 /*================================================

@@ -19,7 +19,7 @@ export default class World {
 		this.revisionID = data?.revisionId ?? 0;
 		this.revertID = data?.revertId ?? null;
 
-		this.wikiPage = data?.wikiPage ?? null;
+		this.wikiPage = data?.wikiPage ?? this.displayName;
 		this.cellSize = data?.cellSize ?? -1;
 
 		this.zoomOffset   = MAPCONFIG.zoomOffset ?? data?.zoomOffset;
@@ -91,7 +91,7 @@ export default class World {
 		query += '&name=' + encodeURI(this.name);
 		query += '&displayname=' + encodeURI(this.displayName);
 		query += '&description=' + encodeURI(this.description);
-		query += '&wikipage=' + encodeURI(this.wikiPage);
+		query += '&wikipage=' + encodeURI(this.linkWikiPage() ? this.displayName : this.wikiPage);
 		query += '&minzoom=' + (+this.minZoomLevel + +this.zoomOffset); //unary black magic
 		query += '&maxzoom=' + (+this.maxZoomLevel + +this.zoomOffset); //unary black magic
 		query += '&posleft=' + this.minX;
@@ -122,6 +122,10 @@ export default class World {
 	setEditing(editing) {
 		this.editing = editing;
 		gamemap.getElement().classList.add("editing"); // add editing effect
+	}
+
+	linkWikiPage() {
+		return this.wikiPage?.toLowerCase() == this.displayName?.toLowerCase() || this.wikiPage == null;
 	}
 
 }

@@ -57,12 +57,12 @@ iconButton element:
         if (checked != null) {
             checked = !checked;
             dispatch("checked", {checked: checked, shift: e.shiftKey});
+        } else if (e.shiftKey) {
+            dispatch("shiftClicked", "clicked");
+        } else if (e.type == "auxclick") {
+            dispatch("middleClicked", "clicked");
         } else {
             dispatch("click", "clicked");
-        }
-
-        if (e.shiftKey) {
-            dispatch("shiftClicked", "clicked");
         }
 
     }
@@ -70,7 +70,7 @@ iconButton element:
 </script>
 
 <markup>
-    <button class='btn_icon_button waves-effect mdc-ripple-surface' title={tooltip} on:click={onClicked} class:lock={lock} class:checked={checked} class:hasBackground={hasBackground} class:bgless={!hasBackground} class:nomobile={noMobile} class:dropdown={dropdown} class:dropdown-trigger={menu != null} data-target={menu} on:contextmenu={(e) => e.stopPropagation()}>
+    <button class='btn_icon_button waves-effect mdc-ripple-surface' title={tooltip} on:click={onClicked} on:auxclick={onClicked} class:lock={lock} class:checked={checked} class:hasBackground={hasBackground} class:bgless={!hasBackground} class:nomobile={noMobile} class:dropdown={dropdown} class:dropdown-trigger={menu != null} data-target={menu} on:contextmenu={(e) => e.stopPropagation()}>
         {#if icon}<Icon name={icon} size={size}/>{/if}
         {#if label}<b class="icon_btn_label nomobile">{label}</b>{/if}
         {#if dropdown}<i id="dropdown_icon" class="material-icons nomobile">expand_more</i>{/if}

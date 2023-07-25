@@ -34,7 +34,7 @@
 	--add_light: #aad67d;
 	--add: #a0ca76;
 	--add_dark: #84a861;
-	--editing: #3e68ffc0;
+	--editing: #3e68ff8d;
 	--editing_opaque: #3e68ff;
 	--editing_opaque_dark: #3557d1;
 	--editing_opaque_light: #5d80ff;
@@ -869,11 +869,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 
 .editing:not(.leaflet-container) {
 	animation: none !important;
-	filter:
-		drop-shadow(-2px -2px 0px var(--editing))
-		drop-shadow(2px -1px 0px var(--editing))
-		drop-shadow(2px 2px 0px var(--editing))
-		drop-shadow(-1px 2px 0px var(--editing)) !important;
+	filter: drop-shadow(0px 0px 3px var(--editing)) drop-shadow(0px 0px 3px var(--editing)) drop-shadow(0px 0px 3px var(--editing)) drop-shadow(0px 0px 3px var(--editing)) !important;
 }
 
 

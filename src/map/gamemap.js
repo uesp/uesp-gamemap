@@ -147,6 +147,7 @@ export default class Gamemap {
 	async setMapState(mapState, onlyUpdateTiles) {
 
 		print("Setting map state!");
+		print(mapState);
 		onlyUpdateTiles = onlyUpdateTiles ?? false;
 
 		// remove previous tiles
@@ -243,7 +244,7 @@ export default class Gamemap {
 		}
 
 		// add padding around max bounds
-		map.setMaxBounds(RC.getMaxBoundsWithPadding());
+		map.setMaxBounds(RC.getMaxBounds(130));
 
 		// finally, update map state
 		this.updateMapState(mapState);
@@ -470,7 +471,7 @@ export default class Gamemap {
 	deleteWorld(world) {
 		// delete selected world from cache
 		this.getWorlds()?.delete(world.id);
-		this.goto(MAPCONFIG.defaultWorldID);
+		this.goto(world.parentID ?? MAPCONFIG.defaultWorldID);
 	}
 
 	/*================================================
@@ -575,7 +576,7 @@ export default class Gamemap {
 			coords = RC.project(latLngs);
 		} else if (Array.isArray(latLngs)) {
 			coords = [];
-			latLngs.forEach((latLng) => {coords.push(this.toCoords(latLng, this.mapConfig.coordType));});
+			latLngs.forEach((latLng) => {coords.push(this.toCoords(latLng, this.mapConfig.coordType))});
 			return coords;
 		}
 
@@ -630,13 +631,9 @@ export default class Gamemap {
 					let xN = coords.x;
 					let yN = coords.y;
 
-					// get max range of x and y, assure it is a positive number
-					let maxRangeX = Math.abs(this.getCurrentWorld().maxX - this.getCurrentWorld().minX);
-					let maxRangeY = Math.abs(this.getCurrentWorld().maxY - this.getCurrentWorld().minY);
-
 					// get normalised value of x and y in range
-					xN = (xN - this.getCurrentWorld().minX) / maxRangeX;
-					yN = Math.abs((yN - this.getCurrentWorld().maxY) / maxRangeY); // flip y around
+					xN = (xN - this.getCurrentWorld().minX) / this.getCurrentWorld().maxRangeX;
+					yN = Math.abs((yN - this.getCurrentWorld().maxY) / this.getCurrentWorld().maxRangeY); // flip y around
 
 					return this.toLatLngs(new Point(xN, yN, COORD_TYPES.NORMALISED));
 			}
@@ -1005,6 +1002,7 @@ export default class Gamemap {
 
 		// reject if null
 		if (identifier == null) { return Promise.reject("Location identifier was null") }
+		this.mapCallbacks?.setLoading(true);
 
 		// get location ID from identifier
 		let isNumerical = !isNaN(identifier) || identifier instanceof Location;
@@ -1033,6 +1031,7 @@ export default class Gamemap {
 		}
 
 		if (localLocation) { // return local location if we found any
+			this.mapCallbacks?.setLoading(false);
 			return Promise.resolve(localLocation);
 		} else { // if no local copies were found, search the online db
 			let queryParams = {};
@@ -1043,16 +1042,16 @@ export default class Gamemap {
 			} else if (isString) {
 				queryParams.centeron = locationName;
 			}
-
 			let response = await getJSON(GAME_DATA_SCRIPT + queryify(queryParams));
 			if (response && response.locations.length > 0) {
 				print("Got location info!");
 				let world = self.getWorldFromID(response?.locations[0]?.worldId);
 				let location = new Location(response.locations[0], world);
-				print(location);
+				this.mapCallbacks?.setLoading(false);
 				return Promise.resolve(location);
 			} else {
 				M.toast({html: "That location doesn't exist!"});
+				this.mapCallbacks?.setLoading(false);
 				return Promise.reject(`Location ${locationID} was invalid.`);
 			}
 		}
@@ -1259,11 +1258,17 @@ export default class Gamemap {
 				});
 
 				// on marker clicked
-				marker.on('click', function (event) {
-					if(!self.mapLock) {
-						let shift = event.originalEvent.shiftKey; // edit
-						let ctrl = event.originalEvent.ctrlKey; // popup
+				marker.on('click', event => {
+					let shift = event.originalEvent.shiftKey; // edit
+					let ctrl = event.originalEvent.ctrlKey; // popup
+					if (!self.mapLock || MAPLOCK.isPartialNoNew(self.mapLock)) {
 						self.onMarkerClicked(this, shift, ctrl);
+					}
+				});
+
+				marker.on('dblclick', () => {
+					if ((!self.mapLock || MAPLOCK.isPartialNoNew(self.mapLock)) && !this.getLocation().isClickable()) {
+						self.onMarkerClicked(this, true, false);
 					}
 				});
 			});
@@ -1380,27 +1385,7 @@ export default class Gamemap {
 			}
 		})
 
-		const el = document.getElementById("gamemap");
-		el.addEventListener("touchstart", test);
-		el.addEventListener("touchend", test);
-		el.addEventListener("touchcancel", test);
-		el.addEventListener("touchmove", test);
-
-		function test(event) {
-			//print(event);
-			let target = event.target;
-
-			if (self.mapLock == MAPLOCK.FULL || target != self.mapRoot && !target?.classList?.contains("leaflet-interactive")) {
-				event?.originalEvent?.preventDefault();
-				map.dragging.disable();
-				//print("should be being disabled");
-			} else {
-				map.dragging.enable();
-				//print("should be being enabled");
-			}
-		}
-
-		map.on("mousemove mousedown touchstart touchmove touchcancel touchend", function(event) {
+		map.on("mousemove mousedown", function(event) {
 			//print(event);
 			let target = event.originalEvent?.target ?? event?.originalEvent?.explicitOriginalTarget ?? event?.sourceTarget?._container;
 			if (self.mapLock == MAPLOCK.FULL || target != self.mapRoot && !target?.classList?.contains("leaflet-interactive")) {
@@ -1415,7 +1400,7 @@ export default class Gamemap {
 
 		map.on("dblclick", function(event) {
 			let target = event.originalEvent?.target ?? event?.originalEvent?.explicitOriginalTarget;
-			if (target?.className?.includes("leaflet")) {
+			if (target?.className?.includes && target?.className?.includes("leaflet")) {
 				map.panTo(event.latlng, {animate: true});
 			}
 			print(target);
@@ -1425,40 +1410,24 @@ export default class Gamemap {
 	onMarkerClicked(marker, shift, ctrl) {
 
 		print(marker.location);
-		let canJumpTo = marker.location != null && marker.location.isClickable() && !this.mapLock;
+		let canJumpTo = marker.getLocation()?.isClickable() && !this.mapLock;
 
 		if (canJumpTo && !shift && !ctrl) { // is location a link to a worldspace/location
-
-			let location = marker.location;
+			let location = marker.getLocation();
 			if (location != null) {
 				this.mapCallbacks?.setLoading(true);
 				if (location.destinationID > 0) { // is destinationID a worldID
 					this.goto(location.destinationID);
 				} else { // it is a location ID
-					this.getLocation(location.destinationID).then((location) => self.goto(location));
+					this.getLocation(location.destinationID).then(location => self.goto(location));
 				}
 			}
-		} else {
-			if (shift) { // if shift pressed, and can edit, show edit menu
-				if (!this.mapLock) {
-					marker.openPopup(this.canEdit());
-				}
-			}
+		} else if (shift && this.canEdit()) { // if shift pressed, and can edit, show edit menu
+			this.edit(marker.location);
+		} else if ((!shift || ctrl || !canJumpTo) && !marker.getLocation()?.editing) { // if normally clicked or pressing ctrl, show popup
+			marker.openPopup();
 		}
-
-		// if normally clicked or pressing ctrl, show popup
-		if (!shift || ctrl ) {
-			if (canJumpTo && !ctrl){
-				// do nothing
-			} else {
-				marker.openPopup();
-			}
-
-		}
-
 	}
-
-
 
 	setZoomTo(zoom) {
 		map.setZoom(zoom, {animate: true})
@@ -1474,47 +1443,9 @@ export default class Gamemap {
 
 	}
 
-	centreOnLocation(location) {
-
-		// get marker object from location
-		let marker = this.getMarkers(location)[0];
-
-		// get bounds of the marker
-		let bounds;
-		if (marker instanceof L.Marker) {
-			bounds = L.latLngBounds([marker.getLatLng()]);
-		} else {
-			bounds = marker.getBounds();
-		}
-		var boundsWithPadding = this.getBoundsWithPadding(bounds, 0.2);
-
-		// centre around the bounds of the marker
-		if (!(this.getZoomFromBounds(boundsWithPadding) < location.displayLevel)) {
-			map.flyToBounds(boundsWithPadding);
-		} else {
-			this.goto(location);
-		}
-
-	}
-
 	getZoomFromBounds(bounds) {
 		return map.getBoundsZoom(bounds, false);
 	}
-
-	getBoundsWithPadding(bounds, nPadding) {
-
-		let southWest = bounds._southWest;
-		let northEast = bounds._northEast;
-
-		southWest.lng = southWest.lng * (1 - nPadding);
-		southWest.lat = southWest.lat * (1 - nPadding);
-		northEast.lng = northEast.lng * (1 + nPadding);
-		northEast.lat = northEast.lat * (1 + nPadding);
-
-		return new L.LatLngBounds(southWest, northEast);
-	}
-
-
 
 	/*================================================
 						  General
@@ -1524,7 +1455,7 @@ export default class Gamemap {
 	reset(currentWorldOnly, customPadding) {
 		if (!this.hasMultipleWorlds() || currentWorldOnly) {
 			if (customPadding) {
-				map.fitBounds(RC.getMaxBoundsWithPadding(customPadding), {animate: true});
+				map.fitBounds(RC.getMaxBounds(customPadding), {animate: true});
 			} else {
 				map.fitBounds(RC.getMaxBounds(), {animate: true});
 			}
@@ -1728,6 +1659,7 @@ L.Layer.include({
 	edit() {
 		this.editing = true;
 		this.pm.enable({ allowEditing: true, snapDistance: self.mapConfig.markerSnapDistance, draggable: true, preventMarkerRemoval: this.getCoordinates().length == 1});
+		this.on("pm:drag", () => gamemap.clearTooltips());
 		this.on('pm:markerdragend pm:vertexremoved pm:edit', (e) => {
 			if ((e.shape == "Marker") || ((e.shape == "Polygon" || e.shape == "Line") && (e.type == "pm:markerdragend" || e.type == "pm:vertexremoved"))) {
 				updateMarkerCoords(self.toCoords(e.layer.getCoordinates()));
@@ -1736,13 +1668,9 @@ L.Layer.include({
 	},
 
 	// open marker popup
-	openPopup(doEdit) {
-		if (!doEdit){
-			print("making popup");
-			print(this);
-			L.popup(this.getCentre(), {content: this.getLocation().getPopupContent()}).openOn(map);
-		} else {
-			gamemap.edit(this.location);
-		}
+	openPopup() {
+		print("making popup");
+		print(this);
+		L.popup(this.getCentre(), {content: this.getLocation().getPopupContent()}).openOn(map);
 	},
 });
