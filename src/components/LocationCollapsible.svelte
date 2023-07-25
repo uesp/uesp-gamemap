@@ -20,10 +20,6 @@
     export let title;
     let isArray = Array.isArray(data);
 
-    function onLocationClicked(id) {
-        gamemap.goto(id);
-    }
-
 </script>
 
 <markup>
@@ -31,11 +27,11 @@
     {#if isArray}
         {#each data as item, i}
             {@const worldID = item.id}
-            {@const worldName = gamemap.getWorldDisplayNameFromID(worldID)}
+            {@const worldName = gamemap.getWorldByID(worldID).displayName}
             {#if item["children"]}
                 <svelte:self data={data[i]} title={worldName} />
             {:else}
-                <ListItem title={worldName} selected={gamemap.getCurrentWorld().displayName == worldName} on:click={() => onLocationClicked(gamemap.getWorldFromDisplayName(worldName).id)} on:middleClick={() => {window.open(`${location.origin}${location.pathname}?world=${gamemap.getWorldFromDisplayName(worldName).id}`)}}/>
+                <ListItem title={worldName} selected={gamemap.getCurrentWorld().displayName == worldName} on:click={() => gamemap.goto(worldID)} on:middleClick={() => window.open(`${location.origin}${location.pathname}?world=${worldID}`)}/>
             {/if}
         {/each}
 
@@ -51,8 +47,8 @@
                     <div class='collapsible-body' in:slide|global out:slide|global>
                         {#if data.id > 0}
                             {@const worldID = data.id}
-                            {@const worldName = gamemap.getWorldDisplayNameFromID(worldID)}
-                            <ListItem title={worldName} selected={gamemap.getCurrentWorld().displayName == worldName} on:click={() => onLocationClicked(gamemap.getWorldFromDisplayName(worldName).id)} on:middleClick={() => {window.open(`${location.origin}${location.pathname}?world=${gamemap.getWorldFromDisplayName(worldName).id}`)}}/>
+                            {@const worldName = gamemap.getWorldByID(worldID).displayName}
+                            <ListItem title={worldName} selected={gamemap.getCurrentWorld().displayName == worldName} on:click={() => gamemap.goto(worldID)} on:middleClick={() => window.open(`${location.origin}${location.pathname}?world=${worldID}`)}/>
                         {/if}
                         <svelte:self data={data["children"]}/>
                     </div>

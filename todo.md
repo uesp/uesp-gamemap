@@ -11,10 +11,9 @@
 - fixed tooltips getting in the way when dragging markers
 - fixed worlds still having the "editing" tag added after cancelling (going back into worlds was showing edit menu)
 - fixed opening colour picker on blobs with null colours setting the colour to a bright blue
+- fixed popups getting in the way when editing worlds
 
 ## todo
-
-- fix popups not going away when editing world
 
 - fix lag in opening big search results (use virtual list)
 
@@ -26,13 +25,8 @@
 
 - make max zoom of all locations -0.5 on all locations client side
 
-
-- ask dave for help on craglorn pow coord conversion
-- craglorn and alikr have weird negative bounds instead of 0, 100000, maybe cause of loc drift
->> ask dave why alikr have weird negative bounds instead of 0 100000, and are there any others like that in esomap to test for loc drift
-
-
 - fix location dropdown being laggy on open, remember existing location data somehow
+>> laggy because it's calculating the groups and abc every time you open it
 
 - fix not being able to click location dropdown while it's open to close it
 
@@ -60,7 +54,7 @@ to be consistent icons (an area doesnt make sense to have a pin icon)
 - fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af on firefox when zooming out
 - fix darker blocks in grid for sr going off by one at the ends
-- show more columns on map key menu dynamically
+- show more columns on map key menu dynamically (refactor styles to grid based)
 - fix cell resource colour intensity to make sense. deeper the colour the more stuff
 - fix pip on layer switcher ui being small
 - make readme on how to create the favicon styles for maps for future developers

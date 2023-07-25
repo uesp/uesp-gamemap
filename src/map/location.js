@@ -347,24 +347,12 @@ export default class Location {
 		print(world);
 
 		coords.forEach(coord => {
-			print("x coord");
-			print(coord.x);
-			print("num tiles");
-			print(world.dbNumTilesX);
-			print("pow 2 num tiles");
-			print(nextPowerOfTwo(world.dbNumTilesX));
-			print("pow 2 calculation")
-			print(nextPowerOfTwo(world.dbNumTilesX) * world.dbNumTilesX)
+
 			coord.x = coord.x / nextPowerOfTwo(world.dbNumTilesX) * world.dbNumTilesX;
-			print("x coord after pow 2 clamp")
-			print(coord.x);
 			coord.y = coord.y / nextPowerOfTwo(world.dbNumTilesY) * world.dbNumTilesY;
-			print("max rangeX")
-			print(world.maxRangeX);
-			coord.x = coord.x * world.maxRangeX;
-			print("x coord denormalised")
-			print(coord.x);
-			coord.y = (1 - coord.y) * world.maxRangeY;
+
+			coord.x = coord.x * world.maxRangeX + world.minX;
+			coord.y = (1 - coord.y) * world.maxRangeY + world.minY;
 		})
 
 		return coords;

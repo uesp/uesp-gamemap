@@ -342,6 +342,7 @@
         gamemap.getMap().pm.disableGlobalEditMode();
         Array.from(document.querySelectorAll("[class*='editing']")).forEach(element => { element.classList.remove("editing"); });
         window.onbeforeunload = null;
+        gamemap.getMap().closePopup();
     }
 
     // cancel editing
