@@ -7,7 +7,7 @@
 - Thal-J <thal-j@uesp.net> (10th Jan, 2023) -->
 
 <div id="debug_tag">
-    <b>{isDebug ? "Debug" : "Beta"}</b>
+    <b>Debug</b>
 </div>
 
 <style>

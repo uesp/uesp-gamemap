@@ -1,3 +1,5 @@
+<!-- svelte-ignore missing-declaration -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- @component
 ### Description
  Search component for the UESP gamemap.
@@ -220,7 +222,6 @@
     <div id="search_pane" in:fly|global="{{ x: -5, duration: 250 }}" out:fade|global="{{duration: 75}}" class:lock={lock} on:contextmenu={(e) => e.stopPropagation()}>
         <div id="search_container">
             <!-- Search bar -->
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div id='searchbar' title="Type here to search" class="waves-effect" class:fullPane={showSearchPane} on:click={() => (searchBox.focus())} class:lockNoFade={lock}>
 
                 <!-- Magnifying glass icon -->
@@ -249,15 +250,11 @@
 
                     <!-- Search Options -->
                     <div id="search_options" class:fullPane={showSearchPane}>
-                        <!-- svelte-ignore a11y-click-events-have-key-events -->
-                        <!-- svelte-ignore missing-declaration -->
                         <b style="font-size: 1.0rem;" class="waves-effect" title="Click to show/hide search options" on:click={() => {setPrefs("expandsearchoptions", !getPrefs("expandsearchoptions")); expandOptions = getPrefs("expandsearchoptions");}}>Search Options <Icon name={(expandOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b><br>
                         {#if doPinSearch && showSearchPane}<div id="search_pin_status" title="Search is pinned"><Icon name="push_pin" size="tiny"></Icon></div>{/if}
 
                         {#if expandOptions}
-                            <!-- svelte-ignore missing-declaration -->
                             {#if gamemap.hasMultipleWorlds()}<Checkbox label="Only show results from this map" title="Toggle to only search locations in the current map" checked={searchCurrentMap} on:change={(e) => {searchCurrentMap = e.detail; updateSearch(searchQuery, searchCurrentMap)}}></Checkbox>{/if}
-                            <!-- svelte-ignore missing-declaration -->
                             <Checkbox label="Pin search window over map" title="Toggle to pin the search window over the map" checked={doPinSearch} on:change={(e) => {setPrefs("pinsearch", e.detail); doPinSearch = getPrefs("pinsearch");}}></Checkbox>
                         {/if}
 
@@ -278,7 +275,6 @@
                             <div id="search_results" class='search_results'>
                                 {#if searchResults.length > 0}
                                     {#each searchResults as result}
-                                        <!-- svelte-ignore missing-declaration -->
                                         {@const isWorld = result.destinationID > 0}
                                         <ListItem title={result.name} subtitle={(!isWorld && gamemap.hasMultipleWorlds()) ? result.description : null} icon={(result.icon != null) ? gamemap.getMapConfig().iconPath + result.icon + ".png" : (isWorld) ? "public" : "location_on"} destinationID={result.destinationID} bold={isWorld} on:click={(e) => {goto(e.detail)}} on:middleClick={(e) => {window.open(`${location.origin}${location.pathname}?${e.detail > 0 ? `world=${e.detail}` : `centeron=${Math.abs(e.detail)}`}`)}}/>
                                     {/each}

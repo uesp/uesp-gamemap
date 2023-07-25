@@ -59,8 +59,6 @@ iconButton element:
             dispatch("checked", {checked: checked, shift: e.shiftKey});
         } else if (e.shiftKey) {
             dispatch("shiftClicked", "clicked");
-        } else if (e.type == "auxclick") {
-            dispatch("middleClicked", "clicked");
         } else {
             dispatch("click", "clicked");
         }

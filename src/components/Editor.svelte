@@ -543,7 +543,7 @@
                         <div class="editor_window" bind:this={editorWindow} style="max-width: inherit; width: inherit;">
 
                             <!-- show edit suggestions if available -->
-                            {#if MAPCONFIG?.editTemplates[objectType]?.[name.toLowerCase()] && unsavedChanges && !modEditObject?.acceptedSuggestion && name.toLowerCase() != (isWorld ? editObject.displayName : editObject.name).toLowerCase()}
+                            {#if MAPCONFIG?.editTemplates[objectType]?.[name.toLowerCase()] && (unsavedChanges || modEditObject?.unsavedLocation) && !modEditObject?.acceptedSuggestion && name.toLowerCase() != (isWorld ? editObject.displayName : editObject.name).toLowerCase()}
                                 {@const template = MAPCONFIG.editTemplates[objectType][name.toLowerCase()]}
                                 <SuggestionBar suggestion={name.toTitleCase()} on:confirm={() => fillFromTemplate(template)}/>
                             {/if}

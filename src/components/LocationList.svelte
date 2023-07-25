@@ -1,3 +1,5 @@
+<!-- svelte-ignore missing-declaration -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- @component
 ### Description
  Location list component for the UESP gamemap.
@@ -7,7 +9,6 @@
 
 <script>
     // import svelte core stuff
-	import { onMount } from 'svelte';
     import { fly } from 'svelte/transition';
     import { createEventDispatcher } from "svelte";
 
@@ -17,14 +18,14 @@
     import LocationCollapsible from './LocationCollapsible.svelte';
 
     // state vars
-    export let currentTab = 0;
+    export let isShown = false;
+    let currentTab = 0;
     let locationList = null;
     let dropdownButton = null;
-    let contentView = null;
-    let tabBar = null;
+    let contentViewHeight;
+    let tabBar;
     let mobile = isMobile() || window.innerWidth <= 670;
     let mapWorlds = gamemap.getWorlds();
-    $: isReady = false;
     let abcWorldList = [];
     let groupedWorldList = [];
     let pairings = [];
@@ -32,20 +33,27 @@
 
     const dispatch = createEventDispatcher();
 
-    // on added to DOM
-    onMount(async () => {
+    //create world lists
+    getWorldLists();
 
-        // reposition menu
-        reposition();
+    export function show(value) {
+        isShown = value;
+        dispatch("toggled", isShown);
+        if (isShown) {
+            setTimeout(() => {
+                // initiate tabs
+                selectTab(currentTab);
+                M.Tabs.init(tabBar, {});
 
-        // initiate tabs
-        M.Tabs.init(tabBar, {});
-        selectTab(currentTab);
+                // reposition menu
+                reposition();
+            }, 1);
+        }
+    }
 
-        //create world lists
-        getWorldLists();
-
-	});
+    export function toggle() {
+        show(!isShown);
+    }
 
     // get world lists
     function getWorldLists() {
@@ -142,7 +150,6 @@
             hasGroupedList = false;
         }
 
-        isReady = true;
         selectTab(currentTab);
     }
 
@@ -187,7 +194,7 @@
     function reposition() {
         dropdownButton = document.querySelector('#dropdown_icon').parentElement;
         mobile = (isMobile() || window.innerWidth <= 670);
-        if (!mobile) {
+        if (!mobile && locationList) {
             let dropdownX = dropdownButton.getBoundingClientRect().left;
             let offset = dropdownX + (dropdownButton.offsetWidth / 2);
             locationList.style.left = offset + "px";
@@ -198,14 +205,13 @@
     // detect when clicked outside of the popup
     function onMouseDown(event) {
         let target = (event.relatedTarget != null) ? event.relatedTarget : (event.explicitOriginalTarget != null) ? event.explicitOriginalTarget : document.elementsFromPoint(event.clientX, event.clientY)[0];
-        let isOutsideLocationList = !(locationList !== target && locationList.contains(target));
-        if (isOutsideLocationList && !dropdownButton.contains(target)) { dismiss(); }
+        let isOutsideLocationList = !(locationList !== target && locationList?.contains(target));
+        if (isOutsideLocationList && !dropdownButton?.contains(target)) { dismiss(); }
     }
 
     // select provided tab
     function selectTab(index) {
         currentTab = (hasGroupedList) ? index : 1;
-        dispatch("tabChange", currentTab);
     }
 
     // dismiss popup on esc pressed
@@ -216,49 +222,42 @@
     }
 
     // dismiss the popup
-    function dismiss() {dispatch("dismiss", "dismissed"); }
+    export function dismiss() { show(false) }
 
 </script>
 
 <markup>
     <!-- Location list -->
-    <div id="location_list" bind:this={locationList} in:fly|global={!mobile ? { y: -15, duration: 200 } : { x: 15, duration: 150 }} out:fly|global={ !mobile ? { y: -5, duration: 150 } : { x: 5, duration: 150 } } on:contextmenu={(e) => e.stopPropagation()}>
+    {#if isShown}
+        <div id="location_list" bind:this={locationList} in:fly|global={!mobile ? { y: -15, duration: 200 } : { x: 15, duration: 150 }} out:fly|global={ !mobile ? { y: -5, duration: 150 } : { x: 5, duration: 150 } } on:contextmenu={(e) => e.stopPropagation()}>
 
-        <ul id="location_list_tab_bar" class="tabs" class:singleTab={!hasGroupedList} bind:this={tabBar}>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            {#if hasGroupedList}
-                <li id="group_tab" class="tab" on:click={() => selectTab(0)}><a class:active={currentTab == 0} href="#tab_categories">Grouped</a></li>
-            {/if}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <li id="abc_tab" class="tab" on:click={() => selectTab(1)}><a class:active={currentTab == 1} href="#tab_alphabetical">{hasGroupedList ? "ABC" : "Worlds"}</a></li>
-        </ul>
+            <ul id="location_list_tab_bar" class="tabs" class:singleTab={!hasGroupedList} bind:this={tabBar}>
+                {#if hasGroupedList}
+                    <li id="group_tab" class="tab" on:click={() => selectTab(0)}><a class:active={currentTab == 0} href="#tab_categories">Grouped</a></li>
+                {/if}
+                <li id="abc_tab" class="tab" on:click={() => selectTab(1)}><a class:active={currentTab == 1} href="#tab_alphabetical">{hasGroupedList ? "ABC" : "Worlds"}</a></li>
+            </ul>
 
-        <div id="location_list_content" bind:this={contentView}>
+            <div id="location_list_content" bind:clientHeight={contentViewHeight}>
 
-            {#if currentTab == 0}
-                <div id="tab_categories" class="tab-pane">
-                    <!-- svelte-ignore missing-declaration -->
-                    {#each groupedWorldList as group,i}
-                        {@const worldID = group.id}
-                        {@const name = (worldID < 0) ? (worldID == -1) ? "Orphaned Maps" : "Beta Maps" : gamemap.getWorldDisplayNameFromID(worldID)}
-                        <LocationCollapsible data={group} expanded={i==0} title={name}/>
-                    {/each}
-                </div>
-            {/if}
+                {#if currentTab == 0}
+                    <div id="tab_categories" class="tab-pane">
+                        {#each groupedWorldList as group,i}
+                            {@const worldID = group.id}
+                            {@const name = (worldID < 0) ? (worldID == -1) ? "Orphaned Maps" : "Beta Maps" : gamemap.getWorldDisplayNameFromID(worldID)}
+                            <LocationCollapsible data={group} expanded={i==0} title={name}/>
+                        {/each}
+                    </div>
+                {/if}
 
-            {#if currentTab == 1}
-                {#if isReady}
+                {#if currentTab == 1 && contentViewHeight}
                     <div id="tab_alphabetical" class="tab-pane">
-                        <!-- svelte-ignore missing-declaration -->
                         <VirtualList
-                            width="100%"
-                            height={contentView.clientHeight}
+                            height={contentViewHeight}
                             itemCount={abcWorldList.length}
                             itemSize={41}
                             scrollToIndex={abcWorldList.indexOf(gamemap.getCurrentWorld().displayName)}
                             scrollToAlignment="center">
-                            <!-- svelte-ignore missing-declaration -->
-                            <!-- svelte-ignore missing-declaration -->
                             <div slot="item" let:index let:style {style}>
                                 {@const world = gamemap.getWorldFromDisplayName(abcWorldList[index])}
                                 <ListItem title={world.displayName} destinationID={world.id} selected={gamemap.getCurrentWorld().displayName == abcWorldList[index]} on:click={(e) => {gamemap.goto(e.detail); dismiss()}} on:middleClick={(e) => window.open(`${location.origin}${location.pathname}?world=${e.detail}`)}></ListItem>
@@ -266,9 +265,9 @@
                         </VirtualList>
                     </div>
                 {/if}
-            {/if}
+            </div>
         </div>
-    </div>
+    {/if}
 </markup>
 
 <style>

@@ -852,10 +852,13 @@ export default class Gamemap {
 		// set map lock state
 		if (mapLock && mapLock == MAPLOCK.FULL)  {
 			map.dragging.disable();
+			map.smoothWheelZoom.disable();
+			map.keyboard.disable();
 			this.mapRoot.classList.add("locked"); // add locked css
-			//map.options = {smoothWheelZoom : false};
 		} else {
 			map.dragging.enable();
+			map.smoothWheelZoom.enable();
+			map.keyboard.enable();
 			this.mapRoot.classList.remove("locked"); // remove locked css
 		}
 
@@ -1386,24 +1389,20 @@ export default class Gamemap {
 		})
 
 		map.on("mousemove mousedown", function(event) {
-			//print(event);
 			let target = event.originalEvent?.target ?? event?.originalEvent?.explicitOriginalTarget ?? event?.sourceTarget?._container;
 			if (self.mapLock == MAPLOCK.FULL || target != self.mapRoot && !target?.classList?.contains("leaflet-interactive")) {
 				event?.originalEvent?.preventDefault();
 				map.dragging.disable();
-				//print("should be being disabled");
 			} else {
 				map.dragging.enable();
-				//print("should be being enabled");
 			}
 		})
 
 		map.on("dblclick", function(event) {
 			let target = event.originalEvent?.target ?? event?.originalEvent?.explicitOriginalTarget;
-			if (target?.className?.includes && target?.className?.includes("leaflet")) {
+			if (target?.className?.includes && target?.className?.includes("leaflet") && !self.mapLock) {
 				map.panTo(event.latlng, {animate: true});
 			}
-			print(target);
 		})
 	}
 

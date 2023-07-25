@@ -44,7 +44,7 @@
                 </div>
 
                 {#if expanded}
-                    <div class='collapsible-body' in:slide|global out:slide|global>
+                    <div class='collapsible-body' in:slide|local out:slide|local>
                         {#if data.id > 0}
                             {@const worldID = data.id}
                             {@const worldName = gamemap.getWorldByID(worldID).displayName}

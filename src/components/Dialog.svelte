@@ -70,11 +70,17 @@
         }
         dispatch("confirm");
     }
+
+    function escPressed(event) {
+        if (event.key == "Escape") {
+            dismiss();
+        }
+    }
 </script>
 
 <markup>
     {#if isShown}
-        <dialog bind:this={dialog} class="modal" class:modal-fixed-footer={fixedFooter} in:scale out:scale={{duration: 250, opacity: 0}}>
+        <dialog bind:this={dialog} class="modal" class:modal-fixed-footer={fixedFooter} in:scale out:scale={{duration: 250, opacity: 0}} on:keyup={escPressed}>
             <div class="modal-content">
                 <h4>{title}</h4>
                 <slot>

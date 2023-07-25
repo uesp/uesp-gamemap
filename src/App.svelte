@@ -80,8 +80,8 @@
 	$: currentWorld = null;
 	let showUI = true;
 	let showLayerSwitcher = false;
-	let showLocationList = false;
-	let locationListTab = 0;
+	let locationList;
+	let locationListShown = false;
 	let showMaps = false;
 	let helpDialog;
 	let mapKeyDialog;
@@ -190,7 +190,7 @@
 		currentWorld = world;
 		setWindowTitle(world.displayName);
 		isLoaded = true;
-		showLocationList = false;
+		locationList?.dismiss();
 		showLayerSwitcher = (world.layers.length > 1 || world.hasGrid());
 		onZoom(mapState.zoom);
 		gridEnabled = mapState.showGrid;
@@ -333,19 +333,15 @@
 							</slot:template>
 
 							<slot:template slot="secondary">
-
 								{#if gamemap.hasMultipleWorlds()}
-									<IconButton icon="explore" label={currentWorld.displayName} tooltip="Show location list" dropdown="true"  lock={mapLock} checked={showLocationList} on:checked={(e) => (showLocationList = e.detail)}/>
+									<IconButton icon="explore" label={currentWorld.displayName} tooltip="Show location list" dropdown="true"  lock={mapLock} checked={locationListShown} on:checked={() => locationList.toggle()}/>
 									<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" lock={mapLock} on:click={() => {
 										print("Getting article link...");
 										let link = gamemap.getArticleLink();
-										if (link != null && link != "") {
-											window.open(link);
-										}
+										if (link != null && link != "") window.open(link);
 									}}/>
 								{/if}
 
-								<!-- svelte-ignore missing-declaration -->
 								<IconButton icon="link" label="Copy Link" lock={mapLock} tooltip="Copy link to current map view" on:click={() => {
 									print("Copying link to clipboard...");
 									M.toast({html: 'Map link copied to clipboard!'});
@@ -355,9 +351,7 @@
 							</slot:template>
 						</IconBar>
 
-						{#if showLocationList}
-							<LocationList on:dismiss={() => (showLocationList = false)} currentTab={locationListTab} on:tabChange={(e) => (locationListTab = e.detail)}/>
-						{/if}
+						<LocationList bind:this={locationList} on:toggled={(e) => locationListShown = e.detail}/>
 
 					{/if}
 				{/if}
@@ -411,12 +405,9 @@
 	{/if}
 
 	<!-- Show debug tag in top right corner if dev build -->
-	<DebugBadge/>
-
-
-	<!-- {#if isDebug}
-		<DebugBadge/>
-	{/if} -->
+	{#if isDebug}
+		 <DebugBadge/>
+	{/if}
 
 </markup>
 
