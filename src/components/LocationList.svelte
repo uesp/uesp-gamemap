@@ -11,6 +11,7 @@
     // import svelte core stuff
     import { fly } from 'svelte/transition';
     import { createEventDispatcher } from "svelte";
+    import { onMount } from 'svelte';
 
     // import ui components
     import VirtualList from 'svelte-tiny-virtual-list';
@@ -29,12 +30,9 @@
     let abcWorldList = [];
     let groupedWorldList = [];
     let pairings = [];
-    $: hasGroupedList = true;
+    let hasGroupedList = true;
 
     const dispatch = createEventDispatcher();
-
-    //create world lists
-    getWorldLists();
 
     export function show(value) {
         isShown = value;
@@ -46,8 +44,8 @@
                 M.Tabs.init(tabBar, {});
 
                 // reposition menu
-                reposition();
-            }, 1);
+                if (gamemap.hasMultipleWorlds()) reposition();
+            });
         }
     }
 
@@ -56,8 +54,7 @@
     }
 
     // get world lists
-    function getWorldLists() {
-
+    window.getWorldLists = function getWorldLists() {
         let groups = {};
     	const GROUP_DEV_ID = -1337;
     	const GROUP_UNSORTED_ID = -1;
@@ -86,7 +83,8 @@
     	});
 
         // get grouped list if there's enough worlds
-        if (abcWorldList.length > 3) {
+        hasGroupedList = abcWorldList.length > 5;
+        if (hasGroupedList) {
             for (let i = 0; i < abcWorldList.length; i++) {
                 let displayName = abcWorldList[i];
                 let world = gamemap.getWorldFromDisplayName(displayName);
@@ -146,8 +144,6 @@
 
                 groupedWorldList.push(output);
             }
-        } else {
-            hasGroupedList = false;
         }
 
         selectTab(currentTab);
@@ -161,7 +157,6 @@
     				parseGroupList(root, obj[property], stack + '.' + property, rootWorldID);
     			} else {
 
-    				//console.log("i: " + property + "   " + obj[property]);
     				if (root[obj[property]] != null) {
     					parseGroupList(root, root[obj[property]], stack + '.' + obj[property], rootWorldID);
     				} else {
@@ -192,11 +187,11 @@
 
     // dyamically centre dropdown when not mobile
     function reposition() {
-        dropdownButton = document.querySelector('#dropdown_icon').parentElement;
+        dropdownButton = document.querySelector('#dropdown_icon')?.parentElement;
         mobile = (isMobile() || window.innerWidth <= 670);
-        if (!mobile && locationList) {
+        if (!mobile && locationList && dropdownButton) {
             let dropdownX = dropdownButton.getBoundingClientRect().left;
-            let offset = dropdownX + (dropdownButton.offsetWidth / 2);
+            let offset = dropdownX + (dropdownButton.clientWidth / 2);
             locationList.style.left = offset + "px";
             locationList.style.top = (locationList.offsetHeight / 2) + dropdownButton.offsetHeight + 16 + "px";
         }
@@ -224,6 +219,7 @@
     // dismiss the popup
     export function dismiss() { show(false) }
 
+    onMount(() => { getWorldLists() });
 </script>
 
 <markup>
@@ -255,7 +251,7 @@
                         <VirtualList
                             height={contentViewHeight}
                             itemCount={abcWorldList.length}
-                            itemSize={41}
+                            itemSize={42}
                             scrollToIndex={abcWorldList.indexOf(gamemap.getCurrentWorld().displayName)}
                             scrollToAlignment="center">
                             <div slot="item" let:index let:style {style}>

@@ -173,12 +173,8 @@ export default class Gamemap {
 			}
 		}
 
-		// make sure the map state is valid
-		if (mapState.world == null) {
-			throw new Error("Map was provided an invalid world!");
-		}
-
 		// update world
+		if (mapState.world == null) mapState.world == this.getWorldByID(MAPCONFIG.defaultWorldID);
 		this.currentWorldID = mapState.world.id;
 
 		// set full image width & height
@@ -456,9 +452,7 @@ export default class Gamemap {
 	/** Simple function that returns whether the current gamemap has multiple worlds.
 	 * @returns {Boolean} - A boolean whether or not the current gamemap contains multiple worlds.
 	 */
-	hasMultipleWorlds() {
-		return this.mapWorlds.size > 1;
-	}
+	hasMultipleWorlds() { return this.mapWorlds.size > 1 }
 
 	// update world
 	updateWorld(world) {
@@ -472,6 +466,7 @@ export default class Gamemap {
 		// delete selected world from cache
 		this.getWorlds()?.delete(world.id);
 		this.goto(world.parentID ?? MAPCONFIG.defaultWorldID);
+		getWorldLists(); // update world lists
 	}
 
 	/*================================================

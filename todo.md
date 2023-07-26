@@ -1,6 +1,6 @@
 ## last week
 
-final polish and bugfixing before relelease
+final polish and bugfixing before release
 
 ## polish
 - added ability to shift click other locations while editing existing ones to jump to editing them
@@ -8,6 +8,7 @@ final polish and bugfixing before relelease
 - added double click to edit on locs
 - made middle click on article button open in new tab
 - middle click on location/world list items opens them in new tab too
+- make max zoom of all locations -0.5 on all locations client side
 
 ## bug fixes
 - fixed tooltips getting in the way when dragging markers
@@ -21,44 +22,36 @@ final polish and bugfixing before relelease
 
 ## todo
 
-- fix not being able to click location dropdown while it's open to close it
-
-- make max zoom of all locations -0.5 on all locations client side
-
-
-- make map key grid columns dynamic and fix overscrolling
-
 - fix clicking out while zoomed in zooming in to parent map as well
+
 - make iconbar and resizing dynamic, dont rely on css for mobile mode, do it in javascript based on map size
+
+- do common.js getIcon() for worlds,locations, to switch between actual icon, polyline, area, world, and point
+to be consistent icons (an area doesnt make sense to have a pin icon)
 
 - do centreon with checking world?= as well
 - cell resource state in/from url
 
 - double markers for reverted locations
 
-- fix requesting /null in layerbutton
-
-- fix location list dropdown not being centred properly
 - fix losing grid on resize
 
-- do common.js getIcon() for worlds,locations, to switch between actual icon, polyline, area, world, and point
-to be consistent icons (an area doesnt make sense to have a pin icon)
+- fix pip on layer switcher ui being small
+- fix small line on layer switcher (e.g. eso layers)
 
 - fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af on firefox when zooming out
 - fix darker blocks in grid for sr going off by one at the ends
-- show more columns on map key menu dynamically (refactor styles to grid based)
+
 - fix cell resource colour intensity to make sense. deeper the colour the more stuff
-- make location list grouped jump down to currently selected location
-- links on gamemap.uesp.net help dialog fugged up
-- fix pip on layer switcher ui being small
+
+- links on devgamemap.uesp.net help dialog fugged up
+
 - make readme on how to create the favicon styles for maps for future developers
+
 - organise app.css and comment gamemap js
+
 - comment/refactor all code
-
-
-
-- wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 
 ## todo maps (future)
 - use the "Dev/Beta" versions of maps for eso as separate layers
@@ -80,6 +73,7 @@ to be consistent icons (an area doesnt make sense to have a pin icon)
 - starfield map
 
 app:
+- wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 - cross platform
 - cross wiki
 - integrate maps

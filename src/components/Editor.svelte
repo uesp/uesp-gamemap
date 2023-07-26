@@ -289,7 +289,10 @@
                 modify("revisionID", data?.newRevisionId);
                 editObject = deepClone(modEditObject);
                 if (isLocation) { gamemap.updateLocation(editObject) }
-                if (isWorld) { gamemap.updateWorld(editObject) }
+                if (isWorld) {
+                    gamemap.updateWorld(editObject);
+                    getWorldLists(); // update world lists
+                }
 
                 // update recent changes
                 getRecentChanges();

@@ -252,7 +252,8 @@ export default class Location {
 	// is location visible (with optional passed bounds)
 	isVisible(bounds) {
 		if (this.editing) return true;
-		if ((gamemap.getCurrentZoom() + 0.001) < this.displayLevel) return false;
+		let zoom = (gamemap.getZoom() + 0.5 >= gamemap.getMaxZoom() ? gamemap.getMaxZoom() : gamemap.getZoom()) + 0.001 // if location is 0.5 away from max map zoom, be lenient and consider it visible
+		if (zoom < this.displayLevel) return false;
 		bounds = bounds ?? gamemap.getCurrentViewBounds();
 		let [isInside, coords] = [false, [this.getCentre()].concat(structuredClone(this.coords))];
 		coords.every(coord => {

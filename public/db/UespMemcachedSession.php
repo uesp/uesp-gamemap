@@ -8,7 +8,7 @@
 
 // return local secrets file if debug or hosted version if release
 if (in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1', "localhost"))) {
-    require 'uespservers.secrets';
+    require '../../../secrets/uespservers.secrets';
 } else {
 	require_once("/home/uesp/secrets/uespservers.secrets");
 }
