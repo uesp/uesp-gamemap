@@ -44,10 +44,13 @@
         setTimeout(() => {
             let links = dialog.querySelectorAll('[href]')
             for (let element of links) {
-                let link = element.href.replace(location.origin, "");
-                element.href = decodeURIComponent(link).substring(1);
-            }
-         }, 500);
+                let link = decodeURIComponent(element.href);
+                link = link.replace(location.origin, "");
+                link = link.replace(location.pathname, "");
+                element.href = "javascript:;";
+                element.addEventListener("click", () => { window.open(link)});
+                element.addEventListener("auxclick", () => { window.open(link)});
+        }}, 500);
 
     }
 

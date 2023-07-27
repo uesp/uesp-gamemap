@@ -36,10 +36,15 @@ export default class World {
 		this.maxRangeX = Math.abs(this.maxX - this.minX);
 		this.maxRangeY = Math.abs(this.maxY - this.minY);
 
+
 		this.numTilesX = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the X direction
 		this.numTilesY = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the Y direction
 		this.dbNumTilesX = (data?.maxTilesX != 0) ? data?.maxTilesX : this.numTilesX; //actual number of tiles in the X direction
 		this.dbNumTilesY = (data?.maxTilesY != 0) ? data?.maxTilesY : this.numTilesY; //actual number of tiles in the Y direction
+
+		//gets width and height of the full world image in pixels
+		this.width  = ((MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.dbNumTilesX : this.numTilesX * MAPCONFIG.tileSize) * Math.pow(2, 0);
+		this.height = ((MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.dbNumTilesY : this.numTilesY * MAPCONFIG.tileSize) * Math.pow(2, 0);
 
 		this.legacy = data; // legacy attributes from server
 
@@ -65,19 +70,14 @@ export default class World {
 
 	//Gets width and height of the full world image in pixels
 	getWorldDimensions() {
-
-		let dimens = {};
-		let width  = ((MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.dbNumTilesX : this.numTilesX * MAPCONFIG.tileSize) * Math.pow(2, 0);
-		let height = ((MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.dbNumTilesY : this.numTilesY * MAPCONFIG.tileSize) * Math.pow(2, 0);
-
-		dimens.width = width;
-		dimens.height = height;
-		dimens.minX = this.minX;
-		dimens.maxX = this.maxX;
-		dimens.minY = this.minY;
-		dimens.maxY = this.maxY;
-
-		return dimens;
+		return {
+			width: this.width,
+			height: this.height,
+			minX: this.minX,
+			maxX: this.maxX,
+			minY: this.minY,
+			maxY: this.maxY,
+		};
 	}
 
 	// get query for saving this world
@@ -128,4 +128,25 @@ export default class World {
 		return this.wikiPage?.toLowerCase() == this.displayName?.toLowerCase() || this.wikiPage == null;
 	}
 
+
+	getLocation(identifier) {
+		if (!isNaN(identifier) || identifier.id) {
+			let locID = identifier?.id ?? identifier;
+			if (this.locations?.has(locID)) {
+				return this.locations.get(locID);
+			}
+		} else if (typeof identifier === 'string' || identifier instanceof String) {
+			this.locations?.forEach(location => {
+				if (location.name.toLowerCase() == identifier) {
+					return location;
+				}
+			});
+		} else {
+			return null;
+		}
+	}
+
+	hasLocation(identifier) {
+		return this.getLocation(identifier) != null;
+	}
 }

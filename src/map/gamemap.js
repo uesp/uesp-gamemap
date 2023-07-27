@@ -142,7 +142,7 @@ export default class Gamemap {
 
 	/** Override mapState to provided map state (use to load from URL or from saved state).
 	 * @param {Object} mapState - Object that controls the state and view of the map.
-	 * @param {Boolean} onlyUpdateTiles - Flag to only update map tiles. Default: false (overrides everything).
+	 * @param {Boolean} onlyUpdateTiles - Flag to only update map tiles. Default: false (replaces everything).
 	 */
 	async setMapState(mapState, onlyUpdateTiles) {
 
@@ -153,43 +153,53 @@ export default class Gamemap {
 		// remove previous tiles
 		if (tileLayer != null) {
 			tileLayer.remove();
-			if (!onlyUpdateTiles) {
-				this.clearLocations();
-			}
+			if (!onlyUpdateTiles) this.clearLocations();
 		}
 
-		// if pendingJump is centeron, we wait until we get centreon data
-		if (mapState?.pendingJump == "centeron") {
+		// if we have centreon in the url, wait until we get centreon data
+		if (getURLParams().has("centeron")) {
 			print("pending centeron")
 			try {
-				let location = await this.getLocation(getURLParams().get("centeron"));
+				let location = await this.getLocation(getURLParams().get("centeron"), (getURLParams().has("world") ? this.getWorld(getURLParams().get("world")) : null));
 				mapState.world = this.getWorldFromID(location.worldID);
 				mapState.zoom = mapState.world.maxZoomLevel;
 				mapState.pendingJump = location;
 				mapState.coords = location.getCentre();
-			} catch {
+			} catch (error){
 				mapState.pendingJump = null;
-				M.toast({html: "Centeron failed!"});
+				print(error);
 			}
 		}
 
 		// update world
-		if (mapState.world == null) mapState.world == this.getWorldByID(MAPCONFIG.defaultWorldID);
+		mapState.world = (mapState.world) ? mapState.world : this.getWorldByID(MAPCONFIG.defaultWorldID);
 		this.currentWorldID = mapState.world.id;
 
-		// set full image width & height
-		let mapImageDimens = mapState.world.getWorldDimensions();
-		this.mapImage = {
-			width: mapImageDimens.width,  // original full width of image
-			height: mapImageDimens.height, // original full height of image
-		}
-		mapState.world.totalWidth = this.mapImage.width;
-		mapState.world.totalHeight = this.mapImage.height;
-
 		// calculate raster coords
-		RC = new RasterCoords(map, this.mapImage);
+		RC = new RasterCoords(map, mapState.world.getWorldDimensions());
 
-		// default tilelayer options
+		// set map view
+		map.setMaxBounds(null);
+		mapState.coords = (mapState.coords) ? mapState.coords : this.toCoords(RC.getMaxBounds().getCenter());
+		mapState.zoom = (mapState.zoom) ? mapState.zoom : map.getBoundsZoom(RC.getMaxBounds());
+
+		if (!mapState.coords || !mapState.zoom) {
+			map.fitBounds(RC.getMaxBounds(), {animate: false});
+		} else {
+			map.setView(this.toLatLngs(mapState.coords), mapState.zoom, {animate: false});
+		}
+		map.setMaxBounds(RC.getMaxBounds(130));
+
+		// if received a world edit pending jump, begin editing
+		if (mapState.pendingJump instanceof World && mapState.pendingJump.editing) {
+			this.edit(mapState.pendingJump);
+			mapState.pendingJump = null;
+		}
+
+		// update map state
+		this.updateMapState(mapState);
+
+		// set up map tiles
 		let tileOptions = {
 			noWrap: true,
 			bounds: RC.getMaxBounds(),
@@ -198,35 +208,11 @@ export default class Gamemap {
 			maxZoom: mapState.world.maxZoomLevel,
 			edgeBufferTiles: 2,
 		}
-
-		// set map tile layer
-		if (isFirefox()){ // use DOM-based rendering on firefox
-			tileLayer = L.tileLayer(this.getMapTileImageURL(mapState.world, mapState.layerIndex), tileOptions);
-		} else { // use canvas-based tile rendering on everything else
-			tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, mapState.layerIndex), tileOptions);
-		}
+		tileLayer = (isFirefox()) ? L.tileLayer(this.getMapTileImageURL(mapState.world, mapState.layerIndex), tileOptions) : tileLayer = L.tileLayer.canvas(this.getMapTileImageURL(mapState.world, mapState.layerIndex), tileOptions);
 		tileLayer.addTo(map);
 
-		// set map view
-		if (mapState.coords == null || mapState.zoom == null) {
-			map.fitBounds(RC.getMaxBounds(), {animate: false}); // reset map to fill world bounds
-			setTimeout(() => map.fitBounds(RC.getMaxBounds(), { animate: true }), 1); // now actually reset it
-		} else {
-			map.setView(this.toLatLngs(mapState.coords), mapState.zoom, {animate: false});
-			setTimeout(() => { // now actually set view
-				map.setView(this.toLatLngs(mapState.coords), mapState.zoom, {animate: true});
-				this.updateMapState(mapState); // update map state
-			}, 1);
-		}
-
-		// if received a world edit pending jump, begin editing
-		if (mapState.pendingJump instanceof World && mapState.pendingJump.editing) {
-			this.edit(mapState.pendingJump);
-			mapState.pendingJump = null;
-		}
-
 		// set background colour
-		if (mapState.world.layers[mapState.layerIndex].bg_color != null) { this.mapRoot.style.backgroundColor = mapState.world.layers[mapState.layerIndex].bg_color; }
+		if (mapState.world.layers[mapState.layerIndex].bg_color) { this.mapRoot.style.backgroundColor = mapState.world.layers[mapState.layerIndex].bg_color; }
 
 		if (!onlyUpdateTiles) {
 			// get/set locations
@@ -238,12 +224,6 @@ export default class Gamemap {
 				this.drawLocations(mapState.world.locations);
 			}
 		}
-
-		// add padding around max bounds
-		map.setMaxBounds(RC.getMaxBounds(130));
-
-		// finally, update map state
-		this.updateMapState(mapState);
 
 		// set grid if available
 		this.toggleGrid(mapState.showGrid, (mapState.showGrid) ? mapState.showGrid : null);
@@ -264,19 +244,13 @@ export default class Gamemap {
 		}
 
 		if (getURLParams().has("world")) {
-			mapState.world = isNaN(parseInt(getURLParams().get("world"))) ? (getURLParams().get("world") != "undefined" ? this.getWorldFromName(getURLParams().get("world")) : this.getWorldFromID(this.mapConfig.defaultWorldID)) : this.getWorldFromID(getURLParams().get("world"));
+			mapState.world = this.getWorld(getURLParams().get("world"));
 		} else {
 			mapState.world = this.getWorldFromID(this.mapConfig.defaultWorldID);
 		}
 
-		if (getURLParams().has("centeron")) {
-			mapState.pendingJump = "centeron"; // tell the map when we load to expect a centeron
-		}
-
 		if (getURLParams().has("x") && getURLParams().has("y")) {
-			let x = Number(getURLParams().get("x"));
-			let y = Number(getURLParams().get("y"));
-			mapState.coords = [x == 0 || isNaN(x) ? 0.001 : x, y == 0 || isNaN(y) ? 0.001 : y]; // prevent div by 0
+			mapState.coords = new Point(Number(getURLParams().get("x")), Number(getURLParams().get("y")), MAPCONFIG.coordType);
 		}
 
 		if (getURLParams().has("grid")) {
@@ -326,7 +300,7 @@ export default class Gamemap {
 			mapLink += `world=${mapState.world.name}&`;
 		}
 		if (mapState.world.hasMultipleLayers()) {
-			mapLink += `layer=${mapState.world.layers[mapState.layerIndex].name}&`;
+			mapLink += `layer=${mapState.world.layers[mapState.layerIndex]?.name}&`;
 		}
 		mapLink += `x=${mapState.coords[0]}`;
 		mapLink += `&y=${mapState.coords[1]}`;
@@ -392,9 +366,8 @@ export default class Gamemap {
 	/** Get the current world object
 	 * @returns {Object} world - An object that represents the current map world.
 	 */
-	getWorld() { return this.getCurrentWorld() }
 	getCurrentWorld() {
-		return this.getMapState()?.world ?? this.getWorldFromID(this.currentWorldID ?? this.mapConfig.defaultWorldID);
+		return this.getWorldFromID(this.currentWorldID) ?? this.getMapState()?.world ?? getWorldFromID(this.mapConfig.defaultWorldID);
 	}
 
 	/** Gets the current world ID (0 by default).
@@ -503,6 +476,14 @@ export default class Gamemap {
 
 	}
 
+	getWorld(identifier) {
+		if (identifier == null) {
+			return this.getCurrentWorld();
+		} else {
+			return isNaN(parseInt(identifier)) ? (identifier != "undefined" ? this.getWorldFromName(identifier) : this.getWorldFromID(this.mapConfig.defaultWorldID)) : this.getWorldFromID(identifier);
+		}
+	}
+
 	gotoLocation(id) {
 		print(`going to location: ${id}`);
 
@@ -562,40 +543,41 @@ export default class Gamemap {
 	getCoords(...args) { return this.toCoords(...args) }
 	toCoords(latLngs, coordType) {
 
-		var coords;
 		latLngs = structuredClone(latLngs);
 		coordType = (coordType != null) ? coordType : (latLngs instanceof Point) ? latLngs.coordType : this.mapConfig.coordType;
 
 		if (latLngs.lat != null) {
+
 			// project latlng to XY coords;
-			coords = RC.project(latLngs);
+			let coords = RC.project(latLngs);
+
+			if (coordType != COORD_TYPES.XY) {
+				let worldDimensions = this.getCurrentWorld().getWorldDimensions();
+				if (coordType == COORD_TYPES.NORMALISED || coordType == COORD_TYPES.PSEUDO_NORMALISED) {
+					// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
+					let x = (coords.x / worldDimensions.width).toFixed(3);
+					let y = (coords.y / worldDimensions.height).toFixed(3);
+					return new Point(x, y, COORD_TYPES.NORMALISED);
+
+				} else if (coordType == COORD_TYPES.WORLDSPACE) {
+					// get current map world pixel position values
+					let nX = coords.x / worldDimensions.width;
+					let nY = 1 - (coords.y / worldDimensions.height);
+
+					// reproject pixel values to worldspace
+					let x = Math.trunc(worldDimensions.minX + (worldDimensions.maxX - worldDimensions.minX) * nX);
+					let y = Math.trunc(worldDimensions.minY + (worldDimensions.maxY - worldDimensions.minY) * nY);
+					return new Point(x, y, COORD_TYPES.WORLDSPACE);
+				}
+			} else {
+				return coords;
+			}
+
 		} else if (Array.isArray(latLngs)) {
-			coords = [];
+			let coords = [];
 			latLngs.forEach((latLng) => {coords.push(this.toCoords(latLng, this.mapConfig.coordType))});
 			return coords;
 		}
-
-		if (coordType != COORD_TYPES.XY) {
-			let worldDimensions = this.getCurrentWorld().getWorldDimensions();
-			if (coordType == COORD_TYPES.NORMALISED || coordType == COORD_TYPES.PSEUDO_NORMALISED) {
-				// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
-				coords.x = (coords.x / worldDimensions.width).toFixed(3);
-				coords.y = (coords.y / worldDimensions.height).toFixed(3);
-				coords.coordType = COORD_TYPES.NORMALISED;
-			} else if (coordType == COORD_TYPES.WORLDSPACE) {
-				// get current map world pixel position values
-				let nX = coords.x / worldDimensions.width;
-				let nY = 1 - (coords.y / worldDimensions.height);
-
-				// reproject pixel values to worldspace
-				coords.x = Math.trunc(worldDimensions.minX + (worldDimensions.maxX - worldDimensions.minX) * nX);
-				coords.y = Math.trunc(worldDimensions.minY + (worldDimensions.maxY - worldDimensions.minY) * nY);
-				coords.coordType = COORD_TYPES.WORLDSPACE;
-			}
-		}
-
-		// return point object for coords
-		return coords;
 	}
 
 	/**
@@ -614,8 +596,8 @@ export default class Gamemap {
 				case COORD_TYPES.XY:
 					return RC.unproject([coords.x , coords.y]);
 				case COORD_TYPES.NORMALISED:
-					let x = (Number(coords.x) * this.mapImage.width);
-					let y = (Number(coords.y) * this.mapImage.height);
+					let x = (Number(coords.x) * this.getCurrentWorld().width);
+					let y = (Number(coords.y) * this.getCurrentWorld().height);
 
 					return RC.unproject([x , y]);
 				case COORD_TYPES.PSEUDO_NORMALISED:
@@ -830,6 +812,7 @@ export default class Gamemap {
 
 			if (layerIndex > -1 && layerIndex < this.getCurrentWorld().layers.length) {
 				let mapState = this.getMapState();
+				print(mapState);
 				if (mapState.layerIndex != layerIndex) {
 					mapState.layerIndex = layerIndex;
 					this.setMapState(mapState, true);
@@ -996,7 +979,7 @@ export default class Gamemap {
 	}
 
 	// async function to get location from cache or from server
-	async getLocation(identifier) {
+	async getLocation(identifier, world) {
 
 		// reject if null
 		if (identifier == null) { return Promise.reject("Location identifier was null") }
@@ -1009,38 +992,33 @@ export default class Gamemap {
 		let locationName = isString ? identifier?.toLowerCase() : null;
 		let localLocation;
 
-		print(`Getting info for location: ${isNumerical ? locationID : locationName}`);
+		print(`Getting info for location: ${identifier}`);
 
-		// search local cache for location first
-		if (isNumerical) { // check locations for matching numerical id
+		// search cache for location first
+		if (world) { // if world is specified, search that one
+			localLocation = world.getLocation(identifier);
+		} else { // otherwise search all worlds
 			this.mapWorlds?.forEach(world => {
-				if (world?.locations?.has(locationID)) {
-					localLocation = world?.locations?.get(locationID);
-				}
-			});
-		} else if (isString && !localLocation) { // search locations for matching name
-			this.mapWorlds?.forEach(world => {
-				world?.locations?.forEach(location => {
-					if (location.name.toLowerCase() == locationName) {
-						localLocation = location;
-					}
-				});
+				localLocation = (world.hasLocation(identifier)) ? world.getLocation(identifier) : localLocation;
 			});
 		}
 
 		if (localLocation) { // return local location if we found any
+			print("found cached location");
 			this.mapCallbacks?.setLoading(false);
 			return Promise.resolve(localLocation);
-		} else { // if no local copies were found, search the online db
-			let queryParams = {};
-			queryParams.action = isNumerical ? "get_loc" : "get_centeron";
-			queryParams.db = MAPCONFIG.database;
-			if (isNumerical) {
-				queryParams.locid = locationID;
-			} else if (isString) {
-				queryParams.centeron = locationName;
+		}
+
+		if (localLocation == null) { // otherwise if no cached copies were found, search the db
+
+			let query = {
+				action: "get_centeron",
+				db: MAPCONFIG.database,
+				centeron: isNumerical ? locationID : locationName,
+				world:  world?.id ?? null,
 			}
-			let response = await getJSON(GAME_DATA_SCRIPT + queryify(queryParams));
+
+			let response = await getJSON(GAME_DATA_SCRIPT + queryify(query));
 			if (response && response.locations.length > 0) {
 				print("Got location info!");
 				let world = self.getWorldFromID(response?.locations[0]?.worldId);
@@ -1050,7 +1028,7 @@ export default class Gamemap {
 			} else {
 				M.toast({html: "That location doesn't exist!"});
 				this.mapCallbacks?.setLoading(false);
-				return Promise.reject(`Location ${locationID} was invalid.`);
+				return Promise.reject(`Location ${identifier} was invalid.`);
 			}
 		}
 	}
