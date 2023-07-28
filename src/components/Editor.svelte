@@ -269,7 +269,7 @@
         print(`${!isRevert ? "Saving" : "Reverting"} ${objectType}...`);
 
         let queryParams = objectify(!isRevert ? modEditObject.getSaveQuery() : modEditObject.getRevertQuery());
-        saveButton.$set({ text: `${!isRevert ? "Saving..." : "Reverting..."}`, icon: "loading" });
+        saveButton.$set({ text: `${!isRevert ? "Saving..." : "Reverting..."}`, icon: "loading",  loading: true });
         print(queryParams);
 
         getJSON((GAME_DATA_SCRIPT + queryify(queryParams)).replace(/=\s*$/, "")).then(data => {
@@ -280,15 +280,17 @@
                     modify("unsavedLocation", false);
                     modify("id", data.newLocId);
                 } else if (isRevert) {
-                    gamemap.deleteLocation(modEditObject);
                     modify("revertID", null);
-                    modify("wasVisible", false);
+                    if (isLocation) {
+                        gamemap.deleteLocation(modEditObject);
+                        modify("wasVisible", modEditObject?.isVisible());
+                    }
                 }
 
                 // overwrite existing object with deep clone of modified one
                 modify("revisionID", data?.newRevisionId);
                 editObject = deepClone(modEditObject);
-                if (isLocation) { gamemap.updateLocation(editObject) }
+                if (isLocation) gamemap.updateLocation(editObject)
                 if (isWorld) {
                     gamemap.updateWorld(editObject);
                     getWorldLists(); // update world lists
@@ -299,7 +301,7 @@
 
                 // close editor
                 unsavedChanges = false;
-                saveButton.$set({ text: "Save", icon: "save", type: "save" });
+                saveButton.$set({ text: "Save", type: "save", icon: "save"});
                 cancel();
             } else {
                 print(data.errorMsg);
@@ -514,8 +516,8 @@
                     <b>Actions</b><br/>
                     <div id="actions-container">
                         <Button text="Add Marker" icon="add_location_alt" on:click={() => addNewLocation(LOCTYPES.MARKER)}></Button>
-                        <Button text="Add Area" icon="add_circle" on:click={() => addNewLocation(LOCTYPES.AREA)}></Button>
                         <Button text="Add Path" icon="polyline" on:click={() => addNewLocation(LOCTYPES.PATH)}></Button>
+                        <Button text="Add Area" icon="add_circle" on:click={() => addNewLocation(LOCTYPES.AREA)}></Button>
                         <Button text="Edit World" icon="public" on:click={() => (edit(gamemap.getCurrentWorld()))}></Button>
                     </div>
                     <div id="recent-changes-titlebar" bind:this={refreshTitleBar}>

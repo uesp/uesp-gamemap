@@ -225,8 +225,8 @@ export default class Gamemap {
 			}
 		}
 
-		// set grid if available
-		this.toggleGrid(mapState.showGrid, (mapState.showGrid) ? mapState.showGrid : null);
+		//set grid if available
+		this.toggleGrid(mapState?.gridData);
 	}
 
 	/** Gets map state object from URL params (XY coords, world etc).
@@ -254,9 +254,9 @@ export default class Gamemap {
 		}
 
 		if (getURLParams().has("grid")) {
-			mapState.showGrid = getURLParams().get("grid");
+			mapState.gridData = JSON.parse(decodeURIComponent(getURLParams().get("grid")));
 		} else {
-			mapState.showGrid = false;
+			mapState.gridData = null;
 		}
 
 		if (getURLParams().has("cellresource")) {
@@ -305,8 +305,8 @@ export default class Gamemap {
 		mapLink += `x=${mapState.coords[0]}`;
 		mapLink += `&y=${mapState.coords[1]}`;
 		mapLink += `&zoom=${mapState.zoom}`;
-		if (mapState.showGrid) {
-			mapLink += `&grid=${mapState.showGrid}`;
+		if (mapState?.gridData) {
+			mapLink += `&grid=${encodeURIComponent(JSON.stringify(mapState.gridData))}`;
 		}
 
 		// callback
@@ -527,10 +527,11 @@ export default class Gamemap {
 				self.clearLocations();
 				let world = self.getWorldFromID(worldID);
 				print(`Going to world... ${world.displayName} (${world.id});`);
-				self.setMapState(new MapState({coords: coords, world: world, pendingJump: world?.editing ? world : null}));
+				self.setMapState(new MapState({coords: coords, world: world, pendingJump: world?.editing ? world : null, layerIndex: 0}));
 			}
 
 		} else {
+			this.mapCallbacks?.setLoading(false);
 			throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
 		}
 	}
@@ -628,28 +629,40 @@ export default class Gamemap {
 	}
 
 	/*================================================
-						 Layers
+						   Layers
 	================================================*/
 
-	toggleGrid(toggle, cellBounds, cellResources) {
+	toggleGrid(gridData) {
 
 		// set grid info
-		let mapState = this.getMapState();
-		mapState.showGrid = toggle;
-		this.updateMapState(mapState);
-		cellResources = (cellResources != null) ? (cellResources == "None") ? null : cellResources : cellResources;
-		if ((cellBounds != null || cellResources != null) && this.isGridShown()) { removeGrid(); }
+		print(gridData);
+		let cellResourceData = gridData?.cellResourceData;
+		gridData = (gridData == null || Object.keys(gridData).length === 0) ? null : {
+			gridShown: gridData.gridShown ?? gridData.gridshown,
+			cellResource: gridData.cellResource ?? gridData.cellresource,
+		}
+		let cellResource = gridData?.cellResource && gridData?.cellResource != "none" ? gridData.cellResource : null;
+		let gridShown = gridData?.gridShown;
+		let refresh = cellResource || cellResourceData || !gridShown;
 
-		// if cellResource is a string, then get cellResource array data and call ourselves again
-		if (cellResources != null && !Array.isArray(cellResources)) {
-			this.getCellResourceData(cellResources).then(array => {
-				if (self.isGridShown()) {
-					self.toggleGrid(self.isGridShown(), cellBounds, array);
+		// update map state
+		let mapState = this.getMapState();
+		mapState.gridData = gridData;
+		this.updateMapState(mapState);
+		print(gridData);
+
+		// download cell resource data if required
+		if (cellResource && !cellResourceData || (cellResourceData) && cellResource != cellResourceData.resource) {
+			this.getCellResourceData(cellResource).then(array => {
+				if (mapState.isGridEnabled()) {
+					gridData.cellResourceData = {resource: cellResource, data: array};
+					self.toggleGrid(gridData);
 				}
 			});
 		}
 
-		if (toggle) { // if draw grid == true
+		if (refresh) {removeGrid(); refresh = false};
+		if (gridData && !refresh) {
 			function drawGrid(_, params) {
 
 				// set up canvas layer
@@ -684,7 +697,7 @@ export default class Gamemap {
 						let isVisible = ((toPx(nX).x >= 0 || (toPx(nX).x < 0 && toPx(nX + nGridSize).x >= 0))) && (toPx(nY).y >= 0 || (toPx(nY).y < 0 && toPx(nY + nGridSize).y >= 0)) && toPx(nX).x <= window.innerWidth && toPx(nY).y <= window.innerHeight;
 
 						// draw grid lines
-						if (cellBounds && i == j) {
+						if (gridShown && i == j) {
 							ctx.beginPath();
 							// rows
 							ctx.moveTo(toPx(0).x, toPx(nY).y);
@@ -698,8 +711,8 @@ export default class Gamemap {
 						}
 
 						if (isVisible) {
-
-							if (cellResources != null && Array.isArray(cellResources)) {
+							let cellResources = cellResourceData?.data;
+							if (cellResources) {
 								let row = (i < cellResources.length) ? cellResources[i] : [];
 								let col = (j < row.length) ? cellResources[i][j] : 0;
 
@@ -720,7 +733,7 @@ export default class Gamemap {
 								}
 							}
 
-							if (cellBounds && currentZoom > self.mapConfig.gridShowLabelZoom) {
+							if (gridShown && currentZoom > self.mapConfig.gridShowLabelZoom) {
 
 								let gridStartX = world.gridStart[0];
 								let gridStartY = world.gridStart[1];
@@ -766,18 +779,13 @@ export default class Gamemap {
 			L.canvasOverlay().params({bounds: RC.getMaxBounds(), className : "cellGrid", zoomAnimation: true}).drawing(drawGrid).addTo(map);
 		} else { removeGrid(); }
 
-		function removeGrid() {
-			//remove the cell grid
+		function removeGrid() { //remove the cell grid
 			map.eachLayer((layer) => {
 				if (layer.options.className == "cellGrid") {
 					layer.remove();
 				}
 			});
 		}
-	}
-
-	isGridShown() {
-		return this.getMapState().showGrid;
 	}
 
 	// async function to get cell resource data
@@ -854,15 +862,15 @@ export default class Gamemap {
 	}
 
 	getNextTileLayerIndex() {
-		return (this.getCurrentTileLayerIndex() +1 == this.getCurrentWorld().layers.length) ? 0 : this.getCurrentTileLayerIndex() + 1;
+		return (this.getCurrentTileLayerIndex() +1 == this.getMapState().world?.layers?.length) ? 0 : this.getCurrentTileLayerIndex() + 1;
 	}
 
 	getNextTileLayerName() {
-		return this.getCurrentWorld().layers[this.getNextTileLayerIndex()].name;
+		return this.getMapState().world?.layers[this.getNextTileLayerIndex()]?.name;
 	}
 
 	getCurrentTileLayerName() {
-		return this.getCurrentWorld().layers[this.getCurrentTileLayerIndex()].name;
+		return this.getMapState().world?.layers[this.getCurrentTileLayerIndex()]?.name;
 	}
 
 	// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
@@ -1356,7 +1364,6 @@ export default class Gamemap {
 
 		map.on("zoom", function() {
 			if (!self.mapLock && self.mapLock != "full") {
-				self.mapCallbacks?.onZoom(map.getZoom());
 				map.dragging.enable();
 			}
 		})
@@ -1544,26 +1551,6 @@ export default class Gamemap {
 
 	getMinZoom() {
 		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().minZoomLevel : 0;
-	}
-
-	/** Get wiki link for the current map world.
-	 * @returns {String} URL on the wiki for the current map world.
-	 */
-	getArticleLink() {
-
-		if (!(this.mapWorlds.has(this.currentWorldID))) {
-			return "";
-		}
-
-		let wikiPage = this.mapWorlds.get(this.currentWorldID).wikiPage;
-		if (wikiPage == null || wikiPage == '') wikiPage = this.mapWorlds.get(this.currentWorldID).displayName;
-
-		let namespace = '';
-		if (this.mapConfig.wikiNamespace != null && this.mapConfig.wikiNamespace != '') namespace = this.mapConfig.wikiNamespace + ':';
-
-		wikiPage = encodeURIComponent(wikiPage);
-
-		return this.mapConfig.wikiURL + namespace + wikiPage;
 	}
 
 	getLayerIndexFromName(layerName, layersObj) {

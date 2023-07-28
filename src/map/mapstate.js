@@ -18,7 +18,7 @@ export default class MapState {
             } else if (this.pendingJump != null) {
                 let jump = this.pendingJump;
                 if (jump instanceof Location) {
-                    return gamemap.getWorldByID(jump.worldID)
+                    return gamemap.getWorldByID(jump.worldID);
                 } else if (jump instanceof World) {
                     return jump;
                 }
@@ -27,9 +27,21 @@ export default class MapState {
             }
 		})();
         this.zoom = data?.zoom ?? (this.pendingJump instanceof Location ? gamemap.getWorldByID(this.pendingJump?.worldID).maxZoomLevel : DEFAULT_MAP_CONFIG.zoomLevel);
-        this.showGrid = data?.showGrid ?? false;
-        this.cellResource = data?.cellResource ?? "";
+        this.gridData = data?.gridData ?? null;
 		this.layerIndex = data?.layerIndex ?? 0;
     }
+
+    getZoom() {
+        return this.zoom;
+    }
+
+    isGridEnabled() {
+        return this.gridData != null;
+    }
+
+    isGridShown() {
+        return this.gridData?.gridShown != null;
+    }
+
 
 }

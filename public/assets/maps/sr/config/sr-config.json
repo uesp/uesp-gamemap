@@ -124,7 +124,7 @@
     },
 
     // cell resource info
-    "gridShowLabelZoom" : 3,
+    "gridShowLabelZoom" : 4,
     "gridLabelCellBgColour" : "rgba(0, 0, 0, 0.20)",
     "cellResources": {
         "None" : "None",
@@ -184,4 +184,5 @@
         "TreeFloraWheat01" : "Wheat",
         "FloraMushroom03" : "White Cap"
     }
+
 }

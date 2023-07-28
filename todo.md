@@ -11,6 +11,8 @@ final polish and bugfixing before release
 - make max zoom of all locations -0.5 on all locations client side
 - fix pip on layer switcher being disconnected
 - made centre on check world param (so world=stormhaven&centeron=blackwood fails, as expected)
+- adjusted SR's cell resource colours to be similar to that of an actual heatmap
+- added loading in cell resource state from url
 
 ## bug fixes
 - fixed tooltips getting in the way when dragging markers
@@ -26,24 +28,16 @@ final polish and bugfixing before release
 - fixed rare issue where some locs wouldnt appear when centering on them
 - fixed small issue where the map would move when changing layers near the bounds of the map
 - fixed links on gamemap.uesp.net help dialog still being garbled up
+- fixed save button displaying wonky on save
+- fixed reverted locations duplicating on the map after map move
+- fixed current layer not syncing up with the current world when switching between layers
 
 ## todo
 
-- double markers for reverted locations
-
-- fix layers in layer switcher not lining up when switching between wolds
-
-- fix cell resource colour intensity to make sense. deeper the colour the more stuff
 - fix losing grid on resize
-- cell resource state in/from url
-- fix regaining grid on day/night mode switch
 - fix canvas grid layer being laggy af on firefox when zooming out
 - fix darker blocks in grid for sr going off by one at the ends
 
-- test editing in worlds, locs, eso problematic worlds
-- test polygons, lines
-
-- make readme on how to create the favicon styles for maps for future developers
 - organise app.css and comment gamemap js
 - comment/refactor all code
 

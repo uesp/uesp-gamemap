@@ -1,3 +1,5 @@
+<!-- svelte-ignore a11y-missing-attribute -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- @component
 ### Description
  Button component for the UESP gamemap.
@@ -38,14 +40,12 @@
 </script>
 
 <markup>
-    <!-- svelte-ignore a11y-missing-attribute -->
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <a class="waves-effect waves-{ripple} btn{flat ? "-flat" : ""}{size ? "-"+{size} : ""}" class:disabled={disabled} class:saving={type=="save" && icon == "loading"} class:error={type && icon == "warning"} title={tooltip} class:light={flat == "light"}
+    <a class="waves-effect waves-{ripple} button btn{flat ? "-flat" : ""}{size ? "-"+{size} : ""}" class:disabled={disabled} class:error={type && icon == "warning"} title={tooltip} class:light={flat == "light"}
     on:click={onClicked} class:loadingButton={icon == "loading"} class:deleteButton={type == "delete"} class:saveButton={type=="save"} class:revertButton={type=="revert"} class:bold={bold}>
         {#if icon}
             {#if icon != "loading"}
                  <i class="material-icons {iconDirection}">{icon}</i>
-            {:else}
+            {:else if icon == "loading"}
                 <div class="spinner"><LoadingSpinner size=36px/></div>
             {/if}
         {/if}
@@ -120,21 +120,16 @@
 
     .loadingButton p {
         flex-grow: 1;
-    }
-
-    .saving {
-        background-color: #3c5822 !important;
-        color: darkgrey  !important;
-        pointer-events: none;
-    }
-
-    .saving p {
         animation: fade 2.5s infinite !important;
+    }
+
+    .button:not(.loadingButton) .spinner  {
+        display: none;
     }
 
     @keyframes fade {
         0% {
-        opacity: 1;
+            opacity: 1;
         }
 
         50% {
@@ -142,7 +137,7 @@
         }
 
         100% {
-        opacity: 1;
+            opacity: 1;
         }
     }
 
@@ -153,6 +148,12 @@
 
     .saveButton {
         background-color: var(--save);
+    }
+
+    .saveButton.loadingButton {
+        background-color: #3c5822 !important;
+        color: darkgrey  !important;
+        pointer-events: none;
     }
 
     .bold {

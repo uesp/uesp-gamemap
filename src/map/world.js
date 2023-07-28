@@ -19,7 +19,7 @@ export default class World {
 		this.revisionID = data?.revisionId ?? 0;
 		this.revertID = data?.revertId ?? null;
 
-		this.wikiPage = data?.wikiPage ?? this.displayName;
+		this.wikiPage = (data?.wikiPage && data.wikiPage != "") ? data.wikiPage : this.displayName;
 		this.cellSize = data?.cellSize ?? -1;
 
 		this.zoomOffset   = MAPCONFIG.zoomOffset ?? data?.zoomOffset;
@@ -66,6 +66,10 @@ export default class World {
 
 	hasMultipleLayers() {
 		return this.layers.length > 1;
+	}
+
+	hasLayerMenu() {
+		return this.hasMultipleLayers() || this.hasGrid();
 	}
 
 	//Gets width and height of the full world image in pixels
@@ -149,4 +153,10 @@ export default class World {
 	hasLocation(identifier) {
 		return this.getLocation(identifier) != null;
 	}
+
+	// Get wiki link for this world
+	getWikiLink() {
+		return `${MAPCONFIG.wikiURL}${MAPCONFIG.wikiNamespace}:${encodeURIComponent(this.wikiPage)}`;
+	}
+
 }

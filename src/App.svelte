@@ -75,17 +75,14 @@
 	let canEdit = false;
 	let editPane;
 	let isEditing;
-	$: mapLock = null;
-	let currentZoom = getURLParams().has("zoom") ? getURLParams().get("zoom") : 0;
-	$: currentWorld = null;
+	let mapLock = null;
+	let mapState;
 	let showUI = true;
-	let showLayerSwitcher = false;
 	let locationList;
 	let locationListShown = false;
 	let showMaps = false;
 	let helpDialog;
 	let mapKeyDialog;
-	$: gridEnabled = false;
 
 	// on app start
 	onMount(async() => {
@@ -169,14 +166,10 @@
 				print("Editing permissions: " + enableEditing);
 				canEdit = enableEditing;
 			},
-			onMapLoaded: () => {
-				setLoading(false);
-				currentZoom = gamemap.getCurrentZoom();
-			},
+			onMapLoaded: () => setLoading(false),
 			onMapLockChanged: (lockType) => { mapLock = lockType },
 			edit: (object) => { editPane.edit(object) },
 			onMapStateChanged,
-			onZoom,
 			setLoading,
 		};
 
@@ -185,24 +178,11 @@
 		gamemap = window.gamemap;
 	}
 
-	function onMapStateChanged(mapState) {
-		let world = mapState.world;
-		currentWorld = world;
-		setWindowTitle(world.displayName);
-		isLoaded = true;
+	function onMapStateChanged(newMapState) {
+		mapState = newMapState;
+		setWindowTitle(mapState.world.displayName);
 		locationList?.dismiss();
-		showLayerSwitcher = (world.layers.length > 1 || world.hasGrid());
-		onZoom(mapState.zoom);
-		gridEnabled = mapState.showGrid;
-	}
-
-	function onZoom(data) {
-		// if data an int, then update zoom level. if its an event, then send zoom back to gamemap
-		if (!isNaN(data)) {
-			currentZoom = data;
-		} else {
-			gamemap.setZoomTo(data.detail)
-		}
+		isLoaded = true;
 	}
 
 	/*================================================
@@ -303,12 +283,12 @@
 					<!-- only show these elements when not being embedded -->
 					{#if !gamemap.isEmbedded()}
 
-						<ZoomWidget currentZoom = {currentZoom} on:zoomclicked={onZoom} lock={mapLock}/>
+						<ZoomWidget currentZoom = {mapState?.getZoom()} lock={mapLock}/>
 						<SearchPane lock={mapLock}/>
 
 						<!-- show layer switcher when available -->
-						{#if showLayerSwitcher}
-							<LayerSwitcher world={currentWorld} lock={mapLock} gridEnabled={gridEnabled} on:gridChecked={(e) => gridEnabled = e.detail}/>
+						{#if mapState.world.hasLayerMenu()}
+							<LayerSwitcher mapState={mapState} lock={mapLock}/>
 						{/if}
 
 						<IconBar>
@@ -334,10 +314,10 @@
 
 							<slot:template slot="secondary">
 								{#if gamemap.hasMultipleWorlds()}
-									<IconButton icon="explore" label={currentWorld.displayName} tooltip="Show location list" dropdown="true"  lock={mapLock} checked={locationListShown} on:checked={() => locationList.toggle()}/>
+									<IconButton icon="explore" label={mapState.world.displayName} tooltip="Show location list" dropdown="true"  lock={mapLock} checked={locationListShown} on:checked={() => locationList.toggle()}/>
 									<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" lock={mapLock} on:click={() => {
 										print("Getting article link...");
-										let link = gamemap.getArticleLink();
+										let link = mapState.world.getWikiLink();
 										if (link != null && link != "") window.open(link);
 									}}/>
 								{/if}
@@ -357,7 +337,7 @@
 				{/if}
 
 				<!-- Infobar / Layer options -->
-				{#if !gridEnabled}
+				{#if !mapState?.isGridEnabled()}
 					<LayerOptionsContainer>
 						<Infobar mapName={mapConfig.mapTitle} embedded={gamemap.isEmbedded()} lock={mapLock}/>
 					</LayerOptionsContainer>

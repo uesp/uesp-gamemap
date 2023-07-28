@@ -10,7 +10,6 @@
 <script>
     // import core svelte stuff
     import { fade, fly, slide } from 'svelte/transition';
-    import { createEventDispatcher } from "svelte";
 
     // import ui components
     import Divider from "./Divider.svelte";
@@ -21,39 +20,34 @@
     import Icon from './Icon.svelte';
 
     // state vars
-    export let world = gamemap.getCurrentWorld();
-    export let gridEnabled = gamemap.isGridShown();
+    export let mapState;
     export let lock;
-    $: hasMultipleLayers = world.hasMultipleLayers();
-    $: layers = world.layers;
-    $: layerName = gamemap.getNextTileLayerName();
-    $: layerImage = (hasMultipleLayers) ? gamemap.getMapTileImageURL(world, layerName, true) : null;
-
-    const dispatch = createEventDispatcher();
 
     let isHovered = false;
-    let resourceGridEnabled = world.hasCellResources();
     let expandGridOptions = getPrefs("expandgridoptions", true);
-    let currentCellResource = "None";
-    let doCellGrid = true;
 
-    // event listeners
-    function onMouseEnter() {
-        if (world != gamemap.getCurrentWorld()) {
-            world = gamemap.getCurrentWorld();
+    $: world = mapState.world;
+    $: gridData = mapState.gridData ?? {gridShown : true || true, cellResource: world.hasCellResources() ? "none" : null};
+    $: isGridShown = mapState.gridData?.gridShown ?? mapState.isGridShown();
+    $: gridEnabled = mapState.isGridEnabled();
+    $: hasMultipleLayers = world.hasMultipleLayers();
+    $: layers = world.layers;
+    $: layerName = mapState && gamemap.getNextTileLayerName();
+    $: layerImage = (mapState && hasMultipleLayers) ? gamemap.getMapTileImageURL(world, layerName, true) : null;
+
+    function updateGrid(data) {
+        if (data == true) {
+            gamemap.toggleGrid(gridData);
+        } else if (data == false || data == null) {
+            gamemap.toggleGrid(null);
+        } else {
+            let mergedGridData = {...gridData, ...data};
+            gamemap.toggleGrid(mergedGridData);
         }
-        isHovered = true;
-        gridEnabled = gamemap.isGridShown();
-        resourceGridEnabled = world.hasCellResources();
-    }
-    function onMouseExit() {
         isHovered = false;
-        gridEnabled = gamemap.isGridShown();
-        resourceGridEnabled = world.hasCellResources();
     }
 
     function onLayerClicked(event) {
-
         if (event.target == null) {
             if (isMobile()) {
                 isHovered = false;
@@ -64,19 +58,11 @@
         }
         layerName = gamemap.getNextTileLayerName();
     }
-
-    function onGridChecked(event) {
-        gridEnabled = event.detail;
-        isHovered = false;
-        gamemap.toggleGrid(event.detail, doCellGrid, currentCellResource);
-        dispatch("gridChecked", event.detail);
-    }
-
 </script>
 
 <markup>
     <!-- Layer switcher Widget -->
-    <div class="layer_widget_root" on:mouseenter={onMouseEnter} on:mouseleave={onMouseExit} in:fly|global="{{ x: -5, duration: 250 }}" out:fade|global="{{duration: 75}}" class:lock={lock} on:contextmenu={(e) => e.stopPropagation()}>
+    <div class="layer_widget_root" on:mouseenter={() => isHovered = true} on:mouseleave={() => isHovered = false} in:fly|global="{{ x: -5, duration: 250 }}" out:fade|global="{{duration: 75}}" class:lock={lock} on:contextmenu={(e) => e.stopPropagation()}>
 
         <!-- Primary layer switcher button -->
         <button id="btn_layer_widget_switcher" class:hasLayerImage={hasMultipleLayers} class="waves-effect" on:click={onLayerClicked} style="background-image: url({layerImage});">
@@ -97,14 +83,12 @@
                         {#each layers as layer}
                             <LayerButton on:onClick={onLayerClicked} label={layer.name.toSentenceCase()} image={gamemap.getMapTileImageURL(gamemap.getCurrentWorld(), layer.name, true)}/>
                         {/each}
-                        {#if world.hasGrid()}
-                             <Divider direction="vertical"></Divider>
-                        {/if}
+                        {#if world.hasGrid()}<Divider direction="vertical"></Divider>{/if}
                     {/if}
 
-                    <!-- Predefined optional map layers -->
+                    <!-- Grid layers -->
                     {#if world.hasGrid()}
-                        <LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked={gridEnabled} on:onClick={onGridChecked}/>
+                        <LayerButton label="Cell Grid" tooltip="Toggle cell grid" icon="grid_on" checked={isGridShown} on:onClick={e => updateGrid(e.detail)}/>
                     {/if}
 
                 </div>
@@ -116,21 +100,21 @@
         <LayerOptionsContainer>
             <div class="cell_grid_options" on:contextmenu={(e) => e.stopPropagation()}>
 
-                <div id="close_button" class="waves-effect" title="Close" on:click={() => onGridChecked({detail: false})}><Icon name="close" size="tiny"></Icon></div>
+                <div id="close_button" class="waves-effect" title="Close" on:click={() => updateGrid(null)}><Icon name="close" size="tiny"></Icon></div>
 
                 <b class="waves-effect" title="Click to show/hide grid options" style="display: -webkit-box; width: fit-content;" on:click={() => {setPrefs("expandgridoptions", !getPrefs("expandgridoptions")); expandGridOptions = getPrefs("expandgridoptions");}}>Grid Options <Icon name={(expandGridOptions) ? "expand_less" : "expand_more"} size="tiny"></Icon></b>
 
                 {#if expandGridOptions}
                     <div in:slide|global out:slide|global>
-                        <Switch label="Show Cell Grid" tooltip="Toggle cell grid" enabled={doCellGrid} on:change={(e) => {doCellGrid = e.detail; onGridChecked({detail: true})}}></Switch>
+                        <Switch label="Show Cell Grid" tooltip="Toggle cell grid" enabled={isGridShown} on:change={(e) => {updateGrid({gridShown: e.detail})}}></Switch>
 
                         <!-- Cell resource dropdown -->
                         {#if world.hasCellResources()}
-                            <DropdownMenu label="Show Resource" hint="Select resource..." tooltip="Select cell resource" on:change={(e) => {currentCellResource = e.detail; onGridChecked({detail: true})}} align="right">
+                            <DropdownMenu label="Show Resource" hint="Select resource..." tooltip="Select cell resource" selected={gridData.cellResource} on:change={(e) => updateGrid({cellResource: e.detail})} align="right">
                                 {@const keys = Object.keys(gamemap.getMapConfig().cellResources)}
                                 {@const names = Object.values(gamemap.getMapConfig().cellResources)}
                                     {#each keys as value, i}
-                                        <option value={value} selected={currentCellResource == value}>{names[i]}</option>
+                                        <option value={value.toLowerCase()} selected={gridData.cellResource == value.toLowerCase()}>{names[i]}</option>
                                     {/each}
                             </DropdownMenu>
 

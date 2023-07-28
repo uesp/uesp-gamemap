@@ -63,7 +63,7 @@
         }
 
         if (doReportZoom) {
-            dispatch("zoomclicked", zoomAmount);
+            gamemap.setZoomTo(zoomAmount);
         }
 
     }
