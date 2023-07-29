@@ -134,7 +134,7 @@
           .subtract(this._map._getMapPanePos());
 
       this._canvas.style[L.DomUtil.TRANSFORM]
-        = L.DomUtil.getTranslateString(offset) + ' scale(' + scale + ')';
+        = L.DomUtil?.getTranslateString(offset) + ' scale(' + scale + ')';
     },
   });
 

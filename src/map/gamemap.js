@@ -30,6 +30,7 @@ import Point from "./point.js";
 let self; // Local "this" instance of Gamemap
 let map; // Leaflet map instance
 let tileLayer; // Current tile layer
+let gridLayer;
 let RC; // RasterCoords instance, for converting leaflet latlngs to XY pixel coords and back
 
 /*================================================
@@ -635,157 +636,163 @@ export default class Gamemap {
 	toggleGrid(gridData) {
 
 		// set grid info
-		print(gridData);
-		let cellResourceData = gridData?.cellResourceData;
+		let cellResourceData = gridData?.cellResourceData ?? this.getMapState()?.cellResourceData;
 		gridData = (gridData == null || Object.keys(gridData).length === 0) ? null : {
 			gridShown: gridData.gridShown ?? gridData.gridshown,
 			cellResource: gridData.cellResource ?? gridData.cellresource,
+			cellResourceData: gridData.cellResourceData,
 		}
 		let cellResource = gridData?.cellResource && gridData?.cellResource != "none" ? gridData.cellResource : null;
 		let gridShown = gridData?.gridShown;
-		let refresh = cellResource || cellResourceData || !gridShown;
 
 		// update map state
 		let mapState = this.getMapState();
-		mapState.gridData = gridData;
+		if (gridData) {
+			let {cellResourceData: _, ...nGridData} = gridData; // remove cellResourceData from gridData to avoid big array in URL
+			mapState.gridData = nGridData;
+		} else {
+			mapState.gridData = null;
+		}
+		mapState.cellResourceData = gridData ? cellResourceData : null;
 		this.updateMapState(mapState);
-		print(gridData);
 
 		// download cell resource data if required
-		if (cellResource && !cellResourceData || (cellResourceData) && cellResource != cellResourceData.resource) {
+		if (cellResource && (!cellResourceData || cellResource != cellResourceData?.resource)) {
+			this.mapCallbacks?.setLoading(true);
 			this.getCellResourceData(cellResource).then(array => {
+				this.mapCallbacks?.setLoading(false);
 				if (mapState.isGridEnabled()) {
 					gridData.cellResourceData = {resource: cellResource, data: array};
 					self.toggleGrid(gridData);
 				}
-			});
+			}).catch(error => this.mapCallbacks?.setLoading(false));
 		}
 
-		if (refresh) {removeGrid(); refresh = false};
-		if (gridData && !refresh) {
-			function drawGrid(_, params) {
+		// set up grid layer
+		if (gridData) {
+			gridLayer?.remove();
+			gridLayer = L.canvasOverlay().params({bounds: RC.getMaxBounds(), className : "cellGrid", zoomAnimation: true}).drawing(drawGrid);
+			gridLayer.addTo(map);
+		} else if (!gridData && gridLayer) {
+			gridLayer.remove();
+			gridLayer = null;
+		}
 
-				// set up canvas layer
-				let ctx = params.canvas.getContext('2d');
-				ctx.clearRect(0, 0, params.size.x, params.size.y); //clear canvas
-				// params.canvas.width = params.canvas.width; //clear canvas
+		// draw grid
+		function drawGrid(_, params) {
 
-				// set up canvas bounds
-				let bounds = RC.getMaxBounds();
-				let [minX, maxX, minY, maxY] = [map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).y, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y];
-				let [gridWidth, gridHeight] = [maxX - minX, maxY - minY]
+			// set up canvas layer
+			let ctx = params.canvas.getContext('2d');
+			ctx.clearRect(0, 0, params.size.x, params.size.y); //clear canvas
+			// params.canvas.width = params.canvas.width; //clear canvas
 
-				// get zoom info
-				let world = self.getCurrentWorld();
-				let currentZoom = self.getCurrentZoom();
+			// set up canvas bounds
+			let bounds = RC.getMaxBounds();
+			let [minX, maxX, minY, maxY] = [map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthWest())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).x, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getNorthEast())).y, map.layerPointToContainerPoint(map.latLngToLayerPoint(bounds.getSouthEast())).y];
+			let [gridWidth, gridHeight] = [maxX - minX, maxY - minY]
 
-				// work out normalised grid cell sizes
-				let cellSize = (self.mapConfig.cellSize != null) ? self.mapConfig.cellSize : Math.round(self.mapConfig.tileSize * Math.pow(2, Math.round(world.maxZoomLevel)) / ((world.maxX - world.minX) / world.cellSize));
-				let nGridSize = cellSize / Math.pow(2, Math.round(world.maxZoomLevel) - currentZoom) / gridHeight;
+			// get zoom info
+			let world = self.getCurrentWorld();
+			let currentZoom = self.getCurrentZoom();
 
-				// work out how many rows and columns there should be
-				let nRows = world.getWorldDimensions().width / cellSize;
-				let nCols = world.getWorldDimensions().height / cellSize;
+			// work out normalised grid cell sizes
+			let cellSize = (self.mapConfig.cellSize != null) ? self.mapConfig.cellSize : Math.round(self.mapConfig.tileSize * Math.pow(2, Math.round(world.maxZoomLevel)) / ((world.maxX - world.minX) / world.cellSize));
+			let nGridSize = cellSize / Math.pow(2, Math.round(world.maxZoomLevel) - currentZoom) / gridHeight;
 
-				// draw grid
-				for (let i = 0; i <= nRows; i++) {
-					for (let j = 0; j <= nCols; j++) {
+			// work out how many rows and columns there should be
+			let nRows = world.getWorldDimensions().width / cellSize;
+			let nCols = world.getWorldDimensions().height / cellSize;
 
-						// get normalised coordinates
-						let nX = i * nGridSize;
-						let nY = j * nGridSize;
-						let isVisible = ((toPx(nX).x >= 0 || (toPx(nX).x < 0 && toPx(nX + nGridSize).x >= 0))) && (toPx(nY).y >= 0 || (toPx(nY).y < 0 && toPx(nY + nGridSize).y >= 0)) && toPx(nX).x <= window.innerWidth && toPx(nY).y <= window.innerHeight;
+			// draw grid
+			for (let i = 0; i <= nRows; i++) {
+				for (let j = 0; j <= nCols; j++) {
 
-						// draw grid lines
-						if (gridShown && i == j) {
-							ctx.beginPath();
-							// rows
-							ctx.moveTo(toPx(0).x, toPx(nY).y);
-							ctx.lineTo(toPx(1).x, toPx(nY).y);
-							// columns
-							ctx.moveTo(toPx(nX).x, toPx(0).y);
-							ctx.lineTo(toPx(nX).x, toPx(1).y);
-							ctx.strokeStyle = ctx.strokeStyle = self.mapConfig.gridLineColour;
-							ctx.lineWidth = self.mapConfig.gridLineWidth;
-							ctx.stroke();
-						}
+					// get normalised coordinates
+					let nX = i * nGridSize;
+					let nY = j * nGridSize;
+					let isVisible = ((toPx(nX).x >= 0 || (toPx(nX).x < 0 && toPx(nX + nGridSize).x >= 0))) && (toPx(nY).y >= 0 || (toPx(nY).y < 0 && toPx(nY + nGridSize).y >= 0)) && toPx(nX).x <= window.innerWidth && toPx(nY).y <= window.innerHeight;
 
-						if (isVisible) {
-							let cellResources = cellResourceData?.data;
-							if (cellResources) {
-								let row = (i < cellResources.length) ? cellResources[i] : [];
-								let col = (j < row.length) ? cellResources[i][j] : 0;
+					// draw grid lines
+					if (gridShown && i == j) {
+						ctx.beginPath();
+						// rows
+						ctx.moveTo(toPx(0).x, toPx(nY).y);
+						ctx.lineTo(toPx(1).x, toPx(nY).y);
+						// columns
+						ctx.moveTo(toPx(nX).x, toPx(0).y);
+						ctx.lineTo(toPx(nX).x, toPx(1).y);
+						ctx.strokeStyle = ctx.strokeStyle = self.mapConfig.gridLineColour;
+						ctx.lineWidth = self.mapConfig.gridLineWidth;
+						ctx.stroke();
+					}
 
-								if (col != 0) {
-									if (col > 0 && col <= 2) {
-										fillCell(self.mapConfig.cellResourceColours[0]);
-									} else if (col > 2 && col <= 5) {
-										fillCell(self.mapConfig.cellResourceColours[1]);
-									} else if (col > 5 && col <= 10) {
-										fillCell(self.mapConfig.cellResourceColours[2]);
-									} else if (col > 10 && col <= 20) {
-										fillCell(self.mapConfig.cellResourceColours[3]);
-									} else if (col > 20 && col <= 50) {
-										fillCell(self.mapConfig.cellResourceColours[4]);
-									} else if (col > 50) {
-										fillCell(self.mapConfig.cellResourceColours[5]);
-									}
-								}
-							}
+					if (isVisible) {
+						let cellResources = cellResourceData?.data;
+						if (cellResources) {
+							let row = (i < cellResources.length) ? cellResources[i] : [];
+							let col = (j < row.length) ? cellResources[i][j] : 0;
 
-							if (gridShown && currentZoom > self.mapConfig.gridShowLabelZoom) {
-
-								let gridStartX = world.gridStart[0];
-								let gridStartY = world.gridStart[1];
-								let colNum = i + gridStartX;
-								let rowNum = (-j) + gridStartY;
-
-								if (rowNum % 5 == 0 || colNum % 5 == 0) {
-
-									// draw background behind cell labels
-									fillCell(self.mapConfig.gridLabelCellBgColour);
-
-									if (rowNum % 5 == 0 && colNum % 5 == 0) {
-										ctx.fillStyle = self.mapConfig.gridLabelColour;
-										ctx.font = "bold 13px Arial";
-										ctx.fillText([colNum, rowNum].join(', '), toPx(nX).x, toPx(nY + nGridSize).y);
-									}
+							if (col != 0) {
+								if (col > 0 && col <= 2) {
+									fillCell(self.mapConfig.cellResourceColours[0]);
+								} else if (col > 2 && col <= 5) {
+									fillCell(self.mapConfig.cellResourceColours[1]);
+								} else if (col > 5 && col <= 10) {
+									fillCell(self.mapConfig.cellResourceColours[2]);
+								} else if (col > 10 && col <= 20) {
+									fillCell(self.mapConfig.cellResourceColours[3]);
+								} else if (col > 20 && col <= 50) {
+									fillCell(self.mapConfig.cellResourceColours[4]);
+								} else if (col > 50) {
+									fillCell(self.mapConfig.cellResourceColours[5]);
 								}
 							}
 						}
 
-						// fill grid cell function
-						function fillCell(style) {
-							ctx.fillStyle = style;
-							ctx.beginPath();
-							ctx.moveTo(toPx(nX).x, toPx(nY).y);
-							ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY).y);
-							ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY + nGridSize).y);
-							ctx.lineTo(toPx(nX).x, toPx(nY + nGridSize).y);
-							ctx.closePath();
-							ctx.fill();
+						if (gridShown && currentZoom > self.mapConfig.gridShowLabelZoom) {
+
+							let gridStartX = world.gridStart[0];
+							let gridStartY = world.gridStart[1];
+							let colNum = i + gridStartX;
+							let rowNum = (-j) + gridStartY;
+
+							if (rowNum % 5 == 0 || colNum % 5 == 0) {
+
+								// draw background behind cell labels
+								fillCell(self.mapConfig.gridLabelCellBgColour);
+
+								if (rowNum % 5 == 0 && colNum % 5 == 0) {
+									ctx.fillStyle = self.mapConfig.gridLabelColour;
+									ctx.font = "bold 13px Arial";
+									ctx.fillText([colNum, rowNum].join(', '), toPx(nX).x, toPx(nY + nGridSize).y);
+								}
+							}
 						}
 					}
-				}
 
-				// normalised values to canvas pixels function
-				function toPx(nX, nY) {
-					nY = (nY != null) ? nY : nX;
-					if (nY > 4 || nY < -4) { nY = nY / gridHeight; }
-					if (nX > 4 || nX < -4) { nX = nX / gridWidth; }
-					return new Point(minX + (nX * gridWidth), minY + (nY * gridHeight))
+					// fill grid cell function
+					function fillCell(style) {
+						ctx.fillStyle = style;
+						ctx.beginPath();
+						ctx.moveTo(toPx(nX).x, toPx(nY).y);
+						ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY).y);
+						ctx.lineTo(toPx(nX + nGridSize).x, toPx(nY + nGridSize).y);
+						ctx.lineTo(toPx(nX).x, toPx(nY + nGridSize).y);
+						ctx.closePath();
+						ctx.fill();
+					}
 				}
-			};
-			L.canvasOverlay().params({bounds: RC.getMaxBounds(), className : "cellGrid", zoomAnimation: true}).drawing(drawGrid).addTo(map);
-		} else { removeGrid(); }
+			}
 
-		function removeGrid() { //remove the cell grid
-			map.eachLayer((layer) => {
-				if (layer.options.className == "cellGrid") {
-					layer.remove();
-				}
-			});
-		}
+			// normalised values to canvas pixels function
+			function toPx(nX, nY) {
+				nY = (nY != null) ? nY : nX;
+				if (nY > 4 || nY < -4) { nY = nY / gridHeight; }
+				if (nX > 4 || nX < -4) { nX = nX / gridWidth; }
+				return new Point(minX + (nX * gridWidth), minY + (nY * gridHeight))
+			}
+		};
+
 	}
 
 	// async function to get cell resource data
@@ -1319,6 +1326,8 @@ export default class Gamemap {
 
 	bindMapEvents() {
 
+
+
 		map.on('resize moveend zoomend', function() {
 
 			self.getCurrentWorld()?.locations?.forEach(location => {
@@ -1347,10 +1356,11 @@ export default class Gamemap {
 
 			});
 
+			self.clearTooltips();
 			if (self.getMapState()) {
+				if (self.getMapState().isGridEnabled()) self.toggleGrid(self.getMapState()?.gridData);
 				self.updateMapState();
 			}
-			self.clearTooltips();
 		});
 
 		map.on("contextmenu", function(event){

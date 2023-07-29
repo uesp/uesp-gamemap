@@ -36,7 +36,7 @@ export default class MapState {
     }
 
     isGridEnabled() {
-        return this.gridData != null;
+        return this.gridData != null && this.world.hasGrid();
     }
 
     isGridShown() {
