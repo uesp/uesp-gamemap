@@ -10,9 +10,10 @@ class CUpdateEsoDevLayers
 {
 	public $MAPS = [
 			"angofschambers" => "cathbedraud",
-			//"theashenmines" =>
 			"banditden1" => "banditden1_main",
 			"banditden11" => "banditden11r1",
+			"u38_telvannipeninsulatd01" => "u38_telvannipeninsula",
+			//"theashenmines" =>
 			//"blackvineruinsl" => "",
 			//"" => "",
 	];
