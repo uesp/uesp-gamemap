@@ -119,9 +119,9 @@ export default class Gamemap {
 
 		// create inital mapState object
 		let mapState = new MapState();
-		if (this.hasURLParams()) { // check if URL has data params
-			mapState = this.getMapStateFromURL();
-		}
+
+		// check if URL has data params
+		if (this.hasURLParams()) mapState = this.getMapStateFromURL();
 
 		// load map state
 		this.setMapState(mapState);
@@ -166,6 +166,7 @@ export default class Gamemap {
 				mapState.zoom = mapState.world.maxZoomLevel;
 				mapState.pendingJump = location;
 				mapState.coords = location.getCentre();
+				mapState.legacy = null;
 			} catch (error){
 				mapState.pendingJump = null;
 				print(error);
@@ -181,6 +182,22 @@ export default class Gamemap {
 
 		// set map view
 		map.setMaxBounds(null);
+		if (mapState.legacy) {
+			mapState.zoom = mapState.zoom - mapState.world.zoomOffset;
+			if (MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) {
+
+				// get normalised value of x and y in range
+				let x = (mapState.coords.x - mapState.world.minX) / mapState.world.maxRangeX;
+				let y = Math.abs((mapState.coords.y - mapState.world.maxY) / mapState.world.maxRangeY); // flip y around
+
+				// transform coords to better fit power of two numbers of tiles
+				x = (x * nextPowerOfTwo(mapState.world.dbNumTilesX) / mapState.world.dbNumTilesX).toFixed(3);
+				y = (y * nextPowerOfTwo(mapState.world.dbNumTilesY) / mapState.world.dbNumTilesY).toFixed(3);
+
+				mapState.coords = new Point(x, y, MAPCONFIG.coordType);
+			}
+			mapState.legacy = false; // conversion completed
+		}
 		mapState.coords = (mapState.coords) ? mapState.coords : this.toCoords(RC.getMaxBounds().getCenter());
 		mapState.zoom = (mapState.zoom) ? mapState.zoom : map.getBoundsZoom(RC.getMaxBounds());
 
@@ -237,12 +254,7 @@ export default class Gamemap {
 
 		// initialise mapstate
 		let mapState = new MapState();
-
-		if (getURLParams().has("zoom")){
-			mapState.zoom = Number(getURLParams().get("zoom"));
-		} else {
-			mapState.zoom = this.mapConfig.defaultZoomLevel;
-		}
+		mapState.legacy = getURLParams().has("legacy");
 
 		if (getURLParams().has("world")) {
 			mapState.world = this.getWorld(getURLParams().get("world"));
@@ -250,8 +262,16 @@ export default class Gamemap {
 			mapState.world = this.getWorldFromID(this.mapConfig.defaultWorldID);
 		}
 
-		if (getURLParams().has("x") && getURLParams().has("y")) {
-			mapState.coords = new Point(Number(getURLParams().get("x")), Number(getURLParams().get("y")), MAPCONFIG.coordType);
+		if (getURLParams().has("zoom")) {
+			mapState.zoom = Number(getURLParams().get("zoom"));
+		} else {
+			mapState.zoom = this.mapConfig.defaultZoomLevel;
+		}
+
+		if (getURLParams().has("x") && getURLParams().has("y") || getURLParams().has("locx") && getURLParams().has("locy")) {
+			let x = Number(getURLParams().get("x") ?? getURLParams().get("locx"));
+			let y = Number(getURLParams().get("y") ?? getURLParams().get("locy"));
+			mapState.coords = new Point(x, y, MAPCONFIG.coordType);
 		}
 
 		if (getURLParams().has("grid")) {
@@ -665,7 +685,7 @@ export default class Gamemap {
 					gridData.cellResourceData = {resource: cellResource, data: array};
 					self.toggleGrid(gridData);
 				}
-			}).catch(error => this.mapCallbacks?.setLoading(false));
+			}).catch(() => this.mapCallbacks?.setLoading(false));
 		}
 
 		// set up grid layer
@@ -756,7 +776,7 @@ export default class Gamemap {
 							let colNum = i + gridStartX;
 							let rowNum = (-j) + gridStartY;
 
-							if (rowNum % 5 == 0 || colNum % 5 == 0) {
+							if ( (rowNum % 5 == 0 || colNum % 5 == 0) && i != nRows && j != nCols) {
 
 								// draw background behind cell labels
 								fillCell(self.mapConfig.gridLabelCellBgColour);
@@ -895,7 +915,6 @@ export default class Gamemap {
 	/*================================================
 						Locations
 	================================================*/
-
 
 	addLocation(locType) {
 

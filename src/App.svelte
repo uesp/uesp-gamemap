@@ -204,6 +204,7 @@
 	}
 
 	// set error function
+	window.onunhandledrejection = event => { setError(event.reason) };
 	function setError(reason) {
 		if (reason == false) {
 			isError = reason;

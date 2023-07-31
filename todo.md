@@ -15,6 +15,8 @@ final polish and bugfixing before release
 - added loading in cell resource state from url
 - cached cell resource state in mapState (so toggling grid on/off doesnt cause resources to reload)
 - added loading bar when getting cell resources from server
+- made it so any client errors will popup on screen (you suggested this the other week with invalid worlds)
+- briefly started working on url compat (show SR example)
 
 ## bug fixes
 - fixed tooltips getting in the way when dragging markers
@@ -34,12 +36,13 @@ final polish and bugfixing before release
 - fixed reverted locations duplicating on the map after map move
 - fixed current layer not syncing up with the current world when switching between layers
 - fixed grid disappearing on resize
+- fixed darker blocks in grid for sr going off by one at the ends
+
+## known issues:
+
+- firefox isnt very good at drawing grid on canvas, works fine on chrome though
 
 ## todo
-
-- make redrawing grid better
-- fix canvas grid layer being laggy af on firefox when zooming out
-- fix darker blocks in grid for sr going off by one at the ends
 
 -  make sure the new maps can handle "old" style map links as best as possible, especially for ESO, for example:
 https://esomap.uesp.net/esomap.html?world=246&x=394043&y=580689&zoom=11
@@ -51,25 +54,16 @@ the latter as I'm doing right now
 For all maps, I'd check if the zoom level was greater than the allowed range. If it was I'd transform it down to the 0-based zoom level.
 For ESO map, I'd check if the coordinates were greater than 1 and if so divide both by 1,000,000
 
-Note: If you try to load a map that doesn't exist it just says "Loading world...." forever.
-Would be nice if it errors out or something.
-https://gamemap.uesp.net/ob/?world=shiriasdasd
-
-If you want to test the redirects you can modify your host file with the following entries:
-107.161.64.232 dbmap.uesp.net
-107.161.64.232 srmap.uesp.net
-107.161.64.232 esomap.uesp.net
-107.161.64.232 mwmap.uesp.net
-107.161.64.232 obmap.uesp.net
-107.161.64.232 simap.uesp.net
-107.161.64.232 bsmap.uesp.net
-
  RewriteEngine On
         RewriteRule ^(.*)$ https://gamemap.uesp.net/ob/?world=shiveringisles&legacy=true [R=301,L,QSA]
 
 - Also just noticed: If I add a new location, then un-check the "Use Name as Wiki," but the name of the wiki is similar, so I type in the name into the wiki block, the toggle auto re-checks, so I can't edit it. For example, I'm adding a book, "The Impresario's Catalogue" to the Impresario's site in Vvardenfell. The name of the wiki for this book is "The Impresario's Catalogue (book)", so, as soon as I type (or copy and paste) "The Impresario's Catalogue" into the wiki block, intending to add " (book)" to the end, the wiki toggle auto re-checks, so I can't edit it. I have to turn the toggle off, type something completely different, then edit it to the real entry "The Impresario's Catalogue (book)".  I hope my rambling made sense.
 
-- test stuff on firefox
+
+
+- update map wiki pages
+- differences to the new map, new features (wiki switch and stuff)
+
 
 - organise app.css and comment gamemap js
 - comment/refactor all code

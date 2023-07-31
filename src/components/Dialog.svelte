@@ -50,7 +50,7 @@
                 element.href = "javascript:;";
                 element.addEventListener("click", () => { window.open(link)});
                 element.addEventListener("auxclick", () => { window.open(link)});
-        }}, 500);
+        }}, 1500);
 
     }
 

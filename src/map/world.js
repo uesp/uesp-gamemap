@@ -36,7 +36,6 @@ export default class World {
 		this.maxRangeX = Math.abs(this.maxX - this.minX);
 		this.maxRangeY = Math.abs(this.maxY - this.minY);
 
-
 		this.numTilesX = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the X direction
 		this.numTilesY = Math.pow(2, this.maxZoomLevel); //estimated number of tiles in the Y direction
 		this.dbNumTilesX = (data?.maxTilesX != 0) ? data?.maxTilesX : this.numTilesX; //actual number of tiles in the X direction
