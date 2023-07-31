@@ -11,7 +11,7 @@ export default class MapState {
     constructor(data) {
         //set default state
         this.pendingJump = data?.pendingJump ?? null;
-        this.coords = data?.coords ?? this.pendingJump instanceof Location ? this.pendingJump?.getCentre() : null
+        this.coords = data?.coords ?? this.pendingJump instanceof Location ? this.pendingJump?.getCentre() : null;
         this.world = (() => {
             if (data?.world) {
                 return data.world;
@@ -26,7 +26,7 @@ export default class MapState {
                 return gamemap.getWorldByID(MAPCONFIG.defaultWorldID || 0);
             }
 		})();
-        this.zoom = data?.zoom ?? (this.pendingJump instanceof Location ? gamemap.getWorldByID(this.pendingJump?.worldID).maxZoomLevel : DEFAULT_MAP_CONFIG.zoomLevel);
+        this.zoom = data?.zoom ?? (this.pendingJump instanceof Location ? gamemap.getWorldByID(this.pendingJump?.worldID).maxZoomLevel : null);
         this.gridData = data?.gridData ?? null;
 		this.layerIndex = data?.layerIndex ?? 0;
     }

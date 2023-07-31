@@ -104,7 +104,7 @@
 		let gameParam = (location.pathname.replace(/\\|\//g,'') != "") ? location.pathname.replace(/\\|\//g,'') : (location.search != null) ? getURLParams().get("game") : null;
 		setLoading("Loading map");
 
-		if (gameParam != null && gameParam.match(/^([a-z]+)/)) {
+		if (gameParam != null && gameParam.toLowerCase().match(/^([a-z]+)/)) {
 			print("Game parameter was: " + gameParam);
 
 			// begin getting map config
@@ -114,7 +114,7 @@
 				window.DEFAULT_MAP_CONFIG = defaultMapConfig;
 
 				// example: /assets/maps/eso/config/eso-config.json
-				let configURL = (MAP_ASSETS_DIR + gameParam + "/config/" + gameParam + "-" + MAP_CONFIG_FILENAME);
+				let configURL = (MAP_ASSETS_DIR + gameParam.toLowerCase() + "/config/" + gameParam + "-" + MAP_CONFIG_FILENAME);
 				setLoading("Loading config");
 				print("Getting map config at " + configURL + "...");
 				getJSON(configURL).then(object => {

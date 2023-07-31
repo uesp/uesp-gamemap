@@ -166,11 +166,11 @@ export default class Gamemap {
 				mapState.zoom = mapState.world.maxZoomLevel;
 				mapState.pendingJump = location;
 				mapState.coords = location.getCentre();
-				mapState.legacy = null;
 			} catch (error){
 				mapState.pendingJump = null;
 				print(error);
 			}
+			mapState.legacy = null;
 		}
 
 		// update world
@@ -182,8 +182,8 @@ export default class Gamemap {
 
 		// set map view
 		map.setMaxBounds(null);
-		if (mapState.legacy) {
-			mapState.zoom = mapState.zoom - mapState.world.zoomOffset;
+		if (mapState.legacy) { // sort out legacy conversions
+			mapState.zoom = mapState.zoom && mapState.zoom > mapState.world.maxZoomLevel ? mapState.zoom - mapState.world.zoomOffset : mapState.zoom;
 			if (MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) {
 
 				// get normalised value of x and y in range
@@ -198,8 +198,8 @@ export default class Gamemap {
 			}
 			mapState.legacy = false; // conversion completed
 		}
-		mapState.coords = (mapState.coords) ? mapState.coords : this.toCoords(RC.getMaxBounds().getCenter());
 		mapState.zoom = (mapState.zoom) ? mapState.zoom : map.getBoundsZoom(RC.getMaxBounds());
+		mapState.coords = (mapState.coords) ? mapState.coords : this.toCoords(RC.getMaxBounds().getCenter());
 
 		if (!mapState.coords || !mapState.zoom) {
 			map.fitBounds(RC.getMaxBounds(), {animate: false});
@@ -264,8 +264,6 @@ export default class Gamemap {
 
 		if (getURLParams().has("zoom")) {
 			mapState.zoom = Number(getURLParams().get("zoom"));
-		} else {
-			mapState.zoom = this.mapConfig.defaultZoomLevel;
 		}
 
 		if (getURLParams().has("x") && getURLParams().has("y") || getURLParams().has("locx") && getURLParams().has("locy")) {

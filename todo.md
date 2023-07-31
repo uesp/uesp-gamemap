@@ -44,19 +44,6 @@ final polish and bugfixing before release
 
 ## todo
 
--  make sure the new maps can handle "old" style map links as best as possible, especially for ESO, for example:
-https://esomap.uesp.net/esomap.html?world=246&x=394043&y=580689&zoom=11
-
-
-https://gamemap.uesp.net/eso/?world=246&x=394043&y=580689&zoom=11
-Dave (UESP) — Today at 17:53
-the latter as I'm doing right now
-For all maps, I'd check if the zoom level was greater than the allowed range. If it was I'd transform it down to the 0-based zoom level.
-For ESO map, I'd check if the coordinates were greater than 1 and if so divide both by 1,000,000
-
- RewriteEngine On
-        RewriteRule ^(.*)$ https://gamemap.uesp.net/ob/?world=shiveringisles&legacy=true [R=301,L,QSA]
-
 - Also just noticed: If I add a new location, then un-check the "Use Name as Wiki," but the name of the wiki is similar, so I type in the name into the wiki block, the toggle auto re-checks, so I can't edit it. For example, I'm adding a book, "The Impresario's Catalogue" to the Impresario's site in Vvardenfell. The name of the wiki for this book is "The Impresario's Catalogue (book)", so, as soon as I type (or copy and paste) "The Impresario's Catalogue" into the wiki block, intending to add " (book)" to the end, the wiki toggle auto re-checks, so I can't edit it. I have to turn the toggle off, type something completely different, then edit it to the real entry "The Impresario's Catalogue (book)".  I hope my rambling made sense.
 
 
