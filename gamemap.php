@@ -139,7 +139,7 @@ class GameMap
 		session_set_cookie_params(3600*24*30, '/', '.uesp.net', false);
 		$this->startedSession = session_start();
 		
-		if (!$this->startedSession) error_log("Failed to start session!");
+		//if (!$this->startedSession) error_log("Failed to start session!");
 		
 		$userId = UespMemcachedSession::readKey('wsUserID');
 		$groups = null;
