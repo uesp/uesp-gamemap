@@ -1,7 +1,7 @@
 {
     // General map info
     "mapTitle": "Tamriel Rebuilt Map",
-    "wikiNamespace": "Morrowind",
+    "wikiNamespace": "Tamriel Rebuilt",
     "database" : "tr",
     "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Morrowind_Map_Design",
     "releaseDate" : "23/09/2006", // for sorting games by release date in the map menu

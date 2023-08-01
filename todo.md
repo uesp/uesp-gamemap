@@ -1,59 +1,32 @@
 ## last week
 
-final polish and bugfixing before release
-
-## polish
-- added ability to shift click other locations while editing existing ones to jump to editing them
->> if unsaved changes on the current one, will warn you first
-- added double click to edit on locs
-- made middle click on article button open in new tab
-- middle click on location/world list items opens them in new tab too
-- make max zoom of all locations -0.5 on all locations client side
-- fix pip on layer switcher being disconnected
-- made centre on check world param (so world=stormhaven&centeron=blackwood fails, as expected)
-- adjusted SR's cell resource colours to be similar to that of an actual heatmap
-- added loading in cell resource state from url
-- cached cell resource state in mapState (so toggling grid on/off doesnt cause resources to reload)
-- added loading bar when getting cell resources from server
-- made it so any client errors will popup on screen (you suggested this the other week with invalid worlds)
-- briefly started working on url compat (show SR example)
-
-## bug fixes
-- fixed tooltips getting in the way when dragging markers
-- fixed worlds still having the "editing" tag added after cancelling (going back into worlds was showing edit menu)
-- fixed opening colour picker on blobs with null colours setting the colour to a bright blue
-- fixed popups getting in the way when editing worlds
-- fixed pressing esc bugging out dialogs
-- fixed editing worlds not locking the map properly
-- fix edit templates not showing up for adding new locations
-- fixed performance issues in world dropdown list
-- fixed an issue where the map would zoom all the way when going up from a bigger map than the parent
-- fixed map position changing/animating when switching maps (it looked cool but was a bug)
-- fixed rare issue where some locs wouldnt appear when centering on them
-- fixed small issue where the map would move when changing layers near the bounds of the map
-- fixed links on gamemap.uesp.net help dialog still being garbled up
-- fixed save button displaying wonky on save
-- fixed reverted locations duplicating on the map after map move
-- fixed current layer not syncing up with the current world when switching between layers
-- fixed grid disappearing on resize
-- fixed darker blocks in grid for sr going off by one at the ends
-
-## known issues:
 
 - firefox isnt very good at drawing grid on canvas, works fine on chrome though
 
 ## todo
 
-- Also just noticed: If I add a new location, then un-check the "Use Name as Wiki," but the name of the wiki is similar, so I type in the name into the wiki block, the toggle auto re-checks, so I can't edit it. For example, I'm adding a book, "The Impresario's Catalogue" to the Impresario's site in Vvardenfell. The name of the wiki for this book is "The Impresario's Catalogue (book)", so, as soon as I type (or copy and paste) "The Impresario's Catalogue" into the wiki block, intending to add " (book)" to the end, the wiki toggle auto re-checks, so I can't edit it. I have to turn the toggle off, type something completely different, then edit it to the real entry "The Impresario's Catalogue (book)".  I hope my rambling made sense.
-
-
+- wiki page field collapsing if text is identical to name (only collapse on switch click or null/blank)
+- add &search query param compatibility
 
 - update map wiki pages
 - differences to the new map, new features (wiki switch and stuff)
 
+- fix flash loading maps from centeron
+
+- fix getlocation always doing network request instead of local
+
+- make getworld do both network and local and toast if invaliid
+
+- fix pr request
+
+- fix gamemap help links actually
+
+if url has xy but no zoom, do max zoom
+
 
 - organise app.css and comment gamemap js
 - comment/refactor all code
+- wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 
 ## todo maps (future)
 - use the "Dev/Beta" versions of maps for eso as separate layers
@@ -74,7 +47,6 @@ final polish and bugfixing before release
 - starfield map
 
 app:
-- wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 - cross platform
 - cross wiki
 - integrate maps

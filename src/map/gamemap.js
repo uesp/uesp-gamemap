@@ -200,8 +200,7 @@ export default class Gamemap {
 		}
 		mapState.zoom = (mapState.zoom) ? mapState.zoom : map.getBoundsZoom(RC.getMaxBounds());
 		mapState.coords = (mapState.coords) ? mapState.coords : this.toCoords(RC.getMaxBounds().getCenter());
-
-		if (!mapState.coords || !mapState.zoom) {
+		if (!mapState.coords && !mapState.zoom) {
 			map.fitBounds(RC.getMaxBounds(), {animate: false});
 		} else {
 			map.setView(this.toLatLngs(mapState.coords), mapState.zoom, {animate: false});
