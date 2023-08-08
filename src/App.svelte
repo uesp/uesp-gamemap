@@ -2,7 +2,6 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-missing-attribute -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-
 <!-- @component
 ### Description
  The UESP Gamemap is web app for displaying Elder Scrolls games' maps.
@@ -88,8 +87,6 @@
 
 	// on app start
 	onMount(async() => {
-
-		print("test");
 
 		// remove noscript message
 		var element = document.getElementsByTagName("noscript");

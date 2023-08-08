@@ -49,12 +49,19 @@ export default {
 		name: 'app',
 		file: 'public/build/bundle.js'
 	},
+	onwarn(warning, warn) {
+		// suppress eval warnings
+		if (warning.code === 'EVAL') return
+		warn(warning)
+	},
 	plugins: [
 		svelte({
 			onwarn: (warning, handler) => {
 				const { code, frame } = warning;
-				if (code === "css-unused-selector")
-					return;
+				if (code === "css-unused-selector") return;
+				if (code === 'a11y-click-events-have-key-events') return;
+				if (code === 'missing-declaration') return;
+				if (code === 'a11y-missing-attribute') return;
 				handler(warning);
 			},
 			compilerOptions: {
@@ -65,6 +72,7 @@ export default {
 			preprocess: sveltePreprocess({ markupTagName : "markup" }),
 		}),
 		replace({
+			preventAssignment: true,
 			isRelease: production,
 			isDebug: !production,
 		}),

@@ -1,17 +1,26 @@
 ## last fortnight
 
 - various bits and bobs
+- updated documentation and readmes
 
 
 - firefox isnt very good at drawing grid on canvas, works fine on chrome though
 
 ## todo
 
+- get php working localhost
+
+- take out link part from help md and insert it in code before md parse is inserted
+
+- add focus=true prop to textbox so name gets selected first
+
 - wiki page field collapsing if text is identical to name (only collapse on switch click or null/blank)
 - add &search query param compatibility
 
 - update map wiki pages
 - differences to the new map, new features (wiki switch and stuff)
+
+- make help just link to the wiki page
 
 - fix flash loading maps from centeron
 

@@ -5,11 +5,38 @@ The UESP Gamemap is web app for displaying Elder Scrolls games' maps. It is desi
 While primarily designed for TES games, it supports a variety of other map formats, and can be modified to support other games if desired.
 
 Under the hood, it uses a modified version of [Leaflet](https://leafletjs.com/) for the map, and [Svelte](https://svelte.dev/) for the interface.
-
-## Vality
-
-Vality is an in-development overhaul of the gamemap system, focusing on usability and performance. It is named after Vality7, the mod author that overhauled the TES3's Project Tamriel mod's heightmap.
 ## Getting started
+
+### Prerequisites
+
+- Install [Node.js](https://nodejs.org)
+- Install [PHP](https://www.php.net/)
+### Server setup
+
+The PHP server needs to be configured before getting the gamemap running:
+- Enable ``mysqli`` extension in ``php.ini``:
+
+Go to ``php.ini`` config file location (On Linux it's ``/etc/php/php.ini``) and uncomment the ``;extension=mysqli`` line.
+
+```php
+...
+;extension=ldap
+extension=mysqli // <-- this one
+;extension=odbc
+...
+```
+- Install [Memcache](https://pecl.php.net/package-search.php?pkg_name=memcache) php extension
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; • Add line ``extension=/path/to/php/modules/memcache.so`` to ``php.ini``. to enable it.
+
+- Enable zlib compression in ``php.ini`` to fix content encoding errors:
+```php
+zlib.output_compression = On
+```
+
+Done!
+
+### Gamemap Setup
 
 Clone this repo:
 
