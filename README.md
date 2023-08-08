@@ -36,7 +36,7 @@ zlib.output_compression = On
 
 Done!
 
-### Gamemap Setup
+### Gamemap setup
 
 Clone this repo:
 
