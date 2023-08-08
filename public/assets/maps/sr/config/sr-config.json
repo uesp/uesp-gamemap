@@ -1,0 +1,188 @@
+{
+    // General map info
+    "mapTitle": "Skyrim Gamemap",
+    "wikiNamespace": "Skyrim",
+    "database" : "sr",
+    "bgColor" : "#5d857b",
+    "releaseDate" : "11/11/2011", // for sorting games by release date in the map menu
+
+    // Map options
+    "hasCustomCSS" : true,
+    "hasCustomFavIcon" : true,
+
+    // Map coordinate system info
+    // 0: XY (Default)
+    // 1: Normalised
+    // 2: Worldspace
+    "coordType" : 2,
+
+    // Map icon info
+    "iconSize" : 24,
+    "labelOffset" : 10,
+    "icons": {
+        // Cities
+        "36": "Riften",
+        "38": "Windhelm",
+        "40": "Whiterun",
+        "42": "Solitude",
+        "44": "Markarth",
+        "46": "Winterhold",
+        "48": "Morthal",
+        "50": "Falkreath",
+        "52": "Dawnstar",
+
+        // Castles
+        "37":  "Palace of Kings",
+        "39":  "Dragonsreach",
+        "41":  "Blue Palace",
+        "35":  "Mistveil Keep",
+        "45":  "College of Winterhold",
+        "150": "Castle",
+        "59":  "Castle Karstaag",
+        "43":  "Understone Keep",
+        "51":  "Hendraheim",
+
+        // Towns / Settlements
+        "2":  "Town",
+        "3":  "Settlement",
+        "5":  "Camp",
+        "16": "Camp (Imperial)",
+        "17": "Camp (Stormcloak)",
+        "6":  "Fort",
+        "13": "Farm",
+        "14": "Mill (Wood)",
+        "19": "Mill (Wheat)",
+        "21": "Stable",
+        "15": "Mine",
+        "22": "Watchtower",
+        "27": "Lighthouse",
+        "28": "Orc Stronghold",
+        "30": "Shack",
+        "56": "Telvanni Tower",
+        "33": "Dock",
+        "54": "Raven Rock",
+
+        // Environment
+        "10":  "Grove",
+        "11":  "Landmark",
+        "26":  "Rock",
+        "77":  "Landmark (Small)",
+        "18":  "Standing Stone",
+        "23":  "Clearing",
+        "24":  "Pass",
+        "29":  "Giant Camp",
+        "200": "World Encounter",
+
+        // Ruins / Dungeons
+        "4":  "Cave",
+        "7":  "Nordic Ruin",
+        "8":  "Dwarven Ruin",
+        "12": "Dragon Lair",
+        "9":  "Shipwreck",
+        "32": "Nordic Dwelling",
+        "31": "Nordic Tower",
+
+        // Important Locations
+        "34": "Shrine",
+        "25": "Altar",
+        "53": "Temple of Miraak",
+        "63": "Dragon Mound",
+        "78": "Aedric Shrine",
+
+        // Alchemy / Materials
+        "81": "Nirnroot",
+        "62": "Ore Vein",
+
+        // Miscelaneous
+        "55": "All-Maker Stone",
+        "57": "To Skyrim",
+        "58": "To Solstheim",
+        "60": "Door",
+        "79": "Chest",
+        "80": "NPC",
+        "87": "Chopping Block",
+        "88": "Arcane Enchanter",
+        "89": "Alchemy Lab",
+        "90": "Book",
+        "83": "Forge",
+        "84": "Grindstone",
+        "85": "Cooking Pot",
+        "92": "Smelter",
+        "93": "Tanning Rack",
+        "94": "Workbench"
+    },
+
+    "editTemplates" : {
+        "location" : { // object type
+            "imperial camp" : { // object name
+                "name" : "Imperial Camp",
+                "icon" : 16,
+                "labelPos" : 6,
+                "displayLevel" : "$gamemap.getMaxZoom() - 1;"
+            }
+        }
+    },
+
+    // cell resource info
+    "gridShowLabelZoom" : 4,
+    "gridLabelCellBgColour" : "rgba(0, 0, 0, 0.20)",
+    "cellResources": {
+        "None" : "None",
+        "NordicBarnacleCluster01" : "Barnacle",
+        "BirdsNest" : "Bird Nest",
+        "FloraMushroom02" : "Bleeding Crown",
+        "FloraMushroom06" : "Blisterwort",
+        "TreeFloraCabbage01" : "Cabbage",
+        "TreeFloraCanisRoot01" : "Canis Root",
+        "CharredSkeever03" : "Charred Skeever",
+        "ChickenNest" : "Chicken Nest",
+        "Clam01" : "Clam",
+        "ClayDepositHF" : "Clay Deposit (Hearthfire)",
+        "CorundumOreVein" :"Corundum Ore Vein",
+        "FloraCreepCluster" : "Creep Cluster",
+        "TreeFloraDeathBell01" : "Deathbell",
+        "TreeFloraDragonsTongue01" : "Dragon's Tongue",
+        "EbonyOreVein" : "Ebony Ore Vein",
+        "HangingElvesEar01" : "Elves Ear",
+        "FloraMushroom01" : "Fly Amanita",
+        "HangingFrostMirriam" : "Frost Mirriam",
+        "FloraSwampFungalPod01" : "Fungal Pod",
+        "HangingGarlicBraid" : "Garlic",
+        "FloraGiantLichen" : "Giant Lichen",
+        "GoldOreVein" : "Gold Ore Vein",
+        "TreeGourdCluster01" : "Gourd",
+        "TreeFloraHangingMoss01" : "Hanging Moss",
+        "FloraMushroom04" : "Imp Stool",
+        "IronOreVein" : "Iron Ore Vein",
+        "TreeFloraJazBay01" : "Jazbay",
+        "TreeFloraJuniper01" : "Juniper",
+        "TreeFloraLavender01" : "Lavender",
+        "TreeFloraLeek01" : "Leek",
+        "MalachiteOreVein" : "Malachite Ore Vein",
+        "MammothCheese01" : "Mammoth Cheese",
+        "MoonstoneOreVein" : "Moonstone Ore Vein",
+        "TreePineForestHollow01BMoraTapinella" : "Mora Tapinella",
+        "TreeFloraMountainFlower01Blue" : "Mountain Flower (Blue)",
+        "TreeFloraMountainFlower01Purple" : "Mountain Flower (Purple)",
+        "TreeFloraMountainFlower01Red" : "Mountain Flower (Red)",
+        "FloraMushroom05" : "Namira's Rot",
+        "TreeFloraNightshade01" : "Nightshade",
+        "OrichalcumOreVein" : "Orichalcum Ore Vein",
+        "HangingPheasant01" : "Pheasant",
+        "TreeFloraPotatoPlant01" : "Potato",
+        "QuicksilverOreVein" : "Quicksilver Ore Vein",
+        "HangingRabbit01" : "Rabbit",
+        "DeadSalmon01" : "Salmon",
+        "TreeAspenLog01ScalyPholiota" : "Scaly Pholiota",
+        "SilverOreVein" : "Silver Ore Vein",
+        "SlaughterfishEggNest01" : "Slaughterfish Egg",
+        "TreeFloraSnowberry01" : "Snowberry",
+        "TreeFloraSpikyGrass01" : "Spiky Grass",
+        "StoneQuarryHF" : "Stone Quarry (Hearthfire)",
+        "TreeFloraThistle01" : "Thistle",
+        "TreeFloraTundraCotton01" : "Tundra Cotton",
+        "TreeFloraWheat01" : "Wheat",
+        "FloraMushroom03" : "White Cap"
+    }
+
+}

@@ -1,0 +1,68 @@
+{
+    // General map info
+    "mapTitle": "Dawnstar Gamemap",
+    "wikiNamespace": "Dawnstar",
+    "database" : "ds",
+    "releaseDate" : "26/08/2004", // for sorting games by release date in the map menu
+
+    // Map options
+    "hasCustomFavIcon" : true,
+    "hasCustomCSS" : true,
+
+    // Map coordinate system info
+    // 0: XY (Default)
+    // 1: Normalised
+    // 1.5: Pseudo-Normalised
+    // 2: Worldspace
+    "coordType" : 1,
+
+    // Map world info
+    "defaultWorldID" : 1,
+
+    // Map icon info
+    "iconSize" : 32,
+    "labelOffset" : 15,
+    "icons": {
+        "1": "Gate",
+        "2": "Chest",
+        "3": "Alhavara (NPC)",
+        "4": "Beatrice (NPC)",
+        "5": "Chung (NPC)",
+        "6": "Eustacia (NPC)",
+        "7": "Jakar (NPC)",
+        "8": "Delacroix (NPC)",
+        "9": "Heavy Armour Peddler (NPC)",
+        "10": "Light Armour Peddler (NPC)",
+        "11": "Weapon Peddler (NPC)",
+        "12": "Arrow (Up)",
+        "13": "Arrow (Right)",
+        "14": "Arrow (Down)",
+        "15": "Arrow (Left)"
+    },
+
+    "editTemplates" : {
+        "location" : { // object type
+            "chest" : { // object name
+                "name" : "Chest",
+                "icon" : 2,
+                "labelPos" : 6,
+                "displayLevel" : 0
+            },
+
+            "gate" : { // object name
+                "name" : "Gate",
+                "icon" : 1,
+                "labelPos" : 6,
+                "displayLevel" : 0
+            },
+
+            "warp" : { // object name
+                "name" : "Warp",
+                "icon" : null,
+                "labelPos" : 5,
+                "displayLevel" : 0
+            }
+        }
+    }
+}
+

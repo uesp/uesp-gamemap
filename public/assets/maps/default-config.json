@@ -1,0 +1,79 @@
+{
+    // General map info
+    "mapTitle": "UESP Gamemap", // replace all of these when making new map config
+    "wikiNamespace": "",
+    "wikiURL": "//en.uesp.net/wiki/",
+    "database" : "",
+    "feedbackURL" : "https://github.com/uesp/uesp-gamemap/issues",
+    "bgColor" : "#000000", // initial background colour of the map (can be overwritten by world layers)
+    "customCSS" : false,
+
+    // Map options
+    "defaultZoomLevel" : 2,
+    "defaultXPos" : 0,
+    "defaultYPos" : 0,
+    "markerSnapDistance" : 10, // invisible padding around markers in pixels that let them snap to eachother
+
+    // Map coordinate system info
+    // 0: XY (Default)
+    // 1: Normalised
+    // 2: Worldspace
+    "coordType" : 0,
+
+    // edit templates (auto fill in forms based on the name)
+    "editTemplates" : {
+        "world" : { //object type
+            // world templates go here
+        },
+        "location" : { //object type
+            // location templates go here
+        }
+    },
+
+    // Map world info
+    "defaultWorldID" : 1,
+    "minWorldID" : 0,
+    "maxWorldID" : 20000,
+
+    // Map icon info
+    "iconSize" : 32,
+    "labelOffset" : 5,
+    "icons": {
+        // icon list goes here...
+    },
+
+    // Default styling for polygon/polylines
+    "defaultFillColour": "rgba(255,255,255,0.05)",
+    "defaultFillColourHover": "rgba(255,255,255,0.25)",
+    "defaultStrokeColour": "rgba(0,0,0,0.5)",
+    "defaultStrokeColourHover": "rgba(0,0,0,1)",
+    "defaultStrokeWidth": 2,
+    "defaultStrokeWidthHover": 2,
+
+    // Map grid info
+    "gridStart" : [0, 0], //cell coords of the top leftmost point (default: 0 , 0);
+    "gridLineWidth" : 2,
+    "gridLineColour" : "rgba(255, 165, 0, 0.50)",
+    "gridLabelColour" : "cyan",
+    "gridShowLabels" : true,
+    "gridLabelCellBgColour" : "rgba(164, 163, 163, 0.30)",
+    "gridShowLabelZoom" : 3,
+
+    // Cell resource colours
+    "cellResourceColours" : [
+        "rgba(104,152,232,0.5)",
+        "rgba(114,250,245,0.5)",
+        "rgba(116,245,47,0.5)",
+        "rgba(246,250,59,0.5)",
+        "rgba(238,118,39,0.5)",
+        "rgba(235,59,34,0.5)"
+    ],
+
+    // core
+    "tileSize" : 256, // size of tiles in pixels
+    "baseTileURL" : "//maps.uesp.net/",
+    "assetsPath" : "assets/maps/",
+    "layers" : [{
+        "name" : "default"
+    }]
+}

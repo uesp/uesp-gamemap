@@ -1,0 +1,100 @@
+{
+    // General map info
+    "mapTitle": "Morrowind Gamemap",
+    "wikiNamespace": "Morrowind",
+    "database" : "mw",
+    "feedbackURL" : "https://en.uesp.net/wiki/UESPWiki_talk:Morrowind_Map_Design",
+    "bgColor" : "#7076AA",
+    "releaseDate" : "01/05/2003", // for sorting games by release date in the map menu
+
+    // Map options
+    "hasCustomFavIcon" : true,
+    "hasCustomCSS" : true,
+
+    // Map coordinate system info
+    // 0: XY (Default)
+    // 1: Normalised
+    // 2: Worldspace
+    // 3: Pseudo-Normalised
+    "coordType" : 2,
+
+
+    // Map world info
+    "defaultWorldID" : 1,
+    "minWorldID" : 0,
+    "maxWorldID" : 20000,
+
+    // Map icon info
+    "iconSize" : 16,
+    "icons": {
+        "1": "City",
+        "2": "Town",
+        "3": "House",
+        "4": "Settlement",
+        "5": "Door",
+        "6": "Shop",
+        "7": "Tavern",
+        "8": "Temple",
+        "9": "Guild",
+        "10": "Ashlander Camp",
+        "11": "Ancestral Tomb",
+        "12": "Barrow",
+        "13": "Cave",
+        "14": "Daedric Shrine",
+        "15": "Diamond Mine",
+        "16": "Dunmer Stronghold",
+        "17": "Dwemer Ruin",
+        "18": "Ebony Mine",
+        "19": "Egg Mine",
+        "20": "Glass Mine",
+        "21": "Grotto",
+        "22": "Imperial Fort",
+        "23": "Landmark",
+        "24": "Monument",
+        "25": "Ship",
+        "26": "Velothi Tower",
+        "30": "NPC",
+        "31": "Transport",
+        "32": "Corpse",
+        "33": "Creature",
+        "34": "Egg Mine",
+        "35": "Glass Mine",
+        "40": "Guilds",
+        "41": "Fighters Guild",
+        "42": "Mages Guild",
+        "43": "Imperial Cult",
+        "44": "Morag Tong",
+        "50": "House Hlaalu",
+        "51": "House Redoran",
+        "52": "House Telvanni",
+        "60": "Shop",
+        "61": "Alchemist",
+        "62": "Bookseller",
+        "63": "Clothier",
+        "64": "Enchanter",
+        "65": "Healer",
+        "66": "Pawnbroker",
+        "67": "Smith",
+        "68": "Spellmaker",
+        "69": "Slave Market",
+        "70": "Tavern",
+        "71": "Trader",
+        "80": "Transportation",
+        "82": "Ship",
+        "83": "Silt-Strider",
+        "100": "Other",
+        "101": "Blank",
+        "102": "Corpse",
+        "103": "Creature",
+        "104": "Door",
+        "105": "Geographical",
+        "106": "Guard-Tower",
+        "107": "Loot",
+        "108": "Monument",
+        "109": "NPC",
+        "110": "Plant",
+        "111": "Propylon",
+        "112": "Ruins"
+    }
+}
+

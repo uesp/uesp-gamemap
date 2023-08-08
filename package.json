@@ -1,0 +1,36 @@
+{
+  "name": "uesp-gamemap",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "sirv public --single"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.0",
+    "@rollup/plugin-replace": "^5.0.2",
+    "@types/marked": "^4.0.8",
+    "php-server": "^1.0.0",
+    "postcss": "^8.4.21",
+    "rollup": "^2.3.4",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-svelte": "^7.1.5",
+    "rollup-plugin-terser": "^7.0.0",
+    "svelte": "^3.0.0",
+    "svelte-preprocess": "^5.0.3"
+  },
+  "dependencies": {
+    "@geoman-io/leaflet-geoman-free": "^2.14.2",
+    "leaflet": "^1.9.3",
+    "long-press-event": "^2.4.4",
+    "marked": "^4.2.12",
+    "material-design-icons-iconfont": "^6.7.0",
+    "materialize-css": "^1.0.0",
+    "sirv-cli": "^2.0.0",
+    "svelte-tiny-virtual-list": "^2.0.5",
+    "vanilla-picker": "^2.12.1"
+  }
+}
