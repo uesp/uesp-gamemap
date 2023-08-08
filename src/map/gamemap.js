@@ -184,7 +184,7 @@ export default class Gamemap {
 		map.setMaxBounds(null);
 		if (mapState.legacy) { // sort out legacy conversions
 			mapState.zoom = mapState.zoom && mapState.zoom > mapState.world.maxZoomLevel ? mapState.zoom - mapState.world.zoomOffset : mapState.zoom;
-			if (MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) {
+			if (MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED && mapState.coords) {
 
 				// get normalised value of x and y in range
 				let x = (mapState.coords.x - mapState.world.minX) / mapState.world.maxRangeX;

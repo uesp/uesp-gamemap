@@ -1,4 +1,6 @@
-## last week
+## last fortnight
+
+- various bits and bobs
 
 
 - firefox isnt very good at drawing grid on canvas, works fine on chrome though
@@ -29,7 +31,6 @@ if url has xy but no zoom, do max zoom
 - wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 
 ## todo maps (future)
-- use the "Dev/Beta" versions of maps for eso as separate layers
 - skyrim minecraft map thing
 - cave interior maps for skyrim, ob, mw
 - divine intervention/region areas for mw map (https://en.uesp.net/wiki/File:MW-map-Divine_Intervention.jpg)

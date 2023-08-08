@@ -3,7 +3,7 @@
     "mapTitle": "Skyrim Gamemap",
     "wikiNamespace": "Skyrim",
     "database" : "sr",
-    "bgColor" : "#284358",
+    "bgColor" : "#5d857b",
     "releaseDate" : "11/11/2011", // for sorting games by release date in the map menu
 
     // Map options
