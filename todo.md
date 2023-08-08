@@ -1,14 +1,12 @@
 ## last fortnight
 
 - various bits and bobs
+- merged vality into master (horrible mess)
 - updated documentation and readmes
-
 
 - firefox isnt very good at drawing grid on canvas, works fine on chrome though
 
 ## todo
-
-- get php working localhost
 
 - take out link part from help md and insert it in code before md parse is inserted
 
