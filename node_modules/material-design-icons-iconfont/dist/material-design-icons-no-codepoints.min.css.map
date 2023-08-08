@@ -1,0 +1,12 @@
+{
+	"version": 3,
+	"file": "material-design-icons-no-codepoints.min.css",
+	"sources": [
+		"../src/material-design-icons-no-codepoints.scss",
+		"../src/material-design-icons.scss",
+		"../src/_variables.scss",
+		"../src/_mixins.scss"
+	],
+	"names": [],
+	"mappings": "AGgEE,UAAU,CACR,WAAW,CAAE,gBAAgB,CAC7B,UAAU,CAAE,MAAM,CAClB,WAAW,CAAE,GAAG,CAChB,YAAY,CAAE,KAAK,CACnB,GAAG,CAAE,wCAAmD,CACxD,GAAG,CAAE,WAAW,CAChB,0CAAqD,CAAC,eAAe,CACrE,yCAAoD,CAAC,cAAc,CACnE,wCAAmD,CAAC,kBAAkB,CF/D1E,AAAA,eAAe,AAAC,CEcd,WAAW,CAAE,gBAAgB,CAC7B,WAAW,CAAE,MAAM,CACnB,UAAU,CAAE,MAAM,CAClB,SAAS,CAAE,IAAI,CACf,OAAO,CAAE,YAAY,CACrB,WAAW,CAAE,CAAC,CACd,cAAc,CAAE,IAAI,CACpB,cAAc,CAAE,MAAM,CACtB,SAAS,CAAE,MAAM,CACjB,WAAW,CAAE,MAAM,CAGnB,SAAS,CAAE,OAAO,CAGlB,sBAAsB,CAAE,WAAW,CAEnC,cAAc,CAAE,kBAAkB,CAElC,uBAAuB,CAAE,SAAS,CAElC,qBAAqB,CAAE,MAAM,CFjC9B"
+}
