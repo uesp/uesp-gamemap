@@ -82,7 +82,6 @@
 	let locationList;
 	let locationListShown = false;
 	let showMaps = false;
-	let helpDialog;
 	let mapKeyDialog;
 
 	// on app start
@@ -306,9 +305,9 @@
 								<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu' lock={mapLock}>
 									<!-- Menu Items -->
 									<ul id='overflow-menu' class='dropdown-content'>
-										<li class="waves-effect"><a title="See help info" on:click={() => helpDialog.show()}><Icon name="help_outline"/>Help</a></li>
-										<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>
+										<li class="waves-effect"><a title="See help info" href="https://en.uesp.net/wiki/UESPWiki:Map_Help" target="_blank" rel="noopener noreferrer"><Icon name="help_outline"/>Help</a></li>
 										<li class="waves-effect"><a title="Show map key" on:click={() => mapKeyDialog.show()}><Icon name="list"/>Map Key</a></li>
+										<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" target="_blank" rel="noopener noreferrer" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>
 										<li class="waves-effect"><a on:click={toggleFullscreen} id="fullscreen-toggle" title="Toggle fullscreen mode"><Icon name={(!isFullscreen) ? "fullscreen" : "fullscreen_exit"}/>{(!isFullscreen) ? "Fullscreen" : "Exit"}</a></li>
 									</ul>
 								</IconButton>
@@ -359,18 +358,6 @@
 	{#if canEdit}
 		<EditPane bind:this={editPane} bind:shown={isEditing}/>
 	{/if}
-
-	<!-- Help dialog -->
-	<Dialog title="Help" bind:this={helpDialog} fixedFooter={true} cancel="close">
-		{@const helpPromise = fetch(ASSETS_DIR+'help.md').then(response => response.text()).then((data) => { return data; })}
-		{#await helpPromise}
-			<p>Loading...</p>
-		{:then helpText}
-			{@html marked.parse(helpText)}
-		{:catch error}
-			<p style="color: red">{error.message}</p>
-		{/await}
-	</Dialog>
 
 	<!-- Map key dialog -->
 	{#if mapConfig}

@@ -25,6 +25,7 @@
     export let min;
     export let max;
     export let column;
+    export let focus = false;
     type = (type == "float") ? "number" : type;
 
     const dispatch = createEventDispatcher();
@@ -52,7 +53,9 @@
         keyboardEvent[initMethod]('keydown', true, true, window, false, false, false, false, 40, 0);
         textbox.dispatchEvent(keyboardEvent);
     }
-
+    
+    // focus textbox if required
+    onMount(async() => { if (textbox && focus) { textbox.focus() }});
     function typeAction(node) {node.type = type}
 </script>
 

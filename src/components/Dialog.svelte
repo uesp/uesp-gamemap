@@ -39,19 +39,6 @@
                 }
             });
         }
-
-        // hack to fix urls
-        setTimeout(() => {
-            let links = dialog.querySelectorAll('[href]')
-            for (let element of links) {
-                let link = decodeURIComponent(element.href);
-                link = link.replace(location.origin, "");
-                link = link.replace(location.pathname, "");
-                element.href = "javascript:;";
-                element.addEventListener("click", () => { window.open(link)});
-                element.addEventListener("auxclick", () => { window.open(link)});
-        }}, 1500);
-
     }
 
     export function showWithCallback(callback) {

@@ -1,16 +1,14 @@
 # UESP Gamemap
 
-The UESP Gamemap is web app for displaying Elder Scrolls games' maps. It is designed for the **Unofficial Elder Scrolls Pages** (www.uesp.net).
-
-While primarily designed for TES games, it supports a variety of other map formats, and can be modified to support other games if desired.
+The UESP Gamemap is web app for displaying Elder Scrolls games' maps. Whilst primarily designed for the **Unofficial Elder Scrolls Pages** (www.uesp.net), it supports a variety of other map formats, and can be modified to support other games/sites if desired.
 
 Under the hood, it uses a modified version of [Leaflet](https://leafletjs.com/) for the map, and [Svelte](https://svelte.dev/) for the interface.
 ## Getting started
 
 ### Prerequisites
 
-- Install [Node.js](https://nodejs.org)
 - Install [PHP](https://www.php.net/)
+- Install [Node.js](https://nodejs.org)
 ### Server setup
 
 The PHP server needs to be configured before getting the gamemap running:
@@ -21,13 +19,13 @@ Go to ``php.ini`` config file location (On Linux it's ``/etc/php/php.ini``) and 
 ```php
 ...
 ;extension=ldap
-extension=mysqli // <-- this one
+extension=mysqli // <-- uncomment this one
 ;extension=odbc
 ...
 ```
 - Install [Memcache](https://pecl.php.net/package-search.php?pkg_name=memcache) php extension
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; • Add line ``extension=/path/to/php/modules/memcache.so`` to ``php.ini``. to enable it.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; • Add line ``extension=/path/to/php/modules/memcache.so`` to ``php.ini`` to enable it.
 
 - Enable zlib compression in ``php.ini`` to fix content encoding errors:
 ```php

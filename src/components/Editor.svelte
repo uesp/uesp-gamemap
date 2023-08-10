@@ -562,6 +562,7 @@
                                                 text={isWorld ? modEditObject.displayName : modEditObject.name }
                                                 hint={(isWorld ? "Display " : "") + "Name"}
                                                 tooltip="{objectType.toSentenceCase()} name"
+                                                focus={true}
                                                 on:change={(e) => {
                                                     if (modEditObject.linkWikiPage()) {
                                                         modify("wikiPage", e.detail)

@@ -1,41 +1,50 @@
 ## last fortnight
 
-- various bits and bobs
-- merged vality into master (horrible mess)
-- updated documentation and readmes
+how was your holiday? where did you go
 
-- firefox isnt very good at drawing grid on canvas, works fine on chrome though
+various bits and bobs, some gamemap fixes, designed some starfield wiki stuff
+
+## gamemap
+
+- merged vality into master (lots of merge conflicts so stuff might be missing)
+- updated readme with build instructions (setting up localhost server and stuff)
+- fixed missing icons / 404 on SR
+- updated wiki map pages with help from dcsg
+>> made help link open wiki page in new tab instead of dialog, as all the info is on there now
+- made "name" field auto focus when adding locations
+
+
+## app
+## sfwiki
+
 
 ## todo
-
-- take out link part from help md and insert it in code before md parse is inserted
-
-- add focus=true prop to textbox so name gets selected first
 
 - wiki page field collapsing if text is identical to name (only collapse on switch click or null/blank)
 - add &search query param compatibility
 
-- update map wiki pages
-- differences to the new map, new features (wiki switch and stuff)
-
-- make help just link to the wiki page
-
 - fix flash loading maps from centeron
+
 
 - fix getlocation always doing network request instead of local
 
 - make getworld do both network and local and toast if invaliid
+- make world param also work with displayName (search displayName and return world)
 
-- fix pr request
 
-- fix gamemap help links actually
+- if url has xy but no zoom, do max zoom
 
-if url has xy but no zoom, do max zoom
 
 
 - organise app.css and comment gamemap js
 - comment/refactor all code
+
+- doo app styff
+
 - wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
+
+
+- start sf wiki design figma
 
 ## todo maps (future)
 - skyrim minecraft map thing
