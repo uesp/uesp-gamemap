@@ -134,7 +134,7 @@ export default class World {
 
 	getLocation(identifier) {
 		if (!isNaN(identifier) || identifier.id) {
-			let locID = identifier?.id ?? identifier;
+			let locID = Math.abs(identifier?.id ?? identifier);
 			if (this.locations?.has(locID)) {
 				return this.locations.get(locID);
 			}

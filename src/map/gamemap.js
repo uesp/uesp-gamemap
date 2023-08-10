@@ -349,7 +349,7 @@ export default class Gamemap {
 			let queryParams = {};
 			queryParams.action = "get_worlds";
 			queryParams.db = mapConfig.database;
-			self.mapCallbacks?.setLoading("Loading world(s)");
+			self.mapCallbacks?.setLoading("Loading world");
 
 			if (this.mapWorlds.size == 0) {
 				getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
@@ -510,9 +510,9 @@ export default class Gamemap {
 
 		this.getLocation(id).then((location) => {
 			if (location.worldID == self.getCurrentWorldID()) {
-				map.setZoom(self.getCurrentZoom() - 0.0001, {animate: false}) // fix pan animation bug
-				map.setView(self.toLatLngs(location.getCentre()), self.getCurrentWorld().maxZoomLevel, {animate: true});
 				setTimeout(() => {
+					map.setZoom(self.getCurrentZoom() - 0.0001, {animate: false}) // fix pan animation bug
+					map.setView(self.toLatLngs(location.getCentre()), self.getCurrentWorld().maxZoomLevel, {animate: true});
 					if (id?.editing) {
 						this.edit(location);
 					} else {
@@ -1029,9 +1029,7 @@ export default class Gamemap {
 		if (world) { // if world is specified, search that one
 			localLocation = world.getLocation(identifier);
 		} else { // otherwise search all worlds
-			this.mapWorlds?.forEach(world => {
-				localLocation = (world.hasLocation(identifier)) ? world.getLocation(identifier) : localLocation;
-			});
+			this.mapWorlds?.forEach(world => { localLocation = (world.hasLocation(identifier)) ? world.getLocation(identifier) : localLocation });
 		}
 
 		if (localLocation) { // return local location if we found any
@@ -1040,7 +1038,7 @@ export default class Gamemap {
 			return Promise.resolve(localLocation);
 		}
 
-		if (localLocation == null) { // otherwise if no cached copies were found, search the db
+		if (!localLocation) { // otherwise if no cached copies were found, search the db
 
 			let query = {
 				action: "get_centeron",

@@ -5,28 +5,36 @@ how was your holiday? where did you go
 various bits and bobs, some gamemap fixes, designed some starfield wiki stuff
 
 ## gamemap
+-------------------------------------------------------------
+### technical
 
 - merged vality into master (lots of merge conflicts so stuff might be missing)
 - updated readme with build instructions (setting up localhost server and stuff)
-- fixed missing icons / 404 on SR
+### polish
 - updated wiki map pages with help from dcsg
 >> made help link open wiki page in new tab instead of dialog, as all the info is on there now
 - made "name" field auto focus when adding locations
 
+### bug fixes
+- fixed missing icons / 404 on SR
+- fixed glitchiness with popups opening
+- fixed searching for locations always doing network request even if cached
+
+
+
 
 ## app
-## sfwiki
+---------------------------------------------------------------
 
+
+
+## sfwiki
+---------------------------------------------------------------
 
 ## todo
 
 - wiki page field collapsing if text is identical to name (only collapse on switch click or null/blank)
 - add &search query param compatibility
-
-- fix flash loading maps from centeron
-
-
-- fix getlocation always doing network request instead of local
 
 - make getworld do both network and local and toast if invaliid
 - make world param also work with displayName (search displayName and return world)
@@ -44,8 +52,10 @@ various bits and bobs, some gamemap fixes, designed some starfield wiki stuff
 - wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 
 
+
 - start sf wiki design figma
 
+prepare for performance review
 ## todo maps (future)
 - skyrim minecraft map thing
 - cave interior maps for skyrim, ob, mw
