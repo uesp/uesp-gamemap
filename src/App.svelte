@@ -83,6 +83,7 @@
 	let locationListShown = false;
 	let showMaps = false;
 	let mapKeyDialog;
+	let searchPane;
 
 	// on app start
 	onMount(async() => {
@@ -183,6 +184,11 @@
 		setWindowTitle(mapState.world.displayName);
 		locationList?.dismiss();
 		isLoaded = true;
+		if (mapState.pendingSearch) {
+			setTimeout(() => {
+				searchPane.updateSearch(mapState.pendingSearch);
+			}, 100);
+		} 
 	}
 
 	/*================================================
@@ -285,7 +291,7 @@
 					{#if !gamemap.isEmbedded()}
 
 						<ZoomWidget currentZoom = {mapState?.getZoom()} lock={mapLock}/>
-						<SearchPane lock={mapLock}/>
+						<SearchPane lock={mapLock} bind:this={searchPane}/>
 
 						<!-- show layer switcher when available -->
 						{#if mapState.world.hasLayerMenu()}
@@ -316,10 +322,12 @@
 							<slot:template slot="secondary">
 								{#if gamemap.hasMultipleWorlds()}
 									<IconButton icon="explore" label={mapState.world.displayName} tooltip="Show location list" dropdown="true"  lock={mapLock} checked={locationListShown} on:checked={() => locationList.toggle()}/>
+								{/if}
+
+								{#if mapState.world.wikiPage} <!-- only show article button if world has a wiki page -->
 									<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" lock={mapLock} on:click={() => {
 										print("Getting article link...");
-										let link = mapState.world.getWikiLink();
-										if (link != null && link != "") window.open(link);
+										window.open(mapState.world.getWikiLink());
 									}}/>
 								{/if}
 

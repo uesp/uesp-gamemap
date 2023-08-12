@@ -1,24 +1,50 @@
 ## last fortnight
 
-how was your holiday? where did you go
+various bits and bobs: gamemap fixes, app fixes, brief sfwiki stuff
 
-various bits and bobs, some gamemap fixes, designed some starfield wiki stuff
+how was your holiday? where did you go
 
 ## gamemap
 -------------------------------------------------------------
 ### technical
-
 - merged vality into master (lots of merge conflicts so stuff might be missing)
 - updated readme with build instructions (setting up localhost server and stuff)
+
 ### polish
 - updated wiki map pages with help from dcsg
 >> made help link open wiki page in new tab instead of dialog, as all the info is on there now
 - made "name" field auto focus when adding locations
+- made goto article button show if there's wikipage available, not just if there's multiple worlds (affects mw map, tr)
 
 ### bug fixes
 - fixed missing icons / 404 on SR
 - fixed glitchiness with popups opening
 - fixed searching for locations always doing network request even if cached
+- if zoom isnt provided in url, then default to max zoom (fixes some map links on the wiki)
+- fixed gamemap not loading on steam embedded browser
+
+
+
+
+## todo
+
+- wiki page field collapsing if text is identical to name (only collapse on switch click or null/blank)
+- add &search query param compatibility
+
+
+- make getworld do both network and local and toast if invaliid
+- make world param also work with displayName (search displayName and return world)
+
+- organise/refactor app.css
+- comment/refactor gamemap js
+
+- doo app styff
+
+- wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
+
+
+
+- start sf wiki design figma
 
 
 
@@ -31,31 +57,12 @@ various bits and bobs, some gamemap fixes, designed some starfield wiki stuff
 ## sfwiki
 ---------------------------------------------------------------
 
-## todo
+- show designs and stuff
+- have you considered calling it constellation wiki?
 
-- wiki page field collapsing if text is identical to name (only collapse on switch click or null/blank)
-- add &search query param compatibility
-
-- make getworld do both network and local and toast if invaliid
-- make world param also work with displayName (search displayName and return world)
-
-
-- if url has xy but no zoom, do max zoom
-
-
-
-- organise app.css and comment gamemap js
-- comment/refactor all code
-
-- doo app styff
-
-- wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
-
-
-
-- start sf wiki design figma
-
-prepare for performance review
+----------------------------------------------------------------
+- signal stuff
+prepare for performance review, make notes
 ## todo maps (future)
 - skyrim minecraft map thing
 - cave interior maps for skyrim, ob, mw
@@ -75,6 +82,6 @@ prepare for performance review
 
 app:
 - cross platform
-- cross wiki
 - integrate maps
+- cross wiki
 - "find in page"

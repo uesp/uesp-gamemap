@@ -21,16 +21,16 @@
 
     // declare state vars
     export let lock;
+    export let searchQuery = "";
     let searchBox = null;
     let isLoading = false;
     let searchCurrentMap = false;
     let doPinSearch = getPrefs("pinsearch");
-    $: expandOptions = getPrefs("expandsearchoptions");
-    $: searchQuery = "";
-    $: searchResults = null;
-    $: searchFocused = null;
-    $: showSearchPane = (searchQuery.length > 0 && searchQuery != "" && searchFocused && searchBox.value != "") && !lock;
+    let expandOptions = getPrefs("expandsearchoptions");
+    let searchResults = null;
+    let searchFocused = null;
     let currentlySelectedResult = 0;
+    $: showSearchPane = (searchQuery.length > 0 && searchQuery != "" && searchFocused && searchBox.value != "") && !lock;
 
     // search result object
     let SearchResult = class {
@@ -45,9 +45,11 @@
     // update search query
     let timer;
     const DELAY_AMOUNT = 500;
-    function updateSearch(query, currentMapOnly) {
+    export function updateSearch(query, currentMapOnly) {
         // update search query
         searchQuery = query;
+        searchBox.value = query;
+        searchFocused = true;
         currentMapOnly = (currentMapOnly != null) ? currentMapOnly : false;
 
         if (query != null && query.length > 0) {
@@ -56,17 +58,11 @@
             isLoading = true;
 
             // search debouncing
-            if (timer != null){
-                clearTimeout(timer);
-            }
-            timer = setTimeout(() => {
-                doSearch(query, currentMapOnly);
-            }, DELAY_AMOUNT)
+            if (timer != null) clearTimeout(timer)
+            timer = setTimeout(() => doSearch(query, currentMapOnly), DELAY_AMOUNT);
 
         } else {
-            currentlySelectedResult = 0;
-            isLoading = false;
-            searchResults = null;
+            clearSearch();
         }
     }
 
@@ -213,7 +209,17 @@
     }
 
     // callbacks
-    function clearSearch() { searchBox.value = ""; updateSearch("", false) }
+    function clearSearch() { 
+        searchBox.value = ""; 
+        currentlySelectedResult = 0;
+        isLoading = false;
+        searchResults = null;
+        if (gamemap.getMapState().pendingSearch) {
+            let mapState = gamemap.getMapState();
+            mapState.pendingSearch = null;
+            gamemap.updateMapState(mapState);
+        }
+    }
     function goto(destinationID) {gamemap.goto(destinationID); if (!doPinSearch){ searchFocused = false; } }
 
 </script>

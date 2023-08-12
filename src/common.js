@@ -522,6 +522,7 @@ window.polygonCenter = function polygonCenter(points) {
  * @param {Object} object - the object to be cloned
  * @returns {Object}  - The cloned object.
  */
+window.structuredClone = function structuredClone(object) { return JSON.parse(JSON.stringify(object));}
 window.deepClone = function deepClone(object) {
 	return Object.assign(Object.create(Object.getPrototypeOf(object)), object);
 }

@@ -198,7 +198,7 @@ export default class Gamemap {
 			}
 			mapState.legacy = false; // conversion completed
 		}
-		mapState.zoom = (mapState.zoom) ? mapState.zoom : map.getBoundsZoom(RC.getMaxBounds());
+		mapState.zoom = (mapState.zoom) ? mapState.zoom : (mapState.coords && !mapState.zoom) ? mapState.world.maxZoomLevel : map.getBoundsZoom(RC.getMaxBounds());
 		mapState.coords = (mapState.coords) ? mapState.coords : this.toCoords(RC.getMaxBounds().getCenter());
 		if (!mapState.coords && !mapState.zoom) {
 			map.fitBounds(RC.getMaxBounds(), {animate: false});
@@ -257,8 +257,6 @@ export default class Gamemap {
 
 		if (getURLParams().has("world")) {
 			mapState.world = this.getWorld(getURLParams().get("world"));
-		} else {
-			mapState.world = this.getWorldFromID(this.mapConfig.defaultWorldID);
 		}
 
 		if (getURLParams().has("zoom")) {
@@ -273,8 +271,6 @@ export default class Gamemap {
 
 		if (getURLParams().has("grid")) {
 			mapState.gridData = JSON.parse(decodeURIComponent(getURLParams().get("grid")));
-		} else {
-			mapState.gridData = null;
 		}
 
 		if (getURLParams().has("cellresource")) {
@@ -284,8 +280,10 @@ export default class Gamemap {
 		if (getURLParams().has("layer")) {
 			let layer = getURLParams().get("layer");
 			mapState.layerIndex = (isNaN(parseInt(layer))) ? this.getLayerIndexFromName(layer, mapState.world.layers) : parseInt(layer);
-		} else {
-			mapState.layerIndex = 0;
+		}
+
+		if (getURLParams().has("search")) {
+			mapState.pendingSearch = getURLParams().get("search");
 		}
 
 		return mapState;
@@ -326,6 +324,9 @@ export default class Gamemap {
 		if (mapState?.gridData) {
 			mapLink += `&grid=${encodeURIComponent(JSON.stringify(mapState.gridData))}`;
 		}
+		if (mapState?.pendingSearch) {
+			mapLink += `&search=${mapState.pendingSearch}`;
+		}
 
 		// callback
 		self.mapCallbacks?.onMapStateChanged(mapState);
@@ -349,7 +350,7 @@ export default class Gamemap {
 			let queryParams = {};
 			queryParams.action = "get_worlds";
 			queryParams.db = mapConfig.database;
-			self.mapCallbacks?.setLoading("Loading world");
+			self.mapCallbacks?.setLoading("Loading worlds");
 
 			if (this.mapWorlds.size == 0) {
 				getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
@@ -468,11 +469,9 @@ export default class Gamemap {
 	 * @param {Object} place - Either a world, a location, or ID of one of those two.
 	 */
 	goto(place) {
-		// figure out what data we're being passed
 
+		// make sure we're not being passed null data
 		if (place == null) { return }
-
-		let isNumerical = !isNaN(place);
 
 		this.mapCallbacks?.setLoading(true);
 		place = (place) ? (isString(place)) ? parseInt(place) : place : this.getCurrentWorldID();
@@ -1340,8 +1339,6 @@ export default class Gamemap {
 
 	bindMapEvents() {
 
-
-
 		map.on('resize moveend zoomend', function() {
 
 			self.getCurrentWorld()?.locations?.forEach(location => {
@@ -1366,6 +1363,13 @@ export default class Gamemap {
 					}
 
 					location.setWasVisible(isVisible);
+				}
+
+				// remove pendingSearch if provided
+				if (self.getMapState().pendingSearch) {
+					let mapState = self.getMapState();
+					mapState.pendingSearch = null;
+					self.updateMapState(mapState);
 				}
 
 			});

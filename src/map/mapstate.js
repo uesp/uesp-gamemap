@@ -29,6 +29,7 @@ export default class MapState {
         this.zoom = data?.zoom ?? (this.pendingJump instanceof Location ? gamemap.getWorldByID(this.pendingJump?.worldID).maxZoomLevel : null);
         this.gridData = data?.gridData ?? null;
 		this.layerIndex = data?.layerIndex ?? 0;
+        this.pendingSearch = null;
     }
 
     getZoom() {
