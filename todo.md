@@ -13,8 +13,10 @@ how was your holiday? where did you go
 ### polish
 - updated wiki map pages with help from dcsg
 >> made help link open wiki page in new tab instead of dialog, as all the info is on there now
+>> this was also to get around the link garbling bug with the dialogs
 - made "name" field auto focus when adding locations
 - made goto article button show if there's wikipage available, not just if there's multiple worlds (affects mw map, tr)
+- added &search param in url (a couple wiki map links had them)
 
 ### bug fixes
 - fixed missing icons / 404 on SR
@@ -29,8 +31,6 @@ how was your holiday? where did you go
 ## todo
 
 - wiki page field collapsing if text is identical to name (only collapse on switch click or null/blank)
-- add &search query param compatibility
-
 
 - make getworld do both network and local and toast if invaliid
 - make world param also work with displayName (search displayName and return world)

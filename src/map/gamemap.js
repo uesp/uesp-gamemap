@@ -1365,13 +1365,6 @@ export default class Gamemap {
 					location.setWasVisible(isVisible);
 				}
 
-				// remove pendingSearch if provided
-				if (self.getMapState().pendingSearch) {
-					let mapState = self.getMapState();
-					mapState.pendingSearch = null;
-					self.updateMapState(mapState);
-				}
-
 			});
 
 			self.clearTooltips();

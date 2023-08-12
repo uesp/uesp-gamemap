@@ -184,11 +184,15 @@
 		setWindowTitle(mapState.world.displayName);
 		locationList?.dismiss();
 		isLoaded = true;
-		if (mapState.pendingSearch) {
-			setTimeout(() => {
+
+		// load pendingSearch if there is one
+		setTimeout(() => { // timeout to wait for ui to load
+			if (mapState.pendingSearch) {
 				searchPane.updateSearch(mapState.pendingSearch);
-			}, 100);
-		} 
+				mapState.pendingSearch = null;
+				gamemap.updateMapState(mapState);
+			}
+		});
 	}
 
 	/*================================================

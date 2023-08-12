@@ -214,11 +214,6 @@
         currentlySelectedResult = 0;
         isLoading = false;
         searchResults = null;
-        if (gamemap.getMapState().pendingSearch) {
-            let mapState = gamemap.getMapState();
-            mapState.pendingSearch = null;
-            gamemap.updateMapState(mapState);
-        }
     }
     function goto(destinationID) {gamemap.goto(destinationID); if (!doPinSearch){ searchFocused = false; } }
 
