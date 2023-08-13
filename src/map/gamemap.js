@@ -30,8 +30,8 @@ import Point from "./point.js";
 let self; // Local "this" instance of Gamemap
 let map; // Leaflet map instance
 let tileLayer; // Current tile layer
-let gridLayer;
 let RC; // RasterCoords instance, for converting leaflet latlngs to XY pixel coords and back
+let gridLayer // Grid instance
 
 /*================================================
 				  Constructor
@@ -54,8 +54,8 @@ export default class Gamemap {
 			mapRoot = gamemap;
 		}
 
-		// check if other params are valid
-		if (mapConfig != null && mapCallbacks != null) {
+		// make sure we have both map config and callbacks
+		if (mapConfig && mapCallbacks) {
 
 			// load in map config
 			this.mapConfig = mapConfig;
@@ -92,10 +92,10 @@ export default class Gamemap {
 					   Initialise
 	================================================*/
 
-	/** Initialise default map state and variables.
-	 * @param {Object} mapConfig - Object that controls the default settings of the map.
+	/**
+	 *  Initialise default map state and variables.
 	 */
-	initialiseMap(mapConfig) {
+	initialise() {
 		// set global map options
 		var mapOptions = {
 			crs: L.CRS.Simple, // CRS: coordinate reference system
@@ -131,7 +131,7 @@ export default class Gamemap {
 	}
 
 	/*================================================
-						  State
+						Map State
 	================================================*/
 
 	/** Get current map state object.
@@ -143,18 +143,18 @@ export default class Gamemap {
 
 	/** Override mapState to provided map state (use to load from URL or from saved state).
 	 * @param {Object} mapState - Object that controls the state and view of the map.
-	 * @param {Boolean} onlyUpdateTiles - Flag to only update map tiles. Default: false (replaces everything).
+	 * @param {Boolean} onlyRedrawTiles - Flag to only redraw map tiles. Default: false (redraws everything).
 	 */
-	async setMapState(mapState, onlyUpdateTiles) {
+	async setMapState(mapState, onlyRedrawTiles) {
 
 		print("Setting map state!");
 		print(mapState);
-		onlyUpdateTiles = onlyUpdateTiles ?? false;
+		onlyRedrawTiles = onlyRedrawTiles ?? false;
 
 		// remove previous tiles
 		if (tileLayer != null) {
 			tileLayer.remove();
-			if (!onlyUpdateTiles) this.clearLocations();
+			if (!onlyRedrawTiles) this.clearLocations();
 		}
 
 		// if we have centreon in the url, wait until we get centreon data
@@ -231,7 +231,7 @@ export default class Gamemap {
 		// set background colour
 		if (mapState.world.layers[mapState.layerIndex].bg_color) { this.mapRoot.style.backgroundColor = mapState.world.layers[mapState.layerIndex].bg_color; }
 
-		if (!onlyUpdateTiles) {
+		if (!onlyRedrawTiles) {
 			// get/set locations
 			if (mapState.world.locations == null) {
 				// get locations for this map
@@ -337,12 +337,77 @@ export default class Gamemap {
   		window.dispatchEvent(new PopStateEvent('popstate'));
 	}
 
+	/** Sets map lock state (default: 0)
+	 * @param {Object} mapLock - mapLock type to set the map with.
+	 */
+	setMapLock(mapLock) {
+		// set map lock state
+		if (mapLock && mapLock == MAPLOCK.FULL)  {
+			map.dragging.disable();
+			map.smoothWheelZoom.disable();
+			map.keyboard.disable();
+			this.mapRoot.classList.add("locked"); // add locked css
+		} else {
+			map.dragging.enable();
+			map.smoothWheelZoom.enable();
+			map.keyboard.enable();
+			this.mapRoot.classList.remove("locked"); // remove locked css
+		}
+
+		// callback back to UI
+		this.mapLock = mapLock;
+		this.mapCallbacks?.onMapLockChanged(this.mapLock);
+	}
+
+	/** Get current map lock state.
+	 * @returns {Object} mapLock - Current map lock state.
+	 */
+	getMapLock() { return this.mapLock }
+
+	/** Initiate edit mode for specified location/world
+	 * @param {Object} object - World or Location object to begin editing
+	 */
+	async edit(object) {
+
+		if (!isNaN(object)) {
+			object = (object > 0) ? this.getWorldByID(object) : await this.getLocation(object);
+		}
+
+		let isWorld = object instanceof World;
+		let isLocation = object instanceof Location;
+
+		if (isWorld && object.id != this.getCurrentWorldID() || isLocation && object.worldID != this.getCurrentWorldID()) {
+			object.editing = true;
+			self.mapState.pendingJump = object;
+			self.setMapState(new MapState({pendingJump: object}));
+		} else {
+			this.mapCallbacks?.edit(object);
+			map.closePopup();
+		}
+	}
+
+	/** Reset the map to its initial state, or reset the current world, with optional padding
+	 * @param {Boolean} currentWorldOnly - Whether to reset the currently world only, or reset the whole map
+	 * @param {Integer} customPadding - If currentWorldOnly is true, then controls how much padding (if any) should be around the map's edges when reset.
+	 */
+	reset(currentWorldOnly, customPadding) {
+		if (!this.hasMultipleWorlds() || currentWorldOnly) {
+			if (customPadding) {
+				map.fitBounds(RC.getMaxBounds(customPadding), {animate: true});
+			} else {
+				map.fitBounds(RC.getMaxBounds(), {animate: true});
+			}
+		} else {
+			this.goto(this.mapConfig.defaultWorldID);
+		}
+	}
+
 	/*================================================
 						  Worlds
 	================================================*/
 
 	/** Get world data for this game's mapConfig. If no mapConfig param provided, returns current list of worlds
-	 * @see initialiseMap()
+	 * @see initialise() for loading the world data
 	 */
 	getWorlds(mapConfig) {
 
@@ -367,7 +432,7 @@ export default class Gamemap {
 					// initialise map
 					print(`Loaded ${worlds.length} worlds!`);
 					print(worlds);
-					self.initialiseMap(mapConfig);
+					self.initialise();
 				}).catch((error) => {throw new Error(`Could not retrieve world data: ${error}`)});
 			}
 		} else {
@@ -442,31 +507,429 @@ export default class Gamemap {
 		return [...this.mapWorlds.values()].find(prop => prop.displayName == worldDisplayName);
 	}
 
+	/** Get world object by identifier (generic)
+	 * @param {Object} identifier - A identifiable piece of data for worlds (ID, name, display name etc)
+	 * @returns {Object} world - The world object that most fits the provided identider, or the current world if none passed.
+	 */
+	getWorld(identifier) {
+		if (identifier && identifier != "undefined") {
+			let world = (isNaN(parseInt(identifier))) ? this.getWorldFromName(identifier) ?? this.getWorldFromDisplayName(identifier) : this.isWorldValid(identifier) ? this.getWorldFromID(identifier) : null;
+			if (world) {
+				return world;
+			} else {
+				M.toast({html: "That world doesn't exist!"});
+				return this.getWorldFromID(MAPCONFIG.defaultWorldID);
+			}
+		} else {
+			return this.getCurrentWorld();
+		}
+	}
+
 	/** Simple function that returns whether the current gamemap has multiple worlds.
 	 * @returns {Boolean} - A boolean whether or not the current gamemap contains multiple worlds.
 	 */
 	hasMultipleWorlds() { return this.mapWorlds.size > 1 }
 
-	// update world
+	/** Update the provided world with new data, used for editing
+	 * @param {Object} world - The world object to be updated
+	 */
 	updateWorld(world) {
 		// update world data
 		this.getWorlds().set(world?.id, world);
 		this.setMapState(this.getMapState(), true);
 	}
 
-	// delete world
+	/** Delete the current world from the local cache (Note: does not delete from the server). Used for editing.
+	 * @param {Object} world - The world object to be deleted
+	 */
 	deleteWorld(world) {
 		// delete selected world from cache
 		this.getWorlds()?.delete(world.id);
 		this.goto(world.parentID ?? MAPCONFIG.defaultWorldID);
 		getWorldLists(); // update world lists
 	}
+	
+	/*================================================
+						Locations
+	================================================*/
+
+	/** Get location object by identifer
+	 * @param {Object} identifier - An identifier related to the location to be found (ID, or name, for example)
+	 * @param {World} world - A specific world to search in (Optional)
+	 */
+	async getLocation(identifier, world) {
+
+		// reject if null
+		if (identifier == null) { return Promise.reject("Location identifier was null") }
+		this.mapCallbacks?.setLoading(true);
+
+		// get location ID from identifier
+		let isNumerical = !isNaN(identifier) || identifier instanceof Location;
+		let isString = identifier instanceof String || typeof identifier === "string";
+		let locationID = Math.abs(identifier?.id ?? identifier);
+		let locationName = isString ? identifier?.toLowerCase() : null;
+		let localLocation;
+
+		print(`Getting info for location: ${identifier}`);
+
+		// search cache for location first
+		if (world) { // if world is specified, search that one
+			localLocation = world.getLocation(identifier);
+		} else { // otherwise search all worlds
+			this.mapWorlds?.forEach(world => { localLocation = (world.hasLocation(identifier)) ? world.getLocation(identifier) : localLocation });
+		}
+
+		if (localLocation) { // return local location if we found any
+			print("found cached location");
+			this.mapCallbacks?.setLoading(false);
+			return Promise.resolve(localLocation);
+		}
+
+		if (!localLocation) { // otherwise if no cached copies were found, search the db
+
+			let query = {
+				action: "get_centeron",
+				db: MAPCONFIG.database,
+				centeron: isNumerical ? locationID : locationName,
+				world:  world?.id ?? null,
+			}
+
+			let response = await getJSON(GAME_DATA_SCRIPT + queryify(query));
+			if (response && response.locations.length > 0) {
+				print("Got location info!");
+				let world = self.getWorldFromID(response?.locations[0]?.worldId);
+				let location = new Location(response.locations[0], world);
+				this.mapCallbacks?.setLoading(false);
+				return Promise.resolve(location);
+			} else {
+				M.toast({html: "That location doesn't exist!"});
+				this.mapCallbacks?.setLoading(false);
+				return Promise.reject(`Location ${identifier} was invalid.`);
+			}
+		}
+	}
+
+	/** Initiates edit mode to add the specified location to the map. Used for editing.
+	 * @param {LocType} locType - The locType to be added to the map.
+	 */
+	addLocation(locType) {
+
+		print("adding location..");
+
+		let isMarker = locType == LOCTYPES.MARKER;
+		let showTooltip = isMarker;
+		this.setMapLock(isMarker ? MAPLOCK.PARTIAL_NEW_MARKER : locType == LOCTYPES.AREA ? MAPLOCK.PARTIAL_NEW_POLYGON : MAPLOCK.PARTIAL_NEW_LINE );
+		let shape = (isMarker ? "Marker" : locType == LOCTYPES.AREA ? "Polygon" : "Line");
+		let altText = isMarker ? "new_marker" : "";
+
+		map.pm.enableDraw(shape, {
+            markerStyle: {
+				icon: this.getIcon(Math.min(...Array.from(MAPCONFIG.icons.keys()))),
+				alt: altText,
+			},
+            continueDrawing: false,
+			tooltips: showTooltip,
+        });
+
+		if (isMarker) { // hacky stuff to add label to geoman's marker object
+			// get our marker
+			let marker = document.querySelectorAll(`[alt="${altText}"]`)[0];
+			if (marker) {
+				marker.removeAttribute("alt") // remove alt attribute
+				marker.classList.add("editing");
+				print(marker);
+
+				// get tooltip
+				let tooltip = document.getElementById(marker.getAttribute('aria-describedby'));
+				tooltip.classList.add("location-label", "new-marker-label", "editing");
+				tooltip.innerText = "New Marker";
+			}
+		}
+
+		map.on("pm:create", ({ shape, layer }) => {
+			print(shape);
+			print(layer);
+			let isMarker = shape == "Marker";
+			layer.remove();
+			print(isMarker);
+			let location = new Location({
+				locType:  (isMarker) ? LOCTYPES.MARKER : (shape == "Polygon") ? LOCTYPES.AREA : LOCTYPES.PATH,
+				coords: self.toCoords(layer.getCoordinates()),
+			}, this.getCurrentWorld());
+			this.getCurrentWorld()?.locations?.set(location.id, location);
+			this.edit(location);
+		});
+
+	}
+
+	/** Update the given world with the list of locations from the server.
+	 * @param {World} world - The world to get locations from the server for.
+	 */
+	getLocations(world) {
+
+		self.clearLocations();
+		print("Getting locations...");
+
+		// check if we've been sent a world ID
+		if (world != null && !isNaN(world)){
+			if (this.isWorldValid(world)) {
+				world = this.getWorldFromID(world);
+			}
+		}
+
+		// make sure we're being given a valid world state
+		if (world == null || world.id == null || world.id < 0 ) { return }
+
+		// generate api query
+		var queryParams = {};
+		queryParams.action = "get_locs";
+		queryParams.world  = world.id;
+		queryParams.db = MAPCONFIG.database;
+
+		// make api query
+		getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
+			let locations = data.locations;
+			let locationMap = new Map();
+
+			print(`Got ${data.locationCount} locations!`);
+			print(locations);
+
+			locations.forEach(location => {
+				if (location.id && location.visible == 1 && !location.description.includes("teleport dest")) {
+					locationMap.set(location.id, new Location(location, world));
+				}
+			});
+
+			// update world
+			self.mapWorlds.get(world.id).locations = locationMap;
+
+			// make sure we're in the right world before overwriting all locations
+			if (self.getCurrentWorldID() == world.id) {
+				self.drawLocations(locationMap);
+			}
+
+		}).catch(error => {throw new Error(`There was an error getting locations: ${error}`)});
+	}
+
+	/** Delete the specified location from the map. (Note: does not delete the location from the server). Used for editing. 
+	 * @param {Location} location - the location to be deleted from the map.
+	 */
+	deleteLocation(location) {
+		// remove existing marker(s)
+		let markers = this.getMarkersFromLocation(location);
+		markers.forEach(function(marker) { marker.remove() });
+
+		// delete location from data as well
+		let locations = this.getCurrentWorld().locations;
+		locations?.delete(location.id);
+	}
+
+	/** Update the specified location with new data. Used in editing. 
+	 * @param {Location} location - the location to be updated.
+	 */
+	updateLocation(location) {
+
+		// remove existing marker(s)
+		let markers = this.getMarkersFromLocation(location);
+		markers.forEach(function(marker) { marker.remove() });
+		map.closePopup();
+
+		// update location data
+		this.getCurrentWorld().locations?.set(location?.id, location);
+
+		// create new markers
+		markers = this.getMarkers(location);
+		markers.forEach(function(marker) { marker.addTo(map) });
+
+		// enable edit mode on marker if needed
+		if (location?.editing) {
+			if (!location.revertID) {
+				if (location.locType == LOCTYPES.MARKER) { // race condition if marker isnt actually added yet
+					setTimeout(() => { markers[0].edit() }, 0);
+				} else {
+					markers[0].edit();
+				}
+			}
+			markers.forEach(function(marker) { marker.setEditingEffect(true) });
+		}
+
+	}
+
+	/** Clear all locations and markers from the map. 
+	 * @see deleteLocation() for removing an individual location from the map.
+	 */
+	clearLocations() {
+		map.eachLayer((layer) => {
+			if (!layer._tiles && layer.options.className != "cellGrid" ) { //remove anything that is not a tile or cell grid
+				layer.off('resize move zoom');
+				layer.remove();
+			}
+		});
+	}
+
+	/** Draw the provided locations on the map.
+	 * @param {Array} locations - A list of locations to draw on the current map.
+	 */
+	drawLocations(locations) {
+
+		// delete any existing location layers
+		this.clearLocations();
+
+		// set up location layer for each zoom level
+		print("Loading initial locations...");
+
+		// check if current map has any locations
+		if (locations.size > 0) {
+
+			// iterate through each location in the list
+			print("Adding location markers to map...")
+			locations.forEach(location => {
+
+				if (location?.isVisible()) {
+					// add markers to the map
+					this.getMarkers(location).forEach(marker => { marker.addTo(map) });
+					location.setWasVisible(true);
+
+					// centre to location if we have a pendingjump for it
+					let jump = this.mapState?.pendingJump;
+					if (jump instanceof Location && jump.id == location.id) {
+						this.mapState.pendingJump = null;
+						this.gotoLocation(jump);
+					}
+				}
+			});
+		}
+
+		// callback to show map fully loaded
+		this.mapCallbacks?.onMapLoaded(true);
+		this.mapRoot.style.animation = "none";
+
+	}
+
+	/** Get leaflet compatible markers from this location. (Some locations may contain more than one marker)
+	 * @param {Location} location - The location to get markers for.
+	 * @returns {Array} - An array of leaflet markers, that can be added to the map.
+	 */
+	getMarkers(location) {
+
+		// return early if missing required attributes
+		if (location == null || location.coords == null) { return [] }
+
+		// make generic fallback marker
+		let polygonIcon = null;
+		let coords = location.coords;
+		let marker = new L.marker(this.toLatLngs(coords[0]), {riseOnHover: true},);
+		L.Marker.prototype.options.icon = L.icon({ iconUrl: IMAGES_DIR + "transparent.png" });
+
+		// create specific marker type
+		if (location.isPolygon()) { // is location polygonal? (polyline or polygon)
+
+			// get coordinates of location
+			coords = [];
+			for (let i = 0; i < location.coords.length; i++) {
+				coords.push(this.toLatLngs(location.coords[i]));
+			}
+
+			let options = {
+				noClip: true,
+				smoothFactor: 2,
+				fillColor: location.fillColour,
+				color: location.strokeColour,
+				fillOpacity: null,
+				weight: location.strokeWidth,
+			}
+
+			if (location.locType == LOCTYPES.AREA) {
+				marker = new L.polygon(coords, options);
+
+				if (location.hasIcon()) {
+					marker.setIsIconPolygon(true);
+					polygonIcon = this.makeMarker(location, self.toLatLngs(location.getCentre()));
+				}
+			}
+
+			if (location.locType == LOCTYPES.PATH) {
+				marker = new L.polyline(coords, options);
+			}
+
+		} else { // if no, then it must be a single point (icon, label)
+
+			if (location.hasIcon()) {
+				marker = this.makeMarker(location, this.toLatLngs(coords[0]));
+			}
+
+		}
+
+		// bind stuff to markers
+		let markers = [marker, polygonIcon].filter((i) => i !== null);
+		markers.forEach(marker => {
+			// bind location to marker
+			marker.setLocation(location);
+
+			// add label to marker if applicable
+			if (location.hasLabel() && !marker.isIconPolygon()) {
+				marker.bindTooltip(location.name, location.getLabel());
+			}
+
+			// bind marker events
+			marker.once('add', function() {
+
+				// on marker deselected
+				marker.on("mouseout", function () {
+					self.clearTooltips();
+					let isPolygon = marker.location.isPolygon() && marker._path;
+
+					if (isPolygon){
+						this.setStyle({
+							fillColor: location.fillColour,
+							color: location.strokeColour,
+							weight: location.strokeWidth,
+						});
+					}
+				});
+
+				// on marker hovered over
+				marker.on('mouseover', function () {
+
+					let isPolygon = location.isPolygon() && marker._path;
+
+					L.tooltip(self.toLatLngs(location.getCentre()), {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
+
+					if (isPolygon){
+						this.setStyle({
+							fillColor: location.fillColourHover,
+							color: location.strokeColourHover,
+							weight: location.strokeWidthHover,
+						});
+					}
+				});
+
+				// on marker clicked
+				marker.on('click', event => {
+					let shift = event.originalEvent.shiftKey; // edit
+					let ctrl = event.originalEvent.ctrlKey; // popup
+					if (!self.mapLock || MAPLOCK.isPartialNoNew(self.mapLock)) {
+						self.onMarkerClicked(this, shift, ctrl);
+					}
+				});
+
+				marker.on('dblclick', () => {
+					if ((!self.mapLock || MAPLOCK.isPartialNoNew(self.mapLock)) && !this.getLocation().isClickable()) {
+						self.onMarkerClicked(this, true, false);
+					}
+				});
+			});
+
+		});
+
+		return markers;
+	}
 
 	/*================================================
 						Navigation
 	================================================*/
 
-	/** Convenience method to quickly "goto" a location, world, or certain coordinates.
+	/** Convenience method to quickly "goto" a location or a world. Can be passed both IDs and objects.
 	 * @param {Object} place - Either a world, a location, or ID of one of those two.
 	 */
 	goto(place) {
@@ -487,20 +950,37 @@ export default class Gamemap {
 		}
 	}
 
-	getWorld(identifier) {
-		if (identifier && identifier != "undefined") {
-			let world = (isNaN(parseInt(identifier))) ? this.getWorldFromName(identifier) ?? this.getWorldFromDisplayName(identifier) : this.isWorldValid(identifier) ? this.getWorldFromID(identifier) : null;
-			if (world) {
-				return world;
-			} else {
-				M.toast({html: "That world doesn't exist!"});
-				return this.getWorldFromID(MAPCONFIG.defaultWorldID);
+	/** Navigation method to jump to the provided world / world ID.
+	 *  @param {Object} worldID - The world ID to jump to.
+	 *  @param {Point} coords - Coordinates on the map to jump to (Optional)
+	 */
+	gotoWorld(worldID, coords) {
+		worldID = (worldID instanceof World) ? worldID.id : worldID;
+		print(worldID);
+		if (self.isWorldValid(worldID)) {
+			// if we are in the same world, just pan to the provided location (or just reset map)
+			if (worldID == self.getCurrentWorldID()) {
+				if (coords) {
+					map.setView(self.toLatLngs(coords), self.getCurrentWorld().maxZoomLevel);
+				} else {
+					self.reset(true);
+				}
+				self.mapCallbacks?.setLoading(false);
+			} else { // else load up the new world
+				self.clearLocations();
+				let world = self.getWorldFromID(worldID);
+				print(`Going to world... ${world.displayName} (${world.id});`);
+				self.setMapState(new MapState({coords: coords, world: world, pendingJump: world?.editing ? world : null, layerIndex: 0}));
 			}
 		} else {
-			return this.getCurrentWorld();
+			this.mapCallbacks?.setLoading(false);
+			print('Gamemap attempted to navigate to invalid world ID: ' + worldID);
 		}
 	}
 
+	/** Navigation method to centre on the provided location.
+	 *  @param {Object} id - The ID of the location to jump to.
+	 */
 	gotoLocation(id) {
 		print(`going to location: ${id}`);
 
@@ -527,122 +1007,6 @@ export default class Gamemap {
 			print(error);
 			self.mapCallbacks?.setLoading(false);
 		});
-	}
-
-	gotoWorld(worldID, coords) {
-		worldID = (worldID instanceof World) ? worldID.id : worldID;
-		print(worldID);
-		if (self.isWorldValid(worldID)) {
-			// if we are in the same world, just pan to the provided location (or just reset map)
-			if (worldID == self.getCurrentWorldID()) {
-				if (coords) {
-					map.setView(self.toLatLngs(coords), self.getCurrentWorld().maxZoomLevel);
-				} else {
-					self.reset(true);
-				}
-				self.mapCallbacks?.setLoading(false);
-			} else { // else load up the new world
-				self.clearLocations();
-				let world = self.getWorldFromID(worldID);
-				print(`Going to world... ${world.displayName} (${world.id});`);
-				self.setMapState(new MapState({coords: coords, world: world, pendingJump: world?.editing ? world : null, layerIndex: 0}));
-			}
-		} else {
-			this.mapCallbacks?.setLoading(false);
-			print('Gamemap attempted to navigate to invalid world ID: ' + worldID);
-		}
-	}
-
-	/**
-	 * Convert leaflet LatLngs to human readable map coordinates coordinates.
-	 * @param {Object} latLngs - the leaflet latLng coordinate object
-	 * @param {Object} coordType - the coordinate system type to convert to
-	 */
-	getCoords(...args) { return this.toCoords(...args) }
-	toCoords(latLngs, coordType) {
-
-		latLngs = structuredClone(latLngs);
-		coordType = (coordType != null) ? coordType : (latLngs instanceof Point) ? latLngs.coordType : this.mapConfig.coordType;
-
-		if (latLngs.lat != null) {
-
-			// project latlng to XY coords;
-			let coords = RC.project(latLngs);
-
-			if (coordType != COORD_TYPES.XY) {
-				let worldDimensions = this.getCurrentWorld().getWorldDimensions();
-				if (coordType == COORD_TYPES.NORMALISED || coordType == COORD_TYPES.PSEUDO_NORMALISED) {
-					// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
-					let x = (coords.x / worldDimensions.width).toFixed(3);
-					let y = (coords.y / worldDimensions.height).toFixed(3);
-					return new Point(x, y, COORD_TYPES.NORMALISED);
-
-				} else if (coordType == COORD_TYPES.WORLDSPACE) {
-					// get current map world pixel position values
-					let nX = coords.x / worldDimensions.width;
-					let nY = 1 - (coords.y / worldDimensions.height);
-
-					// reproject pixel values to worldspace
-					let x = Math.trunc(worldDimensions.minX + (worldDimensions.maxX - worldDimensions.minX) * nX);
-					let y = Math.trunc(worldDimensions.minY + (worldDimensions.maxY - worldDimensions.minY) * nY);
-					return new Point(x, y, COORD_TYPES.WORLDSPACE);
-				}
-			} else {
-				return coords;
-			}
-
-		} else if (Array.isArray(latLngs)) {
-			let coords = [];
-			latLngs.forEach((latLng) => {coords.push(this.toCoords(latLng, this.mapConfig.coordType))});
-			return coords;
-		}
-	}
-
-	/**
-	 * Convert XY/Normalised/Worldspace coordinates to leaflet's LatLongs.
-	 * @param {Object} coords - the coordinate/point object
-	 */
-	getLatLngs(...args) { return this.toLatLngs(...args) }
-	toLatLngs(coords) {
-
-		coords = structuredClone(coords) // make distinct
-
-		if ((coords instanceof Point || coords?.x) && !Array.isArray(coords)) {
-
-			switch (coords.coordType) {
-				default:
-				case COORD_TYPES.XY:
-					return RC.unproject([coords.x , coords.y]);
-				case COORD_TYPES.NORMALISED:
-					let x = (Number(coords.x) * this.getCurrentWorld().width);
-					let y = (Number(coords.y) * this.getCurrentWorld().height);
-
-					return RC.unproject([x , y]);
-				case COORD_TYPES.PSEUDO_NORMALISED:
-					coords.coordType = COORD_TYPES.NORMALISED;
-					return this.toLatLngs(coords);
-				case COORD_TYPES.WORLDSPACE:
-
-					let xN = coords.x;
-					let yN = coords.y;
-
-					// get normalised value of x and y in range
-					xN = (xN - this.getCurrentWorld().minX) / this.getCurrentWorld().maxRangeX;
-					yN = Math.abs((yN - this.getCurrentWorld().maxY) / this.getCurrentWorld().maxRangeY); // flip y around
-
-					return this.toLatLngs(new Point(xN, yN, COORD_TYPES.NORMALISED));
-			}
-
-		} else if (Array.isArray(coords)) {
-			if (coords[0]?.x) { // are we given an array of coord objects?
-				if (coords.length == 1) { // are we given a single coord object? (marker, point)
-					return this.toLatLngs(coords[0]);
-				}
-
-			} else if (coords.length > 1) { // else we are just given a coord array [x, y]
-				return this.toLatLngs(new Point(coords[0] == 0 ? 0.001 : coords[0], coords[1] == 0 ? 0.001 : coords[1], this.mapConfig.coordType));
-			}
-		}
 	}
 
 	/*================================================
@@ -857,29 +1221,6 @@ export default class Gamemap {
 		}
 	}
 
-	setMapLock(mapLock) {
-		// set map lock state
-		if (mapLock && mapLock == MAPLOCK.FULL)  {
-			map.dragging.disable();
-			map.smoothWheelZoom.disable();
-			map.keyboard.disable();
-			this.mapRoot.classList.add("locked"); // add locked css
-		} else {
-			map.dragging.enable();
-			map.smoothWheelZoom.enable();
-			map.keyboard.enable();
-			this.mapRoot.classList.remove("locked"); // remove locked css
-		}
-
-		// callback back to UI
-		this.mapLock = mapLock;
-		this.mapCallbacks?.onMapLockChanged(this.mapLock);
-	}
-
-	getMapLock() {
-		return this.mapLock;
-	}
-
 	getCurrentTileLayerIndex() {
 		return parseInt(this.getMapState().layerIndex);
 	}
@@ -908,378 +1249,142 @@ export default class Gamemap {
 		return `${this.mapConfig.tileURL + world.name}/leaflet/${world.layers[layerIndex].name + zoom + world.name + xy}`;
 	}
 
+	getLayerIndexFromName(layerName, layersObj) {
+		let layers = (layersObj != null) ? layersObj : this.getCurrentWorld().layers;
+		for (let [key] of Object.entries(layers)) {
+			if (layers[key].name == layerName) {
+				return parseInt(key);
+			}
+		}
+		return 0;
+	}
+
 	/*================================================
-						Locations
+						  Utility
 	================================================*/
 
-	addLocation(locType) {
+	/**
+	 * Convert leaflet LatLngs to human readable map coordinates coordinates.
+	 * @param {Object} latLngs - the leaflet latLng coordinate object
+	 * @param {Object} coordType - the coordinate system type to convert to
+	 */
+	getCoords(...args) { return this.toCoords(...args) }
+	toCoords(latLngs, coordType) {
 
-		print("adding location..");
+		latLngs = structuredClone(latLngs);
+		coordType = (coordType != null) ? coordType : (latLngs instanceof Point) ? latLngs.coordType : this.mapConfig.coordType;
 
-		let isMarker = locType == LOCTYPES.MARKER;
-		let showTooltip = isMarker;
-		this.setMapLock(isMarker ? MAPLOCK.PARTIAL_NEW_MARKER : locType == LOCTYPES.AREA ? MAPLOCK.PARTIAL_NEW_POLYGON : MAPLOCK.PARTIAL_NEW_LINE );
-		let shape = (isMarker ? "Marker" : locType == LOCTYPES.AREA ? "Polygon" : "Line");
-		let altText = isMarker ? "new_marker" : "";
+		if (latLngs.lat != null) {
 
-		map.pm.enableDraw(shape, {
-            markerStyle: {
-				icon: this.getIcon(Math.min(...Array.from(MAPCONFIG.icons.keys()))),
-				alt: altText,
-			},
-            continueDrawing: false,
-			tooltips: showTooltip,
-        });
+			// project latlng to XY coords;
+			let coords = RC.project(latLngs);
 
-		if (isMarker) { // hacky stuff to add label to geoman's marker object
-			// get our marker
-			let marker = document.querySelectorAll(`[alt="${altText}"]`)[0];
-			if (marker) {
-				marker.removeAttribute("alt") // remove alt attribute
-				marker.classList.add("editing");
-				print(marker);
+			if (coordType != COORD_TYPES.XY) {
+				let worldDimensions = this.getCurrentWorld().getWorldDimensions();
+				if (coordType == COORD_TYPES.NORMALISED || coordType == COORD_TYPES.PSEUDO_NORMALISED) {
+					// divide xy coords by height to get normalised coords (0.xxx , 0.yyy)
+					let x = (coords.x / worldDimensions.width).toFixed(3);
+					let y = (coords.y / worldDimensions.height).toFixed(3);
+					return new Point(x, y, COORD_TYPES.NORMALISED);
 
-				// get tooltip
-				let tooltip = document.getElementById(marker.getAttribute('aria-describedby'));
-				tooltip.classList.add("location-label", "new-marker-label", "editing");
-				tooltip.innerText = "New Marker";
-			}
-		}
+				} else if (coordType == COORD_TYPES.WORLDSPACE) {
+					// get current map world pixel position values
+					let nX = coords.x / worldDimensions.width;
+					let nY = 1 - (coords.y / worldDimensions.height);
 
-		map.on("pm:create", ({ shape, layer }) => {
-			print(shape);
-			print(layer);
-			let isMarker = shape == "Marker";
-			layer.remove();
-			print(isMarker);
-			let location = new Location({
-				locType:  (isMarker) ? LOCTYPES.MARKER : (shape == "Polygon") ? LOCTYPES.AREA : LOCTYPES.PATH,
-				coords: self.toCoords(layer.getCoordinates()),
-			}, this.getCurrentWorld());
-			this.getCurrentWorld()?.locations?.set(location.id, location);
-			this.edit(location);
-		});
-
-	}
-
-	getLocations(world) {
-
-		self.clearLocations();
-		print("Getting locations...");
-
-		// check if we've been sent a world ID
-		if (world != null && !isNaN(world)){
-			if (this.isWorldValid(world)) {
-				world = this.getWorldFromID(world);
-			}
-		}
-
-		// make sure we're being given a valid world state
-		if (world == null || world.id == null || world.id < 0 ) { return }
-
-		// generate api query
-		var queryParams = {};
-		queryParams.action = "get_locs";
-		queryParams.world  = world.id;
-		queryParams.db = MAPCONFIG.database;
-
-		// make api query
-		getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
-			let locations = data.locations;
-			let locationMap = new Map();
-
-			print(`Got ${data.locationCount} locations!`);
-			print(locations);
-
-			locations.forEach(location => {
-				if (location.id && location.visible == 1 && !location.description.includes("teleport dest")) {
-					locationMap.set(location.id, new Location(location, world));
+					// reproject pixel values to worldspace
+					let x = Math.trunc(worldDimensions.minX + (worldDimensions.maxX - worldDimensions.minX) * nX);
+					let y = Math.trunc(worldDimensions.minY + (worldDimensions.maxY - worldDimensions.minY) * nY);
+					return new Point(x, y, COORD_TYPES.WORLDSPACE);
 				}
-			});
-
-			// update world
-			self.mapWorlds.get(world.id).locations = locationMap;
-
-			// make sure we're in the right world before overwriting all locations
-			if (self.getCurrentWorldID() == world.id) {
-				self.drawLocations(locationMap);
-			}
-
-		}).catch(error => {throw new Error(`There was an error getting locations: ${error}`)});
-	}
-
-	// async function to get location from cache or from server
-	async getLocation(identifier, world) {
-
-		// reject if null
-		if (identifier == null) { return Promise.reject("Location identifier was null") }
-		this.mapCallbacks?.setLoading(true);
-
-		// get location ID from identifier
-		let isNumerical = !isNaN(identifier) || identifier instanceof Location;
-		let isString = identifier instanceof String || typeof identifier === "string";
-		let locationID = Math.abs(identifier?.id ?? identifier);
-		let locationName = isString ? identifier?.toLowerCase() : null;
-		let localLocation;
-
-		print(`Getting info for location: ${identifier}`);
-
-		// search cache for location first
-		if (world) { // if world is specified, search that one
-			localLocation = world.getLocation(identifier);
-		} else { // otherwise search all worlds
-			this.mapWorlds?.forEach(world => { localLocation = (world.hasLocation(identifier)) ? world.getLocation(identifier) : localLocation });
-		}
-
-		if (localLocation) { // return local location if we found any
-			print("found cached location");
-			this.mapCallbacks?.setLoading(false);
-			return Promise.resolve(localLocation);
-		}
-
-		if (!localLocation) { // otherwise if no cached copies were found, search the db
-
-			let query = {
-				action: "get_centeron",
-				db: MAPCONFIG.database,
-				centeron: isNumerical ? locationID : locationName,
-				world:  world?.id ?? null,
-			}
-
-			let response = await getJSON(GAME_DATA_SCRIPT + queryify(query));
-			if (response && response.locations.length > 0) {
-				print("Got location info!");
-				let world = self.getWorldFromID(response?.locations[0]?.worldId);
-				let location = new Location(response.locations[0], world);
-				this.mapCallbacks?.setLoading(false);
-				return Promise.resolve(location);
 			} else {
-				M.toast({html: "That location doesn't exist!"});
-				this.mapCallbacks?.setLoading(false);
-				return Promise.reject(`Location ${identifier} was invalid.`);
+				return coords;
 			}
+
+		} else if (Array.isArray(latLngs)) {
+			let coords = [];
+			latLngs.forEach((latLng) => {coords.push(this.toCoords(latLng, this.mapConfig.coordType))});
+			return coords;
 		}
 	}
 
-	clearLocations() {
-		map.eachLayer((layer) => {
-			if (!layer._tiles && layer.options.className != "cellGrid" ) { //remove anything that is not a tile or cell grid
-				layer.off('resize move zoom');
-				layer.remove();
+	/**
+	 * Convert XY/Normalised/Worldspace coordinates to leaflet's LatLongs.
+	 * @param {Object} coords - the coordinate/point object
+	 */
+	getLatLngs(...args) { return this.toLatLngs(...args) }
+	toLatLngs(coords) {
+
+		coords = structuredClone(coords) // make distinct
+
+		if ((coords instanceof Point || coords?.x) && !Array.isArray(coords)) {
+
+			switch (coords.coordType) {
+				default:
+				case COORD_TYPES.XY:
+					return RC.unproject([coords.x , coords.y]);
+				case COORD_TYPES.NORMALISED:
+					let x = (Number(coords.x) * this.getCurrentWorld().width);
+					let y = (Number(coords.y) * this.getCurrentWorld().height);
+
+					return RC.unproject([x , y]);
+				case COORD_TYPES.PSEUDO_NORMALISED:
+					coords.coordType = COORD_TYPES.NORMALISED;
+					return this.toLatLngs(coords);
+				case COORD_TYPES.WORLDSPACE:
+
+					let xN = coords.x;
+					let yN = coords.y;
+
+					// get normalised value of x and y in range
+					xN = (xN - this.getCurrentWorld().minX) / this.getCurrentWorld().maxRangeX;
+					yN = Math.abs((yN - this.getCurrentWorld().maxY) / this.getCurrentWorld().maxRangeY); // flip y around
+
+					return this.toLatLngs(new Point(xN, yN, COORD_TYPES.NORMALISED));
 			}
-		});
-	}
 
-	getLocTypeByName(locTypeName) {
-
-		locTypeName = locTypeName?.trim()?.toLowerCase();
-
-		if (MAPCONFIG.icons && locTypeName != "") {
-			print(locTypeName);
-
-			for (const [key, value] of MAPCONFIG.icons) {
-				print(key, value);
-				if (locTypeName == value?.toLowerCase()) {
-					print("found it");
-					return key;
+		} else if (Array.isArray(coords)) {
+			if (coords[0]?.x) { // are we given an array of coord objects?
+				if (coords.length == 1) { // are we given a single coord object? (marker, point)
+					return this.toLatLngs(coords[0]);
 				}
+
+			} else if (coords.length > 1) { // else we are just given a coord array [x, y]
+				return this.toLatLngs(new Point(coords[0] == 0 ? 0.001 : coords[0], coords[1] == 0 ? 0.001 : coords[1], this.mapConfig.coordType));
 			}
-		} else {
-			return null;
 		}
 	}
 
-	// delete location from the map
-	deleteLocation(location) {
+	getMap() { return map }
+	getMapObject() { return map }
+	getElement() { return this.mapRoot }
 
-		// remove existing marker(s)
-		let markers = this.getMarkersFromLocation(location);
-		markers.forEach(function(marker) { marker.remove() });
-
-		// delete location from data as well
-		let locations = this.getCurrentWorld().locations;
-		locations?.delete(location.id);
+	hasURLParams() {
+		return (Array.from(getURLParams().values())).length >= 1;
 	}
 
-	// update location on the map
-	updateLocation(location) {
-
-		// remove existing marker(s)
-		let markers = this.getMarkersFromLocation(location);
-		markers.forEach(function(marker) { marker.remove() });
-		map.closePopup();
-
-		// update location data
-		this.getCurrentWorld().locations?.set(location?.id, location);
-
-		// create new markers
-		markers = this.getMarkers(location);
-		markers.forEach(function(marker) { marker.addTo(map) });
-
-		// enable edit mode on marker if needed
-		if (location?.editing) {
-			if (!location.revertID) {
-				if (location.locType == LOCTYPES.MARKER) { // race condition if marker isnt actually added yet
-					setTimeout(() => { markers[0].edit() }, 0);
-				} else {
-					markers[0].edit();
-				}
-			}
-			markers.forEach(function(marker) { marker.setEditingEffect(true) });
-		}
-
+	isEmbedded() {
+		return window.self !== window.top;
 	}
 
-	drawLocations(locations) {
-
-		// delete any existing location layers
-		this.clearLocations();
-
-		// set up location layer for each zoom level
-		print("Loading initial locations...");
-
-		// check if current map has any locations
-		if (locations.size > 0) {
-
-			// iterate through each location in the list
-			print("Adding location markers to map...")
-			locations.forEach(location => {
-
-				if (location?.isVisible()) {
-					// add markers to the map
-					this.getMarkers(location).forEach(marker => { marker.addTo(map) });
-					location.setWasVisible(true);
-
-					// centre to location if we have a pendingjump for it
-					let jump = this.mapState?.pendingJump;
-					if (jump instanceof Location && jump.id == location.id) {
-						this.mapState.pendingJump = null;
-						this.gotoLocation(jump);
-					}
-				}
-			});
-		}
-
-		// callback to show map fully loaded
-		this.mapCallbacks?.onMapLoaded(true);
-		this.mapRoot.style.animation = "none";
-
+	/** Get current map config object.
+	 * @returns {Object} mapConfig - Object that controls the configuration of the map.
+	 */
+	getMapConfig() {
+		return this.mapConfig;
 	}
 
-	// create marker(s) for location
-	getMarkers(location) {
+	getZoom() { return this.getCurrentZoom() }
+	getCurrentZoom() {
+		return (map != null) ? map.getZoom() : 0;
+	}
 
-		// return early if missing required attributes
-		if (location == null || location.coords == null) { return [] }
+	getMaxZoom() {
+		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().maxZoomLevel : 5;
+	}
 
-		// make generic fallback marker
-		let polygonIcon = null;
-		let coords = location.coords;
-		let marker = new L.marker(this.toLatLngs(coords[0]), {riseOnHover: true},);
-		L.Marker.prototype.options.icon = L.icon({ iconUrl: IMAGES_DIR + "transparent.png" });
-
-		// create specific marker type
-		if (location.isPolygon()) { // is location polygonal? (polyline or polygon)
-
-			// get coordinates of location
-			coords = [];
-			for (let i = 0; i < location.coords.length; i++) {
-				coords.push(this.toLatLngs(location.coords[i]));
-			}
-
-			let options = {
-				noClip: true,
-				smoothFactor: 2,
-				fillColor: location.fillColour,
-				color: location.strokeColour,
-				fillOpacity: null,
-				weight: location.strokeWidth,
-			}
-
-			if (location.locType == LOCTYPES.AREA) {
-				marker = new L.polygon(coords, options);
-
-				if (location.hasIcon()) {
-					marker.setIsIconPolygon(true);
-					polygonIcon = this.makeMarker(location, self.toLatLngs(location.getCentre()));
-				}
-			}
-
-			if (location.locType == LOCTYPES.PATH) {
-				marker = new L.polyline(coords, options);
-			}
-
-		} else { // if no, then it must be a single point (icon, label)
-
-			if (location.hasIcon()) {
-				marker = this.makeMarker(location, this.toLatLngs(coords[0]));
-			}
-
-		}
-
-		// bind stuff to markers
-		let markers = [marker, polygonIcon].filter((i) => i !== null);
-		markers.forEach(marker => {
-			// bind location to marker
-			marker.setLocation(location);
-
-			// add label to marker if applicable
-			if (location.hasLabel() && !marker.isIconPolygon()) {
-				marker.bindTooltip(location.name, this.getLocationLabel(location));
-			}
-
-			// bind marker events
-			marker.once('add', function() {
-
-				// on marker deselected
-				marker.on("mouseout", function () {
-					self.clearTooltips();
-					let isPolygon = marker.location.isPolygon() && marker._path;
-
-					if (isPolygon){
-						this.setStyle({
-							fillColor: location.fillColour,
-							color: location.strokeColour,
-							weight: location.strokeWidth,
-						});
-					}
-				});
-
-				// on marker hovered over
-				marker.on('mouseover', function () {
-
-					let isPolygon = location.isPolygon() && marker._path;
-
-					L.tooltip(self.toLatLngs(location.getCentre()), {content: location.getTooltipContent(), sticky: true, className : "location-tooltip",}).addTo(map);
-
-					if (isPolygon){
-						this.setStyle({
-							fillColor: location.fillColourHover,
-							color: location.strokeColourHover,
-							weight: location.strokeWidthHover,
-						});
-					}
-				});
-
-				// on marker clicked
-				marker.on('click', event => {
-					let shift = event.originalEvent.shiftKey; // edit
-					let ctrl = event.originalEvent.ctrlKey; // popup
-					if (!self.mapLock || MAPLOCK.isPartialNoNew(self.mapLock)) {
-						self.onMarkerClicked(this, shift, ctrl);
-					}
-				});
-
-				marker.on('dblclick', () => {
-					if ((!self.mapLock || MAPLOCK.isPartialNoNew(self.mapLock)) && !this.getLocation().isClickable()) {
-						self.onMarkerClicked(this, true, false);
-					}
-				});
-			});
-
-		});
-
-		return markers;
+	getMinZoom() {
+		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().minZoomLevel : 0;
 	}
 
 	getIcon(iconNumber) {
@@ -1299,44 +1404,116 @@ export default class Gamemap {
 		return L.marker(coords, {icon: this.getIcon(location.icon), riseOnHover: true});
 	}
 
-	getLocationLabel(location) {
+		/** Get location type by icon name. Used in searching.
+	 * @param {Array} locations - A list of locations to draw on the current map.
+	 */
+	getLocTypeByName(locTypeName) {
 
-		let offset = [0, 0];
-		const [X_OFFSET, Y_OFFSET] = [this.getMapConfig().labelOffset, this.getMapConfig().labelOffset / 2];
+		locTypeName = locTypeName?.trim()?.toLowerCase();
 
-		// set label offset based on direction
-		switch (LABEL_POSITIONS[location.labelPos]) {
-			case "top":
-				offset = [0, -Y_OFFSET];
-				break;
-			case "bottom":
-				offset = [0, Y_OFFSET];
-				break;
-			case "left":
-				offset = [-X_OFFSET, 0];
-				break;
-			case "right":
-				offset = [X_OFFSET, 0];
-				break;
-			case "auto":
-				offset = [Y_OFFSET, 0];
-				break;
-		}
-		return {
-			className : "location-label",
-			permanent: true,
-			direction: LABEL_POSITIONS[location.labelPos],
-			interactive: true,
-			offset: offset,
-			riseOnHover: true,
+		if (MAPCONFIG.icons && locTypeName != "") {
+			print(locTypeName);
+
+			for (const [key, value] of MAPCONFIG.icons) {
+				print(key, value);
+				if (locTypeName == value?.toLowerCase()) {
+					print("found it");
+					return key;
+				}
+			}
+		} else {
+			return null;
 		}
 	}
 
+		
+
+	getCurrentViewBounds() {
+
+		let northWest = this.toCoords(this.getCurrentMapBounds().getNorthWest());
+		let southEast = this.toCoords(this.getCurrentMapBounds().getSouthEast());
+
+		let bounds = {};
+		bounds.minX = northWest.x;
+		bounds.maxX = southEast.x;
+		bounds.minY = (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) ? southEast.y : northWest.y;
+		bounds.maxY = (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) ? northWest.y : southEast.y;
+
+		return bounds;
+
+	}
+
+	getMapBounds() {
+		return RC.getMaxBounds();
+	}
+
+	getCurrentMapBounds() {
+		return map.getBounds();
+	}
+
+	getMaxBoundsZoom() {
+		return map.getBoundsZoom(this.getMapBounds());
+	}
+
+
+	getMarkersFromLocation(location) {
+		let markers = []; //sometimes locations can have multiple markers
+		map.eachLayer((layer) => {
+			if (layer?.location && layer.location?.id == location?.id) {
+				markers.push(layer);
+			}
+		});
+		return markers;
+	}
+
+	// get if editing is enabled on this map
+	canEdit() {
+		return MAPCONFIG.editingEnabled;
+	}
+
+	checkEditingPermissions() {
+
+		let queryParams = {};
+		let self = this;
+		queryParams.action = "get_perm";
+		queryParams.db = MAPCONFIG.database;
+		this.mapCallbacks?.setLoading("Getting permissions");
+
+		getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
+			let canEdit = data?.canEdit;
+			MAPCONFIG.editingEnabled = ((canEdit || isDebug) && (!self.isEmbedded() && !isMobile()));
+			MAPCONFIG.isAdmin = data.isAdmin;
+			self.mapCallbacks?.onPermissionsLoaded(MAPCONFIG.editingEnabled);
+		});
+
+	}
+
+	// clear tooltips
+	clearTooltips(){
+		map.eachLayer((layer) => {
+			if (layer.options.className == "location-tooltip") { // clear any tooltip
+				layer.remove();
+			}
+		});
+
+	}
+
+
+	setZoomTo(zoom) {
+		map.setZoom(zoom, {animate: true})
+	}
+
+	getZoomFromBounds(bounds) {
+		return map.getBoundsZoom(bounds, false);
+	}
 
 	/*================================================
-						Map Events
+						  Events
 	================================================*/
 
+	/**
+	 * Bind default event listeners to the leaflet map.
+	 */
 	bindMapEvents() {
 
 		map.on('resize moveend zoomend', function() {
@@ -1354,7 +1531,7 @@ export default class Gamemap {
 						markers.forEach(function(marker) {
 							marker.addTo(map);
 							if (marker.location.hasLabel() && !(marker.location.hasIcon() && marker._path)) {
-								marker.bindTooltip(marker.location.name, self.getLocationLabel(marker.location));
+								marker.bindTooltip(marker.location.name, marker.location.getLabel());
 							}
 						});
 
@@ -1407,6 +1584,11 @@ export default class Gamemap {
 		})
 	}
 
+	/** Event function to control what happens when a marker is clicked.
+	 * @param {Marker} marker - The marker being clicked.
+	 * @param {Boolean} shift - Whether the shift key is being pressed.
+	 * @param {Boolean} ctrl - Whether the ctrl key is being pressed.
+	 */
 	onMarkerClicked(marker, shift, ctrl) {
 
 		print(marker.location);
@@ -1429,168 +1611,6 @@ export default class Gamemap {
 		}
 	}
 
-	setZoomTo(zoom) {
-		map.setZoom(zoom, {animate: true})
-	}
-
-	// clear tooltips
-	clearTooltips(){
-		map.eachLayer((layer) => {
-			if (layer.options.className == "location-tooltip") { // clear any tooltip
-				layer.remove();
-			}
-		});
-
-	}
-
-	getZoomFromBounds(bounds) {
-		return map.getBoundsZoom(bounds, false);
-	}
-
-	/*================================================
-						  General
-	================================================*/
-
-	// reset map
-	reset(currentWorldOnly, customPadding) {
-		if (!this.hasMultipleWorlds() || currentWorldOnly) {
-			if (customPadding) {
-				map.fitBounds(RC.getMaxBounds(customPadding), {animate: true});
-			} else {
-				map.fitBounds(RC.getMaxBounds(), {animate: true});
-			}
-		} else {
-			this.goto(this.mapConfig.defaultWorldID);
-		}
-	}
-
-	getCurrentViewBounds() {
-
-		let northWest = this.toCoords(this.getCurrentMapBounds().getNorthWest());
-		let southEast = this.toCoords(this.getCurrentMapBounds().getSouthEast());
-
-		let bounds = {};
-		bounds.minX = northWest.x;
-		bounds.maxX = southEast.x;
-		bounds.minY = (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) ? southEast.y : northWest.y;
-		bounds.maxY = (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) ? northWest.y : southEast.y;
-
-		return bounds;
-
-	}
-
-	getMapBounds() {
-		return RC.getMaxBounds();
-	}
-
-	getCurrentMapBounds() {
-		return map.getBounds();
-	}
-
-	getMaxBoundsZoom() {
-		return map.getBoundsZoom(this.getMapBounds());
-	}
-
-	/*================================================
-						Editing
-	================================================*/
-
-	getMarkersFromLocation(location) {
-		let markers = []; //sometimes locations can have multiple markers
-		map.eachLayer((layer) => {
-			if (layer?.location && layer.location?.id == location?.id) {
-				markers.push(layer);
-			}
-		});
-		return markers;
-	}
-
-	async edit(object) {
-
-		if (!isNaN(object)) {
-			object = (object > 0) ? this.getWorldByID(object) : await this.getLocation(object);
-		}
-
-		let isWorld = object instanceof World;
-		let isLocation = object instanceof Location;
-
-		if (isWorld && object.id != this.getCurrentWorldID() || isLocation && object.worldID != this.getCurrentWorldID()) {
-			object.editing = true;
-			self.mapState.pendingJump = object;
-			self.setMapState(new MapState({pendingJump: object}));
-		} else {
-			this.mapCallbacks?.edit(object);
-			map.closePopup();
-		}
-	}
-
-	// get if editing is enabled on this map
-	canEdit() {
-		return MAPCONFIG.editingEnabled;
-	}
-
-	checkEditingPermissions() {
-
-		let queryParams = {};
-		let self = this;
-		queryParams.action = "get_perm";
-		queryParams.db = MAPCONFIG.database;
-		this.mapCallbacks?.setLoading("Getting permissions");
-
-		getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
-			let canEdit = data?.canEdit;
-			MAPCONFIG.editingEnabled = ((canEdit || isDebug) && (!self.isEmbedded() && !isMobile()));
-			MAPCONFIG.isAdmin = data.isAdmin;
-			self.mapCallbacks?.onPermissionsLoaded(MAPCONFIG.editingEnabled);
-		});
-
-	}
-
-	isEmbedded() {
-		return window.self !== window.top;
-	}
-
-	/*================================================
-						  Utility
-	================================================*/
-
-	/** Get current map config object.
-	 * @returns {Object} mapConfig - Object that controls the configuration of the map.
-	 */
-	getMapConfig() {
-		return this.mapConfig;
-	}
-
-	getZoom() { return this.getCurrentZoom() }
-	getCurrentZoom() {
-		return (map != null) ? map.getZoom() : 0;
-	}
-
-	getMaxZoom() {
-		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().maxZoomLevel : 5;
-	}
-
-	getMinZoom() {
-		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().minZoomLevel : 0;
-	}
-
-	getLayerIndexFromName(layerName, layersObj) {
-		let layers = (layersObj != null) ? layersObj : this.getCurrentWorld().layers;
-		for (let [key] of Object.entries(layers)) {
-			if (layers[key].name == layerName) {
-				return parseInt(key);
-			}
-		}
-		return 0;
-	}
-
-	getMap() { return map }
-	getMapObject() { return map }
-	getElement() { return this.mapRoot }
-
-	hasURLParams() {
-		return (Array.from(getURLParams().values())).length >= 1;
-	}
 }
 
 /*================================================

@@ -28,7 +28,7 @@ how was your holiday? where did you go
 - fixed wiki page field collapsing if field is identical to display name (now only collapses on switch click)
 - fixed /null being requested (404) in OB/MW from the layer buttons
 - fixed world= param not respecting display names (fixes a few wiki map links)
-
+- fixed hang when navigating to deleted world (either from RC or url param)
 
 ## todo
 
@@ -62,7 +62,6 @@ prepare for performance review, make notes
 - drag and edit polygon at the same time
 >> https://jsfiddle.net/Razielwar/hmqgn69r/14/
 - allow shiftclick/ctrl click to add/remove vertices
-- be able to search the icon list in editor
 - use quadtrees as map optimisation
 
 ## todo future general

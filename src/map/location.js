@@ -204,6 +204,40 @@ export default class Location {
 		return (this.labelPos && this.labelPos >= 1 && this.name != "" && this.locType != LOCTYPES.PATH);
 	}
 
+	// get leaflet compatible label for this location
+	getLabel() {
+
+		let offset = [0, 0];
+		const [X_OFFSET, Y_OFFSET] = [MAPCONFIG.labelOffset, MAPCONFIG.labelOffset / 2];
+
+		// set label offset based on direction
+		switch (LABEL_POSITIONS[this.labelPos]) {
+			case "top":
+				offset = [0, -Y_OFFSET];
+				break;
+			case "bottom":
+				offset = [0, Y_OFFSET];
+				break;
+			case "left":
+				offset = [-X_OFFSET, 0];
+				break;
+			case "right":
+				offset = [X_OFFSET, 0];
+				break;
+			case "auto":
+				offset = [Y_OFFSET, 0];
+				break;
+		}
+		return {
+			className : "location-label",
+			permanent: true,
+			direction: LABEL_POSITIONS[this.labelPos],
+			interactive: true,
+			offset: offset,
+			riseOnHover: true,
+		}
+	}
+
 	isLabel() {
 		return (!this.hasIcon() && !this.isPolygon() && this.hasLabel());
 	}
