@@ -17,6 +17,7 @@ how was your holiday? where did you go
 - made "name" field auto focus when adding locations
 - made goto article button show if there's wikipage available, not just if there's multiple worlds (affects mw map, tr)
 - added &search param in url (a couple wiki map links had them)
+- fixed negative IDs being obnoxious to enter in editor
 
 ### bug fixes
 - fixed missing icons / 404 on SR
@@ -24,30 +25,20 @@ how was your holiday? where did you go
 - fixed searching for locations always doing network request even if cached
 - if zoom isnt provided in url, then default to max zoom (fixes some map links on the wiki)
 - fixed gamemap not loading on steam embedded browser
-
-
+- fixed wiki page field collapsing if field is identical to display name (now only collapses on switch click)
+- fixed /null being requested (404) in OB/MW from the layer buttons
+- fixed world= param not respecting display names (fixes a few wiki map links)
 
 
 ## todo
 
-- wiki page field collapsing if text is identical to name (only collapse on switch click or null/blank)
-
-- make getworld do both network and local and toast if invaliid
-- make world param also work with displayName (search displayName and return world)
-
-- organise/refactor app.css
 - comment/refactor gamemap js
+- organise/refactor app.css
 
 - doo app styff
-
 - wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 
-
-
 - start sf wiki design figma
-
-
-
 
 ## app
 ---------------------------------------------------------------

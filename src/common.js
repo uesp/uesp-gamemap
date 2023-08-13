@@ -168,7 +168,6 @@ window.getURLParams = function getURLParams(paramType) {
 		urlParams = location.hash.replace("#\?", '');
 	}
 
-	urlParams = urlParams.toLowerCase();
 	return new URLSearchParams(urlParams); //create params array
 }
 

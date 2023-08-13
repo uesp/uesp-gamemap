@@ -256,6 +256,7 @@ export default class Gamemap {
 		mapState.legacy = getURLParams().has("legacy");
 
 		if (getURLParams().has("world")) {
+			print(getURLParams().get("world"));
 			mapState.world = this.getWorld(getURLParams().get("world"));
 		}
 
@@ -429,7 +430,7 @@ export default class Gamemap {
 	 */
 	getWorldByName(worldName) { return this.getWorldFromName(worldName) }
 	getWorldFromName(worldName){
-		return [...this.mapWorlds.values()].find(prop => prop.name == worldName);
+		return [...this.mapWorlds.values()].find(prop => prop.name.toLowerCase() == worldName.toLowerCase());
 	}
 
 	/** Get world object from user facing display name
@@ -475,29 +476,28 @@ export default class Gamemap {
 
 		this.mapCallbacks?.setLoading(true);
 		place = (place) ? (isString(place)) ? parseInt(place) : place : this.getCurrentWorldID();
-		let isWorld = place instanceof World || place.numTilesX;
-		let isID = !isNaN(place);
-		let isLocation = place instanceof Location || place.coords;
+		let isWorld = place instanceof World || place.numTilesX || place > 0;
+		let isLocation = place instanceof Location || place.coords || place < 0;
 
+		// jump to location/world
 		if (isWorld) {
-			this.gotoWorld(place.id, coords);
+			this.gotoWorld(this.getWorld(place));
 		} else if (isLocation) {
 			this.gotoLocation(place);
-		} else if (isID) {
-			if (place >= 0) { // is destination a worldID?
-				this.gotoWorld(place);
-			} else { // it is a locationID
-				this.gotoLocation(place);
-			}
 		}
-
 	}
 
 	getWorld(identifier) {
-		if (identifier == null) {
-			return this.getCurrentWorld();
+		if (identifier && identifier != "undefined") {
+			let world = (isNaN(parseInt(identifier))) ? this.getWorldFromName(identifier) ?? this.getWorldFromDisplayName(identifier) : this.isWorldValid(identifier) ? this.getWorldFromID(identifier) : null;
+			if (world) {
+				return world;
+			} else {
+				M.toast({html: "That world doesn't exist!"});
+				return this.getWorldFromID(MAPCONFIG.defaultWorldID);
+			}
 		} else {
-			return isNaN(parseInt(identifier)) ? (identifier != "undefined" ? this.getWorldFromName(identifier) : this.getWorldFromID(this.mapConfig.defaultWorldID)) : this.getWorldFromID(identifier);
+			return this.getCurrentWorld();
 		}
 	}
 
@@ -530,6 +530,7 @@ export default class Gamemap {
 	}
 
 	gotoWorld(worldID, coords) {
+		worldID = (worldID instanceof World) ? worldID.id : worldID;
 		print(worldID);
 		if (self.isWorldValid(worldID)) {
 			// if we are in the same world, just pan to the provided location (or just reset map)
@@ -546,10 +547,9 @@ export default class Gamemap {
 				print(`Going to world... ${world.displayName} (${world.id});`);
 				self.setMapState(new MapState({coords: coords, world: world, pendingJump: world?.editing ? world : null, layerIndex: 0}));
 			}
-
 		} else {
 			this.mapCallbacks?.setLoading(false);
-			throw new Error('Gamemap attempted to navigate to invalid world ID: ' + worldID);
+			print('Gamemap attempted to navigate to invalid world ID: ' + worldID);
 		}
 	}
 

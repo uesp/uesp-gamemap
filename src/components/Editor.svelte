@@ -589,8 +589,7 @@
                                                         text={modEditObject.destinationID}
                                                         subtext="+ for world, - for location"
                                                         tooltip="Location/world destination ID"
-                                                        type="number"
-                                                        on:change={(e) => modify("destinationID", e.detail)}>
+                                                        on:change={(e) => modify("destinationID", Number(e.detail))}>
                                                     </Textbox>
                                                 {/if}
                                             {/if}
@@ -614,7 +613,13 @@
                                             text={modEditObject.wikiPage}
                                             placeholder="Enter wiki page..."
                                             tooltip="Wiki page name"
-                                            on:change={(e) => modify("wikiPage", e.detail)}>
+                                            on:change={(e) => {
+                                                if (e.detail == name) {
+                                                    modify("wikiPage", `${e.detail} `); // add space after name so switch doesn't collapse
+                                                } else {
+                                                    modify("wikiPage", e.detail);
+                                                }
+                                            }}>
                                         </Textbox>
                                     </Switch>
 
@@ -732,7 +737,7 @@
                                 {#if editType == EDIT_TYPES.EDIT || editType == EDIT_TYPES.REVERT}
                                     <!-- Recent edits for this object -->
                                     {#if editObject.id > 0 && editObject.revisionID > 0}
-                                        <FormGroup title="Recent Edits" icon="history" tooltip="Shows the up to 5 of the most recent edits">
+                                        <FormGroup title="Edit History" icon="history" tooltip="Shows the up to 5 of the most recent edits">
                                             {@const type = isWorld ? "world" : "loc"}
                                             {#if editHistory.length > 0}
                                                 {#each editHistory as rev}

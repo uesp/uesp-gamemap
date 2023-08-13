@@ -65,7 +65,7 @@
     <div class="layer_widget_root" on:mouseenter={() => isHovered = true} on:mouseleave={() => isHovered = false} in:fly|global="{{ x: -5, duration: 250 }}" out:fade|global="{{duration: 75}}" class:lock={lock} on:contextmenu={(e) => e.stopPropagation()}>
 
         <!-- Primary layer switcher button -->
-        <button id="btn_layer_widget_switcher" class:hasLayerImage={hasMultipleLayers} class="waves-effect" on:click={onLayerClicked} style="background-image: url({layerImage});">
+        <button id="btn_layer_widget_switcher" class:hasLayerImage={hasMultipleLayers} class="waves-effect" on:click={onLayerClicked} style="background-image: url({layerImage ?? "assets/images/transparent.png"});">
             Layers
             <i class="small material-icons" style="position: relative; bottom: 45px;">layers</i>
             {#if hasMultipleLayers}
