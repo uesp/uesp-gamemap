@@ -479,6 +479,17 @@
         }
     }
 
+    // close editor on esc pressed
+    function onKeyPressed(event) {
+        if (event.key == "Escape") {
+            if (overlay) {
+                cancel()
+            } else {
+                back();
+            }
+        }
+    }
+
     // on editor load
 	onMount(() => { window.onpopstate = () => currentZoom = gamemap.getCurrentZoom().toFixed(3);});
     function fixEditor() {editor.style.height = `${editor?.parentElement?.clientHeight}px`; editorWindow.scrollTop = 0;}
@@ -979,4 +990,4 @@
 
 </style>
 <svelte:options accessors/>
-<svelte:window on:resize={() => { if (editPanel != null) { editPanelContent.style.height = document.querySelector('.appbar') ? editPanel.clientHeight - document.querySelector('.appbar').clientHeight + "px" : null } if (editor) { editor.style.height = `${editor?.parentElement?.clientHeight}px`;}}} on:mouseup={onResizerUp} bind:innerHeight />
+<svelte:window on:resize={() => { if (editPanel != null) { editPanelContent.style.height = document.querySelector('.appbar') ? editPanel.clientHeight - document.querySelector('.appbar').clientHeight + "px" : null } if (editor) { editor.style.height = `${editor?.parentElement?.clientHeight}px`;}}} on:mouseup={onResizerUp} bind:innerHeight on:keyup={onKeyPressed}/>

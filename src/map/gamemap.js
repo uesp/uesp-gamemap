@@ -9,9 +9,9 @@ import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 // import plugins
+import RasterCoords from "./plugins/rastercoords";
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
-import RasterCoords from "./plugins/rastercoords";
 import './plugins/smoothwheelzoom';
 import './plugins/tilelayercanvas';
 import './plugins/canvasoverlay';
@@ -402,6 +402,21 @@ export default class Gamemap {
 		}
 	}
 
+	/** Simple function to set the current zoom level to the provided one.
+	 *  @param {Integer} zoom - The zoom level to to set.
+	 */
+	setZoomTo(zoom) { map.setZoom(zoom, {animate: true}) }
+
+	/** Simple function that returns whether there are any URL params declared
+	 * @returns {Boolean} - Whether there are any URL params declared
+	 */
+	hasURLParams() { return (Array.from(getURLParams().values())).length >= 1; }
+
+	/** Simple function that returns whether the current map is embedded or not
+	 * @returns {Boolean} isEmbedded - Whether the current map is embedded
+	 */
+	isEmbedded() { return window.self !== window.top; }
+
 	/*================================================
 						  Worlds
 	================================================*/
@@ -548,6 +563,22 @@ export default class Gamemap {
 		this.goto(world.parentID ?? MAPCONFIG.defaultWorldID);
 		getWorldLists(); // update world lists
 	}
+
+	/** Simple function that gets the current world's zoom.
+	 * @returns {Float} zoom - A zoom level
+	 */
+	getZoom() { return this.getCurrentZoom() }
+	getCurrentZoom() { return (map) ? map.getZoom() : 0 }
+	
+	/** Simple function that gets the current world's maximum zoom.
+	 * @returns {Float} maxZoom - The max zoom level of this world
+	 */
+	getMaxZoom() { return (this.getCurrentWorld()) ? this.getCurrentWorld().maxZoomLevel : MAPCONFIG.maxZoomLevel }
+	
+	/** Simple function that gets the current world's minimum zoom.
+	 * @returns {Float} minZoom - The min zoom level of this world
+	 */
+	getMinZoom() { return (this.getCurrentWorld()) ? this.getCurrentWorld().minZoomLevel : MAPCONFIG.minZoomLevel }
 	
 	/*================================================
 						Locations
@@ -716,7 +747,7 @@ export default class Gamemap {
 	 */
 	deleteLocation(location) {
 		// remove existing marker(s)
-		let markers = this.getMarkersFromLocation(location);
+		let markers = this.findMarkers(location);
 		markers.forEach(function(marker) { marker.remove() });
 
 		// delete location from data as well
@@ -730,7 +761,7 @@ export default class Gamemap {
 	updateLocation(location) {
 
 		// remove existing marker(s)
-		let markers = this.getMarkersFromLocation(location);
+		let markers = this.findMarkers(location);
 		markers.forEach(function(marker) { marker.remove() });
 		map.closePopup();
 
@@ -844,7 +875,7 @@ export default class Gamemap {
 
 				if (location.hasIcon()) {
 					marker.setIsIconPolygon(true);
-					polygonIcon = this.makeMarker(location, self.toLatLngs(location.getCentre()));
+					polygonIcon = location.getMarker();
 				}
 			}
 
@@ -853,11 +884,9 @@ export default class Gamemap {
 			}
 
 		} else { // if no, then it must be a single point (icon, label)
-
 			if (location.hasIcon()) {
-				marker = this.makeMarker(location, this.toLatLngs(coords[0]));
+				marker = location.getMarker();
 			}
-
 		}
 
 		// bind stuff to markers
@@ -922,6 +951,20 @@ export default class Gamemap {
 
 		});
 
+		return markers;
+	}
+
+	/** Find leaflet markers on the map that correspond with the provided location
+	 * @param {Location} location - The location to search for markers from
+	 * @returns {Array} - An array of leaflet markers that match the provided location.
+	 */
+	findMarkers(location) {
+		let markers = []; //sometimes locations can have multiple markers
+		map.eachLayer((layer) => {
+			if (layer?.location && layer.location?.id == location?.id) {
+				markers.push(layer);
+			}
+		});
 		return markers;
 	}
 
@@ -1013,6 +1056,98 @@ export default class Gamemap {
 						   Layers
 	================================================*/
 
+	/** Get tile URLs for the current world and layer.
+	 * @param {World} world - What world to get tiles for
+	 * @param {Integer} layerIndex - What layer to get tiles for
+	 * @param {Boolean} isRoot - Whether to return the root tile (zoom level 0 tile)
+	 * @returns {String} tileURL - The tileURL schema for the current world and layer
+	 */
+	getMapTileImageURL(world, layerIndex, isRoot) {
+
+		if (isNaN(layerIndex)) {
+			layerIndex = this.getLayerIndexFromName(layerIndex);
+		}
+
+		let zoom = (isRoot) ? "/zoom0/" : "/zoom{z}/";
+		let xy = (isRoot) ? "-0-0.jpg" : "-{x}-{y}.jpg";
+		return `${this.mapConfig.tileURL + world.name}/leaflet/${world.layers[layerIndex].name + zoom + world.name + xy}`;
+	}
+
+	/** Set the current layer to the provided index
+	 * @param {Integer} layer - A layer index ID
+	 */
+	setTileLayerTo(layer) {
+
+		if (layer != null) {
+			let layerIndex;
+			if (isNaN(layer)){
+				layerIndex = this.getLayerIndexFromName(layer);
+			} else {
+				layerIndex = layer;
+			}
+
+			if (layerIndex > -1 && layerIndex < this.getCurrentWorld().layers.length) {
+				let mapState = this.getMapState();
+				print(mapState);
+				if (mapState.layerIndex != layerIndex) {
+					mapState.layerIndex = layerIndex;
+					this.setMapState(mapState, true);
+				}
+			} else {
+				print.warn("TileLayer index was out of bounds.")
+			}
+
+		} else {
+			print.error("Provided TileLayer was invalid.")
+		}
+	}
+
+	/** Get the current tile layer index ID
+	 * @returns {Integer} layerIndex - A layer index ID
+	 */
+	getCurrentTileLayerIndex() {
+		return parseInt(this.getMapState().layerIndex);
+	}
+
+	/** Get the next tile layer index ID
+	 * @returns {Integer} layerIndex - A layer index ID
+	 */
+	getNextTileLayerIndex() {
+		return (this.getCurrentTileLayerIndex() +1 == this.getMapState().world?.layers?.length) ? 0 : this.getCurrentTileLayerIndex() + 1;
+	}
+
+	/** Get the next tile layer name as a string. (e.g. "world", or "gridmap")
+	 * @returns {String} layerName - A layer name
+	 */
+	getNextTileLayerName() {
+		return this.getMapState().world?.layers[this.getNextTileLayerIndex()]?.name;
+	}
+
+	/** Get the current tile layer name as a string. (e.g. "world", or "gridmap")
+	 * @returns {String} layerName - A layer name
+	 */
+	getCurrentTileLayerName() {
+		return this.getMapState().world?.layers[this.getCurrentTileLayerIndex()]?.name;
+	}
+
+	/** Get the corresponding tile layer name from provided index ID
+	 * @param {String} layerName - The layer name you want to get the ID for
+	 * @param {Object} layersObj - (Optional) A layer object to search through
+	 * @returns {Intefer} layerIndex - The layer index ID that corresponds to this name
+	 */
+	getLayerIndexFromName(layerName, layersObj) {
+		let layers = (layersObj != null) ? layersObj : this.getCurrentWorld().layers;
+		for (let [key] of Object.entries(layers)) {
+			if (layers[key].name == layerName) {
+				return parseInt(key);
+			}
+		}
+		return 0;
+	}
+	
+	/** Toggle the grid layer on the map.
+	 *  @param {Object} gridData - An object of gridData to be displayed. Grid is hidden if param is null or false.
+	 */
 	toggleGrid(gridData) {
 
 		// set grid info
@@ -1175,7 +1310,10 @@ export default class Gamemap {
 
 	}
 
-	// async function to get cell resource data
+	/** Get cell resource data from server with the provided resourceID.
+	 *  @param {Object} resourceID - A unique name for the resource
+	 *  @returns {Array} resourceData - An array of cell resource data objects.
+	 */
 	async getCellResourceData(resourceID) {
 		if (resourceID != null || resourceID != "") {
 
@@ -1193,70 +1331,6 @@ export default class Gamemap {
 			}
 			return array;
 		}
-	}
-
-	setTileLayerTo(layer) {
-
-		if (layer != null) {
-			let layerIndex;
-			if (isNaN(layer)){
-				layerIndex = this.getLayerIndexFromName(layer);
-			} else {
-				layerIndex = layer;
-			}
-
-			if (layerIndex > -1 && layerIndex < this.getCurrentWorld().layers.length) {
-				let mapState = this.getMapState();
-				print(mapState);
-				if (mapState.layerIndex != layerIndex) {
-					mapState.layerIndex = layerIndex;
-					this.setMapState(mapState, true);
-				}
-			} else {
-				print.warn("TileLayer index was out of bounds.")
-			}
-
-		} else {
-			print.error("Provided TileLayer was invalid.")
-		}
-	}
-
-	getCurrentTileLayerIndex() {
-		return parseInt(this.getMapState().layerIndex);
-	}
-
-	getNextTileLayerIndex() {
-		return (this.getCurrentTileLayerIndex() +1 == this.getMapState().world?.layers?.length) ? 0 : this.getCurrentTileLayerIndex() + 1;
-	}
-
-	getNextTileLayerName() {
-		return this.getMapState().world?.layers[this.getNextTileLayerIndex()]?.name;
-	}
-
-	getCurrentTileLayerName() {
-		return this.getMapState().world?.layers[this.getCurrentTileLayerIndex()]?.name;
-	}
-
-	// https://maps.uesp.net/esomap/tamriel/zoom11/tamriel-0-2.jpg
-	getMapTileImageURL(world, layerIndex, root) {
-
-		if (isNaN(layerIndex)) {
-			layerIndex = this.getLayerIndexFromName(layerIndex);
-		}
-
-		let zoom = (root) ? "/zoom0/" : "/zoom{z}/";
-		let xy = (root) ? "-0-0.jpg" : "-{x}-{y}.jpg";
-		return `${this.mapConfig.tileURL + world.name}/leaflet/${world.layers[layerIndex].name + zoom + world.name + xy}`;
-	}
-
-	getLayerIndexFromName(layerName, layersObj) {
-		let layers = (layersObj != null) ? layersObj : this.getCurrentWorld().layers;
-		for (let [key] of Object.entries(layers)) {
-			if (layers[key].name == layerName) {
-				return parseInt(key);
-			}
-		}
-		return 0;
 	}
 
 	/*================================================
@@ -1355,122 +1429,30 @@ export default class Gamemap {
 		}
 	}
 
-	getMap() { return map }
+	/** Get the gamemap leaflet map object.
+	 * @returns {Object} map - The leaflet map object.
+	*/
 	getMapObject() { return map }
-	getElement() { return this.mapRoot }
-
-	hasURLParams() {
-		return (Array.from(getURLParams().values())).length >= 1;
-	}
-
-	isEmbedded() {
-		return window.self !== window.top;
-	}
+	getMap() { return map }
 
 	/** Get current map config object.
 	 * @returns {Object} mapConfig - Object that controls the configuration of the map.
+	*/
+	getMapConfig() { return this.mapConfig }
+
+	/** Get the gamemap root element.
+	 * @returns {Element} mapRoot - The gamemap root element.
+	*/
+	getElement() { return this.mapRoot }
+	
+	/** Get whether the current map can be edited.
+	 *  @returns {Boolean} editingEnabled - Whether the current map can be edited.
 	 */
-	getMapConfig() {
-		return this.mapConfig;
-	}
+	canEdit() { return MAPCONFIG.editingEnabled }
 
-	getZoom() { return this.getCurrentZoom() }
-	getCurrentZoom() {
-		return (map != null) ? map.getZoom() : 0;
-	}
-
-	getMaxZoom() {
-		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().maxZoomLevel : 5;
-	}
-
-	getMinZoom() {
-		return (this.getCurrentWorld() != null) ? this.getCurrentWorld().minZoomLevel : 0;
-	}
-
-	getIcon(iconNumber) {
-		let anchor = [this.mapConfig.iconSize / 2, this.mapConfig.iconSize / 2];
-		let iconURL = this.mapConfig.iconPath + iconNumber + ".png";
-
-		let locationIcon = L.icon({
-			iconUrl: iconURL,
-			iconAnchor: anchor,
-			iconSize: [this.mapConfig.iconSize, this.mapConfig.iconSize],
-		});
-
-		return locationIcon;
-	}
-
-	makeMarker(location, coords) {
-		return L.marker(coords, {icon: this.getIcon(location.icon), riseOnHover: true});
-	}
-
-		/** Get location type by icon name. Used in searching.
-	 * @param {Array} locations - A list of locations to draw on the current map.
+	/** 
+	 * Check from the server whether the current user has editing permissions.
 	 */
-	getLocTypeByName(locTypeName) {
-
-		locTypeName = locTypeName?.trim()?.toLowerCase();
-
-		if (MAPCONFIG.icons && locTypeName != "") {
-			print(locTypeName);
-
-			for (const [key, value] of MAPCONFIG.icons) {
-				print(key, value);
-				if (locTypeName == value?.toLowerCase()) {
-					print("found it");
-					return key;
-				}
-			}
-		} else {
-			return null;
-		}
-	}
-
-		
-
-	getCurrentViewBounds() {
-
-		let northWest = this.toCoords(this.getCurrentMapBounds().getNorthWest());
-		let southEast = this.toCoords(this.getCurrentMapBounds().getSouthEast());
-
-		let bounds = {};
-		bounds.minX = northWest.x;
-		bounds.maxX = southEast.x;
-		bounds.minY = (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) ? southEast.y : northWest.y;
-		bounds.maxY = (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) ? northWest.y : southEast.y;
-
-		return bounds;
-
-	}
-
-	getMapBounds() {
-		return RC.getMaxBounds();
-	}
-
-	getCurrentMapBounds() {
-		return map.getBounds();
-	}
-
-	getMaxBoundsZoom() {
-		return map.getBoundsZoom(this.getMapBounds());
-	}
-
-
-	getMarkersFromLocation(location) {
-		let markers = []; //sometimes locations can have multiple markers
-		map.eachLayer((layer) => {
-			if (layer?.location && layer.location?.id == location?.id) {
-				markers.push(layer);
-			}
-		});
-		return markers;
-	}
-
-	// get if editing is enabled on this map
-	canEdit() {
-		return MAPCONFIG.editingEnabled;
-	}
-
 	checkEditingPermissions() {
 
 		let queryParams = {};
@@ -1488,23 +1470,89 @@ export default class Gamemap {
 
 	}
 
-	// clear tooltips
+	/** 
+	 * Clears all tooltips on the map.
+	 */
 	clearTooltips(){
 		map.eachLayer((layer) => {
 			if (layer.options.className == "location-tooltip") { // clear any tooltip
 				layer.remove();
 			}
 		});
-
 	}
 
+	/** Get location icon type by name. Used for searching specific icon types.
+	 * @param {String} iconName - The icon name to search for (i.e "cave")
+	 * @returns {Integer} iconID - The icon ID corresponding to the provided name
+	 */
+	getIconByName(iconName) {
 
-	setZoomTo(zoom) {
-		map.setZoom(zoom, {animate: true})
+		iconName = iconName?.trim()?.toLowerCase();
+
+		if (MAPCONFIG.icons && iconName != "") {
+			print(iconName);
+
+			for (const [key, value] of MAPCONFIG.icons) {
+				print(key, value);
+				if (iconName == value?.toLowerCase()) {
+					print("found it");
+					return key;
+				}
+			}
+		} else {
+			return null;
+		}
 	}
 
-	getZoomFromBounds(bounds) {
-		return map.getBoundsZoom(bounds, false);
+	/** Make leaflet icon object based on a provided iconID
+	 * @param {Integer} iconID - The iconID to be iconified
+	 * @returns {Icon} icon - The resulting leaflet Icon object
+	 */
+	getIcon(iconID) {
+		let anchor = [MAPCONFIG.iconSize / 2, MAPCONFIG.iconSize / 2];
+		let iconURL = MAPCONFIG.iconPath + iconID + ".png";
+
+		let locationIcon = L.icon({
+			iconUrl: iconURL,
+			iconAnchor: anchor,
+			iconSize: [MAPCONFIG.iconSize, MAPCONFIG.iconSize],
+		});
+
+		return locationIcon;
+	}
+
+	/** Simple function to get the highest zoom encapsulating the provided leaflet bounds
+	 * @param {Bounds} bounds - A set of leaflet bounds
+	 * @returns {Float} zoom - The maximum zoom encapsulating all of the provided bounds
+	 */
+	getZoomFromBounds(bounds) { return map.getBoundsZoom(bounds, false) }
+
+	/** Get the highest zoom level that would encapsulate the max bounds of the map
+	 * @returns {Float} zoom - The highest zoom level for the max map bounds
+	 */
+	getMaxBoundsZoom() { return map.getBoundsZoom(this.getMaxMapBounds()) }
+
+	/** Get the maximum view bounds of the current map
+	 * @returns {Bounds} bounds - The max bounds of the current map
+	 */
+	getMaxMapBounds() { return RC.getMaxBounds() }
+	
+	/** Get the leaflet bounds of the current view
+	 * @returns {Bounds} bounds - A leaflet bounds object for the current view
+	 */
+	getViewBounds() {
+		
+		let northWest = this.toCoords(map.getBounds().getNorthWest());
+		let southEast = this.toCoords(map.getBounds().getSouthEast());
+		
+		let bounds = {};
+		bounds.minX = northWest.x;
+		bounds.maxX = southEast.x;
+		bounds.minY = (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) ? southEast.y : northWest.y;
+		bounds.maxY = (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) ? northWest.y : southEast.y;
+		
+		return bounds;
+		
 	}
 
 	/*================================================
@@ -1536,7 +1584,7 @@ export default class Gamemap {
 						});
 
 					} else {
-						self.getMarkersFromLocation(location).forEach(m => m.remove());
+						self.findMarkers(location).forEach(m => m.remove());
 					}
 
 					location.setWasVisible(isVisible);
@@ -1551,7 +1599,7 @@ export default class Gamemap {
 			}
 		});
 
-		map.on("contextmenu", function(event){
+		map.on("contextmenu", function(){
 			if (self.getMapState().world.parentID != null && self.getMapState().world.parentID != -1 ) {
 				if (!self.mapLock) {
 					let parentID = self.getMapState().world.parentID;

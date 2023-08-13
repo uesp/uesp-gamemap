@@ -18,6 +18,7 @@ how was your holiday? where did you go
 - made goto article button show if there's wikipage available, not just if there's multiple worlds (affects mw map, tr)
 - added &search param in url (a couple wiki map links had them)
 - fixed negative IDs being obnoxious to enter in editor
+- added ability to press esc to close editor
 
 ### bug fixes
 - fixed missing icons / 404 on SR
@@ -54,6 +55,13 @@ how was your holiday? where did you go
 ----------------------------------------------------------------
 - signal stuff
 prepare for performance review, make notes
+
+
+- write up what you did in gamemap, how you did, what improve, intuition/innovative stuff oyu did
+- ask for training programme, flutter, do that for ios future app
+- move promotion stuff to subl so its not on github
+
+
 ## todo maps (future)
 - skyrim minecraft map thing
 - cave interior maps for skyrim, ob, mw

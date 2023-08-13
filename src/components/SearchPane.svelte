@@ -81,7 +81,7 @@
         queryParams.db = gamemap.getMapConfig().database;
 
         if (searchQuery.substring(0, 5) === "type:") {
-            let locType = gamemap.getLocTypeByName(searchQuery.substring(5));
+            let locType = gamemap.getIconByName(searchQuery.substring(5));
             if (locType != null) {
                 queryParams.searchtype = locType;
             }

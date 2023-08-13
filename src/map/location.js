@@ -184,7 +184,7 @@ export default class Location {
 	}
 
 	openPopup() {
-		let marker = gamemap.getMarkersFromLocation(this)[0];
+		let marker = gamemap.findMarkers(this)[0];
 		if (marker) {
 			marker.openPopup();
 		} else {
@@ -202,6 +202,10 @@ export default class Location {
 
 	hasLabel() {
 		return (this.labelPos && this.labelPos >= 1 && this.name != "" && this.locType != LOCTYPES.PATH);
+	}
+
+	isLabel() {
+		return (!this.hasIcon() && !this.isPolygon() && this.hasLabel());
 	}
 
 	// get leaflet compatible label for this location
@@ -236,10 +240,6 @@ export default class Location {
 			offset: offset,
 			riseOnHover: true,
 		}
-	}
-
-	isLabel() {
-		return (!this.hasIcon() && !this.isPolygon() && this.hasLabel());
 	}
 
 	isClickable() {
@@ -288,7 +288,7 @@ export default class Location {
 		if (this.editing) return true;
 		let zoom = (gamemap.getZoom() + 0.5 >= gamemap.getMaxZoom() ? gamemap.getMaxZoom() : gamemap.getZoom()) + 0.001 // if location is 0.5 away from max map zoom, be lenient and consider it visible
 		if (zoom < this.displayLevel) return false;
-		bounds = bounds ?? gamemap.getCurrentViewBounds();
+		bounds = bounds ?? gamemap.getViewBounds();
 		let [isInside, coords] = [false, [this.getCentre()].concat(structuredClone(this.coords))];
 		coords.every(coord => {
 			if (Number(coord.x) >= Number(bounds.minX) && Number(coord.x) <= Number(bounds.maxX) && Number(coord.y) >= Number(bounds.minY) && Number(coord.y) <= Number(bounds.maxY)) {
@@ -412,9 +412,14 @@ export default class Location {
 		}
 	}
 
+	// returns whether to link wiki page and display name for this location
 	linkWikiPage() {
 		return this.wikiPage?.toLowerCase() == this.name.toLowerCase() || this.wikiPage == null;
 	}
 
+	// return leaflet compatible marker from this location
+	getMarker() {
+		return L.marker(gamemap.getLatLngs(this.getCentre()), {icon: gamemap.getIcon(this.icon), riseOnHover: true});
+	}
 
 }

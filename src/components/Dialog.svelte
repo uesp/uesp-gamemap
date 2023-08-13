@@ -8,7 +8,6 @@
 <script>
 
 	// import svelte core stuff
-	import { onMount } from 'svelte';
     import { createEventDispatcher } from "svelte";
     import { scale } from 'svelte/transition';
     import Button from './Button.svelte';
@@ -18,7 +17,7 @@
     export let cancel = "Cancel";
     export let confirm;
     export let dismissible = true;
-    let isShown = false;
+    export let isShown = false;
     let dialog;
     let callback;
 
@@ -48,6 +47,7 @@
     export function dismiss() {
         isShown = false;
         dispatch("dismiss");
+        print("going away");
         if (callback) {
             callback("dismiss");
         }

@@ -114,6 +114,63 @@ body {
 }
 
 /*================================================
+				   Mobile CSS
+================================================*/
+
+@media only screen and (max-device-width:670px) {
+
+	#location_list {
+		left: calc(50% - var(--appbar_dimen) + var(--padding_large)) !important;
+		width: 75% !important;
+		top: 41.5%;
+	}
+
+	#location_list:before {
+		left: calc(100% - 2px) !important;
+		top: 15px !important;
+		transform: rotate(180deg) !important;
+	}
+
+	#search_pane {
+		width: 100% !important;
+	}
+
+	#search_container {
+		width: calc(100% - 56px) !important;
+  	}
+
+	.layer_widget_root {
+		max-width: calc(100% - 80px) !important;
+	}
+
+	/* hide these elements on mobile */
+	[class*='nomobile'] {
+		display: none !important;
+	}
+
+	/* show these elements only on mobile */
+	[class*='onlymobile'] {
+		display: inline-block !important;
+	}
+
+	div[class^="icon_bar"] {
+		flex-direction: column !important;
+		width: var(--appbar_dimen) !important;
+	}
+
+	.icon_bar_secondary {
+		flex-direction: column !important;
+		max-height: unset !important;
+        overflow-y: unset !important;
+	}
+
+	.modal.modal-fixed-footer {
+		width: 70% !important;
+	}
+
+}
+
+/*================================================
 					 General
 ================================================*/
 
@@ -199,7 +256,6 @@ button {
 	background-color: var(--secondary) !important;
 	border-color: var(--secondary) !important;
 }
-
 
 /* textboxes */
 .input-field > label:not(.label-icon).active {
@@ -627,63 +683,6 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 }
 
 /*================================================
-				   Mobile CSS
-================================================*/
-
-@media only screen and (max-device-width:670px) {
-
-	#location_list {
-		left: calc(50% - var(--appbar_dimen) + var(--padding_large)) !important;
-		width: 75% !important;
-		top: 41.5%;
-	}
-
-	#location_list:before {
-		left: calc(100% - 2px) !important;
-		top: 15px !important;
-		transform: rotate(180deg) !important;
-	}
-
-	#search_pane {
-		width: 100% !important;
-	}
-
-	#search_container {
-		width: calc(100% - 56px) !important;
-  	}
-
-	.layer_widget_root {
-		max-width: calc(100% - 80px) !important;
-	}
-
-	/* hide these elements on mobile */
-	[class*='nomobile'] {
-		display: none !important;
-	}
-
-	/* show these elements only on mobile */
-	[class*='onlymobile'] {
-		display: inline-block !important;
-	}
-
-	div[class^="icon_bar"] {
-		flex-direction: column !important;
-		width: var(--appbar_dimen) !important;
-	}
-
-	.icon_bar_secondary {
-		flex-direction: column !important;
-		max-height: unset !important;
-        overflow-y: unset !important;
-	}
-
-	.modal.modal-fixed-footer {
-		width: 70% !important;
-	}
-
-}
-
-/*================================================
 					Gamemap
 ================================================*/
 
@@ -844,34 +843,6 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 .popupEditButton:active {
 	background: var(--bubble_selection);
 }
-
-.leaflet-container.editing {
-	animation: throb-inner 2.5s infinite !important;
-}
-
-.locked {
-	cursor: not-allowed !important;
-}
-
-@keyframes throb-inner {
-	0% {
-		box-shadow: none;
-	}
-
-	50% {
-		box-shadow: inset 0 0px 40px 8px var(--editing);
-	}
-
-	100% {
-		box-shadow: none;
-	}
-}
-
-.editing:not(.leaflet-container) {
-	animation: none !important;
-	filter: drop-shadow(0px 0px 3px var(--editing)) drop-shadow(0px 0px 3px var(--editing)) drop-shadow(0px 0px 3px var(--editing)) drop-shadow(0px 0px 3px var(--editing)) !important;
-}
-
 
 /*================================================
 				  Ugly CSS Hacks
@@ -1119,4 +1090,31 @@ textarea.materialize-textarea {
 
 ::-webkit-scrollbar-thumb:hover {
 	background-color: rgba(155, 155, 155, 0.87);
+}
+
+.leaflet-container.editing {
+	animation: throb-inner 2.5s infinite !important;
+}
+
+@keyframes throb-inner {
+	0% {
+		box-shadow: none;
+	}
+
+	50% {
+		box-shadow: inset 0 0px 40px 8px var(--editing);
+	}
+
+	100% {
+		box-shadow: none;
+	}
+}
+
+.editing:not(.leaflet-container) {
+	animation: none !important;
+	filter: drop-shadow(0px 0px 3px var(--editing)) drop-shadow(0px 0px 3px var(--editing)) drop-shadow(0px 0px 3px var(--editing)) drop-shadow(0px 0px 3px var(--editing)) !important;
+}
+
+.locked {
+	cursor: not-allowed !important;
 }
