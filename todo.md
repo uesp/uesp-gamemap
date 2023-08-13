@@ -33,9 +33,6 @@ how was your holiday? where did you go
 
 ## todo
 
-- comment/refactor gamemap js
-- organise/refactor app.css
-
 - doo app styff
 - wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
 
