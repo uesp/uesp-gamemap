@@ -1,3 +1,6 @@
+<!-- svelte-ignore a11y-missing-attribute -->
+<!-- svelte-ignore missing-declaration -->
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <!-- @component
 ### Description
  Icon/avatar component for the UESP gamemap.
@@ -49,25 +52,22 @@
 <markup>
 
     <div class="avatar_container">
-        <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 
         <div class="avatar circle" title={iconTooltip} class:waves-effect={canChangeIcon} on:mouseover={() => {showOverlay = canChangeIcon}} on:mouseout={() => showOverlay = false}>
 
             {#if icon}
                  {#if icon.includes("/")}
-                     <!-- svelte-ignore a11y-missing-attribute -->
                      <img src={icon}/>
                  {:else}
                      <Icon size="medium" name={icon}></Icon>
                  {/if}
             {/if}
 
-            <!-- svelte-ignore missing-declaration -->
             {#if canChangeIcon}
                 <DropdownMenu hint="Select icon..." on:change={(e) => change(e.detail)} invisible={true}>
                     <option value={null} selected={iconID == null}>None</option>
                     {#each [...gamemap.getMapConfig().icons] as [id, name]}
-                        <option value={id} selected={id == iconID} data-icon={gamemap.getMapConfig().iconPath + id + ".png"}>{name}</option>
+                        <option value={id} selected={id == iconID} data-icon={gamemap.getMapConfig().iconPath + id + ".png"} title={name}>{name}</option>
                     {/each}
                 </DropdownMenu>
             {/if}

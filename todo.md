@@ -1,14 +1,15 @@
 ## last fortnight
 
-various bits and bobs: gamemap fixes, app fixes, brief sfwiki stuff
+various bits and bobs: gamemap fixes, app stuff, brief sfwiki stuff
 
-how was your holiday? where did you go
+how was your holiday? where did you go?
 
 ## gamemap
 -------------------------------------------------------------
 ### technical
 - merged vality into master (lots of merge conflicts so stuff might be missing)
 - updated readme with build instructions (setting up localhost server and stuff)
+- cleaned up code with better documentation
 
 ### polish
 - updated wiki map pages with help from dcsg
@@ -30,34 +31,27 @@ how was your holiday? where did you go
 - fixed /null being requested (404) in OB/MW from the layer buttons
 - fixed world= param not respecting display names (fixes a few wiki map links)
 - fixed hang when navigating to deleted world (either from RC or url param)
-
-## todo
-
-- doo app styff
-- wiki upgrade broke galleries on the app, skyrim:skyrim and other pages with lots of images make text go squished
-
-- start sf wiki design figma
-
 ## app
 ---------------------------------------------------------------
 
+bad news: had issues trying to fix the gallery bug on the app
+the app relies on a couple of dependencies that are no longer available and wont compile:
 
+- ClickableWebView
+- GlideSVGPlugin
 
+options are (found online):
+    Wait for the maintainer to migrate to another repository (e.g., Maven Central)
+    Find another equivalent package that is available on Maven Central
+    Remove your dependency on the package entirely
+
+for now the app is okay minus that one bug, but would need more dedicated time to app stuff to migrate and fix without causing more issues
 ## sfwiki
 ---------------------------------------------------------------
 
 - show designs and stuff
 - have you considered calling it constellation wiki?
-
-----------------------------------------------------------------
-- signal stuff
-prepare for performance review, make notes
-
-
-- write up what you did in gamemap, how you did, what improve, intuition/innovative stuff oyu did
-- ask for training programme, flutter, do that for ios future app
-- move promotion stuff to subl so its not on github
-
+- what work needs to be done on the site? besides theming is there anything i can help with?
 
 ## todo maps (future)
 - skyrim minecraft map thing
