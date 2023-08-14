@@ -600,7 +600,8 @@
                                                         text={modEditObject.destinationID}
                                                         subtext="+ for world, - for location"
                                                         tooltip="Location/world destination ID"
-                                                        on:change={(e) => modify("destinationID", Number(e.detail))}>
+                                                        type="number"
+                                                        on:change={(e) => modify("destinationID", e.detail)}>
                                                     </Textbox>
                                                 {/if}
                                             {/if}
