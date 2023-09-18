@@ -439,7 +439,7 @@ export default class Gamemap {
 
 					// parse worlds
 					worlds.forEach(world => {
-						if (world.id > mapConfig.minWorldID && world.id < mapConfig.maxWorldID && world.name) {
+						if (world.id >= mapConfig.minWorldID && world.id <= mapConfig.maxWorldID && world.name) {
 							self.mapWorlds.set(world.id, new World(world));
 						}
 					});
@@ -569,17 +569,17 @@ export default class Gamemap {
 	 */
 	getZoom() { return this.getCurrentZoom() }
 	getCurrentZoom() { return (map) ? map.getZoom() : 0 }
-	
+
 	/** Simple function that gets the current world's maximum zoom.
 	 * @returns {Float} maxZoom - The max zoom level of this world
 	 */
 	getMaxZoom() { return (this.getCurrentWorld()) ? this.getCurrentWorld().maxZoomLevel : MAPCONFIG.maxZoomLevel }
-	
+
 	/** Simple function that gets the current world's minimum zoom.
 	 * @returns {Float} minZoom - The min zoom level of this world
 	 */
 	getMinZoom() { return (this.getCurrentWorld()) ? this.getCurrentWorld().minZoomLevel : MAPCONFIG.minZoomLevel }
-	
+
 	/*================================================
 						Locations
 	================================================*/
@@ -742,7 +742,7 @@ export default class Gamemap {
 		}).catch(error => {throw new Error(`There was an error getting locations: ${error}`)});
 	}
 
-	/** Delete the specified location from the map. (Note: does not delete the location from the server). Used for editing. 
+	/** Delete the specified location from the map. (Note: does not delete the location from the server). Used for editing.
 	 * @param {Location} location - the location to be deleted from the map.
 	 */
 	deleteLocation(location) {
@@ -755,7 +755,7 @@ export default class Gamemap {
 		locations?.delete(location.id);
 	}
 
-	/** Update the specified location with new data. Used in editing. 
+	/** Update the specified location with new data. Used in editing.
 	 * @param {Location} location - the location to be updated.
 	 */
 	updateLocation(location) {
@@ -786,7 +786,7 @@ export default class Gamemap {
 
 	}
 
-	/** Clear all locations and markers from the map. 
+	/** Clear all locations and markers from the map.
 	 * @see deleteLocation() for removing an individual location from the map.
 	 */
 	clearLocations() {
@@ -1144,7 +1144,7 @@ export default class Gamemap {
 		}
 		return 0;
 	}
-	
+
 	/** Toggle the grid layer on the map.
 	 *  @param {Object} gridData - An object of gridData to be displayed. Grid is hidden if param is null or false.
 	 */
@@ -1444,13 +1444,13 @@ export default class Gamemap {
 	 * @returns {Element} mapRoot - The gamemap root element.
 	*/
 	getElement() { return this.mapRoot }
-	
+
 	/** Get whether the current map can be edited.
 	 *  @returns {Boolean} editingEnabled - Whether the current map can be edited.
 	 */
 	canEdit() { return MAPCONFIG.editingEnabled }
 
-	/** 
+	/**
 	 * Check from the server whether the current user has editing permissions.
 	 */
 	checkEditingPermissions() {
@@ -1470,7 +1470,7 @@ export default class Gamemap {
 
 	}
 
-	/** 
+	/**
 	 * Clears all tooltips on the map.
 	 */
 	clearTooltips(){
@@ -1536,23 +1536,23 @@ export default class Gamemap {
 	 * @returns {Bounds} bounds - The max bounds of the current map
 	 */
 	getMaxMapBounds() { return RC.getMaxBounds() }
-	
+
 	/** Get the leaflet bounds of the current view
 	 * @returns {Bounds} bounds - A leaflet bounds object for the current view
 	 */
 	getViewBounds() {
-		
+
 		let northWest = this.toCoords(map.getBounds().getNorthWest());
 		let southEast = this.toCoords(map.getBounds().getSouthEast());
-		
+
 		let bounds = {};
 		bounds.minX = northWest.x;
 		bounds.maxX = southEast.x;
 		bounds.minY = (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) ? southEast.y : northWest.y;
 		bounds.maxY = (this.mapConfig.coordType == COORD_TYPES.WORLDSPACE) ? northWest.y : southEast.y;
-		
+
 		return bounds;
-		
+
 	}
 
 	/*================================================
@@ -1601,9 +1601,8 @@ export default class Gamemap {
 
 		map.on("contextmenu", function(){
 			if (self.getMapState().world.parentID != null && self.getMapState().world.parentID != -1 ) {
-				if (!self.mapLock) {
-					let parentID = self.getMapState().world.parentID;
-					self.goto(parentID);
+				if (!self.mapLock && self.hasMultipleWorlds()) {
+					self.goto(self.getMapState().world.parentID);
 				}
 			}
 		})
