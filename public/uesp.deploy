@@ -9,9 +9,13 @@ ignore = .git*
 ignore = *.deploy
 ignore = *.sh
 
-dest = content1.uesp.net:/home/uesp/www/esomap/
-dest = content2.uesp.net:/home/uesp/www/esomap/
-dest = content3.uesp.net:/home/uesp/www/esomap/
-dest = files1.uesp.net:/shared/uesp/maps/esomap/
-destname = [trmap]content1.uesp.net:/home/TamrielRebuilt/www/trmap/
+dest = content1.uesp.net:/home/uesp/gamemap/www/
+dest = content2.uesp.net:/home/uesp/gamemap/www/
+dest = content3.uesp.net:/home/uesp/gamemap/www/
+destname = [dev]content3.uesp.net:/home/thal-j/gamemap/
+
+# Wait until config is seperated
+# dest = content1.uesp.net:/home/sfwiki/gamemap/
+# dest = content2.uesp.net:/home/sfwiki/gamemap/
+# dest = content3.uesp.net:/home/sfwiki/gamemap/
 
