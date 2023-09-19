@@ -14,8 +14,9 @@ dest = content2.uesp.net:/home/uesp/gamemap/www/
 dest = content3.uesp.net:/home/uesp/gamemap/www/
 destname = [dev]content3.uesp.net:/home/thal-j/gamemap/
 
-# Wait until config is seperated
+# Not until Starfield map is merged into gamemap
 # dest = content1.uesp.net:/home/sfwiki/gamemap/
 # dest = content2.uesp.net:/home/sfwiki/gamemap/
 # dest = content3.uesp.net:/home/sfwiki/gamemap/
+# destname = [dev]content3.uesp.net:/home/sfwiki/dev/gamemap/
 
