@@ -1,8 +1,0 @@
-:root {
-	/* text colours */
-	--text_loc_name: #fffc37;
-}
-
-.leaflet-marker-icon {
-    filter: drop-shadow(0 0 0.5rem black);
-}
