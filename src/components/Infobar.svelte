@@ -84,7 +84,6 @@
         border-radius: var(--padding_small);
         margin-left: 100px;
         margin-right: 100px;
-        margin-bottom: 8px;
     }
 
     #watermark:hover {

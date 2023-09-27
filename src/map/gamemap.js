@@ -435,7 +435,6 @@ export default class Gamemap {
 
 			if (this.mapWorlds.size == 0) {
 				getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
-					print(data.worlds);
 					let worlds = data.worlds;
 
 					// parse worlds
@@ -1466,8 +1465,6 @@ export default class Gamemap {
 			let canEdit = data?.canEdit;
 			MAPCONFIG.editingEnabled = ((canEdit || isDebug) && (!self.isEmbedded() && !isMobile()));
 			MAPCONFIG.isAdmin = data.isAdmin;
-			MAPCONFIG.isMobile = isMobile();
-			//MAPCONFIG.hasAds = MAPCONFIG.adScriptName && !MAPCONFIG.editingEnabled;
 			self.mapCallbacks?.onPermissionsLoaded(MAPCONFIG.editingEnabled);
 		});
 

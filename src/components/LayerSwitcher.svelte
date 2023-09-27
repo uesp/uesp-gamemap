@@ -223,7 +223,6 @@
         margin: 0 auto;
         color:black;
         border-radius: var(--padding_medium) !important;
-        margin-bottom: 8px;
     }
 
     #close_button {
