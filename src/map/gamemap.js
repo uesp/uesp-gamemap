@@ -1467,7 +1467,7 @@ export default class Gamemap {
 			MAPCONFIG.editingEnabled = ((canEdit || isDebug) && (!self.isEmbedded() && !isMobile()));
 			MAPCONFIG.isAdmin = data.isAdmin;
 			MAPCONFIG.isMobile = isMobile();
-			//MAPCONFIG.hasAds = MAPCONFIG.adScriptName && !MAPCONFIG.editingEnabled;
+			MAPCONFIG.hasAds = MAPCONFIG.adScriptName && !MAPCONFIG.editingEnabled; // disable ads if user is map editor
 			self.mapCallbacks?.onPermissionsLoaded(MAPCONFIG.editingEnabled);
 		});
 
