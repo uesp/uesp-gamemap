@@ -234,6 +234,12 @@ class GameMap
 	}
 	
 	
+	public function isValidDbPrefix($prefix)
+	{
+		return preg_match('/[^a-zA-Z0-9_-]/', $prefix) === 0;
+	}
+	
+	
 	public function loadUserWikiGroups($userId)
 	{
 		$userId = intval($userId);
@@ -2081,41 +2087,10 @@ class GameMap
 		{
 			$dbPrefix = $this->inputParams['db'];
 			
-			switch ($dbPrefix)
+			if ($this->isValidDbPrefix($dbPrefix)) 
 			{
-				case 'eso':		// Make explicit
-					$this->dbPrefix = "";
-					break;
-				case 'sr':
-					$this->dbPrefix = "sr";
-					break;
-				case 'beyond':
-					$this->dbPrefix = "beyond";
-					break;
-				case 'tr':
-					$this->dbPrefix = "tr";
-					break;
-				case 'ob':
-					$this->dbPrefix = "ob";
-					break;
-				case 'db':
-					$this->dbPrefix = "db";
-					break;
-				case 'mw':
-					$this->dbPrefix = "mw";
-					break;
-				case 'ptmw':
-					$this->dbPrefix = "ptmw";
-					break;
-				case 'si':
-					$this->dbPrefix = "si";
-					break;
-				case 'test':
-					$this->dbPrefix = "test";
-					break;
-				case 'ds':
-					$this->dbPrefix = "ds";
-					break;
+				$this->dbPrefix = $dbPrefix;
+				if ($this->dbPrefix == "eso") $this->dbPrefix = "";
 			}
 		}
 		
