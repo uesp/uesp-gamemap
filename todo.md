@@ -1,3 +1,19 @@
+## todo
+
+- get mobile ad layout working
+- dehardcode border radius from padding (radius css vars, to allow square for starf)
+- refactor fonts to be inside each /map config folder (uesp maps and starfield maps have different fonts)
+- title font should just be title.ttf (for "UESP" brand at bottom)
+- link up MAP WORLD NAME (UESP) to mapconfig wiki name (or have it blank if none provided)
+- support negative world bounds (make starfield not upside down)
+- make feedback support link optional, if not provided, support button doesnt appear
+- make wiki title in infobar optional
+- allow manual coordinate for markers
+
+
+- do flutter training course
+- update mobile app by november 1st
+
 ## todo maps (future)
 - skyrim minecraft map thing
 - cave interior maps for skyrim, ob, mw
@@ -12,7 +28,6 @@
 - wiki features (hybrid news etc)
 - prettify uesp email thing
 - starfield wiki app
-- starfield map
 
 app:
 - cross platform
