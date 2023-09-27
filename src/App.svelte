@@ -21,7 +21,6 @@
 
 	// import svelte core stuff
 	import { onMount } from 'svelte';
-	import { marked } from 'marked';
 
 	// import commons
 	import './common.js';
@@ -119,12 +118,12 @@
 				setLoading("Loading config");
 				print("Getting map config at " + configURL + "...");
 				getJSON(configURL).then(object => {
-					print("Imported map config successfully.");
-					mapConfig = object;
 
+					// set up base map config
+					print("Imported map config successfully.");
 					print("Merging with default map config...")
-					let mergedMapConfig = mergeObjects(DEFAULT_MAP_CONFIG, mapConfig);
-					mapConfig = mergedMapConfig;
+					mapConfig = mergeObjects(DEFAULT_MAP_CONFIG, object);
+					mapConfig.hasAds = mapConfig.adScriptName != null;
 
 					// set up map config assets
 					mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
@@ -140,7 +139,7 @@
 
 					print("Completed merged map config:")
 					print(mapConfig);
-					window.MAPCONFIG = mapConfig; // make global
+					window.MAPCONFIG = mapConfig; // make mapconfig global
 
 					// load map
 					loadGamemap(mapConfig);
