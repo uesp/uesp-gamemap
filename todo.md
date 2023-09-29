@@ -1,6 +1,8 @@
 ## todo
 
 - get mobile ad layout working
+- ad ads to all the other maps
+- get sf ads working
 - dehardcode border radius from padding (radius css vars, to allow square for starf)
 - refactor fonts to be inside each /map config folder (uesp maps and starfield maps have different fonts)
 - title font should just be title.ttf (for "UESP" brand at bottom)
@@ -8,7 +10,12 @@
 - support negative world bounds (make starfield not upside down)
 - make feedback support link optional, if not provided, support button doesnt appear
 - make wiki title in infobar optional
-- allow manual coordinate for markers
+- allow manual coordinate entry for markers
+
+
+ask dave: integrate analytics into individual map features (edit templates) to see how often they are used?
+what does akb actually do? as a job
+- ask dave did he get prior knowledge of tes:castles 
 
 
 - do flutter training course
