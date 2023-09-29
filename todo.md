@@ -1,5 +1,23 @@
+## last week
+
+sfwiki:
+
+- fixed content menu having huge long tiles for 1080p screens
+- added nefas to partners sidebar
+- centred sidebar icons with text, slight padding
+
+gamemap:
+
+- added ad support to gamemap
+>> desktop ads are inside the map, but below the watermark
+>> mobile ads offset the whole map upwards, and separate from it
+- customisable in mapconfig
+- ad script doesnt load if user is logged in && editor
+- couple misc user requested skyrim map icons/templates
+- some work merging sfmap client into gamemap
 ## todo
 
+- do svelte:header tags for discord-like embeds for maps (include current map image, title and stuff)
 - get mobile ad layout working
 - ad ads to all the other maps
 - get sf ads working
@@ -12,10 +30,9 @@
 - make wiki title in infobar optional
 - allow manual coordinate entry for markers
 
-
-ask dave: integrate analytics into individual map features (edit templates) to see how often they are used?
-what does akb actually do? as a job
-- ask dave did he get prior knowledge of tes:castles 
+- benefactor of imperial library expressed interest in being a part time product manager for uesp
+- what does akb actually do? as a job
+- ask dave did he get prior knowledge of tes:castles, what the story is there
 
 
 - do flutter training course
@@ -30,6 +47,10 @@ what does akb actually do? as a job
 >> https://jsfiddle.net/Razielwar/hmqgn69r/14/
 - allow shiftclick/ctrl click to add/remove vertices
 - use quadtrees as map optimisation
+- better layer toggles menu:
+https://cdn.discordapp.com/attachments/1108392138019971164/1157007429222027304/image.png?ex=65170aa3&is=6515b923&hm=1154a1e7c990396188050f054b03e026ae8810bbfec4b84efd3a962197b4ae30&
+- ask dave: integrate analytics into individual map features (edit templates) to see how often they are used?
+
 
 ## todo future general
 - wiki features (hybrid news etc)

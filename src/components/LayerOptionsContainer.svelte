@@ -14,6 +14,8 @@
     // import ui components
     import AdComponent from './AdComponent.svelte';
 
+    export let config = MAPCONFIG;
+
     // state vars
     let isLoaded = false;
     onMount(() => { isLoaded = true;}); // wait to load ads until after page is loaded
@@ -23,7 +25,7 @@
 <markup>
     <div in:fly|global="{{ y: 5, duration: 250 }}" out:fade|global="{{duration: 100}}" on:contextmenu={(e) => e.stopPropagation()} >
         <slot/>
-        {#if isLoaded && MAPCONFIG.hasAds}
+        {#if isLoaded && config.hasAds}
             <AdComponent/>
         {/if}
     </div>

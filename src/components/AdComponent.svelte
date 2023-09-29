@@ -10,6 +10,7 @@
     <div id="{MAPCONFIG.adScriptName}_{isMobile() ? "M_1" : "D_1"}" style="pointer-events: visible;"/>
 </markup>
 
+<!-- inject ads sdk script into document head -->
 <svelte:head>
     <script src="https://lngtd.com/{MAPCONFIG.adScriptName}.js"/>
 </svelte:head>

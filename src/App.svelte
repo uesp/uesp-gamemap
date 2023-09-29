@@ -183,6 +183,7 @@
 		setWindowTitle(mapState.world.displayName);
 		locationList?.dismiss();
 		isLoaded = true;
+		mapConfig = MAPCONFIG;
 
 		// load pendingSearch if there is one
 		setTimeout(() => { // timeout to wait for ui to load
@@ -350,7 +351,7 @@
 
 				<!-- Infobar / Layer options -->
 				{#if !mapState?.isGridEnabled()}
-					<LayerOptionsContainer>
+					<LayerOptionsContainer config={mapConfig}>
 						<Infobar mapName={mapConfig.mapTitle} embedded={gamemap.isEmbedded()} lock={mapLock}/>
 					</LayerOptionsContainer>
 				{/if}
