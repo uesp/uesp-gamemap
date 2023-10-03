@@ -990,6 +990,10 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 				  Ugly CSS Hacks
 ================================================*/
 
+#app.mobile {
+	flex-direction: column !important;
+}
+
 /* make textinput placeholder same colour as low emphasis */
 ::placeholder {
 	color: var(--text_low_emphasis) !important;

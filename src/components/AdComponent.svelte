@@ -16,9 +16,13 @@
 </svelte:head>
 
 <style>
-    .mobile {
-        width: 100% !important;
+
+    div {
+        width: fit-content;
         height: fit-content;
     }
-
+    .mobile {
+        width: 100% !important;
+    }
+    
 </style>
