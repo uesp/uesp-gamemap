@@ -25,7 +25,7 @@
 <markup>
     <div in:fly|global="{{ y: 5, duration: 250 }}" out:fade|global="{{duration: 100}}" on:contextmenu={(e) => e.stopPropagation()} >
         <slot/>
-        {#if isLoaded && config.hasAds}
+        {#if isLoaded && config.hasAds && !isMobile}
             <AdComponent/>
         {/if}
     </div>

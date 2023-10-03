@@ -54,12 +54,12 @@
 	// initialise app
 	print("Initialising app...");
 	document.getElementById('app').addEventListener('DOMSubtreeModified', function () {
-			// prevent scroll events in svelte components propagating to gamemap
-			let svelteElements = document.querySelectorAll("[class*='svelte']");
-			for (let i = 0; i < svelteElements.length; i++) {
-				let element = svelteElements[i];
-				L.DomEvent.disableScrollPropagation(element);
-			}
+		// prevent scroll events in svelte components propagating to gamemap
+		let svelteElements = document.querySelectorAll("[class*='svelte']");
+		for (let i = 0; i < svelteElements.length; i++) {
+			let element = svelteElements[i];
+			L.DomEvent.disableScrollPropagation(element);
+		}
 	}, false);
 
 	// state variables
@@ -72,7 +72,7 @@
 	let mapConfig = null;
 	let gamemap = null;
 	let gamemapContainer = null;
-	let canEdit = false;
+	let canEdit = null;
 	let editPane;
 	let isEditing;
 	let mapLock = null;
@@ -83,6 +83,16 @@
 	let showMaps = false;
 	let mapKeyDialog;
 	let searchPane;
+	let isMobile = false;
+	let clientWidth = 0;
+	$: {
+		// set whether is using mobile mode
+		isMobile = clientWidth <= 670 || navigator.userAgent.match(/Mobi/);
+		window.isMobile = isMobile; 
+
+		// hide edit menu if in mobile mode
+		try { canEdit = (MAPCONFIG != null) ? MAPCONFIG.editingEnabled && !isMobile : canEdit; } catch (e) {}
+	}
 
 	// on app start
 	onMount(async() => {
@@ -352,6 +362,35 @@
 				<!-- Infobar / Layer options -->
 				{#if !mapState?.isGridEnabled()}
 					<LayerOptionsContainer config={mapConfig}>
+
+						{#if condition}
+							 <!-- content here -->
+						{/if}
+						<slot:template slot="ad">
+
+						</slot:template>
+
+						<slot:template slot="secondary">
+							{#if gamemap.hasMultipleWorlds()}
+								<IconButton icon="explore" label={mapState.world.displayName} tooltip="Show location list" dropdown="true"  lock={mapLock} checked={locationListShown} on:checked={() => locationList.toggle()}/>
+							{/if}
+
+							{#if mapState.world.wikiPage} <!-- only show article button if world has a wiki page -->
+								<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" lock={mapLock} on:click={() => {
+									print("Getting article link...");
+									window.open(mapState.world.getWikiLink());
+								}}/>
+							{/if}
+
+							<IconButton icon="link" label="Copy Link" lock={mapLock} tooltip="Copy link to current map view" on:click={() => {
+								print("Copying link to clipboard...");
+								M.toast({html: 'Map link copied to clipboard!'});
+								navigator?.clipboard?.writeText(window.location);
+							}}/>
+
+						</slot:template>
+
+
 						<Infobar mapName={mapConfig.mapTitle} embedded={gamemap.isEmbedded()} lock={mapLock}/>
 					</LayerOptionsContainer>
 				{/if}
@@ -396,4 +435,4 @@
 <style global src="./app.css"></style>
 
 <!-- Global event listeners -->
-<svelte:window on:keydown={onKeyPressed} on:fullscreenchange={toggleFullscreen}/>
+<svelte:window bind:innerWidth={clientWidth} on:keydown={onKeyPressed} on:fullscreenchange={toggleFullscreen} />

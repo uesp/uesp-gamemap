@@ -85,11 +85,6 @@ const YEAR = DAY * 365;
 					Functions
 ================================================*/
 
-/** Returns whether current device is a mobile device or not. */
-window.isMobile = function isMobile() {
-	return (navigator.userAgent.match(/Mobi/));
-}
-
 /** Returns whether current browser is firefox or not. */
 window.isFirefox = function isFirefox() {
 	return (navigator.userAgent.indexOf('Firefox') !== -1);
@@ -101,7 +96,7 @@ window.isChrome = function isChrome() {
 }
 
 /** Debug print function, disabled for mobile */
-if (!isMobile() || isDebug || location.toString().includes("localhost") || location.toString().includes("devgame")) {
+if (!navigator.userAgent.match(/Mobi/) || isDebug || location.toString().includes("localhost") || location.toString().includes("devgame")) {
 
 	// Prevent the default print action from occurring
 	window.addEventListener('beforeprint', function(event) {event.preventDefault() });

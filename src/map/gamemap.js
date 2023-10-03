@@ -9,6 +9,7 @@ import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 // import plugins
+import { replaceState } from "history-throttled"; // workaround for history api throttling issues
 import RasterCoords from "./plugins/rastercoords";
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
@@ -333,7 +334,7 @@ export default class Gamemap {
 		self.mapCallbacks?.onMapStateChanged(mapState);
 
 		// update url with new state
-		window.history.replaceState(mapState, document.title, mapLink);
+		replaceState(mapState, document.title, mapLink);
   		window.dispatchEvent(new PopStateEvent('popstate'));
 	}
 
@@ -1464,9 +1465,8 @@ export default class Gamemap {
 
 		getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
 			let canEdit = data?.canEdit;
-			MAPCONFIG.editingEnabled = ((canEdit || isDebug) && (!self.isEmbedded() && !isMobile()));
+			MAPCONFIG.editingEnabled = ((canEdit || isDebug) && !self.isEmbedded());
 			MAPCONFIG.isAdmin = data.isAdmin;
-			MAPCONFIG.isMobile = isMobile();
 			MAPCONFIG.hasAds = MAPCONFIG.adScriptName && !MAPCONFIG.editingEnabled; // disable ads if user is map editor
 			self.mapCallbacks?.onPermissionsLoaded(MAPCONFIG.editingEnabled);
 		});
