@@ -11,11 +11,6 @@
     import { fade, fly } from 'svelte/transition';
     import { onMount } from 'svelte';
 
-    // import ui components
-    import AdComponent from './AdComponent.svelte';
-
-    export let config = MAPCONFIG;
-
     // state vars
     let isLoaded = false;
     onMount(() => { isLoaded = true;}); // wait to load ads until after page is loaded
@@ -24,10 +19,10 @@
 
 <markup>
     <div in:fly|global="{{ y: 5, duration: 250 }}" out:fade|global="{{duration: 100}}" on:contextmenu={(e) => e.stopPropagation()} >
-        <slot/>
-        {#if isLoaded && config.hasAds && !isMobile}
-            <AdComponent/>
+        {#if isLoaded} <!-- ad slot goes first, above everything else -->
+            <slot name="ad"/> 
         {/if}
+        <slot/>
     </div>
 </markup>
 

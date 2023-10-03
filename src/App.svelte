@@ -47,6 +47,7 @@
 	import Icon from './components/Icon.svelte';
 	import Dialog from './components/Dialog.svelte';
 	import EditPane from './components/Editor.svelte';
+	import AdComponent from './components/AdComponent.svelte';
 
 	// import gamemap
 	import Gamemap from "./map/gamemap.js";
@@ -85,10 +86,16 @@
 	let searchPane;
 	let isMobile = false;
 	let clientWidth = 0;
+
 	$: {
 		// set whether is using mobile mode
 		isMobile = clientWidth <= 670 || navigator.userAgent.match(/Mobi/);
 		window.isMobile = isMobile; 
+		if (isMobile) {
+			document.querySelector('#app').classList.add("mobile");
+		} else {
+			document.querySelector('#app').classList.remove("mobile");
+		}
 
 		// hide edit menu if in mobile mode
 		try { canEdit = (MAPCONFIG != null) ? MAPCONFIG.editingEnabled && !isMobile : canEdit; } catch (e) {}
@@ -363,35 +370,14 @@
 				{#if !mapState?.isGridEnabled()}
 					<LayerOptionsContainer config={mapConfig}>
 
-						{#if condition}
-							 <!-- content here -->
-						{/if}
-						<slot:template slot="ad">
-
+						<slot:template slot="ad"> <!-- ad slot, for desktop layouts-->
+							{#if mapConfig.hasAds && !isMobile}
+								<AdComponent/>
+					  		{/if}
 						</slot:template>
-
-						<slot:template slot="secondary">
-							{#if gamemap.hasMultipleWorlds()}
-								<IconButton icon="explore" label={mapState.world.displayName} tooltip="Show location list" dropdown="true"  lock={mapLock} checked={locationListShown} on:checked={() => locationList.toggle()}/>
-							{/if}
-
-							{#if mapState.world.wikiPage} <!-- only show article button if world has a wiki page -->
-								<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" lock={mapLock} on:click={() => {
-									print("Getting article link...");
-									window.open(mapState.world.getWikiLink());
-								}}/>
-							{/if}
-
-							<IconButton icon="link" label="Copy Link" lock={mapLock} tooltip="Copy link to current map view" on:click={() => {
-								print("Copying link to clipboard...");
-								M.toast({html: 'Map link copied to clipboard!'});
-								navigator?.clipboard?.writeText(window.location);
-							}}/>
-
-						</slot:template>
-
 
 						<Infobar mapName={mapConfig.mapTitle} embedded={gamemap.isEmbedded()} lock={mapLock}/>
+
 					</LayerOptionsContainer>
 				{/if}
 			{/if}
@@ -428,6 +414,11 @@
 	{#if isDebug}
 		 <DebugBadge/>
 	{/if}
+
+	<!-- Mobile ad slot -->
+	{#if isMobile && mapConfig?.hasAds}
+		<AdComponent/>
+  	{/if}
 
 </markup>
 
