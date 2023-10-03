@@ -25,7 +25,7 @@
     let dropdownButton = null;
     let contentViewHeight;
     let tabBar;
-    let mobile = isMobile() || window.innerWidth <= 670;
+    let mobile = isMobile || window.innerWidth <= 670;
     let mapWorlds = gamemap.getWorlds();
     let abcWorldList = [];
     let groupedWorldList = [];
@@ -188,7 +188,7 @@
     // dyamically centre dropdown when not mobile
     function reposition() {
         dropdownButton = document.querySelector('#dropdown_icon')?.parentElement;
-        mobile = (isMobile() || window.innerWidth <= 670);
+        mobile = (isMobile || window.innerWidth <= 670);
         if (!mobile && locationList && dropdownButton) {
             let dropdownX = dropdownButton.getBoundingClientRect().left;
             let offset = dropdownX + (dropdownButton.clientWidth / 2);

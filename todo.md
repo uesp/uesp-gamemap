@@ -1,24 +1,13 @@
 ## last week
 
-sfwiki:
+- fix hang related to resizing map
+- edit ui hides when resizing to mobile-sized screen
 
-- fixed content menu having huge long tiles for 1080p screens
-- added nefas to partners sidebar
-- centred sidebar icons with text, slight padding
 
-gamemap:
-
-- added ad support to gamemap
->> desktop ads are inside the map, but below the watermark
->> mobile ads offset the whole map upwards, and separate from it
-- customisable in mapconfig
-- ad script doesnt load if user is logged in && editor
-- couple misc user requested skyrim map icons/templates
-- some work merging sfmap client into gamemap
 ## todo
 
-- do svelte:header tags for discord-like embeds for maps (include current map image, title and stuff)
 - get mobile ad layout working
+- do svelte:header tags for discord-like embeds for maps (include current map image, title and stuff)
 - ad ads to all the other maps
 - get sf ads working
 - dehardcode border radius from padding (radius css vars, to allow square for starf)
@@ -30,13 +19,10 @@ gamemap:
 - make wiki title in infobar optional
 - allow manual coordinate entry for markers
 
-- benefactor of imperial library expressed interest in being a part time product manager for uesp
-- what does akb actually do? as a job
-- ask dave did he get prior knowledge of tes:castles, what the story is there
-
 
 - do flutter training course
 - update mobile app by november 1st
+
 
 ## todo maps (future)
 - skyrim minecraft map thing
