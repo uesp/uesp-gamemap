@@ -2,11 +2,12 @@
 
 - fix hang related to resizing map
 - edit ui hides when resizing to mobile-sized screen
+- added mobile ad layout
+>> don't think its working though
 
 
 ## todo
 
-- get mobile ad layout working
 - do svelte:header tags for discord-like embeds for maps (include current map image, title and stuff)
 - ad ads to all the other maps
 - get sf ads working
@@ -14,7 +15,6 @@
 - refactor fonts to be inside each /map config folder (uesp maps and starfield maps have different fonts)
 - title font should just be title.ttf (for "UESP" brand at bottom)
 - link up MAP WORLD NAME (UESP) to mapconfig wiki name (or have it blank if none provided)
-- support negative world bounds (make starfield not upside down)
 - make feedback support link optional, if not provided, support button doesnt appear
 - make wiki title in infobar optional
 - allow manual coordinate entry for markers
