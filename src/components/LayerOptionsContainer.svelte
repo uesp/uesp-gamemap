@@ -19,10 +19,10 @@
 
 <markup>
     <div in:fly|global="{{ y: 5, duration: 250 }}" out:fade|global="{{duration: 100}}" on:contextmenu={(e) => e.stopPropagation()} >
-        {#if isLoaded} <!-- ad slot goes first, above everything else -->
+        <slot/>
+        {#if isLoaded}  <!-- ad slot -->
             <slot name="ad"/> 
         {/if}
-        <slot/>
     </div>
 </markup>
 
