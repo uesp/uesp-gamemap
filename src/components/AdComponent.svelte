@@ -7,7 +7,7 @@
 - Thal-J <thal-j@uesp.net> (25th September, 2023) -->
 
 <markup>
-    <div id="{MAPCONFIG.adScriptName}_{isMobile ? "M_1" : "D_1"}" style="pointer-events: visible;" class:mobile={isMobile}/>
+    <div id="{MAPCONFIG.altAdDivID ?? MAPCONFIG.adScriptName}_{isMobile ? "M_1" : "D_1"}" style="pointer-events: visible;" class:mobile={isMobile}/>
 </markup>
 
 <!-- inject ads sdk script into document head -->
@@ -21,8 +21,5 @@
         width: fit-content;
         height: fit-content;
     }
-    .mobile {
-        width: 100% !important;
-    }
-    
+
 </style>
