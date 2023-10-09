@@ -9,13 +9,9 @@ ads and starfield map customisation
 - dehardcoded border radius from padding (made starf have square ui)
 >> ui elements such as the loading box transition between radius and custom colours smoothly
 - dehardcoded fonts, each map family can have its own logo font now
+- dehardcoded wiki links, so the logo and menu items (help, feedback) can be properly set on starfield now
 
 ## todo
-
-- do svelte:header tags for discord-like embeds for maps (include current map image, title and stuff)
-- link up MAP WORLD NAME (UESP) to mapconfig wiki name (or have it blank if none provided)
-- make feedback support link optional, if not provided, support button doesnt appear
-- make wiki title in infobar optional
 
 - do flutter training course
 - update mobile app by november 1st
@@ -33,7 +29,7 @@ ads and starfield map customisation
 - better layer toggles menu:
 https://cdn.discordapp.com/attachments/1108392138019971164/1157007429222027304/image.png?ex=65170aa3&is=6515b923&hm=1154a1e7c990396188050f054b03e026ae8810bbfec4b84efd3a962197b4ae30&
 - ask dave: integrate analytics into individual map features (edit templates) to see how often they are used?
-
+- do svelte:header tags for discord-like embeds for maps (include current map image, title and stuff)
 
 ## todo future general
 - wiki features (hybrid news etc)

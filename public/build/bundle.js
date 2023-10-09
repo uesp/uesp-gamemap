@@ -55325,7 +55325,7 @@ var app = (function () {
 
     			const iconbar_changes = {};
 
-    			if (dirty[0] & /*mapLock, mapState, locationListShown, locationList, gamemap, isFullscreen, mapKeyDialog, isEditing, editPane, canEdit*/ 1504385 | dirty[1] & /*$$scope*/ 32768) {
+    			if (dirty[0] & /*mapLock, mapState, locationListShown, locationList, gamemap, isFullscreen, mapConfig, mapKeyDialog, isEditing, editPane, canEdit*/ 1504897 | dirty[1] & /*$$scope*/ 32768) {
     				iconbar_changes.$$scope = { dirty, ctx };
     			}
 
@@ -55485,12 +55485,13 @@ var app = (function () {
     	return block;
     }
 
-    // (335:10) {#if MAPCONFIG.helpURL}
+    // (335:10) {#if mapConfig.helpURL}
     function create_if_block_15(ctx) {
     	let li;
     	let a;
     	let icon;
     	let t;
+    	let a_href_value;
     	let current;
 
     	icon = new Icon({
@@ -55505,7 +55506,7 @@ var app = (function () {
     			create_component(icon.$$.fragment);
     			t = text("Help");
     			attr_dev(a, "title", "See help info");
-    			attr_dev(a, "href", MAPCONFIG.helpURL);
+    			attr_dev(a, "href", a_href_value = /*mapConfig*/ ctx[9].helpURL);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noopener noreferrer");
     			add_location(a, file, 334, 58, 10914);
@@ -55519,7 +55520,11 @@ var app = (function () {
     			append_dev(a, t);
     			current = true;
     		},
-    		p: noop,
+    		p: function update(ctx, dirty) {
+    			if (!current || dirty[0] & /*mapConfig*/ 512 && a_href_value !== (a_href_value = /*mapConfig*/ ctx[9].helpURL)) {
+    				attr_dev(a, "href", a_href_value);
+    			}
+    		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(icon.$$.fragment, local);
@@ -55539,19 +55544,20 @@ var app = (function () {
     		block,
     		id: create_if_block_15.name,
     		type: "if",
-    		source: "(335:10) {#if MAPCONFIG.helpURL}",
+    		source: "(335:10) {#if mapConfig.helpURL}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (337:10) {#if MAPCONFIG.feedbackURL}
+    // (337:10) {#if mapConfig.feedbackURL}
     function create_if_block_14(ctx) {
     	let li;
     	let a;
     	let icon;
     	let t;
+    	let a_href_value;
     	let current;
 
     	icon = new Icon({
@@ -55565,7 +55571,7 @@ var app = (function () {
     			a = element("a");
     			create_component(icon.$$.fragment);
     			t = text("Feedback");
-    			attr_dev(a, "href", MAPCONFIG.feedbackURL);
+    			attr_dev(a, "href", a_href_value = /*mapConfig*/ ctx[9].feedbackURL);
     			attr_dev(a, "target", "_blank");
     			attr_dev(a, "rel", "noopener noreferrer");
     			attr_dev(a, "title", "Tell us your thoughts");
@@ -55580,7 +55586,11 @@ var app = (function () {
     			append_dev(a, t);
     			current = true;
     		},
-    		p: noop,
+    		p: function update(ctx, dirty) {
+    			if (!current || dirty[0] & /*mapConfig*/ 512 && a_href_value !== (a_href_value = /*mapConfig*/ ctx[9].feedbackURL)) {
+    				attr_dev(a, "href", a_href_value);
+    			}
+    		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(icon.$$.fragment, local);
@@ -55600,7 +55610,7 @@ var app = (function () {
     		block,
     		id: create_if_block_14.name,
     		type: "if",
-    		source: "(337:10) {#if MAPCONFIG.feedbackURL}",
+    		source: "(337:10) {#if mapConfig.feedbackURL}",
     		ctx
     	});
 
@@ -55625,9 +55635,9 @@ var app = (function () {
     	let current;
     	let mounted;
     	let dispose;
-    	let if_block0 = MAPCONFIG.helpURL && create_if_block_15(ctx);
+    	let if_block0 = /*mapConfig*/ ctx[9].helpURL && create_if_block_15(ctx);
     	icon0 = new Icon({ props: { name: "list" }, $$inline: true });
-    	let if_block1 = MAPCONFIG.feedbackURL && create_if_block_14(ctx);
+    	let if_block1 = /*mapConfig*/ ctx[9].feedbackURL && create_if_block_14(ctx);
 
     	icon1 = new Icon({
     			props: {
@@ -55694,8 +55704,52 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (MAPCONFIG.helpURL) if_block0.p(ctx, dirty);
-    			if (MAPCONFIG.feedbackURL) if_block1.p(ctx, dirty);
+    			if (/*mapConfig*/ ctx[9].helpURL) {
+    				if (if_block0) {
+    					if_block0.p(ctx, dirty);
+
+    					if (dirty[0] & /*mapConfig*/ 512) {
+    						transition_in(if_block0, 1);
+    					}
+    				} else {
+    					if_block0 = create_if_block_15(ctx);
+    					if_block0.c();
+    					transition_in(if_block0, 1);
+    					if_block0.m(ul, t0);
+    				}
+    			} else if (if_block0) {
+    				group_outros();
+
+    				transition_out(if_block0, 1, 1, () => {
+    					if_block0 = null;
+    				});
+
+    				check_outros();
+    			}
+
+    			if (/*mapConfig*/ ctx[9].feedbackURL) {
+    				if (if_block1) {
+    					if_block1.p(ctx, dirty);
+
+    					if (dirty[0] & /*mapConfig*/ 512) {
+    						transition_in(if_block1, 1);
+    					}
+    				} else {
+    					if_block1 = create_if_block_14(ctx);
+    					if_block1.c();
+    					transition_in(if_block1, 1);
+    					if_block1.m(ul, t3);
+    				}
+    			} else if (if_block1) {
+    				group_outros();
+
+    				transition_out(if_block1, 1, 1, () => {
+    					if_block1 = null;
+    				});
+
+    				check_outros();
+    			}
+
     			const icon1_changes = {};
 
     			if (dirty[0] & /*isFullscreen*/ 128) icon1_changes.name = !/*isFullscreen*/ ctx[7]
@@ -55805,7 +55859,7 @@ var app = (function () {
     			const iconbutton_changes = {};
     			if (dirty[0] & /*mapLock*/ 16384) iconbutton_changes.lock = /*mapLock*/ ctx[14];
 
-    			if (dirty[0] & /*isFullscreen, mapKeyDialog*/ 1048704 | dirty[1] & /*$$scope*/ 32768) {
+    			if (dirty[0] & /*isFullscreen, mapConfig, mapKeyDialog*/ 1049216 | dirty[1] & /*$$scope*/ 32768) {
     				iconbutton_changes.$$scope = { dirty, ctx };
     			}
 

@@ -332,9 +332,9 @@
 								<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu' lock={mapLock}>
 									<!-- Menu Items -->
 									<ul id='overflow-menu' class='dropdown-content'>
-										{#if MAPCONFIG.helpURL}<li class="waves-effect"><a title="See help info" href={MAPCONFIG.helpURL} target="_blank" rel="noopener noreferrer"><Icon name="help_outline"/>Help</a></li>{/if}
+										{#if mapConfig.helpURL}<li class="waves-effect"><a title="See help info" href={mapConfig.helpURL} target="_blank" rel="noopener noreferrer"><Icon name="help_outline"/>Help</a></li>{/if}
 										<li class="waves-effect"><a title="Show map key" on:click={() => mapKeyDialog.show()}><Icon name="list"/>Map Key</a></li>
-										{#if MAPCONFIG.feedbackURL}<li class="waves-effect"><a href={MAPCONFIG.feedbackURL} target="_blank" rel="noopener noreferrer" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>{/if}
+										{#if mapConfig.feedbackURL}<li class="waves-effect"><a href={mapConfig.feedbackURL} target="_blank" rel="noopener noreferrer" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>{/if}
 										<li class="waves-effect"><a on:click={toggleFullscreen} id="fullscreen-toggle" title="Toggle fullscreen mode"><Icon name={(!isFullscreen) ? "fullscreen" : "fullscreen_exit"}/>{(!isFullscreen) ? "Fullscreen" : "Exit"}</a></li>
 									</ul>
 								</IconButton>
