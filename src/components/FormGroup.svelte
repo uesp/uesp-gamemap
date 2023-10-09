@@ -56,7 +56,7 @@
         border-color: var(--divider);
         border-width: 3px;
         border-style: solid;
-        border-radius: var(--padding_minimum);
+        border-radius: var(--radius_small);
         position: relative;
     }
 

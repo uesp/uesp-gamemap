@@ -96,7 +96,7 @@
         position: relative;
         font-size: 1rem;
         height: 100%;
-        border-radius: var(--padding_large);
+        border-radius: var(--radius_largest);
         z-index: 1;
         width: 100%;
         text-align: center;
@@ -118,7 +118,7 @@
         background-color: var(--surface_variant_dark);
         width: 100%;
         height: 40px;
-        border-radius: var(--padding_large);
+        border-radius: var(--radius_largest);
         border-style: solid;
         border-color: var(--divider);
         border-width: 1px;
@@ -139,7 +139,7 @@
     #slider {
         top: 0px;
         position: absolute;
-        border-radius: var(--padding_large);
+        border-radius: var(--radius_largest);
         z-index: 0;
         background-color: var(--secondary_variant_light);
         box-shadow: 0px 1px 4px 0 var(--shadow);

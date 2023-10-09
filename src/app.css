@@ -86,6 +86,16 @@
 	--padding_small: 12px;
 	--padding_medium: 16px;
 	--padding_large: 32px;
+
+	/* border radius */
+	--radius_minimum: 2px;
+	--radius_tiny: 4px;
+	--radius_small: 8px;
+	--radius_medium: 12px;
+	--radius_large: 16px;
+	--radius_largest: 32px;
+	--radius_button: var(--appbar_dimen);
+	--radius_circle: 50%;
 }
 
 /*================================================
@@ -422,7 +432,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	position: absolute;
 	z-index: 99999 !important;
 	background-color: var(--surface_variant) !important;
-	border-radius: 16px !important;
+	border-radius: var(--radius_large) !important;
 	font-weight: bold;
 	width: fit-content !important;
 	height: fit-content !important;
@@ -507,7 +517,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 
 /* modals */
 .modal {
-	border-radius: var(--padding_medium) !important;
+	border-radius: var(--radius_large) !important;
 	background-color: var(--primary) !important;
 }
 .modal-footer {
@@ -629,7 +639,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 }
 ::-webkit-scrollbar-thumb {
 	background-color: rgba(155, 155, 155, 0.5);
-	border-radius: 20px;
+	border-radius: var(--radius_large);
 	border: transparent;
 }
 ::-webkit-scrollbar-corner {
@@ -644,30 +654,30 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	background: var(--primary_variant_light) !important;
 }
 .picker_selector {
-	border-radius: 50% !important;
+	border-radius: var(--radius_circle) !important;
 	box-shadow: 0 0 3px 1px var(--shadow) !important;
 }
 .picker_wrapper.layout_default {
-	border-radius: var(--padding_minimum) !important;
+	border-radius: var(--radius_small) !important;
 	font-size: 10.5px !important;
 }
 .layout_default .picker_editor {
 	width: 10rem !important;
 }
 .layout_default {
-	border-radius: var(--padding_minimum) !important;
+	border-radius: var(--radius_small) !important;
 }
 .picker_sl {
-	border-radius: 4px !important;
+	border-radius: var(--radius_tiny) !important;
 }
 .picker_alpha .picker_slider {
-	border-radius: var(--padding_medium) !important;
+	border-radius: var(--radius_large) !important;
 }
 .picker_slider, .picker_sl {
 	box-shadow: 0 0 0 1px var(--divider) !important;
 }
 .picker_slider {
-	border-radius: 4px !important;
+	border-radius: var(--radius_tiny) !important;
 }
 .picker_done button {
 	height: 100% !important;
@@ -692,7 +702,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 }
 .picker_editor input {
 	background: var(--surface_variant_dark) !important;
-	border-radius: 4px !important;
+	border-radius: var(--radius_tiny) !important;
 	border-bottom-left-radius: 0 !important;
 	border-bottom-right-radius: 0 !important;
 }
@@ -703,7 +713,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 	box-shadow: 0 0 0 1px var(--divider) !important;
 }
 .picker_sample {
-	border-radius: var(--padding_minimum) !important;
+	border-radius: var(--radius_small) !important;
 	overflow: hidden !important;
 	border: 3px solid white !important;
 	width: 30px !important;
@@ -767,7 +777,7 @@ input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::before {
 }
 
 .location-label {
-	border-radius: var(--padding_large) !important;
+	border-radius: var(--radius_largest) !important;
 	position: absolute !important;
 	white-space: nowrap !important;
 	z-index: 20 !important;

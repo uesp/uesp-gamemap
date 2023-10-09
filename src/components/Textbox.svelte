@@ -53,7 +53,7 @@
         keyboardEvent[initMethod]('keydown', true, true, window, false, false, false, false, 40, 0);
         textbox.dispatchEvent(keyboardEvent);
     }
-    
+
     // focus textbox if required
     onMount(async() => { if (textbox && focus) { textbox.focus() }});
     function typeAction(node) {node.type = type}
@@ -149,7 +149,7 @@
 
     .input {
         margin: 0;
-        border-radius: 4px;
+        border-radius: var(--radius_tiny);
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
         background-color: var(--surface_variant_dark);

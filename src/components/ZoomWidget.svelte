@@ -86,7 +86,7 @@
         cursor: auto;
         position: absolute;
         background: var(--primary_variant_light);
-        border-radius: 64px;
+        border-radius: var(--radius_largest);
         z-index: 1000;
         bottom: var(--padding_minimum);
         right: var(--padding_minimum);
@@ -110,7 +110,7 @@
         border: none;
         transform: translateZ(0);
         z-index: 1001;
-        border-radius: 64px;
+        border-radius: var(--radius_largest);
         transition: all ease-in-out 50ms;
     }
 

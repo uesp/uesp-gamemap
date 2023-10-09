@@ -86,7 +86,7 @@ iconButton element:
         border: none;
         color: var(--text_on_secondary);
         padding: auto;
-        border-radius: var(--appbar_dimen);
+        border-radius: var(--radius_button);
         transition: all ease-in 150ms;
         height: var(--appbar_dimen);
         min-width: var(--appbar_dimen);
@@ -155,7 +155,7 @@ iconButton element:
 
     /* dropdown */
     .dropdown {
-        border-radius: var(--padding_minimum) !important;
+        border-radius: var(--radius_small) !important;
 	    color: var(--highlight_light);
         background-color: var(--shadow) !important;
     }

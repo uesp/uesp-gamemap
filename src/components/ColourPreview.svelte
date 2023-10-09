@@ -36,7 +36,7 @@
 		position: relative;
         border: var(--strokeWidth) solid var(--strokeColour);
         background: var(--fillColour);
-        border-radius: 16px;
+        border-radius: var(--radius_large);
 	}
 
     #colour-preview-container {
@@ -50,7 +50,7 @@
 		width: 100px;
 		margin: var(--padding_minimum);
 		background: linear-gradient(45deg, lightgrey 25%, transparent 25%, transparent 75%, lightgrey 75%) 0 0/2em 2em,linear-gradient(45deg, lightgrey 25%, white 25%, white 75%, lightgrey 75%) 1em 1em/2em 2em;
-		border-radius: var(--padding_medium);
+		border-radius: var(--radius_large);
 		box-shadow: 0px 0px 0px 1px var(--divider);
 		overflow: hidden;
 	}

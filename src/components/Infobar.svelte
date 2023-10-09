@@ -81,7 +81,7 @@
         -ms-user-select: none;
         user-select: none;
         cursor: auto;
-        border-radius: var(--padding_small);
+        border-radius: var(--radius_medium);
         margin-left: 100px;
         margin-right: 100px;
         margin-bottom: 8px;

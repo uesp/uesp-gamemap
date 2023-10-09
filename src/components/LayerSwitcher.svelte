@@ -148,7 +148,8 @@
 
     .layer_widget_options {
         background-color: var(--primary_variant_light);
-        border-radius: var(--padding_minimum);
+        border-radius: var(--radius_small);
+
         width: auto;
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
         position: relative;
@@ -171,7 +172,7 @@
         background-repeat:no-repeat;
         background-position: center center;
         background-size: 165%;
-        border-radius: var(--padding_minimum);
+        border-radius: var(--radius_small);
         box-shadow: 0px 1.5px 4px 4px var(--shadow), inset 0 -7px 16px -7px rgba(0,0,0,0.9);
         border-style: solid;
         border-color: var(--primary);
@@ -222,7 +223,7 @@
         box-shadow: 0px 0px 10px 6px var(--shadow) !important;
         margin: 0 auto;
         color:black;
-        border-radius: var(--padding_medium) !important;
+        border-radius: var(--radius_large) !important;
         margin-bottom: 8px;
     }
 
@@ -243,7 +244,7 @@
         border-style: solid;
         border-width: 1.5px;
         border-color: var(--divider);
-        border-radius: 6px;
+        border-radius: var(--radius_small);
     }
 
     .lock {

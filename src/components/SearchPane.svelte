@@ -209,8 +209,8 @@
     }
 
     // callbacks
-    function clearSearch() { 
-        searchBox.value = ""; 
+    function clearSearch() {
+        searchBox.value = "";
         currentlySelectedResult = 0;
         isLoading = false;
         searchResults = null;
@@ -313,7 +313,7 @@
         pointer-events: visible;
         position: relative;
         top: 2px;
-        border-radius: var(--padding_small);
+        border-radius: var(--radius_medium);
         border-top-left-radius: 0px;
         border-top-right-radius: 0px;
         max-height: 70vh;
@@ -339,7 +339,7 @@
         justify-content: space-between;
         background-color: var(--primary);
         z-index: var(--zindex_floating);
-        border-radius: var(--padding_large);
+        border-radius: var(--radius_largest);
         pointer-events: auto;
         transition: all ease 150ms;
         height: var(--appbar_dimen);
@@ -371,7 +371,7 @@
         pointer-events: visible;
         padding-top: var(--padding_large);
         padding: var(--padding_small);
-        border-radius: var(--padding_small);
+        border-radius: var(--radius_medium);
         background-color: var(--surface);
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
         width: fit-content;
