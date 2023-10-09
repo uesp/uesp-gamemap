@@ -49,9 +49,7 @@
 
     function onLayerClicked(event) {
         if (event.target == null) {
-            if (isMobile()) {
-                isHovered = false;
-            }
+            if (isMobile) isHovered = false;
             gamemap.setTileLayerTo(event.detail);
         } else {
             gamemap.setTileLayerTo(gamemap.getNextTileLayerIndex());
