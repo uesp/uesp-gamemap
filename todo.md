@@ -1,20 +1,4 @@
 
-
-## next
-
-ads and starfield map stuff is done, just need to push to master and config repos
-
-- focus on mobile app stuf for november 1st
-- do flutter training course:
->> https://www.udemy.com/course/learn-flutter-dart-to-build-ios-android-apps/
-
-
-
-- qna, no lots of questions
-
-
-
-
 ## todo maps (future)
 - skyrim minecraft map thing
 - cave interior maps for skyrim, ob, mw
