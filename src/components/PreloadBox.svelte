@@ -9,7 +9,7 @@
         position: absolute;
         background-color: var(--surface_dark_variant);
         color: var(--text_on_secondary);
-        border-radius: var(--padding_medium);
+        border-radius: var(--radius_large);
         padding: var(--padding_medium);
         width: auto;
         text-align: center;

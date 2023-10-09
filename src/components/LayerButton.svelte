@@ -72,7 +72,7 @@
         flex-shrink: 0;
         height: calc(var(--layer_widget_dimen) - var(--padding_minimum)) !important;
         width: calc(var(--layer_widget_dimen) - var(--padding_minimum));
-        border-radius: var(--padding_minimum);
+        border-radius: var(--radius_small);
         background-color: var(--primary_variant_dark);
         margin-top: auto;
         margin-bottom: auto;

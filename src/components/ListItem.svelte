@@ -145,7 +145,7 @@
     }
 
     .action {
-        border-radius: 50%;
+        border-radius: var(--radius_circle);
         width: 20px;
         height: 20px;
         background-color: var(--selection);

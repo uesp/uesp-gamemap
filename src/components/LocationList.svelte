@@ -275,7 +275,7 @@
         color: var(--text_on_primary);
         transform: translate(-50%, -50%);
         z-index: 100000;
-        border-radius: var(--padding_medium);
+        border-radius: var(--radius_large);
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
         cursor: auto;
     }
@@ -283,11 +283,11 @@
     #location_list_content {
         overflow-y: auto;
         height: calc(100% - var(--appbar_dimen));
-        border-radius: 0 0 var(--padding_medium) var(--padding_medium);
+        border-radius: 0 0 var(--radius_large) var(--radius_large);
     }
 
     #location_list_tab_bar {
-        border-radius: var(--padding_medium) var(--padding_medium) 0 0;
+        border-radius: var(--radius_large) var(--radius_large) 0 0;
         height: var(--appbar_dimen) !important;
         background-color: var(--primary_variant_dark);
         box-shadow: 0 2px 2px 0px var(--shadow);
