@@ -1,19 +1,8 @@
-## last week
 
-ads and starfield map customisation
-
-- fix hang related to resizing map
-- edit ui hides when resizing to mobile-sized screen
-- added ads to rest of the maps (starf included)
-- added mobile ad layout
-- dehardcoded border radius from padding (made starf have square ui)
->> ui elements such as the loading box transition between radius and custom colours smoothly
-- dehardcoded fonts, each map family can have its own logo font now
-- dehardcoded wiki links, so the logo and menu items (help, feedback) can be properly set on starfield now
-
-ads and starfield map stuff is done, just need to push to master and config repos
 
 ## next
+
+ads and starfield map stuff is done, just need to push to master and config repos
 
 - focus on mobile app stuf for november 1st
 - do flutter training course:
@@ -21,9 +10,7 @@ ads and starfield map stuff is done, just need to push to master and config repo
 
 
 
-
-
-
+- qna, no lots of questions
 
 
 
