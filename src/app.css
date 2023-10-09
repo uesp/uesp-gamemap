@@ -352,6 +352,7 @@ textarea.materialize-textarea:focus:not([readonly]) + label {
 	background-color: var(--divider) !important;
 	font-size: 1.8rem !important;
 	object-fit: scale-down;
+	border-radius: var(--radius_circle) !important;
 }
 
 /* tabs */

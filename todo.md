@@ -3,7 +3,7 @@
 - fix hang related to resizing map
 - edit ui hides when resizing to mobile-sized screen
 - added mobile ad layout
-- dehardcoded border radius from padding (allows square ui for starf)
+- dehardcoded border radius from padding (made starf have square ui)
 
 ## todo
 
