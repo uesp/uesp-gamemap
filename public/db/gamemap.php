@@ -112,12 +112,13 @@ class GameMap
 	
 	public $wikiUserId = 0;
 	public $wikiUserName = '';
+	public $COOKIE_USERID = 'uesp_net_wiki5UserID';
+	public $COOKIE_TOKEN = 'uesp_net_wiki5Token';
+	public $DBNAME = 'uesp_net_wiki5';
 	
 	
 	function __construct ()
 	{
-		if (self::USE_MEMCACHED_SESSIONS) UespMemcachedSession::install();
-		
 		$this->isLocalhost = in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1', "localhost"));
 		
 		$this->setInputParams();
@@ -134,8 +135,28 @@ class GameMap
 			}
 		}
 		
-		session_name('uesp_net_wiki5_session');
-		session_set_cookie_params(3600*24*30, '/', '.uesp.net', false);
+			//TODO: Better site selection?
+		if ($this->dbPrefix == "starfield")
+		{
+			if (self::USE_MEMCACHED_SESSIONS) UespMemcachedSession::install("sfwiki");
+			
+			session_name('sfwiki_session');
+			session_set_cookie_params(3600*24*30, '/', '.starfieldwiki.net', false);
+			$this->COOKIE_USERID = 'uesp_net_wiki5UserID';
+			$this->COOKIE_TOKEN = 'uesp_net_wiki5Token';
+			$this->DBNAME = 'sfwiki';
+		}
+		else
+		{
+			if (self::USE_MEMCACHED_SESSIONS) UespMemcachedSession::install("uesp_net_wiki5");
+			
+			session_name('uesp_net_wiki5_session');
+			session_set_cookie_params(3600*24*30, '/', '.uesp.net', false);
+			$this->COOKIE_USERID = 'sfwikiUserID';
+			$this->COOKIE_TOKEN = 'sfwikiToken';
+			$this->DBNAME = 'uesp_net_wiki5';
+		}
+		
 		$this->startedSession = session_start();
 		
 		//if (!$this->startedSession) error_log("Failed to start session!");
@@ -153,8 +174,8 @@ class GameMap
 			// If session is not available, check the wiki token and user ID
 		else
 		{
-			$userId = $_COOKIE['uesp_net_wiki5UserID'];
-			$token = $_COOKIE['uesp_net_wiki5Token'];
+			$userId = $_COOKIE[$this->COOKIE_USERID];
+			$token = $_COOKIE[$this->COOKIE_TOKEN];
 			$groups = $this->loadUserWikiGroupsFromToken($userId, $token);
 		}
 		
@@ -218,7 +239,7 @@ class GameMap
 		$userId = intval($userId);
 		if ($userId <= 0) return false;
 		
-		$query = "SELECT * FROM uesp_net_wiki5.user WHERE user_id='$userId';";
+		$query = "SELECT * FROM {$this->DBNAME}.user WHERE user_id='$userId';";
 		$result = $this->db->query($query);
 		if (!$result) return false;
 		
@@ -245,7 +266,7 @@ class GameMap
 		$userId = intval($userId);
 		if ($userId <= 0) return false;
 		
-		$query = "SELECT * FROM uesp_net_wiki5.user_groups WHERE ug_user='$userId';";
+		$query = "SELECT * FROM {$this->DBNAME}.user_groups WHERE ug_user='$userId';";
 		$result = $this->db->query($query);
 		if (!$result) return false;
 		

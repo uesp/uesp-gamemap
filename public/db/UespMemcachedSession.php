@@ -27,10 +27,12 @@ class UespMemcachedSession
 	public static $MEMCACHE = null;
 
 
-	static function install()
+	static function install($dbname)
 	{
 		global $UESP_SERVER_MEMCACHED;
 
+		if ($dbname) self::$UESP_DBNAME = $dbname;
+		
 		self::$UESP_MEMCACHED_HOST = $UESP_SERVER_MEMCACHED;
 
 		session_set_save_handler(
