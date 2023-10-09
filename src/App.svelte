@@ -90,7 +90,7 @@
 	$: {
 		// set whether is using mobile mode
 		isMobile = clientWidth <= 670 || navigator.userAgent.match(/Mobi/);
-		window.isMobile = isMobile; 
+		window.isMobile = isMobile;
 		if (isMobile) {
 			document.querySelector('#app').classList.add("mobile");
 		} else {
@@ -254,7 +254,7 @@
 			document.title = worldName + " | " + document.title;
 		}
 
-		document.title = document.title + (" (UESP)");
+		document.title = document.title + (mapConfig.wikiName ? ` (${mapConfig?.wikiName})` : "");
 	}
 
 	// handle keypresses
@@ -332,9 +332,9 @@
 								<IconButton icon="more_vert" tooltip="More actions" menu='overflow-menu' lock={mapLock}>
 									<!-- Menu Items -->
 									<ul id='overflow-menu' class='dropdown-content'>
-										<li class="waves-effect"><a title="See help info" href="https://en.uesp.net/wiki/UESPWiki:Map_Help" target="_blank" rel="noopener noreferrer"><Icon name="help_outline"/>Help</a></li>
+										{#if MAPCONFIG.helpURL}<li class="waves-effect"><a title="See help info" href={MAPCONFIG.helpURL} target="_blank" rel="noopener noreferrer"><Icon name="help_outline"/>Help</a></li>{/if}
 										<li class="waves-effect"><a title="Show map key" on:click={() => mapKeyDialog.show()}><Icon name="list"/>Map Key</a></li>
-										<li class="waves-effect"><a href="https://en.uesp.net/wiki/UESPWiki_talk:Maps" target="_blank" rel="noopener noreferrer" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>
+										{#if MAPCONFIG.feedbackURL}<li class="waves-effect"><a href={MAPCONFIG.feedbackURL} target="_blank" rel="noopener noreferrer" title="Tell us your thoughts"><Icon name="messenger_outline"/>Feedback</a></li>{/if}
 										<li class="waves-effect"><a on:click={toggleFullscreen} id="fullscreen-toggle" title="Toggle fullscreen mode"><Icon name={(!isFullscreen) ? "fullscreen" : "fullscreen_exit"}/>{(!isFullscreen) ? "Fullscreen" : "Exit"}</a></li>
 									</ul>
 								</IconButton>

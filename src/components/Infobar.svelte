@@ -54,10 +54,13 @@
                 {/if}
 
             {:else}
-                <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home" target='_top'>UESP</a></span> • <a title="Reset this map" href="javascript:void(0);" onclick="gamemap.reset();">{mapName}</a></b>
+                <b>
+                    {#if MAPCONFIG.wikiName}<span class="wikiTitle"><a href={MAPCONFIG.wikiHomeURL} title="Go to {MAPCONFIG.wikiName} home" target='_top'>{MAPCONFIG.wikiName}</a></span> • {/if}
+                    <a title="Reset this map" href="javascript:void(0);" onclick="gamemap.reset();">{mapName}</a>
+                </b>
             {/if}
         {:else}
-            <b><span class="wikiTitle"><a href="//www.uesp.net/wiki/Main_Page" title="Go to UESP home" target='_top'>UESP</a></span> • View larger map <Icon name="open_in_new" size="tiny"/></b>
+            <b>View larger map <Icon name="open_in_new" size="tiny"/></b>
         {/if}
     </div>
 </markup>

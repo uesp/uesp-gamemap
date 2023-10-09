@@ -1,16 +1,17 @@
 ## last week
 
+ads and starfield map customisation
+
 - fix hang related to resizing map
 - edit ui hides when resizing to mobile-sized screen
 - added mobile ad layout
 - added ads to rest of the maps (starf included)
 - dehardcoded border radius from padding (made starf have square ui)
 >> ui elements such as the loading box transition between radius and custom colours smoothly
+- dehardcoded fonts, each map family can have its own logo font now
 
 ## todo
 
-- refactor fonts to be inside each /map config folder (uesp maps and starfield maps have different fonts)
-- title font should just be title.ttf (for "UESP" brand at bottom)
 - do svelte:header tags for discord-like embeds for maps (include current map image, title and stuff)
 - link up MAP WORLD NAME (UESP) to mapconfig wiki name (or have it blank if none provided)
 - make feedback support link optional, if not provided, support button doesnt appear
