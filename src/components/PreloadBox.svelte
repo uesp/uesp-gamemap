@@ -20,5 +20,8 @@
         min-height: 50px;
         transform: translate(-50%, -50%);
         z-index: 900;
+        transition-property: background-color, border-radius;
+        transition-duration: 300ms;
+        transition-timing-function: ease;
     }
 </style>

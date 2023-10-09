@@ -3,7 +3,9 @@
 - fix hang related to resizing map
 - edit ui hides when resizing to mobile-sized screen
 - added mobile ad layout
+- added ads to rest of the maps (starf included)
 - dehardcoded border radius from padding (made starf have square ui)
+>> ui elements such as the loading box transition between radius and custom colours smoothly
 
 ## todo
 
@@ -13,8 +15,6 @@
 - link up MAP WORLD NAME (UESP) to mapconfig wiki name (or have it blank if none provided)
 - make feedback support link optional, if not provided, support button doesnt appear
 - make wiki title in infobar optional
-- allow manual coordinate entry for markers
-
 
 - do flutter training course
 - update mobile app by november 1st
