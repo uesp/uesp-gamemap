@@ -1490,7 +1490,7 @@ class GameMap
 		
 		if (!$this->CanViewWorldId($this->worldId)) return false;
 		
-		$query = "INSERT INTO location(worldId, locType, name, description, wikiPage, displayLevel, visible, x, y, width, height, iconType, destinationId, displayData) VALUES (";
+		$query = "INSERT INTO location(worldId, locType, name, description, wikiPage, displayLevel, visible, x, y, width, height, iconType, destinationId, displayData, revisionId) VALUES (";
 		$query .= "{$this->worldId}, ";
 		$query .= "{$this->locType}, ";
 		$query .= "'{$this->locName}', ";
@@ -1504,7 +1504,8 @@ class GameMap
 		$query .= "{$this->locHeight}, ";
 		$query .= "{$this->locIconType}, ";
 		$query .= "{$this->locDestId}, ";
-		$query .= "'{$this->locDisplayData}' ";
+		$query .= "'{$this->locDisplayData}', ";
+		$query .= "'-1' ";
 		$query .= ');';
 		
 		$result = $this->db->query($query);
