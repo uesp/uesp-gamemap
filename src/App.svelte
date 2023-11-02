@@ -231,7 +231,7 @@
 	}
 
 	// set error function
-	window.onunhandledrejection = event => { setError(event.reason) };
+	window.onunhandledrejection = event => { if (!isMobile) setError(event.reason) };
 	function setError(reason) {
 		if (reason == false) {
 			isError = reason;
