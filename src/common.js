@@ -8,80 +8,6 @@
 import Point from "./map/point.js";
 
 /*================================================
-					Constants
-================================================*/
-
-window.ASSETS_DIR = "assets/";
-window.MAP_ASSETS_DIR = "assets/maps/";
-window.CONFIG_DIR = ASSETS_DIR + "configs/";
-window.TEMPLATES_DIR = ASSETS_DIR + "templates/";
-window.ICONS_DIR = ASSETS_DIR + "icons/";
-window.IMAGES_DIR = ASSETS_DIR + "images/";
-
-window.PARAM_TYPE_QUERY = 0;
-window.PARAM_TYPE_HASH = 1;
-
-window.CSS_OVERRIDE_FILENAME = "override.css"
-window.MAP_CONFIG_FILENAME = "config.json"
-window.DEFAULT_MAP_CONFIG_DIR = MAP_ASSETS_DIR + "default-" + MAP_CONFIG_FILENAME;
-
-window.GAME_DATA_SCRIPT = (isRelease) ? "db/gamemap.php" : "http://localhost:2500/db/gamemap.php"
-
-window.LOCTYPES = {
-	MARKER : 1,
-	PATH : 2,
-	AREA : 3,
-}
-
-window.COORD_TYPES = {
-	XY : 0,
-    NORMALISED : 1,
-	PSEUDO_NORMALISED : 1.5,
-    WORLDSPACE : 2,
-}
-
-window.EDIT_TYPES = {
-	0 : "adding",
-	1 : "editing",
-	2 : "reverting",
-	3 : "deleting",
-	ADD : 0,
-	EDIT : 1,
-	REVERT: 2,
-	DELETE : 3,
-}
-
-window.MAPLOCK = {
-	NONE: false,
-	FULL : 1,
-	PARTIAL : 2,
-	PARTIAL_MARKER : 3,
-	PARTIAL_NEW_MARKER : 3.5,
-	PARTIAL_POLYGON : 4,
-	PARTIAL_NEW_POLYGON : 4.5,
-	PARTIAL_NEW_LINE : 5,
-	isPartial : mapLock => mapLock >= MAPLOCK.PARTIAL,
-	isPartialNoNew : mapLock => MAPLOCK.isPartial(mapLock) && !Object.keys(MAPLOCK).find(key => MAPLOCK[key] === mapLock).toLowerCase().includes("new"),
-}
-
-window.LABEL_POSITIONS = {
-	0  : 'none',
-	4  : 'left',
-	5  : 'center',
-	6  : 'right',
-	2  : 'top',
-	8  : 'bottom',
-	10 : 'auto',
-};
-
-const MINUTE = 60;
-const HOUR = MINUTE * 60;
-const DAY = HOUR * 24;
-const WEEK = DAY * 7;
-const MONTH = DAY * 30;
-const YEAR = DAY * 365;
-
-/*================================================
 					Functions
 ================================================*/
 
@@ -521,6 +447,7 @@ window.deepClone = function deepClone(object) {
 	return Object.assign(Object.create(Object.getPrototypeOf(object)), object);
 }
 
+
 /*================================================
 					  Hacks
 ================================================*/
@@ -528,3 +455,85 @@ window.deepClone = function deepClone(object) {
 // quick hack to make nodeLists iterable
 NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
 HTMLCollection.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
+
+/*================================================
+					Constants
+================================================*/
+
+window.isLocalHost = location.hostname.includes("localhost");
+window.HOST = isLocalHost ? "https://gamemap.uesp.net" : location.origin;
+
+window.GAME = (function() {
+    return (location.pathname.replace(/\\|\//g,'') != "") ? location.pathname.replace(/\\|\//g,'') : (location.search != null) ? getURLParams().get("game") : null;
+})();  
+
+window.ASSETS_DIR = (!isLocalHost) ? "/assets/" : `${HOST}/assets`;
+window.MAPS_DIR = `${ASSETS_DIR}/maps/`;
+window.MAP_ASSETS_DIR = `${ASSETS_DIR}/maps/${GAME}/`;
+window.CONFIG_DIR = MAP_ASSETS_DIR + "configs/";
+window.TEMPLATES_DIR = MAP_ASSETS_DIR + "templates/";
+window.ICONS_DIR = MAP_ASSETS_DIR + "icons/";
+window.IMAGES_DIR = MAP_ASSETS_DIR + "images/";
+
+window.PARAM_TYPE_QUERY = 0;
+window.PARAM_TYPE_HASH = 1;
+
+window.CSS_OVERRIDE_FILENAME = "override.css"
+window.MAP_CONFIG_FILENAME = "config.json"
+window.DEFAULT_MAP_CONFIG_DIR = `${MAPS_DIR}default-${MAP_CONFIG_FILENAME}`;
+
+window.GAME_DATA_SCRIPT = (isRelease) ? "db/gamemap.php" : `${HOST}/db/gamemap.php`;
+
+window.LOCTYPES = {
+	MARKER : 1,
+	PATH : 2,
+	AREA : 3,
+}
+
+window.COORD_TYPES = {
+	XY : 0,
+    NORMALISED : 1,
+	PSEUDO_NORMALISED : 1.5,
+    WORLDSPACE : 2,
+}
+
+window.EDIT_TYPES = {
+	0 : "adding",
+	1 : "editing",
+	2 : "reverting",
+	3 : "deleting",
+	ADD : 0,
+	EDIT : 1,
+	REVERT: 2,
+	DELETE : 3,
+}
+
+window.MAPLOCK = {
+	NONE: false,
+	FULL : 1,
+	PARTIAL : 2,
+	PARTIAL_MARKER : 3,
+	PARTIAL_NEW_MARKER : 3.5,
+	PARTIAL_POLYGON : 4,
+	PARTIAL_NEW_POLYGON : 4.5,
+	PARTIAL_NEW_LINE : 5,
+	isPartial : mapLock => mapLock >= MAPLOCK.PARTIAL,
+	isPartialNoNew : mapLock => MAPLOCK.isPartial(mapLock) && !Object.keys(MAPLOCK).find(key => MAPLOCK[key] === mapLock).toLowerCase().includes("new"),
+}
+
+window.LABEL_POSITIONS = {
+	0  : 'none',
+	4  : 'left',
+	5  : 'center',
+	6  : 'right',
+	2  : 'top',
+	8  : 'bottom',
+	10 : 'auto',
+};
+
+const MINUTE = 60;
+const HOUR = MINUTE * 60;
+const DAY = HOUR * 24;
+const WEEK = DAY * 7;
+const MONTH = DAY * 30;
+const YEAR = DAY * 365;

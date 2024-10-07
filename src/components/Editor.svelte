@@ -36,7 +36,7 @@
     import Dialog from './Dialog.svelte';
 
     // constants
-    let PANEL_WIDTH = getPrefs("editpanelwidth", 480);
+    let PANEL_WIDTH = getPrefs("editpanelwidth", 400);
     const ANIMATION_DURATION = 350;
     const RESIZE_OBSERVER = new ResizeObserver(() => { window.dispatchEvent(new Event('resize'));});
     const MIN_PANEL_WIDTH = 350;
@@ -305,7 +305,12 @@
                 cancel();
             } else {
                 print(data.errorMsg);
-                saveButton.$set({ text: data.errorMsg.includes("permissions") ? "Insufficient permissions!" : data.errorMsg, icon: "warning" });
+                saveButton.$set({ text: data.errorMsg.includes("permissions") ? "Insufficient permissions!" : data.errorMsg, icon: "warning", type: "warning" });
+
+                setTimeout(() => {                    
+                    saveButton.$set({ text: (isRevert) ? "Revert" : "Save", type: (isRevert) ? "revert" : "save", icon: (isRevert) ? "history" : "save" });
+                }, 3000)
+                
             }
         }).catch(() => saveButton.$set({ text: `Error saving ${objectType}!`, icon: "warning" }));
     }

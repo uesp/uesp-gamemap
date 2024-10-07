@@ -54,14 +54,23 @@
 
 	// initialise app
 	print("Initialising app...");
-	document.getElementById('app').addEventListener('DOMSubtreeModified', function () {
+
+	const targetNode = document.getElementById('app');
+	const config = { childList: true, subtree: true };
+	
+	// Prevent svelte-elements from sending scroll events to the map
+	const callback = function () {
 		// prevent scroll events in svelte components propagating to gamemap
 		let svelteElements = document.querySelectorAll("[class*='svelte']");
 		for (let i = 0; i < svelteElements.length; i++) {
 			let element = svelteElements[i];
 			L.DomEvent.disableScrollPropagation(element);
 		}
-	}, false);
+	};
+	
+	// observe events
+	const observer = new MutationObserver(callback);
+	observer.observe(targetNode, config);
 
 	// state variables
 	let isLoading = true;
@@ -118,11 +127,10 @@
 		}, (location.toString().includes("dev") ? 10000 : 0)); // wait 10s on dev to bypass google lighthouse accessibility check
 
 		// get game name from URL
-		let gameParam = (location.pathname.replace(/\\|\//g,'') != "") ? location.pathname.replace(/\\|\//g,'') : (location.search != null) ? getURLParams().get("game") : null;
 		setLoading("Loading map");
 
-		if (gameParam != null && gameParam.toLowerCase().match(/^([a-z]+)/)) {
-			print("Game parameter was: " + gameParam);
+		if (GAME != null && GAME.toLowerCase().match(/^([a-z]+)/)) {
+			print("Game parameter was: " + GAME);
 
 			// begin getting map config
 			getJSON(DEFAULT_MAP_CONFIG_DIR).then(defaultMapConfig => {
@@ -131,7 +139,7 @@
 				window.DEFAULT_MAP_CONFIG = defaultMapConfig;
 
 				// example: /assets/maps/eso/config/eso-config.json
-				let configURL = (MAP_ASSETS_DIR + gameParam.toLowerCase() + "/config/" + gameParam + "-" + MAP_CONFIG_FILENAME);
+				let configURL = (MAPS_DIR + GAME.toLowerCase() + "/config/" + GAME + "-" + MAP_CONFIG_FILENAME);
 				setLoading("Loading config");
 				print("Getting map config at " + configURL + "...");
 				getJSON(configURL).then(object => {
@@ -143,7 +151,7 @@
 					mapConfig.hasAds = mapConfig.adScriptName != null;
 
 					// set up map config assets
-					mapConfig.assetsPath = mapConfig.assetsPath + mapConfig.database + "/";
+					mapConfig.assetsPath = MAP_ASSETS_DIR;
 					mapConfig.iconPath = mapConfig.assetsPath + "icons/";
 					mapConfig.db = mapConfig.database;
 					// sometimes tileURLs on the server are not consistent with the dbName+"map" schema, so you can define an tileURLName in the map config to override this

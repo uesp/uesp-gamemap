@@ -63,7 +63,8 @@
                 <div class="options_container">
                     {#each maps as map}
                         {#if !map.isModded}
-                            <LayerButton label={map.name} icon="assets/maps/{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)} disabled={map.disabled}/>
+                            <!-- svelte-ignore missing-declaration -->
+                            <LayerButton label={map.name} icon="{MAP_ASSETS_DIR}{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)} disabled={map.disabled}/>
                         {/if}
                     {/each}
                 </div>
@@ -76,7 +77,8 @@
                 <div class="options_container">
                     {#each maps as map}
                         {#if map.isModded}
-                            <LayerButton label={map.name} icon="assets/maps/{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)} disabled={map.disabled}/>
+                            <!-- svelte-ignore missing-declaration -->
+                            <LayerButton label={map.name} icon="{MAP_ASSETS_DIR}{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)} disabled={map.disabled}/>
                         {/if}
                     {/each}
                 </div>
