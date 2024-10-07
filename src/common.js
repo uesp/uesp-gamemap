@@ -467,20 +467,21 @@ window.GAME = (function() {
     return (location.pathname.replace(/\\|\//g,'') != "") ? location.pathname.replace(/\\|\//g,'') : (location.search != null) ? getURLParams().get("game") : null;
 })();  
 
-window.ASSETS_DIR = (!isLocalHost) ? "/assets/" : `${HOST}/assets`;
-window.MAPS_DIR = `${ASSETS_DIR}/maps/`;
-window.MAP_ASSETS_DIR = `${ASSETS_DIR}/maps/${GAME}/`;
-window.CONFIG_DIR = MAP_ASSETS_DIR + "configs/";
-window.TEMPLATES_DIR = MAP_ASSETS_DIR + "templates/";
+window.ASSETS_DIR = (!isLocalHost) ? "/assets/" : `${HOST}/assets/`;
+window.MAPS_DIR = `${ASSETS_DIR}maps/`;
+window.MAP_ASSETS_DIR = `${ASSETS_DIR}maps/${GAME}/`;
 window.ICONS_DIR = MAP_ASSETS_DIR + "icons/";
-window.IMAGES_DIR = MAP_ASSETS_DIR + "images/";
+window.IMAGES_DIR = ASSETS_DIR + "images/";
+window.CONFIG_DIR = "config/";
 
 window.PARAM_TYPE_QUERY = 0;
 window.PARAM_TYPE_HASH = 1;
 
 window.CSS_OVERRIDE_FILENAME = "override.css"
 window.MAP_CONFIG_FILENAME = "config.json"
+
 window.DEFAULT_MAP_CONFIG_DIR = `${MAPS_DIR}default-${MAP_CONFIG_FILENAME}`;
+window.MAP_CONFIG_DIR = `${MAP_ASSETS_DIR}${CONFIG_DIR}${GAME}-${MAP_CONFIG_FILENAME}`;
 
 window.GAME_DATA_SCRIPT = (isRelease) ? "db/gamemap.php" : `${HOST}/db/gamemap.php`;
 

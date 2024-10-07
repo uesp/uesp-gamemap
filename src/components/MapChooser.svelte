@@ -64,7 +64,7 @@
                     {#each maps as map}
                         {#if !map.isModded}
                             <!-- svelte-ignore missing-declaration -->
-                            <LayerButton label={map.name} icon="{MAP_ASSETS_DIR}{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)} disabled={map.disabled}/>
+                            <LayerButton label={map.name} icon="{MAPS_DIR}{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)} disabled={map.disabled}/>
                         {/if}
                     {/each}
                 </div>
@@ -78,7 +78,7 @@
                     {#each maps as map}
                         {#if map.isModded}
                             <!-- svelte-ignore missing-declaration -->
-                            <LayerButton label={map.name} icon="{MAP_ASSETS_DIR}{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)} disabled={map.disabled}/>
+                            <LayerButton label={map.name} icon="{MAPS_DIR}{map.database}/icons/favicon.png" dark="true" big="true" on:onClick={() => (location.pathname = map.database)} disabled={map.disabled}/>
                         {/if}
                     {/each}
                 </div>

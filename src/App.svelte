@@ -67,7 +67,7 @@
 			L.DomEvent.disableScrollPropagation(element);
 		}
 	};
-	
+
 	// observe events
 	const observer = new MutationObserver(callback);
 	observer.observe(targetNode, config);
@@ -141,7 +141,7 @@
 				// example: /assets/maps/eso/config/eso-config.json
 				let configURL = (MAPS_DIR + GAME.toLowerCase() + "/config/" + GAME + "-" + MAP_CONFIG_FILENAME);
 				setLoading("Loading config");
-				print("Getting map config at " + configURL + "...");
+				print("Getting map config at " + MAP_CONFIG_DIR + "...");
 				getJSON(configURL).then(object => {
 
 					// set up base map config

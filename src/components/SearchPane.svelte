@@ -220,7 +220,7 @@
 </script>
 
 <markup>
-    <div id="search_pane" in:fly|global="{{ x: -5, duration: 250 }}" out:fade|global="{{duration: 75}}" class:lock={lock} on:contextmenu={(e) => e.stopPropagation()}>
+    <div id="search_pane" in:fly|global="{{ x: -5, duration: 250 }}" out:fade|global="{{duration: 75}}" class:lock={lock} on:contextmenu|stopPropagation>
         <div id="search_container">
             <!-- Search bar -->
             <div id='searchbar' title="Type here to search" class="waves-effect" class:fullPane={showSearchPane} on:click={() => (searchBox.focus())} class:lockNoFade={lock}>
@@ -340,7 +340,7 @@
         background-color: var(--primary);
         z-index: var(--zindex_floating);
         border-radius: var(--radius_largest);
-        pointer-events: auto;
+        pointer-events: all;
         transition: all ease 150ms;
         height: var(--appbar_dimen);
         box-shadow: 0px 1.5px 4px 4px var(--shadow);
@@ -364,6 +364,7 @@
     #searchbox_container {
         margin: auto;
         width: 100%;
+        pointer-events: all;
     }
 
     /* Search options */
