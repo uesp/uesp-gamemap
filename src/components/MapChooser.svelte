@@ -17,7 +17,7 @@
     let maps = null;
 
     // get list of games to show
-    print("Getting available maps...");
+    log("Getting available maps...");
     let queryParams = {};
 	queryParams.action = "get_maps";
     getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
@@ -39,7 +39,7 @@
         })
         maps.sort((a,b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime());
 
-        print(maps);
+        log(maps);
 
     });
 

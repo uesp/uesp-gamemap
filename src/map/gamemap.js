@@ -71,7 +71,7 @@ export default class Gamemap {
 			// set up css
 			if (this.mapConfig.hasCustomFavIcon) { changeFavIcon(mapConfig.iconPath + "favicon.png"); }
 			if (this.mapConfig.bgColor) { mapRoot.style.backgroundColor = mapConfig.bgColor; }
-			if (this.mapConfig.hasCustomCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; print("Loading custom map css: " + cssPath); injectCSS(cssPath);}
+			if (this.mapConfig.hasCustomCSS) { let cssPath = mapConfig.assetsPath + "css/" + mapConfig.database + "-styles.css"; log("Loading custom map css: " + cssPath); injectCSS(cssPath);}
 
 			// set the default map info
 			this.mapWorlds = new Map();
@@ -148,8 +148,8 @@ export default class Gamemap {
 	 */
 	async setMapState(mapState, onlyRedrawTiles) {
 
-		print("Setting map state!");
-		print(mapState);
+		log("Setting map state!");
+		log(mapState);
 		onlyRedrawTiles = onlyRedrawTiles ?? false;
 
 		// remove previous tiles
@@ -160,7 +160,7 @@ export default class Gamemap {
 
 		// if we have centreon in the url, wait until we get centreon data
 		if (getURLParams().has("centeron")) {
-			print("pending centeron")
+			log("pending centeron")
 			try {
 				let location = await this.getLocation(getURLParams().get("centeron"), (getURLParams().has("world") ? this.getWorld(getURLParams().get("world")) : null));
 				mapState.world = this.getWorldFromID(location.worldID);
@@ -169,7 +169,7 @@ export default class Gamemap {
 				mapState.coords = location.getCentre();
 			} catch (error){
 				mapState.pendingJump = null;
-				print(error);
+				log(error);
 			}
 			mapState.legacy = null;
 		}
@@ -257,7 +257,7 @@ export default class Gamemap {
 		mapState.legacy = getURLParams().has("legacy");
 
 		if (getURLParams().has("world")) {
-			print(getURLParams().get("world"));
+			log(getURLParams().get("world"));
 			mapState.world = this.getWorld(getURLParams().get("world"));
 		}
 
@@ -436,7 +436,7 @@ export default class Gamemap {
 
 			if (this.mapWorlds.size == 0) {
 				getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
-					print(data.worlds);
+					log(data.worlds);
 					let worlds = data.worlds;
 
 					// parse worlds
@@ -447,8 +447,8 @@ export default class Gamemap {
 					});
 
 					// initialise map
-					print(`Loaded ${worlds.length} worlds!`);
-					print(worlds);
+					log(`Loaded ${worlds.length} worlds!`);
+					log(worlds);
 					self.initialise();
 				}).catch((error) => {throw new Error(`Could not retrieve world data: ${error}`)});
 			}
@@ -603,7 +603,7 @@ export default class Gamemap {
 		let locationName = isString ? identifier?.toLowerCase() : null;
 		let localLocation;
 
-		print(`Getting info for location: ${identifier}`);
+		log(`Getting info for location: ${identifier}`);
 
 		// search cache for location first
 		if (world) { // if world is specified, search that one
@@ -613,7 +613,7 @@ export default class Gamemap {
 		}
 
 		if (localLocation) { // return local location if we found any
-			print("found cached location");
+			log("found cached location");
 			this.mapCallbacks?.setLoading(false);
 			return Promise.resolve(localLocation);
 		}
@@ -629,7 +629,7 @@ export default class Gamemap {
 
 			let response = await getJSON(GAME_DATA_SCRIPT + queryify(query));
 			if (response && response.locations.length > 0) {
-				print("Got location info!");
+				log("Got location info!");
 				let world = self.getWorldFromID(response?.locations[0]?.worldId);
 				let location = new Location(response.locations[0], world);
 				this.mapCallbacks?.setLoading(false);
@@ -647,7 +647,7 @@ export default class Gamemap {
 	 */
 	addLocation(locType) {
 
-		print("adding location..");
+		log("adding location..");
 
 		let isMarker = locType == LOCTYPES.MARKER;
 		let showTooltip = isMarker;
@@ -670,7 +670,7 @@ export default class Gamemap {
 			if (marker) {
 				marker.removeAttribute("alt") // remove alt attribute
 				marker.classList.add("editing");
-				print(marker);
+				log(marker);
 
 				// get tooltip
 				let tooltip = document.getElementById(marker.getAttribute('aria-describedby'));
@@ -680,11 +680,11 @@ export default class Gamemap {
 		}
 
 		map.on("pm:create", ({ shape, layer }) => {
-			print(shape);
-			print(layer);
+			log(shape);
+			log(layer);
 			let isMarker = shape == "Marker";
 			layer.remove();
-			print(isMarker);
+			log(isMarker);
 			let location = new Location({
 				locType:  (isMarker) ? LOCTYPES.MARKER : (shape == "Polygon") ? LOCTYPES.AREA : LOCTYPES.PATH,
 				coords: self.toCoords(layer.getCoordinates()),
@@ -701,7 +701,7 @@ export default class Gamemap {
 	getLocations(world) {
 
 		self.clearLocations();
-		print("Getting locations...");
+		log("Getting locations...");
 
 		// check if we've been sent a world ID
 		if (world != null && !isNaN(world)){
@@ -724,8 +724,8 @@ export default class Gamemap {
 			let locations = data.locations;
 			let locationMap = new Map();
 
-			print(`Got ${data.locationCount} locations!`);
-			print(locations);
+			log(`Got ${data.locationCount} locations!`);
+			log(locations);
 
 			locations.forEach(location => {
 				if (location.id && location.visible == 1 && !location.description.includes("teleport dest")) {
@@ -809,13 +809,13 @@ export default class Gamemap {
 		this.clearLocations();
 
 		// set up location layer for each zoom level
-		print("Loading initial locations...");
+		log("Loading initial locations...");
 
 		// check if current map has any locations
 		if (locations.size > 0) {
 
 			// iterate through each location in the list
-			print("Adding location markers to map...")
+			log("Adding location markers to map...")
 			locations.forEach(location => {
 
 				if (location?.isVisible()) {
@@ -1001,7 +1001,7 @@ export default class Gamemap {
 	 */
 	gotoWorld(worldID, coords) {
 		worldID = (worldID instanceof World) ? worldID.id : worldID;
-		print(worldID);
+		log(worldID);
 		if (self.isWorldValid(worldID)) {
 			// if we are in the same world, just pan to the provided location (or just reset map)
 			if (worldID == self.getCurrentWorldID()) {
@@ -1014,12 +1014,12 @@ export default class Gamemap {
 			} else { // else load up the new world
 				self.clearLocations();
 				let world = self.getWorldFromID(worldID);
-				print(`Going to world... ${world.displayName} (${world.id});`);
+				log(`Going to world... ${world.displayName} (${world.id});`);
 				self.setMapState(new MapState({coords: coords, world: world, pendingJump: world?.editing ? world : null, layerIndex: 0}));
 			}
 		} else {
 			this.mapCallbacks?.setLoading(false);
-			print('Gamemap attempted to navigate to invalid world ID: ' + worldID);
+			log('Gamemap attempted to navigate to invalid world ID: ' + worldID);
 		}
 	}
 
@@ -1027,7 +1027,7 @@ export default class Gamemap {
 	 *  @param {Object} id - The ID of the location to jump to.
 	 */
 	gotoLocation(id) {
-		print(`going to location: ${id}`);
+		log(`going to location: ${id}`);
 
 		this.mapCallbacks?.setLoading(true);
 		this.mapState.pendingJump = null;
@@ -1049,7 +1049,7 @@ export default class Gamemap {
 				self.setMapState(new MapState({pendingJump: location}));
 			}
 		}).catch((error) => {
-			print(error);
+			log(error);
 			self.mapCallbacks?.setLoading(false);
 		});
 	}
@@ -1090,17 +1090,17 @@ export default class Gamemap {
 
 			if (layerIndex > -1 && layerIndex < this.getCurrentWorld().layers.length) {
 				let mapState = this.getMapState();
-				print(mapState);
+				log(mapState);
 				if (mapState.layerIndex != layerIndex) {
 					mapState.layerIndex = layerIndex;
 					this.setMapState(mapState, true);
 				}
 			} else {
-				print.warn("TileLayer index was out of bounds.")
+				log.warn("TileLayer index was out of bounds.")
 			}
 
 		} else {
-			print.error("Provided TileLayer was invalid.")
+			log.error("Provided TileLayer was invalid.")
 		}
 	}
 
@@ -1493,12 +1493,12 @@ export default class Gamemap {
 		iconName = iconName?.trim()?.toLowerCase();
 
 		if (MAPCONFIG.icons && iconName != "") {
-			print(iconName);
+			log(iconName);
 
 			for (const [key, value] of MAPCONFIG.icons) {
-				print(key, value);
+				log(key, value);
 				if (iconName == value?.toLowerCase()) {
-					print("found it");
+					log("found it");
 					return key;
 				}
 			}
@@ -1641,7 +1641,7 @@ export default class Gamemap {
 	 */
 	onMarkerClicked(marker, shift, ctrl) {
 
-		print(marker.location);
+		log(marker.location);
 		let canJumpTo = marker.getLocation()?.isClickable() && !this.mapLock;
 
 		if (canJumpTo && !shift && !ctrl) { // is location a link to a worldspace/location
@@ -1719,8 +1719,8 @@ L.Layer.include({
 
 	// open marker popup
 	openPopup() {
-		print("making popup");
-		print(this);
+		log("making popup");
+		log(this);
 		L.popup(this.getCentre(), {content: this.getLocation().getPopupContent()}).openOn(map);
 	},
 });

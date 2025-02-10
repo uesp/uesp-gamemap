@@ -21,31 +21,28 @@ window.isChrome = function isChrome() {
 	return window.chrome != null;
 }
 
-/** Debug print function, disabled for mobile */
+/** Debug log function, disabled for mobile */
 if (!navigator.userAgent.match(/Mobi/) || isDebug || location.toString().includes("localhost") || location.toString().includes("devgame")) {
-
-	// Prevent the default print action from occurring
-	window.addEventListener('beforeprint', function(event) {event.preventDefault() });
-	let print = {};
-	print = function(){};
-	window.print = print;
-	print = window.console.log = window.console.log.bind(window.console.log, "%c[Debug]%o", "color: black; font-weight: bold; padding: 2px; background: aqua;");
-	print.warn = window.console.warn = window.console.warn.bind(window.console.warn, "%c[Warn]%o", "color: black; font-weight: bold; padding: 2px; background: yellow;");
-	print.error = window.console.error = window.console.error.bind(window.console.error, "%c[Error]%o", "color: black; font-weight: bold; padding: 2px; background: palevioletred ;");
-	window.print = print;
-	window.print.warn = print.warn;
-	window.print.error = print.error;
+	let log = {};
+	log = function(){};
+	window.log = log;
+	log = window.console.log = window.console.log.bind(window.console.log, "%c[Debug]%o", "color: black; font-weight: bold; padding: 2px; background: aqua;");
+	log.warn = window.console.warn = window.console.warn.bind(window.console.warn, "%c[Warn]%o", "color: black; font-weight: bold; padding: 2px; background: yellow;");
+	log.error = window.console.error = window.console.error.bind(window.console.error, "%c[Error]%o", "color: black; font-weight: bold; padding: 2px; background: palevioletred ;");
+	window.log = log;
+	window.log.warn = log.warn;
+	window.log.error = log.error;
 } else {
 	// disable console logging on release builds
 	let console = {};
 	console.log = function(){};
 	window.console = console;
-	let print = function(){};
-	window.print = print;
-	print = console.log.bind(console);
-	window.print = function(){};
-	window.print.warn = function(){};
-	window.print.error = function(){};
+	let log = function(){};
+	window.log = log;
+	log = console.log.bind(console);
+	window.log = function(){};
+	window.log.warn = function(){};
+	window.log.error = function(){};
 	window.console.warn = function(){};
 	console.warn = function(){};
 }

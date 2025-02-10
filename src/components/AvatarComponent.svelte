@@ -36,7 +36,7 @@
     }
 
     function change(iconID) {
-        print(iconID);
+        log(iconID);
 
         if (iconID != "null" || iconID == null) {
             dispatch("change", Number(iconID));

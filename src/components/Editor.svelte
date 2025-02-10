@@ -104,7 +104,7 @@
                         directEdit = true;
                     }
                 }
-                print("direct edit is: "+directEdit);
+                log("direct edit is: "+directEdit);
             }
 
             shown = true;
@@ -139,7 +139,7 @@
 
             if (unsavedChanges && !force) {
                 discardDialog.showWithCallback((result) => {
-                    print(result);
+                    log(result);
                     if (result == "confirm") {
                         back(true);
                     }
@@ -215,7 +215,7 @@
     function doDelete(force) {
         force = (force != null) ? force : false;
         if (force) {
-            print(`deleting ${objectType}...`);
+            log(`deleting ${objectType}...`);
             if (isLocation) gamemap.deleteLocation(modEditObject);
             if (isWorld) gamemap.deleteWorld(modEditObject);
             let query = queryify(objectify(modEditObject.getDeleteQuery()));
@@ -232,7 +232,7 @@
         revision.rev.id = revision.rev.locationId != 0 ? revision.rev.locationId : revision.rev.worldId;
         revision.rev.revertId = revision.rev.revisionId;
         let object = (revision.isWorld) ? new World(revision.rev) : new Location(revision.rev);
-        print(object);
+        log(object);
 
         if (object.revisionID != editObject.revisionID) {
             // prompt user if they want to load old revision, then overwrite current object with new data;
@@ -266,11 +266,11 @@
     function doSave() {
 
         let isRevert = modEditObject.revertID != null;
-        print(`${!isRevert ? "Saving" : "Reverting"} ${objectType}...`);
+        log(`${!isRevert ? "Saving" : "Reverting"} ${objectType}...`);
 
         let queryParams = objectify(!isRevert ? modEditObject.getSaveQuery() : modEditObject.getRevertQuery());
         saveButton.$set({ text: `${!isRevert ? "Saving..." : "Reverting..."}`, icon: "loading",  loading: true });
-        print(queryParams);
+        log(queryParams);
 
         getJSON((GAME_DATA_SCRIPT + queryify(queryParams)).replace(/=\s*$/, "")).then(data => {
             if (!data?.isError) {
@@ -304,7 +304,7 @@
                 saveButton.$set({ text: "Save", type: "save", icon: "save"});
                 cancel();
             } else {
-                print(data.errorMsg);
+                log(data.errorMsg);
                 saveButton.$set({ text: data.errorMsg.includes("permissions") ? "Insufficient permissions!" : data.errorMsg, icon: "warning", type: "warning" });
 
                 setTimeout(() => {                    
@@ -389,12 +389,12 @@
 
             // update provided property
             if (property) {
-                print(`editing ${property} with value ${value}`)
+                log(`editing ${property} with value ${value}`)
                 modEditObject[property] = value;
-                print("before edit");
-                print(editObject);
-                print("after edit");
-                print(modEditObject);
+                log("before edit");
+                log(editObject);
+                log("after edit");
+                log(modEditObject);
             }
 
             // are there any unsaved changes
@@ -411,8 +411,7 @@
     }
 
     function fillFromTemplate(template) {
-        print("printing template");
-        print(template);
+        log(template);
 
         // fill in data from template
         for (let [key, value] of Object.entries(template)) {
@@ -431,23 +430,23 @@
     // get recent changes function
     function getRecentChanges() {
 
-        print("getting recent changes...")
+        log("getting recent changes...")
         recentChanges = [];
         let queryParams = {};
         queryParams.action = "get_fullrc";
         queryParams.db = MAPCONFIG.database;
 
         getJSON(GAME_DATA_SCRIPT + queryify(queryParams)).then(data => {
-            print("parsing data...");
+            log("parsing data...");
             let tempList = [];
-            print(data);
+            log(data);
             for (let i = 0; i < data.recentChanges.length; i++) {
                 tempList.push(getRCItem(data.recentChanges[i]));
             }
             recentChanges = tempList;
 
-            print("got recent changes: ");
-            print(recentChanges);
+            log("got recent changes: ");
+            log(recentChanges);
         });
     }
 

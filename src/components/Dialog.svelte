@@ -47,7 +47,7 @@
     export function dismiss() {
         isShown = false;
         dispatch("dismiss");
-        print("going away");
+        log("going away");
         if (callback) {
             callback("dismiss");
         }

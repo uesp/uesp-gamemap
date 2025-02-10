@@ -327,7 +327,7 @@ export default class Location {
 		query += `&displaydata=${encodeURI(JSON.stringify(this.displayData))}`;
 		if (this.hasIcon()) { query += `&icontype=${encodeURI(this.icon)}` }
 
-		print(objectify(query));
+		log(objectify(query));
 		return encodeURI(query);
 	}
 
@@ -379,7 +379,7 @@ export default class Location {
 		let world = gamemap.getWorldFromID(this.worldID);
 		coords = (!Array.isArray(coords)) ? [structuredClone(coords)] : structuredClone(coords);
 
-		print(world);
+		log(world);
 
 		coords.forEach(coord => {
 

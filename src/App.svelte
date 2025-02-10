@@ -53,7 +53,7 @@
 	import Gamemap from "./map/gamemap.js";
 
 	// initialise app
-	print("Initialising app...");
+	log("Initialising app...");
 
 	const targetNode = document.getElementById('app');
 	const config = { childList: true, subtree: true };
@@ -130,7 +130,7 @@
 		setLoading("Loading map");
 
 		if (GAME != null && GAME.toLowerCase().match(/^([a-z]+)/)) {
-			print("Game parameter was: " + GAME);
+			log("Game parameter was: " + GAME);
 
 			// begin getting map config
 			getJSON(DEFAULT_MAP_CONFIG_DIR).then(defaultMapConfig => {
@@ -141,12 +141,12 @@
 				// example: /assets/maps/eso/config/eso-config.json
 				let configURL = (MAPS_DIR + GAME.toLowerCase() + "/config/" + GAME + "-" + MAP_CONFIG_FILENAME);
 				setLoading("Loading config");
-				print("Getting map config at " + MAP_CONFIG_DIR + "...");
+				log("Getting map config at " + MAP_CONFIG_DIR + "...");
 				getJSON(configURL).then(object => {
 
 					// set up base map config
-					print("Imported map config successfully.");
-					print("Merging with default map config...")
+					log("Imported map config successfully.");
+					log("Merging with default map config...")
 					mapConfig = mergeObjects(DEFAULT_MAP_CONFIG, object);
 					mapConfig.hasAds = mapConfig.adScriptName != null;
 
@@ -162,8 +162,8 @@
 					icons.sort((a, b) => Object.values(a)[0].localeCompare(Object.values(b)[0], 'en', {'sensitivity': 'base'}));
 					mapConfig.icons = new Map(icons.map(obj => [Number(Object.keys(obj)[0]), Object.values(obj)[0]]));
 
-					print("Completed merged map config:")
-					print(mapConfig);
+					log("Completed merged map config:")
+					log(mapConfig);
 					window.MAPCONFIG = mapConfig; // make mapconfig global
 
 					// load map
@@ -188,7 +188,7 @@
 		// define callbacks
 		let mapCallbacks = {
 			onPermissionsLoaded: (enableEditing) => {
-				print("Editing permissions: " + enableEditing);
+				log("Editing permissions: " + enableEditing);
 				canEdit = enableEditing;
 			},
 			onMapLoaded: () => setLoading(false),
@@ -234,7 +234,7 @@
 		} else { // else we're being passed a string
 			isLoading = true;
 			loadingReason = reason;
-			print(loadingReason+"...");
+			log(loadingReason+"...");
 		}
 	}
 
@@ -247,7 +247,7 @@
 			setLoading(false);
 			isError = true;
 			errorReason = reason;
-			print.error(reason);
+			log.error(reason);
 		}
 	}
 
@@ -271,7 +271,7 @@
 		// if "Insert" key pressed, hide UI
 		if (key.keyCode == 45) {
 			showUI = !showUI;
-			print("UI " + ((showUI) ? "shown." : "hidden."));
+			log("UI " + ((showUI) ? "shown." : "hidden."));
 		}
 
 	}
@@ -355,13 +355,13 @@
 
 								{#if mapState.world.wikiPage} <!-- only show article button if world has a wiki page -->
 									<IconButton icon="article" label="Goto Article" tooltip="Goto this map's article" lock={mapLock} on:click={() => {
-										print("Getting article link...");
+										log("Getting article link...");
 										window.open(mapState.world.getWikiLink());
 									}}/>
 								{/if}
 
 								<IconButton icon="link" label="Copy Link" lock={mapLock} tooltip="Copy link to current map view" on:click={() => {
-									print("Copying link to clipboard...");
+									log("Copying link to clipboard...");
 									M.toast({html: 'Map link copied to clipboard!'});
 									navigator?.clipboard?.writeText(window.location);
 								}}/>

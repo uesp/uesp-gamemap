@@ -72,7 +72,7 @@
         let queryParams = {};
         queryParams.action = 'search';
         queryParams.search = encodeURIComponent(searchQuery);
-        print("search query: " + queryParams.search + ", search in map: " + currentMapOnly);
+        log("search query: " + queryParams.search + ", search in map: " + currentMapOnly);
 
         if (currentMapOnly == true) {
             queryParams.world = gamemap.getCurrentWorldID();
@@ -124,9 +124,9 @@
             }
             searchResults = tempSearchResults;
             isLoading = false;
-            print(searchResults);
+            log(searchResults);
 
-        }).catch((error) => print.warn(`There was an error getting search results: ${error}`));
+        }).catch((error) => log.warn(`There was an error getting search results: ${error}`));
     }
 
     // on search pane focused
