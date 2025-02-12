@@ -293,8 +293,9 @@ class GameMap
 		
 		if ($this->canEdit) return true;
 		
+			// Old permissions
 		if ($dbPrefix == "" || $dbPrefix == "eso") return $this->canEditESO;
-		if ($dbPrefix == "tr") return $this->canEditTR;
+		if ($dbPrefix == "tr" || $dbPrefix == "ptr") return $this->canEditTR;
 		
 		if ($dbPrefix == "sr" || $dbPrefix == "si" || $dbPrefix == "mw" || $dbPrefix == "ob" || $dbPrefix == "si" || $dbPrefix == "db" || $dbPrefix == "ptmw" || $dbPrefix == "test" || $dbPrefix == "beyond" || $dbPrefix == "ds")
 		{
@@ -502,6 +503,8 @@ class GameMap
 	{
 		if ($action == null) $action = $this->action;
 		$this->addOutputItem("action", $action);
+		
+		if (!$this->dbReadInitialized) return false;
 		
 		switch ($action)
 		{
@@ -2058,7 +2061,7 @@ class GameMap
 		if ($this->dbPrefix != "") $database = $uespGameMapDatabase . "_" . $this->dbPrefix;
 		
 		$this->db = new mysqli($uespGameMapReadDBHost, $uespGameMapReadUser, $uespGameMapReadPW, $database);
-		if ($this->db->connect_error) return $this->reportError("Could not connect to mysql database!");
+		if ($this->db->connect_error) return $this->reportError("Could not connect to mysql database '$database'!");
 		
 		$this->dbReadInitialized = true;
 		$this->dbWriteInitialized = false;
@@ -2090,7 +2093,7 @@ class GameMap
 		if ($this->dbPrefix != "") $database = $uespGameMapDatabase . "_" . $this->dbPrefix;
 		
 		$this->db = new mysqli($uespGameMapWriteDBHost, $uespGameMapWriteUser, $uespGameMapWritePW, $database);
-		if ($this->db->connect_error) return $this->reportError("Could not connect to mysql database!");
+		if ($this->db->connect_error) return $this->reportError("Could not connect to mysql database ' $database'!");
 		
 		$this->dbReadInitialized = true;
 		$this->dbWriteInitialized = true;
@@ -2109,10 +2112,11 @@ class GameMap
 		{
 			$dbPrefix = $this->inputParams['db'];
 			
-			if ($this->isValidDbPrefix($dbPrefix)) 
+			if ($this->isValidDbPrefix($dbPrefix))
 			{
 				$this->dbPrefix = $dbPrefix;
 				if ($this->dbPrefix == "eso") $this->dbPrefix = "";
+				if ($this->dbPrefix == "tr") $this->dbPrefix = "ptr";
 			}
 		}
 		
@@ -2248,7 +2252,7 @@ class GameMap
 				$this->world = $this->worldName;
 				$this->worldName = strtolower($this->worldName);
 			}
-	
+			
 		}
 		
 		if ($this->limitTop < $this->limitBottom)
