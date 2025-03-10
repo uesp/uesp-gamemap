@@ -1266,7 +1266,7 @@ export default class Gamemap {
 							}
 						}
 
-						if (gridShown && currentZoom > self.mapConfig.gridShowLabelZoom) {
+						if (gridShown && currentZoom > world.gridShowLabelZoom) {
 
 							let gridStartX = world.gridStart[0];
 							let gridStartY = world.gridStart[1];

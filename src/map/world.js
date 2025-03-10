@@ -46,11 +46,14 @@ export default class World {
 		this.height = ((MAPCONFIG.coordType == COORD_TYPES.PSEUDO_NORMALISED) ? this.dbNumTilesY : this.numTilesY * MAPCONFIG.tileSize) * Math.pow(2, 0);
 
 		this.legacy = data; // legacy attributes from server
+		
+		this.gridShowLabelZoom = MAPCONFIG.gridShowLabelZoom ?? 4;
 
 		// world display data (grids and layers)
 		this.displayData = (data?.displayData) ? JSON.parse(data.displayData) : null;
 		this.layers = this.displayData?.layers ?? MAPCONFIG.layers;
 		this.gridStart = this.displayData?.gridStart;
+		this.gridShowLabelZoom = this.displayData?.gridShowLabelZoom ?? this.gridShowLabelZoom;
 
 		this.editing = false; // whether this world is currently being edited
 	}
