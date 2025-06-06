@@ -13,11 +13,13 @@ ignore = default-config.json
 dest = content1.uesp.net:/home/uesp/gamemap/www/
 dest = content2.uesp.net:/home/uesp/gamemap/www/
 dest = content3.uesp.net:/home/uesp/gamemap/www/
+dest = content4.uesp.net:/home/uesp/gamemap/www/
 destname = [dev]content3.uesp.net:/home/thal-j/www/public/
 
 # Not until Starfield map is merged into gamemap
 dest = content1.uesp.net:/home/sfwiki/gamemap/
 dest = content2.uesp.net:/home/sfwiki/gamemap/
 dest = content3.uesp.net:/home/sfwiki/gamemap/
+dest = content4.uesp.net:/home/sfwiki/gamemap/
 destname = [dev]content3.uesp.net:/home/sfwiki/dev/gamemap/
 

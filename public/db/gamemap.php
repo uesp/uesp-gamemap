@@ -18,6 +18,7 @@ if (in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1', "localhost"))) {
 }
 
 require_once 'UespMemcachedSession.php';
+require_once 'UespMysqlSession.php';
 
 
 class GameMap
@@ -28,7 +29,8 @@ class GameMap
 	const LOCTYPE_PATH  = 2;
 	const LOCTYPE_AREA  = 3;
 	
-	const USE_MEMCACHED_SESSIONS = true;	//Must be true or session reading will break as of MW 1.27
+	//const SESSION_CLASS = "UespMemcachedSession";		// Changed to MySQL sessions in 1.31
+	const SESSION_CLASS = "UespMysqlSession";
 	
 	public $inputParams = array();
 	
@@ -135,39 +137,44 @@ class GameMap
 			}
 		}
 		
+		$SESSION_CLASS = self::SESSION_CLASS;
+		
 			//TODO: Better site selection?
 		if ($this->dbPrefix == "starfield")
 		{
-			if (self::USE_MEMCACHED_SESSIONS) UespMemcachedSession::install("sfwiki");
+			$SESSION_CLASS::install("sfwiki");
 			
 			session_name('sfwiki_session');
 			session_set_cookie_params(3600*24*30, '/', '.starfieldwiki.net', false);
-			$this->COOKIE_USERID = 'uesp_net_wiki5UserID';
-			$this->COOKIE_TOKEN = 'uesp_net_wiki5Token';
+			$this->COOKIE_USERID = 'sfwikiUserID';
+			$this->COOKIE_TOKEN = 'sfwikiToken';
 			$this->DBNAME = 'sfwiki';
 		}
 		else
 		{
-			if (self::USE_MEMCACHED_SESSIONS) UespMemcachedSession::install("uesp_net_wiki5");
+			$SESSION_CLASS::install("uesp_net_wiki5");
 			
 			session_name('uesp_net_wiki5_session');
 			session_set_cookie_params(3600*24*30, '/', '.uesp.net', false);
-			$this->COOKIE_USERID = 'sfwikiUserID';
-			$this->COOKIE_TOKEN = 'sfwikiToken';
+			$this->COOKIE_USERID = 'uesp_net_wiki5UserID';
+			$this->COOKIE_TOKEN = 'uesp_net_wiki5Token';
 			$this->DBNAME = 'uesp_net_wiki5';
 		}
 		
+		// error_log("GameMap: Starting Session Status = " . session_status());
 		$this->startedSession = session_start();
-		
+		// error_log("GameMap: Starting Session = " . $this->startedSession);
 		//if (!$this->startedSession) error_log("Failed to start session!");
 		
-		$userId = UespMemcachedSession::readKey('wsUserID');
+		$userId = $SESSION_CLASS::readKey('wsUserID');
+		error_log("GameMap: userId = $userId");
 		$groups = null;
 		
 		if ($userId > 0)
 		{
 			$this->wikiUserId = intval($userId);
-			$this->wikiUserName = UespMemcachedSession::readKey('wsUserName');
+			$this->wikiUserName = $SESSION_CLASS::readKey('wsUserName');
+			error_log("GameMap: wikiUserName = {$this->wikiUserName}");
 			
 			$groups = $this->loadUserWikiGroups($userId);
 		}
