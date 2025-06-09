@@ -28,7 +28,7 @@ if (!class_exists("UespMysqlSession"))
 		public $db = null;
 		
 		
-		static function install($dbname)
+		static function install($dbname = "uesp_net_wiki5")
 		{
 			global $UESP_SERVER_MEMCACHED;
 			
@@ -48,7 +48,8 @@ if (!class_exists("UespMysqlSession"))
 				return "";
 			}
 			
-			$data = (self::$SESSION)->read(session_id());
+			$SESSION = self::$SESSION;
+			$data = $SESSION->read(session_id());
 			
 			if ($data == "" || $data == null || $data['data'] == null)
 			{
@@ -169,7 +170,6 @@ if (!class_exists("UespMysqlSession"))
 				print("DB connection error!\n");
 				return false;
 			}
-			
 			
 			//$result = $db->query("SELECT * FROM objectcache WHERE keyname='mw-tor-list-status';");
 			$result = $db->query("SELECT * FROM objectcache WHERE keyname='uesp_net_wiki5:abusefilter:stats:total:default';");
