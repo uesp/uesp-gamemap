@@ -167,14 +167,14 @@ class GameMap
 		//if (!$this->startedSession) error_log("Failed to start session!");
 		
 		$userId = $SESSION_CLASS::readKey('wsUserID');
-		error_log("GameMap: userId = $userId");
+		//error_log("GameMap: userId = $userId");
 		$groups = null;
 		
 		if ($userId > 0)
 		{
 			$this->wikiUserId = intval($userId);
 			$this->wikiUserName = $SESSION_CLASS::readKey('wsUserName');
-			error_log("GameMap: wikiUserName = {$this->wikiUserName}");
+			//error_log("GameMap: wikiUserName = {$this->wikiUserName}");
 			
 			$groups = $this->loadUserWikiGroups($userId);
 		}
